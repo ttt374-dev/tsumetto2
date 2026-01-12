@@ -19,10 +19,17 @@ export function createProblemStore(repository: ProblemRepository) {
         }
     };
 
-    const add = async (problem: Problem) => {
+    const addProblem = async (problem: Problem) => {
         await repository.add(problem)
         await reload()
         
+    }
+    const toggleStar = async (problem: Problem) => {
+        await repository.update(problem.toggleStar())
+        await reload()
+    }
+    const setTitle = async (problem: Problem, title: string) => {
+        await repository.update(problem.setTitle(title))
     }
     const clearAll = async () => {
         await repository.save([])
@@ -30,8 +37,13 @@ export function createProblemStore(repository: ProblemRepository) {
     }
 
     return {
+        // query
         problems,
-        add,
+
+        // command
+        addProblem,
+        toggleStar,
+        setTitle,
         clearAll
     }
 }

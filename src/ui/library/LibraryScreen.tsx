@@ -8,27 +8,33 @@ type Props = {
 }
 export function LibraryScreen({ }: Props) {
     const repo = new FileProblemRepository()
-    const { problems, add, clearAll } = createProblemStore(repo)
+    const { problems, addProblem, toggleStar, setTitle, clearAll } = createProblemStore(repo)
 
-    const addProblem = () => {
-        const newProblem = Problem.create()
-        add(newProblem)
+    const handleAddProblem = async () => {
+        addProblem(Problem.create())
     }
-    
+    const handleToggleStars = async () => {
+        toggleStar(problems[0])
+        setTitle(problems[0], "asdfasdf")
+    }
+
     return (
         <>
-            <Button onClick={addProblem}>
+            <Button onClick={handleAddProblem}>
                 add
             </Button>
             <Button onClick={clearAll}>
                 clear all
+            </Button>
+            <Button onClick={handleToggleStars}>
+                Toggle Stars
             </Button>
 
 
             <List>
                 {problems.map((p, i) => (
                     <ListItem>
-                       [{i}] {p.id}
+                       [{i}] {p.id} {p.title} [{p.starred ? "★" : "☆"}]
                     </ListItem>
                 ))}
             </List>

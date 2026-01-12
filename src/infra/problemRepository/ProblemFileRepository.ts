@@ -1,4 +1,4 @@
-import type { Problem } from "../../domain/problem/Problem";
+import { Problem, type ProblemDTO } from "../../domain/problem/Problem";
 import type { ProblemRepository } from "../../domain/problem/ProblemRepository";
 import { Filesystem, Directory, Encoding } from "@capacitor/filesystem";
 
@@ -10,34 +10,31 @@ const LIB_FILE = "problem.json";
 export class FileProblemRepository implements ProblemRepository {
 
     async load(): Promise<Problem[]> {
-        try {
-            
+        try {            
             const result = await Filesystem.readFile({
                 path: LIB_FILE,
                 directory: Directory.Data,
                 encoding: Encoding.UTF8,
             });
-
             const dataStr =
                 typeof result.data === "string"
                     ? result.data
-                    : await result.data.text();
-
-            const parsed = JSON.parse(dataStr);
-            if (Array.isArray(parsed)) {
-                return parsed as Problem[];
-            }
-            return [];
+                    : await result.data.text()
+            const dtos: ProblemDTO[] = JSON.parse(dataStr)
+            return dtos.map(dto =>
+                Problem.fromDTO(dto)
+            )
         } catch (e) {
-            // ファイル未存在などは空配列扱い
             return [];
         }
     }
 
-    async save(collection: Problem[]): Promise<void> {
+    async save(problems: Problem[]): Promise<void> {
+        const dtos: ProblemDTO[] = problems.map(p => (p.toDTO()))
+
         await Filesystem.writeFile({
             path: LIB_FILE,
-            data: JSON.stringify(collection),
+            data: JSON.stringify(dtos),
             directory: Directory.Data,
             encoding: Encoding.UTF8,
         });
@@ -48,7 +45,16 @@ export class FileProblemRepository implements ProblemRepository {
         const next = [...records, problem];
         await this.save(next);
     }
+    async update(problem: Problem): Promise<void> {
+        const problems = await this.load();
+        const index = problems.findIndex(p => p.id === problem.id);
+        if (index === -1) return
 
+        const next = [...problems];
+        next[index] = problem;
+
+        await this.save(next);
+    }
     async remove(problemId: string): Promise<void> {
         const problems = await this.load();
         const next = problems.filter(p => p.id !== problemId);
