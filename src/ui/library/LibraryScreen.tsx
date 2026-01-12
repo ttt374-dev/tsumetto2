@@ -2,6 +2,7 @@ import { Button, List, ListItem } from "@mui/material"
 import { createProblemStore } from "../../application/store/useProblemStore"
 import { Problem } from "../../domain/problem/Problem"
 import { FileProblemRepository } from "../../infra/problemRepository/ProblemFileRepository"
+import { useEffect } from "react"
 
 type Props = {
 
@@ -14,10 +15,13 @@ export function LibraryScreen({ }: Props) {
         addProblem(Problem.create())
     }
     const handleToggleStars = async () => {
-        toggleStar(problems[0])
-        setTitle(problems[0], "asdfasdf")
+        await toggleStar(problems[0])
+        await setTitle(problems[0], "asdfasdf")
     }
 
+    useEffect(()=>{
+        console.log("library screen", problems)
+    }, [problems])
     return (
         <>
             <Button onClick={handleAddProblem}>
@@ -33,7 +37,7 @@ export function LibraryScreen({ }: Props) {
 
             <List>
                 {problems.map((p, i) => (
-                    <ListItem>
+                    <ListItem key={p.id}>
                        [{i}] {p.id} {p.title} [{p.starred ? "★" : "☆"}]
                     </ListItem>
                 ))}

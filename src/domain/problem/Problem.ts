@@ -9,7 +9,7 @@ export type ProblemData = {
     createdAt: number
     starred: boolean
 }
-function createProblemDefaultValues(): ProblemData {
+function createDefaultValues(): ProblemData {
     return {
         id: v4(),
         title: "untitled",
@@ -19,7 +19,7 @@ function createProblemDefaultValues(): ProblemData {
     }
 }
 
-export type ProblemInit = Partial<ProblemData>
+//export type ProblemInit = Partial<ProblemData>
 export type ProblemDTO = ProblemData
 export type ProblemId = string
 /////////////////////////////////////////////////////////////////
@@ -34,8 +34,8 @@ export class Problem {
 
 
     // 生成時
-    static create(init: Partial<ProblemInit> = {}): Problem {
-        return Problem.fromDTO({ ...createProblemDefaultValues(), ...init })
+    static create(init: Partial<ProblemData> = {}): Problem {
+        return Problem.fromDTO({ ...createDefaultValues(), ...init })
     }
 
     // 永続化用 DTO
@@ -55,15 +55,14 @@ export class Problem {
 
     //////
     toggleStar(): Problem {
-        //return new Problem(this.id, this.title, this.kifContent, this.createdAt, !this.starred)
-        //return Problem.create({starred: !this.starred}) 
-        return Problem.fromDTO({
+        const r= Problem.fromDTO({
             ...this.toDTO(),
             starred: !this.starred,
         })
+        console.log("toggle", r)
+        return r
     }
     setTitle(title: string): Problem {
-        //return Problem.create({title: title})
         return Problem.fromDTO({
             ...this.toDTO(),
             title: title,
