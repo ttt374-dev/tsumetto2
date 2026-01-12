@@ -42,7 +42,7 @@ export class FileProblemRepository implements ProblemRepository {
             encoding: Encoding.UTF8,
         });
     }
-/*
+
     async add(problem: Problem): Promise<void> {
         const records = await this.load();
         const next = [...records, problem];
@@ -61,5 +61,5 @@ export class FileProblemRepository implements ProblemRepository {
         const problems = await this.load();
         const next = problems.filter(p => !ids.includes(p.id));
         await this.save(next);
-    }*/
+    }
 }

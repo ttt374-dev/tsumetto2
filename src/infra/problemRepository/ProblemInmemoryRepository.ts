@@ -18,7 +18,6 @@ export class InMemoryProblemRepository implements ProblemRepository {
         // 完全置き換え
         this.problems = [...collection];
     }
-/*
     async add(problem: Problem): Promise<void> {
         this.problems = [...this.problems, problem];
     }
@@ -34,5 +33,4 @@ export class InMemoryProblemRepository implements ProblemRepository {
         const idSet = new Set(ids);
         this.problems = this.problems.filter(p => !idSet.has(p.id));
     }
-        */
 }
