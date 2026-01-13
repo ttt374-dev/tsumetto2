@@ -32,7 +32,7 @@ describe("kif pasrer", () => {
         expect(kifDataResult.ok).toBeTruthy
 
         if (kifDataResult.ok){
-            expect(kifDataResult.value.events.length).toEqual(10)
+            expect(kifDataResult.value.moves.length).toEqual(10)
             expect(kifDataResult.value.headers['手合割']).toEqual('平手')            
         }
         

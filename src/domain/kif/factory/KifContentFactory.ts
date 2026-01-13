@@ -9,7 +9,7 @@ export function createKifContent(
   return {
     board: createEmptyBoard(),
     hands: createEmptyHands(),
-    events: [],
+    moves: [],
     headers: {},
     ...partial,
   };

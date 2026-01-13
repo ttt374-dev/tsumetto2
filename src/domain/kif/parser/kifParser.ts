@@ -17,11 +17,12 @@ export function parseKif(text: string): ParseResult<KifContent> {
   const hands = parseHands(lines)
   const givenBoard = parseBoard(lines)
   const events = parseEvents(lines)
+  const moves = events.filter(e => e.type === "move")
 
   const board = (givenBoard) ? givenBoard :
     (headers['手合割'] === '平手' ? createDefaultBoard() : createEmptyBoard())
 
-  const kifContent: KifContent = { headers, board, hands, events };
+  const kifContent: KifContent = { headers, board, hands, moves };
 
   const valid = isValidKif(lines)
   //if (isValidKifData(kifData)){
