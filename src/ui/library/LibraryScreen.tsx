@@ -5,8 +5,8 @@ import { useMissionItem } from "../../application/useMissionItem"
 export function LibraryScreen() {
     const { problems, learningRecords, missionItems,
         sortState, setSortState, filterState, setFilterState,
-        handleToggleSort, handleStarredOnly,
-        handleAddProblem, handleToggleStar, handleAnswer, clearAll}  = useMissionItem()
+        toggleSort, toggleFilter, 
+        addProblem, toggleStar, handleAnswer, clearAll}  = useMissionItem()
    
     useEffect(()=>{
         console.log("library screen", problems, learningRecords)
@@ -14,16 +14,16 @@ export function LibraryScreen() {
     
     return (
         <>
-            <Button onClick={handleAddProblem}>
+            <Button onClick={addProblem}>
                 add
             </Button>
             <Button onClick={clearAll}>
                 clear all
             </Button>
-            <Button onClick={handleToggleSort}>
+            <Button onClick={() => { toggleSort('createdAt')}}>
                 toggle sort
             </Button>
-            <Button onClick={handleStarredOnly}>
+            <Button onClick={() => { toggleFilter('starredOnly')}}>
                 starred only: { filterState.starredOnly ? "Star": "-"}
             </Button>
 
@@ -34,7 +34,7 @@ export function LibraryScreen() {
                        at { new Date(m.problem.createdAt).toLocaleString()}
                        [{m.problem.starred ? "★" : "☆"}] / 
                         {m.learning?.solvedCount}
-                        <Button onClick={() => handleToggleStar(m)}>
+                        <Button onClick={() => toggleStar(m)}>
                             Toggle Stars
                         </Button>
                        <Button onClick={() => { handleAnswer(m)}}>

@@ -19,10 +19,14 @@ export function createProblemStore(repository: ProblemRepository) {
         }
     };
 
-    const addProblem = async (problem: Problem) => {
+    const add = async (problem: Problem) => {
         await repository.add(problem)
         await reload()
         
+    }
+    const update = async(problem: Problem) => {
+        await repository.update(problem)
+        await reload()
     }
     const toggleStar = async (problem: Problem) => {
         console.log(problem)
@@ -42,7 +46,8 @@ export function createProblemStore(repository: ProblemRepository) {
         problems,
 
         // command
-        addProblem,
+        add,
+        update,
         toggleStar,
         setTitle,
         clearAll

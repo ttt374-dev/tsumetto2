@@ -1,0 +1,57 @@
+src
+├── application
+│   ├── store
+│   │   ├── useLearningStore.ts
+│   │   └── useProblemStore.ts
+│   ├── useFsm.ts
+│   └── useMissionItem.ts
+├── assets
+│   └── react.svg
+├── domain
+│   ├── fsm
+│   │   ├── Fsm.ts
+│   │   └── fsmReducer.ts
+│   ├── learning
+│   │   ├── Learning.ts
+│   │   └── LearningRepository.ts
+│   ├── missionItem
+│   │   ├── MissionItem.ts
+│   │   ├── createMissionItems.ts
+│   │   └── query
+│   │       ├── applyFilter.ts
+│   │       ├── applyQuery.ts
+│   │       ├── applySort.ts
+│   │       ├── filter.ts
+│   │       └── sort.ts
+│   └── problem
+│       ├── Problem.ts
+│       └── ProblemRepository.ts
+├── index.css
+├── infra
+│   └── problemRepository
+│       ├── LearningFileRepository.ts
+│       └── ProblemFileRepository.ts
+├── main.tsx
+└── ui
+    ├── App
+    │   ├── App.css
+    │   ├── App.tsx
+    │   └── providers
+    │       ├── RepositoryProvider.tsx
+    │       ├── StoreProvider.tsx
+    │       └── fsmPRovider.tsx
+    ├── common
+    ├── dashboard
+    │   └── DashboardScreen.tsx
+    ├── library
+    │   └── LibraryScreen.tsx
+    ├── player
+    │   └── PlayerScreen.tsx
+    └── sharedComponents
+        ├── FileButton.tsx
+        ├── FixedScrollScreen.tsx
+        ├── FrameLayout.tsx
+        ├── GenericListMenu.tsx
+        └── MultipleFilesButton.tsx
+
+20 directories, 35 files
