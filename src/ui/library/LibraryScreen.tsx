@@ -11,6 +11,8 @@ import { useRepositoryContext } from "../App/providers/RepositoryProvider"
 import { useRouteLoaderData } from "react-router-dom"
 import { useQuery } from "@/application/useQuery"
 import { applyQuery } from "@/domain/missionItem/query/applyQuery"
+import LibrarySortControl from "./components/LibrarySortControl"
+import type { SortKey } from "@/domain/missionItem/query/sort"
 
 export function useLibrary() {
     const repos = useRepositoryContext()
@@ -46,6 +48,10 @@ export function LibraryScreen() {
         })
         
     })
+    const handleDeleteAll = () => {
+        if (!window.confirm("ok to delete all ?")) return
+        clearAll()
+    }
     const handleDelete = (m: MissionItem) => {
         if (!window.confirm("ok to delete ? ")) return
         deleteProblem(m.problem.id).then(() => {
@@ -60,15 +66,19 @@ export function LibraryScreen() {
                 <Button onClick={openFileDialog}>
                     Import
                 </Button>
-                <Button onClick={clearAll}>
-                    clear all
-                </Button>
-                <Button onClick={() => { toggleSort('createdAt') }}>
-                    toggle sort
+                <Button onClick={handleDeleteAll}>
+                    Delete all
                 </Button>
                 <Button onClick={() => { toggleFilter('starredOnly') }}>
                     starred only: {filterState.starredOnly ? "Star" : "-"}
                 </Button>
+                <LibrarySortControl 
+                    sort={sortState}
+                    onSetSortKey={(key) => { toggleSort(key)}}
+                    onSetSortOrder={(order) => {
+                        setSortState(prev=>({...prev, order: order}))
+                    }}
+                />
             </Stack>
 
 

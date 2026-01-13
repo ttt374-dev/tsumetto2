@@ -10,6 +10,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useMissionItem } from "@/application/useMissionItem";
 import { applyQuery } from "@/domain/missionItem/query/applyQuery";
 import { useQuery } from "@/application/useQuery";
+import type { SortState } from "@/domain/missionItem/query/sort";
 
 function DashboardFilterControl({ filter, onToggleFilter }: {
     filter: FilterState, onToggleFilter: (key: keyof FilterState) => void
@@ -36,11 +37,12 @@ export function DashboardScreen() {
     const fsm = useFsmContext()
 
     const { missionItems } = useMissionItem()
-    const { sortState, filterState, toggleFilter, setFilter} = useQuery()
+    const { filterState, toggleFilter, setFilter} = useQuery()
 
     const queriedItems = useMemo(() => {
+        const sortState: SortState = { key: "nextReviewedAt", order: "asc"}
         return applyQuery(missionItems, sortState, filterState)
-    }, [missionItems, sortState, filterState])
+    }, [missionItems, filterState])
 
     const handleStart = () => {
         fsm.start(buildQueue(queriedItems.map(r => r.problem)))
