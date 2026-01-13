@@ -6,12 +6,14 @@ import { DashboardScreen } from '../dashboard/DashboardScreen';
 import { FsmProvider } from './providers/fsmPRovider';
 import { PlayerScreen } from '../player/PlayerScreen';
 import { SummaryScreen } from '../summary/SummaryScreen';
+import { ToastProvider } from './providers/ToastProvider';
 
 function App() {
     return (
         <RepositoryProvider>
             <StoreProvider>
                 <FsmProvider>
+                    <ToastProvider>
                     <BrowserRouter>
                         <Routes>
                             <Route path="/player" element={<PlayerScreen />} />
@@ -20,6 +22,7 @@ function App() {
                             <Route path="/summary" element={<SummaryScreen />} />
                         </Routes>
                     </BrowserRouter>
+                    </ToastProvider>
                 </FsmProvider>
             </StoreProvider>
         </RepositoryProvider>

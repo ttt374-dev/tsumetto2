@@ -1,9 +1,11 @@
+import { parseKif } from "@/domain/kif/parser";
 import { Problem } from "@/domain/problem/Problem";
 import type { ProblemRepository } from "@/domain/problem/ProblemRepository";
 
-type ImportResult = 
+export type ImportResult = 
     | { ok: true, count: number}
     | { ok: false, message: string }
+
 
 export function createImportProblemsUsecase(problemRepo: ProblemRepository) {
     
@@ -11,12 +13,12 @@ export function createImportProblemsUsecase(problemRepo: ProblemRepository) {
         console.log("import file", file)
         try {
             const buf = await file.arrayBuffer();
-            const text = new TextDecoder("shift_jis").decode(buf);
-
-            //const newProblem = buildProblem(text, file.name)            
+            const text = new TextDecoder("shift_jis").decode(buf);            
             const newProblem = Problem.createFromText(text, file.name)
-            newProblem && await problemRepo.add(newProblem)
-            
+
+            if (!newProblem) { return { ok: false, message: "parse failed" }}
+            problemRepo.add(newProblem)
+
             return { ok: true, count: 1}
         } catch (e) {
             const message = `Failed to import file ${file.name}:`

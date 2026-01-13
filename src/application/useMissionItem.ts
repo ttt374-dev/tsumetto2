@@ -14,7 +14,10 @@ import type { AnswerResult } from "@/domain/fsm/Fsm"
 export function useMissionItem() {
     //const repos = useRepositoryContext()    
     const stores = useStoreContext()
-    const { problems, addProblems, toggleStar: storeToggleStar, setTitle, clearAll } = stores.problem
+    const { problems, 
+        reload,
+        addProblems, deleteProblem,
+         toggleStar: storeToggleStar, setTitle, clearAll } = stores.problem
     const { learningRecords, update: updateLearning } = stores.learning
     const [ sortState, setSortState ] = useState<SortState>({
          key: "createdAt", order: "asc"
@@ -63,7 +66,8 @@ export function useMissionItem() {
     return { 
         problems, learningRecords, missionItems, find,
 
+        reload,
         sortState, setSortState, filterState, setFilterState,
-        toggleSort, toggleFilter, addProblems,
+        toggleSort, toggleFilter, addProblems, deleteProblem,
         toggleStar, markAnswer, clearAll}
 }

@@ -31,6 +31,12 @@ export function createProblemStore(repository: ProblemRepository) {
         await repository.update(problem)
         await reload()
     }
+    const deleteProblem = async (id: string) => {
+        await repository.remove(id)
+        await reload()  // Store 内 state を更新
+
+
+    }
     const toggleStar = async (problem: Problem) => {
         console.log(problem)
         await repository.update(problem.toggleStar())
@@ -49,7 +55,8 @@ export function createProblemStore(repository: ProblemRepository) {
         problems,
 
         // command
-        addProblem, addProblems,
+        reload,
+        addProblem, addProblems, deleteProblem,
         update,
         toggleStar,
         setTitle,

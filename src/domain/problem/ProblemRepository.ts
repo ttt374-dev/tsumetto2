@@ -1,4 +1,4 @@
-import type { Problem } from "./Problem"
+import type { Problem, ProblemId } from "./Problem"
 
 export interface ProblemRepository {
     load(): Promise<Problem[]>
@@ -7,4 +7,6 @@ export interface ProblemRepository {
     add(problem: Problem): Promise<void>
     addMany(problems: Problem[]): Promise<void>
     update(problem: Problem): Promise<void>
+
+    remove(problemId: ProblemId): Promise<void>
 }

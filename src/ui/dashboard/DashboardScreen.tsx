@@ -3,6 +3,7 @@ import { Button, List, ListItem } from "@mui/material";
 import { useStoreContext } from "../App/providers/StoreProvider";
 import { useFsmContext } from "../App/providers/fsmPRovider";
 import { useNavigate } from "react-router-dom";
+import { AppLayout } from "../common/AppLayout";
 
 export function DashboardScreen() {
     const navigate = useNavigate()
@@ -16,7 +17,7 @@ export function DashboardScreen() {
         navigate("/player")        
     }
     return (
-        <>
+        <AppLayout>
             <Button onClick={handleStart}>
                 Start
             </Button>
@@ -31,6 +32,6 @@ export function DashboardScreen() {
                     </>))
                 }
             </List>
-        </>
+        </AppLayout>
     )
 }

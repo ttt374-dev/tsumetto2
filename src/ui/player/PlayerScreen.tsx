@@ -3,6 +3,7 @@ import { Button, List, ListItem } from "@mui/material"
 import { useMissionItem } from "../../application/useMissionItem"
 import { useEffect } from "react"
 import { useNavigate } from "react-router-dom"
+import { AppLayout } from "../common/AppLayout"
 
 export function PlayerScreen() {
     const { state: fsmState, next, prev, solve, fail,
@@ -27,10 +28,13 @@ export function PlayerScreen() {
     if (!missionItem) return (<>NO MISSION</>)
 
     return (
-        <>
+        <AppLayout>
             <List>
                 <ListItem>
                     Id: {missionItem.problem.id}
+                </ListItem>
+                <ListItem>
+                    title: {missionItem.problem.title}
                 </ListItem>
                 <ListItem onClick={() => { toggleStar(missionItem) }}>
                     Star: {missionItem.problem.starred ? "★" : "☆"}
@@ -66,6 +70,6 @@ export function PlayerScreen() {
                 Next
             </Button>
 
-        </>
+        </AppLayout>
     )
 }

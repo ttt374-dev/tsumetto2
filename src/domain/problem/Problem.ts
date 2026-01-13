@@ -1,6 +1,9 @@
 import { v4 } from 'uuid'
+import type { KifContent } from '../kif/types'
+import { createKifContent } from '../kif/factory'
+import { parseKif } from '../kif/parser'
 
-type KifContent = string   // TODO
+//type KifContent = string   // TODO
 
 export type ProblemData = {
     id: ProblemId
@@ -13,7 +16,7 @@ function createDefaultValues(): ProblemData {
     return {
         id: v4(),
         title: "untitled",
-        kifContent: "",
+        kifContent: createKifContent(),
         createdAt: Date.now(),
         starred: false,
     }
@@ -52,9 +55,10 @@ export class Problem {
     static fromDTO(dto: ProblemDTO): Problem {
         return new Problem(dto.id, dto.title, dto.kifContent, dto.createdAt, dto.starred)
     }
-    static createFromText(text: string, title: string){
-        // TODO: parse
-        return this.create({title: title, kifContent: text})
+    static createFromText(text: string, title: string): Problem | null{
+        const r = parseKif(text)
+        if (!r.ok) return null
+        return this.create({title: title, kifContent: r.value})
     }
     //////
     toggleStar(): Problem {
