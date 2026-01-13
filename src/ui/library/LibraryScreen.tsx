@@ -2,11 +2,7 @@ import { Button, List, ListItem } from "@mui/material"
 import { useEffect } from "react"
 import { useLibrary } from "./useLibrary"
 
-type Props = {
-
-}
-
-export function LibraryScreen({ }: Props) {
+export function LibraryScreen() {
     const { problems, learningRecords, missionItems,
         handleAddProblem, handleToggleStar, handleAnswer, clearAll}  = useLibrary()
    

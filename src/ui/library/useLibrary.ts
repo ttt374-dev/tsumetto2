@@ -1,18 +1,16 @@
 import { createProblemStore } from "../../application/store/useProblemStore"
 import { Problem } from "../../domain/problem/Problem"
-import { ProblemFileRepository } from "../../infra/problemRepository/ProblemFileRepository"
-import { LearningFileRepository } from "../../infra/problemRepository/LearningFileRepository"
 import { createLearningStore } from "../../application/store/useLearningStore"
 import type { MissionItem } from "../../domain/missionItem/MissionItem"
+import { useRepositoryContext } from "../App/providers/RepositoryProvider"
+import { useStoreContext } from "../App/providers/StoreProvider"
 
 export function useLibrary() {
-    const problemRepo = new ProblemFileRepository()
-    const { problems, addProblem, toggleStar, setTitle, clearAll } = createProblemStore(problemRepo)
-
-    const learningRepo = new LearningFileRepository()
-    const { learningRecords, update: updateLearning } = createLearningStore(learningRepo)
-
-    
+    //const repos = useRepositoryContext()    
+    const stores = useStoreContext()
+    const { problems, addProblem, toggleStar, setTitle, clearAll } = stores.problem
+    const { learningRecords, update: updateLearning } = stores.learning
+   
     const missionItems: MissionItem[] = problems.map((p) => ({
         problem: p,
         learning: learningRecords[p.id]
