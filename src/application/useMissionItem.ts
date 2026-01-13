@@ -1,19 +1,21 @@
 import { Problem, type ProblemId } from "../domain/problem/Problem"
 import type { MissionItem } from "../domain/missionItem/MissionItem"
-import { useStoreContext } from "../ui/App/providers/StoreProvider"
 import { useMemo, useState } from "react"
 
 import { createMissionItems } from "@/domain/missionItem/createMissionItems"
 import type { AnswerResult } from "@/domain/fsm/Fsm"
+import { createProblemStore } from "./store/useProblemStore"
+import { useRepositoryContext } from "@/ui/App/providers/RepositoryProvider"
+import { createLearningStore } from "./store/useLearningStore"
 
 export function useMissionItem() {
-    //const repos = useRepositoryContext()    
-    const stores = useStoreContext()
+    const repos = useRepositoryContext()    
+    //const stores = useStoreContext()
     const { problems, 
         reload,
         addProblems, deleteProblem,
-         toggleStar: storeToggleStar, setTitle, clearAll } = stores.problem
-    const { learningRecords, update: updateLearning } = stores.learning
+         toggleStar: storeToggleStar, setTitle, clearAll } = createProblemStore(repos.problem) //stores.problem
+    const { learningRecords, update: updateLearning } = createLearningStore(repos.learning)  // stores.learning
 
     const missionItems: MissionItem[] = useMemo(() => { 
         return createMissionItems(problems, learningRecords)

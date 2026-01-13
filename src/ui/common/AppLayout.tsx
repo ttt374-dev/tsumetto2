@@ -4,7 +4,6 @@ import { AppBar, Box, Drawer, IconButton, List, ListItemButton, ListItemText, Me
 import MenuIcon from "@mui/icons-material/Menu";
 import MoreVertIcon from "@mui/icons-material/MoreVert"
 import { useNavigate } from "react-router-dom";
-import { useStoreContext } from "../App/providers/StoreProvider";
 
 
 interface Props {
@@ -19,7 +18,6 @@ export function AppLayout({ header, footer, children, rightActions  }: Props) {
   const [backupDialogOpen, setBackupDialogOpen] = useState(false);
   const navigate = useNavigate()
   //const learningApi = useLearningRecordsContext() // TODO: temp
-  const stores = useStoreContext()
   const toggleDrawer = (open: boolean) => () => {
     setDrawerOpen(open);
   };

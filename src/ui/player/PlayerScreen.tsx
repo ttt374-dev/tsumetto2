@@ -1,14 +1,16 @@
 import { useFsmContext } from "../App/providers/fsmPRovider"
 import { Box, Button, List, ListItem, Stack } from "@mui/material"
 import { useMissionItem } from "../../application/useMissionItem"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { AppLayout } from "../common/AppLayout"
 import BoardView from "./components/BoardView"
 import { useBoardReplay } from "./hooks/useBoardReplay"
 import { createKifContent } from "@/domain/kif/factory"
+import MovesView from "./components/MovesView"
 
 export function PlayerScreen() {
+    const [ showMoves, setShowMoves ] = useState(false)
     const { state: fsmState, next, prev, solve, fail,
         advancePhase, retreatPhase,
     } = useFsmContext()
@@ -40,6 +42,7 @@ export function PlayerScreen() {
         //timer.reset()
         //timer.start()
         resetPly()
+        setShowMoves(false)
     }, [fsmState.currentIndex])
 
     const kifContent = missionItem?.problem.kifContent ?? createKifContent()
@@ -97,6 +100,19 @@ export function PlayerScreen() {
                     Next
                 </Button>
             </Stack>
+            
+
+            <Box>
+            { showMoves && 
+            <MovesView moves={moves} currentPlyIndex={currentPlyIndex} onMoveClick={moveToPly}/>
+
+            }
+            { !showMoves &&
+            <Button onClick={() => { setShowMoves(true)}}>
+                Show MOves
+            </Button>}
+
+            
             {missionItem.learning &&
                 <Stack direction="row" spacing={2}>
                     <Box>
@@ -111,6 +127,7 @@ export function PlayerScreen() {
 
                 </Stack>
             }
+            </Box>
         </AppLayout>
     )
 }
