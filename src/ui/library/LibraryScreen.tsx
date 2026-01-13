@@ -6,7 +6,7 @@ export function LibraryScreen() {
     const { problems, learningRecords, missionItems,
         sortState, setSortState, filterState, setFilterState,
         toggleSort, toggleFilter, 
-        addProblem, toggleStar, handleAnswer, clearAll}  = useMissionItem()
+        addProblem, toggleStar, markAnswer, clearAll}  = useMissionItem()
    
     useEffect(()=>{
         console.log("library screen", problems, learningRecords)
@@ -37,7 +37,7 @@ export function LibraryScreen() {
                         <Button onClick={() => toggleStar(m)}>
                             Toggle Stars
                         </Button>
-                       <Button onClick={() => { handleAnswer(m)}}>
+                       <Button onClick={() => { markAnswer(m, "solved")}}>
                             Answer
                         </Button>
                     </ListItem>

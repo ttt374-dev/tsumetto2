@@ -5,6 +5,7 @@ import { StoreProvider } from './providers/StoreProvider';
 import { DashboardScreen } from '../dashboard/DashboardScreen';
 import { FsmProvider } from './providers/fsmPRovider';
 import { PlayerScreen } from '../player/PlayerScreen';
+import { SummaryScreen } from '../summary/SummaryScreen';
 
 function App() {
     return (
@@ -16,6 +17,7 @@ function App() {
                             <Route path="/player" element={<PlayerScreen />} />
                             <Route path="/dashboard" element={<DashboardScreen />} />
                             <Route path="/library" element={<LibraryScreen />} />
+                            <Route path="/summary" element={<SummaryScreen />} />
                         </Routes>
                     </BrowserRouter>
                 </FsmProvider>

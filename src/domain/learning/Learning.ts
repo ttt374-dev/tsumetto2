@@ -1,9 +1,17 @@
+import type { AnswerResult } from "../fsm/Fsm";
 import type { ProblemId } from "../problem/Problem";
 
 export type LearningData = {
-    problemId: ProblemId,
-    solvedCount: number,
-    failedCount: number,
+    problemId: ProblemId
+    solvedCount: number
+    failedCount: number
+
+    intervalDays: number        // 次回までの日数
+    nextReviewedAt: number        // 次に解くべき時刻（ms）
+    easeFactor: number          // 習熟度（Anki系）
+
+    lastAnsweredAt?: number
+    lastAnswerResult?: AnswerResult
 }
 
 function createDefaultValues(problemId: ProblemId): LearningData {
@@ -11,6 +19,9 @@ function createDefaultValues(problemId: ProblemId): LearningData {
         problemId: problemId,
         solvedCount: 0,
         failedCount: 0,
+        intervalDays: 0,
+        nextReviewedAt: Date.now(),
+        easeFactor: 2.5,
     }
 }
 export type LearningDTO = LearningData 
@@ -20,6 +31,14 @@ export class Learning {
         readonly problemId: ProblemId,
         readonly solvedCount: number,
         readonly failedCount: number,
+
+        readonly intervalDays: number,
+        readonly nextReviewedAt: number,
+        readonly easeFactor: number,
+
+        readonly lastAnsweredAt?: number,
+        readonly lastAnswerResult?: AnswerResult,
+
     ){}
     static create(problemId: ProblemId, init?: Partial<LearningData>): Learning {
         return Learning.fromDTO({...createDefaultValues(problemId),  ...init})
@@ -28,15 +47,28 @@ export class Learning {
         return {
             problemId: this.problemId,
             solvedCount: this.solvedCount,
-            failedCount: this.failedCount
+            failedCount: this.failedCount,
+            intervalDays: this.intervalDays,
+            nextReviewedAt: this.nextReviewedAt,
+            easeFactor: this.easeFactor,            
+            lastAnsweredAt: this.lastAnsweredAt,
+            lastAnswerResult: this.lastAnswerResult,
         }
     }
     static fromDTO(dto: LearningDTO): Learning {
-        return new Learning(dto.problemId, dto.solvedCount, dto.failedCount)
+        return new Learning(dto.problemId, dto.solvedCount, dto.failedCount,
+            dto.intervalDays, dto.nextReviewedAt, dto.easeFactor,
+            dto.lastAnsweredAt, dto.lastAnswerResult,
+        )
     }
     //////////////////////////////////////
-    answer() {
-        return Learning.fromDTO({...this.toDTO(), solvedCount: this.solvedCount+1})
+    answer(result: AnswerResult) {
+        const solved = result === "solved" ? 1 : 0
+        const failed = result === "failed" ? 1 : 0
+        return Learning.fromDTO({...this.toDTO(), 
+            solvedCount: this.solvedCount + solved,
+            failedCount: this.failedCount + failed,
+        })
     }
 
 }

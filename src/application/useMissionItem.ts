@@ -1,4 +1,4 @@
-import { Problem } from "../domain/problem/Problem"
+import { Problem, type ProblemId } from "../domain/problem/Problem"
 import type { MissionItem } from "../domain/missionItem/MissionItem"
 import { useStoreContext } from "../ui/App/providers/StoreProvider"
 import { useMemo, useState } from "react"
@@ -9,6 +9,7 @@ import { applyFilter } from "@/domain/missionItem/query/applyFilter"
 import { applyQuery } from "@/domain/missionItem/query/applyQuery"
 import type { LearningRecord } from "@/domain/learning/Learning"
 import { createMissionItems } from "@/domain/missionItem/createMissionItems"
+import type { AnswerResult } from "@/domain/fsm/Fsm"
 
 export function useMissionItem() {
     //const repos = useRepositoryContext()    
@@ -22,10 +23,16 @@ export function useMissionItem() {
    
     const missionItems: MissionItem[] = useMemo(() => { 
         const items = createMissionItems(problems, learningRecords)
-        return applyQuery(items, sortState, filterState)
-        
+        return applyQuery(items, sortState, filterState)        
     }, [problems, learningRecords, sortState, filterState])
 
+    /////////////////////////
+    // query
+    const find = (problemId: ProblemId): MissionItem | undefined => {
+        return missionItems.find((m) => m.problem.id === problemId)
+    }
+    //////////////////////
+    // command
     const addProblem = () => {
         add(Problem.create())
     }
@@ -33,9 +40,10 @@ export function useMissionItem() {
         storeToggleStar(m.problem)
         //await setTitle(m.problem, "asdfasdf")
     }
-    const markAnswer = (m: MissionItem) => {
+    const markAnswer = (m: MissionItem, answerResult: AnswerResult) => {
+        console.log("mark answer", m, answerResult)
         const problemId = m.problem.id
-        updateLearning(problemId, r => r.answer())
+        updateLearning(problemId, r => r.answer(answerResult))
     }
     const toggleSort = (key: SortKey) => {
         setSortState(prev => ({
@@ -55,9 +63,9 @@ export function useMissionItem() {
 
 
     return { 
-        problems, learningRecords, missionItems,
+        problems, learningRecords, missionItems, find,
 
         sortState, setSortState, filterState, setFilterState,
         toggleSort, toggleFilter, addProblem,
-        toggleStar, handleAnswer: markAnswer, clearAll}
+        toggleStar, markAnswer, clearAll}
 }
