@@ -51,7 +51,7 @@ export function AppLayout({ header, footer, children, rightActions  }: Props) {
       <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer(false)} >
         <Box width={250} mt={3} role="presentation"  className={styles.header}>
           <List>
-            <ListItemButton onClick={() => navigate("/deck")}>
+            <ListItemButton onClick={() => navigate("/dashboard")}>
               <ListItemText primary="ダッシュボード" />
             </ListItemButton>
             <ListItemButton onClick={() => navigate("/library")}>

@@ -14,6 +14,7 @@ export function buildBoardUntil(
         const board = cloneBoard(initialBoard);
         const hands = cloneHands(initialHands)                  
         
+        console.log("moves", moves)
         for (let i = 0; i <= plyIndex; i++) {
             const moveIndex = i - 1 // vieweIndex: 0 は初期盤面    
             const move = moves[moveIndex]

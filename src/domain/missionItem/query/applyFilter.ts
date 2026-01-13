@@ -19,22 +19,21 @@ export const applyFilter = (
     const now = Date.now();
     //console.log("filter problems", filter, learningRecords)
     return missionItems.filter(item => {
-        const record = item.learning
+        const learning = item.learning
 
         // 未回答のみ
-        if (filter.unansweredOnly && record && (record.solvedCount + record.failedCount > 0)){
+        if (filter.unansweredOnly && learning && (learning.solvedCount + learning.failedCount > 0)){
                 return false
-        }
-        /*
+        }        
         
         // ミッション対象
         if (filter.isMissionTarget &&
-            record?.nextReviewedAt !== undefined &&
-            record.nextReviewedAt > now
+            learning?.nextReviewedAt !== undefined &&
+            learning.nextReviewedAt > now
         ){
             return false
         }
-            */
+       
 
         // スターつきのみ
         if (filter.starredOnly &&

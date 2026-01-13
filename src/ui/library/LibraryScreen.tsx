@@ -9,13 +9,15 @@ import { AppLayout } from "../common/AppLayout"
 import { createImportProblemsUsecase, type ImportResult } from "@/usecase/importProblemsUseCase"
 import { useRepositoryContext } from "../App/providers/RepositoryProvider"
 import { useRouteLoaderData } from "react-router-dom"
+import { useQuery } from "@/application/useQuery"
+import { applyQuery } from "@/domain/missionItem/query/applyQuery"
 
 export function useLibrary() {
     const repos = useRepositoryContext()
 
     const importFiles = async (files: File[]): Promise<ImportResult> => {
         const usecase = createImportProblemsUsecase(repos.problem)    
-        return await usecase.importFiles(files)        
+        return await usecase.importFiles(files)                
     }
 
     return {
@@ -24,18 +26,14 @@ export function useLibrary() {
 }
 
 export function LibraryScreen() {
-    const { problems, learningRecords, missionItems, reload,
-        sortState, setSortState, filterState, setFilterState,
-        addProblems, deleteProblem,
-        toggleSort, toggleFilter,
+    const { missionItems, reload,        
+        addProblems, deleteProblem,        
         toggleStar, markAnswer, clearAll } = useMissionItem()
+    const { sortState, setSortState, filterState, setFilterState,
+        toggleSort, toggleFilter, }  = useQuery()
 
     const { openFileDialog, inputElement, setOnFilesSelected } = useFileSelector(".kif")
     const toast = useToast()
-
-    useEffect(() => {
-        //console.log("library screen", problems, learningRecords)
-    }, [problems])
 
     const { importFiles } = useLibrary()
 
@@ -55,6 +53,7 @@ export function LibraryScreen() {
         })
     }
 
+    const libraryItems = applyQuery(missionItems, sortState, filterState)
     return (
         <AppLayout>
             <Stack direction="row">
@@ -75,7 +74,7 @@ export function LibraryScreen() {
 
             <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto" }}>
                 <List>
-                    {missionItems.map((m, i) => (
+                    {libraryItems.map((m, i) => (
                         <ListItem key={m.problem.id}>
                             [{i}] {m.problem.id} {m.problem.title} /
                             at {new Date(m.problem.createdAt).toLocaleString()}

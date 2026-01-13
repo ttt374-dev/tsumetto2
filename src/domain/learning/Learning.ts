@@ -64,6 +64,13 @@ export class Learning {
         )
     }
     //////////////////////////////////////
+    // query
+    get totalCount(): number { 
+        return this.solvedCount + this.failedCount
+    }
+
+    ////////////////////////////////// 
+    // command
     answer(result: AnswerResult, seconds: number) {
         const solved = result === "solved" ? 1 : 0
         const failed = result === "failed" ? 1 : 0

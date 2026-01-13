@@ -7,6 +7,7 @@ import { FsmProvider } from './providers/fsmPRovider';
 import { PlayerScreen } from '../player/PlayerScreen';
 import { SummaryScreen } from '../summary/SummaryScreen';
 import { ToastProvider } from './providers/ToastProvider';
+import styles from "./App.css";
 
 function App() {
     return (
