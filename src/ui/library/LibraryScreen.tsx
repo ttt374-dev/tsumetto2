@@ -1,21 +1,35 @@
 import { Button, List, ListItem } from "@mui/material"
 import { useEffect } from "react"
 import { useMissionItem } from "../../application/useMissionItem"
+import { Problem } from "@/domain/problem/Problem"
+import { useFileSelector } from "../sharedComponents/useFileSelector"
 
 export function LibraryScreen() {
     const { problems, learningRecords, missionItems,
         sortState, setSortState, filterState, setFilterState,
+        addProblems,
         toggleSort, toggleFilter, 
-        addProblem, toggleStar, markAnswer, clearAll}  = useMissionItem()
+        toggleStar, markAnswer, clearAll}  = useMissionItem()
+
+    const { openFileDialog, inputElement, setOnFilesSelected } = useFileSelector(".kif")
    
     useEffect(()=>{
         console.log("library screen", problems, learningRecords)
     }, [problems])    
     
+
+    setOnFilesSelected((filelist) => {
+        const files = Array.from(filelist)                
+        const problems = files.map((f) => (
+            Problem.createFromText("text", f.name)
+    ))
+        addProblems(problems)
+    })
+
     return (
         <>
-            <Button onClick={addProblem}>
-                add
+            <Button onClick={openFileDialog}>
+                Import
             </Button>
             <Button onClick={clearAll}>
                 clear all
@@ -43,6 +57,8 @@ export function LibraryScreen() {
                     </ListItem>
                 ))}
             </List>
+
+            {inputElement}
         </>
     )
 }

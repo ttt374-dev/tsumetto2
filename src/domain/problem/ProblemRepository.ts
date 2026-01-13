@@ -5,5 +5,6 @@ export interface ProblemRepository {
     save(problems: Problem[]): Promise<void>
 
     add(problem: Problem): Promise<void>
+    addMany(problems: Problem[]): Promise<void>
     update(problem: Problem): Promise<void>
 }

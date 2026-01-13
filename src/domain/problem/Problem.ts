@@ -52,7 +52,10 @@ export class Problem {
     static fromDTO(dto: ProblemDTO): Problem {
         return new Problem(dto.id, dto.title, dto.kifContent, dto.createdAt, dto.starred)
     }
-
+    static createFromText(text: string, title: string){
+        // TODO: parse
+        return this.create({title: title, kifContent: text})
+    }
     //////
     toggleStar(): Problem {
         const r= Problem.fromDTO({

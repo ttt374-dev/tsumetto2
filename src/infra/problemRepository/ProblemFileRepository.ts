@@ -44,6 +44,12 @@ export class ProblemFileRepository implements ProblemRepository {
         const next = [...records, problem];
         await this.save(next);
     }
+    async addMany(problems: Problem[]): Promise<void> {
+        const records = await this.load();
+        const next = [...records, ...problems];
+        await this.save(next);
+    }
+
     async update(problem: Problem): Promise<void> {
         const problems = await this.load();
         const index = problems.findIndex(p => p.id === problem.id);
