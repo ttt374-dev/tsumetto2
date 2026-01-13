@@ -41,12 +41,20 @@ export function PlayerScreen() {
                     failedcount: {missionItem.learning?.failedCount} / 
                 </ListItem>
                 <ListItem>
-                    {missionItem.learning?.intervalDays} / 
-                    {missionItem.learning && new Date(missionItem.learning.nextReviewedAt).toLocaleString()} / 
-                    { missionItem.learning?.easeFactor}
+                    Interval: {missionItem.learning?.intervalDays} 
+                </ListItem>
+                <ListItem>
+                    Next Reviewed at: {missionItem.learning && new Date(missionItem.learning.nextReviewedAt).toLocaleString()} / 
+                </ListItem>
+                <ListItem>
+                    EF: { missionItem.learning?.easeFactor}
+                
                 </ListItem>
             </List>
 
+            <Button onClick={() => { markAnswer(missionItem, "solved", 3)}}>
+                easy
+            </Button>
 
             <Button onClick={() => { markAnswer(missionItem, "solved")}}>
                 Solved

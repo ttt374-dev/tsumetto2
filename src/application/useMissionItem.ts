@@ -40,10 +40,10 @@ export function useMissionItem() {
         storeToggleStar(m.problem)
         //await setTitle(m.problem, "asdfasdf")
     }
-    const markAnswer = (m: MissionItem, answerResult: AnswerResult) => {
-        console.log("mark answer", m, answerResult)
+    const markAnswer = (m: MissionItem, answerResult: AnswerResult, seconds: number = 10) => {
+        console.log("mark answer", m, answerResult, seconds)
         const problemId = m.problem.id
-        updateLearning(problemId, r => r.answer(answerResult))
+        updateLearning(problemId, r => r.answer(answerResult, seconds))
     }
     const toggleSort = (key: SortKey) => {
         setSortState(prev => ({
