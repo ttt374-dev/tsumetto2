@@ -3,7 +3,7 @@ import { v4 } from 'uuid'
 type KifContent = string   // TODO
 
 export type ProblemData = {
-    id: string
+    id: ProblemId
     title: string
     kifContent: KifContent
     createdAt: number

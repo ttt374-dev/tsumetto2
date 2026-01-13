@@ -6,9 +6,9 @@ export type LearningData = {
     failedCount: number,
 }
 
-function createDefaultValues(): LearningData {
+function createDefaultValues(problemId: ProblemId): LearningData {
     return {
-        problemId: "",
+        problemId: problemId,
         solvedCount: 0,
         failedCount: 0,
     }
@@ -21,8 +21,8 @@ export class Learning {
         readonly solvedCount: number,
         readonly failedCount: number,
     ){}
-    static create(init: Partial<LearningData>): Learning {
-        return Learning.fromDTO({...createDefaultValues(), ...init})
+    static create(problemId: ProblemId, init?: Partial<LearningData>): Learning {
+        return Learning.fromDTO({...createDefaultValues(problemId),  ...init})
     }
     toDTO(): LearningDTO {
         return {
@@ -37,3 +37,5 @@ export class Learning {
 
 
 }
+
+export type LearningRecord = Record<string, Learning>

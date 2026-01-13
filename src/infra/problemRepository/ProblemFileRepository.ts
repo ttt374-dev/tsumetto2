@@ -7,8 +7,7 @@ const LIB_FILE = "problem.json";
 /**
  * Capacitor Filesystem を使った ProblemRepository 実装
  */
-export class FileProblemRepository implements ProblemRepository {
-
+export class ProblemFileRepository implements ProblemRepository {
     async load(): Promise<Problem[]> {
         try {            
             const result = await Filesystem.readFile({
