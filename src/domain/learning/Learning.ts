@@ -34,7 +34,10 @@ export class Learning {
     static fromDTO(dto: LearningDTO): Learning {
         return new Learning(dto.problemId, dto.solvedCount, dto.failedCount)
     }
-
+    //////////////////////////////////////
+    answer() {
+        return Learning.fromDTO({...this.toDTO(), solvedCount: this.solvedCount+1})
+    }
 
 }
 

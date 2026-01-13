@@ -34,10 +34,12 @@ export function LibraryScreen({ }: Props) {
     const handleAnswer = async () => {
         //console.log("answer", learningRecords)
         const problemId: ProblemId = problems[1].id
-        update(problemId, r => Learning.create(
-            problemId,
-            {solvedCount: r.solvedCount+1}
-        ))
+        //const learning = learningRecords[problemId]
+        update(problemId, r => r.answer())
+        //update(problemId, r => Learning.create(
+        //    problemId,
+        //    {solvedCount: r.solvedCount+1}
+        //))
     }
 
     useEffect(()=>{

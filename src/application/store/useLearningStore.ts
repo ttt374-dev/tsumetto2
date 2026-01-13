@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import type { LearningRepository } from "../../domain/learning/LearningRepository";
 import { Learning, type LearningRecord } from "../../domain/learning/Learning";
+import type { ProblemId } from "../../domain/problem/Problem";
 
 export function createLearningStore(repository: LearningRepository) {
     const [records, setRecords] = useState<LearningRecord>({})
@@ -37,7 +38,7 @@ export function createLearningStore(repository: LearningRepository) {
     return {
         learningRecords: records,
 
-        update,
+        update, 
     }
 
 }
