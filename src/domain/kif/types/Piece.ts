@@ -1,5 +1,5 @@
 export type Player = "black" | "white"
-export type PieceType = "pawn" | "bishop" | "knight" | "silver" | "gold" | "bishop" | "rook" | "king"
+export type PieceType = "pawn" | "lance" | "knight" | "silver" | "gold" | "bishop" | "rook" | "king"
 
 //export class Square {
 //  constructor(readonly file: number, readonly rank: number) { }
