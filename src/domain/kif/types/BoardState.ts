@@ -1,8 +1,8 @@
 import type { initialReplayState } from "@/application/replayReducer"
 import { Board, type BoardDTO } from "./Board"
-import type { Move } from "./Move"
-import { Piece, type Player } from "./Piece"
 import { Hand, type HandDTO } from "./Hand"
+import { Piece, type Player } from "./Piece"
+import type { Move } from "./Move"
 
 export class BoardState {
     constructor(

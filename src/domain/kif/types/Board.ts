@@ -1,4 +1,4 @@
-import { Piece, type PieceDTO, type PieceType, type Square } from "./Piece"
+import { Piece, type PieceDTO, type Square } from "./Piece"
 
 export class Board {
   constructor(

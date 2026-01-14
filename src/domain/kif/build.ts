@@ -1,17 +1,10 @@
-import type { BoardState } from "./BoardState";
-import type { Move } from "./Move";
+import type { KifHistory } from "./types";
+import type { BoardState } from "./types/BoardState";
 
-function buildUntilPly(
-    initial: BoardState,
-    moves: readonly Move[],
-    ply: number
-): BoardState {
-    const safePly = Math.max(0, Math.min(ply, moves.length))
-
-    return moves
-        .slice(0, safePly)
-        .reduce(
-            (state, move) => move.apply(state),
-            initial
-        )
+export function buildUntilPly(history: KifHistory, ply: number): BoardState {
+  return history.moves
+    .slice(0, ply)
+    .reduce((state, move) => move.apply(state), history.initial)
 }
+
+

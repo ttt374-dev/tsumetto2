@@ -1,11 +1,12 @@
 // useReplayView.ts
 import { useReducer, useMemo } from "react";
-import type { KifContent } from "@/domain/kif-old/types";
-import { buildBoardUntil } from "@/domain/kif-old/builder/buildBoardUntil";
 import { initialReplayState, replayReducer, type ReplayAction } from "@/application/replayReducer";
+import { buildUntilPly } from "@/domain/kif/build";
+import type { KifData } from "@/domain/kif/types";
 
-export function useBoardReplay(kifContent: KifContent) {
-  const { board: initialBoard, hands: initialHands, moves } = kifContent;
+export function useBoardReplay(kifData: KifData) {
+  //const { board: initialBoard, hands: initialHands, history } = kifData;
+  const { initialState, moves} = kifData
 
   const [state, dispatch] = useReducer(
     (s: typeof initialReplayState, a: ReplayAction) =>
@@ -13,14 +14,13 @@ export function useBoardReplay(kifContent: KifContent) {
     initialReplayState
   );
 
+  const history = {
+    initial: initialState,
+    moves: moves
+  }
   const { board, hands } = useMemo(() => {
-    return buildBoardUntil(
-      initialBoard,
-      initialHands,
-      moves,
-      state.currentPlyIndex
-    );
-  }, [initialBoard, initialHands, moves, state.currentPlyIndex]);
+    return buildUntilPly(history, state.currentPlyIndex);
+  }, [history, state.currentPlyIndex]);
 
   return {
     // derived state

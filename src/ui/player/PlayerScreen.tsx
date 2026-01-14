@@ -6,8 +6,9 @@ import { useNavigate } from "react-router-dom"
 import { AppLayout } from "../common/AppLayout"
 import BoardView from "./components/BoardView"
 import { useBoardReplay } from "./hooks/useBoardReplay"
-//import { createKifContent } from "@/domain/kif-old/factory"
 import MovesView from "./components/MovesView"
+import { BoardState } from "@/domain/kif/types"
+import { createKifData } from "@/domain/kif/factory/createKifContent"
 
 export function PlayerScreen() {
     const [ showMoves, setShowMoves ] = useState(false)
@@ -45,11 +46,13 @@ export function PlayerScreen() {
         setShowMoves(false)
     }, [fsmState.currentIndex])
 
-    const kifContent = missionItem?.problem.kifContent ?? createKifContent()
+    const kifdata = missionItem?.problem.kifData ?? createKifData()
     const { board, hands, moves, currentPlyIndex,
         advancePly, retreatPly,
         moveToPly, resetPly,
-    } = useBoardReplay(kifContent)
+    } = useBoardReplay(kifdata)
+
+    const boardState = BoardState.empty()
 
 
     if (!missionItem) {

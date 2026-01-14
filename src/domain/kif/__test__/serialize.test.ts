@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { Piece } from "../Piece";
+import { Piece } from "../types/Piece";
 
 describe("serialize", ()=>{
     it("piece", ()=>{

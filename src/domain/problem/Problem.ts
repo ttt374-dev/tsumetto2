@@ -1,14 +1,20 @@
 import { v4 } from 'uuid'
-import type { KifContent } from '../kif-old/types'
-import { createKifContent } from '../kif-old/factory'
-import { parseKif } from '../kif-old/parser'
+import type { KifData } from '../kif/types'
+import { createKifData } from '../kif/factory/createKifContent'
 
-//type KifContent = string   // TODO
+
+type ParseResult = {
+    ok: boolean, value: KifData
+}
+function parseKif(text: string): ParseResult {
+    return { ok: true, value: createKifData()}  
+}
+
 
 export type ProblemData = {
     id: ProblemId
     title: string
-    kifContent: KifContent
+    kifData: KifData,
     createdAt: number
     starred: boolean
 }
@@ -16,7 +22,7 @@ function createDefaultValues(): ProblemData {
     return {
         id: v4(),
         title: "untitled",
-        kifContent: createKifContent(),
+        kifData: createKifData(),
         createdAt: Date.now(),
         starred: false,
     }
@@ -30,7 +36,7 @@ export class Problem {
     constructor(
         readonly id: string,
         readonly title: string,
-        readonly kifContent: KifContent,
+        readonly kifData: KifData,
         readonly createdAt: number,
         readonly starred: boolean
     ) { }
@@ -46,19 +52,19 @@ export class Problem {
         return {
             id: this.id,
             title: this.title,
-            kifContent: this.kifContent,
+            kifData: this.kifData,
             createdAt: this.createdAt,
             starred: this.starred
         }
     }
 
     static fromDTO(dto: ProblemDTO): Problem {
-        return new Problem(dto.id, dto.title, dto.kifContent, dto.createdAt, dto.starred)
+        return new Problem(dto.id, dto.title, dto.kifData, dto.createdAt, dto.starred)
     }
     static createFromText(text: string, title: string): Problem | null{
         const r = parseKif(text)
         if (!r.ok) return null
-        return this.create({title: title, kifContent: r.value})
+        return this.create({title: title, kifData: r.value})
     }
     //////
     toggleStar(): Problem {

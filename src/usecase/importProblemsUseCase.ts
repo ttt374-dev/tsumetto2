@@ -1,4 +1,3 @@
-import { parseKif } from "@/domain/kif-old/parser";
 import { Problem } from "@/domain/problem/Problem";
 import type { ProblemRepository } from "@/domain/problem/ProblemRepository";
 

@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { Piece } from "../Piece";
-import { Move } from "../Move";
-import { Board } from "../Board";
-import { BoardState } from "../BoardState";
-import { Hand } from "../Hand";
+import { Piece } from "../types/Piece";
+import { Move } from "../types/Move";
+import { Board } from "../types/Board";
+import { BoardState } from "../types/BoardState";
+import { Hand } from "../types/Hand";
 
 describe("kif", ()=>{
     it("piece", ()=>{        
@@ -15,7 +15,7 @@ describe("kif", ()=>{
 
     it("move", () => {
         const piece = new Piece("pawn", "black")
-        const move = new Move(null, { file:1, rank:1 }, "pawn")
+        const move = new Move(null, { file:1, rank:1 }, "pawn", "black")
 
         
         const blackHand = Hand.empty().add(new Piece("pawn", "black"))

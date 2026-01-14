@@ -1,8 +1,8 @@
 import { useMemo, useEffect, useRef } from "react";
 
 import { Box } from "@mui/material";
-import type { Move } from "@/domain/kif/Move";
-import type { Player } from "@/domain/kif/Piece";
+import type { Move } from "@/domain/kif/types/Move";
+import type { Player, Square } from "@/domain/kif/types/Piece";
 
 interface Props {
     moves: Move[];
@@ -25,7 +25,7 @@ const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
   }, [currentPlyIndex]);
 
 
-    function formatFrom(from: Position | null) {
+    function formatFrom(from: Square | null) {
         return from ? `(${from.file}, ${from.rank})` : "(-, -)"
 
     }
@@ -33,8 +33,10 @@ const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
         return player === 'black' ? '▲' : '△'
     }
     function formatMove(move: Move, index: number): string {
-        return `${index}: ${formatPlayer(move.player)} ${move.moveText} ${formatFrom(move.from ?? null)}`
+        //return `${index}: ${formatPlayer(move.player)} ${move.moveText} ${formatFrom(move.from ?? null)}`
+        return "" // TODO
     }
+    /*
     function formatEvent(event: KifEvent, index: number): string {
         switch (event.type) {
             case "start":
@@ -47,16 +49,16 @@ const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
                 return ""
         }
 
-    }
+    }*/
 
     // 開始局面を表示させるため、先頭に GameStartを挿入
-    const start: GameStart = { type: "start"}
-    const eventRows = [start, ...moves]
+    //const start: GameStart = { type: "start"}
+    //const eventRows = [start, ...moves]
     //const toViewerIndex = (moveIndex: number) => { moveIndex+1 }
     return (        
         <Box>
             {
-                eventRows.map((m, i) => (
+                moves.map((m, i) => (
                     <div
                         key={i}
                         ref={(el: HTMLDivElement | null) => {
@@ -69,7 +71,7 @@ const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
                             cursor: "pointer"
 
                         }}>
-                        { formatEvent(m, i)}
+                        { formatMove(m, i)}
                     </div>
                 ))
             }
