@@ -1,18 +1,16 @@
-import { Box, Button, List, ListItem, Stack } from "@mui/material"
-import { useEffect } from "react"
+import { Box, Button, IconButton, List, ListItem, Stack } from "@mui/material"
+import DeleteIcon from '@mui/icons-material/Delete';
+
 import { useMissionItem } from "../../application/useMissionItem"
-import { Problem } from "@/domain/problem/Problem"
 import { useFileSelector } from "../sharedComponents/useFileSelector"
 import { useToast } from "../App/providers/ToastProvider"
 import type { MissionItem } from "@/domain/missionItem/MissionItem"
 import { AppLayout } from "../common/AppLayout"
 import { createImportProblemsUsecase, type ImportResult } from "@/usecase/importProblemsUseCase"
 import { useRepositoryContext } from "../App/providers/RepositoryProvider"
-import { useRouteLoaderData } from "react-router-dom"
 import { useQuery } from "@/application/useQuery"
 import { applyQuery } from "@/domain/missionItem/query/applyQuery"
 import LibrarySortControl from "./components/LibrarySortControl"
-import type { SortKey } from "@/domain/missionItem/query/sort"
 
 export function useLibrary() {
     const repos = useRepositoryContext()
@@ -86,19 +84,15 @@ export function LibraryScreen() {
                 <List>
                     {libraryItems.map((m, i) => (
                         <ListItem key={m.problem.id}>
-                            [{i}] {m.problem.id} {m.problem.title} /
-                            at {new Date(m.problem.createdAt).toLocaleString()}
-                            [{m.problem.starred ? "★" : "☆"}] /
-                            {m.learning?.solvedCount}
+                            [{i}] {m.problem.id.slice(0, 8)} {m.problem.title} -
+                            at {new Date(m.problem.createdAt).toLocaleString()} - 
+                            {m.learning?.solvedCount} / {m.learning?.totalCount}
                             <Button onClick={() => toggleStar(m)}>
-                                Toggle Stars
+                            [{m.problem.starred ? "★" : "☆"}]
                             </Button>
-                            <Button onClick={() => { markAnswer(m, "solved") }}>
-                                Answer
-                            </Button>
-                            <Button onClick={() => { handleDelete(m) }}>
-                                Delete
-                            </Button>
+                            <IconButton onClick={() => { handleDelete(m) }}>
+                                <DeleteIcon/>
+                            </IconButton>
 
                         </ListItem>
                     ))}

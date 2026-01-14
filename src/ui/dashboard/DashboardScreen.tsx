@@ -1,6 +1,6 @@
 import { buildQueue } from "@/application/useFsm";
 import { Box, Button, Checkbox, FormControl, FormControlLabel, List, ListItem } from "@mui/material";
-import { useFsmContext } from "../App/providers/fsmPRovider";
+import { useFsmContext } from "../App/providers/fsmProvider";
 import { useNavigate } from "react-router-dom";
 import { AppLayout } from "../common/AppLayout";
 import { Filter } from "@mui/icons-material";

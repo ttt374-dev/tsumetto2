@@ -3,28 +3,31 @@ import { LibraryScreen } from '../library/LibraryScreen';
 import { RepositoryProvider } from './providers/RepositoryProvider';
 import { StoreProvider } from './providers/StoreProvider';
 import { DashboardScreen } from '../dashboard/DashboardScreen';
-import { FsmProvider } from './providers/fsmPRovider';
+import { FsmProvider } from './providers/fsmProvider';
 import { PlayerScreen } from '../player/PlayerScreen';
 import { SummaryScreen } from '../summary/SummaryScreen';
 import { ToastProvider } from './providers/ToastProvider';
+import './App.css'
 
 function App() {
     return (
         <RepositoryProvider>
-            <StoreProvider>
-                <FsmProvider>
-                    <ToastProvider>
+
+            <FsmProvider>
+                <ToastProvider>
                     <BrowserRouter>
                         <Routes>
                             <Route path="/player" element={<PlayerScreen />} />
                             <Route path="/dashboard" element={<DashboardScreen />} />
                             <Route path="/library" element={<LibraryScreen />} />
                             <Route path="/summary" element={<SummaryScreen />} />
+                            <Route path="/" element={<Navigate to="/dashboard"/>}/>
+
                         </Routes>
                     </BrowserRouter>
-                    </ToastProvider>
-                </FsmProvider>
-            </StoreProvider>
+                </ToastProvider>
+            </FsmProvider>
+
         </RepositoryProvider>
     )
 }

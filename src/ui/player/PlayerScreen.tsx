@@ -1,4 +1,4 @@
-import { useFsmContext } from "../App/providers/fsmPRovider"
+import { useFsmContext } from "../App/providers/fsmProvider"
 import { Box, Button, List, ListItem, Stack } from "@mui/material"
 import { useMissionItem } from "../../application/useMissionItem"
 import { useEffect, useState } from "react"
@@ -82,10 +82,13 @@ export function PlayerScreen() {
                 </Stack>
             }
         >
-            <BoardView board={board} hands={hands} />
+            <Stack justifyContent="center">
+                <Box>
+                    <BoardView board={board} hands={hands} />
+                </Box>
+            </Stack>
 
-
-            <Stack direction="row">
+            <Stack direction="row" justifyContent="center">
                 <Button onClick={prev}>
                     Prev
                 </Button>
@@ -104,8 +107,9 @@ export function PlayerScreen() {
 
             <Box>
             { showMoves && 
-            <MovesView moves={moves} currentPlyIndex={currentPlyIndex} onMoveClick={moveToPly}/>
-
+            
+                <MovesView moves={moves} currentPlyIndex={currentPlyIndex} onMoveClick={moveToPly}/>
+            
             }
             { !showMoves &&
             <Button onClick={() => { setShowMoves(true)}}>

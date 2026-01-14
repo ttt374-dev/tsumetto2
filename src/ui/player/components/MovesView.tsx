@@ -1,6 +1,7 @@
 import { useMemo, useEffect, useRef } from "react";
 
 import type { Move, Position, PlayerType, KifEvent, GameStart } from "@/domain/kif/types/";
+import { Box } from "@mui/material";
 
 interface Props {
     moves: Move[];
@@ -52,7 +53,7 @@ const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
     const eventRows = [start, ...moves]
     //const toViewerIndex = (moveIndex: number) => { moveIndex+1 }
     return (        
-        <div>
+        <Box>
             {
                 eventRows.map((m, i) => (
                     <div
@@ -71,6 +72,6 @@ const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
                     </div>
                 ))
             }
-        </div>
+        </Box>
     )
 }
