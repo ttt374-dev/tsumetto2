@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom"
 import { AppLayout } from "../common/AppLayout"
 import BoardView from "./components/BoardView"
 import { useBoardReplay } from "./hooks/useBoardReplay"
-import { createKifContent } from "@/domain/kif/factory"
+//import { createKifContent } from "@/domain/kif-old/factory"
 import MovesView from "./components/MovesView"
 
 export function PlayerScreen() {

@@ -1,10 +1,10 @@
 import { Box } from "@mui/material";
 import styles from "./BoardView.module.css";
+import type { Board } from "@/domain/kif/Board";
 
-import type { PieceTypeKey, Board, Hands } from '@/domain/kif/types/'
+
 //import { PieceTypes } from '@/domain/kif/types/'
-import { formatHand } from "@/domain/kif/formatter/formatHand";
-import { PieceTypes } from "@/domain/kif/types/PieceType";
+//import { formatHand } from "@/domain/kif-old/formatter/formatHand";
 
 
 interface Props {

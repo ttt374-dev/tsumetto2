@@ -1,7 +1,7 @@
 import { v4 } from 'uuid'
-import type { KifContent } from '../kif/types'
-import { createKifContent } from '../kif/factory'
-import { parseKif } from '../kif/parser'
+import type { KifContent } from '../kif-old/types'
+import { createKifContent } from '../kif-old/factory'
+import { parseKif } from '../kif-old/parser'
 
 //type KifContent = string   // TODO
 

@@ -1,7 +1,8 @@
 import { useMemo, useEffect, useRef } from "react";
 
-import type { Move, Position, PlayerType, KifEvent, GameStart } from "@/domain/kif/types/";
 import { Box } from "@mui/material";
+import type { Move } from "@/domain/kif/Move";
+import type { Player } from "@/domain/kif/Piece";
 
 interface Props {
     moves: Move[];
@@ -28,7 +29,7 @@ const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
         return from ? `(${from.file}, ${from.rank})` : "(-, -)"
 
     }
-    function formatPlayer(player: PlayerType): string {
+    function formatPlayer(player: Player): string {
         return player === 'black' ? '▲' : '△'
     }
     function formatMove(move: Move, index: number): string {

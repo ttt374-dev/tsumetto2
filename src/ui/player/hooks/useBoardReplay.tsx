@@ -1,7 +1,7 @@
 // useReplayView.ts
 import { useReducer, useMemo } from "react";
-import type { KifContent } from "@/domain/kif/types";
-import { buildBoardUntil } from "@/domain/kif/builder/buildBoardUntil";
+import type { KifContent } from "@/domain/kif-old/types";
+import { buildBoardUntil } from "@/domain/kif-old/builder/buildBoardUntil";
 import { initialReplayState, replayReducer, type ReplayAction } from "@/application/replayReducer";
 
 export function useBoardReplay(kifContent: KifContent) {
