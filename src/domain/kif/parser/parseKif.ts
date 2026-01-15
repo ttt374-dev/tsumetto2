@@ -37,12 +37,13 @@ export function parseKif(text: string): ParseResult<KifData> {
 
     }
     if (!inMoves) return { ok: false, message: "invalid format: no valid splitter"}
-    const handicap = headers["手合割"] ?? "平手"
-    
-    const initialState = parseInitialState(initialStateLines) ?? 
-        new BoardState(Board.create(), Hands.empty(), "black")
-    if (!initialState ) return { ok: false, message: "no board information"}
 
+
+    //const handicap = headers["手合割"]     
+    const initialState = parseInitialState(initialStateLines) ?? 
+        new BoardState(Board.create(), Hands.empty())
+    //console.log("parse kif")
+    //initialState.board.dump()
     const moves = parseMoves(moveLines, initialState)
     
     return { ok: true, value: { headers, initialState, moves }}

@@ -34,8 +34,31 @@ function extractBoardBodyLines(lines: string[]): string[] | null {
   return body;
 }
 
+type PieceItem = {
+    type: PieceType, promoted: boolean
+}
+//////////////////////////////////
+export const kanjiToPieceItem: Record<string, PieceItem> = {
+    歩: { type: "pawn", promoted: false },
+    と: { type: "pawn", promoted: true },       // 成り歩
+    香: { type: "lance", promoted: false },
+    杏: { type: "lance", promoted: true },      // 成り香
+    桂: { type: "knight", promoted: false },
+    圭: { type: "knight", promoted: true },     // 成り桂
+    銀: { type: "silver", promoted: false },
+    全: { type: "silver", promoted: true },     // 成り銀
+    金: { type: "gold", promoted: false },
+    角: { type: "bishop", promoted: false },
+    馬: { type: "bishop", promoted: true },     // 成り角
+    飛: { type: "rook", promoted: false },
+    龍: { type: "rook", promoted: true },       // 成り飛
+    竜: { type: "rook", promoted: true },       // 別表記の成り飛
+    王: { type: "king", promoted: false },
+    玉: { type: "king", promoted: false }
+}
+
 export function createBoardStateFromKif(boardLines: string[]): BoardState {
-  const board = Board.empty()
+  let board = Board.empty()
 
   for (let r = 0; r < 9; r++) {
     const line = boardLines[r];
@@ -54,11 +77,17 @@ export function createBoardStateFromKif(boardLines: string[]): BoardState {
       const isWhite = trimmed.startsWith("v");
       const name = isWhite ? trimmed.substring(1) : trimmed;
 
-      const file = 8 - i;
-      const rank = r;
+      const file = 9 - i;
+      const rank = r + 1;
 
-      const piece = new Piece(name as PieceType, isWhite ? 'white' : 'black')
-      board.set({rank: rank, file: file}, piece)
+      const pieceItem = kanjiToPieceItem[name]
+      const { type, promoted } = pieceItem
+      
+      const piece = new Piece(type as PieceType, isWhite ? 'white' : 'black', promoted)
+      board = board.set({rank: rank, file: file}, piece)
+      console.log("parse board", file, rank, piece.type, piece.promoted, piece.owner)
+
+
       /*
       board[rank][file] = {
         key: name as PieceTypeKey,
@@ -67,8 +96,10 @@ export function createBoardStateFromKif(boardLines: string[]): BoardState {
       */
     }
   }
-  const hands = Hands.empty()  // TODO
-
+  //const hands = Hands.empty()  // TODO
+  
+  //console.log("createfrom kif")
+  //board.dump()
   return new BoardState(board, hands, "black")
 }
 

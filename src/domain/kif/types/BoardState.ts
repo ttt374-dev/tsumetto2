@@ -26,13 +26,14 @@ export class BoardState {
         const to = move.to
 
         let piece = this.board.get(from)
-        if (!piece) throw new Error("no piece on from")
+        const fromStr = `${from.file}, ${from.rank}`
+        if (!piece) throw new Error(`no piece on from: [${move.pieceType}] [${fromStr}]`)
 
         // capture
         const target = this.board.get(to)
         let hands = this.hands
         if (target) {
-            hands = hands.add(this.turn, target)
+            hands = hands.add(this.turn, target.type)
         }
 
         // promote

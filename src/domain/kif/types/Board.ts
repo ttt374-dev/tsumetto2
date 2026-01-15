@@ -15,37 +15,42 @@ export class Board {
       // 平手用の初期駒配置
     if (handicap === "平手") {
       // 先手の駒
-      squares.set("5,1", new Piece("king", "black"))
-      squares.set("2,1", new Piece("bishop", "black"))
-      squares.set("8,1", new Piece("rook", "black"))
-      // 桂馬、香車、銀、金、歩をすべて配置
-      squares.set("1,1", new Piece("lance", "black"))
-      squares.set("9,1", new Piece("lance", "black"))
-      squares.set("2,1", new Piece("knight", "black"))
-      squares.set("8,1", new Piece("knight", "black"))
-      squares.set("3,1", new Piece("silver", "black"))
-      squares.set("7,1", new Piece("silver", "black"))
-      squares.set("4,1", new Piece("gold", "black"))
-      squares.set("6,1", new Piece("gold", "black"))
-      for (let file = 1; file <= 9; file++) {
-        squares.set(`${file},3`, new Piece("pawn", "black"))
+      
+      squares.set("2,8", new Piece("bishop", "black"))
+      squares.set("8,8", new Piece("rook", "black"))
+      
+      for (let i = 1; i<=9; i++){
+        squares.set(`${i},7`, new Piece("pawn", "black"))
       }
-
+      
+      squares.set("1,9", new Piece("lance", "black"))
+      squares.set("2,9", new Piece("knight", "black"))
+      squares.set("3,9", new Piece("silver", "black"))
+      squares.set("4,9", new Piece("gold", "black"))
+      squares.set("5,9", new Piece("king", "black"))
+      squares.set("6,9", new Piece("gold", "black"))
+      squares.set("7,9", new Piece("silver", "black"))
+      squares.set("8,9", new Piece("knight", "black"))
+      squares.set("9,9", new Piece("lance", "black"))
+      
       // 後手の駒（色 white）
-      squares.set("5,9", new Piece("king", "white"))
-      squares.set("8,9", new Piece("bishop", "white"))
-      squares.set("2,9", new Piece("rook", "white"))
-      squares.set("1,9", new Piece("lance", "white"))
-      squares.set("9,9", new Piece("lance", "white"))
-      squares.set("2,9", new Piece("knight", "white"))
-      squares.set("8,9", new Piece("knight", "white"))
-      squares.set("3,9", new Piece("silver", "white"))
-      squares.set("7,9", new Piece("silver", "white"))
-      squares.set("4,9", new Piece("gold", "white"))
-      squares.set("6,9", new Piece("gold", "white"))
-      for (let file = 1; file <= 9; file++) {
-        squares.set(`${file},7`, new Piece("pawn", "white"))
+            squares.set("2,8", new Piece("bishop", "black"))
+      squares.set("8,8", new Piece("rook", "black"))
+      
+      for (let i = 1; i<=9; i++){
+        squares.set(`${i},3`, new Piece("pawn", "black"))
       }
+      
+      squares.set("1,1", new Piece("lance", "black"))
+      squares.set("2,1", new Piece("knight", "black"))
+      squares.set("3,1", new Piece("silver", "black"))
+      squares.set("4,1", new Piece("gold", "black"))
+      squares.set("5,1", new Piece("king", "black"))
+      squares.set("6,1", new Piece("gold", "black"))
+      squares.set("7,1", new Piece("silver", "black"))
+      squares.set("8,1", new Piece("knight", "black"))
+      squares.set("9,1", new Piece("lance", "black"))     
+ 
     }
     return new Board(squares)
   }
@@ -60,7 +65,18 @@ export class Board {
     next.set(key(sq), piece)
     return new Board(next)
   }
-  ///////////////////////
+  //
+    dump() {
+        for (let r = 1; r <= 9; r++) {
+            for (let f = 1; f <= 9; f++) {
+                const piece = this.get({ file: f, rank: r })
+                console.log(`${f},${r}: ${piece?.type}`)
+            }
+
+
+        }
+    }
+    ///////////////////////
   // private static
   private static createEmptySquares() {
     const squares = new Map<string, Piece | null>()
