@@ -1,14 +1,13 @@
 import { useFsmContext } from "../App/providers/fsmProvider"
 import { Box, Button, List, ListItem, Stack } from "@mui/material"
 import { useMissionItem } from "../../application/useMissionItem"
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { AppLayout } from "../common/AppLayout"
 import BoardView from "./components/BoardView"
 import { useBoardReplay } from "./hooks/useBoardReplay"
 import MovesView from "./components/MovesView"
-import { BoardState } from "@/domain/kif/types"
-import { createKifData } from "@/domain/kif/factory/createKifContent"
+import { BoardState, KifData } from "@/domain/kif/types"
 
 export function PlayerScreen() {
     const [ showMoves, setShowMoves ] = useState(false)
@@ -46,13 +45,13 @@ export function PlayerScreen() {
         setShowMoves(false)
     }, [fsmState.currentIndex])
 
-    const kifdata = missionItem?.problem.kifData ?? createKifData()
+    const kifdata = missionItem?.problem.kifData ?? KifData.create()
     const { board, hands, moves, currentPlyIndex,
         advancePly, retreatPly,
         moveToPly, resetPly,
     } = useBoardReplay(kifdata)
 
-    const boardState = BoardState.empty()
+    
 
 
     if (!missionItem) {

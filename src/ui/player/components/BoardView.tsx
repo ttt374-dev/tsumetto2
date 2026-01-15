@@ -1,7 +1,7 @@
 import { Box } from "@mui/material";
 import styles from "./BoardView.module.css";
 import type { Board } from "@/domain/kif/types/Board";
-import { BoardState, type Hands, type Piece, type PieceType, type Player } from "@/domain/kif/types";
+import { BoardState, displayPiece, type Hands, type Piece, type PieceType, type Player } from "@/domain/kif/types";
 
 
 interface Props {
@@ -15,17 +15,15 @@ const rankLabels = ["一", "二", "三", "四", "五", "六", "七", "八", "九
 //const rankLabels = ["", "九", "八", "七", "六", "五", "四", "三", "二", "一"];
 
 
-function displayPiece(type: PieceType): string {
-    return "??" //TODO
-}
 function formatHand(player: Player) {
     return player  // TODO
 }
 
 function renderPiece(piece: Piece): string {
-  return piece.owner === "black"
-    ? piece.type
-    : `v${piece.type}`   // 後手は仮で v
+    const d = displayPiece(piece)
+    return piece.owner === "black"
+        ? d
+        : `v${d}`   // 後手は仮で v
 }
 
 function BoardView({ board, hands }: Props ) {
@@ -50,10 +48,16 @@ function BoardView({ board, hands }: Props ) {
                     {/* 盤面の行 */}
                     {files.map(file => {
                         const sq = { file, rank }
+                        const key = `${file},${rank}`
                         const piece = board.get(sq)
+                        if (!piece) {
+                            return <div key={key} className={styles.emptyCell} />;
+                        }
                         return (
-                            <div className={styles.cell}>                                
-                                {piece ? renderPiece(piece) : ""}
+                            <div 
+                            className={`${styles.cell} ${piece.owner === 'white' && styles.white}  :`}
+                            >  
+                                {piece ? displayPiece(piece) : ""}
                             </div>
                         )
                     })}

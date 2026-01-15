@@ -70,7 +70,7 @@ export class Board {
         for (let r = 1; r <= 9; r++) {
             for (let f = 1; f <= 9; f++) {
                 const piece = this.get({ file: f, rank: r })
-                console.log(`${f},${r}: ${piece?.type}`)
+                //console.log(`${f},${r}: ${piece?.type}`)
             }
 
 

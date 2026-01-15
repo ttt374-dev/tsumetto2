@@ -38,7 +38,7 @@ export function createProblemStore(repository: ProblemRepository) {
 
     }
     const toggleStar = async (problem: Problem) => {
-        console.log(problem)
+        //console.log(problem)
         await repository.update(problem.toggleStar())
         await reload()
     }

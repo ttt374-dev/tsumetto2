@@ -20,6 +20,12 @@ export class ProblemFileRepository implements ProblemRepository {
                     ? result.data
                     : await result.data.text()
             const dtos: ProblemDTO[] = JSON.parse(dataStr)
+            console.log("load", dtos)
+            dtos.map(dto => {
+                const p = Problem.fromDTO(dto)
+                //console.log(p)
+                //p.kifData.initialState.board.dump()
+            })
             return dtos.map(dto =>
                 Problem.fromDTO(dto)
             )
@@ -31,6 +37,7 @@ export class ProblemFileRepository implements ProblemRepository {
     async save(problems: Problem[]): Promise<void> {
         const dtos: ProblemDTO[] = problems.map(p => (p.toDTO()))
 
+        console.log("save repo", dtos)
         await Filesystem.writeFile({
             path: LIB_FILE,
             data: JSON.stringify(dtos),

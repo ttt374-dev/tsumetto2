@@ -1,4 +1,4 @@
-import { Piece, type PieceType, } from "./Piece"
+import { Piece, type PieceType, type Player, } from "./Piece"
 
 export class Hand {
     private readonly counts: Record<PieceType, number>
@@ -61,8 +61,6 @@ export class Hand {
 export type HandDTO = Partial<Record<PieceType, number>>
 
 //////////////////////////////////////////
-export type Player = "black" | "white"
-
 export class Hands {
     private readonly byPlayer: Record<Player, Hand>
 

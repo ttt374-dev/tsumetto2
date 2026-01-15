@@ -1,5 +1,6 @@
-import { Board, BoardState, Hands, type Handicap, type KifData, type KifHeader } from "../types"
-import { parseInitialState } from "./parseInitialState"
+import { Board, BoardState, Hands, KifData, type Handicap, type KifHeader } from "../types"
+import { parseHand } from "./parseHand";
+import { parseInitialBoard } from "./parseInitialState"
 import { parseMoves } from "./parseMove"
 
 export type ParseResult<T> =
@@ -40,12 +41,19 @@ export function parseKif(text: string): ParseResult<KifData> {
 
 
     //const handicap = headers["手合割"]     
-    const initialState = parseInitialState(initialStateLines) ?? 
-        new BoardState(Board.create(), Hands.empty())
+    const board = parseInitialBoard(initialStateLines) ?? Board.create()            
     //console.log("parse kif")
     //initialState.board.dump()
-    const moves = parseMoves(moveLines, initialState)
     
-    return { ok: true, value: { headers, initialState, moves }}
+    console.log("後手の持ち駒", headers["後手の持駒"])
+    const hands = Hands.create(
+        parseHand(headers["先手の持駒"]),
+        parseHand(headers["後手の持駒"]),
+    )
+    const initialState = new BoardState(board, hands, "black")
+    const moves = parseMoves(moveLines, initialState)
+    const kifData = new KifData(headers, initialState, moves)
+    
+    return { ok: true, value: kifData}
 }
 

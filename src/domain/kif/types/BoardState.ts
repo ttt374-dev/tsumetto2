@@ -93,7 +93,7 @@ export class BoardState {
 const flip = (c: Player): Player => (c === "black" ? "white" : "black")
 
 
-type BoardStateDTO = {
+export type BoardStateDTO = {
     board: BoardDTO
     hands: {
         black: HandDTO

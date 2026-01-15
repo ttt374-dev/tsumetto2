@@ -1,6 +1,17 @@
 export type Player = "black" | "white"
 export type PieceType = "pawn" | "lance" | "knight" | "silver" | "gold" | "bishop" | "rook" | "king"
 
+export function displayPiece(piece: Piece): string{
+  const baseMapping = {
+    pawn: "歩", lance: "香", knight: "桂", silver: "銀", gold: "金", bishop: "角", rook: "飛", king: "玉"
+  }
+  const promotedMapping = {
+    pawn: "と", lance: "杏", knight: "圭", silver: "全", gold: "金", bishop: "馬", rook: "龍", king: "玉"
+  }
+
+  return piece.promoted ? promotedMapping[piece.type] : baseMapping[piece.type]
+
+}
 //export class Square {
 //  constructor(readonly file: number, readonly rank: number) { }
 //}

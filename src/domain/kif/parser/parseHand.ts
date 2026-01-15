@@ -1,15 +1,14 @@
 import { Hand, type PieceType } from "../types"
 import { kanjiToPieceItem } from "./parseInitialState"
 
-
-function parseHand(handStr: string): Hand {
+export function parseHand(handStr: string): Hand {
     const counts: Partial<Record<PieceType, number>> = {}
+    if (!handStr || handStr === "なし") return Hand.empty()
 
-    // 空白を除去
     const str = handStr.replace(/\s/g, '')
 
-    // 正規表現：漢字1文字 + 数字0～2桁
-    const regex = /([歩香桂銀金角馬飛龍竜])(\d{0,2})/g
+    // 正規表現：漢字1文字 + 数字または漢数字（0～2桁 or 一二三…十百）
+    const regex = /([歩香桂銀金角馬飛])([0-9一二三四五六七八九十百]+)?/g
     let match: RegExpExecArray | null
 
     while ((match = regex.exec(str)) !== null) {
@@ -19,13 +18,48 @@ function parseHand(handStr: string): Hand {
         const item = kanjiToPieceItem[kanji]
         if (!item) throw new Error(`Unknown piece kanji: ${kanji}`)
 
-        const n = numStr ? parseInt(numStr, 10) : 1
+        const n = numStr
+            ? (/^[0-9]+$/.test(numStr)
+                ? parseInt(numStr, 10)
+                : kanjiNumberToInt(numStr))
+            : 1
 
-        // 成り駒は手駒にする場合、promoted を無視して基本駒の type を使用
+        // 成り駒は手駒にする場合、promoted を無視
         const pieceType = item.type
-
         counts[pieceType] = (counts[pieceType] || 0) + n
+        console.log("parse hand", pieceType, counts[pieceType])
     }
 
     return new Hand(counts)
+}
+
+
+
+function kanjiNumberToInt(kanjiNum: string): number {
+    if (!kanjiNum) return 1
+
+    const kanjiMap: Record<string, number> = {
+        '一': 1, '二': 2, '三': 3, '四': 4, '五': 5,
+        '六': 6, '七': 7, '八': 8, '九': 9
+    }
+
+    // 「十」「十一」～「十九」まで対応
+    if (kanjiNum === '十') return 10
+    if (kanjiNum.startsWith('十')) {
+        const unit = kanjiMap[kanjiNum[1]] ?? 0
+        return 10 + unit
+    }
+    if (kanjiNum.endsWith('十')) {
+        const ten = kanjiMap[kanjiNum[0]] ?? 0
+        return ten * 10
+    }
+    if (kanjiNum.includes('十')) {
+        const parts = kanjiNum.split('十')
+        const ten = kanjiMap[parts[0]] ?? 1
+        const unit = parts[1] ? kanjiMap[parts[1]] ?? 0 : 0
+        return ten * 10 + unit
+    }
+
+    // 単純な一桁
+    return kanjiMap[kanjiNum] ?? 1
 }

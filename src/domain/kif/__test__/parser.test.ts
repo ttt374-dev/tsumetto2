@@ -5,6 +5,7 @@ import { PanoramaFishEyeSharp, RttRounded } from "@mui/icons-material";
 import { parseMoveLine } from "../parser/parseMove";
 import { parse } from "uuid";
 import { buildUntilPly } from "../build";
+import { parseHand } from "../parser/parseHand";
 
 
 describe("parse moves", () => {
@@ -25,6 +26,15 @@ describe("parse moves", () => {
     })
 })
 
+describe("parse hand", () => {
+    it ("hand", () => {
+        const text="飛 角二 金四 銀三 桂四 香四 歩十七 "
+        const hand = parseHand(text)
+        expect(hand.count("bishop")).toEqual(2)
+        expect(hand.count("rook")).toEqual(1)
+        expect(hand.count("pawn")).toEqual(17)
+    })
+})
 describe("parse header", () => {
     const text = `開始日時：2025/12/29 13:00:40
 終了日時：2025/12/29 13:16:44
@@ -44,6 +54,30 @@ describe("parse header", () => {
 })
 
 describe("parse board", () => {
+    const text=`
+後手の持駒：飛 角二 金四 銀三 桂四 香四 歩十七 
+  ９ ８ ７ ６ ５ ４ ３ ２ １
++---------------------------+
+| ・ ・ ・ ・ ・ ・ ・ ・ ・|一
+| ・ ・ ・ ・ ・ ・ 龍 銀v玉|二
+| ・ ・ ・ ・ ・ ・ ・ ・ ・|三
+| ・ ・ ・ ・ ・ ・v歩 ・ ・|四
+| ・ ・ ・ ・ ・ ・ ・ ・ ・|五
+| ・ ・ ・ ・ ・ ・ ・ ・ ・|六
+| ・ ・ ・ ・ ・ ・ ・ ・ ・|七
+| ・ ・ ・ ・ ・ ・ ・ ・ ・|八
+| ・ ・ ・ ・ ・ ・ ・ ・ ・|九
++---------------------------+
+先手の持駒：なし
+先手：
+後手：
+手数----指手---------消費時間--
+   1 ３三銀(22)        ( 0:00/00:00:00)
+   2 ２三玉(12)        ( 0:00/00:00:00)
+   3 ２二飛成(32)       ( 0:00/00:00:00)
+   4 １四玉(23)        ( 0:00/00:00:00)
+   5 ２四龍(22)        ( 0:00/00:00:00)
+`
     it("invalid text check", () => {
         const text = `invalid data text
     foo bar`
@@ -67,30 +101,7 @@ describe("parse board", () => {
     })
 
     it("初期盤", () => {
-        const text=`
-        後手の持駒：飛 角二 金四 銀三 桂四 香四 歩十七 
-  ９ ８ ７ ６ ５ ４ ３ ２ １
-+---------------------------+
-| ・ ・ ・ ・ ・ ・ ・ ・ ・|一
-| ・ ・ ・ ・ ・ ・ 龍 銀v玉|二
-| ・ ・ ・ ・ ・ ・ ・ ・ ・|三
-| ・ ・ ・ ・ ・ ・v歩 ・ ・|四
-| ・ ・ ・ ・ ・ ・ ・ ・ ・|五
-| ・ ・ ・ ・ ・ ・ ・ ・ ・|六
-| ・ ・ ・ ・ ・ ・ ・ ・ ・|七
-| ・ ・ ・ ・ ・ ・ ・ ・ ・|八
-| ・ ・ ・ ・ ・ ・ ・ ・ ・|九
-+---------------------------+
-先手の持駒：なし
-先手：
-後手：
-手数----指手---------消費時間--
-   1 ３三銀(22)        ( 0:00/00:00:00)
-   2 ２三玉(12)        ( 0:00/00:00:00)
-   3 ２二飛成(32)       ( 0:00/00:00:00)
-   4 １四玉(23)        ( 0:00/00:00:00)
-   5 ２四龍(22)        ( 0:00/00:00:00)
-`
+        
         const r = parseKif(text)
         expect(r.ok).toBeTruthy
         if (r.ok){
@@ -102,7 +113,16 @@ describe("parse board", () => {
         }
         
     })
+    it ("持ち駒", () => {
+        const r = parseKif(text)
+        expect(r.ok).toBeTruthy
+        if (r.ok){
+            const hands = r.value.initialState.hands
+            expect(hands.get("white").count("bishop")).toEqual(2)
+        }
+    })
 })
+
 
 describe("実録", () => {
     it("平手", () => {
@@ -125,8 +145,7 @@ describe("実録", () => {
         if (r.ok){
             const moves = r.value.moves
             expect(moves.length).toEqual(11)
-
-            const board = r.value.initialState.board
+            
             const history = { initial: BoardState.create(), moves: moves}
             const state = buildUntilPly(history, 11)
             expect(state.board.get({file: 4, rank: 8})?.type).toEqual("king")

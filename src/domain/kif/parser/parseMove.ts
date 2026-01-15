@@ -1,4 +1,5 @@
 import { BoardState, Move, type KifData, type KifHeader, type PieceType, type Player } from "../types"
+import { kanjiToPieceItem } from "./parseInitialState"
 
 
 export function parseMoves(
@@ -58,11 +59,10 @@ function parseDropMove(
 
     const file = kanjiToFile(m[1])
     const rank = kanjiToRank(m[2])
-    const pieceType = parsePieceType(m[3])
-    const promote = !!m[4]
+    const pieceItem = kanjiToPieceItem[m[3]]
+    const { type, promoted } = pieceItem
 
-
-    return new Move(null, { file, rank }, pieceType, player, promote)
+    return new Move(null, { file, rank }, type, player, promoted)
 }
 
 function parseNormalMove(
@@ -76,14 +76,17 @@ function parseNormalMove(
 
     const file = kanjiToFile(m[1])
     const rank = kanjiToRank(m[2])
-    const pieceType = parsePieceType(m[3])
-    const promote = !!m[4]
+    //const pieceType = parsePieceType(m[3])
+    const pieceItem = kanjiToPieceItem[m[3]]
+    const { type, promoted } = pieceItem
+
+    //const promote = !!m[4]
     const from = {
         file: Number(m[5]),
         rank: Number(m[6]),
     }
 
-    return new Move(from, { file, rank }, pieceType, player, promote)
+    return new Move(from, { file, rank }, type, player, promoted)
 }
 function kanjiToFile(k: string): number {
     return "１２３４５６７８９".indexOf(k) + 1
@@ -93,18 +96,3 @@ function kanjiToRank(k: string): number {
     return "一二三四五六七八九".indexOf(k) + 1
 }
 
-function parsePieceType(s: string): PieceType {
-    switch (s) {
-        case "歩": return "pawn"
-        case "香": return "lance"
-        case "桂": return "knight"
-        case "銀": return "silver"
-        case "金": return "gold"
-        case "角": return "bishop"
-        case "飛": return "rook"
-        case "玉":
-        case "王": return "king"
-        default:
-            throw new Error(`Unknown piece: ${s}`)
-    }
-}

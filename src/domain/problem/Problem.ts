@@ -1,20 +1,12 @@
 import { v4 } from 'uuid'
-import type { KifData } from '../kif/types'
-import { createKifData } from '../kif/factory/createKifContent'
-
-
-type ParseResult = {
-    ok: boolean, value: KifData
-}
-function parseKif(text: string): ParseResult {
-    return { ok: true, value: createKifData()}  
-}
+import { KifData, type KifDataDTO } from '../kif/types'
+import { parseKif } from '../kif/parser/parseKif'
 
 
 export type ProblemData = {
     id: ProblemId
     title: string
-    kifData: KifData,
+    kifData: KifDataDTO,
     createdAt: number
     starred: boolean
 }
@@ -22,7 +14,7 @@ function createDefaultValues(): ProblemData {
     return {
         id: v4(),
         title: "untitled",
-        kifData: createKifData(),
+        kifData: KifData.create().toJSON(),
         createdAt: Date.now(),
         starred: false,
     }
@@ -52,19 +44,19 @@ export class Problem {
         return {
             id: this.id,
             title: this.title,
-            kifData: this.kifData,
+            kifData: this.kifData.toJSON(),
             createdAt: this.createdAt,
             starred: this.starred
         }
     }
 
     static fromDTO(dto: ProblemDTO): Problem {
-        return new Problem(dto.id, dto.title, dto.kifData, dto.createdAt, dto.starred)
+        return new Problem(dto.id, dto.title, KifData.fromJSON(dto.kifData), dto.createdAt, dto.starred)
     }
     static createFromText(text: string, title: string): Problem | null{
         const r = parseKif(text)
         if (!r.ok) return null
-        return this.create({title: title, kifData: r.value})
+        return this.create({title: title, kifData: r.value.toJSON()})
     }
     //////
     toggleStar(): Problem {

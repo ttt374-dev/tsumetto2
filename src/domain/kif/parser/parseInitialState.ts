@@ -1,6 +1,6 @@
 import { Board, BoardState, Hand, Hands, Piece, type PieceType } from "../types";
 
-export function parseInitialState(lines: string[]): BoardState | null {
+export function parseInitialBoard(lines: string[]): Board | null {
      const boardLines = extractBoardBodyLines(lines);
   //console.log("parse board", boardLines)
 
@@ -57,7 +57,7 @@ export const kanjiToPieceItem: Record<string, PieceItem> = {
     玉: { type: "king", promoted: false }
 }
 
-export function createBoardStateFromKif(boardLines: string[]): BoardState {
+export function createBoardStateFromKif(boardLines: string[]): Board {
   let board = Board.empty()
 
   for (let r = 0; r < 9; r++) {
@@ -100,7 +100,7 @@ export function createBoardStateFromKif(boardLines: string[]): BoardState {
   
   //console.log("createfrom kif")
   //board.dump()
-  return new BoardState(board, hands, "black")
+  return board
 }
 
 
