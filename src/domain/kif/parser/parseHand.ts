@@ -1,5 +1,4 @@
-import { Hand, type PieceType } from "../types"
-import { kanjiToPieceItem } from "./parseInitialState"
+import { Hand, kanjiToPieceItem, type PieceType } from "../types"
 
 export function parseHand(handStr: string): Hand {
     const counts: Partial<Record<PieceType, number>> = {}

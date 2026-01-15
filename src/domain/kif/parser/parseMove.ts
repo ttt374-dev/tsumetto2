@@ -1,5 +1,4 @@
-import { BoardState, Move, type KifData, type KifHeader, type PieceType, type Player } from "../types"
-import { kanjiToPieceItem } from "./parseInitialState"
+import { BoardState, kanjiToPieceItem, Move, type KifData, type KifHeader, type PieceType, type Player } from "../types"
 
 
 export function parseMoves(

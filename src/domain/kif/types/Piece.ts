@@ -1,6 +1,29 @@
 export type Player = "black" | "white"
 export type PieceType = "pawn" | "lance" | "knight" | "silver" | "gold" | "bishop" | "rook" | "king"
 
+export type PieceItem = {
+    type: PieceType, promoted: boolean
+}
+export const kanjiToPieceItem: Record<string, PieceItem> = {
+    歩: { type: "pawn", promoted: false },
+    と: { type: "pawn", promoted: true },       // 成り歩
+    香: { type: "lance", promoted: false },
+    杏: { type: "lance", promoted: true },      // 成り香
+    桂: { type: "knight", promoted: false },
+    圭: { type: "knight", promoted: true },     // 成り桂
+    銀: { type: "silver", promoted: false },
+    全: { type: "silver", promoted: true },     // 成り銀
+    金: { type: "gold", promoted: false },
+    角: { type: "bishop", promoted: false },
+    馬: { type: "bishop", promoted: true },     // 成り角
+    飛: { type: "rook", promoted: false },
+    龍: { type: "rook", promoted: true },       // 成り飛
+    竜: { type: "rook", promoted: true },       // 別表記の成り飛
+    王: { type: "king", promoted: false },
+    玉: { type: "king", promoted: false }
+}
+
+///////////////////////////////
 export function displayPiece(piece: Piece): string{
   const baseMapping = {
     pawn: "歩", lance: "香", knight: "桂", silver: "銀", gold: "金", bishop: "角", rook: "飛", king: "玉"

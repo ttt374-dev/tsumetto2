@@ -1,8 +1,8 @@
 import { Box } from "@mui/material";
 import styles from "./BoardView.module.css";
 import type { Board } from "@/domain/kif/types/Board";
-import { BoardState, displayPiece, type Hands, type Piece, type PieceType, type Player } from "@/domain/kif/types";
-
+import { BoardState, displayPiece, Hand, kanjiToPieceItem, type Hands, type Piece, type PieceType, type Player } from "@/domain/kif/types";
+import { numberToKanjiTwoDigits } from "./numberToKanji";
 
 interface Props {
     board: Board;
@@ -15,23 +15,37 @@ const rankLabels = ["一", "二", "三", "四", "五", "六", "七", "八", "九
 //const rankLabels = ["", "九", "八", "七", "六", "五", "四", "三", "二", "一"];
 
 
-function formatHand(player: Player) {
-    return player  // TODO
-}
+function formatHand(hand: Hand): string {
+    const parts: string[] = [];    
 
-function renderPiece(piece: Piece): string {
-    const d = displayPiece(piece)
-    return piece.owner === "black"
-        ? d
-        : `v${d}`   // 後手は仮で v
-}
+    const kanjikeys = Object.entries(kanjiToPieceItem)
+        .filter(([key, item]) => !item.promoted && key !== "王" && key !== "玉")
+        .map(([key]) => key as PieceType)
+        .reverse(); // 逆順
+    
+    console.log("hand", hand)
 
+    kanjikeys.forEach(kanjipieceType => {        
+        const item = kanjiToPieceItem[kanjipieceType]
+        const count = hand.count(item.type);
+        if (count > 0) {
+            const suffix = numberToKanjiTwoDigits(count) ?? count.toString();
+            parts.push(`${kanjipieceType}${suffix}`);
+        }
+    });
+    //console.log(parts)        
+    return parts.length === 0 ? "なし" : parts.join(" ");
+}
 function BoardView({ board, hands }: Props ) {
     const ranks = [...Array(9)].map((_, i) => i +1)   //   1 → 9
     const files = [...Array(9)].map((_, i) => 9 - i)   // 9 → 1（将棋表記） ???
 
     return (
         <Box className={styles.container}>
+            {/* 持駒表示 */}
+            <div>
+                △後手：{formatHand(hands.get("white"))}
+            </div>
             {/* 上の筋表示 */}
             <div className={styles.fileLabels}>
                 <div className={styles.corner}></div> {/* 左上の空白 */}
@@ -64,6 +78,10 @@ function BoardView({ board, hands }: Props ) {
                     <div className={styles.rankLabel}>{rankLabels[rank-1]}</div>
                 </div>)
             )}
+            {/* 持駒表示 */}
+            <div>
+                △先手：{formatHand(hands.get("black"))}
+            </div>
         </Box>
     )
 
