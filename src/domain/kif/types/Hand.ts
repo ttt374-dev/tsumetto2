@@ -1,4 +1,4 @@
-import type { Piece, PieceType } from "./Piece"
+import type { Piece, PieceType, } from "./Piece"
 
 export class Hand {
     constructor(
@@ -39,8 +39,53 @@ export class Hand {
 
 export type HandDTO = Partial<Record<PieceType, number>>
 
+//////////////////////////////////////////
+export type Player = "black" | "white"
 
+export class Hands {
+  private readonly byPlayer: Record<Player, Hand>
 
-export type Hands = {
-    black: Hand, white: Hand
+  private constructor(byPlayer: Record<Player, Hand>) {
+    this.byPlayer = byPlayer
+  }
+
+  static empty(): Hands {
+    return new Hands({
+      black: Hand.empty(),
+      white: Hand.empty(),
+    })
+  }
+
+  get(player: Player): Hand {
+    return this.byPlayer[player]
+  }
+
+  add(player: Player, piece: Piece): Hands {
+    return new Hands({
+      ...this.byPlayer,
+      [player]: this.byPlayer[player].add(piece),
+    })
+  }
+
+  remove(player: Player, piece: PieceType): Hands {
+    return new Hands({
+      ...this.byPlayer,
+      [player]: this.byPlayer[player].remove(piece),
+    })
+  }
+
+  // serialize
+  toJSON(): Record<Player, ReturnType<Hand["toJSON"]>> {
+    return {
+      black: this.byPlayer.black.toJSON(),
+      white: this.byPlayer.white.toJSON(),
+    }
+  }
+
+  static fromJSON(json: Record<Player, any>): Hands {
+    return new Hands({
+      black: Hand.fromJSON(json.black),
+      white: Hand.fromJSON(json.white),
+    })
+  }
 }
