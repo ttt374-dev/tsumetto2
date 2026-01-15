@@ -1,8 +1,9 @@
 import { useMemo, useEffect, useRef } from "react";
 
 import { Box } from "@mui/material";
-import type { Move } from "@/domain/kif/types/Move";
-import type { Player, Square } from "@/domain/kif/types/Piece";
+import { Move } from "@/domain/kif/types/Move";
+import { displayPiece, type Player, type Square } from "@/domain/kif/types/Piece";
+import { numberToKanjiTwoDigits } from "./numberToKanji";
 
 interface Props {
     moves: Move[];
@@ -29,12 +30,18 @@ const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
         return from ? `(${from.file}, ${from.rank})` : "(-, -)"
 
     }
+    function formatTo(to: Square){
+        return `${to.file}${numberToKanjiTwoDigits(to.rank)}`
+    }
     function formatPlayer(player: Player): string {
         return player === 'black' ? '▲' : '△'
     }
     function formatMove(move: Move, index: number): string {
+        const player = index % 2 === 0 ? "black" : "white"
+        const moveText = [formatPlayer(player), formatTo(move.to), displayPiece(move.pieceType, move.promote), formatFrom(move.from)].join("")
+        return moveText
         //return `${index}: ${formatPlayer(move.player)} ${move.moveText} ${formatFrom(move.from ?? null)}`
-        return "" // TODO
+        
     }
     /*
     function formatEvent(event: KifEvent, index: number): string {
@@ -55,23 +62,35 @@ const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
     //const start: GameStart = { type: "start"}
     //const eventRows = [start, ...moves]
     //const toViewerIndex = (moveIndex: number) => { moveIndex+1 }
+    
+    const hilightColor =  "#ffd"
     return (        
         <Box>
+                <div onClick={() => onMoveClick(0)}
+                    style={{
+                            padding: "2px 0",
+                            backgroundColor: 0 === currentPlyIndex ? hilightColor : undefined, // ハイライト色
+                            cursor: "pointer"
+                        }}>
+                    {"=== 開始局面 ==="}
+                </div>
+                
             {
+
                 moves.map((m, i) => (
                     <div
-                        key={i}
+                        key={i+1}
                         ref={(el: HTMLDivElement | null) => {
-                            itemRefs.current[i] = el;
+                            itemRefs.current[i+1] = el;
                         }}
-                        onClick={() => onMoveClick(i)}
+                        onClick={() => onMoveClick(i+1)}
                         style={{
                             padding: "2px 0",
-                            backgroundColor: i === currentPlyIndex ? "#ffd" : undefined, // ハイライト色
+                            backgroundColor: i+1 === currentPlyIndex ? hilightColor : undefined, // ハイライト色
                             cursor: "pointer"
 
                         }}>
-                        { formatMove(m, i)}
+                        { formatMove(m, i+1)}
                     </div>
                 ))
             }

@@ -7,7 +7,8 @@ export class Move {
         readonly to: Square,
         readonly pieceType: PieceType,
         readonly player: Player,
-        readonly promote: boolean = false
+        readonly promote: boolean = false,
+        readonly info: string = "",
     ) { }
 
     isDrop(): boolean {
@@ -27,6 +28,7 @@ export class Move {
             pieceType: this.pieceType,
             player: this.player,
             promote: this.promote,
+            info: this.info,
         }
     }
     static fromJSON(dto: MoveDTO): Move {
@@ -35,7 +37,8 @@ export class Move {
             dto.to,
             dto.pieceType,
             dto.player,
-            dto.promote
+            dto.promote,
+            dto.info
         )
     }
 }
@@ -46,6 +49,7 @@ export type MoveDTO = {
     pieceType: PieceType
     player: Player
     promote: boolean
+    info: string
 }
 ///////////////////////////////////
 

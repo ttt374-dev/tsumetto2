@@ -23,7 +23,7 @@ function formatHand(hand: Hand): string {
         .map(([key]) => key as PieceType)
         .reverse(); // 逆順
     
-    console.log("hand", hand)
+    
 
     kanjikeys.forEach(kanjipieceType => {        
         const item = kanjiToPieceItem[kanjipieceType]
@@ -71,7 +71,7 @@ function BoardView({ board, hands }: Props ) {
                             <div 
                             className={`${styles.cell} ${piece.owner === 'white' && styles.white}  :`}
                             >  
-                                {piece ? displayPiece(piece) : ""}
+                                {piece ? displayPiece(piece.type, piece.promoted) : ""}
                             </div>
                         )
                     })}

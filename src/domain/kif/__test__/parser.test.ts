@@ -24,6 +24,28 @@ describe("parse moves", () => {
         expect(parsed.to).toEqual({ file: 5, rank: 5 })
         expect(parsed.isDrop).toBeTruthy
     })
+    it("桂成", () => {
+        const text = "  1 ５五桂成(29)"
+        const state = BoardState.create()
+        const parsed = parseMoveLine(text, 1, state)
+        expect(parsed.pieceType).toEqual("knight")        
+        expect(parsed.promote).toBeTruthy
+    })
+    it("成桂", () => {
+        const text = "  1 ５五成桂(29)"
+        const state = BoardState.create()
+        const parsed = parseMoveLine(text, 1, state)
+        expect(parsed.pieceType).toEqual("knight")        
+        const newstate = parsed.apply(state)
+        expect(newstate.board.get({file: 5, rank: 5})?.promoted).toBeTruthy
+        expect(newstate.board.get({file: 5, rank: 5})?.type).toEqual("knight")        
+    })
+    it("右", () => {
+        const text = "   2 １四金右(13)        ( 0:00/00:00:00)"
+        const state = BoardState.create()
+        const parsed = parseMoveLine(text, 1, state)
+        expect(parsed.pieceType).toEqual("gold")
+    })
 })
 
 describe("parse hand", () => {

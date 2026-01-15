@@ -9,10 +9,13 @@ export const kanjiToPieceItem: Record<string, PieceItem> = {
     と: { type: "pawn", promoted: true },       // 成り歩
     香: { type: "lance", promoted: false },
     杏: { type: "lance", promoted: true },      // 成り香
+    成香: { type: "lance", promoted: true },
     桂: { type: "knight", promoted: false },
     圭: { type: "knight", promoted: true },     // 成り桂
+    成桂: { type: "knight", promoted: true },     // 成り桂
     銀: { type: "silver", promoted: false },
     全: { type: "silver", promoted: true },     // 成り銀
+    成銀: { type: "silver", promoted: true },     // 成り銀
     金: { type: "gold", promoted: false },
     角: { type: "bishop", promoted: false },
     馬: { type: "bishop", promoted: true },     // 成り角
@@ -24,7 +27,7 @@ export const kanjiToPieceItem: Record<string, PieceItem> = {
 }
 
 ///////////////////////////////
-export function displayPiece(piece: Piece): string{
+export function displayPiece(pieceType: PieceType, promoted: boolean): string{
   const baseMapping = {
     pawn: "歩", lance: "香", knight: "桂", silver: "銀", gold: "金", bishop: "角", rook: "飛", king: "玉"
   }
@@ -32,7 +35,7 @@ export function displayPiece(piece: Piece): string{
     pawn: "と", lance: "杏", knight: "圭", silver: "全", gold: "金", bishop: "馬", rook: "龍", king: "玉"
   }
 
-  return piece.promoted ? promotedMapping[piece.type] : baseMapping[piece.type]
+  return promoted ? promotedMapping[pieceType] : baseMapping[pieceType]
 
 }
 //export class Square {

@@ -76,7 +76,11 @@ function parseNormalMove(
     const file = kanjiToFile(m[1])
     const rank = kanjiToRank(m[2])
     //const pieceType = parsePieceType(m[3])
-    const pieceItem = kanjiToPieceItem[m[3]]
+    const pieceString = m[3]
+    // 右寄などを削除
+    const minfo = pieceString.match(/(.*)([右左直下寄])/)
+
+    const pieceItem = kanjiToPieceItem[minfo ? minfo[1] : pieceString]
     const { type, promoted } = pieceItem
 
     //const promote = !!m[4]
