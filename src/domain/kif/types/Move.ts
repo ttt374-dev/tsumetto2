@@ -20,8 +20,8 @@ export class Move {
     /////////////////////////////////
     // serialize
 
-    toJSON(): MoveDTO {
-        console.log("tojson", this)
+    toDTO(): MoveDTO {
+        console.log("toDTO", this)
         return {
             from: this.from,
             to: this.to,
@@ -30,7 +30,7 @@ export class Move {
             rawtext: this.rawtext,
         }
     }
-    static fromJSON(dto: MoveDTO): Move {
+    static fromDTO(dto: MoveDTO): Move {
         console.log("from json", dto)
         return new Move(
             dto.from,

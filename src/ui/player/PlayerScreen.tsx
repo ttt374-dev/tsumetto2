@@ -58,7 +58,10 @@ export function PlayerScreen() {
     if (!missionItem) {
         return (
             <>
-                NO MISSION
+                <Box>
+                    NO MISSION
+                </Box>
+
                 <Button onClick={() => { navigate("/dashboard") }}>
                     Back
                 </Button>

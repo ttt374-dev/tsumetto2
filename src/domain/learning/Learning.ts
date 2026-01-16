@@ -27,7 +27,7 @@ function createDefaultValues(problemId: ProblemId): LearningData {
     }
 }
 export type LearningDTO = LearningData 
-
+//////////////////////////////////////////////////////////////////
 export class Learning {
     constructor(
         readonly problemId: ProblemId,

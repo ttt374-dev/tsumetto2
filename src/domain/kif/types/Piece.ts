@@ -61,7 +61,7 @@ export class Piece {
   }
   ///////////////////////////////
   // seiralize
-  toJSON(): PieceDTO {
+  toDTO(): PieceDTO {
     return {
       type: this.type,
       owner: this.owner,
@@ -70,7 +70,7 @@ export class Piece {
 
   }
 
-  static fromJSON(dto: PieceDTO): Piece {
+  static fromDTO(dto: PieceDTO): Piece {
     return new Piece(dto.type, dto.owner, dto.promoted)
   }
 }

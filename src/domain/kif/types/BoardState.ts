@@ -70,18 +70,18 @@ export class BoardState {
     }
     //////////////////////////
     // serialize    
-    toJSON(): BoardStateDTO {
+    toDTO(): BoardStateDTO {
         return {
-            board: this.board.toJSON(),
-            hands: this.hands.toJSON(),
+            board: this.board.toDTO(),
+            hands: this.hands.toDTO(),
             turn: this.turn,
         }
     }
 
-    static fromJSON(dto: BoardStateDTO): BoardState {
+    static fromDTO(dto: BoardStateDTO): BoardState {
         return new BoardState(
-            Board.fromJSON(dto.board),
-            Hands.fromJSON(dto.hands),
+            Board.fromDTO(dto.board),
+            Hands.fromDTO(dto.hands),
             
             dto.turn
         )

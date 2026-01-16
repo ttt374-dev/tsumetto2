@@ -91,7 +91,7 @@ export class Board {
   }
   ////////////////////////////
   // serialize
-  toJSON(): BoardDTO {
+  toDTO(): BoardDTO {
     const squares = []
 
     for (const [key, piece] of this.squares.entries()) {
@@ -99,20 +99,20 @@ export class Board {
       squares.push({
         file,
         rank,
-        piece: piece ? piece.toJSON() : null,
+        piece: piece ? piece.toDTO() : null,
       })
     }
 
     return { squares }
   }
 
-  static fromJSON(dto: BoardDTO): Board {
+  static fromDTO(dto: BoardDTO): Board {
     const map = new Map<string, Piece | null>()
 
     for (const { file, rank, piece } of dto.squares) {
       map.set(
         `${file},${rank}`,
-        piece ? Piece.fromJSON(piece) : null
+        piece ? Piece.fromDTO(piece) : null
       )
     }
 

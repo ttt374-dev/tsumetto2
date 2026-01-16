@@ -7,16 +7,16 @@ import { parseKif } from "../parser/parseKif";
 describe("serialize", ()=>{
     it("piece", ()=>{
         const piece = new Piece("bishop", "black")
-        expect(Piece.fromJSON(piece.toJSON())).toEqual(piece)
+        expect(Piece.fromDTO(piece.toDTO())).toEqual(piece)
 
-        const serialized = piece.toJSON()
+        const serialized = piece.toDTO()
         expect(serialized).toEqual(new Piece("bishop", "black", false))           
        
     })
 
     it("boardstate", () => {
         const boardState = BoardState.create()
-        expect(BoardState.fromJSON(boardState.toJSON())).toEqual(boardState)
+        expect(BoardState.fromDTO(boardState.toDTO())).toEqual(boardState)
     })
 
     it("parsed data", () => {
@@ -33,7 +33,7 @@ describe("serialize", ()=>{
         expect(r.ok).toBeTruthy
         if (r.ok){
             const boardState = r.value.initialState
-            expect(BoardState.fromJSON(boardState.toJSON())).toEqual(boardState)
+            expect(BoardState.fromDTO(boardState.toDTO())).toEqual(boardState)
         }
     })
 })

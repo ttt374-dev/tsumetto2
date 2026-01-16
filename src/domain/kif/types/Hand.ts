@@ -47,12 +47,12 @@ export class Hand {
     }
 
     // JSON 用にオブジェクト化
-    toJSON(): Record<PieceType, number> {
+    toDTO(): Record<PieceType, number> {
         return this.toObject()
     }
 
     // JSON から復元
-    static fromJSON(obj: Partial<Record<PieceType, number>>): Hand {
+    static fromDTO(obj: Partial<Record<PieceType, number>>): Hand {
         return new Hand(obj)
     }
 }
@@ -97,17 +97,17 @@ export class Hands {
     }
 
     // serialize
-    toJSON(): Record<Player, ReturnType<Hand["toJSON"]>> {
+    toDTO(): Record<Player, ReturnType<Hand["toDTO"]>> {
         return {
-            black: this.byPlayer.black.toJSON(),
-            white: this.byPlayer.white.toJSON(),
+            black: this.byPlayer.black.toDTO(),
+            white: this.byPlayer.white.toDTO(),
         }
     }
 
-    static fromJSON(json: Record<Player, any>): Hands {
+    static fromDTO(json: Record<Player, any>): Hands {
         return new Hands({
-            black: Hand.fromJSON(json.black),
-            white: Hand.fromJSON(json.white),
+            black: Hand.fromDTO(json.black),
+            white: Hand.fromDTO(json.white),
         })
     }
 }

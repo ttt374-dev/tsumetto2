@@ -37,17 +37,17 @@ export class KifData {
     //}
 
     // KifData を JSON に変換
-    toJSON(): KifDataDTO {
+    toDTO(): KifDataDTO {
         return {
             headers: this.headers,
-            initialState: this.initialState.toJSON(),
-            moves: this.moves.map(m => m.toJSON())
+            initialState: this.initialState.toDTO(),
+            moves: this.moves.map(m => m.toDTO())
         }
     }
 
-    static fromJSON(json: KifDataDTO): KifData {
-        const initialState = BoardState.fromJSON(json.initialState)
-        const moves = json.moves.map((m: any) => Move.fromJSON(m))
+    static fromDTO(json: KifDataDTO): KifData {
+        const initialState = BoardState.fromDTO(json.initialState)
+        const moves = json.moves.map((m: any) => Move.fromDTO(m))
         return new KifData(json.headers, initialState, moves)
     }
 }
