@@ -17,7 +17,7 @@ describe("kif", ()=>{
 
     it("move", () => {
         let state = initialState
-        const move = new Move({ file:1, rank:3}, {file:1, rank: 4}, 'pawn', "black")
+        const move = new Move({ file:1, rank:3}, {file:1, rank: 4}, 'pawn')
         state = move.apply(state)
         expect(state.board.get({file:1, rank: 4})?.type).toEqual("pawn")
         expect(state.board.get({file:1, rank: 4})).toBeNull
@@ -28,8 +28,8 @@ describe("kif", ()=>{
         const hands = Hands.create(blackHand, Hand.empty())
         let state = new BoardState(Board.create(), hands)
 
-        //const piece = new Piece("pawn", "black")
-        const move = new Move(null, { file:1, rank:1 }, "pawn", "black")   
+        //const piece = new Piece("pawn")
+        const move = new Move(null, { file:1, rank:1 }, "pawn")   
         expect(move.isDrop).toBeTruthy     
         state = move.apply(state)
         expect(state.board.get({file: 1, rank: 1})?.type).toEqual("pawn")
@@ -38,13 +38,13 @@ describe("kif", ()=>{
     })
     it("promote", () => {
         let state = initialState
-        const move = new Move({file:1, rank:3}, { file:1, rank: 4}, "pawn", "black", true)
+        const move = new Move({file:1, rank:3}, { file:1, rank: 4}, "pawn", true)
         state = move.apply(state)
         expect(state.board.get({file: 1, rank: 4})?.promoted).toBeTruthy       
     })
     it("相手の駒を取る", () => {
         let state = initialState
-        const move = new Move({file:1, rank:3}, { file:1, rank: 7}, "pawn", "black", true)
+        const move = new Move({file:1, rank:3}, { file:1, rank: 7}, "pawn", true)
         state = move.apply(state)
         expect(state.hands.get("black").count('pawn')).toEqual(1)
     })

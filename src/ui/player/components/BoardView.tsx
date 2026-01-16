@@ -29,7 +29,7 @@ function formatHand(hand: Hand): string {
         const item = kanjiToPieceItem[kanjipieceType]
         const count = hand.count(item.type);
         if (count > 0) {
-            const suffix = numberToKanjiTwoDigits(count) ?? count.toString();
+            const suffix = count > 1 ? (numberToKanjiTwoDigits(count) ?? count.toString()) : ""
             parts.push(`${kanjipieceType}${suffix}`);
         }
     });

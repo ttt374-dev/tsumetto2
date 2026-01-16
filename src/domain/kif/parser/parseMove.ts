@@ -70,7 +70,7 @@ function parseNormalMove(rawtext: string, prevSquare?: Square): Move {
     if (!mr) throw new Error("invalid body")
     const [_, toText, piecetypeText, fromText] = mr
 
-    console.log("parse normal move", toText, piecetypeText, fromText, rawtext)
+    //console.log("parse normal move", toText, piecetypeText, fromText, rawtext)
     const to = parseTo(toText, prevSquare)
     const pieceKey = parsePieceType(piecetypeText)
     const from = parseFrom(fromText)

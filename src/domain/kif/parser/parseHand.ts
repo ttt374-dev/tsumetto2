@@ -26,7 +26,7 @@ export function parseHand(handStr: string): Hand {
         // 成り駒は手駒にする場合、promoted を無視
         const pieceType = item.type
         counts[pieceType] = (counts[pieceType] || 0) + n
-        console.log("parse hand", pieceType, counts[pieceType])
+        //console.log("parse hand", pieceType, counts[pieceType])
     }
 
     return new Hand(counts)

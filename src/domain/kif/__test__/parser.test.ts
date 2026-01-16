@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { BoardState, Hands, Move } from "../types";
+import { Board, BoardState, Hand, Hands, Move } from "../types";
 import { parseKif } from "../parser/parseKif";
 import { PanoramaFishEyeSharp, PasswordRounded, RttRounded } from "@mui/icons-material";
 import { parseMoveLine } from "../parser/parseMove";
@@ -43,11 +43,11 @@ describe("parse moves", () => {
         }
     })
     it("成桂", () => {
-        /*
-        const text = "  1 ５五成桂(29)"
-        let state = BoardState.create()
         
-        state = state.hands.add('black', 'knight')
+        const text = "  1 ５五成桂(29)"
+        //let state = BoardState.create()
+        const hands = Hands.empty()
+        let state = new BoardState(Board.create(), hands.add('black', 'knight'))
         const drop = new Move(null, {file: 2, rank: 9}, "knight")
         state = drop.apply(state)
         const parsed = parseMoveLine(text)
@@ -57,8 +57,7 @@ describe("parse moves", () => {
             state = parsed.apply(state)
             expect(state.board.get({ file: 5, rank: 5 })?.promoted).toBeTruthy
             expect(state.board.get({ file: 5, rank: 5 })?.type).toEqual("knight")
-        }
-            */
+        }       
         
     })
     it("右", () => {
