@@ -37,9 +37,10 @@ const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
         return player === 'black' ? '▲' : '△'
     }
     function formatMove(move: Move, index: number): string {
+        console.log("format move", move)
         const player = index % 2 === 0 ? "black" : "white"
-        const moveText = [formatPlayer(player), formatTo(move.to), displayPiece(move.pieceType, move.promote), formatFrom(move.from)].join("")
-        return moveText
+        //const moveText = [formatPlayer(player), formatTo(move.to), displayPiece(move.pieceType, move.promote), formatFrom(move.from)].join("")
+        return `${index}: ` + formatPlayer(player) + move.rawtext
         //return `${index}: ${formatPlayer(move.player)} ${move.moveText} ${formatFrom(move.from ?? null)}`
         
     }
@@ -61,22 +62,25 @@ const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
     // 開始局面を表示させるため、先頭に GameStartを挿入
     //const start: GameStart = { type: "start"}
     //const eventRows = [start, ...moves]
-    //const toViewerIndex = (moveIndex: number) => { moveIndex+1 }
+    //const toViewerIndex = (moveIndex: number) => { moveIndex+1 }    
     
-    const hilightColor =  "#ffd"
+    function itemStyles(index: number){
+        const hilightColor =  "#ffd"
+        const itemBgColor = index === currentPlyIndex ? hilightColor : undefined // ハイライト色
+        return {
+            padding: "2px 0",
+            backgroundColor: itemBgColor,
+            cursor: "pointer"
+        }
+    }
     return (        
         <Box>
                 <div onClick={() => onMoveClick(0)}
-                    style={{
-                            padding: "2px 0",
-                            backgroundColor: 0 === currentPlyIndex ? hilightColor : undefined, // ハイライト色
-                            cursor: "pointer"
-                        }}>
+                    style={itemStyles(0)}>
                     {"=== 開始局面 ==="}
                 </div>
                 
             {
-
                 moves.map((m, i) => (
                     <div
                         key={i+1}
@@ -84,13 +88,8 @@ const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
                             itemRefs.current[i+1] = el;
                         }}
                         onClick={() => onMoveClick(i+1)}
-                        style={{
-                            padding: "2px 0",
-                            backgroundColor: i+1 === currentPlyIndex ? hilightColor : undefined, // ハイライト色
-                            cursor: "pointer"
-
-                        }}>
-                        { formatMove(m, i+1)}
+                        style={itemStyles(i+1)}>
+                        { formatMove(m, i+1) }
                     </div>
                 ))
             }

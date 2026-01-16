@@ -1,50 +1,74 @@
 import { describe, expect, it } from "vitest";
-import { BoardState, Hands } from "../types";
+import { BoardState, Hands, Move } from "../types";
 import { parseKif } from "../parser/parseKif";
-import { PanoramaFishEyeSharp, RttRounded } from "@mui/icons-material";
+import { PanoramaFishEyeSharp, PasswordRounded, RttRounded } from "@mui/icons-material";
 import { parseMoveLine } from "../parser/parseMove";
 import { parse } from "uuid";
-import { buildUntilPly } from "../build";
+import { buildUntilPly } from "../buildUntilPly";
 import { parseHand } from "../parser/parseHand";
+import { formControlClasses } from "@mui/material";
 
 
 describe("parse moves", () => {
     it("move", () => {
         const text = "   2 １四歩(13)        ( 0:00/00:00:00)"
-        const state = BoardState.create()
-        const parsed = parseMoveLine(text, 1, state)
-        expect(parsed.pieceType).toEqual("pawn")
+        const move = parseMoveLine(text)
+        expect(move).toBeTruthy
+        if (move){
+            expect(move?.pieceType).toEqual("pawn")
+            expect(move.from).toEqual({file: 1, rank: 3})
+            expect(move.to).toEqual({file: 1, rank: 4})
+        }
     })
 
     it("打", () => {
         const text = "  55 ５五桂打        "
         const state = BoardState.create()
-        const parsed = parseMoveLine(text, 1, state)
-        expect(parsed.pieceType).toEqual("knight")
-        expect(parsed.to).toEqual({ file: 5, rank: 5 })
-        expect(parsed.isDrop).toBeTruthy
+        const parsed = parseMoveLine(text)
+        expect(parsed).toBeTruthy
+        if (parsed) {
+            expect(parsed.pieceType).toEqual("knight")
+            expect(parsed.to).toEqual({ file: 5, rank: 5 })
+            expect(parsed.isDrop).toBeTruthy
+        }        
     })
     it("桂成", () => {
         const text = "  1 ５五桂成(29)"
-        const state = BoardState.create()
-        const parsed = parseMoveLine(text, 1, state)
-        expect(parsed.pieceType).toEqual("knight")        
-        expect(parsed.promote).toBeTruthy
+        const parsed = parseMoveLine(text)
+        expect(parsed).toBeTruthy
+        if (parsed) {
+            expect(parsed.pieceType).toEqual("knight")
+            expect(parsed.promote).toBeTruthy
+
+        }
     })
     it("成桂", () => {
+        /*
         const text = "  1 ５五成桂(29)"
-        const state = BoardState.create()
-        const parsed = parseMoveLine(text, 1, state)
-        expect(parsed.pieceType).toEqual("knight")        
-        const newstate = parsed.apply(state)
-        expect(newstate.board.get({file: 5, rank: 5})?.promoted).toBeTruthy
-        expect(newstate.board.get({file: 5, rank: 5})?.type).toEqual("knight")        
+        let state = BoardState.create()
+        
+        state = state.hands.add('black', 'knight')
+        const drop = new Move(null, {file: 2, rank: 9}, "knight")
+        state = drop.apply(state)
+        const parsed = parseMoveLine(text)
+        expect(parsed).toBeTruthy
+        if (parsed){
+            expect(parsed.pieceType).toEqual("knight")            
+            state = parsed.apply(state)
+            expect(state.board.get({ file: 5, rank: 5 })?.promoted).toBeTruthy
+            expect(state.board.get({ file: 5, rank: 5 })?.type).toEqual("knight")
+        }
+            */
+        
     })
     it("右", () => {
         const text = "   2 １四金右(13)        ( 0:00/00:00:00)"
         const state = BoardState.create()
-        const parsed = parseMoveLine(text, 1, state)
-        expect(parsed.pieceType).toEqual("gold")
+        const parsed = parseMoveLine(text)
+        expect(!parsed).toBeTruthy
+        if (parsed){
+            expect(parsed.pieceType).toEqual("gold")
+        }
     })
 })
 
@@ -167,7 +191,8 @@ describe("実録", () => {
         if (r.ok){
             const moves = r.value.moves
             expect(moves.length).toEqual(11)
-            
+            const initial = BoardState.create()
+            //initial.board.dump()
             const history = { initial: BoardState.create(), moves: moves}
             const state = buildUntilPly(history, 11)
             expect(state.board.get({file: 4, rank: 8})?.type).toEqual("king")

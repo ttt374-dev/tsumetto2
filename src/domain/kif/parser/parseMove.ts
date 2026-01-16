@@ -1,4 +1,4 @@
-import { BoardState, kanjiToPieceItem, Move, type KifData, type KifHeader, type PieceType, type Player } from "../types"
+import { BoardState, kanjiToPieceItem, Move, type KifData, type KifHeader, type PieceType, type Player, type Square } from "../types"
 
 
 export function parseMoves(
@@ -7,51 +7,49 @@ export function parseMoves(
 ): Move[] {
     let state = initial
     const moves: Move[] = []
+    let prevSquare: Square | undefined = undefined
 
-    for (let i = 0; i < lines.length; i++) {
-        const move = parseMoveLine(lines[i], i + 1, state)
+    //for (let i = 0; i < lines.length; i++) {
+    for (const line of lines){
+        const move = parseMoveLine(line, prevSquare)
+        if (!move) continue  // TODO
         moves.push(move)
-        state = state.applyMove(move)
+        prevSquare = move.to
+        //state = state.applyMove(move)
     }
 
     return moves
 }
+export function parseMoveLine(line: string, prevSquare?: Square): Move | null {
+    const trimmed = line.trim()
 
-export function parseMoveLine(
-    line: string,
-    ply: number,
-    state: BoardState
-): Move {
-    // 例: "1 ７六歩(77)"
-    const m = line.match(/\d+\s+(.+)/)
-    if (!m) throw new Error("Invalid move line")
+    // ① thinkingTime（行末）
+    const timeMatch = trimmed.match(/\s+\(([^)]*)\)$/)
+    //const thinkingTime = timeMatch?.[1]
 
-    const body = m[1]
+    const withoutTime = timeMatch
+        ? trimmed.slice(0, timeMatch.index).trim()
+        : trimmed
 
-    const player =
-        ply % 2 === 1 ? "black" : "white"
+    // ② plyIndex（先頭）
+    const plyMatch = withoutTime.match(/^(\d+)\s+(.*)$/)
+    if (!plyMatch) return null
 
-    return parseMoveBody(body, player, state)
-}
-export function parseMoveBody(
-    body: string,
-    player: Player,
-    state: BoardState
-): Move {
+    //const plyIndex = Number(plyMatch[1])
+    const rawText = plyMatch[2]
 
-    // 打ち駒
-    if (body.includes("打")) {
-        return parseDropMove(body, player, state)
+    //console.log("pasre moveline", rawText)
+    if (rawText.startsWith("投了")) return null
+    if (rawText.includes("打")) {
+        return parseDropMove(rawText, )
+    } else {
+        return parseNormalMove(rawText, prevSquare)
     }
-
-    // 通常の移動
-    return parseNormalMove(body, player, state)
+ 
 }
-function parseDropMove(
-    text: string,
-    player: Player,
-    _state: BoardState
-): Move {
+
+
+function parseDropMove(text: string): Move {
     // 例: "５五桂打"
     const m = text.match(/(.)(.)(.+?)打/)
     if (!m) throw new Error("Invalid move body")
@@ -61,15 +59,23 @@ function parseDropMove(
     const pieceItem = kanjiToPieceItem[m[3]]
     const { type, promoted } = pieceItem
 
-    return new Move(null, { file, rank }, type, player, promoted)
+    return new Move(null, { file, rank }, type, false, text)
 }
 
-function parseNormalMove(
-    text: string,
-    player: Player,
-    state: BoardState
-): Move {
+function parseNormalMove(rawtext: string, prevSquare?: Square): Move {
+    
+    
     // ７六歩(77)
+    const mr = rawtext.match(/^(..)(.+)\((\d\d)\)$/)
+    if (!mr) throw new Error("invalid body")
+    const [_, toText, piecetypeText, fromText] = mr
+
+    console.log("parse normal move", toText, piecetypeText, fromText, rawtext)
+    const to = parseTo(toText, prevSquare)
+    const pieceKey = parsePieceType(piecetypeText)
+    const from = parseFrom(fromText)
+
+    /*
     const m = text.match(/(.)(.)(.+?)(成)?\((\d)(\d)\)/)
     if (!m) throw new Error("Invalid move body")
 
@@ -84,12 +90,67 @@ function parseNormalMove(
     const { type, promoted } = pieceItem
 
     //const promote = !!m[4]
+    
     const from = {
         file: Number(m[5]),
         rank: Number(m[6]),
     }
+*/
+    const { pieceType, promote} = parsePieceType(piecetypeText)
 
-    return new Move(from, { file, rank }, type, player, promoted)
+    return new Move(
+        parseFrom(fromText),
+        parseTo(toText, prevSquare),
+        pieceType,
+        promote,
+        rawtext
+    )
+}
+function parseTo(text: string, prevSquare?: Square): Square {
+    const m = text.match(/(.)(.)/)
+    if (!m) throw new Error("")
+    const [ fileText, rankText] = m
+
+    if (fileText === "同"){
+        if (!prevSquare) throw new Error("no prevoius squire given")       
+        return prevSquare
+    } else {    
+        return {
+        file: kanjiToFile(m[1]),
+        rank: kanjiToRank(m[2])
+        }
+    }
+}
+function parsePieceType(text: string): {pieceType: PieceType, promote: boolean} {
+    let t = text
+    let p: boolean
+    if (t.endsWith("不成")){
+        t = text.slice(0, -2)
+    } else if (t.endsWith("成")){
+        t = text.slice(0, 1)
+        p = true
+    }
+    if (["打", "右", "左", "引", "直", "寄", "上"].some(s => t.endsWith(s))) {
+        t = t.slice(0, -1)
+    }
+    const pieceItem = kanjiToPieceItem[t] // misdisambiguish の処理
+    if (!pieceItem) {
+        throw new Error(`Unknown piece text: ${text}`)
+    }
+    const { type, promoted } = pieceItem
+    return {
+        pieceType: type,
+        promote: promoted
+    }
+}
+function parseFrom(text: string): Square {
+    const m = text.match(/(\d)(\d)/)
+    if (!m) throw new Error("")
+    const [ _, fileText, rankText ] = m
+    return {
+        file: Number(fileText),
+        rank: Number(rankText),
+    }
 }
 function kanjiToFile(k: string): number {
     return "１２３４５６７８９".indexOf(k) + 1

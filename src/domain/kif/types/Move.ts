@@ -5,10 +5,9 @@ export class Move {
     constructor(
         readonly from: Square | null,
         readonly to: Square,
-        readonly pieceType: PieceType,
-        readonly player: Player,
+        readonly pieceType: PieceType,        
         readonly promote: boolean = false,
-        readonly info: string = "",
+        readonly rawtext: string = "",
     ) { }
 
     isDrop(): boolean {
@@ -22,23 +21,23 @@ export class Move {
     // serialize
 
     toJSON(): MoveDTO {
+        console.log("tojson", this)
         return {
             from: this.from,
             to: this.to,
-            pieceType: this.pieceType,
-            player: this.player,
+            pieceType: this.pieceType,            
             promote: this.promote,
-            info: this.info,
+            rawtext: this.rawtext,
         }
     }
     static fromJSON(dto: MoveDTO): Move {
+        console.log("from json", dto)
         return new Move(
             dto.from,
             dto.to,
-            dto.pieceType,
-            dto.player,
+            dto.pieceType,            
             dto.promote,
-            dto.info
+            dto.rawtext
         )
     }
 }
@@ -47,9 +46,8 @@ export type MoveDTO = {
     from: Square | null
     to: Square
     pieceType: PieceType
-    player: Player
     promote: boolean
-    info: string
+    rawtext: string
 }
 ///////////////////////////////////
 

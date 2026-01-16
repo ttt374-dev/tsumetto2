@@ -45,7 +45,7 @@ export function parseKif(text: string): ParseResult<KifData> {
     //console.log("parse kif")
     //initialState.board.dump()
     
-    console.log("後手の持ち駒", headers["後手の持駒"])
+    //console.log("後手の持ち駒", headers["後手の持駒"])
     const hands = Hands.create(
         parseHand(headers["先手の持駒"]),
         parseHand(headers["後手の持駒"]),
