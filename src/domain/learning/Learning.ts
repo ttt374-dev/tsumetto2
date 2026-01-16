@@ -133,7 +133,7 @@ export class Learning {
             nextReviewedAt,
             easeFactor,
             now,
-            this.lastAnswerResult)            
+            answer)            
     }
 }
 
