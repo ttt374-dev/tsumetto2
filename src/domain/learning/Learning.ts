@@ -71,6 +71,7 @@ export class Learning {
 
     ////////////////////////////////// 
     // command
+    /*
     answer(result: AnswerResult, seconds: number) {
         const solved = result === "solved" ? 1 : 0
         const failed = result === "failed" ? 1 : 0
@@ -79,7 +80,7 @@ export class Learning {
         //    solvedCount: this.solvedCount + solved,
         //    failedCount: this.failedCount + failed,
         //})
-    }
+    }*/
     
     // 正解評価
     private judgeAnswerQuality(answer: AnswerResult, sec: number): number {
@@ -89,7 +90,7 @@ export class Learning {
     }
 
     // --- 新しいインスタンスを返す ---
-    scheduleNext(answer: AnswerResult, sec: number=20, now: number = Date.now()): Learning {
+    answer(answer: AnswerResult, sec: number=20, now: number = Date.now()): Learning {
         const quality = this.judgeAnswerQuality(answer, sec)
 
         let intervalDays = this.intervalDays
@@ -116,14 +117,6 @@ export class Learning {
         )
 
         const nextReviewedAt = now + intervalDays * 24 * 60 * 60 * 1000
-        console.log(
-            "scheduleNext",
-            quality,
-            sec,
-            intervalDays,
-            new Date(nextReviewedAt),
-            easeFactor
-        )
 
         return new Learning(
             this.problemId,

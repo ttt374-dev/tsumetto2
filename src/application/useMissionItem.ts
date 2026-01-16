@@ -1,5 +1,4 @@
 import { Problem, type ProblemId } from "../domain/problem/Problem"
-import type { MissionItem } from "../domain/missionItem/MissionItem"
 import { useMemo, useState } from "react"
 
 import { createMissionItems } from "@/domain/missionItem/createMissionItems"
@@ -7,6 +6,7 @@ import type { AnswerResult } from "@/application/missionFsm/MissionFsm"
 import { createProblemStore } from "./store/useProblemStore"
 import { useRepositoryContext } from "@/ui/App/providers/RepositoryProvider"
 import { createLearningStore } from "./store/useLearningStore"
+import type { MissionItem } from "@/domain/missionItem/MissionItem"
 
 export function useMissionItem() {
     const repos = useRepositoryContext()    
