@@ -1,4 +1,4 @@
-import type { AnswerEntry, FsmState } from "@/domain/fsm/Fsm";
+import type { AnswerEntry, MissionState } from "@/application/missionFsm/MissionFsm";
 import { Box, Button, Stack } from "@mui/material";
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -43,7 +43,7 @@ function SummaryRow({
 }
 export function SummaryScreen(){
     const location = useLocation();
-    const locationState = location.state as { fsmState?: FsmState } | null;
+    const locationState = location.state as { fsmState?: MissionState } | null;
     const fsmState = locationState?.fsmState;
 
     

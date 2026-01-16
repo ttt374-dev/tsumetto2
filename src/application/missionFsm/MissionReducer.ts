@@ -1,6 +1,6 @@
-import type { FsmAction, FsmState } from "./Fsm"
+import type { MissionAction, MissionState } from "./MissionFsm"
 
-export const initialState: FsmState = {
+export const initialState: MissionState = {
   queue: [],
   currentIndex: 0,
   phase: "problem",
@@ -8,7 +8,7 @@ export const initialState: FsmState = {
   results: [],
 }
 
-export function fsmReducer(state: FsmState, action: FsmAction): FsmState {
+export function missionReducer(state: MissionState, action: MissionAction): MissionState {
   switch (action.type) {    
     case "START":
       return {
@@ -17,13 +17,14 @@ export function fsmReducer(state: FsmState, action: FsmAction): FsmState {
         currentIndex: action.payload.startIndex ?? 0,
       }
 
-    case "SOLVE":
+    case "SOLVE":  // 答えらたら次の問題へ移る
     case "FAIL": {
       const current = state.queue[state.currentIndex]
       if (!current) return state
       return {
         ...state,
-        phase: "answered",
+        phase: "problem",
+        currentIndex: state.currentIndex + 1,
         results: [
           ...state.results,
           { problemId: current.problemId, answerResult: action.type === "SOLVE" ? "solved" : "failed" },

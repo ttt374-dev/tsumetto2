@@ -1,4 +1,4 @@
-import type { initialReplayState } from "@/application/replayReducer";
+import type { initialReplayState } from "@/application/ReplayFsm/replayReducer";
 import { BoardState, type BoardStateDTO } from "./BoardState";
 import { Move, type MoveDTO } from "./Move";
 

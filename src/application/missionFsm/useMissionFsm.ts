@@ -1,15 +1,15 @@
 // useFSM.ts
 import { useReducer } from "react"
-import { fsmReducer, initialState } from "@/domain/fsm/fsmReducer"
-import type { QueueItem } from "@/domain/fsm/Fsm"
+import { missionReducer, initialState } from "@/application/missionFsm/MissionReducer"
+import type { QueueItem } from "@/application/missionFsm/MissionFsm"
 import type { Problem } from "@/domain/problem/Problem"
 
 export const buildQueue = (problems: Problem[]): QueueItem[] => {       
     return problems.map((p) => ({problemId: p.id}))
     
 }
-export function useFsm() {
-  const [state, dispatch] = useReducer(fsmReducer, initialState)
+export function useMissionFsm() {
+  const [state, dispatch] = useReducer(missionReducer, initialState)
 
   // ラッパー
   const start = (queue: QueueItem[], startIndex?: number) => {

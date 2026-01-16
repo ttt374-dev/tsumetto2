@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { AppLayout } from "../common/AppLayout"
 import BoardView from "./components/BoardView"
-import { useBoardReplay } from "./hooks/useBoardReplay"
+import { useReplayFsm } from "../../application/ReplayFsm/useReplayFsm"
 import MovesView from "./components/MovesView"
 import { BoardState, KifData } from "@/domain/kif/types"
 
@@ -30,11 +30,12 @@ export function PlayerScreen() {
     }, [fsmState.isFinished, navigate]);
 
     // answer から次へ自動遷移
+    /*
     useEffect(() => {
         if (fsmState.phase === "answered")
             next()
     }, [fsmState.phase])
-
+*/
     // 問題が変わったら手筋をリセット
     useEffect(() => {
         if (!fsmState) return
@@ -49,7 +50,7 @@ export function PlayerScreen() {
     const { board, hands, moves, currentPlyIndex,
         advancePly, retreatPly,
         moveToPly, resetPly,
-    } = useBoardReplay(kifdata)
+    } = useReplayFsm(kifdata)
 
     
 

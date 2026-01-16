@@ -1,10 +1,10 @@
 // useReplayView.ts
 import { useReducer, useMemo } from "react";
-import { initialReplayState, replayReducer, type ReplayAction } from "@/application/replayReducer";
+import { initialReplayState, replayReducer, type ReplayAction } from "@/application/ReplayFsm/replayReducer";
 import { buildUntilPly } from "@/domain/kif/buildUntilPly";
 import type { KifData } from "@/domain/kif/types";
 
-export function useBoardReplay(kifData: KifData) {
+export function useReplayFsm(kifData: KifData) {
   //const { board: initialBoard, hands: initialHands, history } = kifData;
   const { initialState, moves} = kifData
 

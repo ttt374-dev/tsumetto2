@@ -1,16 +1,16 @@
-import { useFsm } from "@/application/useFsm"
+import { useMissionFsm } from "@/application/missionFsm/useMissionFsm"
 import type { ReactNode } from "react"
 import { createContext, useContext } from "react"
 
 
 // context を作る
-type FsmContextValue = ReturnType<typeof useFsm>
+type FsmContextValue = ReturnType<typeof useMissionFsm>
 export const FsmContext = createContext<FsmContextValue | null > (null)
 
 export const FsmProvider = ({children}: { children: ReactNode}) => {
     return (
         <FsmContext.Provider value={
-            useFsm()
+            useMissionFsm()
         }>
             {children}
         </FsmContext.Provider>        

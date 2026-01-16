@@ -1,16 +1,15 @@
 
 
-export type FsmState = {
+export type MissionState = {
   queue: QueueItem[]
   currentIndex: number
   phase: PlayerPhase
-  //plyIndex: number
   isFinished: boolean
   results: { problemId: string; answerResult: AnswerResult }[]
 }
 
 // FSM actions
-export type FsmAction =
+export type MissionAction =
   | { type: "START"; payload: { queue: QueueItem[]; startIndex?: number } }
   | { type: "SOLVE" }
   | { type: "FAIL" }
