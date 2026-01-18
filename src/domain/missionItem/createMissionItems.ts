@@ -1,6 +1,6 @@
 import type { LearningRecord } from "../learning/Learning"
 import type { Problem } from "../problem/Problem"
-import { MissionItem } from "./MissionItem"
+import type { MissionItem } from "./MissionItem"
 
 export function createMissionItems(
     problems: Problem[], learningRecords: LearningRecord,
@@ -8,7 +8,8 @@ export function createMissionItems(
 ) {
 
     const items = problems.map((p) => (
-        new MissionItem(p, learningRecords[p.id])
+        //new MissionItem(p, learningRecords[p.id])
+        { problem: p, learning: learningRecords[p.id]}
     ))
     
     return items

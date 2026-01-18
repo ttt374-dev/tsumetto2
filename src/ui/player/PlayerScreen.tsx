@@ -123,15 +123,15 @@ export function PlayerScreen() {
             </Button>}
 
             
-            {missionItem.hasResult &&
+            {missionItem.learning &&
                 <Stack direction="row" spacing={2}>
                     <Box>
-                        {missionItem.getLearning.solvedCount} /
-                        {missionItem.getLearning.totalCount}
+                        {missionItem.learning.solvedCount} /
+                        {missionItem.learning.totalCount}
                     </Box>
                     <Box>
-                        ef{missionItem.getLearning.easeFactor.toFixed(2)},
-                        reviewed at {new Date(missionItem.getLearning.nextReviewedAt).toLocaleString()}
+                        ef{missionItem.learning.easeFactor.toFixed(2)},
+                        reviewed at {new Date(missionItem.learning.nextReviewedAt).toLocaleString()}
                     </Box>
 
 
