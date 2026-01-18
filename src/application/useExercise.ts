@@ -21,7 +21,7 @@ export function useExercise() {
         return createExerciseList(problems, learningRecords)
      //   return applyQuery(items, sortState, filterState)        
     }, [problems, learningRecords]) // , sortState, filterState])
-
+    
     /////////////////////////
     // query
     const find = (problemId: ProblemId): Exercise | undefined => {

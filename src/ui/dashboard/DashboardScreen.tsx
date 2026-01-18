@@ -10,6 +10,7 @@ import { useExercise } from "@/application/useExercise";
 import { applyQuery } from "@/domain/Exercise/query/applyQuery";
 import { useQuery } from "@/application/useQuery";
 import type { SortState } from "@/domain/Exercise/query/sort";
+import type { Exercise } from "@/domain/Exercise/Exercise";
 
 function DashboardFilterControl({ filter, onToggleFilter }: {
     filter: FilterState, onToggleFilter: (key: keyof FilterState) => void
@@ -31,7 +32,15 @@ function DashboardFilterControl({ filter, onToggleFilter }: {
     )
 }
 
-export function DashboardScreen() {
+export function DashboardScreen(
+    {queuedExerciseList, filterState, onStart, onToggleFilter}: {
+    queuedExerciseList: Exercise[],
+    filterState: FilterState,
+    onStart: () => void,
+    onToggleFilter: (key: keyof FilterState) => void,
+}
+) {
+    /*
     const navigate = useNavigate()
     const fsm = useFsmContext()
 
@@ -53,20 +62,21 @@ export function DashboardScreen() {
         setFilter("isMissionTarget", true)
         console.log("toggle filter", filterState)
     }, [])
+    */
     return (
         <AppLayout
             footer={
-                <Button onClick={handleStart}
-                    variant="contained" fullWidth disabled={queriedItems.length === 0}>
+                <Button onClick={onStart}
+                    variant="contained" fullWidth disabled={queuedExerciseList.length === 0}>
                     Start
                 </Button>
             }
         >
-            <DashboardFilterControl filter={filterState} onToggleFilter={toggleFilter} />
+            <DashboardFilterControl filter={filterState} onToggleFilter={onToggleFilter} />
 
 
             <Box>
-                {queriedItems.length}
+                {queuedExerciseList.length}
             </Box>
 
         </AppLayout>

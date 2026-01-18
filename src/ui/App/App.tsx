@@ -8,6 +8,7 @@ import { PlayerScreen } from '../player/PlayerScreen';
 import { SummaryScreen } from '../summary/SummaryScreen';
 import { ToastProvider } from './providers/ToastProvider';
 import './App.css'
+import { MissionScreen } from '../mission/MissionScreen';
 
 function App() {
     return (
@@ -18,10 +19,10 @@ function App() {
                     <BrowserRouter>
                         <Routes>
                             <Route path="/player" element={<PlayerScreen />} />
-                            <Route path="/dashboard" element={<DashboardScreen />} />
+                            <Route path="/mission" element={<MissionScreen />} />
                             <Route path="/library" element={<LibraryScreen />} />
                             <Route path="/summary" element={<SummaryScreen />} />
-                            <Route path="/" element={<Navigate to="/dashboard"/>}/>
+                            <Route path="/" element={<Navigate to="/mission"/>}/>
 
                         </Routes>
                     </BrowserRouter>

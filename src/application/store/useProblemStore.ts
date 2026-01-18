@@ -8,6 +8,7 @@ export function createProblemStore(repository: ProblemRepository) {
     // 初期ロード
     useEffect(() => {
         reload().catch(() => setProblems([]));
+        
     }, []);
 
     const reload = async () => {

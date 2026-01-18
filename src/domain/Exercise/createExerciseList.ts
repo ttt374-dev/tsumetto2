@@ -4,7 +4,6 @@ import type { Exercise } from "./Exercise"
 
 export function createExerciseList(
     problems: Problem[], learningRecords: LearningRecord,
-    
 ) {
 
     const items = problems.map((p) => (

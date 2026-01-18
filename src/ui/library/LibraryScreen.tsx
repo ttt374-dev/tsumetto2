@@ -58,6 +58,7 @@ export function LibraryScreen() {
     }
 
     const libraryItems = applyQuery(exerciseList, sortState, filterState)
+    console.log("library items", libraryItems, exerciseList)
     return (
         <AppLayout>
             <Stack direction="row">

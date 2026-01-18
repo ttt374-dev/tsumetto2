@@ -41,7 +41,12 @@ function SummaryRow({
         </Stack>
     )
 }
-export function SummaryScreen(){
+/////////////////////////////////////////////
+export function SummaryScreen({ answerEntries, onNavigateToDashboard}: { 
+    answerEntries: AnswerEntry[],
+    onNavigateToDashboard: () => void,
+}){
+    /*
     const location = useLocation();
     const locationState = location.state as { fsmState?: MissionState } | null;
     const fsmState = locationState?.fsmState;
@@ -56,7 +61,9 @@ export function SummaryScreen(){
     if (!fsmState) return null; // セーフティレンダリング
      const summary = summaryResult(fsmState.results)   
     const navigate = useNavigate()
-
+*/
+console.log("summary screen", answerEntries)
+   const summary = summaryResult(answerEntries)   
     return (
         <>
             <Box>
@@ -69,7 +76,7 @@ export function SummaryScreen(){
                         <SummaryRow label="正解率" value={`${Math.round(summary.accuracy * 100)} %`} />
                     </Stack>
 
-            <Button onClick={() => { navigate("/dashboard")}}>
+            <Button onClick={onNavigateToDashboard}>
                 Dashboard
             </Button>
         </>

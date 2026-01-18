@@ -20,7 +20,7 @@ export class ProblemFileRepository implements ProblemRepository {
                     ? result.data
                     : await result.data.text()
             const dtos: ProblemDTO[] = JSON.parse(dataStr)
-            console.log("load", dtos)
+            //console.log("load", dtos)
             dtos.map(dto => {
                 const p = Problem.fromDTO(dto)
 
@@ -29,6 +29,7 @@ export class ProblemFileRepository implements ProblemRepository {
                 Problem.fromDTO(dto)
             )
         } catch (e) {
+            console.error("problem repo load error", e)
             return [];
         }
     }

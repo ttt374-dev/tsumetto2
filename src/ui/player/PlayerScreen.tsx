@@ -8,26 +8,41 @@ import BoardView from "./components/BoardView"
 import { useReplayFsm } from "../../application/ReplayFsm/useReplayFsm"
 import MovesView from "./components/MovesView"
 import { Position, KifData } from "@/domain/kif/types"
+import type { Problem } from "@/domain/problem/Problem"
+import type { Learning } from "@/domain/learning/Learning"
+import type { AnswerResult } from "@/application/missionFsm/MissionFsm"
 
-export function PlayerScreen() {
+export function PlayerScreen({ problem, learning, onNext, onPrev, onAnswer}: {
+    problem: Problem,
+    learning?: Learning,
+    onNext: () => void,
+    onPrev: () => void, 
+    onAnswer: (answerResult: AnswerResult, secToTaken?: number) => void,
+}) {
     const [ showMoves, setShowMoves ] = useState(false)
+    /*
     const { state: fsmState, next, prev, solve, fail,
         advancePhase, retreatPhase,
     } = useFsmContext()
+     */
 
-    const { exerciseList, markAnswer, toggleStar } = useExercise()
+    const { markAnswer, toggleStar } = useExercise()
 
-    const problemId = fsmState.queue[fsmState.currentIndex]?.problemId
-    const exercise = exerciseList.find((m) => m.problem.id === problemId)
+
+    //const problemId = fsmState.queue[fsmState.currentIndex]?.problemId
+
+    //const exercise = exerciseList.find((m) => m.problem.id === problemId)
 
     const navigate = useNavigate()
 
     // 最後のインデックスだったらサマリーに遷移
+    /*
     useEffect(() => {
         if (fsmState.isFinished) {
             navigate("/summary", { state: { fsmState } })
         }
     }, [fsmState.isFinished, navigate]);
+    */
 
     // answer から次へ自動遷移
     /*
@@ -37,6 +52,7 @@ export function PlayerScreen() {
     }, [fsmState.phase])
 */
     // 問題が変わったら手筋をリセット
+    /*
     useEffect(() => {
         if (!fsmState) return
 
@@ -45,8 +61,10 @@ export function PlayerScreen() {
         resetPly()
         setShowMoves(false)
     }, [fsmState.currentIndex])
+    */
 
-    const kifdata = exercise?.problem.kifData ?? KifData.create()
+    //const kifdata = exercise?.problem.kifData ?? KifData.create()
+    const kifdata = problem.kifData
     const { board, hands, moves, currentPlyIndex,
         advancePly, retreatPly,
         moveToPly, resetPly,
@@ -55,14 +73,14 @@ export function PlayerScreen() {
     
 
 
-    if (!exercise) {
+    if (!problem) {
         return (
             <>
                 <Box>
                     NO MISSION
                 </Box>
 
-                <Button onClick={() => { navigate("/dashboard") }}>
+                <Button onClick={() => { navigate("/") }}>
                     Back
                 </Button>
             </>)
@@ -70,17 +88,17 @@ export function PlayerScreen() {
 
     return (
         <AppLayout
-            header={exercise.problem.title}
+            header={problem.title}
             footer={
                 <Stack direction="row" spacing={1}>
-                    <Button fullWidth variant="contained" onClick={() => { markAnswer(exercise, "failed"); fail() }}>
+                    <Button fullWidth variant="contained" onClick={() => { onAnswer("failed") }}>
                         Failed
                     </Button>
 
-                    <Button fullWidth variant="contained" onClick={() => { markAnswer(exercise, "solved"); solve() }}>
+                    <Button fullWidth variant="contained" onClick={() => { onAnswer("solved") }}>
                         Solved
                     </Button>
-                    <Button fullWidth variant="contained" onClick={() => { markAnswer(exercise, "solved", 3); solve() }}>
+                    <Button fullWidth variant="contained" onClick={() => { onAnswer("solved", 5) }}>
                         easy
                     </Button>
 
@@ -95,7 +113,7 @@ export function PlayerScreen() {
             </Stack>
 
             <Stack direction="row" justifyContent="center">
-                <Button onClick={prev}>
+                <Button onClick={onPrev}>
                     Prev
                 </Button>
                 <Button onClick={retreatPly}>
@@ -105,7 +123,7 @@ export function PlayerScreen() {
                 <Button onClick={advancePly}>
                     Adv Ply
                 </Button>
-                <Button onClick={next}>
+                <Button onClick={onNext}>
                     Next
                 </Button>
             </Stack>
@@ -123,15 +141,15 @@ export function PlayerScreen() {
             </Button>}
 
             
-            {exercise.learning &&
+            {learning &&
                 <Stack direction="row" spacing={2}>
                     <Box>
-                        {exercise.learning.solvedCount} /
-                        {exercise.learning.totalCount}
+                        {learning.solvedCount} /
+                        {learning.totalCount}
                     </Box>
                     <Box>
-                        ef{exercise.learning.easeFactor.toFixed(2)},
-                        reviewed at {new Date(exercise.learning.nextReviewedAt).toLocaleString()}
+                        ef{learning.easeFactor.toFixed(2)},
+                        reviewed at {new Date(learning.nextReviewedAt).toLocaleString()}
                     </Box>
 
 
