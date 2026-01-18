@@ -6,7 +6,7 @@ import type { KifData } from "@/domain/kif/types";
 
 export function useReplayFsm(kifData: KifData) {
   //const { board: initialBoard, hands: initialHands, history } = kifData;
-  const { initialState, moves} = kifData
+  const { initialPosition: initialPosition, moves} = kifData
 
   const [state, dispatch] = useReducer(
     (s: typeof initialReplayState, a: ReplayAction) =>
@@ -15,7 +15,7 @@ export function useReplayFsm(kifData: KifData) {
   );
 
   const history = {
-    initial: initialState,
+    initial: initialPosition,
     moves: moves
   }
   const { board, hands } = useMemo(() => {

@@ -1,6 +1,6 @@
 // useFSM.ts
 import { useReducer } from "react"
-import { missionReducer, initialState } from "@/application/missionFsm/MissionReducer"
+import { missionReducer, initialPosition as initialPosition } from "@/application/missionFsm/MissionReducer"
 import type { QueueItem } from "@/application/missionFsm/MissionFsm"
 import type { Problem } from "@/domain/problem/Problem"
 
@@ -9,7 +9,7 @@ export const buildQueue = (problems: Problem[]): QueueItem[] => {
     
 }
 export function useMissionFsm() {
-  const [state, dispatch] = useReducer(missionReducer, initialState)
+  const [state, dispatch] = useReducer(missionReducer, initialPosition)
 
   // ラッパー
   const start = (queue: QueueItem[], startIndex?: number) => {

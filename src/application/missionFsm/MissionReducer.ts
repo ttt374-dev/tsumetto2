@@ -1,6 +1,6 @@
 import type { MissionAction, MissionState } from "./MissionFsm"
 
-export const initialState: MissionState = {
+export const initialPosition: MissionState = {
   queue: [],
   currentIndex: 0,
   phase: "problem",
@@ -12,7 +12,7 @@ export function missionReducer(state: MissionState, action: MissionAction): Miss
   switch (action.type) {    
     case "START":
       return {
-        ...initialState,
+        ...initialPosition,
         queue: action.payload.queue,
         currentIndex: action.payload.startIndex ?? 0,
       }
@@ -72,7 +72,7 @@ export function missionReducer(state: MissionState, action: MissionAction): Miss
       }
 
     case "RESET":
-      return initialState  // TODO
+      return initialPosition  // TODO
 
     default:
       return state

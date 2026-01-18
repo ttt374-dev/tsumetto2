@@ -1,7 +1,7 @@
 import { Box } from "@mui/material";
 import styles from "./BoardView.module.css";
 import type { Board } from "@/domain/kif/types/Board";
-import { BoardState, displayPiece, Hand, kanjiToPieceItem, type Hands, type Piece, type PieceType, type Player } from "@/domain/kif/types";
+import { Position, displayPiece, Hand, kanjiToPieceItem, type Hands, type Piece, type PieceType, type Player } from "@/domain/kif/types";
 import { numberToKanjiTwoDigits } from "./numberToKanji";
 
 interface Props {

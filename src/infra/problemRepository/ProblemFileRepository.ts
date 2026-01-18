@@ -23,8 +23,7 @@ export class ProblemFileRepository implements ProblemRepository {
             console.log("load", dtos)
             dtos.map(dto => {
                 const p = Problem.fromDTO(dto)
-                //console.log(p)
-                //p.kifData.initialState.board.dump()
+
             })
             return dtos.map(dto =>
                 Problem.fromDTO(dto)

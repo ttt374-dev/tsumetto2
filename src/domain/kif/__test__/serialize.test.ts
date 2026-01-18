@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { Piece } from "../types/Piece";
-import { BoardState } from "../types";
+import { Position } from "../types";
 import { pink } from "@mui/material/colors";
 import { parseKif } from "../parser/parseKif";
 
@@ -15,8 +15,8 @@ describe("serialize", ()=>{
     })
 
     it("boardstate", () => {
-        const boardState = BoardState.create()
-        expect(BoardState.fromDTO(boardState.toDTO())).toEqual(boardState)
+        const boardState = Position.create()
+        expect(Position.fromDTO(boardState.toDTO())).toEqual(boardState)
     })
 
     it("parsed data", () => {
@@ -32,8 +32,8 @@ describe("serialize", ()=>{
         const r = parseKif(text)
         expect(r.ok).toBeTruthy
         if (r.ok){
-            const boardState = r.value.initialState
-            expect(BoardState.fromDTO(boardState.toDTO())).toEqual(boardState)
+            const boardState = r.value.initialPosition
+            expect(Position.fromDTO(boardState.toDTO())).toEqual(boardState)
         }
     })
 })

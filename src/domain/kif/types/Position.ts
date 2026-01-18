@@ -4,24 +4,24 @@ import { Hand, Hands, type HandDTO } from "./Hand"
 import { Piece, type Player } from "./Piece"
 import type { Move } from "./Move"
 
-export class BoardState {
+export class Position {
     constructor(
         readonly board: Board,
         readonly hands: Hands,
         readonly turn: Player = "black"
     ) { }
-    static create(): BoardState {
-        return new BoardState(Board.create(), Hands.empty())
+    static create(): Position {
+        return new Position(Board.create(), Hands.empty())
     }
 
-    applyMove(move: Move): BoardState {
+    applyMove(move: Move): Position {
         if (move.isDrop()) {
             return this.applyDrop(move)
         }
         return this.applyNormalMove(move)
     }
 
-    private applyNormalMove(move: Move): BoardState {
+    private applyNormalMove(move: Move): Position {
         const from = move.from!
         const to = move.to
 
@@ -46,13 +46,13 @@ export class BoardState {
                 .set(from, null)
                 .set(to, piece)
 
-        return new BoardState(
+        return new Position(
             nextBoard,
             hands,
             flip(this.turn)
         )
     }
-    private applyDrop(move: Move): BoardState {
+    private applyDrop(move: Move): Position {
         const piece = new Piece(move.pieceType, this.turn)
 
         const nextBoard = this.board.set(move.to, piece)
@@ -62,7 +62,7 @@ export class BoardState {
         //    [this.turn]: this.hands[this.turn].remove(move.pieceType)
         //}
 
-        return new BoardState(
+        return new Position(
             nextBoard,
             nextHands,
             flip(this.turn)
@@ -70,7 +70,7 @@ export class BoardState {
     }
     //////////////////////////
     // serialize    
-    toDTO(): BoardStateDTO {
+    toDTO(): PositionDTO {
         return {
             board: this.board.toDTO(),
             hands: this.hands.toDTO(),
@@ -78,8 +78,8 @@ export class BoardState {
         }
     }
 
-    static fromDTO(dto: BoardStateDTO): BoardState {
-        return new BoardState(
+    static fromDTO(dto: PositionDTO): Position {
+        return new Position(
             Board.fromDTO(dto.board),
             Hands.fromDTO(dto.hands),
             
@@ -93,7 +93,7 @@ export class BoardState {
 const flip = (c: Player): Player => (c === "black" ? "white" : "black")
 
 
-export type BoardStateDTO = {
+export type PositionDTO = {
     board: BoardDTO
     hands: {
         black: HandDTO

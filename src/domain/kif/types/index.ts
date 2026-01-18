@@ -1,5 +1,5 @@
 export * from './Board'
-export * from './BoardState'
+export * from './Position'
 export * from './Hand'
 export * from './KifData'
 export * from './Move'

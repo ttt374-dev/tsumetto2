@@ -2,11 +2,11 @@ import { describe, expect, it } from "vitest";
 import { Piece } from "../types/Piece";
 import { Move } from "../types/Move";
 import { Board } from "../types/Board";
-import { BoardState } from "../types/BoardState";
+import { Position } from "../types/Position";
 import { Hand, Hands } from "../types/Hand";
 
 describe("kif", ()=>{
-    const initialState = BoardState.create()
+    const initialPosition = Position.create()
 
     it("piece", ()=>{        
         const piece = new Piece("pawn", "black")
@@ -16,7 +16,7 @@ describe("kif", ()=>{
     })
 
     it("move", () => {
-        let state = initialState
+        let state = initialPosition
         const move = new Move({ file:1, rank:3}, {file:1, rank: 4}, 'pawn')
         state = move.apply(state)
         expect(state.board.get({file:1, rank: 4})?.type).toEqual("pawn")
@@ -26,7 +26,7 @@ describe("kif", ()=>{
     it("drop", () => {
         const blackHand = new Hand({pawn: 1})
         const hands = Hands.create(blackHand, Hand.empty())
-        let state = new BoardState(Board.create(), hands)
+        let state = new Position(Board.create(), hands)
 
         //const piece = new Piece("pawn")
         const move = new Move(null, { file:1, rank:1 }, "pawn")   
@@ -37,13 +37,13 @@ describe("kif", ()=>{
 
     })
     it("promote", () => {
-        let state = initialState
+        let state = initialPosition
         const move = new Move({file:1, rank:3}, { file:1, rank: 4}, "pawn", true)
         state = move.apply(state)
         expect(state.board.get({file: 1, rank: 4})?.promoted).toBeTruthy       
     })
     it("相手の駒を取る", () => {
-        let state = initialState
+        let state = initialPosition
         const move = new Move({file:1, rank:3}, { file:1, rank: 7}, "pawn", true)
         state = move.apply(state)
         expect(state.hands.get("black").count('pawn')).toEqual(1)

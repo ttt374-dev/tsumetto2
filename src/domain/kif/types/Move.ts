@@ -1,4 +1,4 @@
-import type { BoardState } from "./BoardState"
+import type { Position } from "./Position"
 import type { PieceType, Player, Square } from "./Piece"
 
 export class Move {
@@ -14,7 +14,7 @@ export class Move {
         return this.from === null
     }
 
-    apply(state: BoardState): BoardState {
+    apply(state: Position): Position {
         return state.applyMove(this)
     }
     /////////////////////////////////
@@ -52,7 +52,7 @@ export type MoveDTO = {
 ///////////////////////////////////
 
 export type KifHistory = { 
-    initial: BoardState
+    initial: Position
     moves: Move[]
 }
     

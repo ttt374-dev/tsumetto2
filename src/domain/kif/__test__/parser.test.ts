@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { Board, BoardState, Hand, Hands, Move } from "../types";
+import { Board, Position, Hand, Hands, Move } from "../types";
 import { parseKif } from "../parser/parseKif";
 import { PanoramaFishEyeSharp, PasswordRounded, RttRounded } from "@mui/icons-material";
 import { parseMoveLine } from "../parser/parseMove";
@@ -23,7 +23,7 @@ describe("parse moves", () => {
 
     it("打", () => {
         const text = "  55 ５五桂打        "
-        const state = BoardState.create()
+        const state = Position.create()
         const parsed = parseMoveLine(text)
         expect(parsed).toBeTruthy
         if (parsed) {
@@ -47,7 +47,7 @@ describe("parse moves", () => {
         const text = "  1 ５五成桂(29)"
         //let state = BoardState.create()
         const hands = Hands.empty()
-        let state = new BoardState(Board.create(), hands.add('black', 'knight'))
+        let state = new Position(Board.create(), hands.add('black', 'knight'))
         const drop = new Move(null, {file: 2, rank: 9}, "knight")
         state = drop.apply(state)
         const parsed = parseMoveLine(text)
@@ -62,7 +62,7 @@ describe("parse moves", () => {
     })
     it("右", () => {
         const text = "   2 １四金右(13)        ( 0:00/00:00:00)"
-        const state = BoardState.create()
+        const state = Position.create()
         const parsed = parseMoveLine(text)
         expect(!parsed).toBeTruthy
         if (parsed){
@@ -140,7 +140,7 @@ describe("parse board", () => {
         const r = parseKif(text)
         expect(r.ok).toBeTruthy
         if (r.ok) {
-            const board = r.value.initialState.board
+            const board = r.value.initialPosition.board
             expect(board.get({ file: 1, rank: 3 })?.type).toEqual('pawn')
         }
     })
@@ -150,7 +150,7 @@ describe("parse board", () => {
         const r = parseKif(text)
         expect(r.ok).toBeTruthy
         if (r.ok){
-            const board = r.value.initialState.board
+            const board = r.value.initialPosition.board
 
             expect(board.get({file: 1, rank: 2})?.type).toEqual("king")
             expect(board.get({file: 3, rank: 4})?.owner).toEqual("white")
@@ -162,7 +162,7 @@ describe("parse board", () => {
         const r = parseKif(text)
         expect(r.ok).toBeTruthy
         if (r.ok){
-            const hands = r.value.initialState.hands
+            const hands = r.value.initialPosition.hands
             expect(hands.get("white").count("bishop")).toEqual(2)
         }
     })
@@ -190,9 +190,9 @@ describe("実録", () => {
         if (r.ok){
             const moves = r.value.moves
             expect(moves.length).toEqual(11)
-            const initial = BoardState.create()
+            const initial = Position.create()
             //initial.board.dump()
-            const history = { initial: BoardState.create(), moves: moves}
+            const history = { initial: Position.create(), moves: moves}
             const state = buildUntilPly(history, 11)
             expect(state.board.get({file: 4, rank: 8})?.type).toEqual("king")
         }

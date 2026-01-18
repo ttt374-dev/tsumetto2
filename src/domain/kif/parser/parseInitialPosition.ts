@@ -1,4 +1,4 @@
-import { Board, BoardState, Hand, Hands, kanjiToPieceItem, Piece, type PieceType } from "../types";
+import { Board, Position, Hand, Hands, kanjiToPieceItem, Piece, type PieceType } from "../types";
 
 export function parseInitialBoard(lines: string[]): Board | null {
      const boardLines = extractBoardBodyLines(lines);

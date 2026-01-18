@@ -7,7 +7,7 @@ import { AppLayout } from "../common/AppLayout"
 import BoardView from "./components/BoardView"
 import { useReplayFsm } from "../../application/ReplayFsm/useReplayFsm"
 import MovesView from "./components/MovesView"
-import { BoardState, KifData } from "@/domain/kif/types"
+import { Position, KifData } from "@/domain/kif/types"
 
 export function PlayerScreen() {
     const [ showMoves, setShowMoves ] = useState(false)

@@ -1,9 +1,9 @@
-import { BoardState, kanjiToPieceItem, Move, type KifData, type KifHeader, type PieceType, type Player, type Square } from "../types"
+import { Position, kanjiToPieceItem, Move, type KifData, type KifHeader, type PieceType, type Player, type Square } from "../types"
 
 
 export function parseMoves(
     lines: string[],
-    initial: BoardState
+    initial: Position
 ): Move[] {
     let state = initial
     const moves: Move[] = []
