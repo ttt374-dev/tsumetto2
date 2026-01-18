@@ -1,8 +1,8 @@
-import { DefaultSortState, type SortKey, type SortState } from "@/domain/missionItem/query/sort"
-import { applySort } from "@/domain/missionItem/query/applySort"
-import { DefaultFilterState, type FilterState } from "@/domain/missionItem/query/filter"
-import { applyFilter } from "@/domain/missionItem/query/applyFilter"
-import { applyQuery } from "@/domain/missionItem/query/applyQuery"
+import { DefaultSortState, type SortKey, type SortState } from "@/domain/Exercise/query/sort"
+import { applySort } from "@/domain/Exercise/query/applySort"
+import { DefaultFilterState, type FilterState } from "@/domain/Exercise/query/filter"
+import { applyFilter } from "@/domain/Exercise/query/applyFilter"
+import { applyQuery } from "@/domain/Exercise/query/applyQuery"
 import { useState } from "react"
 //import { useMediaQuery } from "@mui/material"
 

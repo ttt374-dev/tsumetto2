@@ -1,15 +1,15 @@
 import { Box, Button, IconButton, List, ListItem, Stack } from "@mui/material"
 import DeleteIcon from '@mui/icons-material/Delete';
 
-import { useMissionItem } from "../../application/useMissionItem"
+import { useExercise } from "../../application/useExercise"
 import { useFileSelector } from "../sharedComponents/useFileSelector"
 import { useToast } from "../App/providers/ToastProvider"
-import type { MissionItem } from "@/domain/missionItem/MissionItem"
+import type { Exercise } from "@/domain/Exercise/Exercise"
 import { AppLayout } from "../common/AppLayout"
 import { createImportProblemsUsecase, type ImportResult } from "@/usecase/importProblemsUseCase"
 import { useRepositoryContext } from "../App/providers/RepositoryProvider"
 import { useQuery } from "@/application/useQuery"
-import { applyQuery } from "@/domain/missionItem/query/applyQuery"
+import { applyQuery } from "@/domain/Exercise/query/applyQuery"
 import LibrarySortControl from "./components/LibrarySortControl"
 
 export function useLibrary() {
@@ -26,9 +26,9 @@ export function useLibrary() {
 }
 
 export function LibraryScreen() {
-    const { missionItems, reload,        
+    const { exerciseList, reload,        
         addProblems, deleteProblem,        
-        toggleStar, markAnswer, clearAll } = useMissionItem()
+        toggleStar, markAnswer, clearAll } = useExercise()
     const { sortState, setSortState, filterState, setFilterState,
         toggleSort, toggleFilter, }  = useQuery()
 
@@ -50,14 +50,14 @@ export function LibraryScreen() {
         if (!window.confirm("ok to delete all ?")) return
         clearAll()
     }
-    const handleDelete = (m: MissionItem) => {
+    const handleDelete = (m: Exercise) => {
         if (!window.confirm("ok to delete ? ")) return
         deleteProblem(m.problem.id).then(() => {
             toast({ message: "deleted" })
         })
     }
 
-    const libraryItems = applyQuery(missionItems, sortState, filterState)
+    const libraryItems = applyQuery(exerciseList, sortState, filterState)
     return (
         <AppLayout>
             <Stack direction="row">

@@ -4,12 +4,12 @@ import { useFsmContext } from "../App/providers/fsmProvider";
 import { useNavigate } from "react-router-dom";
 import { AppLayout } from "../common/AppLayout";
 import { Filter } from "@mui/icons-material";
-import { DefaultFilterState, type FilterState } from "@/domain/missionItem/query/filter";
+import { DefaultFilterState, type FilterState } from "@/domain/Exercise/query/filter";
 import { useEffect, useMemo, useState } from "react";
-import { useMissionItem } from "@/application/useMissionItem";
-import { applyQuery } from "@/domain/missionItem/query/applyQuery";
+import { useExercise } from "@/application/useExercise";
+import { applyQuery } from "@/domain/Exercise/query/applyQuery";
 import { useQuery } from "@/application/useQuery";
-import type { SortState } from "@/domain/missionItem/query/sort";
+import type { SortState } from "@/domain/Exercise/query/sort";
 
 function DashboardFilterControl({ filter, onToggleFilter }: {
     filter: FilterState, onToggleFilter: (key: keyof FilterState) => void
@@ -35,13 +35,13 @@ export function DashboardScreen() {
     const navigate = useNavigate()
     const fsm = useFsmContext()
 
-    const { missionItems } = useMissionItem()
+    const { exerciseList } = useExercise()
     const { filterState, toggleFilter, setFilter} = useQuery()
 
     const queriedItems = useMemo(() => {
         const sortState: SortState = { key: "nextReviewedAt", order: "asc"}
-        return applyQuery(missionItems, sortState, filterState)
-    }, [missionItems, filterState])
+        return applyQuery(exerciseList, sortState, filterState)
+    }, [exerciseList, filterState])
 
     const handleStart = () => {
         fsm.start(buildQueue(queriedItems.map(r => r.problem)))

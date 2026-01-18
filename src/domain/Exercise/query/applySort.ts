@@ -3,14 +3,13 @@
 import type { Problem } from "@/domain/problem/Problem"
 import type { SortState } from "./sort"
 import type { LearningRecord } from "@/domain/learning/Learning"
-import type { MissionItem } from "../MissionItem"
+import type { Exercise } from "../Exercise"
 
-export function applySort(missionItems: MissionItem[],    
-  ///missionItems: Problem[],
+export function applySort(exerciseList: Exercise[],    
   sort: SortState,
   //learningRecords?: LearningRecord
-): MissionItem[] {    
-    const sorted = [...missionItems]
+): Exercise[] {    
+    const sorted = [...exerciseList]
     sorted.sort((a, b) => {
       let vA: any
       let vB: any

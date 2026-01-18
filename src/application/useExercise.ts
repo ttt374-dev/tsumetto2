@@ -1,14 +1,14 @@
 import { Problem, type ProblemId } from "../domain/problem/Problem"
 import { useMemo, useState } from "react"
 
-import { createMissionItems } from "@/domain/missionItem/createMissionItems"
+import { createExerciseList } from "@/domain/Exercise/createExerciseList"
 import type { AnswerResult } from "@/application/missionFsm/MissionFsm"
 import { createProblemStore } from "./store/useProblemStore"
 import { useRepositoryContext } from "@/ui/App/providers/RepositoryProvider"
 import { createLearningStore } from "./store/useLearningStore"
-import type { MissionItem } from "@/domain/missionItem/MissionItem"
+import type { Exercise } from "@/domain/Exercise/Exercise"
 
-export function useMissionItem() {
+export function useExercise() {
     const repos = useRepositoryContext()    
     //const stores = useStoreContext()
     const { problems, 
@@ -17,24 +17,24 @@ export function useMissionItem() {
          toggleStar: storeToggleStar, setTitle, clearAll } = createProblemStore(repos.problem) //stores.problem
     const { learningRecords, update: updateLearning } = createLearningStore(repos.learning)  // stores.learning
 
-    const missionItems: MissionItem[] = useMemo(() => { 
-        return createMissionItems(problems, learningRecords)
+    const exerciseList: Exercise[] = useMemo(() => { 
+        return createExerciseList(problems, learningRecords)
      //   return applyQuery(items, sortState, filterState)        
     }, [problems, learningRecords]) // , sortState, filterState])
 
     /////////////////////////
     // query
-    const find = (problemId: ProblemId): MissionItem | undefined => {
-        return missionItems.find((m) => m.problem.id === problemId)
+    const find = (problemId: ProblemId): Exercise | undefined => {
+        return exerciseList.find((m) => m.problem.id === problemId)
     }
     //////////////////////
     // command
     
-    const toggleStar = (m: MissionItem) => {
+    const toggleStar = (m: Exercise) => {
         storeToggleStar(m.problem)
         //await setTitle(m.problem, "asdfasdf")
     }
-    const markAnswer = (m: MissionItem, answerResult: AnswerResult, seconds: number = 10) => {
+    const markAnswer = (m: Exercise, answerResult: AnswerResult, seconds: number = 10) => {
         console.log("mark answer", m, answerResult, seconds)
         const problemId = m.problem.id
         updateLearning(problemId, r => r.answer(answerResult, seconds))
@@ -48,7 +48,7 @@ export function useMissionItem() {
 
     return { 
         //problems, learningRecords, 
-        missionItems, find,
+        exerciseList, find,
 
         reload,
         

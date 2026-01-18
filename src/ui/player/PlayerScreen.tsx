@@ -1,6 +1,6 @@
 import { useFsmContext } from "../App/providers/fsmProvider"
 import { Box, Button, List, ListItem, Stack } from "@mui/material"
-import { useMissionItem } from "../../application/useMissionItem"
+import { useExercise } from "../../application/useExercise"
 import { useEffect, useMemo, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { AppLayout } from "../common/AppLayout"
@@ -15,10 +15,10 @@ export function PlayerScreen() {
         advancePhase, retreatPhase,
     } = useFsmContext()
 
-    const { missionItems, markAnswer, toggleStar } = useMissionItem()
+    const { exerciseList, markAnswer, toggleStar } = useExercise()
 
     const problemId = fsmState.queue[fsmState.currentIndex]?.problemId
-    const missionItem = missionItems.find((m) => m.problem.id === problemId)
+    const exercise = exerciseList.find((m) => m.problem.id === problemId)
 
     const navigate = useNavigate()
 
@@ -46,7 +46,7 @@ export function PlayerScreen() {
         setShowMoves(false)
     }, [fsmState.currentIndex])
 
-    const kifdata = missionItem?.problem.kifData ?? KifData.create()
+    const kifdata = exercise?.problem.kifData ?? KifData.create()
     const { board, hands, moves, currentPlyIndex,
         advancePly, retreatPly,
         moveToPly, resetPly,
@@ -55,7 +55,7 @@ export function PlayerScreen() {
     
 
 
-    if (!missionItem) {
+    if (!exercise) {
         return (
             <>
                 <Box>
@@ -70,17 +70,17 @@ export function PlayerScreen() {
 
     return (
         <AppLayout
-            header={missionItem.problem.title}
+            header={exercise.problem.title}
             footer={
                 <Stack direction="row" spacing={1}>
-                    <Button fullWidth variant="contained" onClick={() => { markAnswer(missionItem, "failed"); fail() }}>
+                    <Button fullWidth variant="contained" onClick={() => { markAnswer(exercise, "failed"); fail() }}>
                         Failed
                     </Button>
 
-                    <Button fullWidth variant="contained" onClick={() => { markAnswer(missionItem, "solved"); solve() }}>
+                    <Button fullWidth variant="contained" onClick={() => { markAnswer(exercise, "solved"); solve() }}>
                         Solved
                     </Button>
-                    <Button fullWidth variant="contained" onClick={() => { markAnswer(missionItem, "solved", 3); solve() }}>
+                    <Button fullWidth variant="contained" onClick={() => { markAnswer(exercise, "solved", 3); solve() }}>
                         easy
                     </Button>
 
@@ -123,15 +123,15 @@ export function PlayerScreen() {
             </Button>}
 
             
-            {missionItem.learning &&
+            {exercise.learning &&
                 <Stack direction="row" spacing={2}>
                     <Box>
-                        {missionItem.learning.solvedCount} /
-                        {missionItem.learning.totalCount}
+                        {exercise.learning.solvedCount} /
+                        {exercise.learning.totalCount}
                     </Box>
                     <Box>
-                        ef{missionItem.learning.easeFactor.toFixed(2)},
-                        reviewed at {new Date(missionItem.learning.nextReviewedAt).toLocaleString()}
+                        ef{exercise.learning.easeFactor.toFixed(2)},
+                        reviewed at {new Date(exercise.learning.nextReviewedAt).toLocaleString()}
                     </Box>
 
 

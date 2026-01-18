@@ -1,6 +1,6 @@
 import type { Problem } from "@/domain/problem/Problem";
 import type { FilterState } from "./filter";
-import type { MissionItem } from "../MissionItem";
+import type { Exercise } from "../Exercise";
 
 function matchesText(problem: Problem, text?: string): boolean {
     if (!text) return true;
@@ -11,14 +11,14 @@ function matchesText(problem: Problem, text?: string): boolean {
 }
 //////////////////////////////////
 export const applyFilter = (
-    missionItems: MissionItem[],
+    exerciseList: Exercise[],
     //problems: Problem[],
     filter: FilterState,
     //learningRecords?: LearningRecord,
-): MissionItem[] => {
+): Exercise[] => {
     const now = Date.now();
     //console.log("filter problems", filter, learningRecords)
-    return missionItems.filter(item => {
+    return exerciseList.filter(item => {
         const learning = item.learning
 
         // 未回答のみ
