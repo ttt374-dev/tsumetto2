@@ -19,7 +19,6 @@ export function useExercise() {
 
     const exerciseList: Exercise[] = useMemo(() => { 
         return createExerciseList(problems, learningRecords)
-     //   return applyQuery(items, sortState, filterState)        
     }, [problems, learningRecords]) // , sortState, filterState])
     
     /////////////////////////

@@ -1,15 +1,18 @@
 import { DefaultSortState, type SortKey, type SortState } from "@/domain/Exercise/query/sort"
-import { applySort } from "@/domain/Exercise/query/applySort"
 import { DefaultFilterState, type FilterState } from "@/domain/Exercise/query/filter"
-import { applyFilter } from "@/domain/Exercise/query/applyFilter"
-import { applyQuery } from "@/domain/Exercise/query/applyQuery"
 import { useState } from "react"
 //import { useMediaQuery } from "@mui/material"
 
+type UseQueryOptions = {
+  sort?: Partial<SortState>
+  filter?: Partial<FilterState>
+}
 
-export function useQuery(){
-    const [ sortState, setSortState ] = useState<SortState>(DefaultSortState)
-    const [ filterState, setFilterState ] = useState<FilterState>(DefaultFilterState)   
+export function useQuery(options?: UseQueryOptions){
+    const [ sortState, setSortState ] = useState<SortState>(
+        {...DefaultSortState, ...options?.sort})
+    const [ filterState, setFilterState ] = useState<FilterState>(
+        {...DefaultFilterState, ...options?.filter})   
 
      const toggleSort = (key: SortKey) => {
         setSortState(prev => ({

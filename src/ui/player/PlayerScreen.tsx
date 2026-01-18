@@ -17,7 +17,7 @@ export function PlayerScreen({ problem, learning, onNext, onPrev, onAnswer}: {
     learning?: Learning,
     onNext: () => void,
     onPrev: () => void, 
-    onAnswer: (answerResult: AnswerResult, secToTaken?: number) => void,
+    onAnswer: (problem: Problem, answerResult: AnswerResult, secToTaken?: number) => void,
 }) {
     const [ showMoves, setShowMoves ] = useState(false)
     /*
@@ -91,14 +91,14 @@ export function PlayerScreen({ problem, learning, onNext, onPrev, onAnswer}: {
             header={problem.title}
             footer={
                 <Stack direction="row" spacing={1}>
-                    <Button fullWidth variant="contained" onClick={() => { onAnswer("failed") }}>
+                    <Button fullWidth variant="contained" onClick={() => { onAnswer(problem, "failed") }}>
                         Failed
                     </Button>
 
-                    <Button fullWidth variant="contained" onClick={() => { onAnswer("solved") }}>
+                    <Button fullWidth variant="contained" onClick={() => { onAnswer(problem, "solved") }}>
                         Solved
                     </Button>
-                    <Button fullWidth variant="contained" onClick={() => { onAnswer("solved", 5) }}>
+                    <Button fullWidth variant="contained" onClick={() => { onAnswer(problem, "solved", 5) }}>
                         easy
                     </Button>
 
