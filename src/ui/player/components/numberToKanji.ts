@@ -27,11 +27,3 @@ export function numberToKanjiTwoDigits(num: number): string {
 
     return result;
 }
-
-// 使用例
-console.log(numberToKanjiTwoDigits(0));  // 〇
-console.log(numberToKanjiTwoDigits(7));  // 七
-console.log(numberToKanjiTwoDigits(10)); // 十
-console.log(numberToKanjiTwoDigits(21)); // 二十一
-console.log(numberToKanjiTwoDigits(40)); // 四十
-console.log(numberToKanjiTwoDigits(99)); // 九十九

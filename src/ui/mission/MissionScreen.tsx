@@ -4,12 +4,12 @@ import { DashboardScreen } from "../dashboard/DashboardScreen";
 import { PlayerScreen } from "../player/PlayerScreen";
 import { SummaryScreen } from "../summary/SummaryScreen";
 import { useMissionController } from "./hooks/useMissionController";
-import { useQueryContext } from "../App/providers/QueryProvider";
+import { useMissionQueryContext } from "../App/providers/QueryProvider";
 
 
 export function MissionScreen() {
     const { exerciseList, markAnswer } = useExercise()
-    const query = useQueryContext()    
+    const query = useMissionQueryContext()    
     const queuedExerciseList = applyQuery(exerciseList, query.sortState, query.filterState)
     const mission = useMissionController(queuedExerciseList, markAnswer)      
 

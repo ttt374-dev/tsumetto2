@@ -11,7 +11,6 @@ const ToastContext = createContext<(toast: Toast) => void>(() => { });
 export function ToastProvider({ children }: { children: React.ReactNode }) {
     const [toast, setToast] = useState<Toast | null>(null);
 
-    const handleClose = () => {  }
     return (
         <ToastContext.Provider value={setToast}>
             {children}
@@ -20,8 +19,6 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
                     {toast?.message}
                 </Alert>
             </Snackbar>
-
-
         </ToastContext.Provider>
     );
 }

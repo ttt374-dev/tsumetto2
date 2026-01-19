@@ -4,24 +4,36 @@ import { createContext, useContext } from "react"
 
 // context を作る
 type QueryContextValue = ReturnType<typeof useQuery>
-export const QueryContext = createContext<QueryContextValue | null > (null)
+export const MissionQueryContext = createContext<QueryContextValue | null > (null)
+export const LibraryQueryContext = createContext<QueryContextValue | null > (null)
 
-export const QueryProvider = ({children}: { children: ReactNode}) => {
+// mission
+export const MissionQueryProvider = ({children}: { children: ReactNode}) => {
+    const query = useQuery()
     return (
-        <QueryContext.Provider value={
-            useQuery()  
-        }>
+        <MissionQueryContext.Provider value={query}>
             {children}
-        </QueryContext.Provider>        
+        </MissionQueryContext.Provider>        
     )
 }
-
-// Hook で安全に取得
-export function useQueryContext(): QueryContextValue {
-  const ctx = useContext(QueryContext)
+export function useMissionQueryContext(): QueryContextValue {
+  const ctx = useContext(MissionQueryContext)
   if (!ctx) throw new Error("context provider error");
   return ctx;
 }
 
 
-
+// library
+export const LibraryQueryProvider = ({children}: { children: ReactNode}) => {
+    const query = useQuery()
+    return (
+        <LibraryQueryContext.Provider value={query}>
+            {children}
+        </LibraryQueryContext.Provider>        
+    )
+}
+export function useLibraryQueryContext(): QueryContextValue {
+  const ctx = useContext(LibraryQueryContext)
+  if (!ctx) throw new Error("context provider error");
+  return ctx;
+}

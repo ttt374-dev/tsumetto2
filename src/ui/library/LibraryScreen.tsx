@@ -11,6 +11,7 @@ import { useRepositoryContext } from "../App/providers/RepositoryProvider"
 import { useQuery } from "@/application/useQuery"
 import { applyQuery } from "@/domain/Exercise/query/applyQuery"
 import LibrarySortControl from "./components/LibrarySortControl"
+import { useLibraryQueryContext } from "../App/providers/QueryProvider";
 
 export function useLibrary() {
     const repos = useRepositoryContext()
@@ -28,7 +29,7 @@ export function useLibrary() {
 export function LibraryScreen() {
     const { exerciseList, reload,        
         deleteProblem, toggleStar, deleteAllProblems } = useExercise()
-    const query = useQuery()
+    const query = useLibraryQueryContext()
 
     const { openFileDialog, inputElement, setOnFilesSelected } = useFileSelector(".kif")
     const toast = useToast()
