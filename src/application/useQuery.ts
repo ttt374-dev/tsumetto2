@@ -19,9 +19,6 @@ export function useQuery(options?: UseQueryOptions){
             key,
             order: prev.key === key && prev.order === 'asc' ? 'desc' : 'asc'
         }))
-        //const order = sortState.order === "asc" ? "desc" : "asc"
-        //setSortState(prev => { return { ...prev, order: order}})
-        
     }
 
     const toggleFilter = (key: keyof FilterState) => {

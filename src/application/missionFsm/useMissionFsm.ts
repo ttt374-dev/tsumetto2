@@ -1,3 +1,4 @@
+/*
 // useFSM.ts
 import { useReducer } from "react"
 import { missionReducer, initialPosition as initialPosition } from "@/application/missionFsm/MissionReducer"
@@ -38,3 +39,4 @@ export function useMissionFsm() {
     dispatch, // 必要なら生 dispatch も公開
   }
 }
+*/

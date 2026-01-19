@@ -1,3 +1,4 @@
+/*
 import type { MissionAction, MissionState } from "./MissionFsm"
 
 export const initialPosition: MissionState = {
@@ -77,4 +78,4 @@ export function missionReducer(state: MissionState, action: MissionAction): Miss
     default:
       return state
   }
-}
+}*/

@@ -1,5 +1,5 @@
 
-
+/*
 export type MissionState = {
   queue: QueueItem[]
   currentIndex: number
@@ -37,4 +37,6 @@ export type AttemptRecord = {
 
 export type PlayerPhase = "problem" | "solution" | "answered"
 
-export type SolvedResult = "solved" | "failed"
+
+
+*/

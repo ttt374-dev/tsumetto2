@@ -1,20 +1,17 @@
 import { useExercise } from "@/application/useExercise";
-import { useQuery } from "@/application/useQuery";
 import { applyQuery } from "@/domain/Exercise/query/applyQuery";
 import { DashboardScreen } from "../dashboard/DashboardScreen";
 import { PlayerScreen } from "../player/PlayerScreen";
-import { useNavigate } from "react-router-dom";
 import { SummaryScreen } from "../summary/SummaryScreen";
 import { useMissionController } from "./hooks/useMissionController";
+import { useQueryContext } from "../App/providers/QueryProvider";
 
 
 export function MissionScreen() {
     const { exerciseList, markAnswer } = useExercise()
-    const query = useQuery({ filter: { isMissionTarget: true } })
+    const query = useQueryContext()    
     const queuedExerciseList = applyQuery(exerciseList, query.sortState, query.filterState)
     const mission = useMissionController(queuedExerciseList, markAnswer)      
-    const navigate = useNavigate()
-    
 
     switch (mission.phase) {
         case "idle":
@@ -37,11 +34,10 @@ export function MissionScreen() {
                 />
             )
         case "summary":
-            //console.log("summary", mission.missionResultList)
             return (
                 <SummaryScreen
                     missionResultEntryList={mission.missionResultList}
-                    onNavigateToDashboard={() => navigate("/")}
+                    onBackToDashboard={() => { mission.resetPhase()}}
                 />
             )
     }

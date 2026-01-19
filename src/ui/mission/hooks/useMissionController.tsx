@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import type { SolvedResult } from "@/application/missionFsm/MissionFsm";
 import type { Exercise } from "@/domain/Exercise/Exercise";
 import type { Problem, ProblemId } from "@/domain/problem/Problem";
-import type { MissionResultEntry } from "@/domain/mission/MissionSummary";
+import type { MissionResultEntry, SolvedResult } from "@/domain/mission/MissionSummary";
 
 export type MissionPhase = "idle" | "playing" | "summary"
 
@@ -27,6 +26,9 @@ export function useMissionController(exercises: Exercise[],
         setIndex(0)
         setMissionResultList([])
         //console.log("start", missionResultList)
+    }
+    const resetPhase = () => {
+        setPhase("idle")        
     }
 
     // --- navigation ---
@@ -74,6 +76,8 @@ export function useMissionController(exercises: Exercise[],
         index,
         currentExercise,
         missionResultList,
+
+        resetPhase,
         answer,
         start, next, prev,
     }

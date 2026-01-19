@@ -25,9 +25,9 @@ function SummaryRow({
     )
 }
 /////////////////////////////////////////////
-export function SummaryScreen({ missionResultEntryList, onNavigateToDashboard }: {
+export function SummaryScreen({ missionResultEntryList, onBackToDashboard: onNavigateToDashboard }: {
     missionResultEntryList: MissionResultEntry[],
-    onNavigateToDashboard: () => void,
+    onBackToDashboard: () => void,
 }) {
     //console.log("summary scr", missionResultEntryList)
     const summary = MissionSummary.create(missionResultEntryList)

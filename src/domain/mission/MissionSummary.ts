@@ -1,5 +1,6 @@
-import type { SolvedResult } from "@/application/missionFsm/MissionFsm"
 import type { ProblemId } from "../problem/Problem"
+
+export type SolvedResult = "solved" | "failed"
 
 export type MissionResultEntry = {
     problemId: ProblemId,
