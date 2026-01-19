@@ -1,4 +1,3 @@
-import type { initialReplayState } from "@/application/ReplayFsm/replayReducer"
 import { Board, type BoardDTO } from "./Board"
 import { Hand, Hands, type HandDTO } from "./Hand"
 import { Piece, type Player } from "./Piece"

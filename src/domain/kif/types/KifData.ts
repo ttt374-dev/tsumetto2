@@ -1,4 +1,3 @@
-import type { initialReplayState } from "@/application/ReplayFsm/replayReducer";
 import { Position, type PositionDTO } from "./Position";
 import { Move, type MoveDTO } from "./Move";
 

@@ -1,19 +1,10 @@
 import { Box } from "@mui/material";
 import styles from "./BoardView.module.css";
-import type { Board } from "@/domain/kif/types/Board";
-import { Position, displayPiece, Hand, kanjiToPieceItem, type Hands, type Piece, type PieceType, type Player } from "@/domain/kif/types";
+import { Position, displayPiece, Hand, kanjiToPieceItem, type PieceType} from "@/domain/kif/types";
 import { numberToKanjiTwoDigits } from "./numberToKanji";
-
-interface Props {
-    board: Board;
-    hands: Hands;
-
-}
 
 const fileLabels = ["９", "８", "７", "６", "５", "４", "３", "２", "１"];
 const rankLabels = ["一", "二", "三", "四", "五", "六", "七", "八", "九"];
-//const rankLabels = ["", "九", "八", "七", "六", "五", "四", "三", "二", "一"];
-
 
 function formatHand(hand: Hand): string {
     const parts: string[] = [];    
@@ -22,8 +13,6 @@ function formatHand(hand: Hand): string {
         .filter(([key, item]) => !item.promoted && key !== "王" && key !== "玉")
         .map(([key]) => key as PieceType)
         .reverse(); // 逆順
-    
-    
 
     kanjikeys.forEach(kanjipieceType => {        
         const item = kanjiToPieceItem[kanjipieceType]
@@ -36,7 +25,8 @@ function formatHand(hand: Hand): string {
     //console.log(parts)        
     return parts.length === 0 ? "なし" : parts.join(" ");
 }
-function BoardView({ board, hands }: Props ) {
+function BoardView({ position }: { position: Position}) {
+    const { board, hands } = position
     const ranks = [...Array(9)].map((_, i) => i +1)   //   1 → 9
     const files = [...Array(9)].map((_, i) => 9 - i)   // 9 → 1（将棋表記） ???
 
@@ -84,8 +74,6 @@ function BoardView({ board, hands }: Props ) {
             </div>
         </Box>
     )
-
-
 }
 
 export default BoardView;

@@ -44,25 +44,6 @@ const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
         //return `${index}: ${formatPlayer(move.player)} ${move.moveText} ${formatFrom(move.from ?? null)}`
         
     }
-    /*
-    function formatEvent(event: KifEvent, index: number): string {
-        switch (event.type) {
-            case "start":
-                return "=== 開始局面 ==="
-            case "move":
-                return formatMove(event, index)
-            case "end":
-                return `=== 終了 (${event.reason}) ===`
-            default:
-                return ""
-        }
-
-    }*/
-
-    // 開始局面を表示させるため、先頭に GameStartを挿入
-    //const start: GameStart = { type: "start"}
-    //const eventRows = [start, ...moves]
-    //const toViewerIndex = (moveIndex: number) => { moveIndex+1 }    
     
     function itemStyles(index: number){
         const hilightColor =  "#ffd"
@@ -73,23 +54,22 @@ const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
             cursor: "pointer"
         }
     }
-    return (        
+    return (
         <Box>
-                <div onClick={() => onMoveClick(0)}
-                    style={itemStyles(0)}>
-                    {"=== 開始局面 ==="}
-                </div>
-                
+            <div onClick={() => onMoveClick(0)}
+                style={itemStyles(0)}>
+                {"=== 開始局面 ==="}
+            </div>
             {
                 moves.map((m, i) => (
                     <div
-                        key={i+1}
+                        key={i + 1}
                         ref={(el: HTMLDivElement | null) => {
-                            itemRefs.current[i+1] = el;
+                            itemRefs.current[i + 1] = el;
                         }}
-                        onClick={() => onMoveClick(i+1)}
-                        style={itemStyles(i+1)}>
-                        { formatMove(m, i+1) }
+                        onClick={() => onMoveClick(i + 1)}
+                        style={itemStyles(i + 1)}>
+                        {formatMove(m, i + 1)}
                     </div>
                 ))
             }
