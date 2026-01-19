@@ -10,11 +10,11 @@ import { useMissionController } from "./hooks/useMissionController";
 
 export function MissionScreen() {
     const { exerciseList, markAnswer } = useExercise()
-    const query = useQuery({ filter: { isMissionTarget: false } })
+    const query = useQuery({ filter: { isMissionTarget: true } })
     const queuedExerciseList = applyQuery(exerciseList, query.sortState, query.filterState)
     const mission = useMissionController(queuedExerciseList, markAnswer)      
     const navigate = useNavigate()
-    console.log("mission scr", mission.missionResultList)
+    
 
     switch (mission.phase) {
         case "idle":
@@ -37,7 +37,7 @@ export function MissionScreen() {
                 />
             )
         case "summary":
-            console.log("summary", mission.missionResultList)
+            //console.log("summary", mission.missionResultList)
             return (
                 <SummaryScreen
                     missionResultEntryList={mission.missionResultList}

@@ -6,7 +6,6 @@ import type { MissionResultEntry } from "@/domain/mission/MissionSummary";
 
 export type MissionPhase = "idle" | "playing" | "summary"
 
-
 export function useMissionController(exercises: Exercise[],
     onPersistAnswer: (
         exercise: Exercise,

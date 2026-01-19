@@ -9,7 +9,7 @@ function DashboardFilterControl({ filter, onToggleFilter }: {
 
     return (
         <>
-            <FormControl>
+            <FormControl sx={{p: 2}}>
                 <FormControlLabel control={
                     <Checkbox checked={filter.starredOnly}
                         onChange={() => { onToggleFilter("starredOnly") }} />}

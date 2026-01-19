@@ -29,7 +29,7 @@ export function SummaryScreen({ missionResultEntryList, onNavigateToDashboard }:
     missionResultEntryList: MissionResultEntry[],
     onNavigateToDashboard: () => void,
 }) {
-    console.log("summary scr", missionResultEntryList)
+    //console.log("summary scr", missionResultEntryList)
     const summary = MissionSummary.create(missionResultEntryList)
     return (
         <>
