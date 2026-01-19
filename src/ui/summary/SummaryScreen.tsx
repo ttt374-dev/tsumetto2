@@ -1,6 +1,5 @@
+import { MissionSummary, type MissionResultEntry } from "@/domain/mission/MissionSummary";
 import { Box, Button, Stack } from "@mui/material";
-import { MissionSummary, type MissionResultEntry } from "../mission/hooks/useMissionController";
-
 
 function SummaryRow({
     label,

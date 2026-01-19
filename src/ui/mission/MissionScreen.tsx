@@ -5,7 +5,7 @@ import { DashboardScreen } from "../dashboard/DashboardScreen";
 import { PlayerScreen } from "../player/PlayerScreen";
 import { useNavigate } from "react-router-dom";
 import { SummaryScreen } from "../summary/SummaryScreen";
-import { MissionSummary, useMissionController } from "./hooks/useMissionController";
+import { useMissionController } from "./hooks/useMissionController";
 
 
 export function MissionScreen() {
