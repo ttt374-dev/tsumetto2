@@ -2,7 +2,7 @@ import { useMemo, useEffect, useRef } from "react";
 
 import { Box } from "@mui/material";
 import { Move } from "@/domain/kif/types/Move";
-import { displayPiece, type Player, type Square } from "@/domain/kif/types/Piece";
+import { Square, type Player } from "@/domain/kif/types/Piece";
 import { numberToKanjiTwoDigits } from "./numberToKanji";
 
 interface Props {

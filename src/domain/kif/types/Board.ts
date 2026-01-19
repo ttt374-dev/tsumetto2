@@ -1,6 +1,13 @@
 export type Handicap = "平手" | "二枚落ち" | "四枚落ち"
 
-import { Piece, type PieceDTO, type Square } from "./Piece"
+import { Piece, Square, type PieceDTO, type Player } from "./Piece"
+
+type SquareGrid = Map<string, Piece | null>
+
+function locateEvenMatch(squares: Square, player: Player){
+  
+
+}
 
 export class Board {
   constructor(
@@ -57,19 +64,19 @@ export class Board {
 
   ////
   get(sq: Square): Piece | null {
-    return this.squares.get(key(sq)) ?? null
+    return this.squares.get(sq.key) ?? null
   }
 
   set(sq: Square, piece: Piece | null): Board {
     const next = new Map(this.squares)
-    next.set(key(sq), piece)
+    next.set(sq.key, piece)
     return new Board(next)
   }
   //
     dump() {
         for (let r = 1; r <= 9; r++) {
             for (let f = 1; f <= 9; f++) {
-                const piece = this.get({ file: f, rank: r })
+                const piece = this.get(Square.create(f, r))
                 console.log(`${f},${r}: ${piece?.type}`)
             }
 
@@ -119,8 +126,6 @@ export class Board {
     return new Board(map)
   }
 }
-const key = (sq: Square) => `${sq.file},${sq.rank}`
-
 
 export type BoardDTO = {
   squares: Array<{

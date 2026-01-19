@@ -25,58 +25,77 @@ export const kanjiToPieceItem: Record<string, PieceItem> = {
     王: { type: "king", promoted: false },
     玉: { type: "king", promoted: false }
 }
-
-///////////////////////////////
-export function displayPiece(pieceType: PieceType, promoted: boolean): string{
-  const baseMapping = {
-    pawn: "歩", lance: "香", knight: "桂", silver: "銀", gold: "金", bishop: "角", rook: "飛", king: "玉"
-  }
-  const promotedMapping = {
-    pawn: "と", lance: "杏", knight: "圭", silver: "全", gold: "金", bishop: "馬", rook: "龍", king: "玉"
-  }
-
-  return promoted ? promotedMapping[pieceType] : baseMapping[pieceType]
-
-}
-//export class Square {
-//  constructor(readonly file: number, readonly rank: number) { }
-//}
+/*
 export type Square = {
-  file: number, rank: number,
+    file: number, rank: number,
+}
+    */
+export type SqaureNumber = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+
+function isSquareNumber(n: number): n is SqaureNumber {
+    return n >= 1 && n <= 9
+}
+
+export class Square {
+    constructor(
+        readonly file: SqaureNumber,
+        readonly rank: SqaureNumber,
+    ) {}
+        static create(file: number, rank: number): Square {
+        if (!isSquareNumber(file) || !isSquareNumber(rank)) {
+            throw new Error(`Invalid square: ${file}, ${rank}`)
+        }
+        return new Square(file, rank)
+    }
+
+    get key(): string {
+        return `${this.file},${this.rank}`
+    }
+
 }
 
 export class Piece {
-  constructor(
-    readonly type: PieceType,
-    readonly owner: Player,
-    readonly promoted: boolean = false
-  ) { }
+    constructor(
+        readonly type: PieceType,
+        readonly owner: Player,
+        readonly promoted: boolean = false
+    ) { }
 
-  demote(): Piece {
-    return new Piece(this.type, this.owner, false)
-  }
-
-  promote(): Piece {
-    return new Piece(this.type, this.owner, true)
-  }
-  ///////////////////////////////
-  // seiralize
-  toDTO(): PieceDTO {
-    return {
-      type: this.type,
-      owner: this.owner,
-      promoted: this.promoted,
+    format(): string {
+        const baseMapping = {
+            pawn: "歩", lance: "香", knight: "桂", silver: "銀", gold: "金", bishop: "角", rook: "飛", king: "玉"
+        }
+        const promotedMapping = {
+            pawn: "と", lance: "杏", knight: "圭", silver: "全", gold: "金", bishop: "馬", rook: "龍", king: "玉"
+        }
+        return this.promoted ? promotedMapping[this.type] : baseMapping[this.type]
     }
 
-  }
+    demote(): Piece {
+        return new Piece(this.type, this.owner, false)
+    }
 
-  static fromDTO(dto: PieceDTO): Piece {
-    return new Piece(dto.type, dto.owner, dto.promoted)
-  }
+    promote(): Piece {
+        return new Piece(this.type, this.owner, true)
+    }
+    ///////////////////////////////
+    // seiralize
+    toDTO(): PieceDTO {
+        return {
+            type: this.type,
+            owner: this.owner,
+            promoted: this.promoted,
+        }
+
+    }
+
+    static fromDTO(dto: PieceDTO): Piece {
+        return new Piece(dto.type, dto.owner, dto.promoted)
+    }
 }
 
 export type PieceDTO = {
-  type: PieceType
-  owner: Player
-  promoted: boolean
+    type: PieceType
+    owner: Player
+    promoted: boolean
 }

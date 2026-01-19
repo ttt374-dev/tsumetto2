@@ -1,7 +1,8 @@
 import { Box } from "@mui/material";
-import styles from "./BoardView.module.css";
-import { Position, displayPiece, Hand, kanjiToPieceItem, type PieceType} from "@/domain/kif/types";
+import { Position, Hand, kanjiToPieceItem, type PieceType, Piece, Square, type SqaureNumber} from "@/domain/kif/types";
 import { numberToKanjiTwoDigits } from "./numberToKanji";
+
+import styles from "./BoardView.module.css";
 
 const fileLabels = ["９", "８", "７", "６", "５", "４", "３", "２", "１"];
 const rankLabels = ["一", "二", "三", "四", "五", "六", "七", "八", "九"];
@@ -25,6 +26,29 @@ function formatHand(hand: Hand): string {
     //console.log(parts)        
     return parts.length === 0 ? "なし" : parts.join(" ");
 }
+/////////////////////////////
+function HandView({hand}: { hand: Hand}){
+    return (
+        <div>
+            △後手：{formatHand(hand)}
+        </div>
+    )
+}
+function SquareView({ piece, square }: { piece: Piece | null, square: Square }) {   
+
+    if (!piece) {
+        return <div key={square.key} className={styles.emptyCell} />;
+    } else {
+        return (
+            <div
+                className={`${styles.cell} ${piece.owner === 'white' && styles.white}  :`}
+            >
+                {piece ? piece.format() : ""}
+            </div>
+        )
+    }
+}
+///////////////////////////////
 function BoardView({ position }: { position: Position}) {
     const { board, hands } = position
     const ranks = [...Array(9)].map((_, i) => i +1)   //   1 → 9
@@ -33,9 +57,7 @@ function BoardView({ position }: { position: Position}) {
     return (
         <Box className={styles.container}>
             {/* 持駒表示 */}
-            <div>
-                △後手：{formatHand(hands.get("white"))}
-            </div>
+            <HandView hand={hands.get("white")}/>
             {/* 上の筋表示 */}
             <div className={styles.fileLabels}>
                 <div className={styles.corner}></div> {/* 左上の空白 */}
@@ -51,27 +73,18 @@ function BoardView({ position }: { position: Position}) {
                     <div className={styles.rankLabel}></div>
                     {/* 盤面の行 */}
                     {files.map(file => {
-                        const sq = { file, rank }
-                        const key = `${file},${rank}`
+                        const sq = Square.create(file, rank)
                         const piece = board.get(sq)
-                        if (!piece) {
-                            return <div key={key} className={styles.emptyCell} />;
-                        }
+                        
                         return (
-                            <div 
-                            className={`${styles.cell} ${piece.owner === 'white' && styles.white}  :`}
-                            >  
-                                {piece ? displayPiece(piece.type, piece.promoted) : ""}
-                            </div>
+                            <SquareView piece={piece} square={sq}/>
                         )
                     })}
                     <div className={styles.rankLabel}>{rankLabels[rank-1]}</div>
                 </div>)
             )}
             {/* 持駒表示 */}
-            <div>
-                △先手：{formatHand(hands.get("black"))}
-            </div>
+            <HandView hand={hands.get("black")}/>
         </Box>
     )
 }
