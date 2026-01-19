@@ -30,7 +30,7 @@ export function SummaryScreen({ missionResultEntryList, onBackToDashboard: onNav
     onBackToDashboard: () => void,
 }) {
     //console.log("summary scr", missionResultEntryList)
-    const summary = MissionSummary.create(missionResultEntryList)
+    const summary = MissionSummary.createFromResultList(missionResultEntryList)
     return (
         <>
             <Box>
@@ -38,6 +38,7 @@ export function SummaryScreen({ missionResultEntryList, onBackToDashboard: onNav
             </Box>
 
             <Stack spacing={2} p={2}>
+                <SummaryRow label="総問題数" value={summary.problemCount} />
                 <SummaryRow label="正解" value={summary.solvedCount} />
                 <SummaryRow label="不正解" value={summary.failedCount} />
                 <SummaryRow label="正解率" value={`${Math.round(summary.accuracy * 100)} %`} />

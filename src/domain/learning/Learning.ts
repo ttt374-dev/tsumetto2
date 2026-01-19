@@ -1,4 +1,4 @@
-import type { SolvedResult } from "../../application/missionFsm/MissionFsm";
+import type { SolvedResult } from "../mission/MissionSummary";
 import type { ProblemId } from "../problem/Problem";
 
 const MAX_INTERVAL_DAYS = 60

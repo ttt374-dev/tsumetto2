@@ -1,17 +1,16 @@
 import { Box, Button, IconButton, List, ListItem, Stack } from "@mui/material"
 import DeleteIcon from '@mui/icons-material/Delete';
 
-import { useExercise } from "../../application/useExercise"
-import { useFileSelector } from "../sharedComponents/useFileSelector"
-import { useToast } from "../App/providers/ToastProvider"
 import type { Exercise } from "@/domain/Exercise/Exercise"
-import { AppLayout } from "../common/AppLayout"
 import { createImportProblemsUsecase, type ImportResult } from "@/usecase/importProblemsUseCase"
 import { useRepositoryContext } from "../App/providers/RepositoryProvider"
-import { useQuery } from "@/application/useQuery"
 import { applyQuery } from "@/domain/Exercise/query/applyQuery"
 import LibrarySortControl from "./components/LibrarySortControl"
 import { useLibraryQueryContext } from "../App/providers/QueryProvider";
+import { useExercise } from "@/application/useExercise";
+import { useFileSelector } from "../sharedComponents/useFileSelector";
+import { useToast } from "../App/providers/ToastProvider";
+import { AppLayout } from "../common/AppLayout";
 
 export function useLibrary() {
     const repos = useRepositoryContext()
@@ -56,7 +55,6 @@ export function LibraryScreen() {
     }
 
     const libraryItems = applyQuery(exerciseList, query.sortState, query.filterState)
-    console.log("library items", libraryItems, exerciseList)
     return (
         <AppLayout>
             <Stack direction="row">
@@ -82,7 +80,7 @@ export function LibraryScreen() {
                 <List>
                     {libraryItems.map((m, i) => (
                         <ListItem key={m.problem.id}>
-                            [{i}] {m.problem.id.slice(0, 8)} {m.problem.title} -
+                            [{i+1}] {m.problem.title} -
                             at {new Date(m.problem.createdAt).toLocaleString()} - 
                             {m.learning?.solvedCount} / {m.learning?.totalCount}
                             <Button onClick={() => toggleStar(m)}>

@@ -2,11 +2,11 @@ import { Problem, type ProblemId } from "../domain/problem/Problem"
 import { useEffect, useMemo, useState } from "react"
 
 import { createExerciseList } from "@/domain/Exercise/createExerciseList"
-import type { SolvedResult } from "@/application/missionFsm/MissionFsm"
 import { createProblemStore } from "./store/useProblemStore"
 import { useRepositoryContext } from "@/ui/App/providers/RepositoryProvider"
 import { createLearningStore } from "./store/useLearningStore"
 import type { Exercise } from "@/domain/Exercise/Exercise"
+import type { SolvedResult } from "@/domain/mission/MissionSummary"
 
 export function useExercise() {
     const repos = useRepositoryContext()    

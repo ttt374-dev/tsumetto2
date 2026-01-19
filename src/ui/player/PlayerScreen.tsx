@@ -50,10 +50,10 @@ export function PlayerScreen({ problem, learning, onNext, onPrev, onAnswer}: {
                 <Button onClick={onPrev}>
                     Prev
                 </Button>
-                <Button onClick={retreatPly}>
+                <Button onClick={retreatPly} disabled={currentPlyIndex===0}>
                     Ret Ply
                 </Button>
-                <Button onClick={advancePly}>
+                <Button onClick={advancePly} disabled={currentPlyIndex===moves.length-1}>
                     Adv Ply
                 </Button>
                 <Button onClick={onNext}>
