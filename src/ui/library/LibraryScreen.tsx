@@ -24,17 +24,14 @@ export function useLibrary() {
         importFiles
     }
 }
-
+//////////////////////////////////////////////////
 export function LibraryScreen() {
     const { exerciseList, reload,        
-        addProblems, deleteProblem,        
-        toggleStar, markAnswer, clearAll } = useExercise()
-    const { sortState, setSortState, filterState, setFilterState,
-        toggleSort, toggleFilter, }  = useQuery()
+        deleteProblem, toggleStar, deleteAllProblems } = useExercise()
+    const query = useQuery()
 
     const { openFileDialog, inputElement, setOnFilesSelected } = useFileSelector(".kif")
     const toast = useToast()
-
     const { importFiles } = useLibrary()
 
     setOnFilesSelected( (filelist) => {
@@ -43,12 +40,12 @@ export function LibraryScreen() {
             console.log("imported", r)
             reload()
             toast({message: `import files`})
-        })
-        
+        })        
     })
+    
     const handleDeleteAll = () => {
         if (!window.confirm("ok to delete all ?")) return
-        clearAll()
+        deleteAllProblems()
     }
     const handleDelete = (m: Exercise) => {
         if (!window.confirm("ok to delete ? ")) return
@@ -57,7 +54,7 @@ export function LibraryScreen() {
         })
     }
 
-    const libraryItems = applyQuery(exerciseList, sortState, filterState)
+    const libraryItems = applyQuery(exerciseList, query.sortState, query.filterState)
     console.log("library items", libraryItems, exerciseList)
     return (
         <AppLayout>
@@ -68,18 +65,17 @@ export function LibraryScreen() {
                 <Button onClick={handleDeleteAll}>
                     Delete all
                 </Button>
-                <Button onClick={() => { toggleFilter('starredOnly') }}>
-                    starred only: {filterState.starredOnly ? "Star" : "-"}
+                <Button onClick={() => { query.toggleFilter('starredOnly') }}>
+                    starred only: {query.filterState.starredOnly ? "Star" : "-"}
                 </Button>
                 <LibrarySortControl 
-                    sort={sortState}
-                    onSetSortKey={(key) => { toggleSort(key)}}
+                    sort={query.sortState}
+                    onSetSortKey={query.toggleSort}
                     onSetSortOrder={(order) => {
-                        setSortState(prev=>({...prev, order: order}))
+                        query.setSortState(prev=>({...prev, order: order}))
                     }}
                 />
             </Stack>
-
 
             <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto" }}>
                 <List>

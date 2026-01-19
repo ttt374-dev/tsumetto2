@@ -64,7 +64,7 @@ export function createBoardStateFromKif(boardLines: string[]): Board {
       const { type, promoted } = pieceItem
       
       const piece = new Piece(type as PieceType, isWhite ? 'white' : 'black', promoted)
-      board = board.set({rank: rank, file: file}, piece)
+      board = board.set(rank, file, piece)
       //console.log("parse board", file, rank, piece.type, piece.promoted, piece.owner)
 
 

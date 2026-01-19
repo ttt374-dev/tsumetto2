@@ -1,8 +1,8 @@
 import { Problem, type ProblemId } from "../domain/problem/Problem"
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 
 import { createExerciseList } from "@/domain/Exercise/createExerciseList"
-import type { AnswerResult } from "@/application/missionFsm/MissionFsm"
+import type { SolvedResult } from "@/application/missionFsm/MissionFsm"
 import { createProblemStore } from "./store/useProblemStore"
 import { useRepositoryContext } from "@/ui/App/providers/RepositoryProvider"
 import { createLearningStore } from "./store/useLearningStore"
@@ -10,16 +10,15 @@ import type { Exercise } from "@/domain/Exercise/Exercise"
 
 export function useExercise() {
     const repos = useRepositoryContext()    
-    //const stores = useStoreContext()
-    const { problems, 
-        reload,
-        addProblems, deleteProblem,
-         toggleStar: storeToggleStar, setTitle, clearAll } = createProblemStore(repos.problem) //stores.problem
-    const { learningRecords, update: updateLearning } = createLearningStore(repos.learning)  // stores.learning
-
+    const stores = {
+        problem: createProblemStore(repos.problem),
+        learning: createLearningStore(repos.learning)
+    }
+    
     const exerciseList: Exercise[] = useMemo(() => { 
-        return createExerciseList(problems, learningRecords)
-    }, [problems, learningRecords]) // , sortState, filterState])
+        return createExerciseList(stores.problem.problems, stores.learning.records)
+    }, [stores.problem.problems, stores.learning.records])
+
     
     /////////////////////////
     // query
@@ -27,31 +26,24 @@ export function useExercise() {
         return exerciseList.find((m) => m.problem.id === problemId)
     }
     //////////////////////
-    // command
-    
+    // command    
+    const markAnswer = (exercise: Exercise, answerResult: SolvedResult, secToTaken: number = 10) => {
+        //console.log("mark answer", m, answerResult, seconds)
+        stores.learning.update(exercise.problem.id, 
+            learning => learning.answer(answerResult, secToTaken))
+    }
+    // delegat to store
     const toggleStar = (m: Exercise) => {
-        storeToggleStar(m.problem)
-        //await setTitle(m.problem, "asdfasdf")
+        stores.problem.toggleStar(m.problem)
     }
-    const markAnswer = (m: Exercise, answerResult: AnswerResult, seconds: number = 10) => {
-        console.log("mark answer", m, answerResult, seconds)
-        const problemId = m.problem.id
-        updateLearning(problemId, r => r.answer(answerResult, seconds))
-    }
-   
-    //const handleStarredOnly = () => {
-     //   setFilterState(prev => { return { ...prev, starredOnly: !prev.starredOnly}})
-    //}
-    //const toggleFilter = <K extends keyof FilterState>(key: K) => {
-
 
     return { 
-        //problems, learningRecords, 
         exerciseList, find,
 
-        reload,
-        
-        
-        addProblems, deleteProblem,
-        toggleStar, markAnswer, clearAll}
+        addProblems: stores.problem.add,
+        deleteProblem: stores.problem.remove,
+        reload: stores.problem.reset,
+        deleteAllProblems: stores.problem.removeAll,
+        toggleStar, markAnswer
+    }
 }

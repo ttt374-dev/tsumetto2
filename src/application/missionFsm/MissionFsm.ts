@@ -5,7 +5,7 @@ export type MissionState = {
   currentIndex: number
   phase: PlayerPhase
   isFinished: boolean
-  results: { problemId: string; answerResult: AnswerResult }[]
+  results: { problemId: string; answerResult: SolvedResult }[]
 }
 
 // FSM actions
@@ -26,15 +26,15 @@ export type MissionAction =
   problemId: string
 }
 
-type AnswerQuality = "easy" | "medium" | "hard"
+//type AnswerQuality = "easy" | "medium" | "hard"
 
-export type AnswerEntry = {
+export type AttemptRecord = {
     problemId: string
-    answerResult: AnswerResult,
+    solvedResult: SolvedResult,
     //secTaken: number,
     //answerQuality: AnswerQuality,
 }
 
 export type PlayerPhase = "problem" | "solution" | "answered"
 
-export type AnswerResult = "solved" | "failed"
+export type SolvedResult = "solved" | "failed"

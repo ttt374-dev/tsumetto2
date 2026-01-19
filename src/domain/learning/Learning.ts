@@ -1,4 +1,4 @@
-import type { AnswerResult } from "../../application/missionFsm/MissionFsm";
+import type { SolvedResult } from "../../application/missionFsm/MissionFsm";
 import type { ProblemId } from "../problem/Problem";
 
 const MAX_INTERVAL_DAYS = 60
@@ -13,7 +13,7 @@ export type LearningData = {
     easeFactor: number          // 習熟度（Anki系）
 
     lastAnsweredAt?: number
-    lastAnswerResult?: AnswerResult
+    lastAnswerResult?: SolvedResult
 }
 
 function createDefaultValues(problemId: ProblemId): LearningData {
@@ -39,7 +39,7 @@ export class Learning {
         readonly easeFactor: number,
 
         readonly lastAnsweredAt?: number,
-        readonly lastAnswerResult?: AnswerResult,
+        readonly lastAnswerResult?: SolvedResult,
 
     ){}
     static create(problemId: ProblemId, init?: Partial<LearningData>): Learning {
@@ -83,14 +83,14 @@ export class Learning {
     }*/
     
     // 正解評価
-    private judgeAnswerQuality(answer: AnswerResult, sec: number): number {
+    private judgeAnswerQuality(answer: SolvedResult, sec: number): number {
         if (answer === "failed") return 0
         if (sec < 10) return 5
         return 2
     }
 
     // --- 新しいインスタンスを返す ---
-    answer(answer: AnswerResult, sec: number=20, now: number = Date.now()): Learning {
+    answer(answer: SolvedResult, sec: number=20, now: number = Date.now()): Learning {
         const quality = this.judgeAnswerQuality(answer, sec)
 
         let intervalDays = this.intervalDays

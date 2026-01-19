@@ -1,21 +1,39 @@
 import { useEffect, useMemo, useState } from "react";
-import type { AnswerEntry, AnswerResult } from "@/application/missionFsm/MissionFsm";
+import type { SolvedResult } from "@/application/missionFsm/MissionFsm";
 import type { Exercise } from "@/domain/Exercise/Exercise";
-import type { Problem } from "@/domain/problem/Problem";
+import type { Problem, ProblemId } from "@/domain/problem/Problem";
 
 export type MissionPhase = "idle" | "playing" | "summary"
+export type MissionResultEntry = {
+    problemId: ProblemId,
+    solvedResult: SolvedResult,
+}
+
+export class MissionSummary {
+    constructor(
+        readonly solvedCount: number,    
+        readonly failedCount: number,        
+    ){}
+    static create(missionResultList: MissionResultEntry[]) {
+        return new MissionSummary(
+            missionResultList.filter(r => r.solvedResult === "solved").length,
+            missionResultList.filter(r => r.solvedResult === "failed").length
+        )        
+    }
+    get totalCount(): number { return this.solvedCount + this.failedCount}
+    get accuracy(): number { return this.totalCount === 0 ? 0 : this.solvedCount / this.totalCount }
+}
 
 export function useMissionController(exercises: Exercise[],
-    onAnswer: (
+    onPersistAnswer: (
         exercise: Exercise,
-        result: AnswerResult,
+        solvedResult: SolvedResult,
         sec?: number
     ) => void
-
 ) {
     const [phase, setPhase] = useState<MissionPhase>("idle")
     const [index, setIndex] = useState(0)
-    const [answerEntries, setAnswerEntries] = useState<AnswerEntry[]>([])
+    const [missionResultList, setMissionResultList] = useState<MissionResultEntry[]>([])
 
     const currentExercise = useMemo(()=> { 
         return exercises[index]}, [exercises, index])
@@ -25,7 +43,8 @@ export function useMissionController(exercises: Exercise[],
         if (exercises.length === 0) return
         setPhase("playing")
         setIndex(0)
-        setAnswerEntries([])
+        setMissionResultList([])
+        //console.log("start", missionResultList)
     }
 
     // --- navigation ---
@@ -46,16 +65,17 @@ export function useMissionController(exercises: Exercise[],
     // --- answer handling ---
     const answer = (
         problem: Problem,
-        answerResult: AnswerResult,
+        solvedResult: SolvedResult,
         secToTaken?: number
     ) => {
-        const entry: AnswerEntry = {
+        const entry: MissionResultEntry = {
             problemId: problem.id,
-            answerResult,
+            solvedResult: solvedResult,
             //secToTaken,
         }
 
-        setAnswerEntries(prev => [...prev, entry])
+        setMissionResultList(prev => [...prev, entry])
+        onPersistAnswer(currentExercise, solvedResult, secToTaken)
         next()
     }
 
@@ -71,7 +91,7 @@ export function useMissionController(exercises: Exercise[],
         phase,
         index,
         currentExercise,
-        answerEntries,
+        missionResultList,
         answer,
         start, next, prev,
     }

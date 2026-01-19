@@ -31,7 +31,6 @@ export class Move {
         }
     }
     static fromDTO(dto: MoveDTO): Move {
-        console.log("from json", dto)
         return new Move(
             dto.from,
             dto.to,

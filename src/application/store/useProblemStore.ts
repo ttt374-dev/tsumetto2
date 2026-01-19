@@ -20,11 +20,11 @@ export function createProblemStore(repository: ProblemRepository) {
         }
     };
 
-    const addProblem = async (problem: Problem) => {
+    const add = async (problem: Problem) => {
         await repository.add(problem)
         await reload()        
     }
-    const addProblems = async (problems: Problem[]) => {
+    const addMany = async (problems: Problem[]) => {
         await repository.addMany(problems)
         await reload()
     }
@@ -32,12 +32,16 @@ export function createProblemStore(repository: ProblemRepository) {
         await repository.update(problem)
         await reload()
     }
-    const deleteProblem = async (id: string) => {
+    const remove = async (id: string) => {
         await repository.remove(id)
         await reload()  // Store 内 state を更新
-
-
     }
+    const removeAll = async () => {
+        await repository.save([])
+        await reload()
+    }
+
+
     const toggleStar = async (problem: Problem) => {
         //console.log(problem)
         await repository.update(problem.toggleStar())
@@ -46,21 +50,14 @@ export function createProblemStore(repository: ProblemRepository) {
     const setTitle = async (problem: Problem, title: string) => {
         await repository.update(problem.setTitle(title))
     }
-    const clearAll = async () => {
-        await repository.save([])
-        await reload()
-    }
-
     return {
         // query
         problems,
 
         // command
-        reload,
-        addProblem, addProblems, deleteProblem,
-        update,
-        toggleStar,
-        setTitle,
-        clearAll
+        reset: reload,
+        add, addMany, update, remove, removeAll,
+        toggleStar, setTitle,
+        
     }
 }

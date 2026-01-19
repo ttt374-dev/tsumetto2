@@ -36,6 +36,7 @@ export function createLearningStore(repository: LearningRepository) {
     };
 
     return {
+        records,
         learningRecords: records,
 
         update, 

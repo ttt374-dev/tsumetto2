@@ -1,6 +1,6 @@
 export type Handicap = "平手" | "二枚落ち" | "四枚落ち"
 
-import { Piece, Square, type PieceDTO, type Player } from "./Piece"
+import { Piece, type PieceDTO, type Player } from "./Piece"
 
 type SquareGrid = Map<string, Piece | null>
 

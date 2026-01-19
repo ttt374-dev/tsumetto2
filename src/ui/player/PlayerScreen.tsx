@@ -5,7 +5,7 @@ import BoardView from "./components/BoardView"
 import MovesView from "./components/MovesView"
 import type { Problem } from "@/domain/problem/Problem"
 import type { Learning } from "@/domain/learning/Learning"
-import type { AnswerResult } from "@/application/missionFsm/MissionFsm"
+import type { SolvedResult } from "@/application/missionFsm/MissionFsm"
 import { useReplayController } from "./useReplayController"
 
 export function PlayerScreen({ problem, learning, onNext, onPrev, onAnswer}: {
@@ -13,7 +13,7 @@ export function PlayerScreen({ problem, learning, onNext, onPrev, onAnswer}: {
     learning?: Learning,
     onNext: () => void,
     onPrev: () => void, 
-    onAnswer: (problem: Problem, answerResult: AnswerResult, secToTaken?: number) => void,
+    onAnswer: (problem: Problem, answerResult: SolvedResult, secToTaken?: number) => void,
 }) {    
     const moves = problem.kifData.moves
     const { position, plyIndex: currentPlyIndex,
