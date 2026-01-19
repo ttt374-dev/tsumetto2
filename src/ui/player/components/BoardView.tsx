@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import { Position, Hand, kanjiToPieceItem, type PieceType, Piece, Square, type SqaureNumber} from "@/domain/kif/types";
+import { Position, Hand, kanjiToPieceItem, type PieceType, Piece, Square, type SquareNumber} from "@/domain/kif/types";
 import { numberToKanjiTwoDigits } from "./numberToKanji";
 
 import styles from "./BoardView.module.css";
@@ -74,7 +74,7 @@ function BoardView({ position }: { position: Position}) {
                     {/* 盤面の行 */}
                     {files.map(file => {
                         const sq = Square.create(file, rank)
-                        const piece = board.get(sq)
+                        const piece = board.get(sq.file, sq.rank)
                         
                         return (
                             <SquareView piece={piece} square={sq}/>

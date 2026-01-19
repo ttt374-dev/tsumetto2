@@ -1,3 +1,5 @@
+import { Board } from "./Board"
+
 export type Player = "black" | "white"
 export type PieceType = "pawn" | "lance" | "knight" | "silver" | "gold" | "bishop" | "rook" | "king"
 
@@ -30,16 +32,16 @@ export type Square = {
     file: number, rank: number,
 }
     */
-export type SqaureNumber = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+export type SquareNumber = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
 
-function isSquareNumber(n: number): n is SqaureNumber {
+function isSquareNumber(n: number): n is SquareNumber {
     return n >= 1 && n <= 9
 }
 
 export class Square {
     constructor(
-        readonly file: SqaureNumber,
-        readonly rank: SqaureNumber,
+        readonly file: SquareNumber,
+        readonly rank: SquareNumber,
     ) {}
         static create(file: number, rank: number): Square {
         if (!isSquareNumber(file) || !isSquareNumber(rank)) {
@@ -49,7 +51,8 @@ export class Square {
     }
 
     get key(): string {
-        return `${this.file},${this.rank}`
+        //return `${this.file},${this.rank}`
+        return Board.squareKey(this.file, this.rank)
     }
 
 }

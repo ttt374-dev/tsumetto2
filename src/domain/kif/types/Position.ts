@@ -24,12 +24,12 @@ export class Position {
         const from = move.from!
         const to = move.to
 
-        let piece = this.board.get(from)
+        let piece = this.board.get(from.file, from.rank)
         const fromStr = `${from.file}, ${from.rank}`
         if (!piece) throw new Error(`no piece on from: [${move.pieceType}] [${fromStr}]`)
 
         // capture
-        const target = this.board.get(to)
+        const target = this.board.get(to.file, to.rank)
         let hands = this.hands
         if (target) {
             hands = hands.add(this.turn, target.type)
@@ -42,8 +42,8 @@ export class Position {
 
         const nextBoard =
             this.board
-                .set(from, null)
-                .set(to, piece)
+                .set(from.file, from.rank, null)
+                .set(to.file, to.rank, piece)
 
         return new Position(
             nextBoard,
@@ -54,7 +54,7 @@ export class Position {
     private applyDrop(move: Move): Position {
         const piece = new Piece(move.pieceType, this.turn)
 
-        const nextBoard = this.board.set(move.to, piece)
+        const nextBoard = this.board.set(move.to.file, move.to.rank, piece)
         const nextHands = this.hands.remove(this.turn, move.pieceType)
         //const nextHands = {
         //    ...this.hands,
