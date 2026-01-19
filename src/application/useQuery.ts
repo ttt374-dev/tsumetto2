@@ -22,6 +22,7 @@ export function useQuery(options?: UseQueryOptions){
     }
 
     const toggleFilter = (key: keyof FilterState) => {
+        console.log("toggle filter", key)
         setFilterState(prev => ({ ...prev, [key]: !prev[key] }))
     }
     const setFilter = (key: keyof FilterState, value: boolean) => {

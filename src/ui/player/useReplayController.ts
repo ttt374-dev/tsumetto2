@@ -1,9 +1,14 @@
 import { buildUntilPly } from "@/domain/kif/buildUntilPly"
 import type { KifData } from "@/domain/kif/types"
-import { useMemo, useState } from "react"
+import { useMemo, useState, useEffect } from "react"
 
 export function useReplayController (kifData: KifData){
     const [plyIndex, setPlyIndex] = useState(0)
+
+    useEffect(()=>{
+        setPlyIndex(0)
+    }, [kifData])
+
     const history = {
         initial: kifData.initialPosition,
         moves: kifData.moves

@@ -21,7 +21,10 @@ export function PlayerScreen({ problem, learning, onNext, onPrev, onAnswer}: {
         moveToPly, } = useReplayController(problem.kifData)
     const [ showMoves, setShowMoves ] = useState(false)     
     
-    useEffect(()=> { setShowMoves(false)}, [problem.id])
+    useEffect(()=> { 
+        setShowMoves(false)
+        
+    }, [problem.id])
 
     return (
         <AppLayout

@@ -14,9 +14,9 @@ export function MissionScreen() {
     const mission = useMissionController(exerciseList, markAnswer)     
     
     const problemStats = { 
-        totalCount: exerciseList.length,
-        solvedCount: exerciseList.reduce((sum, exercise) => sum + (exercise.learning?.solvedCount ?? 0), 0),
-        failedCount: exerciseList.reduce((sum, exercise) => sum + (exercise.learning?.failedCount ?? 0), 0),
+        totalCount: mission.missionProblems.length,
+        solvedCount: mission.missionProblems.reduce((sum, exercise) => sum + (exercise.learning?.solvedCount ?? 0), 0),
+        failedCount: mission.missionProblems.reduce((sum, exercise) => sum + (exercise.learning?.failedCount ?? 0), 0),
     }
 
     switch (mission.phase) {
