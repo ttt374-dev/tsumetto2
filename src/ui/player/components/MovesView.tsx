@@ -26,22 +26,13 @@ const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
   }, [currentPlyIndex]);
 
 
-    function formatFrom(from: Square | null) {
-        return from ? `(${from.file}, ${from.rank})` : "(-, -)"
-
-    }
-    function formatTo(to: Square){
-        return `${to.file}${numberToKanjiTwoDigits(to.rank)}`
-    }
     function formatPlayer(player: Player): string {
         return player === 'black' ? '▲' : '△'
     }
     function formatMove(move: Move, index: number): string {
         console.log("format move", move)
         const player = index % 2 === 0 ? "black" : "white"
-        //const moveText = [formatPlayer(player), formatTo(move.to), displayPiece(move.pieceType, move.promote), formatFrom(move.from)].join("")
         return `${index}: ` + formatPlayer(player) + move.rawtext
-        //return `${index}: ${formatPlayer(move.player)} ${move.moveText} ${formatFrom(move.from ?? null)}`
         
     }
     

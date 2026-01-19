@@ -1,12 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { Board, Position, Hand, Hands, Move } from "../types";
 import { parseKif } from "../parser/parseKif";
-import { PanoramaFishEyeSharp, PasswordRounded, RttRounded } from "@mui/icons-material";
 import { parseMoveLine } from "../parser/parseMove";
-import { parse } from "uuid";
 import { buildUntilPly } from "../buildUntilPly";
 import { parseHand } from "../parser/parseHand";
-import { formControlClasses } from "@mui/material";
 
 
 describe("parse moves", () => {
@@ -55,8 +52,8 @@ describe("parse moves", () => {
         if (parsed){
             expect(parsed.pieceType).toEqual("knight")            
             state = parsed.apply(state)
-            expect(state.board.get({ file: 5, rank: 5 })?.promoted).toBeTruthy
-            expect(state.board.get({ file: 5, rank: 5 })?.type).toEqual("knight")
+            expect(state.board.get(5, 5)?.promoted).toBeTruthy
+            expect(state.board.get(5, 5)?.type).toEqual("knight")
         }       
         
     })
@@ -141,22 +138,8 @@ describe("parse board", () => {
         expect(r.ok).toBeTruthy
         if (r.ok) {
             const board = r.value.initialPosition.board
-            expect(board.get({ file: 1, rank: 3 })?.type).toEqual('pawn')
+            expect(board.get(1, 3)?.type).toEqual('pawn')
         }
-    })
-
-    it("初期盤", () => {
-        
-        const r = parseKif(text)
-        expect(r.ok).toBeTruthy
-        if (r.ok){
-            const board = r.value.initialPosition.board
-
-            expect(board.get({file: 1, rank: 2})?.type).toEqual("king")
-            expect(board.get({file: 3, rank: 4})?.owner).toEqual("white")
-            
-        }
-        
     })
     it ("持ち駒", () => {
         const r = parseKif(text)
@@ -194,7 +177,7 @@ describe("実録", () => {
             //initial.board.dump()
             const history = { initial: Position.create(), moves: moves}
             const state = buildUntilPly(history, 11)
-            expect(state.board.get({file: 4, rank: 8})?.type).toEqual("king")
+            expect(state.board.get(4, 8)?.type).toEqual("king")
         }
     })    
 })

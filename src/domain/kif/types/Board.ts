@@ -1,11 +1,8 @@
 export type Handicap = "平手" | "二枚落ち" | "四枚落ち"
 
-import { Place } from "@mui/icons-material"
 import { Piece, Square, type PieceDTO, type Player } from "./Piece"
 
 type SquareGrid = Map<string, Piece | null>
-
-
 
 export class Board {
     constructor(
@@ -62,14 +59,15 @@ export class Board {
         const m = player === "black" ? 8 : 2
         const b = player === "black" ? 9 : 1
 
-
+        // upper rank
+        for (let i = 1; i <= 9; i++) {
+            squares.set(`${i},${u}`, new Piece("pawn", player))
+        }
+        // middle rank        
         squares.set(`2,${m}`, new Piece("bishop", player))
         squares.set(`8,${m}`, new Piece("rook", player))
 
-        for (let i = 1; i <= 9; i++) {
-            squares.set(`${i},${m}`, new Piece("pawn", player))
-        }
-
+        // bottom rank
         squares.set(`1,${b}`, new Piece("lance", player))
         squares.set(`2,${b}`, new Piece("knight", player))
         squares.set(`3,${b}`, new Piece("silver", player))

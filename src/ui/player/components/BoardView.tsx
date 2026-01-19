@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import { Position, Hand, kanjiToPieceItem, type PieceType, Piece, Square, type SquareNumber} from "@/domain/kif/types";
+import { Position, Hand, kanjiToPieceItem, type PieceType, Piece, Board} from "@/domain/kif/types";
 import { numberToKanjiTwoDigits } from "./numberToKanji";
 
 import styles from "./BoardView.module.css";
@@ -34,16 +34,16 @@ function HandView({hand}: { hand: Hand}){
         </div>
     )
 }
-function SquareView({ piece, square }: { piece: Piece | null, square: Square }) {   
+function SquareView({ piece }: { piece: Piece | null }) {   
 
     if (!piece) {
-        return <div key={square.key} className={styles.emptyCell} />;
+        return <div className={styles.emptyCell} />;
     } else {
         return (
             <div
                 className={`${styles.cell} ${piece.owner === 'white' && styles.white}  :`}
             >
-                {piece ? piece.format() : ""}
+                {piece.format()}
             </div>
         )
     }
@@ -68,16 +68,17 @@ function BoardView({ position }: { position: Position}) {
 
             {/* 盤面 + 左側の段表示 */}
             {ranks.map(rank => (
-                <div className={styles.rowWithRank}>
+                <div key={`rank:${rank}`} className={styles.rowWithRank}>
                     {/* 左側の段表示（スペース） */}
                     <div className={styles.rankLabel}></div>
                     {/* 盤面の行 */}
                     {files.map(file => {
-                        const sq = Square.create(file, rank)
-                        const piece = board.get(sq.file, sq.rank)
-                        
+                        //const sq = Square.create(file, rank)
+                        const piece = board.get(file, rank)                        
                         return (
-                            <SquareView piece={piece} square={sq}/>
+                            <div key={Board.squareKey(file, rank)}>
+                                <SquareView piece={piece}/>
+                            </div>
                         )
                     })}
                     <div className={styles.rankLabel}>{rankLabels[rank-1]}</div>

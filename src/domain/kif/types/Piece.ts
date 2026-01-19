@@ -32,16 +32,16 @@ export type Square = {
     file: number, rank: number,
 }
     */
-export type SquareNumber = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+//export type SquareNumber = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
 
-function isSquareNumber(n: number): n is SquareNumber {
+function isSquareNumber(n: number): boolean {
     return n >= 1 && n <= 9
 }
 
 export class Square {
     constructor(
-        readonly file: SquareNumber,
-        readonly rank: SquareNumber,
+        readonly file: number,
+        readonly rank: number,
     ) {}
         static create(file: number, rank: number): Square {
         if (!isSquareNumber(file) || !isSquareNumber(rank)) {
@@ -49,12 +49,12 @@ export class Square {
         }
         return new Square(file, rank)
     }
-
+/*
     get key(): string {
         //return `${this.file},${this.rank}`
         return Board.squareKey(this.file, this.rank)
     }
-
+*/
 }
 
 export class Piece {
