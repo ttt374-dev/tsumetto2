@@ -8,7 +8,7 @@ import { useReplayController } from "../player/useReplayController";
 import { Box, Button, Stack } from "@mui/material";
 import MovesView from "../player/components/MovesView";
 
-export function ViewSCreen() {
+export function ViewerScreen() {
     const { id } = useParams()
     const exerciseController = useExercise()
 
@@ -16,13 +16,13 @@ export function ViewSCreen() {
     const exercise = exerciseController.find(id)
     if (!exercise) return null
     return (
-        <ViewContent exercise={exercise} />
+        <ViewerView exercise={exercise} />
     )
 
 }
 
 ///////
-function ViewContent({ exercise }: { exercise: Exercise }) {
+function ViewerView({ exercise }: { exercise: Exercise }) {
     const navigate = useNavigate()
     const replayController = useReplayController(exercise.problem.kifData)
     const moves = exercise.problem.kifData.moves

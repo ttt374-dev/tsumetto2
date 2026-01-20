@@ -4,6 +4,7 @@ import type { Problem, ProblemId } from "@/domain/problem/Problem";
 import type { MissionResultEntry, SolvedResult } from "@/domain/mission/MissionSummary";
 import { useMissionQueryContext } from "@/ui/App/providers/QueryProvider";
 import { applyQuery } from "@/domain/Exercise/query/applyQuery";
+import type { SortState } from "@/domain/Exercise/query/sort";
 
 export type MissionPhase = "idle" | "playing" | "summary"
 
@@ -19,7 +20,8 @@ export function useMissionController(exercises: Exercise[],
     const [missionResultList, setMissionResultList] = useState<MissionResultEntry[]>([])
     const query = useMissionQueryContext()   
     const missionProblems = useMemo(()=> {        
-        const r = applyQuery(exercises, query.sortState, query.filterState)
+        const sortState: SortState = { key: "nextReviewedAt", order: "asc"}
+        const r = applyQuery(exercises, sortState, query.filterState)
         console.log("mission problems", r)
         return r
     },

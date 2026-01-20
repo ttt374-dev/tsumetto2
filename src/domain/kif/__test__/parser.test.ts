@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { Board, Position, Hand, Hands, Move } from "../types";
 import { parseKif } from "../parser/parseKif";
-import { parseMoveLine } from "../parser/parseMove";
+import { parseMoveLine, parseMoves } from "../parser/parseMove";
 import { buildUntilPly } from "../buildUntilPly";
 import { parseHand } from "../parser/parseHand";
 
@@ -12,10 +12,21 @@ describe("parse moves", () => {
         const move = parseMoveLine(text)
         expect(move).toBeTruthy
         if (move){
-            expect(move?.pieceType).toEqual("pawn")
+            expect(move.pieceType).toEqual("pawn")
             expect(move.from).toEqual({file: 1, rank: 3})
             expect(move.to).toEqual({file: 1, rank: 4})
         }
+    })
+    it("同", () => {
+        const text = [
+    "1 ３三飛成(35)       ( 0:00/00:00:00)",
+    "2 同　桂(21)        ( 0:00/00:00:00)"]
+
+        const moves = parseMoves(text, Position.create())
+
+        expect(moves[1]).toBeTruthy
+        expect(moves[1].to).toEqual({ file: 3, rank: 3})
+        
     })
     it("打", () => {
         const text = "  55 ５五桂打        "

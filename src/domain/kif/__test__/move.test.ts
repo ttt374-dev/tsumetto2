@@ -7,7 +7,7 @@ import { Hand, Hands } from "../types/Hand";
 
 describe("kif", ()=>{
     const initialPosition = Position.create()
-    initialPosition.board.dump()
+    //initialPosition.board.dump()
 
     it("piece", ()=>{        
         const piece = new Piece("pawn", "black")
@@ -53,4 +53,5 @@ describe("kif", ()=>{
         expect(state.board.get(1, 3)?.type).toEqual("bishop")
         
     })
+    
 })
