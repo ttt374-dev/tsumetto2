@@ -20,7 +20,7 @@ export function useMissionController(exercises: Exercise[],
     const query = useMissionQueryContext()   
     const missionProblems = useMemo(()=> {        
         const r = applyQuery(exercises, query.sortState, query.filterState)
-        console.log("mission problems", query.filterState, r)
+        console.log("mission problems", r)
         return r
     },
         [exercises, query.filterState])

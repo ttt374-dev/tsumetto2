@@ -1,75 +1,45 @@
 // domain/problemRecord/sortProblemRecords.ts
 
-import type { Problem } from "@/domain/problem/Problem"
-import type { SortState } from "./sort"
-import type { LearningRecord } from "@/domain/learning/Learning"
+import type { SortOrder, SortState } from "./sort"
 import type { Exercise } from "../Exercise"
 
-export function applySort(exerciseList: Exercise[],    
-  sort: SortState,
-  //learningRecords?: LearningRecord
-): Exercise[] {    
-    const sorted = [...exerciseList]
-    sorted.sort((a, b) => {
-      let vA: any
-      let vB: any
+type SortKey = SortState["key"]
+type SortValue = string | number
 
-      const pA = a.problem
-      const pB = b.problem
-      const lA = a.learning
-      const lB = b.learning
-      
-      
-      switch (sort.key) {
-        case "title":
-          vA = pA.title ?? ""
-          vB = pB.title ?? ""
-          break
+const sortValueGetters: Record<SortKey, (e: Exercise) => SortValue | null> = {
+  title: (e) => e.problem.title ?? "",
+  createdAt: (e) => e.problem.createdAt,
+  random: () => Math.random(),
 
-        case "createdAt":
-          vA = pA.createdAt
-          vB = pB.createdAt
-          break
+  easeFactor: (e) => e.learning?.easeFactor ?? null,
+  nextReviewedAt: (e) => e.learning?.nextReviewedAt ?? null,
 
-        case "random":
-          vA = Math.random();
-          vB = Math.random();
-          break;
-/*
-        case "accuracy":
-          if (!learningRecords) return 0                    
-          const aAcc = calcAccuracy(rA) 
-          const bAcc = calcAccuracy(rB) 
-          return sort.order === "asc" ? aAcc - bAcc : bAcc - aAcc
-          break
-        case "easeFactor":
-          if (!learningRecords) return 0
-          vA = rA?.easeFactor
-          vB = rB?.easeFactor
-          break
-
-        case "nextReviewedAt":
-          if (!learningRecords) return 0
-          vA = rA?.nextReviewedAt
-          vB = rB?.nextReviewedAt
-          break;
+  moveCount: () => null,
+  accuracy: () => null,
+}
 
 
-          //console.log("random", vA, vB)
-          break;
-*/
-        default:
-          return 0
-      }
-      //console.log("compare", sort.key, vA, vB)
+function compare(
+    a: SortValue | null,
+    b: SortValue | null,
+    order: SortOrder
+) {
+    if (a == null && b == null) return 0
+    if (a == null) return 1
+    if (b == null) return -1
 
-      if (vA < vB) return sort.order === "asc" ? -1 : 1
-      if (vA > vB) return sort.order === "asc" ? 1 : -1
-      return 0
-    })
-    //alert("sorted")
+    if (a < b) return order === "asc" ? -1 : 1
+    if (a > b) return order === "asc" ? 1 : -1
+    return 0
+}
 
-    //console.log("sorted:", sorted)
+export function applySort(
+    exerciseList: Exercise[],
+    sort: SortState
+): Exercise[] {
+    const getValue = sortValueGetters[sort.key]
 
-    return sorted
+    return [...exerciseList].sort((a, b) =>
+        compare(getValue(a), getValue(b), sort.order)
+    )
 }

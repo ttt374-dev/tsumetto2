@@ -46,7 +46,7 @@ export function DashboardScreen(
             <DashboardFilterControl filter={filterState} onToggleFilter={onToggleFilter} />
             <Box>
                 <Box>{stats.totalCount}</Box>
-                {stats.solvedCount} : {stats.failedCount} ()
+                {stats.solvedCount} : {stats.failedCount}
             </Box>
 
         </AppLayout>

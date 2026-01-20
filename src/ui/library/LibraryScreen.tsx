@@ -11,6 +11,7 @@ import { useExercise } from "@/application/useExercise";
 import { useFileSelector } from "../sharedComponents/useFileSelector";
 import { useToast } from "../App/providers/ToastProvider";
 import { AppLayout } from "../common/AppLayout";
+import { useNavigate } from "react-router-dom";
 
 export function useLibrary() {
     const repos = useRepositoryContext()
@@ -24,6 +25,24 @@ export function useLibrary() {
         importFiles
     }
 }
+
+export function LibraryListItem({exercise, index, onClick}: {
+    exercise: Exercise,
+    index: number,    
+    onClick?: () => void,
+}){
+    return (
+        <ListItem key={exercise.problem.id} onClick={onClick}>  
+            [{index + 1}] {exercise.problem.title} -
+            at {new Date(exercise.problem.createdAt).toLocaleString()}
+            {exercise.learning && <>
+                {exercise.learning.solvedCount} / {exercise.learning.totalCount}
+                [ {new Date(exercise.learning.nextReviewedAt).toLocaleDateString()}]
+          </>}
+
+        </ListItem>
+    )
+}
 //////////////////////////////////////////////////
 export function LibraryScreen() {
     const { exerciseList, reload,        
@@ -33,6 +52,7 @@ export function LibraryScreen() {
     const { openFileDialog, inputElement, setOnFilesSelected } = useFileSelector(".kif")
     const toast = useToast()
     const { importFiles } = useLibrary()
+    const navigate = useNavigate()
 
     setOnFilesSelected( (filelist) => {
         const files = Array.from(filelist)
@@ -64,9 +84,6 @@ export function LibraryScreen() {
                 <Button onClick={handleDeleteAll}>
                     Delete all
                 </Button>
-                <Button onClick={() => { query.toggleFilter('starredOnly') }}>
-                    starred only: {query.filterState.starredOnly ? "Star" : "-"}
-                </Button>
                 <LibrarySortControl 
                     sort={query.sortState}
                     onSetSortKey={query.toggleSort}
@@ -79,21 +96,9 @@ export function LibraryScreen() {
             <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto" }}>
                 <List>
                     {libraryItems.map((m, i) => (
-                        <ListItem key={m.problem.id}>
-                            [{i+1}] {m.problem.title} -
-                            at {new Date(m.problem.createdAt).toLocaleString()}
-                            { m.learning && <>
-                            {m.learning.solvedCount} / {m.learning.totalCount}
-                            [ { new Date(m.learning.nextReviewedAt).toLocaleDateString()}]
-                            </> } 
-                            <Button onClick={() => toggleStar(m)}>
-                            [{m.problem.starred ? "★" : "☆"}]
-                            </Button>
-                            <IconButton onClick={() => { handleDelete(m) }}>
-                                <DeleteIcon/>
-                            </IconButton>
-
-                        </ListItem>
+                        <LibraryListItem exercise={m} index={i+1}
+                            onClick={() => { navigate(`/view/${m.problem.id}`)}}
+                        />
                     ))}
                 </List>
             </Box>

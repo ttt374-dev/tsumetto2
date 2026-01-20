@@ -17,7 +17,6 @@ export function MissionScreen() {
     switch (mission.phase) {
         case "idle":
             return (<DashboardScreen
-                //queuedExerciseList={mission.missionProblems}
                 filterState={mission.query.filterState}
                 onStart={mission.start}
                 onToggleFilter={mission.query.toggleFilter}
@@ -43,5 +42,4 @@ export function MissionScreen() {
                 />
             )
     }
-
 }
