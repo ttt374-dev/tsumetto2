@@ -21,7 +21,6 @@ export class Move {
     // serialize
 
     toDTO(): MoveDTO {
-        console.log("toDTO", this)
         return {
             from: this.from,
             to: this.to,

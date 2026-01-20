@@ -62,8 +62,7 @@ function parseDropMove(text: string): Move {
     return new Move(null, { file, rank }, type, false, text)
 }
 
-function parseNormalMove(rawtext: string, prevSquare?: Square): Move {
-    
+function parseNormalMove(rawtext: string, prevSquare?: Square): Move {    
     
     // ７六歩(77)
     const mr = rawtext.match(/^(..)(.+)\((\d\d)\)$/)
@@ -72,35 +71,14 @@ function parseNormalMove(rawtext: string, prevSquare?: Square): Move {
 
     //console.log("parse normal move", toText, piecetypeText, fromText, rawtext)
     const to = parseTo(toText, prevSquare)
-    const pieceKey = parsePieceType(piecetypeText)
+    //const pieceKey = parsePieceType(piecetypeText)
     const from = parseFrom(fromText)
-
-    /*
-    const m = text.match(/(.)(.)(.+?)(成)?\((\d)(\d)\)/)
-    if (!m) throw new Error("Invalid move body")
-
-    const file = kanjiToFile(m[1])
-    const rank = kanjiToRank(m[2])
-    //const pieceType = parsePieceType(m[3])
-    const pieceString = m[3]
-    // 右寄などを削除
-    const minfo = pieceString.match(/(.*)([右左直下寄])/)
-
-    const pieceItem = kanjiToPieceItem[minfo ? minfo[1] : pieceString]
-    const { type, promoted } = pieceItem
-
-    //const promote = !!m[4]
     
-    const from = {
-        file: Number(m[5]),
-        rank: Number(m[6]),
-    }
-*/
     const { pieceType, promote} = parsePieceType(piecetypeText)
-
+    console.log("parsemove", rawtext, to, prevSquare)
     return new Move(
-        parseFrom(fromText),
-        parseTo(toText, prevSquare),
+        from,
+        to,
         pieceType,
         promote,
         rawtext
@@ -109,9 +87,10 @@ function parseNormalMove(rawtext: string, prevSquare?: Square): Move {
 function parseTo(text: string, prevSquare?: Square): Square {
     const m = text.match(/(.)(.)/)
     if (!m) throw new Error("")
-    const [ fileText, rankText] = m
+    //const [ fileText, rankText] = m
 
-    if (fileText === "同"){
+    //if (fileText === "同"){
+    if (text.startsWith("同")){
         if (!prevSquare) throw new Error("no prevoius squire given")       
         return prevSquare
     } else {    

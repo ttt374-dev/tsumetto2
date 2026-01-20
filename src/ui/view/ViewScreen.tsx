@@ -6,6 +6,7 @@ import { Problem } from "@/domain/problem/Problem";
 import BoardView from "../player/components/BoardView";
 import { useReplayController } from "../player/useReplayController";
 import { Box, Button, Stack } from "@mui/material";
+import MovesView from "../player/components/MovesView";
 
 export function ViewSCreen() {
     const { id } = useParams()
@@ -24,6 +25,8 @@ export function ViewSCreen() {
 function ViewContent({ exercise }: { exercise: Exercise }) {
     const navigate = useNavigate()
     const replayController = useReplayController(exercise.problem.kifData)
+    const moves = exercise.problem.kifData.moves
+    
     return (
         <AppLayout 
             header={exercise.problem.title}
@@ -45,6 +48,16 @@ function ViewContent({ exercise }: { exercise: Exercise }) {
                         Adv Ply
                     </Button>                    
                 </Stack>
+
+                <Box>
+                    <MovesView moves={moves} currentPlyIndex={0} onMoveClick={alert} /> :
+                    <>
+                        {moves.length}手詰め
+                        <Button onClick={() => {  }}>
+                            Show Moves
+                        </Button>
+                    </>
+                </Box>
             </Stack>
         </AppLayout>
     )

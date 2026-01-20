@@ -31,7 +31,7 @@ const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
     }
     function formatMove(move: Move, index: number): string {
         console.log("format move", move)
-        const player = index % 2 === 0 ? "black" : "white"
+        const player = index % 2 === 1 ? "black" : "white"
         return `${index}: ` + formatPlayer(player) + move.rawtext
         
     }
