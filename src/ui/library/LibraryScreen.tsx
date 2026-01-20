@@ -81,8 +81,11 @@ export function LibraryScreen() {
                     {libraryItems.map((m, i) => (
                         <ListItem key={m.problem.id}>
                             [{i+1}] {m.problem.title} -
-                            at {new Date(m.problem.createdAt).toLocaleString()} - 
-                            {m.learning?.solvedCount} / {m.learning?.totalCount}
+                            at {new Date(m.problem.createdAt).toLocaleString()}
+                            { m.learning && <>
+                            {m.learning.solvedCount} / {m.learning.totalCount}
+                            [ { new Date(m.learning.nextReviewedAt).toLocaleDateString()}]
+                            </> } 
                             <Button onClick={() => toggleStar(m)}>
                             [{m.problem.starred ? "★" : "☆"}]
                             </Button>

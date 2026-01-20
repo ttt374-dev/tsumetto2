@@ -64,12 +64,16 @@ export function PlayerScreen({ problem, learning, onNext, onPrev, onAnswer}: {
                 </Button>
             </Stack>            
 
+
             <Box>
             { showMoves ?             
-                <MovesView moves={moves} currentPlyIndex={currentPlyIndex} onMoveClick={moveToPly}/> :
+                <MovesView moves={moves} currentPlyIndex={currentPlyIndex} onMoveClick={moveToPly}/> :                
+                <>
+                    {moves.length}手詰め
                 <Button onClick={() => { setShowMoves(true); advancePly()}}>
                     Show Moves
                 </Button>
+                </>
             }           
             
             {learning &&
