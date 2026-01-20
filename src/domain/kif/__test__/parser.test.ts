@@ -17,7 +17,6 @@ describe("parse moves", () => {
             expect(move.to).toEqual({file: 1, rank: 4})
         }
     })
-
     it("打", () => {
         const text = "  55 ５五桂打        "
         const state = Position.create()

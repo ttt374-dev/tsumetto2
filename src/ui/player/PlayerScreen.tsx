@@ -56,7 +56,7 @@ export function PlayerScreen({ problem, learning, onNext, onPrev, onAnswer}: {
                 <Button onClick={retreatPly} disabled={currentPlyIndex===0}>
                     Ret Ply
                 </Button>
-                <Button onClick={advancePly} disabled={currentPlyIndex===moves.length-1}>
+                <Button onClick={advancePly} disabled={currentPlyIndex===moves.length}>
                     Adv Ply
                 </Button>
                 <Button onClick={onNext}>
@@ -81,7 +81,7 @@ export function PlayerScreen({ problem, learning, onNext, onPrev, onAnswer}: {
                     </Box>
                     <Box>                        
                         ef{learning.easeFactor.toFixed(2)},
-                        reviewed at {new Date(learning.nextReviewedAt).toLocaleString()}
+                        next:{new Date(learning.nextReviewedAt).toLocaleString()}
                     </Box>
                 </Stack>
             }

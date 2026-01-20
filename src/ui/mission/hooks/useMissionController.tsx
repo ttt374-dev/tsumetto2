@@ -18,16 +18,16 @@ export function useMissionController(exercises: Exercise[],
     const [index, setIndex] = useState(0)
     const [missionResultList, setMissionResultList] = useState<MissionResultEntry[]>([])
     const query = useMissionQueryContext()   
-    const missionProblems = useMemo(()=> {
-        console.log("mission problems, filter.", )
-        return applyQuery(exercises, query.sortState, query.filterState)
-
+    const missionProblems = useMemo(()=> {        
+        const r = applyQuery(exercises, query.sortState, query.filterState)
+        console.log("mission problems", query.filterState, r)
+        return r
     },
         [exercises, query.filterState])
 
     
     const currentExercise = useMemo(()=> { 
-        return exercises[index]}, [exercises, index])
+        return missionProblems[index]}, [exercises, index])
 
         
     // --- phase control ---

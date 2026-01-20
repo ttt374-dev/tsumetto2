@@ -37,7 +37,8 @@ export class Board {
         for (let r = 1; r <= 9; r++) {
             for (let f = 1; f <= 9; f++) {
                 const piece = this.get(f, r)
-                console.log(`${f},${r}: ${piece?.type}`)
+                if (!piece) continue
+                console.log(`${f},${r}: ${piece?.type} (${piece?.owner})`)
             }
         }
     }
@@ -56,16 +57,23 @@ export class Board {
     }
     private static locateEvenMatch(squares: SquareGrid, player: Player) {
         const u = player === "black" ? 7 : 3
-        const m = player === "black" ? 8 : 2
+        //const m = player === "black" ? 8 : 2
         const b = player === "black" ? 9 : 1
+
+        
 
         // upper rank
         for (let i = 1; i <= 9; i++) {
             squares.set(`${i},${u}`, new Piece("pawn", player))
         }
         // middle rank        
-        squares.set(`2,${m}`, new Piece("bishop", player))
-        squares.set(`8,${m}`, new Piece("rook", player))
+        if (player === "black"){
+            squares.set(`8,8`, new Piece("bishop", player))
+            squares.set(`2,8`, new Piece("rook", player))
+        } else {
+            squares.set(`2,2`, new Piece("bishop", player))
+            squares.set(`8,2`, new Piece("rook", player))
+        }
 
         // bottom rank
         squares.set(`1,${b}`, new Piece("lance", player))

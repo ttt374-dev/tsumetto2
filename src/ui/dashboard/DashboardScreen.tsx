@@ -23,10 +23,10 @@ function DashboardFilterControl({ filter, onToggleFilter }: {
         </>
     )
 }
-
+/////////////////////////////////////////////
 export function DashboardScreen(
     {filterState, onStart, onToggleFilter, stats}: {
-    queuedExerciseList: Exercise[],
+    //queuedExerciseList: Exercise[],
     filterState: FilterState,
     onStart: () => void,
     onToggleFilter: (key: keyof FilterState) => void,

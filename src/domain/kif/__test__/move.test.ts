@@ -43,10 +43,14 @@ describe("kif", ()=>{
         state = move.apply(state)
         expect(state.board.get(1, 4)?.promoted).toBeTruthy       
     })
-    it("相手の駒を取る", () => {
+    it("capture", () => {
         let state = initialPosition
-        const move = new Move(Square.create(1, 3), Square.create(1, 7), "pawn", true)
+        const move = new Move(Square.create(8, 8), Square.create(1, 3), "bishop")
+        expect(state.board.get(1, 3)?.owner).toEqual("white")
         state = move.apply(state)
         expect(state.hands.get("black").count('pawn')).toEqual(1)
+        expect(state.board.get(1, 3)?.owner).toEqual("black")
+        expect(state.board.get(1, 3)?.type).toEqual("bishop")
+        
     })
 })

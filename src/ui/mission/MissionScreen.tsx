@@ -1,13 +1,8 @@
 import { useExercise } from "@/application/useExercise";
-import { applyQuery } from "@/domain/Exercise/query/applyQuery";
 import { DashboardScreen } from "../dashboard/DashboardScreen";
 import { PlayerScreen } from "../player/PlayerScreen";
 import { SummaryScreen } from "../summary/SummaryScreen";
 import { useMissionController } from "./hooks/useMissionController";
-import { useMissionQueryContext } from "../App/providers/QueryProvider";
-import { useEffect } from "react";
-
-
 
 export function MissionScreen() {
     const { exerciseList, markAnswer } = useExercise()
@@ -22,7 +17,7 @@ export function MissionScreen() {
     switch (mission.phase) {
         case "idle":
             return (<DashboardScreen
-                queuedExerciseList={mission.missionProblems}
+                //queuedExerciseList={mission.missionProblems}
                 filterState={mission.query.filterState}
                 onStart={mission.start}
                 onToggleFilter={mission.query.toggleFilter}
