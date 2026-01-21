@@ -82,17 +82,17 @@ export function PlayerView({title, position, showMoves, currentPlyIndex,
                 <BoardView position={position} />
 
                 <Stack direction="row" sx={{ minHeight: 0, flexGrow: 1, p: 1}} spacing={1}>
-                    <Box>
-                        <MovesPanel>
-                            { showMoves ? 
+                    
+                    <MovesPanel>
+                        {showMoves ?
                             <MovesView moves={moves} currentPlyIndex={currentPlyIndex} onMoveToPly={onMoveToPly} />
-                            : (<Box onClick={()=>setShowMoves(true)}>
+                            : (<Box onClick={() => setShowMoves(true)}>
                                 {moves.length} 手詰め
                             </Box>)
-                            }
-                        </MovesPanel> 
-                    </Box>
-                    <Box sx={{ border: 1, borderColor: "divider" }}>
+                        }
+                    </MovesPanel>
+
+                    <Box sx={{ border: 1, borderColor: "divider" , flex: 0.75}}>
                         <Stack direction="column" p={1} spacing={1}>
                             <Button variant="outlined" onClick={retreatPly} disabled={currentPlyIndex === 0}>
                                 Ret Ply
