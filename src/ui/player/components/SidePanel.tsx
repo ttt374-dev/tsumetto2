@@ -3,7 +3,7 @@ import MovesView from "./MovesView";
 import type { Theme } from "@emotion/react";
 
 
-export default function MovesPanel
+export default function SidePanel
     ({ children }: { children: React.ReactNode })
  {
     return (
