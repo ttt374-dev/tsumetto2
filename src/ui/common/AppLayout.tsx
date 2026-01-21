@@ -4,7 +4,35 @@ import { AppBar, Box, Drawer, IconButton, List, ListItemButton, ListItemText, Me
 import MenuIcon from "@mui/icons-material/Menu";
 import MoreVertIcon from "@mui/icons-material/MoreVert"
 import { useNavigate } from "react-router-dom";
+import { useFileSelector } from "../sharedComponents/useFileSelector";
+import { useLibraryController } from "../library/hooks/useLibraryController";
+import { useExerciseControl } from "@/application/useExerciseControl";
 
+function DrawerMenu({isOpen, onClose, onNavigateToDashboard, onNavigateToLibrary, onImport}: {
+  isOpen: boolean,
+  onClose: () => void,
+  onNavigateToDashboard: () => void,
+  onNavigateToLibrary: () => void,
+  onImport: () => void
+}){
+  return (
+          <Drawer anchor="left" open={isOpen} onClose={onClose} >
+        <Box width={250} mt={3} role="presentation"  className={styles.header}>
+          <List>
+            <ListItemButton onClick={() => onNavigateToDashboard()}>
+              <ListItemText primary="ダッシュボード" />
+            </ListItemButton>
+            <ListItemButton onClick={() => onNavigateToLibrary()}>
+              <ListItemText primary="ライブラリ" />
+            </ListItemButton>
+            <ListItemButton onClick={onImport}>
+              <ListItemText primary="インポート"/>
+            </ListItemButton>
+          </List>
+        </Box>
+      </Drawer>
+  )
+}
 
 interface Props {
   header?: React.ReactNode;
@@ -15,12 +43,19 @@ interface Props {
 
 export function AppLayout({ header, footer, children, rightActions  }: Props) {
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [backupDialogOpen, setBackupDialogOpen] = useState(false);
+  //const [backupDialogOpen, setBackupDialogOpen] = useState(false);
   const navigate = useNavigate()
-  //const learningApi = useLearningRecordsContext() // TODO: temp
-  const toggleDrawer = (open: boolean) => () => {
-    setDrawerOpen(open);
-  };
+
+  // インポート用
+  const { openFileDialog, inputElement, setOnFilesSelected } =
+    useFileSelector(".kif")
+
+  //const c = useLibraryController()
+  const c = useExerciseControl()
+  setOnFilesSelected(async files => {
+    await c.importFiles(Array.from(files))
+    //navigate("/library")
+  })
 
   return (
     <div className={styles.container}>
@@ -30,7 +65,7 @@ export function AppLayout({ header, footer, children, rightActions  }: Props) {
           <IconButton
             edge="start"
             color="inherit"
-            onClick={toggleDrawer(true)}
+            onClick={() => setDrawerOpen(true)}
           >
             <MenuIcon />
           </IconButton>
@@ -39,33 +74,21 @@ export function AppLayout({ header, footer, children, rightActions  }: Props) {
             { header }
           </Typography>
           <Box sx={{flexGrow: 1}}></Box>
-
           
           { rightActions}          
         </Toolbar>
       </AppBar>
 
       {/* Drawer */}
-      <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer(false)} >
-        <Box width={250} mt={3} role="presentation"  className={styles.header}>
-          <List>
-            <ListItemButton onClick={() => navigate("/")}>
-              <ListItemText primary="ダッシュボード" />
-            </ListItemButton>
-            <ListItemButton onClick={() => navigate("/library")}>
-              <ListItemText primary="ライブラリ" />
-            </ListItemButton>
-
-            <ListItemButton onClick={() => console.log("settings")}>
-              <ListItemText primary="設定" />
-            </ListItemButton>
-          </List>
-        </Box>
-      </Drawer>
+      <DrawerMenu isOpen={drawerOpen} onClose={() => setDrawerOpen(false)}
+        onNavigateToDashboard={() => navigate("/")}
+        onNavigateToLibrary={() => navigate("/library")}
+        onImport={openFileDialog}
+        />
       
       <div className={styles.main}>{children}</div>
       {footer && <div className={styles.footer}>{footer}</div>}
-
+    {inputElement}
     </div>
   );
 }

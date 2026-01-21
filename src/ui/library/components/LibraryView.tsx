@@ -22,7 +22,6 @@ export function LibraryView({
     return (
         <AppLayout>
             <Stack direction="row">
-                <Button onClick={onImport}>Import</Button>
                 <Button onClick={onDeleteAll}>Delete all</Button>
 
                 <LibrarySortControl

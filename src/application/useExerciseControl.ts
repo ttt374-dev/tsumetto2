@@ -7,8 +7,9 @@ import { useRepositoryContext } from "@/ui/App/providers/RepositoryProvider"
 import { createLearningStore } from "./store/useLearningStore"
 import type { Exercise } from "@/domain/Exercise/Exercise"
 import type { SolvedResult } from "@/domain/mission/MissionSummary"
+import { createImportProblemsUsecase } from "@/usecase/importProblemsUseCase"
 
-export function useExercise() {
+export function useExerciseControl() {
     const repos = useRepositoryContext()    
     const stores = {
         problem: createProblemStore(repos.problem),
@@ -36,13 +37,26 @@ export function useExercise() {
     const toggleStar = (m: Exercise) => {
         stores.problem.toggleStar(m.problem)
     }
+      /* ---------- import ---------- */
+
+  const importFiles = async (files: File[]) => {
+    const usecase = createImportProblemsUsecase(repos.problem)
+    await usecase.importFiles(files)
+    reload()
+    //toast({ message: "imported" })
+  }
+  const reload = () => {
+    stores.problem.reset()
+  }
 
     return { 
         exerciseList, find,
 
         addProblems: stores.problem.add,
         deleteProblem: stores.problem.remove,
-        reload: stores.problem.reset,
+        //reload: stores.problem.reset,
+        reload,
+        importFiles,
         deleteAllProblems: stores.problem.removeAll,
         toggleStar, markAnswer
     }

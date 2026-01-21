@@ -1,11 +1,11 @@
-import { useExercise } from "@/application/useExercise";
+import { useExerciseControl } from "@/application/useExerciseControl";
 import { DashboardScreen } from "../dashboard/DashboardScreen";
 import { PlayerScreen } from "../player/PlayerScreen";
 import { SummaryScreen } from "../summary/SummaryScreen";
 import { useMissionController } from "./hooks/useMissionController";
 
 export function MissionScreen() {
-    const { exerciseList, markAnswer } = useExercise()
+    const { exerciseList, markAnswer, importFiles } = useExerciseControl()
     const mission = useMissionController(exerciseList, markAnswer)     
     
     const problemStats = { 
@@ -21,6 +21,7 @@ export function MissionScreen() {
                 onStart={mission.start}
                 onToggleFilter={mission.query.toggleFilter}
                 onSetFilter={mission.query.setFilter}
+                onImportFiles={files => importFiles(files)}
                 stats={problemStats}
             />
             )

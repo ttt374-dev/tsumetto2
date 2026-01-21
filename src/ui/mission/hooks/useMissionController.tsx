@@ -25,12 +25,8 @@ export function useMissionController(exercises: Exercise[],
         console.log("mission problems", r)
         return r
     },
-        [exercises, query.filterState])
-
-    
-    const currentExercise = useMemo(()=> { 
-        return missionProblems[index]}, [exercises, index])
-
+        [exercises, query.filterState])    
+    const currentExercise = missionProblems[index]
         
     // --- phase control ---
     const start = () => {

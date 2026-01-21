@@ -1,4 +1,4 @@
-import { useExercise } from "@/application/useExercise"
+import { useExerciseControl } from "@/application/useExerciseControl"
 import { applyQuery } from "@/domain/Exercise/query/applyQuery"
 import { useLibraryQueryContext } from "../../App/providers/QueryProvider"
 import { useRepositoryContext } from "../../App/providers/RepositoryProvider"
@@ -9,21 +9,12 @@ import { createImportProblemsUsecase } from "@/usecase/importProblemsUseCase"
 // useLibraryController.ts
 export function useLibraryController() {
   const { exerciseList, reload,
-    deleteProblem, deleteAllProblems } = useExercise()
+    deleteProblem, deleteAllProblems } = useExerciseControl()
 
   const query = useLibraryQueryContext()
   const repos = useRepositoryContext()
   const toast = useToast()
-  const navigate = useNavigate()
 
-  /* ---------- import ---------- */
-
-  const importFiles = async (files: File[]) => {
-    const usecase = createImportProblemsUsecase(repos.problem)
-    await usecase.importFiles(files)
-    reload()
-    toast({ message: "imported" })
-  }
 
   /* ---------- delete ---------- */
 
@@ -53,9 +44,8 @@ export function useLibraryController() {
     query,
 
     // actions
-    importFiles,
     handleDeleteAll,
     handleDeleteOne,
-    navigate,
+    
   }
 }
