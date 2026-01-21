@@ -25,13 +25,16 @@ export function MissionScreen() {
             )
         case "playing":
             if (!mission.currentExercise) return null
+            const title = `${mission.index+1}/${mission.missionProblems.length}: ${mission.currentExercise.problem.title}`
             return (
                 <PlayerScreen
+                    title={title}
                     problem={mission.currentExercise.problem}
                     learning={mission.currentExercise.learning}
                     onNextProblem={mission.next}
                     onPrevProblem={mission.prev}
-                    onAnswer={mission.answer}                    
+                    onAnswer={(answerResult, secToTaken) => 
+                        mission.answer(mission.currentExercise.problem, answerResult, secToTaken)}  
                 />
             )
         case "summary":

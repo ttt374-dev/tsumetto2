@@ -7,58 +7,28 @@ import BoardView from "../player/components/BoardView";
 import { useReplayController } from "../player/useReplayController";
 import { Box, Button, Stack } from "@mui/material";
 import MovesView from "../player/components/MovesView";
+import { PlayerView } from "../player/PlayerScreen";
+import { KifData } from "@/domain/kif/types";
 
 export function ViewerScreen() {
     const { id } = useParams()
     const exerciseController = useExercise()
+    const exercise = id ? exerciseController.find(id) : null
+    const replay = useReplayController(exercise?.problem.kifData ?? KifData.create())
+    if (!id || !exercise) return null       
 
-    if (!id) return null
-    const exercise = exerciseController.find(id)
-    if (!exercise) return null
     return (
-        <ViewerView exercise={exercise} />
+        <PlayerView
+            title={exercise.problem.title}
+            moves={exercise.problem.kifData.moves}
+            position={replay.position}
+            retreatPly={replay.retreatPly}
+            advancePly={replay.advancePly}
+            onMoveToPly={replay.moveToPly}
+            currentPlyIndex={replay.plyIndex}
+            showMoves={true}
+            setShowMoves={()=>{}}
+        />
     )
 
-}
-
-///////
-function ViewerView({ exercise }: { exercise: Exercise }) {
-    const navigate = useNavigate()
-    const replayController = useReplayController(exercise.problem.kifData)
-    const moves = exercise.problem.kifData.moves
-    
-    return (
-        <AppLayout 
-            header={exercise.problem.title}
-            footer={
-            <Button fullWidth variant="outlined" onClick={() => { navigate(-1)}}>
-                Back
-            </Button>
-        }
-        >
-            <Stack justifyContent="center">
-                <Box>
-                    <BoardView position={replayController.position} />
-                </Box>
-                <Stack direction="row" justifyContent="center">
-                    <Button onClick={replayController.retreatPly} disabled={replayController.plyIndex === 0}>
-                        Ret Ply
-                    </Button>
-                    <Button onClick={replayController.advancePly} disabled={replayController.plyIndex === exercise.problem.kifData.moves.length}>
-                        Adv Ply
-                    </Button>                    
-                </Stack>
-
-                <Box>
-                    <MovesView moves={moves} currentPlyIndex={0} onMoveClick={alert} /> :
-                    <>
-                        {moves.length}手詰め
-                        <Button onClick={() => {  }}>
-                            Show Moves
-                        </Button>
-                    </>
-                </Box>
-            </Stack>
-        </AppLayout>
-    )
 }

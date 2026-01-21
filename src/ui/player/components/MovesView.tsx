@@ -8,11 +8,11 @@ import { numberToKanjiTwoDigits } from "./numberToKanji";
 interface Props {
     moves: Move[];
     currentPlyIndex: number,
-    onMoveClick: (index: number) => void;
+    onMoveToPly: (index: number) => void;
 }
 
     
-export default function MovesView({ moves: moves, currentPlyIndex, onMoveClick }: Props) {
+export default function MovesView({ moves: moves, currentPlyIndex, onMoveToPly }: Props) {
 const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
@@ -30,7 +30,7 @@ const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
         return player === 'black' ? '▲' : '△'
     }
     function formatMove(move: Move, index: number): string {
-        console.log("format move", move)
+        //console.log("format move", move)
         const player = index % 2 === 1 ? "black" : "white"
         return `${index}: ` + formatPlayer(player) + move.rawtext
         
@@ -47,7 +47,7 @@ const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
     }
     return (
         <Box>
-            <div onClick={() => onMoveClick(0)}
+            <div onClick={() => onMoveToPly(0)}
                 style={itemStyles(0)}>
                 {"=== 開始局面 ==="}
             </div>
@@ -58,7 +58,7 @@ const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
                         ref={(el: HTMLDivElement | null) => {
                             itemRefs.current[i + 1] = el;
                         }}
-                        onClick={() => onMoveClick(i + 1)}
+                        onClick={() => onMoveToPly(i + 1)}
                         style={itemStyles(i + 1)}>
                         {formatMove(m, i + 1)}
                     </div>

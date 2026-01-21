@@ -44,7 +44,7 @@ export class Position {
             this.board
                 .set(from.file, from.rank, null)
                 .set(to.file, to.rank, piece)
-        console.log("apply move", nextBoard.dump(), piece)
+        //console.log("apply move", nextBoard.dump(), piece)
 
         return new Position(
             nextBoard,
