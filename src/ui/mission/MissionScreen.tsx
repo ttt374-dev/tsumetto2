@@ -20,10 +20,12 @@ export function MissionScreen() {
                 filterState={mission.query.filterState}
                 onStart={mission.start}
                 onToggleFilter={mission.query.toggleFilter}
+                onSetFilter={mission.query.setFilter}
                 stats={problemStats}
             />
             )
         case "playing":
+            
             if (!mission.currentExercise) return null
             const title = `${mission.index+1}/${mission.missionProblems.length}: ${mission.currentExercise.problem.title}`
             return (

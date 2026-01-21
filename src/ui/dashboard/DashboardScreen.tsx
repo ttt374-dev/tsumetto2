@@ -1,9 +1,11 @@
 import { Box, Button, Checkbox, FormControl, FormControlLabel, List, ListItem } from "@mui/material";
 import { AppLayout } from "../common/AppLayout";
 import { type FilterState } from "@/domain/Exercise/query/filter";
+import { MateLengthCheckboxes } from "./MateLengthCheckbox";
 
-function DashboardFilterControl({ filter, onToggleFilter }: {
+function DashboardFilterControl({ filter, onToggleFilter, onSetFilter }: {
     filter: FilterState, onToggleFilter: (key: keyof FilterState) => void
+    onSetFilter: (partial: Partial<FilterState>) => void
 }) {
 
     return (
@@ -16,17 +18,29 @@ function DashboardFilterControl({ filter, onToggleFilter }: {
                 <Checkbox checked={filter.isMissionTarget}
                     onChange={() => { onToggleFilter("isMissionTarget") }} />}
                 label="ミッションのみ" />
+                <MateLengthCheckboxes
+                        mateBuckets={filter.mateBuckets}
+                        onChange={(buckets) => {
+                            console.log("dsbd filter ", buckets)
+                            onSetFilter({ mateBuckets: buckets})
+                            //onToggleFilter()
+                        }
+                            //setFilter({ mateBuckets: buckets })
+                        }
+                    />
+
         </FormControl>
 
     )
 }
 /////////////////////////////////////////////
 export function DashboardScreen(
-    { filterState, onStart, onToggleFilter, stats }: {
+    { filterState, onStart, onToggleFilter, onSetFilter, stats }: {
         //queuedExerciseList: Exercise[],
         filterState: FilterState,
         onStart: () => void,
         onToggleFilter: (key: keyof FilterState) => void,
+        onSetFilter: (partial: Partial<FilterState>) => void,
         stats: { totalCount: number, solvedCount: number, failedCount: number }
 
     }
@@ -40,7 +54,10 @@ export function DashboardScreen(
                 </Button>
             }
         >
-            <DashboardFilterControl filter={filterState} onToggleFilter={onToggleFilter} />
+            <DashboardFilterControl filter={filterState} 
+                onToggleFilter={onToggleFilter}
+                onSetFilter={onSetFilter}
+                 />
             <Box>
                 <Box>{stats.totalCount}</Box>
                 {stats.solvedCount} : {stats.failedCount}

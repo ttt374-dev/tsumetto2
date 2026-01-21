@@ -2,7 +2,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useExercise } from "@/application/useExercise";
 import { useReplayController } from "../player/useReplayController";
 import { KifData } from "@/domain/kif/types";
-import { PlayerView } from "../player/components/PlayerView";
+import PlayerView from "../player/components/PlayerView";
 
 export function ViewerScreen() {
     const { id } = useParams()

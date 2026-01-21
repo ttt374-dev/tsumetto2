@@ -11,7 +11,16 @@ interface Props {
     onMoveToPly: (index: number) => void;
 }
 
-    
+export function formatPlayer(player: Player): string {
+    return player === 'black' ? '▲' : '△'
+}
+export function formatMove(move: Move, index: number): string {
+    //console.log("format move", move)
+    const player = index % 2 === 1 ? "black" : "white"
+    return `${index}: ` + formatPlayer(player) + move.rawtext
+
+}
+
 export default function MovesView({ moves: moves, currentPlyIndex, onMoveToPly }: Props) {
 const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
 
@@ -26,15 +35,7 @@ const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
   }, [currentPlyIndex]);
 
 
-    function formatPlayer(player: Player): string {
-        return player === 'black' ? '▲' : '△'
-    }
-    function formatMove(move: Move, index: number): string {
-        //console.log("format move", move)
-        const player = index % 2 === 1 ? "black" : "white"
-        return `${index}: ` + formatPlayer(player) + move.rawtext
-        
-    }
+    
     
     function itemStyles(index: number){
         const hilightColor =  "#ffd"

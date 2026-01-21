@@ -1,5 +1,6 @@
 import { MissionSummary, type MissionResultEntry } from "@/domain/mission/MissionSummary";
 import { Box, Button, Stack } from "@mui/material";
+import { AppLayout } from "../common/AppLayout";
 
 function SummaryRow({
     label,
@@ -32,7 +33,7 @@ export function SummaryScreen({ missionResultEntryList, onBackToDashboard: onNav
     //console.log("summary scr", missionResultEntryList)
     const summary = MissionSummary.createFromResultList(missionResultEntryList)
     return (
-        <>
+        <AppLayout>
             <Box>
                 Done. Good Job
             </Box>
@@ -47,6 +48,6 @@ export function SummaryScreen({ missionResultEntryList, onBackToDashboard: onNav
             <Button onClick={onNavigateToDashboard}>
                 Dashboard
             </Button>
-        </>
+        </AppLayout>
     )
 }

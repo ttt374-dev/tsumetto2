@@ -5,20 +5,21 @@ import { Learning } from "@/domain/learning/Learning"
 import { useReplayController } from "./useReplayController"
 import type { SolvedResult } from "@/domain/mission/MissionSummary"
 import { PlayerFooterActions } from "./components/PlayerFooterActions"
-import { PlayerView } from "./components/PlayerView"
+import PlayerView from "./components/PlayerView"
 
 export function PlayerLearningStats({ learning }: { 
     learning: Learning 
 }) {
     if (!learning) return
     return (
-        <Stack direction="row" spacing={2}>
+        <Stack spacing={1}>
             <Box>
-                {learning.solvedCount} /
-                {learning.totalCount}
+                { `${learning.solvedCount} : ${learning.failedCount}`}
             </Box>
             <Box>
-                ef{learning.easeFactor.toFixed(2)},
+                ef{learning.easeFactor.toFixed(2)}
+            </Box>
+            <Box>
                 next:{new Date(learning.nextReviewedAt).toLocaleString()}
             </Box>
         </Stack>
@@ -41,9 +42,17 @@ export function PlayerScreen({ title, problem, learning, onNextProblem, onPrevPr
         setShowMoves(false)        
     }, [problem.id])
 
+    useEffect(()=>{
+        if (replay.plyIndex > 0){
+            setShowMoves(true)
+        } else if (replay.plyIndex === 0){
+            setShowMoves(false)
+        }
+    }, [replay.plyIndex])
     return (
         <PlayerView
             title={title ?? problem.title}
+            learning={learning}
             showMoves={showMoves}
             moves={problem.kifData.moves}
             position={replay.position}
@@ -51,6 +60,8 @@ export function PlayerScreen({ title, problem, learning, onNextProblem, onPrevPr
             advancePly={replay.advancePly}
             onMoveToPly={replay.moveToPly}
             currentPlyIndex={replay.plyIndex}
+            onNextProblem={onNextProblem}
+            onPrevProblem={onPrevProblem}
             setShowMoves={setShowMoves}
             footerActions={
                 <PlayerFooterActions onAnswer={onAnswer} />

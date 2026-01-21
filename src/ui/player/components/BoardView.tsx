@@ -3,6 +3,7 @@ import { Position, Hand, kanjiToPieceItem, type PieceType, Piece, Board, type Pl
 import { numberToKanjiTwoDigits } from "./numberToKanji";
 
 import styles from "./BoardView.module.css";
+import { formatPlayer } from "./MovesView";
 
 const fileLabels = ["９", "８", "７", "６", "５", "４", "３", "２", "１"];
 const rankLabels = ["一", "二", "三", "四", "五", "六", "七", "八", "九"];
@@ -26,14 +27,12 @@ function formatHand(hand: Hand): string {
     //console.log(parts)        
     return parts.length === 0 ? "なし" : parts.join(" ");
 }
-function formatOwner(owner: Player): string {
-    return owner === "black" ? "▲先手" : "△後手"
-}
+
 /////////////////////////////
 function HandView({ hand, owner }: { hand: Hand, owner: Player }) {
     return (
         <div>
-            { formatOwner(owner)}：{formatHand(hand)}
+            { formatPlayer(owner)}{formatHand(hand)}
         </div>
     )
 }

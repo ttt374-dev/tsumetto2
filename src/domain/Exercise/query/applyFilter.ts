@@ -1,5 +1,6 @@
 import type { FilterState } from "./filter";
 import type { Exercise } from "../Exercise";
+import { matchMateBuckets } from "./mateFilter";
 
 //////////////////////////////////
 export const applyFilter = (
@@ -24,7 +25,16 @@ export const applyFilter = (
     (e) =>
       !filter.starredOnly ||
       e.problem.starred,
-  ]
+
+    // 手数
+    //(e) =>
+    //  !filter.mateLength ||
+    //  matchMateLength(e.problem.kifData, filter.mateLength),
+    // 手数バケット
+    (e) => 
+      !filter.mateBuckets ||
+      matchMateBuckets(e.problem.kifData, filter.mateBuckets),
+]
 
   return exerciseList.filter(e =>
     predicates.every(p => p(e))
