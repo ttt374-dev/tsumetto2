@@ -1,5 +1,5 @@
 import { Box, Stack } from "@mui/material";
-import { Position, Hand, kanjiToPieceItem, type PieceType, Piece, Board } from "@/domain/kif/types";
+import { Position, Hand, kanjiToPieceItem, type PieceType, Piece, Board, type Player } from "@/domain/kif/types";
 import { numberToKanjiTwoDigits } from "./numberToKanji";
 
 import styles from "./BoardView.module.css";
@@ -26,11 +26,14 @@ function formatHand(hand: Hand): string {
     //console.log(parts)        
     return parts.length === 0 ? "なし" : parts.join(" ");
 }
+function formatOwner(owner: Player): string {
+    return owner === "black" ? "▲先手" : "△後手"
+}
 /////////////////////////////
-function HandView({ hand }: { hand: Hand }) {
+function HandView({ hand, owner }: { hand: Hand, owner: Player }) {
     return (
         <div>
-            △後手：{formatHand(hand)}
+            { formatOwner(owner)}：{formatHand(hand)}
         </div>
     )
 }
@@ -59,7 +62,7 @@ function BoardView({ position }: { position: Position }) {
             <Box>   { /* センタリングするために必要 */ }
                 <Box className={styles.container}>
                     {/* 持駒表示 */}
-                    <HandView hand={hands.get("white")} />
+                    <HandView hand={hands.get("white")} owner="white" />
                     {/* 上の筋表示 */}
                     <div className={styles.fileLabels}>
                         <div className={styles.corner}></div> {/* 左上の空白 */}
@@ -87,7 +90,7 @@ function BoardView({ position }: { position: Position }) {
                         </div>)
                     )}
                     {/* 持駒表示 */}
-                    <HandView hand={hands.get("black")} />
+                    <HandView hand={hands.get("black")} owner="black" />
                 </Box>
             </Box>
         </Stack >

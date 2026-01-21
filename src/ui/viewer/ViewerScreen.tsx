@@ -1,14 +1,8 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { AppLayout } from "../common/AppLayout";
 import { useExercise } from "@/application/useExercise";
-import type { Exercise } from "@/domain/Exercise/Exercise";
-import { Problem } from "@/domain/problem/Problem";
-import BoardView from "../player/components/BoardView";
 import { useReplayController } from "../player/useReplayController";
-import { Box, Button, Stack } from "@mui/material";
-import MovesView from "../player/components/MovesView";
-import { PlayerView } from "../player/PlayerScreen";
 import { KifData } from "@/domain/kif/types";
+import { PlayerView } from "../player/components/PlayerView";
 
 export function ViewerScreen() {
     const { id } = useParams()
