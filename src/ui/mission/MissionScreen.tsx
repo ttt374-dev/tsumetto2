@@ -29,8 +29,8 @@ export function MissionScreen() {
                 <PlayerScreen
                     problem={mission.currentExercise.problem}
                     learning={mission.currentExercise.learning}
-                    onNext={mission.next}
-                    onPrev={mission.prev}
+                    onNextProblem={mission.next}
+                    onPrevProblem={mission.prev}
                     onAnswer={mission.answer}                    
                 />
             )

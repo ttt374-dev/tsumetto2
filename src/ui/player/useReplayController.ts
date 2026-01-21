@@ -2,6 +2,10 @@ import { buildUntilPly } from "@/domain/kif/buildUntilPly"
 import type { KifData } from "@/domain/kif/types"
 import { useMemo, useState, useEffect } from "react"
 
+/*
+    盤上での駒の動きを制御する
+
+*/
 export function useReplayController (kifData: KifData){
     const [plyIndex, setPlyIndex] = useState(0)
 
@@ -9,10 +13,11 @@ export function useReplayController (kifData: KifData){
         setPlyIndex(0)
     }, [kifData])
 
-    const history = {
+    const history = useMemo(() => ({
         initial: kifData.initialPosition,
-        moves: kifData.moves
-    }
+        moves: kifData.moves,
+    }), [kifData])
+
     const position = useMemo(()=> {
         return buildUntilPly(history, plyIndex)
     }, [history, plyIndex])
