@@ -1,23 +1,19 @@
 export type FilterState = {
-  text?: string; 
-  unansweredOnly: boolean;
-  //includeNotDue: boolean,
-  isMissionTarget: boolean,
-  starredOnly: boolean,
+    text?: string;
+    unansweredOnly: boolean;    
+    isMissionTarget: boolean,
+    starredOnly: boolean,
 
-  //mateLength?: MateLengthFilter
-  mateBuckets?: MateBucket[]
-  
+    //mateLength?: MateLengthFilter
+    mateBuckets?: MateBucket[]
+
 };
 
 export const DefaultFilterState: FilterState = {
-  text: undefined,
-  unansweredOnly: false,
-  isMissionTarget: false,
-  //includeNotDue: false,
-  starredOnly: false,
-
-  
+    text: undefined,
+    unansweredOnly: false,
+    isMissionTarget: false,
+    starredOnly: false,
 }
 
 /*
@@ -29,7 +25,7 @@ export type MateLengthFilter = {
 */
 
 export type MateBucket =
-  | "lte3"
-  | "eq5"
-  | "eq7"
-  | "gte9"
+    | "lte3"
+    | "eq5"
+    | "eq7"
+    | "gte9"

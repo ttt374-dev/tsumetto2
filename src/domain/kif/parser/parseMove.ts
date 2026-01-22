@@ -14,6 +14,7 @@ export function parseMoves(
         const move = parseMoveLine(line, prevSquare)
         if (!move) continue  // TODO
         moves.push(move)
+        console.log("parse moves", move)
         prevSquare = move.to
         //state = state.applyMove(move)
     }
@@ -43,7 +44,9 @@ export function parseMoveLine(line: string, prevSquare?: Square): Move | null {
     if (rawText.includes("打")) {
         return parseDropMove(rawText, )
     } else {
-        return parseNormalMove(rawText, prevSquare)
+        const move = parseNormalMove(rawText, prevSquare)
+        console.log("parse move", move)
+        return move
     }
  
 }
@@ -75,7 +78,7 @@ function parseNormalMove(rawtext: string, prevSquare?: Square): Move {
     const from = parseFrom(fromText)
     
     const { pieceType, promote} = parsePieceType(piecetypeText)
-    console.log("parsemove", rawtext, to, prevSquare)
+    console.log("parsemove", rawtext, pieceType, promote, prevSquare)
     return new Move(
         from,
         to,
@@ -100,26 +103,31 @@ function parseTo(text: string, prevSquare?: Square): Square {
         }
     }
 }
-function parsePieceType(text: string): {pieceType: PieceType, promote: boolean} {
+function parsePieceType(text: string): {
+    pieceType: PieceType, promote: boolean
+} {
     let t = text
-    let p: boolean
+    let promoteIntent: boolean = false
     if (t.endsWith("不成")){
         t = text.slice(0, -2)
     } else if (t.endsWith("成")){
         t = text.slice(0, 1)
-        p = true
+        console.log("成", text)
+        promoteIntent = true
     }
     if (["打", "右", "左", "引", "直", "寄", "上"].some(s => t.endsWith(s))) {
         t = t.slice(0, -1)
     }
     const pieceItem = kanjiToPieceItem[t] // misdisambiguish の処理
+    console.log("parse piecetype", pieceItem, promoteIntent)
     if (!pieceItem) {
         throw new Error(`Unknown piece text: ${text}`)
     }
     const { type, promoted } = pieceItem
+    console.log("parse piece", promoteIntent, pieceItem)
     return {
         pieceType: type,
-        promote: promoted
+        promote: promoteIntent || promoted
     }
 }
 function parseFrom(text: string): Square {

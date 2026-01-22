@@ -5,7 +5,6 @@ import { parseMoveLine, parseMoves } from "../parser/parseMove";
 import { buildUntilPly } from "../buildUntilPly";
 import { parseHand } from "../parser/parseHand";
 
-
 describe("parse moves", () => {
     it("move", () => {
         const text = "   2 １四歩(13)        ( 0:00/00:00:00)"
@@ -19,8 +18,8 @@ describe("parse moves", () => {
     })
     it("同", () => {
         const text = [
-    "1 ３三飛成(35)       ( 0:00/00:00:00)",
-    "2 同　桂(21)        ( 0:00/00:00:00)"]
+            "1 ３三飛成(35)       ( 0:00/00:00:00)",
+            "2 同　桂(21)        ( 0:00/00:00:00)"]
 
         const moves = parseMoves(text, Position.create())
 
@@ -49,8 +48,7 @@ describe("parse moves", () => {
 
         }
     })
-    it("成桂", () => {
-        
+    it("成桂", () => {        
         const text = "  1 ５五成桂(29)"
         //let state = BoardState.create()
         const hands = Hands.empty()
@@ -64,8 +62,7 @@ describe("parse moves", () => {
             state = parsed.apply(state)
             expect(state.board.get(5, 5)?.promoted).toBeTruthy
             expect(state.board.get(5, 5)?.type).toEqual("knight")
-        }       
-        
+        }
     })
     it("右", () => {
         const text = "   2 １四金右(13)        ( 0:00/00:00:00)"

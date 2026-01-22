@@ -5,7 +5,7 @@ type PlyControlPanelProps = {
   maxPlyIndex: number
   onPrevPly: () => void
   onNextPly: () => void
-  onReset: () => void
+  //onReset: () => void
 }
 
 
@@ -14,7 +14,7 @@ export function PlyControlPanel({
   maxPlyIndex,
   onPrevPly,
   onNextPly,
-  onReset,
+  //onReset,
 }: PlyControlPanelProps) {
   return (
     <Box sx={{ border: 1, borderColor: "divider" }}>
@@ -24,7 +24,7 @@ export function PlyControlPanel({
           onClick={onPrevPly}
           disabled={currentPlyIndex === 0}
         >
-          Ret Ply
+          ↑前の手
         </Button>
 
         <Button
@@ -32,11 +32,7 @@ export function PlyControlPanel({
           onClick={onNextPly}
           disabled={currentPlyIndex === maxPlyIndex}
         >
-          Adv Ply
-        </Button>
-
-        <Button variant="outlined" onClick={onReset}>
-          Reset
+          ↓次の手
         </Button>
       </Stack>
     </Box>

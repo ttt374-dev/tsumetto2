@@ -6,7 +6,6 @@ import { AppLayout } from "../common/AppLayout";
 import { type FilterState } from "@/domain/Exercise/query/filter";
 import { MateLengthCheckboxes } from "./MateLengthCheckbox";
 import { useFileSelector } from "../sharedComponents/useFileSelector";
-import { useExerciseControl } from "@/application/useExerciseControl";
 
 function DashboardFilterControl({ filter, onToggleFilter, onSetFilter }: {
     filter: FilterState, onToggleFilter: (key: keyof FilterState) => void
@@ -16,6 +15,11 @@ function DashboardFilterControl({ filter, onToggleFilter, onSetFilter }: {
     return (
         <FormControl sx={{ p: 2 }}>
             <FormControlLabel control={
+                <Checkbox checked={filter.unansweredOnly}
+                    onChange={() => { onToggleFilter("unansweredOnly") }} />}
+                label="未回答のみ" />
+
+            <FormControlLabel control={
                 <Checkbox checked={filter.starredOnly}
                     onChange={() => { onToggleFilter("starredOnly") }} />}
                 label="スターのみ" />
@@ -23,17 +27,13 @@ function DashboardFilterControl({ filter, onToggleFilter, onSetFilter }: {
                 <Checkbox checked={filter.isMissionTarget}
                     onChange={() => { onToggleFilter("isMissionTarget") }} />}
                 label="ミッションのみ" />
-                <MateLengthCheckboxes
-                        mateBuckets={filter.mateBuckets}
-                        onChange={(buckets) => {
-                            console.log("dsbd filter ", buckets)
-                            onSetFilter({ mateBuckets: buckets})
-                            //onToggleFilter()
-                        }
-                            //setFilter({ mateBuckets: buckets })
-                        }
-                    />
-
+            <MateLengthCheckboxes
+                mateBuckets={filter.mateBuckets}
+                onChange={(buckets) => {
+                    console.log("dsbd filter ", buckets)
+                    onSetFilter({ mateBuckets: buckets })
+                }}
+            />
         </FormControl>
 
     )
@@ -41,7 +41,6 @@ function DashboardFilterControl({ filter, onToggleFilter, onSetFilter }: {
 /////////////////////////////////////////////
 export function DashboardScreen(
     { filterState, onStart, onToggleFilter, onSetFilter, onImportFiles, stats }: {
-        //queuedExerciseList: Exercise[],
         filterState: FilterState,
         onStart: () => void,
         onToggleFilter: (key: keyof FilterState) => void,
@@ -60,7 +59,7 @@ export function DashboardScreen(
     return (
         <AppLayout
             footer={
-                <Button onClick={onStart} sx={{height: 100}}
+                <Button onClick={onStart} sx={{ height: 100 }}
                     variant="contained" fullWidth disabled={stats.totalCount === 0}>
                     Start
                 </Button>
@@ -71,15 +70,15 @@ export function DashboardScreen(
                 </Fab>
             }
         >
-            <DashboardFilterControl filter={filterState} 
+            <DashboardFilterControl filter={filterState}
                 onToggleFilter={onToggleFilter}
                 onSetFilter={onSetFilter}
-                 />
+            />
             <Box>
                 <Box>{stats.totalCount}</Box>
                 {stats.solvedCount} : {stats.failedCount}
             </Box>
-            
+
             {inputElement}
         </AppLayout>
     )

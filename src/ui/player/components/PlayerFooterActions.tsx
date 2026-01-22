@@ -11,7 +11,7 @@ type AnswerAction = {
 const ANSWER_ACTIONS: AnswerAction[] = [
   { label: "Failed", result: "failed", color: "error" },
   { label: "Solved", result: "solved", color: "success" },
-  { label: "Easy", result: "solved", color: "primary", secToTaken: 5 },
+  //{ label: "Easy", result: "solved", color: "primary", secToTaken: 5 },
 ]
 
 export function PlayerFooterActions({onAnswer}: {

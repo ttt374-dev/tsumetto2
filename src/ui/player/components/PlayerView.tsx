@@ -72,11 +72,6 @@ function PlayerView({title, learning, position, showMoves, currentPlyIndex,
                             onPrevPly={retreatPly}
                             onNextPly={() => {
                                 advancePly()
-                                //setShowMoves(true)
-                            }}
-                            onReset={() => {
-                                onMoveToPly(0)
-                                //setShowMoves(false)
                             }}
                         />
                         <Box>
