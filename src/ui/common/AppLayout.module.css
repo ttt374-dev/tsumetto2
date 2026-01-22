@@ -5,7 +5,7 @@
   height: 100vh;
   overflow: hidden; /* 画面 全体はスクロールさせない */
 
-  min-width: 300px
+  /* min-width: 300px */
 }
 
 .header {

@@ -51,25 +51,24 @@ export function DashboardScreen(
 
     }
 ) {
-
     // インポート用
     const { openFileDialog, inputElement, setOnFilesSelected } =
         useFileSelector(".kif")
-
-    //const c = useLibraryController()
-    const c = useExerciseControl()
     setOnFilesSelected(async files => {
         onImportFiles(Array.from(files))
-        //await c.importFiles(Array.from(files))
-        //navigate("/library")
     })
     return (
         <AppLayout
             footer={
-                <Button onClick={onStart}
+                <Button onClick={onStart} sx={{height: 100}}
                     variant="contained" fullWidth disabled={stats.totalCount === 0}>
                     Start
                 </Button>
+            }
+            fab={
+                <Fab onClick={openFileDialog}>
+                    <AddIcon />
+                </Fab>
             }
         >
             <DashboardFilterControl filter={filterState} 
@@ -80,19 +79,8 @@ export function DashboardScreen(
                 <Box>{stats.totalCount}</Box>
                 {stats.solvedCount} : {stats.failedCount}
             </Box>
-
-            <Fab
-                color="primary"
-                aria-label="add"
-                sx={{
-                    position: "fixed",
-                    bottom: 60,
-                    right: 16,
-                }}
-            >
-                <AddIcon onClick={openFileDialog}/>
-            </Fab>
-                   {inputElement}
+            
+            {inputElement}
         </AppLayout>
     )
 }

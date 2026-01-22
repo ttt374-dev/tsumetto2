@@ -39,9 +39,10 @@ interface Props {
   footer?: React.ReactNode;
   children: React.ReactNode;
   rightActions?: React.ReactNode;
+  fab?: React.ReactNode;
 }
 
-export function AppLayout({ header, footer, children, rightActions  }: Props) {
+export function AppLayout({ header, footer, children, rightActions, fab  }: Props) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   //const [backupDialogOpen, setBackupDialogOpen] = useState(false);
   const navigate = useNavigate()
@@ -88,6 +89,28 @@ export function AppLayout({ header, footer, children, rightActions  }: Props) {
       
       <div className={styles.main}>{children}</div>
       {footer && <div className={styles.footer}>{footer}</div>}
+
+      {fab && (
+        <Box
+          sx={{
+            position: "fixed",
+            bottom: 66,
+            right: 16,
+            zIndex: theme => theme.zIndex.drawer + 1,
+
+            left: "50%",
+            transform: "translateX(-50%)",
+            width: "100%",
+            maxWidth: 500, // App の max-width と合わせる
+            pointerEvents: "none",
+
+          }}
+        >
+          <Box sx={{ display: "flex", justifyContent: "flex-end", pr: 2, pointerEvents: "auto", height: 100 }}>
+            {fab}
+          </Box>
+        </Box>
+      )}
     {inputElement}
     </div>
   );

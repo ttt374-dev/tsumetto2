@@ -8,8 +8,8 @@ import { createImportProblemsUsecase } from "@/usecase/importProblemsUseCase"
 
 // useLibraryController.ts
 export function useLibraryController() {
-  const { exerciseList, reload,
-    deleteProblem, deleteAllProblems } = useExerciseControl()
+  const { exerciseList, 
+    deleteProblem, deleteAllProblems, importFiles } = useExerciseControl()
 
   const query = useLibraryQueryContext()
   const repos = useRepositoryContext()
@@ -17,7 +17,6 @@ export function useLibraryController() {
 
 
   /* ---------- delete ---------- */
-
   const handleDeleteAll = async () => {
     if (!window.confirm("ok to delete all ?")) return
     await deleteAllProblems()
@@ -31,7 +30,6 @@ export function useLibraryController() {
   }
 
   /* ---------- derived ---------- */
-
   const items = applyQuery(
     exerciseList,
     query.sortState,
@@ -46,6 +44,9 @@ export function useLibraryController() {
     // actions
     handleDeleteAll,
     handleDeleteOne,
+
+    // delegate to exercisecontrol
+    importFiles
     
   }
 }
