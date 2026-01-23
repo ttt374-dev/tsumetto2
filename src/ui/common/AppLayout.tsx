@@ -2,37 +2,11 @@ import React, { useState } from "react";
 import styles from "./AppLayout.module.css";
 import { AppBar, Box, Drawer, IconButton, List, ListItemButton, ListItemText, Menu, MenuItem, Toolbar, Typography } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import MoreVertIcon from "@mui/icons-material/MoreVert"
 import { useNavigate } from "react-router-dom";
 import { useFileSelector } from "../sharedComponents/useFileSelector";
-import { useLibraryController } from "../library/hooks/useLibraryController";
 import { useExerciseControl } from "@/application/useExerciseControl";
+import { DrawerMenu } from "./DrawerMenu";
 
-function DrawerMenu({isOpen, onClose, onNavigateToDashboard, onNavigateToLibrary, onImport}: {
-  isOpen: boolean,
-  onClose: () => void,
-  onNavigateToDashboard: () => void,
-  onNavigateToLibrary: () => void,
-  onImport: () => void
-}){
-  return (
-          <Drawer anchor="left" open={isOpen} onClose={onClose} >
-        <Box width={250} mt={3} role="presentation"  className={styles.header}>
-          <List>
-            <ListItemButton onClick={() => onNavigateToDashboard()}>
-              <ListItemText primary="ダッシュボード" />
-            </ListItemButton>
-            <ListItemButton onClick={() => onNavigateToLibrary()}>
-              <ListItemText primary="ライブラリ" />
-            </ListItemButton>
-            <ListItemButton onClick={onImport}>
-              <ListItemText primary="インポート"/>
-            </ListItemButton>
-          </List>
-        </Box>
-      </Drawer>
-  )
-}
 
 interface Props {
   header?: React.ReactNode;
@@ -85,7 +59,7 @@ export function AppLayout({ header, footer, children, rightActions, fab  }: Prop
         onNavigateToDashboard={() => navigate("/")}
         onNavigateToLibrary={() => navigate("/library")}
         onImport={openFileDialog}
-        />
+      />
       
       <div className={styles.main}>{children}</div>
       {footer && <div className={styles.footer}>{footer}</div>}
@@ -94,7 +68,7 @@ export function AppLayout({ header, footer, children, rightActions, fab  }: Prop
         <Box
           sx={{
             position: "fixed",
-            bottom: 66,
+            bottom: 116,
             right: 16,
             zIndex: theme => theme.zIndex.drawer + 1,
 

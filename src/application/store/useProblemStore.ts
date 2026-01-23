@@ -36,6 +36,11 @@ export function createProblemStore(repository: ProblemRepository) {
         await repository.remove(id)
         await reload()  // Store 内 state を更新
     }
+    const removeMany = async (ids: string[]) => {
+        await repository.removeMany(ids)
+        await reload()  // Store 内 state を更新
+    }
+    
     const removeAll = async () => {
         await repository.save([])
         await reload()
@@ -56,7 +61,7 @@ export function createProblemStore(repository: ProblemRepository) {
 
         // command
         reset: reload,
-        add, addMany, update, remove, removeAll,
+        add, addMany, update, remove, removeAll, removeMany,
         toggleStar, setTitle,
         
     }

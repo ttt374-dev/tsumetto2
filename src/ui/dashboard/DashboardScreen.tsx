@@ -11,7 +11,6 @@ function DashboardFilterControl({ filter, onToggleFilter, onSetFilter }: {
     filter: FilterState, onToggleFilter: (key: keyof FilterState) => void
     onSetFilter: (partial: Partial<FilterState>) => void
 }) {
-
     return (
         <FormControl sx={{ p: 2 }}>
             <FormControlLabel control={
@@ -35,7 +34,6 @@ function DashboardFilterControl({ filter, onToggleFilter, onSetFilter }: {
                 }}
             />
         </FormControl>
-
     )
 }
 /////////////////////////////////////////////

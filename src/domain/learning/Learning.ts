@@ -68,6 +68,9 @@ export class Learning {
     get totalCount(): number { 
         return this.solvedCount + this.failedCount
     }
+    get accuracy(): number { 
+        return this.totalCount === 0 ? 0 : this.solvedCount / this.totalCount
+    }
 
     ////////////////////////////////// 
     // command

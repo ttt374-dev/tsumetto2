@@ -45,5 +45,15 @@ export class LearningFileRepository implements LearningRepository {
             encoding: Encoding.UTF8,
         });
     }
-    
+      /** 複数 problemId に対応する Learning を削除 */
+  async removeMany(problemIds: string[]): Promise<void> {
+    const learnings = await this.load();
+
+    for (const id of problemIds) {
+      delete learnings[id];
+    }
+
+    await this.save(learnings);
+  }
+
 }

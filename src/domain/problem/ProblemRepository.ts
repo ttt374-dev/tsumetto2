@@ -9,4 +9,5 @@ export interface ProblemRepository {
     update(problem: Problem): Promise<void>
 
     remove(problemId: ProblemId): Promise<void>
+    removeMany(problemIds: ProblemId[]): Promise<void>
 }

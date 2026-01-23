@@ -48,6 +48,10 @@ export function useExerciseControl() {
   const reload = () => {
     stores.problem.reset()
   }
+  const deleteMany = (ids: ProblemId[]) => {
+    stores.problem.removeMany(ids)
+    stores.learning.removeMany(ids)
+  }
 
     return { 
         exerciseList, find,
@@ -58,6 +62,7 @@ export function useExerciseControl() {
         reload,
         importFiles,
         deleteAllProblems: stores.problem.removeAll,
+        deleteMany: stores.problem.removeMany,
         toggleStar, markAnswer
     }
 }

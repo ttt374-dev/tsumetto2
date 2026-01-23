@@ -40,6 +40,7 @@ export function createLearningStore(repository: LearningRepository) {
         learningRecords: records,
 
         update, 
+        removeMany: repository.removeMany
     }
 
 }
