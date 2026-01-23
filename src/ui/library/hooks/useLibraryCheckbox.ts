@@ -6,8 +6,8 @@ export function useLibraryCheckbox(problemIds: string[]): {
     isChecked(id: string): boolean
     toggleChecked: (id: string) => void
     isAllChecked: boolean
-    clearAll: () => void
-    selectAll: () => void    
+    uncheckAll: () => void
+    checkAll: () => void    
 } {
     const [ checkedIds, setCheckedIds] = useState<Set<string>>(()=>new Set())
 
@@ -23,15 +23,15 @@ export function useLibraryCheckbox(problemIds: string[]): {
         return next
     })
 
-    const selectAll = () => setCheckedIds(new Set(problemIds))
-    const clearAll = () => setCheckedIds(new Set())
+    const checkAll = () => setCheckedIds(new Set(problemIds))
+    const uncheckAll = () => setCheckedIds(new Set())
 
     return {
         checkedIds,        
 
         isChecked, toggleChecked,
         isAllChecked,
-        clearAll, selectAll,
+        uncheckAll, checkAll,
 
     }
 }

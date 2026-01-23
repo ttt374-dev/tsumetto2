@@ -2,17 +2,21 @@ import type { Exercise } from "@/domain/Exercise/Exercise";
 import type { Learning } from "@/domain/learning/Learning";
 import { Box, Checkbox, ListItem, ListItemIcon, ListItemText, Stack, Typography } from "@mui/material";
 
-export function LibraryListItem({ exercise, onClick, isChecked, onToggleChecked }: {
+export function LibraryListItem({ exercise, onClick, isCheckboxMode, isChecked, onToggleChecked }: {
     exercise: Exercise,
+    isCheckboxMode: boolean,
     onClick?: () => void,
     isChecked: boolean,
     onToggleChecked: () => void,
 }) {
     return (
-        <ListItem key={exercise.problem.id}>     
+        <ListItem key={exercise.problem.id}   sx={{ borderBottom: 1, borderColor: "divider" }}>     
+            { isCheckboxMode &&
             <ListItemIcon>
                 <Checkbox size="small" edge="start" checked={isChecked} onChange={onToggleChecked}/>
             </ListItemIcon>       
+            }
+            
             <ListItemText  onClick={onClick}>
                 {/* 一行目: タイトル */}
                 <Box>
