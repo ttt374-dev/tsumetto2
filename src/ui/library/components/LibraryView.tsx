@@ -17,14 +17,13 @@ import type { ProblemId } from "@/domain/problem/Problem"
 export function LibraryView({
     items,
     query,
-    onImportFiles,
 
     isChecked,
     checkedIds,
     onCheckAll,
     onUncheckAll,
     onToggleChecked,
-
+    onImportFiles,
     isCheckboxMode,
     onToggleCheckboxMode,
 
