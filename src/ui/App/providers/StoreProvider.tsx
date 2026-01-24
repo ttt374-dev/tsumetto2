@@ -1,7 +1,7 @@
 import type { ReactNode, } from "react"
 import { createContext, useContext, } from "react"
 import { useRepositoryContext } from "./RepositoryProvider"
-import { createProblemStore } from "@/application/store/useProblemStore"
+import { useProblemStore } from "@/application/store/useProblemStore"
 //import { createLearningStore } from "@/application/store/useLearningStore"
 
 /*

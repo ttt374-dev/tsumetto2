@@ -2,14 +2,8 @@ import { useState, useEffect } from "react";
 import type { ProblemRepository } from "../../domain/problem/ProblemRepository";
 import type { Problem } from "../../domain/problem/Problem";
 
-export function createProblemStore(repository: ProblemRepository) {
+export function useProblemStore(repository: ProblemRepository) {
     const [problems, setProblems] = useState<Problem[]>([]);
-
-    // 初期ロード
-    useEffect(() => {
-        reload().catch(() => setProblems([]));
-        
-    }, []);
 
     const reload = async () => {
         try {
@@ -19,6 +13,12 @@ export function createProblemStore(repository: ProblemRepository) {
             setProblems([]);
         }
     };
+    // 初期ロード
+    useEffect(() => {
+        reload().catch(() => setProblems([]));
+        
+    }, [repository]);
+
 
     const add = async (problem: Problem) => {
         await repository.add(problem)
@@ -61,7 +61,7 @@ export function createProblemStore(repository: ProblemRepository) {
         problems,
 
         // command
-        reset: reload,
+        reload,
         add, addMany, update, remove, removeAll, removeMany,
         toggleStar, setTitle,
         

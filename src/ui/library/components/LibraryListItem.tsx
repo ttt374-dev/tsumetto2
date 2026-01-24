@@ -46,12 +46,16 @@ export function LibraryListItem({ problem, learning, onClick, isCheckboxMode, is
     )
 }
 
-function inDays(date: number): number {
-    return (date - Date.now()) / (60 * 60 * 24 * 1000)
+function inDays(date: number, now: number = Date.now()): number {
+    return (date - now) / (60 * 60 * 24 * 1000)
 }
 function formatLearning(learning: Learning): string {
+    const indays = inDays(learning.nextReviewedAt)
+    const indaysString = indays >= 0 ? `${indays}d` : "due"
+    
     return `${learning.solvedCount}:${learning.failedCount},
 ${(learning.accuracy * 100).toFixed(0)}%,
 ef:${learning.easeFactor.toFixed(2)},
-${inDays(learning.nextReviewedAt).toFixed(0)}d`
+${indaysString}
+`
 }

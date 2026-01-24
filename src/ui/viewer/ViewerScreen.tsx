@@ -3,21 +3,22 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useReplayController } from "../player/useReplayController";
 import { KifData } from "@/domain/kif/types";
 import PlayerView from "../player/components/PlayerView";
-import { createProblemStore } from "@/application/store/useProblemStore";
+import { useProblemStore } from "@/application/store/useProblemStore";
 import { useRepositoryContext } from "../App/providers/RepositoryProvider";
 import type { Problem } from "@/domain/problem/Problem";
 
 export function ViewerScreen() {
     const { id } = useParams()
-    if (!id) return null
+    
     //const exerciseController = useExerciseControl()
     //const exercise = id ? exerciseController.find(id) : null
     const repos = useRepositoryContext()
-    const problemStore = createProblemStore(repos.problem)
+    const problemStore = useProblemStore(repos.problem)
     const problem = problemStore.problems.find(p => p.id === id)
-    if (!problem) return null
+    console.log("view screen", problem)
+    
     const replay = useReplayController(problem?.kifData ?? KifData.create())    
-
+    if (!id || !problem) return null
     return (
         <PlayerView
             title={problem?.title}

@@ -4,12 +4,12 @@ import type { MissionResultEntry, SolvedResult } from "@/domain/mission/MissionS
 import { useMissionQueryContext } from "@/ui/App/providers/QueryProvider";
 import { applyQuery } from "@/domain/Exercise/query/applyQuery";
 import type { SortState } from "@/domain/Exercise/query/sort";
-import { createLearningEventStore } from "@/application/store/useLearningEventStore";
+import { useLearningEventStore } from "@/application/store/useLearningEventStore";
 import type { LearningEvent } from "@/domain/LearningEvent/";
 import { useRepositoryContext } from "@/ui/App/providers/RepositoryProvider";
 import { createMissionEventStore } from "@/domain/MissionEvent/createMissionEventStore";
 import type { MissionFinished, MissionProblemAnswered, MissionSnapshot, MissionStarted } from "@/domain/MissionEvent/MissionEvent";
-import { createProblemStore } from "@/application/store/useProblemStore";
+import { useProblemStore } from "@/application/store/useProblemStore";
 import { createExerciseList } from "@/domain/Exercise/createExerciseList";
 import { createImportProblemsUsecase } from "@/usecase/importProblemsUseCase";
 
@@ -17,8 +17,8 @@ export type MissionPhase = "idle" | "playing" | "summary"
 
 export function useMissionController() {
     const repos = useRepositoryContext()
-    const learningEventStore = createLearningEventStore(repos.learningEvent)
-    const problemStore = createProblemStore(repos.problem)
+    const learningEventStore = useLearningEventStore(repos.learningEvent)
+    const problemStore = useProblemStore(repos.problem)
     const learningRecords = learningEventStore.records
     
     const missionEventStore = createMissionEventStore()
