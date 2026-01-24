@@ -64,7 +64,7 @@ export class Problem {
             ...this.toDTO(),
             starred: !this.starred,
         })
-        console.log("toggle", r)
+        //console.log("toggle", r)
         return r
     }
     setTitle(title: string): Problem {

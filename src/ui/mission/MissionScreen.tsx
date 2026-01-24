@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { DashboardScreen } from "../dashboard/DashboardScreen";
 import { PlayerScreen } from "../player/PlayerScreen";
 import { SummaryScreen } from "../summary/SummaryScreen";
@@ -7,7 +6,6 @@ import { useRepositoryContext } from "../App/providers/RepositoryProvider";
 import { createImportProblemsUsecase } from "@/usecase/importProblemsUseCase";
 
 export function MissionScreen() {   
-
     const mission = useMissionController()      
     const repos = useRepositoryContext()
     const handleImportFiles = async (files: File[]) => {        
@@ -33,8 +31,7 @@ export function MissionScreen() {
                 stats={problemStats}
             />
             )
-        case "playing":
-            
+        case "playing":            
             if (!mission.currentProblem) return null
             const title = `${mission.index+1}/${mission.snapshot?.problemIds.length}: ${mission.currentProblem.title}`
             return (
@@ -45,7 +42,6 @@ export function MissionScreen() {
                     onNextProblem={mission.next}
                     onPrevProblem={mission.prev}
                     onAnswer={(answerResult, secToTaken) => {
-                        console.log("onanswer")
                         mission.currentProblem && mission.answer(mission.currentProblem, answerResult, secToTaken)}  
                     }
                 />

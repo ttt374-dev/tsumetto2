@@ -29,7 +29,7 @@ function DashboardFilterControl({ filter, onToggleFilter, onSetFilter }: {
             <MateLengthCheckboxes
                 mateBuckets={filter.mateBuckets}
                 onChange={(buckets) => {
-                    console.log("dsbd filter ", buckets)
+                    //console.log("dsbd filter ", buckets)
                     onSetFilter({ mateBuckets: buckets })
                 }}
             />
@@ -56,6 +56,7 @@ export function DashboardScreen(
     })
     return (
         <AppLayout
+            header={ "Dashboard"}
             footer={
                 <Button onClick={onStart} sx={{ height: 100 }}
                     variant="contained" fullWidth disabled={stats.problemCount === 0}>

@@ -4,7 +4,6 @@ import type { LearningRecord } from "@/domain/learning/Learning";
 import { useEffect, useRef, useState } from "react";
 import { projectLearning } from "../../domain/learning/projectionLearning";
 
-
 export function useLearningEventStore(repository: LearningEventRepository){
     const [eventLog, setEventLog] = useState<LearningEventLog>([])
     const [snapshot, setSnapshot] = useState<LearningRecord>({})
@@ -12,7 +11,7 @@ export function useLearningEventStore(repository: LearningEventRepository){
     const reload = async () => {
         try {
             const data: LearningEventLog = await repository.load();
-            console.log("event store reload", data)
+            //console.log("event store reload", data)
             setEventLog(data)
             setSnapshot(projectLearning(data))
         } catch {
@@ -25,7 +24,7 @@ export function useLearningEventStore(repository: LearningEventRepository){
     }, [repository])
 
     useEffect(() => {
-        console.log("setsnapshot on effect", eventLog)
+        //console.log("setsnapshot on effect", eventLog)
         setSnapshot(projectLearning(eventLog))
     }, [eventLog])
 
@@ -42,12 +41,6 @@ export function useLearningEventStore(repository: LearningEventRepository){
             await repository.append(e);
             appendQueue.current.shift();
         }
-        /*
-        console.log("use learning event store: appen")
-        const event = {...learningEvent, at: Date.now()}
-        setEventLog(prev => [...prev, event])
-        await repository.append(event)
-        */
     }
 
     return {

@@ -9,7 +9,6 @@ export type ImportResult =
 export function createImportProblemsUsecase(problemRepo: ProblemRepository) {
     
     const importFile = async (file: File): Promise<ImportResult> => {
-        console.log("import file", file)
         try {
             const buf = await file.arrayBuffer();
             const text = new TextDecoder("shift_jis").decode(buf);            
@@ -17,7 +16,6 @@ export function createImportProblemsUsecase(problemRepo: ProblemRepository) {
 
             if (!newProblem) { return { ok: false, message: "parse failed" }}
             await problemRepo.add(newProblem)
-            console.log("import file: ", file.name)
             return { ok: true, count: 1}
         } catch (e) {
             const message = `Failed to import file ${file.name}:`
@@ -41,7 +39,6 @@ export function createImportProblemsUsecase(problemRepo: ProblemRepository) {
         if (failedCount > 0){
             return { ok: false, message: `failed to import ${failedCount} files`}    
         }
-        console.log("import files", successCount)
         return { ok: true, count: successCount}        
     }
     return {

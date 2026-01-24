@@ -130,8 +130,9 @@ export function useMissionController() {
 
     // stats
     const problemCount = useMemo(()=>{
+        console.log("problemcount", filteredProblems.length)
         return filteredProblems.length        
-    }, [problemStore.problems, snapshot, query.filterState])
+    }, [filteredProblems])
     const solvedCount = snapshot?.problemIds.reduce((sum, pid) => {
         const learning = learningRecords[pid];
         if (!learning) return sum;          // 学習記録がない場合はスキップ

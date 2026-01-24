@@ -13,7 +13,7 @@ export function projectLearning(
     const record: LearningRecord = {}
     console.log("project learning for events", events)
     for (const event of events) {
-        console.log("project learning", event)
+        ///console.log("project learning", event)
         if (event.type !== "reviewed") continue
 
         const prev = record[event.problemId] ?? Learning.create(event.problemId)
@@ -52,8 +52,8 @@ function applyReviewedEvent(
         )
 
     const nextReviewAt = event.at + intervalDays * DAY
-    console.log("event", event)
-    console.log("apply reviewed event", new Date(nextReviewAt).toLocaleDateString(), intervalDays)
+    //console.log("event", event)
+    //console.log("apply reviewed event", new Date(nextReviewAt).toLocaleDateString(), intervalDays)
 
     return new Learning(
         event.problemId, solvedCnt, failedCnt, intervalDays,

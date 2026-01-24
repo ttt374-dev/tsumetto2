@@ -15,7 +15,6 @@ export function ViewerScreen() {
     const repos = useRepositoryContext()
     const problemStore = useProblemStore(repos.problem)
     const problem = problemStore.problems.find(p => p.id === id)
-    console.log("view screen", problem)
     
     const replay = useReplayController(problem?.kifData ?? KifData.create())    
     if (!id || !problem) return null
