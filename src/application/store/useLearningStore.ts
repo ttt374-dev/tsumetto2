@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import type { LearningRepository } from "../../domain/learning/LearningRepository";
 import { Learning, type LearningRecord } from "../../domain/learning/Learning";
 import type { ProblemId } from "../../domain/problem/Problem";
+import { projectLearning } from "../projectionLearning";
 
 export function createLearningStore(repository: LearningRepository) {
     const [records, setRecords] = useState<LearningRecord>({})
@@ -14,7 +15,7 @@ export function createLearningStore(repository: LearningRepository) {
     const reload = async () => {
         try {
             const data = await repository.load();
-            setRecords(data);
+            setRecords(data);            
         } catch {
             setRecords({});
         }
