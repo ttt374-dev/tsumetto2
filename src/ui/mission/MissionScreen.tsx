@@ -10,9 +10,10 @@ export function MissionScreen() {
 
     const mission = useMissionController()      
     const repos = useRepositoryContext()
-    const handleImportFiles = (files: File[]) => {        
+    const handleImportFiles = async (files: File[]) => {        
         const importer = createImportProblemsUsecase(repos.problem)
-        importer.importFiles(files)
+        await importer.importFiles(files)
+        mission.reload()
     }
     
     switch (mission.phase) {

@@ -123,13 +123,15 @@ export function useMissionController() {
 
         //setPhase("summary")
     }
-
+    const reload = () => {
+        problemStore.reload()
+        learningEventStore.reload()
+    }
 
     // stats
     const problemCount = useMemo(()=>{
-        return filteredProblems.length
-        
-    }, [snapshot, query.filterState])
+        return filteredProblems.length        
+    }, [problemStore.problems, snapshot, query.filterState])
     const solvedCount = snapshot?.problemIds.reduce((sum, pid) => {
         const learning = learningRecords[pid];
         if (!learning) return sum;          // 学習記録がない場合はスキップ
@@ -149,7 +151,7 @@ export function useMissionController() {
         snapshot: snapshot as ReadonlyMissionSnapshot,
         missionResultList,
 
-        resetPhase,
+        resetPhase, reload,
         answer, finish,
         start, next, prev,
 

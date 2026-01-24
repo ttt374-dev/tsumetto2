@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import type { MissionEvent, MissionSnapshot } from "./MissionEvent"
 import { projectMission } from "./projectionMission"
+import type { LearningEvent } from "../LearningEvent"
 
 export function createMissionEventStore() {
     const [eventLog, setEventLog] = useState<MissionEvent[]>([])
@@ -9,6 +10,9 @@ export function createMissionEventStore() {
     useEffect(()=>{
         reset()
     }, [])    
+
+    
+
     const append = <E extends MissionEvent>(
         event: Omit<E, "at">
     ) => {
