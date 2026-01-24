@@ -68,11 +68,12 @@ export function LibraryScreen() {
     /////////
     return (
         <LibraryView
-            items={libraryItems}
+            problems={problems}
+            learningRecords={learningRecords}
             query={query}
             onDeleteAll={handleDeleteAll}
             onImportFiles={handleImportFiles}
-            onSelect={e => navigate(`/view/${e.problem.id}`)}
+            onSelect={id => navigate(`/view/${id}`)}
 
             isChecked={checkboxControl.isChecked}
             checkedIds={checkboxControl.checkedIds}

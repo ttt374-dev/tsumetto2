@@ -5,17 +5,18 @@ import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CloseIcon from "@mui/icons-material/Close";
 
-import type { Exercise } from "@/domain/Exercise/Exercise"
 import type { useLibraryQueryContext } from "../../App/providers/QueryProvider"
 import { AppLayout } from "../../common/AppLayout"
 import LibrarySortControl from "./LibrarySortControl"
 import { LibraryListItem } from "./LibraryListItem"
 import { useFileSelector } from "@/ui/sharedComponents/useFileSelector"
-import type { ProblemId } from "@/domain/problem/Problem"
+import type { Problem, ProblemId } from "@/domain/problem/Problem"
+import type { LearningRecord } from "@/domain/learning/Learning";
 
 // LibraryView.tsx
 export function LibraryView({
-    items,
+    problems,
+    learningRecords,
     query,
 
     isChecked,
@@ -31,10 +32,11 @@ export function LibraryView({
     onDeleteChecked,
     onSelect,
 }: {
-    items: Exercise[]
+    problems: Problem[],
+    learningRecords: LearningRecord,
     query: ReturnType<typeof useLibraryQueryContext>
     
-    onSelect: (e: Exercise) => void
+    onSelect: (pid: ProblemId) => void
     onImportFiles: (files: File[]) => void
     isChecked: (id: ProblemId) => boolean,
     checkedIds: Set<ProblemId>,
@@ -126,14 +128,15 @@ export function LibraryView({
             { /* リスト */ }
             <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto" }}>
                 <List>
-                    {items.map((e, i) => (
+                    {problems.map((p, i) => (
                         <LibraryListItem
-                            key={e.problem.id}
-                            exercise={e}
+                            key={p.id}
+                            problem={p}
+                            learning={learningRecords[p.id]}
                             isCheckboxMode={isCheckboxMode}
-                            onClick={() => onSelect(e)}
-                            isChecked={isChecked(e.problem.id)}
-                            onToggleChecked={() => { onToggleChecked(e.problem.id)}}
+                            onClick={() => onSelect(p.id)}
+                            isChecked={isChecked(p.id)}
+                            onToggleChecked={() => { onToggleChecked(p.id)}}
                         />
                     ))}
                 </List>

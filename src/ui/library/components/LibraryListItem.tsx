@@ -1,16 +1,18 @@
 import type { Exercise } from "@/domain/Exercise/Exercise";
 import type { Learning } from "@/domain/learning/Learning";
+import type { Problem } from "@/domain/problem/Problem";
 import { Box, Checkbox, ListItem, ListItemIcon, ListItemText, Stack, Typography } from "@mui/material";
 
-export function LibraryListItem({ exercise, onClick, isCheckboxMode, isChecked, onToggleChecked }: {
-    exercise: Exercise,
+export function LibraryListItem({ problem, learning, onClick, isCheckboxMode, isChecked, onToggleChecked }: {
+    problem: Problem,
+    learning?: Learning,
     isCheckboxMode: boolean,
     onClick?: () => void,
     isChecked: boolean,
     onToggleChecked: () => void,
 }) {
     return (
-        <ListItem key={exercise.problem.id}   sx={{ borderBottom: 1, borderColor: "divider" }}>     
+        <ListItem key={problem.id}   sx={{ borderBottom: 1, borderColor: "divider" }}>     
             { isCheckboxMode &&
             <ListItemIcon>
                 <Checkbox size="small" edge="start" checked={isChecked} onChange={onToggleChecked}/>
@@ -21,19 +23,19 @@ export function LibraryListItem({ exercise, onClick, isCheckboxMode, isChecked, 
                 {/* 一行目: タイトル */}
                 <Box>
                     <Typography variant="subtitle1" fontWeight="bold">
-                        {exercise.problem.title}
+                        {problem.title}
                     </Typography>
                 </Box>
 
                 {/* 二行目: 追加日・学習結果 */}
                 <Stack direction="row" justifyContent={"space-between"}>
                     <Typography variant="body2" color="text.secondary">
-                        {new Date(exercise.problem.createdAt).toLocaleString()}
+                        {new Date(problem.createdAt).toLocaleString()}
                     </Typography>
 
-                    {exercise.learning && <>
+                    {learning && <>
                         <Typography variant="body2" color="text.primary">
-                            {formatLearning(exercise.learning)}
+                            {formatLearning(learning)}
                         </Typography>
 
                     </>}
