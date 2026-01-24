@@ -1,13 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import type { Problem, ProblemId } from "@/domain/problem/Problem";
-import type { MissionResultEntry, SolvedResult } from "@/domain/mission/MissionSummary";
+import type { MissionResultEntry, SolvedResult } from "@/domain/MissionEvent/MissionSummary";
 import { useMissionQueryContext } from "@/ui/App/providers/QueryProvider";
 import { applyQuery } from "@/domain/problem/query/applyQuery";
 import type { SortState } from "@/domain/problem/query/sort";
 import { useLearningEventStore } from "@/application/store/useLearningEventStore";
 import type { LearningEvent } from "@/domain/LearningEvent/";
 import { useRepositoryContext } from "@/ui/App/providers/RepositoryProvider";
-import { createMissionEventStore } from "@/domain/MissionEvent/createMissionEventStore";
+import { useMissionEventStore } from "@/application/store/useMissionEventStore";
 import type { MissionFinished, MissionProblemAnswered, MissionSnapshot, MissionStarted } from "@/domain/MissionEvent/MissionEvent";
 import { useProblemStore } from "@/application/store/useProblemStore";
 import { createImportProblemsUsecase } from "@/usecase/importProblemsUseCase";
@@ -20,7 +20,7 @@ export function useMissionController() {
     const problemStore = useProblemStore(repos.problem)
     const learningRecords = learningEventStore.records
 
-    const missionEventStore = createMissionEventStore()
+    const missionEventStore = useMissionEventStore()
     const snapshot = missionEventStore.snapshot
 
     const [phase, setPhase] = useState<MissionPhase>("idle")

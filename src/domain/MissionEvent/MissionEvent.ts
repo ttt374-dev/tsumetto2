@@ -1,4 +1,4 @@
-import type { SolvedResult } from "../mission/MissionSummary"
+import type { SolvedResult } from "./MissionSummary"
 import type { ProblemId } from "../problem/Problem"
 
 export type MissionId = string

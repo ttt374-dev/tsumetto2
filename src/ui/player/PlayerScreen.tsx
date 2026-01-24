@@ -3,7 +3,7 @@ import { useEffect, useState } from "react"
 import type { Problem } from "@/domain/problem/Problem"
 import { Learning } from "@/domain/learning/Learning"
 import { useReplayController } from "./useReplayController"
-import type { SolvedResult } from "@/domain/mission/MissionSummary"
+import type { SolvedResult } from "@/domain/MissionEvent/MissionSummary"
 import { PlayerFooterActions } from "./components/PlayerFooterActions"
 import PlayerView from "./components/PlayerView"
 

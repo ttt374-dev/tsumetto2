@@ -1,4 +1,4 @@
-import type { SolvedResult } from "../mission/MissionSummary"
+import type { SolvedResult } from "../MissionEvent/MissionSummary"
 import type { ProblemId } from "../problem/Problem"
 
 export type LearningEvent = {

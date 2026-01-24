@@ -1,7 +1,7 @@
 import type { LearningEvent } from "@/domain/LearningEvent"
 import { Learning, type LearningRecord } from "@/domain/learning/Learning"
 import type { ProblemId } from "@/domain/problem/Problem"
-import type { SolvedResult } from "../mission/MissionSummary"
+import type { SolvedResult } from "../MissionEvent/MissionSummary"
 
 
 const MAX_INTERVAL_DAYS = 60

@@ -1,16 +1,14 @@
 import { useEffect, useRef, useState } from "react"
-import type { MissionEvent, MissionSnapshot } from "./MissionEvent"
-import { projectMission } from "./projectionMission"
-import type { LearningEvent } from "../LearningEvent"
+import type { MissionEvent, MissionSnapshot } from "../../domain/MissionEvent/MissionEvent"
+import { projectMission } from "../../domain/MissionEvent/projectionMission"
 
-export function createMissionEventStore() {
+export function useMissionEventStore() {
     const [eventLog, setEventLog] = useState<MissionEvent[]>([])
     const [snapshot, setSnapshot] = useState<MissionSnapshot | null>(null)
 
     useEffect(()=>{
         reset()
     }, [])    
-
     
 
     const append = <E extends MissionEvent>(

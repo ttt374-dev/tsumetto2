@@ -1,4 +1,4 @@
-import { MissionSummary, type MissionResultEntry } from "@/domain/mission/MissionSummary";
+import { MissionSummary, type MissionResultEntry } from "@/domain/MissionEvent/MissionSummary";
 import { Box, Button, Stack } from "@mui/material";
 import { AppLayout } from "../common/AppLayout";
 
