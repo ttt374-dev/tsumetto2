@@ -8,24 +8,19 @@ import { createImportProblemsUsecase } from "@/usecase/importProblemsUseCase";
 
 export function MissionScreen() {   
 
-    //const { exerciseList, markAnswer, importFiles } = useExerciseControl()
     const mission = useMissionController()      
     const repos = useRepositoryContext()
-    const handleImportFiles = (files: File[]) => {
-        
+    const handleImportFiles = (files: File[]) => {        
         const importer = createImportProblemsUsecase(repos.problem)
         importer.importFiles(files)
     }
     
     switch (mission.phase) {
-        case "idle":           
-
+        case "idle":
             const problemStats = {
-                problemCount: mission.snapshot?.problemIds.length,
+                problemCount: mission.problemCount,
                 solvedCount: mission.solvedCount,
-                failedCount: mission.failedCount,     // TODO
-                //solvedCount: mission..reduce((sum, exercise) => sum + (exercise.learning?.solvedCount ?? 0), 0),
-                //failedCount: mission.missionProblems.reduce((sum, exercise) => sum + (exercise.learning?.failedCount ?? 0), 0),
+                failedCount: mission.failedCount, 
             }
 
             return (<DashboardScreen
@@ -48,8 +43,10 @@ export function MissionScreen() {
                     learning={mission.currentLearning}
                     onNextProblem={mission.next}
                     onPrevProblem={mission.prev}
-                    onAnswer={(answerResult, secToTaken) => 
+                    onAnswer={(answerResult, secToTaken) => {
+                        console.log("onanswer")
                         mission.currentProblem && mission.answer(mission.currentProblem, answerResult, secToTaken)}  
+                    }
                 />
             )
         case "summary":

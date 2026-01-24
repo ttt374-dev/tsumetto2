@@ -1,4 +1,3 @@
-import type { Exercise } from "@/domain/Exercise/Exercise";
 import type { Learning } from "@/domain/learning/Learning";
 import type { Problem } from "@/domain/problem/Problem";
 import { Box, Checkbox, ListItem, ListItemIcon, ListItemText, Stack, Typography } from "@mui/material";
@@ -51,7 +50,8 @@ function inDays(date: number, now: number = Date.now()): number {
 }
 function formatLearning(learning: Learning): string {
     const indays = inDays(learning.nextReviewedAt)
-    const indaysString = indays >= 0 ? `${indays}d` : "due"
+    //const indaysString = indays >= 0 ? `${indays}d` : "due"
+    const indaysString = new Date(learning.nextReviewedAt).toLocaleString()
     
     return `${learning.solvedCount}:${learning.failedCount},
 ${(learning.accuracy * 100).toFixed(0)}%,

@@ -3,7 +3,7 @@ import { useToast } from "../App/providers/ToastProvider";
 import { useNavigate } from "react-router-dom";
 import { useLibraryCheckbox } from "./hooks/useLibraryCheckbox";
 import { useLibraryQueryContext } from "../App/providers/QueryProvider";
-import { applyQuery } from "@/domain/Exercise/query/applyQuery";
+import { applyQuery } from "@/domain/problem/query/applyQuery";
 import { useMemo, useState } from "react";
 import { useRepositoryContext } from "../App/providers/RepositoryProvider";
 import { useProblemStore } from "@/application/store/useProblemStore";
@@ -16,8 +16,6 @@ import { createImportProblemsUsecase } from "@/usecase/importProblemsUseCase";
 // LibraryScreen.tsx
 export function LibraryScreen() {
     const [checkboxMode, setCheckboxMode] = useState(false)
-
-    //const exerciseController = useExerciseControl()
     const repos = useRepositoryContext()
     const problemStore = useProblemStore(repos.problem)
     const problems = problemStore.problems
@@ -25,15 +23,9 @@ export function LibraryScreen() {
     const importFilesUsecase = createImportProblemsUsecase(repos.problem)
     const query = useLibraryQueryContext()
 
-    const libraryItems: Problem[] = useMemo(() => {        
-        const items = problems.map(problem => ({
-            problem,
-            learning: learningRecords?.[problem.id],
-        }))
-        const r = applyQuery(items, query.sortState, query.filterState)
-        return r.map(e=>e.problem)
-
-    }, [problems, learningRecords])
+    const libraryItems: Problem[] = useMemo(() => {            
+        return applyQuery(problems, learningRecords, query.sortState, query.filterState)
+    }, [problems, learningRecords, query.sortState, query.filterState])
 
     
     const checkboxControl = useLibraryCheckbox(libraryItems.map(e => e.id))

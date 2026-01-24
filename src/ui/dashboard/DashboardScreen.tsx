@@ -3,7 +3,7 @@ import { Fab } from "@mui/material"
 import AddIcon from "@mui/icons-material/Add"
 
 import { AppLayout } from "../common/AppLayout";
-import { type FilterState } from "@/domain/Exercise/query/filter";
+import { type FilterState } from "@/domain/problem/query/filter";
 import { MateLengthCheckboxes } from "./MateLengthCheckbox";
 import { useFileSelector } from "../sharedComponents/useFileSelector";
 

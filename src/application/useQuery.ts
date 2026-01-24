@@ -1,5 +1,5 @@
-import { DefaultSortState, type SortKey, type SortState } from "@/domain/Exercise/query/sort"
-import { DefaultFilterState, type FilterState } from "@/domain/Exercise/query/filter"
+import { DefaultSortState, type SortKey, type SortState } from "@/domain/problem/query/sort"
+import { DefaultFilterState, type FilterState } from "@/domain/problem/query/filter"
 import { useState } from "react"
 //import { useMediaQuery } from "@mui/material"
 

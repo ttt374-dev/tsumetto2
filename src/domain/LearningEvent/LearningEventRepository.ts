@@ -69,7 +69,7 @@ export class JsonLearningEventPersistence implements LearningEventPersistence {
                 directory: Directory.Data,
                 encoding: Encoding.UTF8,
             });
-            console.log("learning events store saved", events)
+            //console.log("learning events store saved", events)
         } catch (e){
             console.error("learning event store write error", e)
             throw e

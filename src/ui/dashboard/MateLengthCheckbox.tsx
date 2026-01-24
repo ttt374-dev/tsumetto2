@@ -1,4 +1,4 @@
-import type { MateBucket } from "@/domain/Exercise/query/filter"
+import type { MateBucket } from "@/domain/problem/query/filter"
 import {
   FormControl,
   FormLabel,

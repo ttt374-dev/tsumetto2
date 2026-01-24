@@ -27,7 +27,7 @@ export function PlayerFooterActions({onAnswer}: {
           color={color}
           variant="contained"
           sx={{height: height}}
-          onClick={() => onAnswer(result, secToTaken)}
+          onClick={() => { onAnswer(result, secToTaken)}}
         >
           {label}
         </Button>

@@ -18,11 +18,12 @@ export const matchMateLength = (kif: KifData, mateFilter?: MateLengthFilter) => 
 }
 */
 export function matchMateBuckets(
-  kif: KifData,
+  //kif: KifData,
+  mateLength: number,
   buckets?: MateBucket[]
 ): boolean {
   if (!buckets || buckets.length === 0) return true
-  const mateLength = kif.moves.length
+  //const mateLength = kif.moves.length
   if (mateLength === undefined) return false
 
   return buckets.some(bucket => {    

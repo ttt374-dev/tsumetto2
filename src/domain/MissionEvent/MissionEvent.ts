@@ -1,4 +1,3 @@
-import type { LearningEvent } from "../LearningEvent"
 import type { SolvedResult } from "../mission/MissionSummary"
 import type { ProblemId } from "../problem/Problem"
 

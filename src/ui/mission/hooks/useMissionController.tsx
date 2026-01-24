@@ -2,15 +2,14 @@ import { useEffect, useMemo, useState } from "react";
 import type { Problem, ProblemId } from "@/domain/problem/Problem";
 import type { MissionResultEntry, SolvedResult } from "@/domain/mission/MissionSummary";
 import { useMissionQueryContext } from "@/ui/App/providers/QueryProvider";
-import { applyQuery } from "@/domain/Exercise/query/applyQuery";
-import type { SortState } from "@/domain/Exercise/query/sort";
+import { applyQuery } from "@/domain/problem/query/applyQuery";
+import type { SortState } from "@/domain/problem/query/sort";
 import { useLearningEventStore } from "@/application/store/useLearningEventStore";
 import type { LearningEvent } from "@/domain/LearningEvent/";
 import { useRepositoryContext } from "@/ui/App/providers/RepositoryProvider";
 import { createMissionEventStore } from "@/domain/MissionEvent/createMissionEventStore";
 import type { MissionFinished, MissionProblemAnswered, MissionSnapshot, MissionStarted } from "@/domain/MissionEvent/MissionEvent";
 import { useProblemStore } from "@/application/store/useProblemStore";
-import { createExerciseList } from "@/domain/Exercise/createExerciseList";
 import { createImportProblemsUsecase } from "@/usecase/importProblemsUseCase";
 
 export type MissionPhase = "idle" | "playing" | "summary"
@@ -20,10 +19,9 @@ export function useMissionController() {
     const learningEventStore = useLearningEventStore(repos.learningEvent)
     const problemStore = useProblemStore(repos.problem)
     const learningRecords = learningEventStore.records
-    
+
     const missionEventStore = createMissionEventStore()
     const snapshot = missionEventStore.snapshot
-
 
     const [phase, setPhase] = useState<MissionPhase>("idle")
     const [index, setIndex] = useState(0)
@@ -38,18 +36,20 @@ export function useMissionController() {
             }))
             : []
 
-    const query = useMissionQueryContext()   
+    const query = useMissionQueryContext()
+
+    const filteredProblems = useMemo(() => {
+        const sortState: SortState = { key: "nextReviewedAt", order: "asc" }
+        return applyQuery(problemStore.problems, learningRecords, sortState, query.filterState)
+    }, [problemStore.problems, learningRecords, query.filterState])
 
     // --- phase control ---
-    const start = () => {        
-        const sortState: SortState = { key: "nextReviewedAt", order: "asc"}
-        const exercises = createExerciseList(problemStore.problems, learningRecords)
-        const r = applyQuery(exercises, sortState, query.filterState)
-        if (r.length === 0) return
+    const start = () => {
+        if (filteredProblems.length === 0) return
         const ev: MissionStarted = {
             type: "MissionStarted",
             missionId: crypto.randomUUID(),
-            problemIds: r.map(e => e.problem.id), at: 0
+            problemIds: filteredProblems.map(p => p.id), at: Date.now()
         }
         missionEventStore.append(ev)
         setPhase("playing")
@@ -58,67 +58,64 @@ export function useMissionController() {
     const resetPhase = () => {
         missionEventStore.reset
         setIndex(0)
-        
+
         setPhase("idle")          // TODO
     }
 
     // --- navigation ---
     function next() {
-        if (snapshot){
+        if (snapshot) {
             if (index < snapshot.problemIds.length - 1) {
                 setIndex(i => i + 1)
             } else {
-                const event: MissionFinished = {
+                missionEventStore.append({
                     type: "MissionFinished",
-                    missionId: snapshot.missionId,
-                    at: Date.now(),
-                }
-                missionEventStore.append(event)
+                    missionId: snapshot.missionId
+                })
+
                 setPhase("summary")
             }
-        }       
 
-        //snapshot && setIndex(i => Math.min(i + 1, snapshot.problemIds.length - 1))
+        }
     }
-
     function prev() {
         setIndex(i => Math.max(i - 1, 0))
     }
 
 
     // --- answer handling ---
-    const answer = (
+    const answer = async (
         problem: Problem,
         solvedResult: SolvedResult,
         secToTaken?: number
     ) => {
-        if (!snapshot) return
 
-        const missionEvent: MissionProblemAnswered = {
+        if (!snapshot) return
+        const missionEvent: Omit<MissionProblemAnswered, "at"> = {
             type: "MissionProblemAnswered",
             missionId: snapshot.missionId,
             problemId: problem.id as ProblemId,
             result: solvedResult,
-            sec: secToTaken, at: 0,
+            sec: secToTaken,
         }
         missionEventStore.append(missionEvent)
 
         // Learning への反映は「副作用」としてここで
-        const learningEvent: LearningEvent = {
+        const learningEvent: Omit<LearningEvent, "at"> = {
             type: "reviewed",
             problemId: problem.id,
             quality: solvedResult,
             sec: secToTaken,
-            at: 0
+            //at: Date.now()
         }
-        learningEventStore.append(learningEvent)
+        await learningEventStore.append(learningEvent)
         next()
-        
+
     }
 
     function finish(missionId: string) {
         if (phase !== "playing") return
-        
+
         missionEventStore.append({
             type: "MissionFinished",
             missionId: missionId
@@ -127,14 +124,12 @@ export function useMissionController() {
         //setPhase("summary")
     }
 
-    /* --- usecase --- */
-      const importFiles = async (files: File[]) => {
-        const usecase = createImportProblemsUsecase(repos.problem)
-        await usecase.importFiles(files)
-        //reload() // TODO
-        //toast({ message: "imported" })
-      }
-      // stats
+
+    // stats
+    const problemCount = useMemo(()=>{
+        return filteredProblems.length
+        
+    }, [snapshot, query.filterState])
     const solvedCount = snapshot?.problemIds.reduce((sum, pid) => {
         const learning = learningRecords[pid];
         if (!learning) return sum;          // 学習記録がない場合はスキップ
@@ -148,21 +143,20 @@ export function useMissionController() {
     return {
         // state
         phase,
-        index,        
+        index,
         currentProblem, currentProblemId, currentLearning,
-        query, 
+        query,
         snapshot: snapshot as ReadonlyMissionSnapshot,
-        missionResultList,        
+        missionResultList,
 
         resetPhase,
         answer, finish,
         start, next, prev,
 
         // stats
-        solvedCount, failedCount
+        problemCount, solvedCount, failedCount
     }
 }
-
 
 export type ReadonlyMissionSnapshot =
     Readonly<MissionSnapshot>
