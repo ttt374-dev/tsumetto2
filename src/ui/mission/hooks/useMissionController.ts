@@ -11,14 +11,16 @@ import { useMissionEventStore } from "@/application/store/useMissionEventStore";
 import type { MissionFinished, MissionProblemAnswered, MissionSnapshot, MissionStarted } from "@/domain/MissionEvent/MissionEvent";
 import { useProblemStore } from "@/application/store/useProblemStore";
 import { createImportProblemsUsecase } from "@/usecase/importProblemsUseCase";
+import { useMissionPreview } from "./useMissionPreview";
 
 export type MissionPhase = "idle" | "playing" | "summary"
 
+//////////////////////////////
 export function useMissionController() {
     const repos = useRepositoryContext()
     const learningEventStore = useLearningEventStore(repos.learningEvent)
     const problemStore = useProblemStore(repos.problem)
-    const learningRecords = learningEventStore.records
+    //const learningRecords = learningEventStore.records
 
     const missionEventStore = useMissionEventStore()
     const snapshot = missionEventStore.snapshot
@@ -27,8 +29,7 @@ export function useMissionController() {
     const [index, setIndex] = useState(0)
     const currentProblemId = snapshot && snapshot.problemIds[index]
     const currentProblem = snapshot ? problemStore.problems.find(p => p.id === currentProblemId) : undefined
-    const currentLearning = snapshot && currentProblemId ? learningRecords[currentProblemId] : undefined
-    const missionResultList: MissionResultEntry[] =
+        const missionResultList: MissionResultEntry[] =
         snapshot
             ? Object.values(snapshot.answered).map(e => ({
                 problemId: e.problemId,
@@ -36,30 +37,26 @@ export function useMissionController() {
             }))
             : []
 
-    const query = useMissionQueryContext()
-
-    const filteredProblems = useMemo(() => {
-        const sortState: SortState = { key: "nextReviewedAt", order: "asc" }
-        return applyQuery(problemStore.problems, learningRecords, sortState, query.filterState)
-    }, [problemStore.problems, learningRecords, query.filterState])
+    //const query = useMissionQueryContext()
+    const preview = useMissionPreview()
+    const filteredProblems = preview.filteredProblems
 
     // --- phase control ---
     const start = () => {
         if (filteredProblems.length === 0) return
-        const ev: MissionStarted = {
+        const ev: Omit<MissionStarted, "at"> = {
             type: "MissionStarted",
             missionId: crypto.randomUUID(),
-            problemIds: filteredProblems.map(p => p.id), at: Date.now()
+            problemIds: filteredProblems.map(p => p.id)
         }
         missionEventStore.append(ev)
         setPhase("playing")
 
     }
     const resetPhase = () => {
-        missionEventStore.reset
+        missionEventStore.reset()
         setIndex(0)
-
-        setPhase("idle")          // TODO
+        setPhase("idle")
     }
 
     // --- navigation ---
@@ -72,7 +69,6 @@ export function useMissionController() {
                     type: "MissionFinished",
                     missionId: snapshot.missionId
                 })
-
                 setPhase("summary")
             }
 
@@ -106,7 +102,6 @@ export function useMissionController() {
             problemId: problem.id,
             quality: solvedResult,
             sec: secToTaken,
-            //at: Date.now()
         }
         await learningEventStore.append(learningEvent)
         next()
@@ -121,44 +116,23 @@ export function useMissionController() {
             missionId: missionId
         })
 
-        //setPhase("summary")
-    }
-    const reload = () => {
-        problemStore.reload()
-        learningEventStore.reload()
     }
 
-    // stats
-    const problemCount = useMemo(()=>{
-        console.log("problemcount", filteredProblems.length)
-        return filteredProblems.length        
-    }, [filteredProblems])
-    const solvedCount = snapshot?.problemIds.reduce((sum, pid) => {
-        const learning = learningRecords[pid];
-        if (!learning) return sum;          // 学習記録がない場合はスキップ
-        return sum + (learning.solvedCount ?? 0); // solvedCount を足す
-    }, 0) ?? 0;
-    const failedCount = snapshot?.problemIds.reduce((sum, pid) => {
-        const learning = learningRecords[pid];
-        if (!learning) return sum;          // 学習記録がない場合はスキップ
-        return sum + (learning.failedCount ?? 0); // solvedCount を足す
-    }, 0) ?? 0;
-    return {
+
+
+        return {
         // state
         phase,
-        index,
-        currentProblem, currentProblemId, currentLearning,
-        query,
+        index,        
+        currentProblem, currentProblemId,
         snapshot: snapshot as ReadonlyMissionSnapshot,
         missionResultList,
 
-        resetPhase, reload,
+        resetPhase,
         answer, finish,
         start, next, prev,
-
-        // stats
-        problemCount, solvedCount, failedCount
     }
+
 }
 
 export type ReadonlyMissionSnapshot =

@@ -8,7 +8,6 @@ import { useMemo, useState } from "react";
 import { useRepositoryContext } from "../App/providers/RepositoryProvider";
 import { useProblemStore } from "@/application/store/useProblemStore";
 import type { Problem } from "@/domain/problem/Problem";
-import type { Learning } from "@/domain/learning/Learning";
 import { useLearningEventStore } from "@/application/store/useLearningEventStore";
 import { createImportProblemsUsecase } from "@/usecase/importProblemsUseCase";
 
@@ -33,15 +32,17 @@ export function LibraryScreen() {
     const navigate = useNavigate()
 
     // --- handlers ---
-    const handleDeleteAll = () => { 
+    const handleDeleteAll = async () => { 
         if (!window.confirm("are you sure to delete")) return
-        problemStore.removeAll()
+        await runCommand(() => repos.problem.removeAll())
+        //await problemStore.reload()
         toast({ message: `delete all problems` })
     }
-    const handleDeleteChecked = () => {
+    const handleDeleteChecked = async() => {
         if (!window.confirm("are you sure to delete")) return
         const deleteIds = Array.from(checkboxControl.checkedIds)
-        problemStore.removeMany(deleteIds)
+        await runCommand(() => repos.problem.removeMany(deleteIds))
+        
         toast({ message: `delete ${deleteIds.length} problems` })
     }
     const handleToggleCheckboxMode = () => {
@@ -49,7 +50,12 @@ export function LibraryScreen() {
     }
     const handleImportFiles = async (files: File[]) => {
         await importFilesUsecase.importFiles(files)
-        problemStore.reload()
+        await problemStore.reload()
+    }
+    // helper
+    const runCommand = async (cmd: () => Promise<void>) => {
+        await cmd()
+        await problemStore.reload()
     }
     /////////
     return (

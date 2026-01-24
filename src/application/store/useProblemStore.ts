@@ -19,7 +19,7 @@ export function useProblemStore(repository: ProblemRepository) {
         
     }, [repository]);
 
-
+/*
     const add = async (problem: Problem) => {
         await repository.add(problem)
         await reload()        
@@ -56,14 +56,16 @@ export function useProblemStore(repository: ProblemRepository) {
     const setTitle = async (problem: Problem, title: string) => {
         await repository.update(problem.setTitle(title))
     }
+        */
     return {
         // query
         problems,
-
-        // command
         reload,
+        // command
+        /*
         add, addMany, update, remove, removeAll, removeMany,
         toggleStar, setTitle,
+        */
         
     }
 }

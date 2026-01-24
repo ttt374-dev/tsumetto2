@@ -4,29 +4,34 @@ import { SummaryScreen } from "../summary/SummaryScreen";
 import { useMissionController } from "./hooks/useMissionController";
 import { useRepositoryContext } from "../App/providers/RepositoryProvider";
 import { createImportProblemsUsecase } from "@/usecase/importProblemsUseCase";
+import { useMissionPreview } from "./hooks/useMissionPreview";
+import { useLearningEventStore } from "@/application/store/useLearningEventStore";
 
 export function MissionScreen() {   
     const mission = useMissionController()      
     const repos = useRepositoryContext()
+    const learningStore = useLearningEventStore(repos.learningEvent)
+    const learningRecords = learningStore.records
     const handleImportFiles = async (files: File[]) => {        
         const importer = createImportProblemsUsecase(repos.problem)
         await importer.importFiles(files)
-        mission.reload()
+        missionPreview.reload()
     }
+    const missionPreview = useMissionPreview()
     
     switch (mission.phase) {
         case "idle":
             const problemStats = {
-                problemCount: mission.problemCount,
-                solvedCount: mission.solvedCount,
-                failedCount: mission.failedCount, 
+                problemCount: missionPreview.problemCount,
+                solvedCount: missionPreview.solvedCount,
+                failedCount: missionPreview.failedCount, 
             }
 
             return (<DashboardScreen
-                filterState={mission.query.filterState}
+                filterState={missionPreview.query.filterState}
                 onStart={mission.start}
-                onToggleFilter={mission.query.toggleFilter}
-                onSetFilter={mission.query.setFilter}
+                onToggleFilter={missionPreview.query.toggleFilter}
+                onSetFilter={missionPreview.query.setFilter}
                 onImportFiles={files => handleImportFiles(files)}
                 stats={problemStats}
             />
@@ -34,11 +39,12 @@ export function MissionScreen() {
         case "playing":            
             if (!mission.currentProblem) return null
             const title = `${mission.index+1}/${mission.snapshot?.problemIds.length}: ${mission.currentProblem.title}`
+            const learning = mission.currentProblemId ? learningRecords[mission.currentProblemId] : undefined
             return (
                 <PlayerScreen
                     title={title}
                     problem={mission.currentProblem}
-                    learning={mission.currentLearning}
+                    learning={learning}
                     onNextProblem={mission.next}
                     onPrevProblem={mission.prev}
                     onAnswer={(answerResult, secToTaken) => {
