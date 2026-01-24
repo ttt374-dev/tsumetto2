@@ -5,6 +5,9 @@ import type { MissionResultEntry, SolvedResult } from "@/domain/mission/MissionS
 import { useMissionQueryContext } from "@/ui/App/providers/QueryProvider";
 import { applyQuery } from "@/domain/Exercise/query/applyQuery";
 import type { SortState } from "@/domain/Exercise/query/sort";
+import { JsonLearningEventPersistence, LearningEventRepository } from "@/domain/EventLog/LearningEventRepository";
+import { createLearningEventStore } from "@/application/store/useLearningEventStore";
+import type { LearningEvent } from "@/domain/EventLog/EventLog";
 
 export type MissionPhase = "idle" | "playing" | "summary"
 
@@ -13,8 +16,12 @@ export function useMissionController(exercises: Exercise[],
         exercise: Exercise,
         solvedResult: SolvedResult,
         sec?: number
-    ) => void
+    ) => void,
+    
 ) {
+    const repo = LearningEventRepository.create(new JsonLearningEventPersistence())
+    const learningEventStore = createLearningEventStore(repo)
+
     const [phase, setPhase] = useState<MissionPhase>("idle")
     const [index, setIndex] = useState(0)
     const [missionResultList, setMissionResultList] = useState<MissionResultEntry[]>([])
@@ -69,6 +76,11 @@ export function useMissionController(exercises: Exercise[],
 
         setMissionResultList(prev => [...prev, entry])
         onPersistAnswer(currentExercise, solvedResult, secToTaken)
+        const leanringEvent: LearningEvent = {
+            type: "reviewed", problemId: currentExercise.problem.id, 
+            quality: solvedResult, sec: secToTaken, at: 0
+        }
+        learningEventStore.append(leanringEvent)
         next()
     }
 

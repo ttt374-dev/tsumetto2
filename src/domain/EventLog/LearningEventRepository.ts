@@ -1,0 +1,72 @@
+import type { LearningEvent, LearningEventLog } from "./EventLog"
+import { Filesystem, Directory, Encoding } from "@capacitor/filesystem";
+
+
+export class LearningEventRepository {
+    constructor(
+        //private readonly loadLog: () => Promise<LearningEventLog>,
+        //private readonly saveLog: (log: LearningEventLog) => Promise<void>,
+        private readonly store: LearningEventPersistence
+    ) { }
+    static create(store: LearningEventPersistence){
+        return new LearningEventRepository(store)
+    }
+    async load(){ return this.store.load()}
+    //async save(data: LearningEventLog){ this.store.save(data)}
+
+    async append(
+        event: Omit<LearningEvent, "at">
+    ) {
+        const log = await this.store.load()
+
+        const newEvent: LearningEvent = {
+            ...event,
+            at: Date.now(),
+        }
+
+        const nextLog = [...log, newEvent]
+
+        console.log("learning event repo append", newEvent)
+        await this.store.save(nextLog)
+    }
+}
+////////////////////////////////////
+const LEARNING_EVENT_LOG_FILE = "problem.json";
+
+export interface LearningEventPersistence {
+    load(): Promise<LearningEvent[]>
+    save(events: LearningEvent[]): Promise<void>
+}
+
+export class JsonLearningEventPersistence implements LearningEventPersistence {
+    async load(): Promise<LearningEvent[]> {
+        try {
+            const result = await Filesystem.readFile({
+                path: LEARNING_EVENT_LOG_FILE,
+                directory: Directory.Data,
+                encoding: Encoding.UTF8,
+            });
+            const dataStr =
+                typeof result.data === "string"
+                    ? result.data
+                    : await result.data.text()
+            const data: LearningEvent[] = JSON.parse(dataStr)
+            
+            return data
+
+        } catch (e) {
+            console.error("learning event store load error", e)
+            //return [];
+            throw e
+        }
+    }
+
+    async save(events: LearningEvent[]): Promise<void> {
+        await Filesystem.writeFile({
+            path: LEARNING_EVENT_LOG_FILE,
+            data: JSON.stringify(events),
+            directory: Directory.Data,
+            encoding: Encoding.UTF8,
+        });
+    }
+}

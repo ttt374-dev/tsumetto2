@@ -3,8 +3,11 @@ import { DashboardScreen } from "../dashboard/DashboardScreen";
 import { PlayerScreen } from "../player/PlayerScreen";
 import { SummaryScreen } from "../summary/SummaryScreen";
 import { useMissionController } from "./hooks/useMissionController";
+import { createLearningEventStore } from "@/application/store/useLearningEventStore";
+import { JsonLearningEventPersistence, LearningEventRepository } from "@/domain/EventLog/LearningEventRepository";
 
-export function MissionScreen() {
+export function MissionScreen() {   
+
     const { exerciseList, markAnswer, importFiles } = useExerciseControl()
     const mission = useMissionController(exerciseList, markAnswer)     
     
