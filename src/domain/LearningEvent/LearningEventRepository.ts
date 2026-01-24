@@ -31,7 +31,7 @@ export class LearningEventRepository {
     }
 }
 ////////////////////////////////////
-const LEARNING_EVENT_LOG_FILE = "problem.json";
+const LEARNING_EVENT_LOG_FILE = "learning_event_log.json";
 
 export interface LearningEventPersistence {
     load(): Promise<LearningEvent[]>
@@ -56,17 +56,22 @@ export class JsonLearningEventPersistence implements LearningEventPersistence {
 
         } catch (e) {
             console.error("learning event store load error", e)
-            //return [];
-            throw e
+            return [];
+            //throw e
         }
     }
 
     async save(events: LearningEvent[]): Promise<void> {
-        await Filesystem.writeFile({
-            path: LEARNING_EVENT_LOG_FILE,
-            data: JSON.stringify(events),
-            directory: Directory.Data,
-            encoding: Encoding.UTF8,
-        });
+        try {
+            await Filesystem.writeFile({
+                path: LEARNING_EVENT_LOG_FILE,
+                data: JSON.stringify(events),
+                directory: Directory.Data,
+                encoding: Encoding.UTF8,
+            });
+        } catch (e){
+            console.error("learning event store write error", e)
+            throw e
+        }
     }
 }

@@ -45,6 +45,7 @@ export class KifData {
     }
 
     static fromDTO(json: KifDataDTO): KifData {
+        console.log("kif data from dto", json.initialPosition)
         const initialPosition = Position.fromDTO(json.initialPosition)
         const moves = json.moves.map((m: any) => Move.fromDTO(m))
         return new KifData(json.headers, initialPosition, moves)

@@ -42,6 +42,7 @@ export function createProblemStore(repository: ProblemRepository) {
     }
     
     const removeAll = async () => {
+        console.log("problem store: removeall")
         await repository.save([])
         await reload()
     }

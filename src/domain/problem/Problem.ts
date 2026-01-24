@@ -4,15 +4,15 @@ import { parseKif } from '../kif/parser/parseKif'
 
 
 export type ProblemData = {
-    id: ProblemId
+    id: string
     title: string
-    kifData: KifDataDTO,
+    kifData: KifDataDTO
     createdAt: number
     starred: boolean
 }
 function createDefaultValues(): ProblemData {
     return {
-        id: v4() as ProblemId,
+        id: v4(),
         title: "untitled",
         kifData: KifData.create().toDTO(),
         createdAt: Date.now(),
@@ -42,7 +42,7 @@ export class Problem {
     // 永続化用 DTO
     toDTO(): ProblemDTO {
         return {
-            id: this.id as ProblemId,
+            id: this.id,
             title: this.title,
             kifData: this.kifData.toDTO(),
             createdAt: this.createdAt,

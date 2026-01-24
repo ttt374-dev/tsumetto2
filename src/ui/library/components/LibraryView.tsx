@@ -66,6 +66,7 @@ export function LibraryView({
         >
             { /* 上部コントロール */ }
             <Stack direction="row">
+                <Button onClick={onDeleteAll}>Delete All</Button>
                 { isCheckboxMode &&
                 <>
                     { /* --- 全選択 --- */}
@@ -96,7 +97,7 @@ export function LibraryView({
                     >
                         <CloseIcon />
                     </IconButton>
-
+                    
 
                 </>
                 }

@@ -27,7 +27,7 @@ export function LibraryScreen() {
     }
     const handleDeleteAll = () => {
         if (!window.confirm("are you sure to delete")) return
-        exerciseController.deleteAllProblems
+        exerciseController.deleteAllProblems()
         toast({ message: `delete all problems` })
     }
     const handleDeleteChecked = () => {
