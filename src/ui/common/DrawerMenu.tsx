@@ -18,9 +18,6 @@ export function DrawerMenu({isOpen, onClose, onNavigateToDashboard, onNavigateTo
             <ListItemButton onClick={() => onNavigateToLibrary()}>
               <ListItemText primary="ライブラリ" />
             </ListItemButton>
-            <ListItemButton onClick={onImport}>
-              <ListItemText primary="インポート"/>
-            </ListItemButton>
           </List>
         </Box>
       </Drawer>

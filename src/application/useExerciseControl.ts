@@ -1,3 +1,4 @@
+
 import { Problem, type ProblemId } from "../domain/problem/Problem"
 import { useEffect, useMemo, useState } from "react"
 
@@ -9,7 +10,7 @@ import type { Exercise } from "@/domain/Exercise/Exercise"
 import type { SolvedResult } from "@/domain/mission/MissionSummary"
 import { createImportProblemsUsecase } from "@/usecase/importProblemsUseCase"
 
-export function useExerciseControl() {
+export function useExerciseControlDEPRECATE() {
     const repos = useRepositoryContext()    
     const stores = {
         problem: createProblemStore(repos.problem),

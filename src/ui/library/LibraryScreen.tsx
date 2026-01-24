@@ -2,7 +2,6 @@ import { LibraryView } from "./components/LibraryView";
 import { useToast } from "../App/providers/ToastProvider";
 import { useNavigate } from "react-router-dom";
 import { useLibraryCheckbox } from "./hooks/useLibraryCheckbox";
-import { useExerciseControl } from "@/application/useExerciseControl";
 import { useLibraryQueryContext } from "../App/providers/QueryProvider";
 import { applyQuery } from "@/domain/Exercise/query/applyQuery";
 import { useMemo, useState } from "react";
@@ -30,7 +29,7 @@ export function LibraryScreen() {
     const learningRecords = createLearningEventStore(repos.learningEvent).records
     const importFilesUsecase = createImportProblemsUsecase(repos.problem)
     const query = useLibraryQueryContext()
-    
+
     const libraryItems = useMemo(() => {
         
         const items = problems.map(problem => ({

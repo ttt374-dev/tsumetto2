@@ -1,9 +1,7 @@
-import { useExerciseControl } from "@/application/useExerciseControl";
 import { Problem } from "@/domain/problem/Problem";
 import { describe, expect, it } from "vitest";
 import { applyFilter } from "../applyFilter";
 import { DefaultFilterState } from "../filter";
-import { startTransition } from "react";
 import { KifData, Move } from "@/domain/kif/types";
 
 describe("filter", ()=> {

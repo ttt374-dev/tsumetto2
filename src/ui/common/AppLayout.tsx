@@ -4,7 +4,7 @@ import { AppBar, Box, Drawer, IconButton, List, ListItemButton, ListItemText, Me
 import MenuIcon from "@mui/icons-material/Menu";
 import { useNavigate } from "react-router-dom";
 import { useFileSelector } from "../sharedComponents/useFileSelector";
-import { useExerciseControl } from "@/application/useExerciseControl";
+//import { useExerciseControl } from "@/application/useExerciseControl";
 import { DrawerMenu } from "./DrawerMenu";
 
 
@@ -26,11 +26,12 @@ export function AppLayout({ header, footer, children, rightActions, fab  }: Prop
     useFileSelector(".kif")
 
   //const c = useLibraryController()
+  /*
   const c = useExerciseControl()
   setOnFilesSelected(async files => {
     await c.importFiles(Array.from(files))
     //navigate("/library")
-  })
+  })*/
 
   return (
     <div className={styles.container}>
