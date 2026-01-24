@@ -2,16 +2,8 @@ import type { SolvedResult } from "../mission/MissionSummary"
 import type { ProblemId } from "../problem/Problem"
 
 export type MissionId = string
-export type AppEvent = | LearningEvent | MissionEvent
+//export type AppEvent = | LearningEvent | MissionEvent
 
-export type LearningEvent = {
-    type: "reviewed"
-    problemId: ProblemId
-    quality: SolvedResult
-    sec?: number
-    at: number
-}
-export type LearningEventLog = LearningEvent[]
 
 type MissionEvent =
   | {

@@ -1,5 +1,5 @@
-import type { LearningEvent, LearningEventLog } from "@/domain/EventLog/EventLog";
-import type { LearningEventRepository } from "@/domain/EventLog/LearningEventRepository";
+import type { LearningEvent, LearningEventLog } from "@/domain/LearningEvent";
+import type { LearningEventRepository } from "@/domain/LearningEvent/LearningEventRepository";
 import type { LearningRecord } from "@/domain/learning/Learning";
 import { useState } from "react";
 import { projectLearning } from "../projectionLearning";

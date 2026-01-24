@@ -1,5 +1,5 @@
-import type { LearningEvent, LearningEventLog } from "./EventLog"
 import { Filesystem, Directory, Encoding } from "@capacitor/filesystem";
+import type { LearningEvent } from "./LearningEvent";
 
 
 export class LearningEventRepository {

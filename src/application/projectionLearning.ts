@@ -1,4 +1,4 @@
-import type { LearningEvent } from "@/domain/EventLog/EventLog"
+import type { LearningEvent } from "@/domain/LearningEvent"
 import { Learning, type LearningRecord } from "@/domain/learning/Learning"
 import type { ProblemId } from "@/domain/problem/Problem"
 

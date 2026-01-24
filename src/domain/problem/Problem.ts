@@ -12,7 +12,7 @@ export type ProblemData = {
 }
 function createDefaultValues(): ProblemData {
     return {
-        id: v4(),
+        id: v4() as ProblemId,
         title: "untitled",
         kifData: KifData.create().toDTO(),
         createdAt: Date.now(),
@@ -26,7 +26,7 @@ export type ProblemId = string
 /////////////////////////////////////////////////////////////////
 export class Problem {
     constructor(
-        readonly id: string,
+        readonly id: ProblemId,
         readonly title: string,
         readonly kifData: KifData,
         readonly createdAt: number,
@@ -42,7 +42,7 @@ export class Problem {
     // 永続化用 DTO
     toDTO(): ProblemDTO {
         return {
-            id: this.id,
+            id: this.id as ProblemId,
             title: this.title,
             kifData: this.kifData.toDTO(),
             createdAt: this.createdAt,

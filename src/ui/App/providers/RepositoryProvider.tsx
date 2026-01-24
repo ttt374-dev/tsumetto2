@@ -4,7 +4,7 @@ import type { LearningRepository } from "@/domain/learning/LearningRepository"
 import type { ProblemRepository } from "@/domain/problem/ProblemRepository"
 import { ProblemFileRepository } from "@/infra/problemRepository/ProblemFileRepository"
 import { LearningFileRepository } from "@/infra/problemRepository/LearningFileRepository"
-import { JsonLearningEventPersistence, LearningEventRepository } from "@/domain/EventLog/LearningEventRepository"
+import { JsonLearningEventPersistence, LearningEventRepository } from "@/domain/LearningEvent/LearningEventRepository"
 
 type RepositoryContextValue = {
     readonly problem: ProblemRepository

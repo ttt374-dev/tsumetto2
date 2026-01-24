@@ -4,17 +4,20 @@ import { PlayerScreen } from "../player/PlayerScreen";
 import { SummaryScreen } from "../summary/SummaryScreen";
 import { useMissionController } from "./hooks/useMissionController";
 import { createLearningEventStore } from "@/application/store/useLearningEventStore";
-import { JsonLearningEventPersistence, LearningEventRepository } from "@/domain/EventLog/LearningEventRepository";
+import { JsonLearningEventPersistence, LearningEventRepository } from "@/domain/LearningEvent/LearningEventRepository";
 
 export function MissionScreen() {   
 
-    const { exerciseList, markAnswer, importFiles } = useExerciseControl()
-    const mission = useMissionController(exerciseList, markAnswer)     
+    //const { exerciseList, markAnswer, importFiles } = useExerciseControl()
+    const mission = useMissionController()     
     
+
     const problemStats = { 
-        totalCount: mission.missionProblems.length,
-        solvedCount: mission.missionProblems.reduce((sum, exercise) => sum + (exercise.learning?.solvedCount ?? 0), 0),
-        failedCount: mission.missionProblems.reduce((sum, exercise) => sum + (exercise.learning?.failedCount ?? 0), 0),
+        totalCount: mission.snapshot?.problemIds.length,
+        solvedCount: 0,
+        failedCount: 0,
+        //solvedCount: mission..reduce((sum, exercise) => sum + (exercise.learning?.solvedCount ?? 0), 0),
+        //failedCount: mission.missionProblems.reduce((sum, exercise) => sum + (exercise.learning?.failedCount ?? 0), 0),
     }
 
     switch (mission.phase) {
@@ -24,23 +27,23 @@ export function MissionScreen() {
                 onStart={mission.start}
                 onToggleFilter={mission.query.toggleFilter}
                 onSetFilter={mission.query.setFilter}
-                onImportFiles={files => importFiles(files)}
+                onImportFiles={files => mission.importFiles(files)}
                 stats={problemStats}
             />
             )
         case "playing":
             
-            if (!mission.currentExercise) return null
-            const title = `${mission.index+1}/${mission.missionProblems.length}: ${mission.currentExercise.problem.title}`
+            if (!mission.currentProblem) return null
+            const title = `${mission.index+1}/${mission.snapshot?.problemIds.length}: ${mission.currentProblem.title}`
             return (
                 <PlayerScreen
                     title={title}
-                    problem={mission.currentExercise.problem}
-                    learning={mission.currentExercise.learning}
+                    problem={mission.currentProblem}
+                    learning={mission.currentLearning}
                     onNextProblem={mission.next}
                     onPrevProblem={mission.prev}
                     onAnswer={(answerResult, secToTaken) => 
-                        mission.answer(mission.currentExercise.problem, answerResult, secToTaken)}  
+                        mission.currentProblem && mission.answer(mission.currentProblem, answerResult, secToTaken)}  
                 />
             )
         case "summary":
