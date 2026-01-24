@@ -19,6 +19,8 @@ export function createLearningEventStore(repository: LearningEventRepository){
     }
 
     return {
+        eventLog,
+        
         reload, append
     }
 }

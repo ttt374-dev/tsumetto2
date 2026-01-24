@@ -8,6 +8,7 @@ import type { SortState } from "@/domain/Exercise/query/sort";
 import { JsonLearningEventPersistence, LearningEventRepository } from "@/domain/EventLog/LearningEventRepository";
 import { createLearningEventStore } from "@/application/store/useLearningEventStore";
 import type { LearningEvent } from "@/domain/EventLog/EventLog";
+import { useRepositoryContext } from "@/ui/App/providers/RepositoryProvider";
 
 export type MissionPhase = "idle" | "playing" | "summary"
 
@@ -19,8 +20,9 @@ export function useMissionController(exercises: Exercise[],
     ) => void,
     
 ) {
-    const repo = LearningEventRepository.create(new JsonLearningEventPersistence())
-    const learningEventStore = createLearningEventStore(repo)
+    //const repo = LearningEventRepository.create(new JsonLearningEventPersistence())
+    const repos = useRepositoryContext()
+    const learningEventStore = createLearningEventStore(repos.learningEvent)
 
     const [phase, setPhase] = useState<MissionPhase>("idle")
     const [index, setIndex] = useState(0)
