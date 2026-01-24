@@ -3,43 +3,37 @@ import { DashboardScreen } from "../dashboard/DashboardScreen";
 import { PlayerScreen } from "../player/PlayerScreen";
 import { SummaryScreen } from "../summary/SummaryScreen";
 import { useMissionController } from "./hooks/useMissionController";
+import { useRepositoryContext } from "../App/providers/RepositoryProvider";
+import { createImportProblemsUsecase } from "@/usecase/importProblemsUseCase";
 
 export function MissionScreen() {   
 
     //const { exerciseList, markAnswer, importFiles } = useExerciseControl()
-    const mission = useMissionController()     
+    const mission = useMissionController()      
+    const repos = useRepositoryContext()
+    const handleImportFiles = (files: File[]) => {
+        
+        const importer = createImportProblemsUsecase(repos.problem)
+        importer.importFiles(files)
+    }
     
-    useEffect(() => {
-    if (
-        mission.snapshot?.phase === "playing" &&
-        mission.snapshot.problemIds.length === Object.keys(mission.snapshot.answered).length
-    ) {
-        mission.finish(mission.snapshot.missionId)
-        mission.appendEvent({
-            type: "MissionFinished",
-            missionId: mission.snapshot.missionId,
-        })
-    }
-}, [mission.snapshot])
-
-
-
-    const problemStats = { 
-        totalCount: mission.snapshot?.problemIds.length,
-        solvedCount: 0,
-        failedCount: 0,
-        //solvedCount: mission..reduce((sum, exercise) => sum + (exercise.learning?.solvedCount ?? 0), 0),
-        //failedCount: mission.missionProblems.reduce((sum, exercise) => sum + (exercise.learning?.failedCount ?? 0), 0),
-    }
-
     switch (mission.phase) {
-        case "idle":
+        case "idle":           
+
+            const problemStats = {
+                problemCount: mission.snapshot?.problemIds.length,
+                solvedCount: mission.solvedCount,
+                failedCount: mission.failedCount,     // TODO
+                //solvedCount: mission..reduce((sum, exercise) => sum + (exercise.learning?.solvedCount ?? 0), 0),
+                //failedCount: mission.missionProblems.reduce((sum, exercise) => sum + (exercise.learning?.failedCount ?? 0), 0),
+            }
+
             return (<DashboardScreen
                 filterState={mission.query.filterState}
                 onStart={mission.start}
                 onToggleFilter={mission.query.toggleFilter}
                 onSetFilter={mission.query.setFilter}
-                onImportFiles={files => mission.importFiles(files)}
+                onImportFiles={files => handleImportFiles(files)}
                 stats={problemStats}
             />
             )

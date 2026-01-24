@@ -44,7 +44,7 @@ export function DashboardScreen(
         onToggleFilter: (key: keyof FilterState) => void,
         onSetFilter: (partial: Partial<FilterState>) => void,
         onImportFiles: (files: File[]) => void,
-        stats: { totalCount: number, solvedCount: number, failedCount: number }
+        stats: { problemCount: number, solvedCount: number, failedCount: number }
 
     }
 ) {
@@ -58,7 +58,7 @@ export function DashboardScreen(
         <AppLayout
             footer={
                 <Button onClick={onStart} sx={{ height: 100 }}
-                    variant="contained" fullWidth disabled={stats.totalCount === 0}>
+                    variant="contained" fullWidth disabled={stats.problemCount === 0}>
                     Start
                 </Button>
             }
@@ -73,7 +73,7 @@ export function DashboardScreen(
                 onSetFilter={onSetFilter}
             />
             <Box>
-                <Box>{stats.totalCount}</Box>
+                <Box>{stats.problemCount}</Box>
                 {stats.solvedCount} : {stats.failedCount}
             </Box>
 

@@ -49,6 +49,8 @@ export function PlayerScreen({ title, problem, learning, onNextProblem, onPrevPr
             setShowMoves(false)
         }
     }, [replay.plyIndex])
+
+    console.log("play screen: learning", learning)
     return (
         <PlayerView
             title={title ?? problem.title}

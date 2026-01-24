@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import type { Exercise } from "@/domain/Exercise/Exercise";
 import type { Problem, ProblemId } from "@/domain/problem/Problem";
 import type { MissionResultEntry, SolvedResult } from "@/domain/mission/MissionSummary";
 import { useMissionQueryContext } from "@/ui/App/providers/QueryProvider";
@@ -17,31 +16,20 @@ import { createImportProblemsUsecase } from "@/usecase/importProblemsUseCase";
 export type MissionPhase = "idle" | "playing" | "summary"
 
 export function useMissionController() {
-    //const repo = LearningEventRepository.create(new JsonLearningEventPersistence())
     const repos = useRepositoryContext()
     const learningEventStore = createLearningEventStore(repos.learningEvent)
     const problemStore = createProblemStore(repos.problem)
+    const learningRecords = learningEventStore.records
     
     const missionEventStore = createMissionEventStore()
     const snapshot = missionEventStore.snapshot
 
 
-    //const [phase, setPhase] = useState<MissionPhase>("idle")
-    //const [index, setIndex] = useState(0)
-    //const [missionResultList, setMissionResultList] = useState<MissionResultEntry[]>([])
-    const phase: MissionPhase =
-        snapshot?.phase === "playing"
-            ? "playing"
-            : snapshot?.phase === "finished"
-                ? "summary"
-                : "idle"
-
-    const index = snapshot
-        ? Object.keys(snapshot.answered).length
-        : 0
+    const [phase, setPhase] = useState<MissionPhase>("idle")
+    const [index, setIndex] = useState(0)
     const currentProblemId = snapshot && snapshot.problemIds[index]
     const currentProblem = snapshot ? problemStore.problems.find(p => p.id === currentProblemId) : undefined
-    const currentLearning = snapshot && currentProblemId ? learningEventStore.records[currentProblemId] : undefined
+    const currentLearning = snapshot && currentProblemId ? learningRecords[currentProblemId] : undefined
     const missionResultList: MissionResultEntry[] =
         snapshot
             ? Object.values(snapshot.answered).map(e => ({
@@ -51,23 +39,11 @@ export function useMissionController() {
             : []
 
     const query = useMissionQueryContext()   
-    /*
-    const query = useMissionQueryContext()   
-    const missionProblems = useMemo(()=> {        
-        const sortState: SortState = { key: "nextReviewedAt", order: "asc"}
-        const exercises = createExerciseList(problemStore.problems, learningEventStore.records)
-        const r = applyQuery(exercises, sortState, query.filterState)
-        console.log("mission problems", r)
-        return r
-    },
-        [problemStore.problems, query.filterState])    
-    const currentExercise = missionProblems[index]
-    */
-        
+
     // --- phase control ---
     const start = () => {        
         const sortState: SortState = { key: "nextReviewedAt", order: "asc"}
-        const exercises = createExerciseList(problemStore.problems, learningEventStore.records)
+        const exercises = createExerciseList(problemStore.problems, learningRecords)
         const r = applyQuery(exercises, sortState, query.filterState)
         if (r.length === 0) return
         const ev: MissionStarted = {
@@ -76,35 +52,39 @@ export function useMissionController() {
             problemIds: r.map(e => e.problem.id), at: 0
         }
         missionEventStore.append(ev)
-        /*
-        if (exercises.length === 0) return
         setPhase("playing")
-        setIndex(0)
-        setMissionResultList([])
-        //console.log("start", missionResultList)
-        */
+
     }
     const resetPhase = () => {
-        missionEventStore.reset()
-        //setPhase("idle")          // TODO
+        missionEventStore.reset
+        setIndex(0)
+        
+        setPhase("idle")          // TODO
     }
 
     // --- navigation ---
-    const next = () => {
-        /*
-        setIndex(i => {
-            if (i >= exercises.length - 1) {
+    function next() {
+        if (snapshot){
+            if (index < snapshot.problemIds.length - 1) {
+                setIndex(i => i + 1)
+            } else {
+                const event: MissionFinished = {
+                    type: "MissionFinished",
+                    missionId: snapshot.missionId,
+                    at: Date.now(),
+                }
+                missionEventStore.append(event)
                 setPhase("summary")
-                return i
             }
-            return i + 1
-        })
-            */
+        }       
+
+        //snapshot && setIndex(i => Math.min(i + 1, snapshot.problemIds.length - 1))
     }
 
-    const prev = () => {
-        //setIndex(i => Math.max(0, i - 1))
+    function prev() {
+        setIndex(i => Math.max(i - 1, 0))
     }
+
 
     // --- answer handling ---
     const answer = (
@@ -132,31 +112,10 @@ export function useMissionController() {
             at: 0
         }
         learningEventStore.append(learningEvent)
-        /*
-        const entry: MissionResultEntry = {
-            problemId: problem.id,
-            solvedResult: solvedResult,
-            //secToTaken,
-        }
-
-        setMissionResultList(prev => [...prev, entry])
-        onPersistAnswer(currentExercise, solvedResult, secToTaken)
-        const leanringEvent: LearningEvent = {
-            type: "reviewed", problemId: currentExercise.problem.id, 
-            quality: solvedResult, sec: secToTaken, at: 0
-        }
-        learningEventStore.append(leanringEvent)
         next()
-        */
+        
     }
-/*
-    // --- safety ---
-    useEffect(() => {
-        if (phase === "playing" && !currentExercise) {
-            //setPhase("summary")
-        }
-    }, [phase, currentExercise])
-*/
+
     function finish(missionId: string) {
         if (phase !== "playing") return
         
@@ -175,24 +134,32 @@ export function useMissionController() {
         //reload() // TODO
         //toast({ message: "imported" })
       }
+      // stats
+    const solvedCount = snapshot?.problemIds.reduce((sum, pid) => {
+        const learning = learningRecords[pid];
+        if (!learning) return sum;          // 学習記録がない場合はスキップ
+        return sum + (learning.solvedCount ?? 0); // solvedCount を足す
+    }, 0) ?? 0;
+    const failedCount = snapshot?.problemIds.reduce((sum, pid) => {
+        const learning = learningRecords[pid];
+        if (!learning) return sum;          // 学習記録がない場合はスキップ
+        return sum + (learning.failedCount ?? 0); // solvedCount を足す
+    }, 0) ?? 0;
     return {
         // state
         phase,
-        index,
-        //missionProblems,
-        //currentExercise,
-        //missionResultList,
+        index,        
         currentProblem, currentProblemId, currentLearning,
         query, 
         snapshot: snapshot as ReadonlyMissionSnapshot,
-        missionResultList,
-        appendEvent: missionEventStore.append,
+        missionResultList,        
 
         resetPhase,
         answer, finish,
         start, next, prev,
 
-        importFiles,
+        // stats
+        solvedCount, failedCount
     }
 }
 
