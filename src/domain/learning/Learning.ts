@@ -84,7 +84,7 @@ export class Learning {
         //    failedCount: this.failedCount + failed,
         //})
     }*/
-    
+    /*
     // 正解評価
     private judgeAnswerQuality(answer: SolvedResult, sec: number): number {
         if (answer === "failed") return 0
@@ -131,6 +131,7 @@ export class Learning {
             now,
             answer)            
     }
+            */
 }
 
 export type LearningRecord = Record<string, Learning>

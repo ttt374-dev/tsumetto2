@@ -1,5 +1,5 @@
 import { Filesystem, Directory, Encoding } from "@capacitor/filesystem";
-import type { LearningRepository } from "../../domain/learning/LearningRepository";
+//import type { LearningRepository } from "../../domain/learning/LearningRepository";
 import { Learning, type LearningDTO, type LearningRecord } from "../../domain/learning/Learning";
 
 
@@ -8,6 +8,7 @@ const LIB_FILE = "Learning.json";
 /**
  * Capacitor Filesystem を使った LearningRepository 実装
  */
+/*
 export class LearningFileRepository implements LearningRepository {
     async load(): Promise<LearningRecord> {
         try {            
@@ -45,7 +46,7 @@ export class LearningFileRepository implements LearningRepository {
             encoding: Encoding.UTF8,
         });
     }
-      /** 複数 problemId に対応する Learning を削除 */
+  
   async removeMany(problemIds: string[]): Promise<void> {
     const learnings = await this.load();
 
@@ -57,3 +58,4 @@ export class LearningFileRepository implements LearningRepository {
   }
 
 }
+*/

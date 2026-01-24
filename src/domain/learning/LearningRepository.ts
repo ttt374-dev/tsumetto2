@@ -1,6 +1,7 @@
 import type { ProblemId } from "../problem/Problem"
 import type { Learning, LearningRecord } from "./Learning"
 
+/*
 export interface LearningRepository {
     load(): Promise<LearningRecord>
     save(problems: LearningRecord): Promise<void>
@@ -8,4 +9,4 @@ export interface LearningRepository {
 
     //add(Learning: Learning): Promise<void>
     //update(Learning: Learning): Promise<void>    
-}
+}*/

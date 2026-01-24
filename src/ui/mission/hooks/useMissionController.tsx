@@ -9,7 +9,7 @@ import { createLearningEventStore } from "@/application/store/useLearningEventSt
 import type { LearningEvent } from "@/domain/LearningEvent/";
 import { useRepositoryContext } from "@/ui/App/providers/RepositoryProvider";
 import { createMissionEventStore } from "@/domain/MissionEvent/createMissionEventStore";
-import type { MissionProblemAnswered, MissionSnapshot, MissionStarted } from "@/domain/MissionEvent/MissionEvent";
+import type { MissionFinished, MissionProblemAnswered, MissionSnapshot, MissionStarted } from "@/domain/MissionEvent/MissionEvent";
 import { createProblemStore } from "@/application/store/useProblemStore";
 import { createExerciseList } from "@/domain/Exercise/createExerciseList";
 import { createImportProblemsUsecase } from "@/usecase/importProblemsUseCase";
@@ -68,12 +68,12 @@ export function useMissionController() {
     const start = () => {        
         const sortState: SortState = { key: "nextReviewedAt", order: "asc"}
         const exercises = createExerciseList(problemStore.problems, learningEventStore.records)
-        const missionProblems = applyQuery(exercises, sortState, query.filterState)
-        if (missionProblems.length === 0) return
+        const r = applyQuery(exercises, sortState, query.filterState)
+        if (r.length === 0) return
         const ev: MissionStarted = {
             type: "MissionStarted",
             missionId: crypto.randomUUID(),
-            problemIds: missionProblems.map(e => e.problem.id), at: 0
+            problemIds: r.map(e => e.problem.id), at: 0
         }
         missionEventStore.append(ev)
         /*
@@ -85,6 +85,7 @@ export function useMissionController() {
         */
     }
     const resetPhase = () => {
+        missionEventStore.reset()
         //setPhase("idle")          // TODO
     }
 
@@ -156,6 +157,17 @@ export function useMissionController() {
         }
     }, [phase, currentExercise])
 */
+    function finish(missionId: string) {
+        if (phase !== "playing") return
+        
+        missionEventStore.append({
+            type: "MissionFinished",
+            missionId: missionId
+        })
+
+        //setPhase("summary")
+    }
+
     /* --- usecase --- */
       const importFiles = async (files: File[]) => {
         const usecase = createImportProblemsUsecase(repos.problem)
@@ -174,9 +186,10 @@ export function useMissionController() {
         query, 
         snapshot: snapshot as ReadonlyMissionSnapshot,
         missionResultList,
+        appendEvent: missionEventStore.append,
 
         resetPhase,
-        answer,
+        answer, finish,
         start, next, prev,
 
         importFiles,

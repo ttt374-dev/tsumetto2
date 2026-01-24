@@ -12,11 +12,6 @@ import type { Learning } from "@/domain/learning/Learning";
 import { createLearningEventStore } from "@/application/store/useLearningEventStore";
 import { createImportProblemsUsecase } from "@/usecase/importProblemsUseCase";
 
-type LibraryItem = {
-    problem: Problem
-    learning?: Learning
-}
-
 //////////////////////////////////////////////////
 // LibraryScreen.tsx
 export function LibraryScreen() {
@@ -30,20 +25,20 @@ export function LibraryScreen() {
     const importFilesUsecase = createImportProblemsUsecase(repos.problem)
     const query = useLibraryQueryContext()
 
-    const libraryItems = useMemo(() => {
+    const libraryItems: Problem[] = useMemo(() => {
         
         const items = problems.map(problem => ({
             problem,
             learning: learningRecords?.[problem.id],
         }))
-        return applyQuery(items, query.sortState, query.filterState)
+        const r = applyQuery(items, query.sortState, query.filterState)
+        return r.map(e=>e.problem)
 
     }, [problems, learningRecords])
 
-
     
     //const libraryItems = applyQuery(exerciseController.exerciseList, query.sortState, query.filterState)
-    const checkboxControl = useLibraryCheckbox(libraryItems.map(e => e.problem.id))
+    const checkboxControl = useLibraryCheckbox(libraryItems.map(e => e.id))
     const toast = useToast()
     const navigate = useNavigate()
 
@@ -68,7 +63,7 @@ export function LibraryScreen() {
     /////////
     return (
         <LibraryView
-            problems={problems}
+            problems={libraryItems}
             learningRecords={learningRecords}
             query={query}
             onDeleteAll={handleDeleteAll}

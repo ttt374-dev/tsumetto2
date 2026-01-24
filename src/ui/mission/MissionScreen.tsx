@@ -1,15 +1,28 @@
+import { useEffect } from "react";
 import { DashboardScreen } from "../dashboard/DashboardScreen";
 import { PlayerScreen } from "../player/PlayerScreen";
 import { SummaryScreen } from "../summary/SummaryScreen";
 import { useMissionController } from "./hooks/useMissionController";
-import { createLearningEventStore } from "@/application/store/useLearningEventStore";
-import { JsonLearningEventPersistence, LearningEventRepository } from "@/domain/LearningEvent/LearningEventRepository";
 
 export function MissionScreen() {   
 
     //const { exerciseList, markAnswer, importFiles } = useExerciseControl()
     const mission = useMissionController()     
     
+    useEffect(() => {
+    if (
+        mission.snapshot?.phase === "playing" &&
+        mission.snapshot.problemIds.length === Object.keys(mission.snapshot.answered).length
+    ) {
+        mission.finish(mission.snapshot.missionId)
+        mission.appendEvent({
+            type: "MissionFinished",
+            missionId: mission.snapshot.missionId,
+        })
+    }
+}, [mission.snapshot])
+
+
 
     const problemStats = { 
         totalCount: mission.snapshot?.problemIds.length,
