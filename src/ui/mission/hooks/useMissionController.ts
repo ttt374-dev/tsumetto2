@@ -118,9 +118,7 @@ export function useMissionController() {
 
     }
 
-
-
-        return {
+    return {
         // state
         phase,
         index,        

@@ -6,37 +6,23 @@ import { useReplayController } from "./useReplayController"
 import type { SolvedResult } from "@/domain/MissionEvent/MissionSummary"
 import { PlayerFooterActions } from "./components/PlayerFooterActions"
 import PlayerView from "./components/PlayerView"
-
-export function PlayerLearningStats({ learning }: { 
-    learning: Learning 
-}) {
-    if (!learning) return
-    return (
-        <Stack spacing={1}>
-            <Box>
-                { `${learning.solvedCount} : ${learning.failedCount}`}
-            </Box>
-            <Box>
-                ef{learning.easeFactor.toFixed(2)}
-            </Box>
-            <Box>
-                next:{new Date(learning.nextReviewedAt).toLocaleString()}
-            </Box>
-        </Stack>
-    )
-}
+import { useLearningEventStore } from "@/application/store/useLearningEventStore"
+import { useRepositoryContext } from "../App/providers/RepositoryProvider"
 
 ////////////////////////////////
-export function PlayerScreen({ title, problem, learning, onNextProblem, onPrevProblem, onAnswer}: {
+export function PlayerScreen({ title, problem, onNextProblem, onPrevProblem, onAnswer}: {
     title?: string,
     problem: Problem,
-    learning?: Learning,
+    //learning?: Learning,
     onNextProblem: () => void,
     onPrevProblem: () => void, 
     onAnswer: (answerResult: SolvedResult, secToTaken?: number) => void,
 }) {
     const replay = useReplayController(problem.kifData)
     const [ showMoves, setShowMoves ] = useState(false)     
+    const repos = useRepositoryContext()
+    const learningStore = useLearningEventStore(repos.learningEvent)
+    const learning = learningStore.records[problem.id]
     
     useEffect(()=> { 
         setShowMoves(false)        
@@ -49,7 +35,6 @@ export function PlayerScreen({ title, problem, learning, onNextProblem, onPrevPr
             setShowMoves(false)
         }
     }, [replay.plyIndex])
-
     console.log("play screen: learning", learning)
     return (
         <PlayerView

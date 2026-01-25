@@ -39,12 +39,12 @@ export function MissionScreen() {
         case "playing":            
             if (!mission.currentProblem) return null
             const title = `${mission.index+1}/${mission.snapshot?.problemIds.length}: ${mission.currentProblem.title}`
-            const learning = mission.currentProblemId ? learningRecords[mission.currentProblemId] : undefined
+            //const learning = mission.currentProblemId ? learningRecords[mission.currentProblemId] : undefined
             return (
                 <PlayerScreen
                     title={title}
                     problem={mission.currentProblem}
-                    learning={learning}
+                    //learning={learning}
                     onNextProblem={mission.next}
                     onPrevProblem={mission.prev}
                     onAnswer={(answerResult, secToTaken) => {

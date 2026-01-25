@@ -6,7 +6,6 @@ import BoardView from "./BoardView"
 import MovesPanel from "./MovesPanel"
 import MovesView from "./MovesView"
 import { PlyControlPanel } from "./PlyControlPanel"
-import { PlayerLearningStats } from "../PlayerScreen"
 import { Learning } from "@/domain/learning/Learning"
 import BoardPanel from "./BoardPanel"
 
@@ -23,6 +22,26 @@ export function InfoView({movesLength, learning}: {
         </Stack>
     )
 }
+
+export function PlayerLearningStats({ learning }: { 
+    learning: Learning 
+}) {
+    if (!learning) return
+    return (
+        <Stack spacing={1}>
+            <Box>
+                { `${learning.solvedCount} : ${learning.failedCount}`}
+            </Box>
+            <Box>
+                ef{learning.easeFactor.toFixed(2)}
+            </Box>
+            <Box>
+                next:{new Date(learning.nextReviewedAt).toLocaleString()}
+            </Box>
+        </Stack>
+    )
+}
+
 ///////////////////////////////////////////////////////////////
 function PlayerView({title, learning, position, showMoves, currentPlyIndex, 
     onNextProblem, onPrevProblem,
