@@ -6,10 +6,10 @@ import { AppLayout } from "../common/AppLayout";
 import { useFileSelector } from "../sharedComponents/useFileSelector";
 import { createImportProblemsUsecase } from "@/usecase/importProblemsUseCase";
 import { useRepositoryContext } from "../App/providers/RepositoryProvider";
-import { useMissionPreview } from "../mission/hooks/useMissionPreview";
+import { useDashboard } from "./hooks/useDashboard";
 import type { ProblemId } from "@/domain/problem/Problem";
 import { useEffect } from "react";
-import { DashboardFilterControl } from "./DashboardFilterControl";
+import { DashboardFilterControl } from "./components/DashboardFilterControl";
 import { SummaryView } from "../summary/SummaryView";
 
 /////////////////////////////////////////////
@@ -18,7 +18,7 @@ export function DashboardScreen({ onStart }: {
     onStart: (ids: ProblemId[]) => void 
 }) {
     const repos = useRepositoryContext()       
-    const missionPreview = useMissionPreview()    
+    const missionPreview = useDashboard()    
     const statsSummary = missionPreview.missionSummary
     //console.log("problemstats", problemStats)
 

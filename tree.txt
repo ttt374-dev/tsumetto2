@@ -1,57 +1,114 @@
 src
 ├── application
 │   ├── store
-│   │   ├── useLearningStore.ts
+│   │   ├── useLearningEventStore.ts
+│   │   ├── useMissionEventStore.ts
 │   │   └── useProblemStore.ts
-│   ├── useFsm.ts
-│   └── useMissionItem.ts
-├── assets
-│   └── react.svg
+│   └── useQuery.ts
 ├── domain
-│   ├── fsm
-│   │   ├── Fsm.ts
-│   │   └── fsmReducer.ts
+│   ├── LearningEvent
+│   │   ├── LearningEvent.ts
+│   │   ├── LearningEventRepository.ts
+│   │   └── index.ts
+│   ├── MissionEvent
+│   │   ├── MissionEvent.ts
+│   │   ├── MissionSummary.ts
+│   │   └── projectionMission.ts
+│   ├── kif
+│   │   ├── __test__
+│   │   │   ├── move.test.ts
+│   │   │   ├── parser.test.ts
+│   │   │   └── serialize.test.ts
+│   │   ├── buildUntilPly.ts
+│   │   ├── parser
+│   │   │   ├── parseHand.ts
+│   │   │   ├── parseInitialPosition.ts
+│   │   │   ├── parseKif.ts
+│   │   │   └── parseMove.ts
+│   │   └── types
+│   │       ├── Board.ts
+│   │       ├── Hand.ts
+│   │       ├── KifData.ts
+│   │       ├── Move.ts
+│   │       ├── Piece.ts
+│   │       ├── Position.ts
+│   │       └── index.ts
 │   ├── learning
 │   │   ├── Learning.ts
-│   │   └── LearningRepository.ts
-│   ├── missionItem
-│   │   ├── MissionItem.ts
-│   │   ├── createMissionItems.ts
-│   │   └── query
-│   │       ├── applyFilter.ts
-│   │       ├── applyQuery.ts
-│   │       ├── applySort.ts
-│   │       ├── filter.ts
-│   │       └── sort.ts
+│   │   └── projectionLearning.ts
 │   └── problem
 │       ├── Problem.ts
-│       └── ProblemRepository.ts
+│       ├── ProblemRepository.ts
+│       ├── PwL.ts
+│       └── query
+│           ├── __test__
+│           │   └── filter.test.ts
+│           ├── applyFilter.ts
+│           ├── applyQuery.ts
+│           ├── applySort.ts
+│           ├── filter.ts
+│           ├── mateFilter.ts
+│           └── sort.ts
 ├── index.css
-├── infra
-│   └── problemRepository
-│       ├── LearningFileRepository.ts
-│       └── ProblemFileRepository.ts
 ├── main.tsx
-└── ui
-    ├── App
-    │   ├── App.css
-    │   ├── App.tsx
-    │   └── providers
-    │       ├── RepositoryProvider.tsx
-    │       ├── StoreProvider.tsx
-    │       └── fsmPRovider.tsx
-    ├── common
-    ├── dashboard
-    │   └── DashboardScreen.tsx
-    ├── library
-    │   └── LibraryScreen.tsx
-    ├── player
-    │   └── PlayerScreen.tsx
-    └── sharedComponents
-        ├── FileButton.tsx
-        ├── FixedScrollScreen.tsx
-        ├── FrameLayout.tsx
-        ├── GenericListMenu.tsx
-        └── MultipleFilesButton.tsx
+├── ui
+│   ├── App
+│   │   ├── App.css
+│   │   ├── App.tsx
+│   │   └── providers
+│   │       ├── AllProviders.tsx
+│   │       ├── QueryProvider.tsx
+│   │       ├── RepositoryProvider.tsx
+│   │       └── ToastProvider.tsx
+│   ├── common
+│   │   ├── AppLayout.module.css
+│   │   ├── AppLayout.tsx
+│   │   └── DrawerMenu.tsx
+│   ├── dashboard
+│   │   ├── DashboardFilterControl.tsx
+│   │   ├── DashboardScreen.tsx
+│   │   └── MateLengthCheckbox.tsx
+│   ├── library
+│   │   ├── LibraryScreen.tsx
+│   │   ├── components
+│   │   │   ├── LibraryCheckboxControl.tsx
+│   │   │   ├── LibraryListItem.tsx
+│   │   │   ├── LibrarySortControl.tsx
+│   │   │   └── LibraryView.tsx
+│   │   └── hooks
+│   │       └── useLibraryCheckbox.ts
+│   ├── mission
+│   │   ├── MissionScreen.tsx
+│   │   └── hooks
+│   │       ├── useMissionController.ts
+│   │       └── useMissionPreview.ts
+│   ├── player
+│   │   ├── PlayerScreen.tsx
+│   │   ├── components
+│   │   │   ├── BoardPanel.tsx
+│   │   │   ├── BoardView.module.css
+│   │   │   ├── BoardView.tsx
+│   │   │   ├── MovesPanel.tsx
+│   │   │   ├── MovesView.tsx
+│   │   │   ├── PlayerFooterActions.tsx
+│   │   │   ├── PlayerView.tsx
+│   │   │   ├── PlyControlPanel.tsx
+│   │   │   ├── SwipeWrapper.tsx
+│   │   │   └── numberToKanji.ts
+│   │   └── useReplayController.ts
+│   ├── sharedComponents
+│   │   ├── FileButton.tsx
+│   │   ├── FixedScrollScreen.tsx
+│   │   ├── FrameLayout.tsx
+│   │   ├── GenericListMenu.tsx
+│   │   ├── MultipleFilesButton.tsx
+│   │   └── useFileSelector.tsx
+│   ├── summary
+│   │   ├── SummaryScreen.tsx
+│   │   └── SummaryView.tsx
+│   └── viewer
+│       └── ViewerScreen.tsx
+└── usecase
+    └── importProblemsUseCase.ts
 
-20 directories, 35 files
+30 directories, 82 files

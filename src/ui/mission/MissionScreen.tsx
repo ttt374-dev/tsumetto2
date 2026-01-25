@@ -4,12 +4,13 @@ import { SummaryScreen } from "../summary/SummaryScreen";
 import { useMissionController } from "./hooks/useMissionController";
 
 export function MissionScreen() {   
-    const mission = useMissionController()    
+    const mission = useMissionController()
     switch (mission.phase) {
         case "idle":
             return (<DashboardScreen onStart={mission.start}/>
             )
-        case "playing":            
+        case "playing": 
+       
             if (!mission.currentProblemId) return null
             //const title = `${mission.index+1}/${mission.snapshot?.problemIds.length}: ${mission.currentProblem.title}`
             // TODO: title prefix
@@ -31,7 +32,7 @@ export function MissionScreen() {
             return (
                 <SummaryScreen
                     missionResultEntryList={mission.missionResultList}
-                    onBackToDashboard={() => { mission.resetPhase()}}
+                    onBackToDashboard={() => { mission.reset()}}
                 />
             )
     }

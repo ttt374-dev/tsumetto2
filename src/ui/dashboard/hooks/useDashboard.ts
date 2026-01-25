@@ -8,7 +8,7 @@ import { useProblemStore } from "@/application/store/useProblemStore";
 import { MissionSummary } from "@/domain/MissionEvent/MissionSummary";
 
 
-export function useMissionPreview(){
+export function useDashboard(){
     const repos = useRepositoryContext()
     const problemStore = useProblemStore(repos.problem)
     const learningStore = useLearningEventStore(repos.learningEvent)

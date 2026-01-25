@@ -7,7 +7,14 @@ import { useRepositoryContext } from "@/ui/App/providers/RepositoryProvider";
 import { useMissionEventStore } from "@/application/store/useMissionEventStore";
 import type { MissionFinished, MissionProblemAnswered, MissionSnapshot, MissionStarted } from "@/domain/MissionEvent/MissionEvent";
 
-export type MissionPhase = "idle" | "playing" | "summary"
+//export type MissionPhase = "idle" | "playing" | "summary"
+
+const snapshotToResultList = (snapshot: MissionSnapshot) => {
+    return Object.values(snapshot.answered).map(e => ({
+        problemId: e.problemId,
+        solvedResult: e.result,
+    }))
+}
 
 //////////////////////////////
 export function useMissionController() {
@@ -19,18 +26,11 @@ export function useMissionController() {
     const missionEventStore = useMissionEventStore()
     const snapshot = missionEventStore.snapshot
     const phase = snapshot?.phase ?? "idle"
-
-    const currentProblemId = snapshot && snapshot.problemIds[index]
-
-    const missionResultList: MissionResultEntry[] =
-        snapshot
-            ? Object.values(snapshot.answered).map(e => ({
-                problemId: e.problemId,
-                solvedResult: e.result,
-            }))
-            : []
-
-    // --- phase control ---
+    
+    
+    
+    ///////////////////////////////////////////
+    // idle
     const start = (ids: ProblemId[]) => {
         if (ids.length === 0) return null
         const ev: Omit<MissionStarted, "at"> = {
@@ -39,14 +39,11 @@ export function useMissionController() {
             problemIds: ids
         }
         missionEventStore.append(ev)
-        //setPhase("playing")
-    }
-    const resetPhase = () => {
-        missionEventStore.reset()
-        setIndex(0)
-        //setPhase("idle")
     }
 
+    ///////////////////////////
+    // playing
+    const currentProblemId = snapshot && snapshot.problemIds[index]
     // --- navigation ---
     function next() {
         if (snapshot) {
@@ -57,9 +54,7 @@ export function useMissionController() {
                     type: "MissionFinished",
                     missionId: snapshot.missionId
                 })
-                //setPhase("summary")
             }
-
         }
     }
     function prev() {
@@ -94,17 +89,30 @@ export function useMissionController() {
         next()
 
     }
-
-    /*
-    const finish = (missionId: string) => {
-        if (phase !== "playing") return
-
-        missionEventStore.append({
-            type: "MissionFinished",
-            missionId: missionId
-        })
-    }*/
-    
+    ///////////////
+    // finished
+    const missionResultList: MissionResultEntry[] =
+        snapshot ? snapshotToResultList(snapshot) : []
+        
+    const reset = () => {
+        missionEventStore.reset()
+        setIndex(0)
+    }
+/*
+    return {
+        idle: phase === "idle" ? { start } : null,
+        playing: phase === "playing" ? {
+            currentProblemId,
+            next,
+            prev,
+            answer
+        } : null,
+        finished: phase === "finished" ? {
+            missionResultList,
+            reset
+        } : null
+    }
+        */
     return {
         // state
         phase,
@@ -113,8 +121,8 @@ export function useMissionController() {
         snapshot: snapshot as ReadonlyMissionSnapshot,
         missionResultList,
 
-        resetPhase,
-        answer,// finish,
+        reset,
+        answer,
         start, next, prev,
     }
 }
