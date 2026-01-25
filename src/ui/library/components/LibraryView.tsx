@@ -5,151 +5,120 @@ import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CloseIcon from "@mui/icons-material/Close";
 
-import type { useLibraryQueryContext } from "../../App/providers/QueryProvider"
+import type { QueryContextValue, useLibraryQueryContext } from "../../App/providers/QueryProvider"
 import { AppLayout } from "../../common/AppLayout"
 import LibrarySortControl from "./LibrarySortControl"
 import { LibraryListItem } from "./LibraryListItem"
 import { useFileSelector } from "@/ui/sharedComponents/useFileSelector"
 import type { Problem, ProblemId } from "@/domain/problem/Problem"
 import type { LearningRecord } from "@/domain/learning/Learning";
+import { useEffect } from "react";
+import { LibraryCheckboxControl } from "./LibraryCheckboxControl";
 
-// LibraryView.tsx
+
+export type LibraryViewHandlers = {
+  view: { onViewProblem: (id: ProblemId) => void }
+  import: { onImportFiles: (files: File[]) => void }
+  delete: { onDeleteAll: () => void; onDeleteChecked: () => void }
+  checkbox: {
+    onCheckAll: () => void
+    onUncheckAll: () => void
+    onToggleChecked: (id: ProblemId) => void
+    onToggleCheckboxMode: () => void
+  }
+}
+
+export type LibrarySelection = {
+  checkedIds: Set<ProblemId>
+  isChecked: (id: ProblemId) => boolean
+  isCheckboxMode: boolean
+}
+
+export type LibraryViewProps = {
+  problems: Problem[]
+  learningRecords: LearningRecord
+  query: ReturnType<typeof useLibraryQueryContext>
+  handlers: LibraryViewHandlers
+  selection: LibrarySelection
+}
+
+/////////////////////////////////////////
 export function LibraryView({
-    problems,
-    learningRecords,
-    query,
+  problems,
+  learningRecords,
+  query,
+  handlers,
+  selection
+}: LibraryViewProps) {
 
-    isChecked,
-    checkedIds,
-    onCheckAll,
-    onUncheckAll,
-    onToggleChecked,
-    onImportFiles,
-    isCheckboxMode,
-    onToggleCheckboxMode,
+  const { openFileDialog, inputElement, setOnFilesSelected } = useFileSelector(".kif")
 
-    onDeleteAll,
-    onDeleteChecked,
-    onViewProblem,
-}: {
-    problems: Problem[],
-    learningRecords: LearningRecord,
-    query: ReturnType<typeof useLibraryQueryContext>
-    
-    onViewProblem: (pid: ProblemId) => void
-    onImportFiles: (files: File[]) => void
-    isChecked: (id: ProblemId) => boolean,
-    checkedIds: Set<ProblemId>,
-    onCheckAll: () => void,
-    onUncheckAll: () => void,
-    onToggleChecked: (id: ProblemId) => void,
+  // ファイル選択時
+  setOnFilesSelected(async files => {
+    handlers.import.onImportFiles(Array.from(files))
+  })
 
-    isCheckboxMode: boolean,
-    onToggleCheckboxMode: () => void,
-
-    onDeleteAll: () => void
-    onDeleteChecked: () => void
-}) {
-    // インポート用
-    const { openFileDialog, inputElement, setOnFilesSelected } =
-        useFileSelector(".kif")
-    setOnFilesSelected(async files => {
-        onImportFiles(Array.from(files))
-    })
-    const handleItemClick = (pid: ProblemId) => {
-        if (isCheckboxMode){
-            onToggleChecked(pid)
-        } else {
-            onViewProblem(pid)
-        }
-        
+  const handleItemClick = (id: string) => {
+    if (selection.isCheckboxMode) {
+      handlers.checkbox.onToggleChecked(id)
+    } else {
+      handlers.view.onViewProblem(id)
     }
-    return (
-        <AppLayout
-            header={"Library"}
-            fab={
-                <Fab onClick={openFileDialog}>
-                    <AddIcon />
-                </Fab>
-            }
-        >
-            { /* 上部コントロール */ }
-            <Stack direction="row">
-                <Button onClick={onDeleteAll}>Delete All</Button>
-                { isCheckboxMode &&
-                <>
-                    { /* --- 全選択 --- */}
-                    <IconButton
-                        onClick={onCheckAll}
-                        color="primary"
-                    >
-                        <CheckBoxIcon />
-                    </IconButton>
-                    <IconButton
-                        onClick={onUncheckAll}
-                        color="primary"
-                    >
-                        <CheckBoxOutlineBlankIcon />
-                    </IconButton>
+  }
 
-                    { /* --- 削除 --- */}
-                    <IconButton
-                        onClick={onDeleteChecked}
-                        disabled={checkedIds.size === 0}
-                    >
-                        <DeleteIcon />
-                    </IconButton>
+  return (
+    <AppLayout
+      header="Library"
+      fab={
+        <Fab onClick={openFileDialog}>
+          <AddIcon />
+        </Fab>
+      }
+    >
+      <Stack direction="row">
+        <LibraryCheckboxControl
+          onCheckAll={handlers.checkbox.onCheckAll}
+          onUncheckAll={handlers.checkbox.onUncheckAll}
+          onToggleCheckboxMode={handlers.checkbox.onToggleCheckboxMode}
+          isCheckboxMode={selection.isCheckboxMode}
+        />
 
-                                        <IconButton
-                        onClick={onToggleCheckboxMode}
-                        color="primary"
-                    >
-                        <CloseIcon />
-                    </IconButton>
-                    
+        {selection.isCheckboxMode &&
+          <IconButton
+            onClick={handlers.delete.onDeleteChecked}
+            disabled={selection.checkedIds.size === 0}
+          >
+            <DeleteIcon />
+          </IconButton>
+        }
 
-                </>
-                }
-                { !isCheckboxMode && 
-                    <>
-                        <IconButton
-                        onClick={onToggleCheckboxMode}
-                        color="primary"
-                    >
-                        <CheckBoxOutlineBlankIcon />
-                    </IconButton>
-                 </>
-                }
-                
-                <Box sx={{ flexGrow: 1 }} />
+        <Box sx={{ flexGrow: 1 }} />
 
-                { /* --- ソート --- */}
-                <LibrarySortControl
-                    sort={query.sortState}
-                    onSetSortKey={query.toggleSort}
-                    onSetSortOrder={order =>
-                        query.setSortState(p => ({ ...p, order }))
-                    }
-                />
-            </Stack>
+        {/* ソート */}
+        <LibrarySortControl
+          sort={query.sortState}
+          onSetSortKey={query.toggleSort}
+          onSetSortOrder={order => query.setSortState(p => ({ ...p, order }))}
+        />
+      </Stack>
 
-            { /* リスト */ }
-            <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto" }}>
-                <List>
-                    {problems.map((p, i) => (
-                        <LibraryListItem
-                            key={p.id}
-                            problem={p}
-                            learning={learningRecords[p.id]}
-                            isCheckboxMode={isCheckboxMode}
-                            onClick={() => { handleItemClick(p.id)}}
-                            isChecked={isChecked(p.id)}
-                            onToggleChecked={() => { onToggleChecked(p.id)}}
-                        />
-                    ))}
-                </List>
-            </Box>
-            { inputElement }
-        </AppLayout>
-    )
+      <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto" }}>
+        <List>
+          {problems.map(p => (
+            <LibraryListItem
+              key={p.id}
+              problem={p}
+              learning={learningRecords[p.id]}
+              isCheckboxMode={selection.isCheckboxMode}
+              onClick={() => handleItemClick(p.id)}
+              isChecked={selection.isChecked(p.id)}
+              onToggleChecked={() => handlers.checkbox.onToggleChecked(p.id)}
+            />
+          ))}
+        </List>
+      </Box>
+
+      {inputElement}
+    </AppLayout>
+  )
 }

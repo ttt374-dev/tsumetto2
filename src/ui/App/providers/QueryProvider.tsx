@@ -3,7 +3,7 @@ import type { ReactNode } from "react"
 import { createContext, useContext } from "react"
 
 // context を作る
-type QueryContextValue = ReturnType<typeof useQuery>
+export type QueryContextValue = ReturnType<typeof useQuery>
 export const MissionQueryContext = createContext<QueryContextValue | null > (null)
 export const LibraryQueryContext = createContext<QueryContextValue | null > (null)
 

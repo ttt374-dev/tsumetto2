@@ -7,73 +7,74 @@ import { applyQuery } from "@/domain/problem/query/applyQuery";
 import { useMemo, useState } from "react";
 import { useRepositoryContext } from "../App/providers/RepositoryProvider";
 import { useProblemStore } from "@/application/store/useProblemStore";
-import type { Problem } from "@/domain/problem/Problem";
 import { useLearningEventStore } from "@/application/store/useLearningEventStore";
 import { createImportProblemsUsecase } from "@/usecase/importProblemsUseCase";
 
-//////////////////////////////////////////////////
+    //////////////////////////////////////////////////
 // LibraryScreen.tsx
 export function LibraryScreen() {
-    const [checkboxMode, setCheckboxMode] = useState(false)
-    const repos = useRepositoryContext()
-    const problemStore = useProblemStore(repos.problem)
-    const problems = problemStore.problems
-    const learningRecords = useLearningEventStore(repos.learningEvent).records
-    const importFilesUsecase = createImportProblemsUsecase(repos.problem)
-    const query = useLibraryQueryContext()
+  const [checkboxMode, setCheckboxMode] = useState(false)
+  const repos = useRepositoryContext()
+  const problemStore = useProblemStore(repos.problem)
+  const problems = problemStore.problems
+  const learningRecords = useLearningEventStore(repos.learningEvent).records
+  const query = useLibraryQueryContext()
 
-    const libraryItems: Problem[] = useMemo(() => {            
-        return applyQuery(problems, learningRecords, query.sortState, query.filterState)
-    }, [problems, learningRecords, query.sortState, query.filterState])
+  const libraryItems = useMemo(
+    () => applyQuery(problems, learningRecords, query.sortState, query.filterState),
+    [problems, learningRecords, query.sortState, query.filterState]
+  )
 
-    console.log("librar problems", problems)
-    const checkboxControl = useLibraryCheckbox(libraryItems.map(e => e.id))
-    const toast = useToast()
-    const navigate = useNavigate()
+  const checkboxControl = useLibraryCheckbox(libraryItems.map(p => p.id))
+  const toast = useToast()
+  const navigate = useNavigate()
 
-    // --- handlers ---
-    const handleDeleteAll = async () => { 
-        if (!window.confirm("are you sure to delete")) return
+  const handlers = {
+    view: { onViewProblem: (id: string) => navigate(`/view/${id}`) },
+    import: {
+      onImportFiles: async (files: File[]) => {
+        const importer = createImportProblemsUsecase(repos.problem)
+        await importer.importFiles(files)
+        problemStore.reload()
+      }
+    },
+    delete: {
+      onDeleteAll: async () => {
+        if (!window.confirm("Are you sure to delete all?")) return
         await repos.problem.removeAll()
         await repos.learningEvent.removeAll()
         problemStore.reload()
-        toast({ message: `delete all problems` })
-    }
-    const handleDeleteChecked = async() => {
-        if (!window.confirm("are you sure to delete")) return
-        const deleteIds = Array.from(checkboxControl.checkedIds)
-        await repos.problem.removeMany(deleteIds)
-        problemStore.reload()        
-        toast({ message: `delete ${deleteIds.length} problems` })
-    }
-    const handleToggleCheckboxMode = () => {
-        setCheckboxMode(prev => !prev)
-    }
-    const handleImportFiles = async (files: File[]) => {
-        await importFilesUsecase.importFiles(files)
+        toast({ message: "Deleted all problems" })
+      },
+      onDeleteChecked: async () => {
+        if (!window.confirm("Are you sure to delete selected?")) return
+        const ids = Array.from(checkboxControl.checkedIds)
+        await repos.problem.removeMany(ids)
         problemStore.reload()
+        toast({ message: `Deleted ${ids.length} problems` })
+      }
+    },
+    checkbox: {
+      onCheckAll: checkboxControl.checkAll,
+      onUncheckAll: checkboxControl.uncheckAll,
+      onToggleChecked: checkboxControl.toggleChecked,
+      onToggleCheckboxMode: () => setCheckboxMode(prev => !prev)
     }
-    
-    /////////
-    return (
-        <LibraryView
-            problems={libraryItems}
-            learningRecords={learningRecords}
-            query={query}
-            onDeleteAll={handleDeleteAll}
-            onImportFiles={handleImportFiles}
-            onViewProblem={id => navigate(`/view/${id}`)}
+  }
 
-            isChecked={checkboxControl.isChecked}
-            checkedIds={checkboxControl.checkedIds}
-            onCheckAll={checkboxControl.checkAll}
-            onUncheckAll={checkboxControl.uncheckAll}
+  const selection = {
+    checkedIds: checkboxControl.checkedIds,
+    isChecked: checkboxControl.isChecked,
+    isCheckboxMode: checkboxMode
+  }
 
-            isCheckboxMode={checkboxMode}
-            onToggleCheckboxMode={handleToggleCheckboxMode}
-
-            onToggleChecked={checkboxControl.toggleChecked}
-            onDeleteChecked={handleDeleteChecked}
-        />
-    )
+  return (
+    <LibraryView
+      problems={libraryItems}
+      learningRecords={learningRecords}
+      query={query}
+      handlers={handlers}
+      selection={selection}
+    />
+  )
 }
