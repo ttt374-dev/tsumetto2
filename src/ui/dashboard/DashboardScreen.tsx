@@ -6,6 +6,8 @@ import { AppLayout } from "../common/AppLayout";
 import { type FilterState } from "@/domain/problem/query/filter";
 import { MateLengthCheckboxes } from "./MateLengthCheckbox";
 import { useFileSelector } from "../sharedComponents/useFileSelector";
+import { createImportProblemsUsecase } from "@/usecase/importProblemsUseCase";
+import { useRepositoryContext } from "../App/providers/RepositoryProvider";
 
 function DashboardFilterControl({ filter, onToggleFilter, onSetFilter }: {
     filter: FilterState, onToggleFilter: (key: keyof FilterState) => void
@@ -38,21 +40,27 @@ function DashboardFilterControl({ filter, onToggleFilter, onSetFilter }: {
 }
 /////////////////////////////////////////////
 export function DashboardScreen(
-    { filterState, onStart, onToggleFilter, onSetFilter, onImportFiles, stats }: {
+    { filterState, onStart, onToggleFilter, onSetFilter, stats }: {
         filterState: FilterState,
         onStart: () => void,
         onToggleFilter: (key: keyof FilterState) => void,
-        onSetFilter: (partial: Partial<FilterState>) => void,
-        onImportFiles: (files: File[]) => void,
+        onSetFilter: (partial: Partial<FilterState>) => void,        
         stats: { problemCount: number, solvedCount: number, failedCount: number }
 
     }
 ) {
+    const repos = useRepositoryContext()       
+    
     // インポート用
     const { openFileDialog, inputElement, setOnFilesSelected } =
         useFileSelector(".kif")
-    setOnFilesSelected(async files => {
-        onImportFiles(Array.from(files))
+    setOnFilesSelected(async fileList => {
+        const files = Array.from(fileList) 
+        
+        const importer = createImportProblemsUsecase(repos.problem)
+        await importer.importFiles(files)
+        //missionPreview.reload()
+            
     })
     return (
         <AppLayout
