@@ -8,6 +8,8 @@ import { MateLengthCheckboxes } from "./MateLengthCheckbox";
 import { useFileSelector } from "../sharedComponents/useFileSelector";
 import { createImportProblemsUsecase } from "@/usecase/importProblemsUseCase";
 import { useRepositoryContext } from "../App/providers/RepositoryProvider";
+import { useMissionPreview } from "../mission/hooks/useMissionPreview";
+import type { ProblemId } from "@/domain/problem/Problem";
 
 function DashboardFilterControl({ filter, onToggleFilter, onSetFilter }: {
     filter: FilterState, onToggleFilter: (key: keyof FilterState) => void
@@ -39,18 +41,16 @@ function DashboardFilterControl({ filter, onToggleFilter, onSetFilter }: {
     )
 }
 /////////////////////////////////////////////
-export function DashboardScreen(
-    { filterState, onStart, onToggleFilter, onSetFilter, stats }: {
-        filterState: FilterState,
-        onStart: () => void,
-        onToggleFilter: (key: keyof FilterState) => void,
-        onSetFilter: (partial: Partial<FilterState>) => void,        
-        stats: { problemCount: number, solvedCount: number, failedCount: number }
-
-    }
-) {
+export function DashboardScreen({ onStart }: { 
+    onStart: (ids: ProblemId[]) => void 
+}) {
     const repos = useRepositoryContext()       
-    
+    const missionPreview = useMissionPreview()    
+    const problemStats = {
+        problemCount: missionPreview.problemCount,
+        solvedCount: missionPreview.solvedCount,
+        failedCount: missionPreview.failedCount,
+    }
     // インポート用
     const { openFileDialog, inputElement, setOnFilesSelected } =
         useFileSelector(".kif")
@@ -62,12 +62,15 @@ export function DashboardScreen(
         //missionPreview.reload()
             
     })
+    const handleStart = () => {
+        onStart(missionPreview.filteredProblems.map(p=>p.id))
+    }
     return (
         <AppLayout
             header={ "Dashboard"}
             footer={
-                <Button onClick={onStart} sx={{ height: 100 }}
-                    variant="contained" fullWidth disabled={stats.problemCount === 0}>
+                <Button onClick={handleStart} sx={{ height: 100 }}
+                    variant="contained" fullWidth disabled={problemStats.problemCount === 0}>
                     Start
                 </Button>
             }
@@ -77,13 +80,13 @@ export function DashboardScreen(
                 </Fab>
             }
         >
-            <DashboardFilterControl filter={filterState}
-                onToggleFilter={onToggleFilter}
-                onSetFilter={onSetFilter}
+            <DashboardFilterControl filter={missionPreview.query.filterState}
+                onToggleFilter={missionPreview.query.toggleFilter}
+                onSetFilter={missionPreview.query.setFilter}
             />
             <Box>
-                <Box>{stats.problemCount}</Box>
-                {stats.solvedCount} : {stats.failedCount}
+                <Box>{problemStats.problemCount}</Box>
+                {problemStats.solvedCount} : {problemStats.failedCount}
             </Box>
 
             {inputElement}

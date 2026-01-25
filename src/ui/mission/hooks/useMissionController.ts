@@ -20,7 +20,6 @@ export function useMissionController() {
     const repos = useRepositoryContext()
     const learningEventStore = useLearningEventStore(repos.learningEvent)
     const problemStore = useProblemStore(repos.problem)
-    //const learningRecords = learningEventStore.records
 
     const missionEventStore = useMissionEventStore()
     const snapshot = missionEventStore.snapshot
@@ -38,16 +37,17 @@ export function useMissionController() {
             : []
 
     //const query = useMissionQueryContext()
-    const preview = useMissionPreview()
-    const filteredProblems = preview.filteredProblems
+    //const preview = useMissionPreview()
+    //const filteredProblems = preview.filteredProblems
 
     // --- phase control ---
-    const start = () => {
-        if (filteredProblems.length === 0) return
+    const start = (ids: ProblemId[]) => {
+        if (ids.length === 0) return null
+        //if (filteredProblems.length === 0) return
         const ev: Omit<MissionStarted, "at"> = {
             type: "MissionStarted",
             missionId: crypto.randomUUID(),
-            problemIds: filteredProblems.map(p => p.id)
+            problemIds: ids // filteredProblems.map(p => p.id)
         }
         missionEventStore.append(ev)
         setPhase("playing")

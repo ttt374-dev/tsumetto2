@@ -6,24 +6,10 @@ import { useRepositoryContext } from "../App/providers/RepositoryProvider";
 import { useMissionPreview } from "./hooks/useMissionPreview";
 
 export function MissionScreen() {   
-    const mission = useMissionController()      
-    const missionPreview = useMissionPreview()
-    
+    const mission = useMissionController()    
     switch (mission.phase) {
         case "idle":
-            const problemStats = {
-                problemCount: missionPreview.problemCount,
-                solvedCount: missionPreview.solvedCount,
-                failedCount: missionPreview.failedCount, 
-            }
-
-            return (<DashboardScreen
-                filterState={missionPreview.query.filterState}
-                onStart={mission.start}
-                onToggleFilter={missionPreview.query.toggleFilter}
-                onSetFilter={missionPreview.query.setFilter}                
-                stats={problemStats}
-            />
+            return (<DashboardScreen onStart={mission.start}/>
             )
         case "playing":            
             if (!mission.currentProblem) return null
