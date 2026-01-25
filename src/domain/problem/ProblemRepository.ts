@@ -1,5 +1,5 @@
 import { Filesystem, Directory, Encoding } from "@capacitor/filesystem";
-import type { Problem, ProblemId } from "./Problem"
+import { Problem, type ProblemDTO, type ProblemId } from "./Problem"
 
 export class ProblemRepository {
     constructor(
@@ -75,9 +75,14 @@ export class FileProblemPersistence implements ProblemPersistence {
                 typeof result.data === "string"
                     ? result.data
                     : await result.data.text()
-            const data: Problem[] = JSON.parse(dataStr)
-            return data
+            const dtos: ProblemDTO[] = JSON.parse(dataStr)
+            dtos.map(dto => {
+                const p = Problem.fromDTO(dto)
 
+            })
+            return dtos.map(dto =>
+                Problem.fromDTO(dto)
+            )
         } catch (e) {
             console.error("problem store load error", e)
             return [];
@@ -85,11 +90,12 @@ export class FileProblemPersistence implements ProblemPersistence {
         }
     }
     async save(problems: Problem[]){
+        const dtos: ProblemDTO[] = problems.map(p => (p.toDTO()))
         console.log("save problem persis", problems)
         try {
             await Filesystem.writeFile({
                 path: PROBLEM_FILE,
-                data: JSON.stringify(problems),
+                data: JSON.stringify(dtos),
                 directory: Directory.Data,
                 encoding: Encoding.UTF8,
             });

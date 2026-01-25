@@ -34,6 +34,13 @@ describe("serialize", ()=>{
         if (r.ok){
             const boardState = r.value.initialPosition
             expect(Position.fromDTO(boardState.toDTO())).toEqual(boardState)
+
+            const text = JSON.stringify(boardState)
+            const parsed = JSON.parse(text)
+            expect(boardState).toEqual(parsed)
         }
+    })
+    it("stringfy", () => {
+
     })
 })
