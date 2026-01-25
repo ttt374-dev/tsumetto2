@@ -5,9 +5,7 @@ export type ImportResult =
     | { ok: true, count: number}
     | { ok: false, message: string }
 
-
-export function createImportProblemsUsecase(problemRepo: ProblemRepository) {
-    
+export function createImportProblemsUsecase(problemRepo: ProblemRepository) {    
     const importFile = async (file: File): Promise<ImportResult> => {
         try {
             const buf = await file.arrayBuffer();

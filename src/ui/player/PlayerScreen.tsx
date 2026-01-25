@@ -1,7 +1,5 @@
-import { Box, Button, Grid, Stack } from "@mui/material"
 import { useEffect, useState } from "react"
 import { Problem, type ProblemId } from "@/domain/problem/Problem"
-import { Learning } from "@/domain/learning/Learning"
 import { useReplayController } from "./useReplayController"
 import type { SolvedResult } from "@/domain/MissionEvent/MissionSummary"
 import { PlayerFooterActions } from "./components/PlayerFooterActions"
@@ -22,22 +20,22 @@ export function PlayerScreen({ titlePrefix, problemId, onNextProblem, onPrevProb
     const [ showMoves, setShowMoves ] = useState(false)     
 
     const repos = useRepositoryContext()    
-    const problem = useProblemStore(repos.problem).problems.find(p=> p.id === problemId) 
-    const replay = useReplayController(problem?.kifData ?? KifData.create())    
-    const learningStore = useLearningEventStore(repos.learningEvent)    
-    const learning = problem && learningStore.records[problem.id]
-    
-    useEffect(()=> { 
-        setShowMoves(false)        
-    }, [problem?.id])
+    const problem = useProblemStore(repos.problem).findById(problemId) 
+    const { initialPosition, moves } = problem?.kifData ?? KifData.create()
+    const replay = useReplayController(initialPosition, moves)
+    const learning = useLearningEventStore(repos.learningEvent).records[problemId]    
 
-    useEffect(()=>{
+    useEffect(()=>{        
         if (replay.plyIndex > 0){
             setShowMoves(true)
         } else if (replay.plyIndex === 0){
             setShowMoves(false)
         }
     }, [replay.plyIndex])
+
+    useEffect(()=> { 
+        setShowMoves(false)        
+    }, [problemId])
 
     if (!problem) return null
     console.log("play screen: learning", learning)

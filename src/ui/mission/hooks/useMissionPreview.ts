@@ -5,6 +5,7 @@ import type { SortState } from "@/domain/problem/query/sort";
 import { useLearningEventStore } from "@/application/store/useLearningEventStore";
 import { useRepositoryContext } from "@/ui/App/providers/RepositoryProvider";
 import { useProblemStore } from "@/application/store/useProblemStore";
+import { MissionSummary } from "@/domain/MissionEvent/MissionSummary";
 
 
 export function useMissionPreview(){
@@ -35,7 +36,7 @@ export function useMissionPreview(){
     ])
     const learningRecords = learningStore.records
     // stats
-    const stats = useMemo(() => {
+    const missionSummary = useMemo(() => {
         const problemCount = filteredProblems.length
 
         let solvedCount = 0
@@ -49,12 +50,13 @@ export function useMissionPreview(){
         }
         //console.log("stats", problemCount)
 
-        return { problemCount, solvedCount, failedCount }
+        return new MissionSummary(problemCount, solvedCount, failedCount)
+        //return { problemCount, solvedCount, failedCount }
     }, [filteredProblems, learningRecords])
 
     return {
         filteredProblems, reload, query,
         // stats
-        stats
+        missionSummary
     }
 }

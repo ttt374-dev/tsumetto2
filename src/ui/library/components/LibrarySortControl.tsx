@@ -3,14 +3,12 @@ import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import type { SortKey, SortOrder, SortState } from "@/domain/problem/query/sort";
 
-
 export default function LibrarySortControl({ sort, onSetSortKey, onSetSortOrder }: {
     sort: SortState,
     onSetSortKey: (key: SortKey) => void,
     onSetSortOrder: (order: SortOrder) => void,    
 }) {
     const handleChangeKey = (e: any) => {
-        //console.log("set sort key", e.target.value)
         onSetSortKey(e.target.value)
     }
     return (

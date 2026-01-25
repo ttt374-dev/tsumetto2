@@ -1,6 +1,5 @@
 import type { LearningEvent } from "@/domain/LearningEvent"
 import { Learning, type LearningRecord } from "@/domain/learning/Learning"
-import type { ProblemId } from "@/domain/problem/Problem"
 import type { SolvedResult } from "../MissionEvent/MissionSummary"
 
 
@@ -19,7 +18,6 @@ export function projectLearning(
         const prev = record[event.problemId] ?? Learning.create(event.problemId)
         record[event.problemId] = applyReviewedEvent(prev, event)
     }
-
     return record
 }
 function applyReviewedEvent(

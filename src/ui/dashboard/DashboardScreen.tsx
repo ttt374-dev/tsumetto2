@@ -1,55 +1,25 @@
-import { Box, Button, Checkbox, FormControl, FormControlLabel, List, ListItem } from "@mui/material";
+import { Box, Button,  } from "@mui/material";
 import { Fab } from "@mui/material"
 import AddIcon from "@mui/icons-material/Add"
 
 import { AppLayout } from "../common/AppLayout";
-import { type FilterState } from "@/domain/problem/query/filter";
-import { MateLengthCheckboxes } from "./MateLengthCheckbox";
 import { useFileSelector } from "../sharedComponents/useFileSelector";
 import { createImportProblemsUsecase } from "@/usecase/importProblemsUseCase";
 import { useRepositoryContext } from "../App/providers/RepositoryProvider";
 import { useMissionPreview } from "../mission/hooks/useMissionPreview";
 import type { ProblemId } from "@/domain/problem/Problem";
 import { useEffect } from "react";
+import { DashboardFilterControl } from "./DashboardFilterControl";
+import { SummaryView } from "../summary/SummaryView";
 
-function DashboardFilterControl({ filter, onToggleFilter, onSetFilter }: {
-    filter: FilterState, onToggleFilter: (key: keyof FilterState) => void
-    onSetFilter: (partial: Partial<FilterState>) => void
-}) {
-    return (
-        <FormControl sx={{ p: 2 }}>
-            <FormControlLabel control={
-                <Checkbox checked={filter.unansweredOnly}
-                    onChange={() => { onToggleFilter("unansweredOnly") }} />}
-                label="未回答のみ" />
-
-            <FormControlLabel control={
-                <Checkbox checked={filter.starredOnly}
-                    onChange={() => { onToggleFilter("starredOnly") }} />}
-                label="スターのみ" />
-            <FormControlLabel control={
-                <Checkbox checked={filter.isMissionTarget}
-                    onChange={() => { onToggleFilter("isMissionTarget") }} />}
-                label="ミッションのみ" />
-            <MateLengthCheckboxes
-                mateBuckets={filter.mateBuckets}
-                onChange={(buckets) => {
-                    //console.log("dsbd filter ", buckets)
-                    onSetFilter({ mateBuckets: buckets })
-                }}
-            />
-        </FormControl>
-    )
-}
 /////////////////////////////////////////////
-
 
 export function DashboardScreen({ onStart }: { 
     onStart: (ids: ProblemId[]) => void 
 }) {
     const repos = useRepositoryContext()       
     const missionPreview = useMissionPreview()    
-    const problemStats = missionPreview.stats
+    const statsSummary = missionPreview.missionSummary
     //console.log("problemstats", problemStats)
 
     // インポート用
@@ -70,7 +40,7 @@ export function DashboardScreen({ onStart }: {
             header={ "Dashboard"}
             footer={
                 <Button onClick={handleStart} sx={{ height: 100 }}
-                    variant="contained" fullWidth disabled={problemStats.problemCount === 0}>
+                    variant="contained" fullWidth disabled={statsSummary.problemCount === 0}>
                     Start
                 </Button>
             }
@@ -78,17 +48,12 @@ export function DashboardScreen({ onStart }: {
                 <Fab onClick={openFileDialog}>
                     <AddIcon />
                 </Fab>
-            }
-        >
+            }>
             <DashboardFilterControl filter={missionPreview.query.filterState}
                 onToggleFilter={missionPreview.query.toggleFilter}
-                onSetFilter={missionPreview.query.setFilter}
-            />
-            <Box>
-                <Box>{problemStats.problemCount}</Box>
-                {problemStats.solvedCount} : {problemStats.failedCount}
-            </Box>
+                onSetFilter={missionPreview.query.setFilter}/>
 
+            <SummaryView summary={statsSummary}/>
             {inputElement}
         </AppLayout>
     )

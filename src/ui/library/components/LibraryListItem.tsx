@@ -36,7 +36,6 @@ export function LibraryListItem({ problem, learning, onClick, isCheckboxMode, is
                         <Typography variant="body2" color="text.primary">
                             {formatLearning(learning)}
                         </Typography>
-
                     </>}
                 </Stack>
 

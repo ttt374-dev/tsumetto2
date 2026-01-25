@@ -3,50 +3,50 @@ import type { MissionEvent, MissionSnapshot } from "../../domain/MissionEvent/Mi
 import { projectMission } from "../../domain/MissionEvent/projectionMission"
 
 type MissionState = {
-  eventLog: MissionEvent[]
-  snapshot: MissionSnapshot | null
+    eventLog: MissionEvent[]
+    snapshot: MissionSnapshot | null
 }
 type MissionAction =
-  | { type: "append"; event: MissionEvent }
-  | { type: "reset" }
+    | { type: "append"; event: MissionEvent }
+    | { type: "reset" }
 
 function missionReducer(
-  state: MissionState,
-  action: MissionAction
+    state: MissionState,
+    action: MissionAction
 ): MissionState {
-  switch (action.type) {
-    case "append": {
-      const nextLog = [...state.eventLog, action.event]
-      return {
-        eventLog: nextLog,
-        snapshot: projectMission(nextLog),
-      }
+    switch (action.type) {
+        case "append": {
+            const nextLog = [...state.eventLog, action.event]
+            return {
+                eventLog: nextLog,
+                snapshot: projectMission(nextLog),
+            }
+        }
+        case "reset":
+            return { eventLog: [], snapshot: null }
     }
-    case "reset":
-      return { eventLog: [], snapshot: null }
-  }
 }
 
 export function useMissionEventStore() {
-  const [state, dispatch] = useReducer(missionReducer, {
-    eventLog: [],
-    snapshot: null,
-  })
-
-  const append = <E extends MissionEvent>(event: Omit<E, "at">) => {
-    dispatch({
-      type: "append",
-      event: { ...event, at: Date.now() } as E,
+    const [state, dispatch] = useReducer(missionReducer, {
+        eventLog: [],
+        snapshot: null,
     })
-  }
-  const reset = () => dispatch({ type: "reset" })
 
-  return {
-    eventLog: state.eventLog,
-    snapshot: state.snapshot,
-    append,
-    reset,
-  }
+    const append = <E extends MissionEvent>(event: Omit<E, "at">) => {
+        dispatch({
+            type: "append",
+            event: { ...event, at: Date.now() } as E,
+        })
+    }
+    const reset = () => dispatch({ type: "reset" })
+
+    return {
+        eventLog: state.eventLog,
+        snapshot: state.snapshot,
+        append,
+        reset,
+    }
 }
 
 /*

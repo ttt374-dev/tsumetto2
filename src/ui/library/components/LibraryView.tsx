@@ -1,18 +1,14 @@
 import AddIcon from "@mui/icons-material/Add"
 import { Box, Button, Checkbox, Fab, IconButton, List, Stack } from "@mui/material"
 import DeleteIcon from '@mui/icons-material/Delete';
-import CheckBoxIcon from '@mui/icons-material/CheckBox';
-import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
-import CloseIcon from "@mui/icons-material/Close";
 
-import type { QueryContextValue, useLibraryQueryContext } from "../../App/providers/QueryProvider"
+import type { useLibraryQueryContext } from "../../App/providers/QueryProvider"
 import { AppLayout } from "../../common/AppLayout"
 import LibrarySortControl from "./LibrarySortControl"
 import { LibraryListItem } from "./LibraryListItem"
 import { useFileSelector } from "@/ui/sharedComponents/useFileSelector"
 import type { Problem, ProblemId } from "@/domain/problem/Problem"
 import type { LearningRecord } from "@/domain/learning/Learning";
-import { useEffect } from "react";
 import { LibraryCheckboxControl } from "./LibraryCheckboxControl";
 
 

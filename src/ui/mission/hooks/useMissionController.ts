@@ -6,16 +6,13 @@ import type { LearningEvent } from "@/domain/LearningEvent/";
 import { useRepositoryContext } from "@/ui/App/providers/RepositoryProvider";
 import { useMissionEventStore } from "@/application/store/useMissionEventStore";
 import type { MissionFinished, MissionProblemAnswered, MissionSnapshot, MissionStarted } from "@/domain/MissionEvent/MissionEvent";
-import { useProblemStore } from "@/application/store/useProblemStore";
-
 
 export type MissionPhase = "idle" | "playing" | "summary"
 
 //////////////////////////////
 export function useMissionController() {
     //const [phase, setPhase] = useState<MissionPhase>("idle")    
-    const [index, setIndex] = useState(0)
-    
+    const [index, setIndex] = useState(0)    
 
     const repos = useRepositoryContext()
     const learningEventStore = useLearningEventStore(repos.learningEvent)
@@ -24,7 +21,6 @@ export function useMissionController() {
     const phase = snapshot?.phase ?? "idle"
 
     const currentProblemId = snapshot && snapshot.problemIds[index]
-
 
     const missionResultList: MissionResultEntry[] =
         snapshot
