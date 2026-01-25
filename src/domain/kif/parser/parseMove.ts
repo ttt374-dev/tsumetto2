@@ -14,7 +14,7 @@ export function parseMoves(
         const move = parseMoveLine(line, prevSquare)
         if (!move) continue  // TODO
         moves.push(move)
-        console.log("parse moves", move)
+        //console.log("parse moves", move)
         prevSquare = move.to
         //state = state.applyMove(move)
     }
@@ -44,8 +44,7 @@ export function parseMoveLine(line: string, prevSquare?: Square): Move | null {
     if (rawText.includes("打")) {
         return parseDropMove(rawText, )
     } else {
-        const move = parseNormalMove(rawText, prevSquare)
-        console.log("parse move", move)
+        const move = parseNormalMove(rawText, prevSquare)        
         return move
     }
  
@@ -78,7 +77,7 @@ function parseNormalMove(rawtext: string, prevSquare?: Square): Move {
     const from = parseFrom(fromText)
     
     const { pieceType, promote} = parsePieceType(piecetypeText)
-    console.log("parsemove", rawtext, pieceType, promote, prevSquare)
+    //console.log("parsemove", rawtext, pieceType, promote, prevSquare)
     return new Move(
         from,
         to,
@@ -119,12 +118,12 @@ function parsePieceType(text: string): {
         t = t.slice(0, -1)
     }
     const pieceItem = kanjiToPieceItem[t] // misdisambiguish の処理
-    console.log("parse piecetype", pieceItem, promoteIntent)
+    
     if (!pieceItem) {
         throw new Error(`Unknown piece text: ${text}`)
     }
     const { type, promoted } = pieceItem
-    console.log("parse piece", promoteIntent, pieceItem)
+    
     return {
         pieceType: type,
         promote: promoteIntent || promoted

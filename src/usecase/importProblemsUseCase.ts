@@ -16,6 +16,7 @@ export function createImportProblemsUsecase(problemRepo: ProblemRepository) {
 
             if (!newProblem) { return { ok: false, message: "parse failed" }}
             await problemRepo.add(newProblem)
+            console.log("import file", newProblem)
             return { ok: true, count: 1}
         } catch (e) {
             const message = `Failed to import file ${file.name}:`
@@ -28,6 +29,7 @@ export function createImportProblemsUsecase(problemRepo: ProblemRepository) {
         let successCount = 0
         let failedCount = 0
 
+        console.log("import files", files)
         for (const file of files) {
             const result = await importFile(file)
             if (result.ok){

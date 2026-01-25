@@ -26,8 +26,11 @@ export class LearningEventRepository {
 
         const nextLog = [...log, newEvent]
 
-        console.log("learning event repo append", newEvent)
+        //console.log("learning event repo append", newEvent)
         await this.store.save(nextLog)
+    }
+    async removeAll(){
+        await this.store.save([])
     }
 }
 ////////////////////////////////////

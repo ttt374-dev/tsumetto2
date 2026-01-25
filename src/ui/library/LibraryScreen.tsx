@@ -26,7 +26,7 @@ export function LibraryScreen() {
         return applyQuery(problems, learningRecords, query.sortState, query.filterState)
     }, [problems, learningRecords, query.sortState, query.filterState])
 
-    
+    console.log("librar problems", problems)
     const checkboxControl = useLibraryCheckbox(libraryItems.map(e => e.id))
     const toast = useToast()
     const navigate = useNavigate()
@@ -34,15 +34,16 @@ export function LibraryScreen() {
     // --- handlers ---
     const handleDeleteAll = async () => { 
         if (!window.confirm("are you sure to delete")) return
-        await runCommand(() => repos.problem.removeAll())
-        //await problemStore.reload()
+        await repos.problem.removeAll()
+        await repos.learningEvent.removeAll()
+        problemStore.reload()
         toast({ message: `delete all problems` })
     }
     const handleDeleteChecked = async() => {
         if (!window.confirm("are you sure to delete")) return
         const deleteIds = Array.from(checkboxControl.checkedIds)
-        await runCommand(() => repos.problem.removeMany(deleteIds))
-        
+        await repos.problem.removeMany(deleteIds)
+        problemStore.reload()        
         toast({ message: `delete ${deleteIds.length} problems` })
     }
     const handleToggleCheckboxMode = () => {
@@ -50,13 +51,9 @@ export function LibraryScreen() {
     }
     const handleImportFiles = async (files: File[]) => {
         await importFilesUsecase.importFiles(files)
-        await problemStore.reload()
+        problemStore.reload()
     }
-    // helper
-    const runCommand = async (cmd: () => Promise<void>) => {
-        await cmd()
-        await problemStore.reload()
-    }
+    
     /////////
     return (
         <LibraryView
