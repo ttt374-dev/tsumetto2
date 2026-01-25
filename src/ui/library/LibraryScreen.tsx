@@ -62,7 +62,7 @@ export function LibraryScreen() {
             query={query}
             onDeleteAll={handleDeleteAll}
             onImportFiles={handleImportFiles}
-            onSelect={id => navigate(`/view/${id}`)}
+            onViewProblem={id => navigate(`/view/${id}`)}
 
             isChecked={checkboxControl.isChecked}
             checkedIds={checkboxControl.checkedIds}

@@ -10,6 +10,7 @@ import { createImportProblemsUsecase } from "@/usecase/importProblemsUseCase";
 import { useRepositoryContext } from "../App/providers/RepositoryProvider";
 import { useMissionPreview } from "../mission/hooks/useMissionPreview";
 import type { ProblemId } from "@/domain/problem/Problem";
+import { useEffect } from "react";
 
 function DashboardFilterControl({ filter, onToggleFilter, onSetFilter }: {
     filter: FilterState, onToggleFilter: (key: keyof FilterState) => void
@@ -41,30 +42,29 @@ function DashboardFilterControl({ filter, onToggleFilter, onSetFilter }: {
     )
 }
 /////////////////////////////////////////////
+
+
 export function DashboardScreen({ onStart }: { 
     onStart: (ids: ProblemId[]) => void 
 }) {
     const repos = useRepositoryContext()       
     const missionPreview = useMissionPreview()    
-    const problemStats = {
-        problemCount: missionPreview.problemCount,
-        solvedCount: missionPreview.solvedCount,
-        failedCount: missionPreview.failedCount,
-    }
+    const problemStats = missionPreview.stats
+    //console.log("problemstats", problemStats)
+
     // インポート用
-    const { openFileDialog, inputElement, setOnFilesSelected } =
-        useFileSelector(".kif")
-    setOnFilesSelected(async fileList => {
-        const files = Array.from(fileList) 
-        
-        const importer = createImportProblemsUsecase(repos.problem)
-        await importer.importFiles(files)
-        //missionPreview.reload()
-            
-    })
+    const { openFileDialog, inputElement, setOnFilesSelected } = useFileSelector(".kif")    
     const handleStart = () => {
         onStart(missionPreview.filteredProblems.map(p=>p.id))
     }
+    useEffect(() => {
+        setOnFilesSelected(async fileList => {
+            const files = Array.from(fileList)
+            const importer = createImportProblemsUsecase(repos.problem)
+            await importer.importFiles(files)
+            missionPreview.reload()
+        })
+    }, [repos.problem, missionPreview])
     return (
         <AppLayout
             header={ "Dashboard"}

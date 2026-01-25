@@ -9,15 +9,17 @@ import { useProblemStore } from "@/application/store/useProblemStore";
 
 export function useMissionPreview(){
     const repos = useRepositoryContext()
-
     const problemStore = useProblemStore(repos.problem)
     const learningStore = useLearningEventStore(repos.learningEvent)
     const query = useMissionQueryContext()
 
-    const reload = () => {
-        problemStore.reload()
-        learningStore.reload()
+    const reload = async () => {
+        await Promise.all([
+            problemStore.reload(),
+            learningStore.reload(),
+        ])
     }
+
     const filteredProblems = useMemo(() => {
         const sortState: SortState = { key: "nextReviewedAt", order: "asc" }
         return applyQuery(
@@ -32,26 +34,27 @@ export function useMissionPreview(){
         query.filterState
     ])
     const learningRecords = learningStore.records
-// stats
-    const problemCount = useMemo(()=>{
-        console.log("problemcount", filteredProblems.length)
-        return filteredProblems.length
-    }, [filteredProblems])
+    // stats
+    const stats = useMemo(() => {
+        const problemCount = filteredProblems.length
 
-    const solvedCount = filteredProblems.reduce((sum, p) => {
-        const learning = learningRecords[p.id];
-        if (!learning) return sum;          // 学習記録がない場合はスキップ
-        return sum + (learning.solvedCount ?? 0); // solvedCount を足す
-    }, 0) ?? 0;
-    const failedCount = filteredProblems.reduce((sum, p) => {
-        const learning = learningRecords[p.id];
-        if (!learning) return sum;         
-        return sum + (learning.failedCount ?? 0);
-    }, 0) ?? 0;
+        let solvedCount = 0
+        let failedCount = 0
+
+        for (const p of filteredProblems) {
+            const learning = learningRecords[p.id]
+            if (!learning) continue
+            solvedCount += learning.solvedCount ?? 0
+            failedCount += learning.failedCount ?? 0
+        }
+        //console.log("stats", problemCount)
+
+        return { problemCount, solvedCount, failedCount }
+    }, [filteredProblems, learningRecords])
 
     return {
-        filteredProblems, reload, query,      
+        filteredProblems, reload, query,
         // stats
-        problemCount, solvedCount, failedCount
+        stats
     }
 }

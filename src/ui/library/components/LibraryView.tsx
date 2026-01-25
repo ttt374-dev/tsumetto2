@@ -30,13 +30,13 @@ export function LibraryView({
 
     onDeleteAll,
     onDeleteChecked,
-    onSelect,
+    onViewProblem,
 }: {
     problems: Problem[],
     learningRecords: LearningRecord,
     query: ReturnType<typeof useLibraryQueryContext>
     
-    onSelect: (pid: ProblemId) => void
+    onViewProblem: (pid: ProblemId) => void
     onImportFiles: (files: File[]) => void
     isChecked: (id: ProblemId) => boolean,
     checkedIds: Set<ProblemId>,
@@ -56,6 +56,14 @@ export function LibraryView({
     setOnFilesSelected(async files => {
         onImportFiles(Array.from(files))
     })
+    const handleItemClick = (pid: ProblemId) => {
+        if (isCheckboxMode){
+            onToggleChecked(pid)
+        } else {
+            onViewProblem(pid)
+        }
+        
+    }
     return (
         <AppLayout
             header={"Library"}
@@ -134,7 +142,7 @@ export function LibraryView({
                             problem={p}
                             learning={learningRecords[p.id]}
                             isCheckboxMode={isCheckboxMode}
-                            onClick={() => onSelect(p.id)}
+                            onClick={() => { handleItemClick(p.id)}}
                             isChecked={isChecked(p.id)}
                             onToggleChecked={() => { onToggleChecked(p.id)}}
                         />
