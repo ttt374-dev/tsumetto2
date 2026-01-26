@@ -11,8 +11,7 @@ import { KifData } from "@/domain/kif/types"
 import { useMissionEventStoreContext } from "../App/providers/MissionEventStoreProvider"
 import type { LearningEvent } from "@/domain/LearningEvent"
 
-////////////////////////////////
-export function PlayerScreen() {
+function usePlayer(){
     const [ index, setIndex] = useState(0)
     const [ showMoves, setShowMoves ] = useState(false)     
       
@@ -22,12 +21,28 @@ export function PlayerScreen() {
     const repos = useRepositoryContext()  
     const problem = currentProblemId ? useProblemStore(repos.problem).findById(currentProblemId)  : undefined
     const learningEventStore = useLearningEventStore(repos.learningEvent)
+    const learning = currentProblemId ? 
+        useLearningEventStore(repos.learningEvent).records[currentProblemId] : undefined
+
+    // replay
     const { initialPosition, moves } = problem?.kifData ?? KifData.create()
     const replay = useReplayController(initialPosition, moves)
-    const learning = currentProblemId ? useLearningEventStore(repos.learningEvent).records[currentProblemId] : undefined
+    
     
     console.log("playerscreen", snapshot, currentProblemId)
-    if (!snapshot || !currentProblemId) return null
+        useEffect(()=>{        
+        if (replay.plyIndex > 0){
+            setShowMoves(true)
+        } else if (replay.plyIndex === 0){
+            setShowMoves(false)
+        }
+    }, [replay.plyIndex])
+
+    useEffect(()=> { 
+        setShowMoves(false)        
+    }, [currentProblemId])
+
+    if (!snapshot || !currentProblemId || !problem) return null
     
     // --- navigation ---
     function next() {
@@ -61,22 +76,24 @@ export function PlayerScreen() {
         }
         await learningEventStore.append(learningEvent)
         next()
-
     }
 
-    useEffect(()=>{        
-        if (replay.plyIndex > 0){
-            setShowMoves(true)
-        } else if (replay.plyIndex === 0){
-            setShowMoves(false)
-        }
-    }, [replay.plyIndex])
+    return {
+        index, problem, learning, showMoves,
+        replay, snapshot,
 
-    useEffect(()=> { 
-        setShowMoves(false)        
-    }, [currentProblemId])
-
-    if (!problem) return null
+        answer, next, prev,
+        setShowMoves,
+    }
+}
+////////////////////////////////
+export function PlayerScreen() {
+    const player = usePlayer()
+    if (!player) return null
+    const { index, problem, learning, snapshot, replay, 
+        next, prev, answer, setShowMoves, showMoves,
+     } = player
+     
     console.log("play screen: learning", learning)
     const titlePrefix = `${index+1}/${snapshot.problemIds.length}: `
     return (
