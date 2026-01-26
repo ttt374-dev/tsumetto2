@@ -6,38 +6,35 @@ import { AppLayout } from "../common/AppLayout";
 import { useFileSelector } from "../sharedComponents/useFileSelector";
 import { createImportProblemsUsecase } from "@/usecase/importProblemsUseCase";
 import { useRepositoryContext } from "../App/providers/RepositoryProvider";
-import { useDashboardFilterProblems } from "./hooks/useDashboardFilterProblems";
+import { useFilterProblems } from "./hooks/useFilterProblems";
 import { useEffect } from "react";
 import { DashboardFilterControl } from "./components/DashboardFilterControl";
 import { SummaryView } from "../summary/SummaryView";
 import { useMissionEventStoreContext } from "../App/providers/MissionEventStoreProvider";
 import { useToast } from "../App/providers/ToastProvider";
+import { useImporter } from "@/application/useImporter";
 
 /////////////////////////////////////////////
 
 export function DashboardScreen() {
-    const repos = useRepositoryContext()       
-    const dashboard = useDashboardFilterProblems()    
-    const { problemIds, } = dashboard
+    //const repos = useRepositoryContext()       
+    const dashboard = useFilterProblems()    
+
     const statsSummary = dashboard.missionSummary
     const missionStore = useMissionEventStoreContext()
     const toast = useToast()
 
     // インポート用
-    const { openFileDialog, inputElement, setOnFilesSelected } = useFileSelector(".kif")    
+    //const { openFileDialog, inputElement, setOnFilesSelected } = useFileSelector(".kif")    
+    
+    const { openFileDialog, inputElement } = useImporter((files: File[]) => {
+        dashboard.reloadStores()
+        toast({message: `imported ${files.length} file`})
+    })    
+
     const handleStart = () => {
-        missionStore.start(problemIds)
+        missionStore.start(dashboard.problemIds)
     }
-    useEffect(() => {
-        setOnFilesSelected(async fileList => {
-            const files = Array.from(fileList)
-            //if (!window.confirm(`importing ${files.length} files`)) return
-            const importer = createImportProblemsUsecase(repos.problem)
-            await importer.importFiles(files)
-            await dashboard.reloadStores()
-            toast({message: `imported ${files.length} file`})
-        })
-    }, [repos.problem, dashboard])
     return (
         <AppLayout
             header={ "Dashboard"}

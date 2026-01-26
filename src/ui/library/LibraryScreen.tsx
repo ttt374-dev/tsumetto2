@@ -9,6 +9,7 @@ import { useRepositoryContext } from "../App/providers/RepositoryProvider";
 import { useProblemStore } from "@/application/store/useProblemStore";
 import { useLearningEventStore } from "@/application/store/useLearningEventStore";
 import { createImportProblemsUsecase } from "@/usecase/importProblemsUseCase";
+import { useImporter } from "@/application/useImporter";
 
     //////////////////////////////////////////////////
 // LibraryScreen.tsx
@@ -28,15 +29,18 @@ export function LibraryScreen() {
   const checkboxControl = useLibraryCheckbox(libraryItems.map(p => p.id))
   const toast = useToast()
   const navigate = useNavigate()
-
+  const importer = useImporter((files: File[]) => { problemStore.reload()})
+  
   const handlers = {
     view: { onViewProblem: (id: string) => navigate(`/view/${id}`) },
     import: {
+      onOpenImportFileDialog: importer.openFileDialog,
+      /*
       onImportFiles: async (files: File[]) => {
         const importer = createImportProblemsUsecase(repos.problem)
         await importer.importFiles(files)
         problemStore.reload()
-      }
+      }*/
     },
     delete: {
       onDeleteAll: async () => {
@@ -69,12 +73,15 @@ export function LibraryScreen() {
   }
 
   return (
-    <LibraryView
-      problems={libraryItems}
-      learningRecords={learningRecords}
-      query={query}
-      handlers={handlers}
-      selection={selection}
-    />
+    <>
+      <LibraryView
+        problems={libraryItems}
+        learningRecords={learningRecords}
+        query={query}
+        handlers={handlers}
+        selection={selection}
+      />
+      {importer.inputElement}
+    </>
   )
 }
