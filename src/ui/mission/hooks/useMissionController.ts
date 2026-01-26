@@ -25,7 +25,7 @@ export function useMissionController() {
     const learningEventStore = useLearningEventStore(repos.learningEvent)
     const missionEventStore = useMissionEventStore()
     const snapshot = missionEventStore.snapshot
-    const phase = snapshot?.phase ?? "idle"
+    //const phase = snapshot?.phase ?? "idle"
     
     
     ///////////////////////////////////////////
@@ -99,10 +99,10 @@ export function useMissionController() {
         */
     return {
         // state
-        phase,
+        phase: snapshot?.phase ?? "idle",
         index,        
         currentProblemId,
-        snapshot: snapshot as ReadonlyMissionSnapshot,
+        snapshot: snapshot as Readonly<MissionSnapshot>,
         missionResultList,
 
         reset,
@@ -111,5 +111,3 @@ export function useMissionController() {
     }
 }
 
-export type ReadonlyMissionSnapshot =
-    Readonly<MissionSnapshot>

@@ -2,14 +2,18 @@ import { MissionSummary, type MissionResultEntry } from "@/domain/MissionEvent/M
 import { Box, Button, Stack } from "@mui/material";
 import { AppLayout } from "../common/AppLayout";
 import { SummaryView } from "./SummaryView";
+import { useMissionEventStoreContext } from "../App/providers/MissionEventStoreProvider";
+import type { MissionSnapshot } from "@/domain/MissionEvent/MissionEvent";
 
 /////////////////////////////////////////////
-export function SummaryScreen({ missionResultEntryList, onBackToDashboard: onNavigateToDashboard }: {
-    missionResultEntryList: MissionResultEntry[],
-    onBackToDashboard: () => void,
-}) {
+export function SummaryScreen() {
     //console.log("summary scr", missionResultEntryList)
+    const missionStore = useMissionEventStoreContext()
+    if (!missionStore.snapshot) return null
+
+    const missionResultEntryList = snapshotToResultList(missionStore.snapshot)
     const summary = MissionSummary.createFromResultList(missionResultEntryList)
+    
     return (
         <AppLayout>
             <Box>
@@ -18,9 +22,16 @@ export function SummaryScreen({ missionResultEntryList, onBackToDashboard: onNav
 
             <SummaryView summary={summary}/>
 
-            <Button onClick={onNavigateToDashboard}>
+            <Button onClick={missionStore.reset}>
                 Dashboard
             </Button>
         </AppLayout>
     )
+}
+//////////////////
+const snapshotToResultList = (snapshot: MissionSnapshot) => {
+    return Object.values(snapshot.answered).map(e => ({
+        problemId: e.problemId,
+        solvedResult: e.result,
+    }))
 }

@@ -2,6 +2,7 @@ import type React from 'react';
 import { RepositoryProvider } from './RepositoryProvider';
 import { ToastProvider } from './ToastProvider';
 import { LibraryQueryProvider, MissionQueryProvider } from './QueryProvider';
+import { MissionEventStoreContext, MissionEventStoreProvider } from './MissionEventStoreProvider';
 
 export function AllProviders({ children }: { children: React.ReactNode }) {
     return (
@@ -9,7 +10,9 @@ export function AllProviders({ children }: { children: React.ReactNode }) {
             <ToastProvider>
                 <MissionQueryProvider>
                     <LibraryQueryProvider>
-                        {children}
+                        <MissionEventStoreProvider>
+                            {children}
+                        </MissionEventStoreProvider>
                     </LibraryQueryProvider>
                 </MissionQueryProvider>
             </ToastProvider>

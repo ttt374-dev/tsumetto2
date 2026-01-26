@@ -56,6 +56,7 @@ export function useDashboard(){
 
     return {
         filteredProblems, reload, query,
+        problemIds: filteredProblems.map(p=>p.id),
         // stats
         missionSummary
     }

@@ -11,30 +11,32 @@ import type { ProblemId } from "@/domain/problem/Problem";
 import { useEffect } from "react";
 import { DashboardFilterControl } from "./components/DashboardFilterControl";
 import { SummaryView } from "../summary/SummaryView";
+import { useMissionEventStoreContext } from "../App/providers/MissionEventStoreProvider";
 
 /////////////////////////////////////////////
 
-export function DashboardScreen({ onStart }: { 
-    onStart: (ids: ProblemId[]) => void 
-}) {
+export function DashboardScreen() {
     const repos = useRepositoryContext()       
-    const missionPreview = useDashboard()    
-    const statsSummary = missionPreview.missionSummary
+    const dashboard = useDashboard()    
+    const statsSummary = dashboard.missionSummary
     //console.log("problemstats", problemStats)
+    const missionStore = useMissionEventStoreContext()
 
     // インポート用
     const { openFileDialog, inputElement, setOnFilesSelected } = useFileSelector(".kif")    
     const handleStart = () => {
-        onStart(missionPreview.filteredProblems.map(p=>p.id))
+        //onStart(missionPreview.filteredProblems.map(p=>p.id))
+
+        missionStore.start(dashboard.problemIds)
     }
     useEffect(() => {
         setOnFilesSelected(async fileList => {
             const files = Array.from(fileList)
             const importer = createImportProblemsUsecase(repos.problem)
             await importer.importFiles(files)
-            missionPreview.reload()
+            dashboard.reload()
         })
-    }, [repos.problem, missionPreview])
+    }, [repos.problem, dashboard])
     return (
         <AppLayout
             header={ "Dashboard"}
@@ -49,9 +51,9 @@ export function DashboardScreen({ onStart }: {
                     <AddIcon />
                 </Fab>
             }>
-            <DashboardFilterControl filter={missionPreview.query.filterState}
-                onToggleFilter={missionPreview.query.toggleFilter}
-                onSetFilter={missionPreview.query.setFilter}/>
+            <DashboardFilterControl filter={dashboard.query.filterState}
+                onToggleFilter={dashboard.query.toggleFilter}
+                onSetFilter={dashboard.query.setFilter}/>
 
             <SummaryView summary={statsSummary}/>
             {inputElement}

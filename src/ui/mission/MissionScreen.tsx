@@ -1,3 +1,4 @@
+import { useMissionEventStoreContext } from "../App/providers/MissionEventStoreProvider";
 import { DashboardScreen } from "../dashboard/DashboardScreen";
 import { PlayerScreen } from "../player/PlayerScreen";
 import { SummaryScreen } from "../summary/SummaryScreen";
@@ -5,35 +6,25 @@ import { useMissionController } from "./hooks/useMissionController";
 
 export function MissionScreen() {   
     const mission = useMissionController()
-    switch (mission.phase) {
+    const missionStore = useMissionEventStoreContext()
+    
+    const phase = missionStore.snapshot?.phase ?? "idle"
+    console.log("phase", phase)
+
+    switch (phase) {
         case "idle":
-            return (<DashboardScreen onStart={mission.start}/>
+            return (<DashboardScreen/>
             )
-        case "playing": 
-       
-            if (!mission.currentProblemId) return null
+        case "playing":        
+            //if (!mission.currentProblemId) return null
             //const title = `${mission.index+1}/${mission.snapshot?.problemIds.length}: ${mission.currentProblem.title}`
-            // TODO: title prefix
-            const titlePrefix = `${mission.index+1}/${mission.snapshot?.problemIds.length}: `
+            // TODO: title prefix            
             return (
-                <PlayerScreen
-                    //title={title}
-                    titlePrefix={titlePrefix}
-                    problemId={mission.currentProblemId}
-                    onNextProblem={mission.next}
-                    onPrevProblem={mission.prev}
-                    onAnswer={(answerResult, secToTaken) => {
-                        mission.currentProblemId && 
-                            mission.answer(mission.currentProblemId, answerResult, secToTaken)}  
-                    }
-                />
+                <PlayerScreen/>
             )
         case "finished":
             return (
-                <SummaryScreen
-                    missionResultEntryList={mission.missionResultList}
-                    onBackToDashboard={() => { mission.reset()}}
-                />
+                <SummaryScreen/>
             )
     }
 }

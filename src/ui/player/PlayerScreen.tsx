@@ -8,22 +8,61 @@ import { useLearningEventStore } from "@/application/store/useLearningEventStore
 import { useRepositoryContext } from "../App/providers/RepositoryProvider"
 import { useProblemStore } from "@/application/store/useProblemStore"
 import { KifData } from "@/domain/kif/types"
+import { useMissionEventStoreContext } from "../App/providers/MissionEventStoreProvider"
+import type { LearningEvent } from "@/domain/LearningEvent"
 
 ////////////////////////////////
-export function PlayerScreen({ titlePrefix, problemId, onNextProblem, onPrevProblem, onAnswer}: {
-    titlePrefix?: string,
-    problemId: ProblemId,
-    onNextProblem: () => void,
-    onPrevProblem: () => void, 
-    onAnswer: (answerResult: SolvedResult, secToTaken?: number) => void,
-}) {
+export function PlayerScreen() {
+    const [ index, setIndex] = useState(0)
     const [ showMoves, setShowMoves ] = useState(false)     
-
-    const repos = useRepositoryContext()    
-    const problem = useProblemStore(repos.problem).findById(problemId) 
+      
+    const missionStore = useMissionEventStoreContext()
+    const snapshot = missionStore.snapshot
+    const currentProblemId = snapshot && snapshot.problemIds[index]
+    const repos = useRepositoryContext()  
+    const problem = currentProblemId ? useProblemStore(repos.problem).findById(currentProblemId)  : undefined
+    const learningEventStore = useLearningEventStore(repos.learningEvent)
     const { initialPosition, moves } = problem?.kifData ?? KifData.create()
     const replay = useReplayController(initialPosition, moves)
-    const learning = useLearningEventStore(repos.learningEvent).records[problemId]    
+    const learning = currentProblemId ? useLearningEventStore(repos.learningEvent).records[currentProblemId] : undefined
+    
+    console.log("playerscreen", snapshot, currentProblemId)
+    if (!snapshot || !currentProblemId) return null
+    
+    // --- navigation ---
+    function next() {
+        if (snapshot) {
+            if (index < snapshot.problemIds.length - 1) {
+                setIndex(i => i + 1)
+            } else {
+                missionStore.finish()
+            }
+        }
+    }
+    function prev() {
+        setIndex(i => Math.max(i - 1, 0))
+    }
+    // --- answer handling ---
+    const answer = async (
+        //problemId: ProblemId,
+        solvedResult: SolvedResult,
+        secToTaken?: number
+    ) => {
+
+        if (!snapshot) return
+        missionStore.answer(currentProblemId, solvedResult, secToTaken)
+
+        // Learning への反映は「副作用」としてここで
+        const learningEvent: Omit<LearningEvent, "at"> = {
+            type: "reviewed",
+            problemId: currentProblemId,
+            quality: solvedResult,
+            sec: secToTaken,
+        }
+        await learningEventStore.append(learningEvent)
+        next()
+
+    }
 
     useEffect(()=>{        
         if (replay.plyIndex > 0){
@@ -35,10 +74,11 @@ export function PlayerScreen({ titlePrefix, problemId, onNextProblem, onPrevProb
 
     useEffect(()=> { 
         setShowMoves(false)        
-    }, [problemId])
+    }, [currentProblemId])
 
     if (!problem) return null
     console.log("play screen: learning", learning)
+    const titlePrefix = `${index+1}/${snapshot.problemIds.length}: `
     return (
         <PlayerView
             title={`${titlePrefix}${problem.title}`}
@@ -50,11 +90,11 @@ export function PlayerScreen({ titlePrefix, problemId, onNextProblem, onPrevProb
             advancePly={replay.advancePly}
             onMoveToPly={replay.moveToPly}
             currentPlyIndex={replay.plyIndex}
-            onNextProblem={onNextProblem}
-            onPrevProblem={onPrevProblem}
+            onNextProblem={next}
+            onPrevProblem={prev}
             setShowMoves={setShowMoves}
             footerActions={
-                <PlayerFooterActions onAnswer={onAnswer} />
+                <PlayerFooterActions onAnswer={answer} />
             }
         />
     )
