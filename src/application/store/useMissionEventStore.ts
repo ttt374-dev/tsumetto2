@@ -1,6 +1,8 @@
 import { useEffect, useReducer, useRef, useState } from "react"
-import type { MissionEvent, MissionSnapshot } from "../../domain/MissionEvent/MissionEvent"
+import type { MissionEvent, MissionProblemAnswered, MissionSnapshot, MissionStarted } from "../../domain/MissionEvent/MissionEvent"
 import { projectMission } from "../../domain/MissionEvent/projectionMission"
+import type { ProblemId } from "@/domain/problem/Problem"
+import type { SolvedResult } from "@/domain/MissionEvent/MissionSummary"
 
 type MissionState = {
     eventLog: MissionEvent[]
@@ -26,13 +28,39 @@ function missionReducer(
             return { eventLog: [], snapshot: null }
     }
 }
-
+//////////////////////////////////////////////////
 export function useMissionEventStore() {
     const [state, dispatch] = useReducer(missionReducer, {
         eventLog: [],
         snapshot: null,
     })
 
+    const start = (ids: ProblemId[]) => {
+        const ev: Omit<MissionStarted, "at"> = {
+            type: "MissionStarted",
+            missionId: crypto.randomUUID(),
+            problemIds: ids
+        }
+        append(ev)
+    }
+    const answer = (problemId: ProblemId, solvedResult: SolvedResult, secToTaken?: number) => {
+        if (!state.snapshot) return
+        const missionEvent: Omit<MissionProblemAnswered, "at"> = {
+            type: "MissionProblemAnswered",
+            missionId: state.snapshot.missionId,
+            problemId: problemId as ProblemId,
+            result: solvedResult,
+            sec: secToTaken,
+        }
+        append(missionEvent)
+    }
+    const finish = () => {
+        state.snapshot &&
+            append({
+                type: "MissionFinished",
+                missionId: state.snapshot.missionId
+            })
+    }
     const append = <E extends MissionEvent>(event: Omit<E, "at">) => {
         dispatch({
             type: "append",
@@ -44,40 +72,9 @@ export function useMissionEventStore() {
     return {
         eventLog: state.eventLog,
         snapshot: state.snapshot,
+
+        start, answer, finish,
         append,
         reset,
     }
 }
-
-/*
-////////////////////////////
-export function useMissionEventStoreOrig() {
-    const [eventLog, setEventLog] = useState<MissionEvent[]>([])
-    const [snapshot, setSnapshot] = useState<MissionSnapshot | null>(null)
-
-    useEffect(()=>{
-        reset()
-    }, [])    
-    
-
-    const append = <E extends MissionEvent>(
-        event: Omit<E, "at">
-    ) => {
-        const e = { ...event, at: Date.now() } as E
-        setEventLog(prev => {
-            const next = [...prev, e]
-            setSnapshot(projectMission(next))
-            return next
-        })
-    }
-
-    const reset = () => {
-        setEventLog([])
-        setSnapshot(null)
-    }
-
-
-    return { eventLog, snapshot, append, reset }
-}
-
-*/

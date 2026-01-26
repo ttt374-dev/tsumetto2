@@ -28,17 +28,11 @@ export function useMissionController() {
     const phase = snapshot?.phase ?? "idle"
     
     
-    
     ///////////////////////////////////////////
     // idle
     const start = (ids: ProblemId[]) => {
         if (ids.length === 0) return null
-        const ev: Omit<MissionStarted, "at"> = {
-            type: "MissionStarted",
-            missionId: crypto.randomUUID(),
-            problemIds: ids
-        }
-        missionEventStore.append(ev)
+        missionEventStore.start(ids)        
     }
 
     ///////////////////////////
@@ -50,10 +44,7 @@ export function useMissionController() {
             if (index < snapshot.problemIds.length - 1) {
                 setIndex(i => i + 1)
             } else {
-                missionEventStore.append({
-                    type: "MissionFinished",
-                    missionId: snapshot.missionId
-                })
+                missionEventStore.finish()
             }
         }
     }
@@ -69,14 +60,7 @@ export function useMissionController() {
     ) => {
 
         if (!snapshot) return
-        const missionEvent: Omit<MissionProblemAnswered, "at"> = {
-            type: "MissionProblemAnswered",
-            missionId: snapshot.missionId,
-            problemId: problemId as ProblemId,
-            result: solvedResult,
-            sec: secToTaken,
-        }
-        missionEventStore.append(missionEvent)
+        missionEventStore.answer(problemId, solvedResult, secToTaken)
 
         // Learning への反映は「副作用」としてここで
         const learningEvent: Omit<LearningEvent, "at"> = {

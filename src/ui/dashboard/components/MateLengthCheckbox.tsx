@@ -1,5 +1,5 @@
 import type { MateBucket } from "@/domain/problem/query/filter"
-import { FormControl, FormLabel, FormGroup, FormControlLabel, Checkbox,} from "@mui/material"
+import { FormControl, FormLabel, FormGroup, FormControlLabel, Checkbox, Paper, } from "@mui/material"
 
 type Props = {
   mateBuckets: MateBucket[] | undefined
@@ -23,22 +23,24 @@ export function MateLengthCheckboxes({ mateBuckets = [], onChange }: Props) {
   }
 
   return (
-    <FormControl component="fieldset">
-      <FormLabel component="legend">詰み手数</FormLabel>
-      <FormGroup row>
-        {(Object.keys(BUCKET_LABELS) as MateBucket[]).map(bucket => (
-          <FormControlLabel
-            key={bucket}
-            control={
-              <Checkbox
-                checked={mateBuckets.includes(bucket)}
-                onChange={() => toggle(bucket)}
-              />
-            }
-            label={BUCKET_LABELS[bucket]}
-          />
-        ))}
-      </FormGroup>
-    </FormControl>
+    <Paper sx={{p: 1}}>
+      <FormControl component="fieldset">
+        <FormLabel component="legend">詰み手数</FormLabel>
+        <FormGroup row>
+          {(Object.keys(BUCKET_LABELS) as MateBucket[]).map(bucket => (
+            <FormControlLabel
+              key={bucket}
+              control={
+                <Checkbox
+                  checked={mateBuckets.includes(bucket)}
+                  onChange={() => toggle(bucket)}
+                />
+              }
+              label={BUCKET_LABELS[bucket]}
+            />
+          ))}
+        </FormGroup>
+      </FormControl>
+    </Paper>
   )
 }
