@@ -6,35 +6,36 @@ import { AppLayout } from "../common/AppLayout";
 import { useFileSelector } from "../sharedComponents/useFileSelector";
 import { createImportProblemsUsecase } from "@/usecase/importProblemsUseCase";
 import { useRepositoryContext } from "../App/providers/RepositoryProvider";
-import { useDashboard } from "./hooks/useDashboard";
-import type { ProblemId } from "@/domain/problem/Problem";
+import { useDashboardFilterProblems } from "./hooks/useDashboardFilterProblems";
 import { useEffect } from "react";
 import { DashboardFilterControl } from "./components/DashboardFilterControl";
 import { SummaryView } from "../summary/SummaryView";
 import { useMissionEventStoreContext } from "../App/providers/MissionEventStoreProvider";
+import { useToast } from "../App/providers/ToastProvider";
 
 /////////////////////////////////////////////
 
 export function DashboardScreen() {
     const repos = useRepositoryContext()       
-    const dashboard = useDashboard()    
+    const dashboard = useDashboardFilterProblems()    
+    const { problemIds, } = dashboard
     const statsSummary = dashboard.missionSummary
-    //console.log("problemstats", problemStats)
     const missionStore = useMissionEventStoreContext()
+    const toast = useToast()
 
     // インポート用
     const { openFileDialog, inputElement, setOnFilesSelected } = useFileSelector(".kif")    
     const handleStart = () => {
-        //onStart(missionPreview.filteredProblems.map(p=>p.id))
-
-        missionStore.start(dashboard.problemIds)
+        missionStore.start(problemIds)
     }
     useEffect(() => {
         setOnFilesSelected(async fileList => {
             const files = Array.from(fileList)
+            //if (!window.confirm(`importing ${files.length} files`)) return
             const importer = createImportProblemsUsecase(repos.problem)
             await importer.importFiles(files)
-            dashboard.reload()
+            await dashboard.reloadStores()
+            toast({message: `imported ${files.length} file`})
         })
     }, [repos.problem, dashboard])
     return (

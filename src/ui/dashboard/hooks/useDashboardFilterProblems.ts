@@ -8,21 +8,23 @@ import { useProblemStore } from "@/application/store/useProblemStore";
 import { MissionSummary } from "@/domain/MissionEvent/MissionSummary";
 
 
-export function useDashboard(){
+export function useDashboardFilterProblems(){
     const repos = useRepositoryContext()
     const problemStore = useProblemStore(repos.problem)
     const learningStore = useLearningEventStore(repos.learningEvent)
     const query = useMissionQueryContext()
 
-    const reload = async () => {
+    const reloadStores = async () => {
         await Promise.all([
             problemStore.reload(),
             learningStore.reload(),
         ])
+        //console.log("reloaded stores")
     }
 
     const filteredProblems = useMemo(() => {
         const sortState: SortState = { key: "nextReviewedAt", order: "asc" }
+        console.log("fileteredproblems")
         return applyQuery(
             problemStore.problems,
             learningStore.records,
@@ -51,11 +53,10 @@ export function useDashboard(){
         //console.log("stats", problemCount)
 
         return new MissionSummary(problemCount, solvedCount, failedCount)
-        //return { problemCount, solvedCount, failedCount }
     }, [filteredProblems, learningRecords])
 
     return {
-        filteredProblems, reload, query,
+        filteredProblems, reloadStores, query,
         problemIds: filteredProblems.map(p=>p.id),
         // stats
         missionSummary

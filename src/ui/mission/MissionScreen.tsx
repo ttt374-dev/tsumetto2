@@ -1,8 +1,5 @@
 import { useEffect } from "react";
 import { useMissionEventStoreContext } from "../App/providers/MissionEventStoreProvider";
-import { DashboardScreen } from "../dashboard/DashboardScreen";
-import { PlayerScreen } from "../player/PlayerScreen";
-import { SummaryScreen } from "../summary/SummaryScreen";
 import { Outlet, useNavigate } from "react-router-dom";
 
 export function MissionScreen() {
