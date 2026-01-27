@@ -4,8 +4,12 @@ import { KifData } from "@/domain/kif/types";
 import PlayerView from "../player/components/PlayerView";
 import { useProblemStore } from "@/application/store/useProblemStore";
 import { useRepositoryContext } from "../App/providers/RepositoryProvider";
+import { useState } from "react";
+
+type DialogState = "none" | "problemDetail"
 
 export function ViewerScreen() {
+    const [dialog, setDialog] = useState<DialogState>("none")
     const { id } = useParams()    
     
     const repos = useRepositoryContext()    
@@ -16,12 +20,13 @@ export function ViewerScreen() {
     if (!id || !problem) return null
     return (
         <PlayerView
-            title={problem?.title}
-            moves={problem?.kifData.moves}
+            title={problem.title}
+            moves={problem.kifData.moves}
             position={replay.position}
             retreatPly={replay.retreatPly}
             advancePly={replay.advancePly}
             onMoveToPly={replay.moveToPly}
+            onOpenDetailDialog={() => setDialog("problemDetail")}
             currentPlyIndex={replay.plyIndex}
             showMoves={true}
             setShowMoves={()=>{}}

@@ -1,24 +1,23 @@
 import { Box, Button, Grid, Stack } from "@mui/material"
-import { useEffect, useState } from "react"
 import { AppLayout } from "@/ui/common/AppLayout"
 import type { Move, Position } from "@/domain/kif/types"
-import BoardView from "./BoardView"
 import MovesPanel from "./MovesPanel"
 import MovesView from "./MovesView"
 import { PlyControlPanel } from "./PlyControlPanel"
 import { Learning } from "@/domain/learning/Learning"
 import BoardPanel from "./BoardPanel"
+import { formatLearning } from "@/ui/library/components/LibraryListItem"
 
-export function InfoView({movesLength, learning}: {
-    movesLength: number
+export function InfoView({mateLength, learning}: {
+    mateLength: number
     learning?: Learning
 }){
     return (
         <Stack>
             <Box>
-                {movesLength} 手詰め
+                {mateLength} 手詰め
             </Box>
-            {learning && <PlayerLearningStats learning={learning} />}
+            {learning && formatLearning(learning)}
         </Stack>
     )
 }
@@ -28,7 +27,7 @@ export function PlayerLearningStats({ learning }: {
 }) {
     if (!learning) return
     return (
-        <Stack spacing={1}>
+        <Stack spacing={0}>
             <Box>
                 { `${learning.solvedCount} : ${learning.failedCount}`}
             </Box>
@@ -36,7 +35,7 @@ export function PlayerLearningStats({ learning }: {
                 ef{learning.easeFactor.toFixed(2)}
             </Box>
             <Box>
-                next:{new Date(learning.nextReviewedAt).toLocaleString()}
+                in {new Date(learning.nextReviewedAt).toLocaleString()}
             </Box>
         </Stack>
     )
@@ -44,7 +43,7 @@ export function PlayerLearningStats({ learning }: {
 
 ///////////////////////////////////////////////////////////////
 function PlayerView({title, learning, position, showMoves, currentPlyIndex, 
-    onNextProblem, onPrevProblem,
+    onNextProblem, onPrevProblem, onOpenDetailDialog,
     retreatPly, advancePly, moves, setShowMoves, onMoveToPly, footerActions}: {
     title: string,
     learning?: Learning,
@@ -57,13 +56,20 @@ function PlayerView({title, learning, position, showMoves, currentPlyIndex,
     setShowMoves: (flag: boolean) => void,
     onPrevProblem?: () => void,
     onNextProblem?: () => void,
+    onOpenDetailDialog: () => void,
     moves: Move[],
     footerActions?: React.ReactNode
 }){
     return (
         <AppLayout
             header={title}
-            footer={footerActions}>
+            footer={footerActions}
+            rightActions={
+                <Button onClick={onOpenDetailDialog}>
+                    Detail
+                </Button>
+            }
+            >
             <Stack sx={{ minHeight: 0, height: "100%" }} spacing={1} >
                 { /* --- 盤面 ---*/ }
                 <BoardPanel position={position}
@@ -77,9 +83,12 @@ function PlayerView({title, learning, position, showMoves, currentPlyIndex,
                     <MovesPanel>
                         {showMoves ?
                             <MovesView moves={moves} currentPlyIndex={currentPlyIndex} onMoveToPly={onMoveToPly} />                            
-                            : <Button onClick={() => setShowMoves(true)} >
-                                Show Moves
-                                </Button>
+                            : (<Stack>
+                            <Button onClick={() => setShowMoves(true)} >
+                                手筋を表示
+                            </Button>
+                            {moves.length}手詰め
+                            </Stack>)
                         }
                     </MovesPanel>                    
                         
@@ -93,10 +102,7 @@ function PlayerView({title, learning, position, showMoves, currentPlyIndex,
                                 advancePly()
                             }}
                         />
-                        <Box>
-                            {moves.length} 手詰み
-                        </Box>
-                        { learning && <PlayerLearningStats learning={learning}/>}
+                        { learning && formatLearning(learning)}
                     </Box>
                 </Stack>
             </Stack>

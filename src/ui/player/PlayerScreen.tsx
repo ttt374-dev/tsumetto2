@@ -1,106 +1,92 @@
 import { useEffect, useState } from "react"
-import { Problem, type ProblemId } from "@/domain/problem/Problem"
-import { useReplayController } from "./useReplayController"
-import type { SolvedResult } from "@/domain/MissionEvent/MissionSummary"
+import ProblemDetailDialog from "../common/ProblemDetailDialog"
 import { PlayerFooterActions } from "./components/PlayerFooterActions"
 import PlayerView from "./components/PlayerView"
+import { useMissionPlayer } from "./useMissionPlayer"
+import { useReplayController } from "./useReplayController"
 import { useLearningEventStore } from "@/application/store/useLearningEventStore"
 import { useRepositoryContext } from "../App/providers/RepositoryProvider"
 import { useProblemStore } from "@/application/store/useProblemStore"
-import { KifData } from "@/domain/kif/types"
-import { useMissionEventStoreContext } from "../App/providers/MissionEventStoreProvider"
-import type { LearningEvent } from "@/domain/LearningEvent"
+import { Problem, type ProblemId } from "@/domain/problem/Problem"
+import { Board, Hand, Hands, KifData, Position } from "@/domain/kif/types"
 
-function usePlayer(){
-    const [ index, setIndex] = useState(0)
+function useShowMovesController(problemId: ProblemId, plyIndex: number){
     const [ showMoves, setShowMoves ] = useState(false)     
-      
-    const missionStore = useMissionEventStoreContext()
-    const snapshot = missionStore.snapshot
-    const currentProblemId = snapshot && snapshot.problemIds[index]
-    const repos = useRepositoryContext()  
-    const problem = currentProblemId ? useProblemStore(repos.problem).findById(currentProblemId)  : undefined
-    const learningEventStore = useLearningEventStore(repos.learningEvent)
-    const learning = currentProblemId ? 
-        useLearningEventStore(repos.learningEvent).records[currentProblemId] : undefined
-
-    // replay
-    const { initialPosition, moves } = problem?.kifData ?? KifData.create()
-    const replay = useReplayController(initialPosition, moves)
-    
-    
-    console.log("playerscreen", snapshot, currentProblemId)
-        useEffect(()=>{        
-        if (replay.plyIndex > 0){
+    useEffect(()=>{        
+        if (plyIndex > 0){
             setShowMoves(true)
-        } else if (replay.plyIndex === 0){
+        } else if (plyIndex === 0){
             setShowMoves(false)
         }
-    }, [replay.plyIndex])
+    }, [plyIndex])
 
     useEffect(()=> { 
         setShowMoves(false)        
-    }, [currentProblemId])
+    }, [problemId])
 
-    if (!snapshot || !currentProblemId || !problem) return null
-    
-    // --- navigation ---
-    function next() {
-        if (snapshot) {
-            if (index < snapshot.problemIds.length - 1) {
-                setIndex(i => i + 1)
-            } else {
-                missionStore.finish()
-            }
-        }
-    }
-    function prev() {
-        setIndex(i => Math.max(i - 1, 0))
-    }
-    // --- answer handling ---
-    const answer = async (
-        //problemId: ProblemId,
-        solvedResult: SolvedResult,
-        secToTaken?: number
-    ) => {
+    return { showMoves, setShowMoves }
 
-        if (!snapshot) return
-        missionStore.answer(currentProblemId, solvedResult, secToTaken)
-
-        // Learning への反映は「副作用」としてここで
-        const learningEvent: Omit<LearningEvent, "at"> = {
-            type: "reviewed",
-            problemId: currentProblemId,
-            quality: solvedResult,
-            sec: secToTaken,
-        }
-        await learningEventStore.append(learningEvent)
-        next()
-    }
-
-    return {
-        index, problem, learning, showMoves,
-        replay, snapshot,
-
-        answer, next, prev,
-        setShowMoves,
-    }
 }
+function useProblemDetailDialog(problem: Problem){
+    const [ open, setOpen] = useState(false)
+
+    const repos = useRepositoryContext()
+    const problemStore = useProblemStore(repos.problem)
+
+    const openDialog = () => { setOpen(true); console.log("detaildialog", open); }
+    const closeDialog = () => { setOpen(false)}
+    // delete
+    const deleteProblem = async () => {
+        await repos.problem.remove(problem.id)
+        await problemStore.reload()
+        //next()
+    }
+
+    const dialogElement = (
+        <ProblemDetailDialog
+            open={open}
+            problem={problem}
+            onConfirm={alert}
+            onClose={closeDialog}
+            onDelete={deleteProblem}
+            onResetLearning={alert}  // TODO
+        />
+    )
+
+    return { openDialog, dialogElement }
+}
+//type DialogState = "none" | "problemDetail"
+
+
 ////////////////////////////////
-export function PlayerScreen() {
-    const player = usePlayer()
-    if (!player) return null
-    const { index, problem, learning, snapshot, replay, 
-        next, prev, answer, setShowMoves, showMoves,
-     } = player
-     
-    console.log("play screen: learning", learning)
+export function PlayerScreen() {   
+    const missionPlayer = useMissionPlayer()
+    const { index, problem: nullableProblem, snapshot, 
+        next, prev, answer,
+    } = missionPlayer
+    //const problem = nullableProblem ?? Problem.create()
+    const problem = nullableProblem ?? Problem.create({
+        kifData: new KifData({}, new Position(Board.empty(), Hands.empty()), []).toDTO()})
+    // replay
+    const { initialPosition, moves } = problem.kifData
+    const replay = useReplayController(initialPosition, moves)
+    const showMovesController = useShowMovesController(problem.id, replay.plyIndex)
+    
+    // learning
+    const repos = useRepositoryContext()    
+    const learning = useLearningEventStore(repos.learningEvent).records[problem.id]
+
+    // dialog
+    const detailDialog = useProblemDetailDialog(problem)
+
+    //console.log("play screen: learning", learning)
     const titlePrefix = `${index+1}/${snapshot.problemIds.length}: `
     return (
+        <>
         <PlayerView
             title={`${titlePrefix}${problem.title}`}
             learning={learning}
-            showMoves={showMoves}
+            showMoves={showMovesController.showMoves}
             moves={problem.kifData.moves}
             position={replay.position}
             retreatPly={replay.retreatPly}
@@ -109,10 +95,14 @@ export function PlayerScreen() {
             currentPlyIndex={replay.plyIndex}
             onNextProblem={next}
             onPrevProblem={prev}
-            setShowMoves={setShowMoves}
+            onOpenDetailDialog={detailDialog.openDialog}
+            setShowMoves={showMovesController.setShowMoves}
             footerActions={
                 <PlayerFooterActions onAnswer={answer} />
             }
         />
+
+            { detailDialog.dialogElement}
+        </>
     )
 }

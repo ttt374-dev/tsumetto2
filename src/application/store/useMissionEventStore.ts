@@ -4,9 +4,17 @@ import { projectMission } from "../../domain/MissionEvent/projectionMission"
 import type { ProblemId } from "@/domain/problem/Problem"
 import type { SolvedResult } from "@/domain/MissionEvent/MissionSummary"
 
-type MissionState = {
-    eventLog: MissionEvent[]
-    snapshot: MissionSnapshot | null
+//type MissionState = {
+//    eventLog: MissionEvent[]
+//    snapshot: MissionSnapshot | null
+//}
+type MissionState =
+  | { phase: "idle"; eventLog: MissionEvent[] }
+  | MissionPlayingState
+  | { phase: "finished"; eventLog: MissionEvent[]; snapshot: MissionSnapshot }
+
+  export type MissionPlayingState = {
+    phase: "playing"; eventLog: MissionEvent[]; snapshot: MissionSnapshot 
 }
 type MissionAction =
     | { type: "append"; event: MissionEvent }
@@ -18,21 +26,27 @@ function missionReducer(
 ): MissionState {
     switch (action.type) {
         case "append": {
-            const nextLog = [...state.eventLog, action.event]
+            const event = action.event
+            const nextLog = [...state.eventLog, event]
+            const nextSnapshot = projectMission(nextLog)
+
             return {
+                ...state,
                 eventLog: nextLog,
-                snapshot: projectMission(nextLog),
+                snapshot: nextSnapshot,
+                phase: nextSnapshot.phase,
             }
         }
         case "reset":
-            return { eventLog: [], snapshot: null }
+            return { eventLog: [], phase: "idle" }
     }
 }
 //////////////////////////////////////////////////
 export function useMissionEventStore() {
     const [state, dispatch] = useReducer(missionReducer, {
         eventLog: [],
-        snapshot: null,
+        phase: "idle",
+        //snapshot: null,
     })
 
     const start = (ids: ProblemId[]) => {
@@ -44,7 +58,8 @@ export function useMissionEventStore() {
         append(ev)
     }
     const answer = (problemId: ProblemId, solvedResult: SolvedResult, secToTaken?: number) => {
-        if (!state.snapshot) return
+        //if (!state.snapshot) return
+        if (state.phase !== "playing") return
         const missionEvent: Omit<MissionProblemAnswered, "at"> = {
             type: "MissionProblemAnswered",
             missionId: state.snapshot.missionId,
@@ -55,11 +70,11 @@ export function useMissionEventStore() {
         append(missionEvent)
     }
     const finish = () => {
-        state.snapshot &&
-            append({
-                type: "MissionFinished",
-                missionId: state.snapshot.missionId
-            })
+        if (state.phase !== "playing") return
+        append({
+            type: "MissionFinished",
+            missionId: state.snapshot.missionId
+        })
     }
     const append = <E extends MissionEvent>(event: Omit<E, "at">) => {
         dispatch({
@@ -71,7 +86,7 @@ export function useMissionEventStore() {
 
     return {
         eventLog: state.eventLog,
-        snapshot: state.snapshot,
+        snapshot: state.phase === "idle" ? null : state.snapshot,
 
         start, answer, finish,
         append,
