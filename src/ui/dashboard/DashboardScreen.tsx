@@ -9,6 +9,9 @@ import { SummaryView } from "../summary/SummaryView";
 import { useMissionEventStoreContext } from "../App/providers/MissionEventStoreProvider";
 import { useToast } from "../App/providers/ToastProvider";
 import { useImporter } from "@/application/useImporter";
+import { Navigate, useNavigate } from "react-router-dom";
+import { ListDialog } from "../mission/ListDialog";
+import { useState } from "react";
 
 /////////////////////////////////////////////
 
@@ -16,17 +19,17 @@ export function DashboardScreen() {
     const { query, missionSummary, problemIds, reloadStores } = useFilterProblems()
     const { start } = useMissionEventStoreContext()
     const toast = useToast()
-    
+    const navigate = useNavigate()
     const { openFileDialog, inputElement } = useImporter((files: File[]) => {
         reloadStores()
         toast({message: `imported ${files.length} file`})
     })    
-
+    const [open, setOpen] = useState(false)
     return (
         <AppLayout
             header={ "Dashboard"}
             footer={
-                <Button onClick={()=> start(problemIds)} sx={{ height: 100 }}
+            <Button onClick={()=> start(problemIds)} sx={{ height: 100 }}
                     variant="contained" fullWidth 
                     disabled={missionSummary.problemCount === 0}>
                     Start
@@ -37,12 +40,24 @@ export function DashboardScreen() {
                     <AddIcon />
                 </Fab>
             }>
+            <Button onClick={ () => setOpen(true)}>
+                リスト
+            </Button>
             <DashboardFilterControl filter={query.filterState}
                 onToggleFilter={query.toggleFilter}
                 onSetFilter={query.setFilter}/>
 
             <SummaryView summary={missionSummary}/>
+
             {inputElement}
+            
+
+            <ListDialog
+                open={open}
+                onClose={() => setOpen(false)}
+                problemIds={problemIds}
+            />
+
         </AppLayout>
     )
 }

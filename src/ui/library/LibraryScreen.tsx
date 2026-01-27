@@ -10,6 +10,7 @@ import { useProblemStore } from "@/application/store/useProblemStore";
 import { useLearningEventStore } from "@/application/store/useLearningEventStore";
 import { createImportProblemsUsecase } from "@/usecase/importProblemsUseCase";
 import { useImporter } from "@/application/useImporter";
+import { useMissionEventStoreContext } from "../App/providers/MissionEventStoreProvider";
 
     //////////////////////////////////////////////////
 // LibraryScreen.tsx
@@ -30,9 +31,12 @@ export function LibraryScreen() {
   const toast = useToast()
   const navigate = useNavigate()
   const importer = useImporter((files: File[]) => { problemStore.reload()})
+
+  const { start } = useMissionEventStoreContext()
   
   const handlers = {
-    view: { onViewProblem: (id: string) => navigate(`/view/${id}`) },
+    //view: { onViewProblem: (id: string) => navigate(`/view/${id}`) },
+    view: { onViewProblem: (id: string) => start([id]) },
     import: {
       onOpenImportFileDialog: importer.openFileDialog,
       /*

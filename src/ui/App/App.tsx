@@ -9,12 +9,14 @@ import { MissionEventStoreProvider } from './providers/MissionEventStoreProvider
 import { DashboardScreen } from '../dashboard/DashboardScreen';
 import { PlayerScreen } from '../player/PlayerScreen';
 import { SummaryScreen } from '../summary/SummaryScreen';
+import { ListScreen } from '../mission/ListView';
 
 function App() {
     return (
         <AllProviders>
             <BrowserRouter>
                 <Routes>
+                    
                     <Route path="/mission" element={
                         <MissionEventStoreProvider>
                             <MissionScreen />
@@ -22,7 +24,9 @@ function App() {
                         <Route index element={<DashboardScreen />} />
                         <Route path="play" element={<PlayerScreen />} />
                         <Route path="summary" element={<SummaryScreen />} />
+                        <Route path="list" element={<ListScreen />} />
                     </Route>
+                    <Route path="/list" element={<ListScreen />} />
                     <Route path="/library" element={<LibraryScreen />} />
                     <Route path="/view/:id" element={<ViewerScreen />} />
                     <Route path="/" element={<Navigate to="/mission" />} />
