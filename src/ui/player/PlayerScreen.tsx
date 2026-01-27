@@ -78,9 +78,12 @@ export function PlayerScreen() {
 
     // dialog
     const detailDialog = useProblemDetailDialog(problem)
+    //console.log("playscre", problem, index, snapshot)
+    //if (!index || !snapshot) return null
 
     //console.log("play screen: learning", learning)
-    const titlePrefix = `${index+1}/${snapshot.problemIds.length}: `
+    const titlePrefix =  `${(index ?? 0)+1}/${snapshot?.problemIds.length}: `
+    //console.log("titleprefx", titlePrefix)
     return (
         <>
         <PlayerView

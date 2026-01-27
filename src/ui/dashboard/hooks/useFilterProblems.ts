@@ -24,7 +24,7 @@ export function useFilterProblems(){
 
     const filteredProblems = useMemo(() => {
         const sortState: SortState = { key: "nextReviewedAt", order: "asc" }
-        console.log("fileteredproblems")
+        //console.log("fileteredproblems")
         return applyQuery(
             problemStore.problems,
             learningStore.records,
