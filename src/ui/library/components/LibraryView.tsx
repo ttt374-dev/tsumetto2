@@ -1,4 +1,4 @@
-import AddIcon from "@mui/icons-material/Add"
+
 import { Box, Button, Checkbox, Fab, IconButton, List, Stack } from "@mui/material"
 import DeleteIcon from '@mui/icons-material/Delete';
 
@@ -56,14 +56,7 @@ export function LibraryView({
     }
 
     return (
-        <AppLayout
-            header="Library"
-            fab={
-                <Fab onClick={handlers.import.onOpenImportFileDialog}>
-                    <AddIcon />
-                </Fab>
-            }
-        >
+        <>
             <Stack direction="row">
                 <LibraryCheckboxControl
                     onCheckAll={handlers.checkbox.onCheckAll}
@@ -107,7 +100,6 @@ export function LibraryView({
                 </List>
             </Box>
 
-
-        </AppLayout>
+        </>
     )
 }

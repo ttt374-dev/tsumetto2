@@ -19,7 +19,7 @@ export function DashboardScreen() {
     const { query, missionSummary, problemIds, reloadStores } = useFilterProblems()
     const { start } = useMissionEventStoreContext()
     const toast = useToast()
-    const navigate = useNavigate()
+    
     const { openFileDialog, inputElement } = useImporter((files: File[]) => {
         reloadStores()
         toast({message: `imported ${files.length} file`})

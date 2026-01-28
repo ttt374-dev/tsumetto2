@@ -24,9 +24,9 @@ function App() {
                         <Route index element={<DashboardScreen />} />
                         <Route path="play" element={<PlayerScreen />} />
                         <Route path="summary" element={<SummaryScreen />} />
-                        <Route path="list" element={<ListScreen />} />
+                        
                     </Route>
-                    <Route path="/list" element={<ListScreen />} />
+                    
                     <Route path="/library" element={<LibraryScreen />} />
                     <Route path="/view/:id" element={<ViewerScreen />} />
                     <Route path="/" element={<Navigate to="/mission" />} />

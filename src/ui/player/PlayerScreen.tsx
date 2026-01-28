@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react"
-import ProblemDetailDialog from "../common/ProblemDetailDialog"
 import { PlayerFooterActions } from "./components/PlayerFooterActions"
 import PlayerView from "./components/PlayerView"
 import { useMissionPlayer } from "./useMissionPlayer"
@@ -9,8 +8,10 @@ import { useRepositoryContext } from "../App/providers/RepositoryProvider"
 import { useProblemStore } from "@/application/store/useProblemStore"
 import { Problem, type ProblemId } from "@/domain/problem/Problem"
 import { Board, Hand, Hands, KifData, Position } from "@/domain/kif/types"
+import { ListDialog } from "../mission/ListDialog"
+import { useProblemDetailDialog } from "../common/useProblemDetailDialog"
 
-function useShowMovesController(problemId: ProblemId, plyIndex: number){
+export function useShowMovesController(problemId: ProblemId, plyIndex: number){
     const [ showMoves, setShowMoves ] = useState(false)     
     useEffect(()=>{        
         if (plyIndex > 0){
@@ -27,36 +28,6 @@ function useShowMovesController(problemId: ProblemId, plyIndex: number){
     return { showMoves, setShowMoves }
 
 }
-function useProblemDetailDialog(problem: Problem){
-    const [ open, setOpen] = useState(false)
-
-    const repos = useRepositoryContext()
-    const problemStore = useProblemStore(repos.problem)
-
-    const openDialog = () => { setOpen(true); console.log("detaildialog", open); }
-    const closeDialog = () => { setOpen(false)}
-    // delete
-    const deleteProblem = async () => {
-        await repos.problem.remove(problem.id)
-        await problemStore.reload()
-        //next()
-    }
-
-    const dialogElement = (
-        <ProblemDetailDialog
-            open={open}
-            problem={problem}
-            onConfirm={alert}
-            onClose={closeDialog}
-            onDelete={deleteProblem}
-            onResetLearning={alert}  // TODO
-        />
-    )
-
-    return { openDialog, dialogElement }
-}
-//type DialogState = "none" | "problemDetail"
-
 
 ////////////////////////////////
 export function PlayerScreen() {   
@@ -84,6 +55,8 @@ export function PlayerScreen() {
     //console.log("play screen: learning", learning)
     const titlePrefix =  `${(index ?? 0)+1}/${snapshot.problemIds.length}: `
     //console.log("titleprefx", titlePrefix)
+
+    const [openListDialog, setOpenListDialog] = useState(false)
     return (
         <>
         <PlayerView
@@ -96,16 +69,24 @@ export function PlayerScreen() {
             advancePly={replay.advancePly}
             onMoveToPly={replay.moveToPly}
             currentPlyIndex={replay.plyIndex}
+
             onNextProblem={next}
             onPrevProblem={prev}
+            
             onOpenDetailDialog={detailDialog.openDialog}
+            onOpenListDialog={()=> setOpenListDialog(true)}
             setShowMoves={showMovesController.setShowMoves}
             footerActions={
                 <PlayerFooterActions onAnswer={answer} />
             }
         />
 
-            { detailDialog.dialogElement}
+            {detailDialog.dialogElement}
+            <ListDialog
+                open={openListDialog}
+                onClose={() => setOpenListDialog(false)}
+                problemIds={snapshot.problemIds}
+            />
         </>
     )
 }

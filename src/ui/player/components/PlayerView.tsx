@@ -42,22 +42,23 @@ export function PlayerLearningStats({ learning }: {
 }
 
 ///////////////////////////////////////////////////////////////
-function PlayerView({title, learning, position, showMoves, currentPlyIndex, 
-    onNextProblem, onPrevProblem, onOpenDetailDialog,
+function PlayerView({title, learning, position, showMoves = true, currentPlyIndex, 
+    onNextProblem, onPrevProblem, onOpenDetailDialog, onOpenListDialog,
     retreatPly, advancePly, moves, setShowMoves, onMoveToPly, footerActions}: {
     title: string,
     learning?: Learning,
     position: Position,
-    showMoves: boolean,
+    moves: Move[],
+    showMoves?: boolean,
     currentPlyIndex: number,
     retreatPly: () => void,
     advancePly: () => void,
     onMoveToPly: (index: number) => void,
-    setShowMoves: (flag: boolean) => void,
+    setShowMoves?: (flag: boolean) => void,
     onPrevProblem?: () => void,
     onNextProblem?: () => void,
-    onOpenDetailDialog: () => void,
-    moves: Move[],
+    onOpenDetailDialog?: () => void,
+    onOpenListDialog?: () => void,    
     footerActions?: React.ReactNode
 }){
     return (
@@ -84,7 +85,7 @@ function PlayerView({title, learning, position, showMoves, currentPlyIndex,
                         {showMoves ?
                             <MovesView moves={moves} currentPlyIndex={currentPlyIndex} onMoveToPly={onMoveToPly} />                            
                             : (<Stack>
-                            <Button onClick={() => setShowMoves(true)} >
+                            <Button onClick={() => setShowMoves?.(true)} >
                                 手筋を表示
                             </Button>
                             {moves.length}手詰め
@@ -102,6 +103,9 @@ function PlayerView({title, learning, position, showMoves, currentPlyIndex,
                                 advancePly()
                             }}
                         />
+                        <Button onClick={onOpenListDialog}>
+                            リスト表示
+                        </Button>
                         { learning && formatLearning(learning)}
                     </Box>
                 </Stack>

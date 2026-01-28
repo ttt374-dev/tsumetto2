@@ -23,7 +23,12 @@ export function ListDialog({ problemIds, open, onClose }: {
   )
 
   return (
-    <Dialog fullScreen open={open} onClose={onClose}>
+    <Dialog fullScreen open={open} onClose={onClose}
+        sx={{
+            paddingTop: 'env(safe-area-inset-top)',
+            paddingBottom: 'env(safe-area-inset-buttom)',
+        }}
+    >
         <DialogTitle>リスト一覧</DialogTitle>
         <DialogContent>
             <ListView problems={problems} />
