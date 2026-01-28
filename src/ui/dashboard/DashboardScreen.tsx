@@ -9,7 +9,6 @@ import { SummaryView } from "../summary/SummaryView";
 import { useMissionEventStoreContext } from "../App/providers/MissionEventStoreProvider";
 import { useToast } from "../App/providers/ToastProvider";
 import { useImporter } from "@/application/useImporter";
-import { Navigate, useNavigate } from "react-router-dom";
 import { ListDialog } from "../mission/ListDialog";
 import { useState } from "react";
 
@@ -46,12 +45,10 @@ export function DashboardScreen() {
             <DashboardFilterControl filter={query.filterState}
                 onToggleFilter={query.toggleFilter}
                 onSetFilter={query.setFilter}/>
-
             <SummaryView summary={missionSummary}/>
 
             {inputElement}
             
-
             <ListDialog
                 open={open}
                 onClose={() => setOpen(false)}

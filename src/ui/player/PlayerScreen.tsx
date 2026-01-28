@@ -80,9 +80,15 @@ export function PlayerScreen() {
             header={title}
             footer={footerActions}
             rightActions={
-                <Button onClick={detailDialog.openDialog}>
+                <>
+                <Button onClick={detailDialog.openDialog} sx={{ color: "#fff" }}>
                     Detail
                 </Button>
+                <Button onClick={()=> setOpenListDialog(true)} sx={{ color: "#fff" }}>
+                    リスト
+                </Button>
+                </>
+                
             }
             >
         <PlayerView
@@ -94,7 +100,7 @@ export function PlayerScreen() {
             handlers={handlers}
             currentPlyIndex={replay.plyIndex}
             
-            onOpenListDialog={()=> setOpenListDialog(true)}
+            //onOpenListDialog={()=> setOpenListDialog(true)}
             
         />
             {detailDialog.dialogElement}

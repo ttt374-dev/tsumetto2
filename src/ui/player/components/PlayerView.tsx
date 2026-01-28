@@ -20,15 +20,12 @@ type PlayerViewHandlers = {
     setShowMoves?: (flag: boolean) => void,
 }
 ///////////////////////////////////////////////////////////////
-function PlayerView({learning, position, moves, showMoves = true, currentPlyIndex, 
-    onOpenListDialog, handlers}: {
+function PlayerView({learning, position, moves, showMoves = true, currentPlyIndex, handlers}: {
     position: Position,
     moves: Move[],
-    showMoves?: boolean,
     currentPlyIndex: number,    
-    handlers: PlayerViewHandlers,
-
-    onOpenListDialog?: () => void,    
+    handlers: PlayerViewHandlers,    
+    showMoves?: boolean,
     learning?: Learning,
 }) {
     return (
@@ -65,9 +62,6 @@ function PlayerView({learning, position, moves, showMoves = true, currentPlyInde
                             handlers.ply.advance()
                         }}
                     />
-                    <Button onClick={onOpenListDialog}>
-                        リスト表示
-                    </Button>
                     {learning && formatLearning(learning)}
                 </Box>
             </Stack>
