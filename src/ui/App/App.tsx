@@ -4,7 +4,6 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AllProviders } from './providers/AllProviders';
 import { MissionScreen } from '../mission/MissionScreen';
 import { LibraryScreen } from '../library/LibraryScreen';
-import { ViewerScreen } from '../viewer/ViewerScreen';
 import { MissionEventStoreProvider } from './providers/MissionEventStoreProvider';
 import { DashboardScreen } from '../dashboard/DashboardScreen';
 import { PlayerScreen } from '../player/PlayerScreen';
@@ -27,7 +26,6 @@ function App() {
                     </Route>
                     
                     <Route path="/library" element={<LibraryScreen />} />
-                    <Route path="/view/:id" element={<ViewerScreen />} />
                     <Route path="/" element={<Navigate to="/mission" />} />
                 </Routes>
             </BrowserRouter>

@@ -1,117 +1,145 @@
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { PlayerFooterActions } from "./components/PlayerFooterActions"
-import PlayerView from "./components/PlayerView"
+import PlayerView, { type PlayerViewNavigationHandlers } from "./components/PlayerView"
 import { useMissionPlayer } from "./useMissionPlayer"
 import { useReplayController } from "./useReplayController"
 import { useLearningEventStore } from "@/application/store/useLearningEventStore"
 import { useRepositoryContext } from "../App/providers/RepositoryProvider"
 import { Problem, type ProblemId } from "@/domain/problem/Problem"
-import { Board, Hand, Hands, KifData, Position } from "@/domain/kif/types"
 import { ListDialog } from "../mission/ListDialog"
 import { useProblemDetailDialog } from "../common/useProblemDetailDialog"
 import { AppLayout } from "../common/AppLayout"
 import { Button } from "@mui/material"
+import { useProblemStore } from "@/application/store/useProblemStore"
+import type { SolvedResult } from "@/domain/MissionEvent/MissionSummary"
 
-export function useShowMovesController(problemId: ProblemId, plyIndex: number){
-    const [ showMoves, setShowMoves ] = useState(false)     
-    useEffect(()=>{        
-        if (plyIndex > 0){
+export function useShowMovesController(problemId: ProblemId | undefined, plyIndex: number) {
+    const [showMoves, setShowMoves] = useState(false)
+    useEffect(() => {
+        if (plyIndex > 0) {
             setShowMoves(true)
-        } else if (plyIndex === 0){
+        } else if (plyIndex === 0) {
             setShowMoves(false)
         }
     }, [plyIndex])
 
-    useEffect(()=> { 
-        setShowMoves(false)        
+    useEffect(() => {
+        setShowMoves(false)
     }, [problemId])
 
     return { showMoves, setShowMoves }
 
 }
 
-////////////////////////////////
-export function PlayerScreen() {   
-    const missionPlayer = useMissionPlayer()
-    const { index, problem: nullableProblem, snapshot, 
+export function PlayerScreen() {
+    const { index, currentProblemId, snapshot,
         next, prev, answer, moveTo,
-    } = missionPlayer
-    //const problem = nullableProblem ?? Problem.create()
-    const problem = nullableProblem ?? Problem.create({
-        kifData: new KifData({}, new Position(Board.empty(), Hands.empty()), []).toDTO()})
+    } = useMissionPlayer()
+
+    const repos = useRepositoryContext()
+    const store = useProblemStore(repos.problem)
+    const problem = currentProblemId !== undefined ?
+        store.findById(currentProblemId) : undefined
+    if (!problem) return (<>Loading...</>)
+    const navigationHandlers = {
+        next: next, prev: prev, moveTo: moveTo
+    }
+    return (
+        <PlayerScreenContent problem={problem} problemIds={snapshot.problemIds}
+            index={index} onAnswer={answer} navigationHandlers={navigationHandlers} />
+    )
+}
+
+////////////////////////////////
+// problem の実体を受け取り、スクリーンとして view に渡す。
+//  (これをかまさないと防御コードばかりになっちゃう)
+export function PlayerScreenContent({ problem, problemIds,
+    index, navigationHandlers, onAnswer }: {
+        problem: Problem
+        problemIds: ProblemId[]
+        index: number
+        navigationHandlers: PlayerViewNavigationHandlers
+        onAnswer: (r: SolvedResult, sec?: number) => void,
+    }) {
+    const repos = useRepositoryContext()
     // replay
     const { initialPosition, moves } = problem.kifData
     const replay = useReplayController(initialPosition, moves)
     const showMovesController = useShowMovesController(problem.id, replay.plyIndex)
-    
-    // learning
-    const repos = useRepositoryContext()    
-    const learning = useLearningEventStore(repos.learningEvent).records[problem.id]
 
     // dialog
-    const detailDialog = useProblemDetailDialog(problem)
-    console.log("playscre", problem, index, snapshot)
+    const handleUpdateProblem = async (p: Problem) => {
+        const problemStore = useProblemStore(repos.problem)
+
+        await repos.problem.update(p)
+        await problemStore.reload()
+
+    }
+    const detailDialog = useProblemDetailDialog(handleUpdateProblem)
+    //console.log("playscre", problem, index, snapshot)
     //if (!index || !snapshot) return null
 
     //console.log("play screen: learning", learning)
-    const titlePrefix =  `${(index ?? 0)+1}/${snapshot.problemIds.length}: `
+    const titlePrefix = `${(index ?? 0) + 1}/${problemIds.length}: `
     //console.log("titleprefx", titlePrefix)
 
     const [openListDialog, setOpenListDialog] = useState(false)
     const title = `${titlePrefix}${problem.title}`
-    const footerActions = (
-        <PlayerFooterActions onAnswer={answer} />
-    )
+
+    const handleAnswer = async (solvedResult: SolvedResult, secToTaken?: number) => {
+        // learning    
+        onAnswer(solvedResult, secToTaken) // mission アクション        
+        const learningEventStore = useLearningEventStore(repos.learningEvent)
+        await learningEventStore.append({
+            type: "reviewed",
+            problemId: problem.id,
+            quality: solvedResult,
+            sec: secToTaken,
+        })
+    }
     const handlers = {
         ply: {
             advance: replay.advancePly,
             retreat: replay.retreatPly,
             moveTo: replay.moveToPly
         },
-        navigation: {
-            next: next,
-            prev: prev,
-            moveTo: moveTo,
-        },
+        navigation: navigationHandlers,
         showMoves: showMovesController.setShowMoves,
     }
     return (
         <AppLayout
             header={title}
-            footer={footerActions}
+            footer={<PlayerFooterActions onAnswer={handleAnswer} />}
             rightActions={
                 <>
-                <Button onClick={detailDialog.openDialog} sx={{ color: "#fff" }}>
-                    Detail
-                </Button>
-                <Button onClick={()=> setOpenListDialog(true)} sx={{ color: "#fff" }}>
-                    リスト
-                </Button>
+                    <Button onClick={() => detailDialog.openDialog(problem.id)} sx={{ color: "#fff" }}>
+                        Detail
+                    </Button>
+                    <Button onClick={() => setOpenListDialog(true)} sx={{ color: "#fff" }}>
+                        リスト
+                    </Button>
                 </>
-                
             }
-            >
-        <PlayerView
-            learning={learning}
-            showMoves={showMovesController.showMoves}
-            moves={problem.kifData.moves}
-            position={replay.position}
+        >
+            <PlayerView
+                showMoves={showMovesController.showMoves}
+                moves={moves}
+                position={replay.position}
+                tags={problem.tags}
 
-            handlers={handlers}
-            currentPlyIndex={replay.plyIndex}
-            
-            //onOpenListDialog={()=> setOpenListDialog(true)}
-            
-        />
+                handlers={handlers}
+                currentPlyIndex={replay.plyIndex}
+
+            />
             {detailDialog.dialogElement}
             <ListDialog
                 open={openListDialog}
                 onClose={() => setOpenListDialog(false)}
-                onSelectProblem = {(pid) => {
+                onSelectProblem={(pid) => {
                     handlers.navigation.moveTo(pid)
                     setOpenListDialog(false)
                 }}
-                problemIds={snapshot.problemIds}
+                problemIds={problemIds}
                 currentProblemId={problem.id}
             />
         </AppLayout>

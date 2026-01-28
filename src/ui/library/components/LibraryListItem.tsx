@@ -31,8 +31,11 @@ export function LibraryListItem({ problem, learning, onClick, isCheckboxMode, is
                     </Typography>
                 </Box>
 
-                {/* 二行目: 追加日・学習結果 */}
+                {/* 二行目: タグ・追加日・学習結果 */}
                 <Stack direction="row" justifyContent={"space-between"}>
+                    <Typography variant="body2" color="text.secondary">
+                        { problem.tags.join(",")}
+                    </Typography>
                     <Typography variant="body2" color="text.secondary">
                         {new Date(problem.createdAt).toLocaleString()}
                     </Typography>

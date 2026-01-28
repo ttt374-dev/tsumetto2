@@ -54,6 +54,7 @@ export function ViewerDialog({ problem, open, onClose }: {
                     position={replay.position}
                     currentPlyIndex={replay.plyIndex}
                     showMoves={showMovesController.showMoves}
+                    tags={problem.tags}
                     handlers={handlers}/>
             </DialogContent>
             <DialogActions>

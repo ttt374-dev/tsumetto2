@@ -16,6 +16,8 @@ import { useMissionEventStoreContext } from "../App/providers/MissionEventStoreP
 import { AppLayout } from "../common/AppLayout";
 import { Fab, IconButton } from "@mui/material";
 import { useMissionEventStore } from "@/application/store/useMissionEventStore";
+import { useProblemDetailDialog } from "../common/useProblemDetailDialog";
+import type { Problem, ProblemId } from "@/domain/problem/Problem";
 import { useViewerDialog } from "../viewer/ViewDialog";
 
 //////////////////////////////////////////////////
@@ -28,6 +30,10 @@ export function LibraryScreen() {
     const learningRecords = useLearningEventStore(repos.learningEvent).records
     const query = useLibraryQueryContext()
     const viewerDialog = useViewerDialog()
+    const detailDialog = useProblemDetailDialog(async (p: Problem)=>{
+        await repos.problem.update(p)
+        await problemStore.reload()
+    }) // TODO
 
     const libraryItems = useMemo(
         () => applyQuery(problems, learningRecords, query.sortState, query.filterState),
@@ -39,11 +45,9 @@ export function LibraryScreen() {
     const navigate = useNavigate()
     const importer = useImporter((files: File[]) => { problemStore.reload() })
 
-    //const { start } = useMissionEventStore()
-
     const handlers = {
         //view: { onViewProblem: (id: string) => navigate(`/view/${id}`) },
-        view: { onViewProblem: (id: string) => { viewerDialog.openDialog(id)}},
+        view: { onViewProblem: (id: string) => { detailDialog.openDialog(id)}},
         import: {
             onOpenImportFileDialog: importer.openFileDialog,
         },
@@ -98,6 +102,7 @@ export function LibraryScreen() {
             </AppLayout>
             {importer.inputElement}
             {viewerDialog.dialogElement}
+            {detailDialog.dialogElement}
         </>
     )
 }

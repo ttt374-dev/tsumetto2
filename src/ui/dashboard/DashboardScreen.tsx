@@ -11,6 +11,7 @@ import { useToast } from "../App/providers/ToastProvider";
 import { useImporter } from "@/application/useImporter";
 import { ListDialog } from "../mission/ListDialog";
 import { useState } from "react";
+import { useRepositoryContext } from "../App/providers/RepositoryProvider";
 
 /////////////////////////////////////////////
 
@@ -18,12 +19,17 @@ export function DashboardScreen() {
     const { query, missionSummary, problemIds, reloadStores } = useFilterProblems()
     const { start } = useMissionEventStoreContext()
     const toast = useToast()
+        const repos = useRepositoryContext()
     
     const { openFileDialog, inputElement } = useImporter((files: File[]) => {
         reloadStores()
         toast({message: `imported ${files.length} file`})
     })    
     const [open, setOpen] = useState(false)
+    const deleteAll = () => {
+        repos.problem.removeAll()
+        reloadStores()
+    }
     return (
         <AppLayout
             header={ "Dashboard"}
@@ -42,6 +48,9 @@ export function DashboardScreen() {
             <Button onClick={ () => setOpen(true)}>
                 リスト
             </Button>
+            <Button onClick={ () => deleteAll()}>
+                全削除
+            </Button>
             <DashboardFilterControl filter={query.filterState}
                 onToggleFilter={query.toggleFilter}
                 onSetFilter={query.setFilter}/>
@@ -53,6 +62,7 @@ export function DashboardScreen() {
                 open={open}
                 onClose={() => setOpen(false)}
                 problemIds={problemIds}
+                onSelectProblem={()=>{}}
             />
 
         </AppLayout>

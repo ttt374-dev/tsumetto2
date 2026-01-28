@@ -10,7 +10,7 @@ export function ListDialog({ problemIds, open, onClose, onSelectProblem, current
     problemIds: ProblemId[],
     open: boolean,
     onClose: () => void,
-    onSelectProblem?: ( id: ProblemId) => void,
+    onSelectProblem: ( id: ProblemId) => void,
     currentProblemId?: ProblemId,
 }) {
   const repos = useRepositoryContext()
@@ -28,7 +28,7 @@ export function ListDialog({ problemIds, open, onClose, onSelectProblem, current
     <Dialog fullScreen open={open} onClose={onClose}
         sx={{
             paddingTop: 'env(safe-area-inset-top)',
-            paddingBottom: 'env(safe-area-inset-buttom)',
+            paddingBottom: 'env(safe-area-inset-bottom)',
         }}
     >
         <DialogTitle>リスト一覧</DialogTitle>

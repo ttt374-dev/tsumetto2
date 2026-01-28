@@ -1,9 +1,6 @@
 import { useEffect, useState } from "react"
 import { Problem, type ProblemId } from "@/domain/problem/Problem"
 import type { SolvedResult } from "@/domain/MissionEvent/MissionSummary"
-import { useLearningEventStore } from "@/application/store/useLearningEventStore"
-import { useRepositoryContext } from "../App/providers/RepositoryProvider"
-import { useProblemStore } from "@/application/store/useProblemStore"
 import { useMissionEventStoreContext } from "../App/providers/MissionEventStoreProvider"
 import type { MissionSnapshot } from "@/domain/MissionEvent/MissionEvent"
 
@@ -20,13 +17,9 @@ export function useMissionPlayer() {
     const missionStore = useMissionEventStoreContext()
     const snapshot = requireSnapshot(missionStore.snapshot)
 
-    const repos = useRepositoryContext()
-    const problemStore = useProblemStore(repos.problem)
-    const learningEventStore = useLearningEventStore(repos.learningEvent)
-
     // --- 主状態は ID ---
     const [currentProblemId, setCurrentProblemId] =
-        useState<ProblemId | null>(null)
+        useState<ProblemId | undefined>(undefined)
 
     // --- mission 開始時に初期化 ---
     useEffect(() => {
@@ -41,16 +34,12 @@ export function useMissionPlayer() {
         ? ids.indexOf(currentProblemId)
         : -1
 
-    const problem = currentProblemId
-        ? problemStore.findById(currentProblemId)
-        : undefined
-
     // --- 問題削除 / reload 耐性 ---
     useEffect(() => {
         if (!currentProblemId || !snapshot) return
 
         // ID が mission から消えた or problem が消えた
-        if (!ids.includes(currentProblemId) || !problem) {
+        if (!ids.includes(currentProblemId)){ //} || !problem) {
             if (index >= 0 && index < ids.length - 1) {
                 setCurrentProblemId(ids[index + 1])
             } else if (ids.length > 0) {
@@ -59,7 +48,7 @@ export function useMissionPlayer() {
                 missionStore.finish()
             }
         }
-    }, [ids, problem])
+    }, [ids, currentProblemId])
 
     // --- navigation ---
     const next = () => {
@@ -78,8 +67,7 @@ export function useMissionPlayer() {
     }
     const moveTo = (id: ProblemId) => {        
         console.log("moveto", id, snapshot, index)
-        //if (!snapshot || index <= 0) return 
-        
+        //if (!snapshot || index <= 0) return         
         setCurrentProblemId(id)
     }
 
@@ -89,27 +77,13 @@ export function useMissionPlayer() {
         secToTaken?: number
     ) => {
         if (!snapshot || !currentProblemId) return
-
         missionStore.answer(currentProblemId, solvedResult, secToTaken)
-
-        await learningEventStore.append({
-            type: "reviewed",
-            problemId: currentProblemId,
-            quality: solvedResult,
-            sec: secToTaken,
-        })
-
         next()
     }
-    // --- loading 判定 ---
-    //if (!snapshot || !currentProblemId) {
-    //    return { status: "loading" as const }
-    //}
-
-
     return {
         status: "playing" as const,  
-        index, problem, snapshot,
+        currentProblemId,
+        index, snapshot,  // problem, 
         answer, next, prev, moveTo,
     }
 }

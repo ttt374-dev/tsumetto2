@@ -6,6 +6,13 @@ import { PlyControlPanel } from "./PlyControlPanel"
 import { Learning } from "@/domain/learning/Learning"
 import BoardPanel from "./BoardPanel"
 import { formatLearning } from "@/ui/library/components/LibraryListItem"
+import type { ProblemId } from "@/domain/problem/Problem"
+
+export type PlayerViewNavigationHandlers = {
+    next: () => void,
+    prev: () => void,
+    moveTo: (problemId: ProblemId) => void,
+}
 
 type PlayerViewHandlers = {
     ply: {
@@ -13,21 +20,19 @@ type PlayerViewHandlers = {
         retreat: () => void,
         moveTo: (index: number) => void,        
     },
-    navigation?: {
-        next: () => void,
-        prev: () => void,
-    },
+    navigation?: PlayerViewNavigationHandlers,
     setShowMoves?: (flag: boolean) => void,
 }
 ///////////////////////////////////////////////////////////////
-function PlayerView({learning, position, moves, showMoves = true, currentPlyIndex, handlers}: {
+function PlayerView({learning, position, moves, showMoves = true, tags, currentPlyIndex, handlers}: {
     position: Position,
     moves: Move[],
     currentPlyIndex: number,    
     handlers: PlayerViewHandlers,    
     showMoves?: boolean,
     learning?: Learning,
-}) {
+    tags: string[],
+}){
     return (
 
         <Stack sx={{ minHeight: 0, height: "100%" }} spacing={1} >
@@ -47,7 +52,9 @@ function PlayerView({learning, position, moves, showMoves = true, currentPlyInde
                             <Button onClick={() => handlers.setShowMoves?.(true)} >
                                 手筋を表示
                             </Button>
-                            {moves.length}手詰め
+                            <Box>{moves.length}手詰め</Box>
+                            <Box>Tags: { tags.join(",")}</Box>
+
                         </Stack>)
                     }
                 </MovesPanel>

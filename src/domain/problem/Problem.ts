@@ -2,13 +2,13 @@ import { v4 } from 'uuid'
 import { KifData, type KifDataDTO } from '../kif/types'
 import { parseKif } from '../kif/parser/parseKif'
 
-
 export type ProblemData = {
     id: string
     title: string
     kifData: KifDataDTO
     createdAt: number
     starred: boolean
+    tags: string[]
 }
 function createDefaultValues(): ProblemData {
     return {
@@ -17,9 +17,9 @@ function createDefaultValues(): ProblemData {
         kifData: KifData.create().toDTO(),
         createdAt: Date.now(),
         starred: false,
+        tags: []
     }
 }
-
 //export type ProblemInit = Partial<ProblemData>
 export type ProblemDTO = ProblemData
 export type ProblemId = string
@@ -30,9 +30,9 @@ export class Problem {
         readonly title: string,
         readonly kifData: KifData,
         readonly createdAt: number,
-        readonly starred: boolean
+        readonly starred: boolean,
+        readonly tags: string[],
     ) { }
-
 
     // 生成時
     static create(init: Partial<ProblemData> = {}): Problem {
@@ -46,12 +46,14 @@ export class Problem {
             title: this.title,
             kifData: this.kifData.toDTO(),
             createdAt: this.createdAt,
-            starred: this.starred
+            starred: this.starred,
+            tags: this.tags,
         }
     }
 
     static fromDTO(dto: ProblemDTO): Problem {
-        return new Problem(dto.id, dto.title, KifData.fromDTO(dto.kifData), dto.createdAt, dto.starred)
+        return new Problem(dto.id, dto.title, KifData.fromDTO(dto.kifData),
+            dto.createdAt, dto.starred, dto.tags)
     }
     static createFromText(text: string, title: string): Problem | null{
         const r = parseKif(text)
@@ -73,5 +75,11 @@ export class Problem {
             title: title,
         })
 
+    }
+    setTags(tags: string[]): Problem {
+        return Problem.fromDTO({
+            ...this.toDTO(),
+            tags: tags
+        })
     }
 }
