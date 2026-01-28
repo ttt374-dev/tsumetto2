@@ -9,7 +9,6 @@ import { MissionEventStoreProvider } from './providers/MissionEventStoreProvider
 import { DashboardScreen } from '../dashboard/DashboardScreen';
 import { PlayerScreen } from '../player/PlayerScreen';
 import { SummaryScreen } from '../summary/SummaryScreen';
-import { ListScreen } from '../mission/ListView';
 
 function App() {
     return (

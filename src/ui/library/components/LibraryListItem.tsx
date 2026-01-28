@@ -1,17 +1,22 @@
 import type { Learning } from "@/domain/learning/Learning";
 import type { Problem } from "@/domain/problem/Problem";
-import { Box, Checkbox, ListItem, ListItemIcon, ListItemText, Stack, Typography } from "@mui/material";
+import { Box, Checkbox, colors, ListItem, ListItemButton, ListItemIcon, ListItemText, Stack, Typography } from "@mui/material";
 
-export function LibraryListItem({ problem, learning, onClick, isCheckboxMode, isChecked, onToggleChecked }: {
+export function LibraryListItem({ problem, learning, onClick, isCheckboxMode, isChecked, onToggleChecked, selected}: {
     problem: Problem,
     learning?: Learning,
     isCheckboxMode: boolean,
     onClick?: () => void,
     isChecked: boolean,
     onToggleChecked: () => void,
+    selected?: boolean,
+    
 }) {
     return (
-        <ListItem key={problem.id}   sx={{ borderBottom: 1, borderColor: "divider" }}>     
+        <ListItemButton 
+            key={problem.id}
+            selected={selected}
+            sx={{ borderBottom: 1, borderColor: "divider" }}>     
             { isCheckboxMode &&
             <ListItemIcon>
                 <Checkbox size="small" edge="start" checked={isChecked} onChange={onToggleChecked}/>
@@ -40,7 +45,7 @@ export function LibraryListItem({ problem, learning, onClick, isCheckboxMode, is
                 </Stack>
 
             </ListItemText>
-        </ListItem>
+        </ListItemButton>
     )
 }
 

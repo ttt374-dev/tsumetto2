@@ -97,7 +97,6 @@ export function PlayerScreen() {
             onOpenListDialog={()=> setOpenListDialog(true)}
             
         />
-
             {detailDialog.dialogElement}
             <ListDialog
                 open={openListDialog}
@@ -107,6 +106,7 @@ export function PlayerScreen() {
                     setOpenListDialog(false)
                 }}
                 problemIds={snapshot.problemIds}
+                currentProblemId={problem.id}
             />
         </AppLayout>
     )

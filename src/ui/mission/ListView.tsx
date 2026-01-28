@@ -7,12 +7,15 @@ import { useRepositoryContext } from "../App/providers/RepositoryProvider"
 import { useLearningEventStore } from "@/application/store/useLearningEventStore"
 
 
-export function ListView({ problems, onSelectProblem }: {
+export function ListView({ problems, onSelectProblem, currentProblemId }: {
     problems: Problem[],
-    onSelectProblem: (id: ProblemId) => void
+    onSelectProblem?: (id: ProblemId) => void,
+    currentProblemId?: ProblemId
 }) {
     const repos = useRepositoryContext()
     const learningRecords = useLearningEventStore(repos.learningEvent).records
+
+    
 
     return (
         <List>
@@ -24,7 +27,8 @@ export function ListView({ problems, onSelectProblem }: {
                     isCheckboxMode={false}
                     isChecked={false}
                     onToggleChecked={alert}
-                    onClick={()=> onSelectProblem(p.id)}
+                    onClick={()=> onSelectProblem?.(p.id)}
+                    selected={currentProblemId === p.id}
                 />
             ))}
         </List>
