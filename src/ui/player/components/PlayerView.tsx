@@ -42,10 +42,10 @@ export function PlayerLearningStats({ learning }: {
 }
 
 ///////////////////////////////////////////////////////////////
-function PlayerView({title, learning, position, showMoves = true, currentPlyIndex, 
-    onNextProblem, onPrevProblem, onOpenDetailDialog, onOpenListDialog,
-    retreatPly, advancePly, moves, setShowMoves, onMoveToPly, footerActions}: {
-    title: string,
+function PlayerView({learning, position, showMoves = true, currentPlyIndex, 
+    onNextProblem, onPrevProblem,  onOpenListDialog,
+    retreatPly, advancePly, moves, setShowMoves, onMoveToPly}: {
+    
     learning?: Learning,
     position: Position,
     moves: Move[],
@@ -56,61 +56,51 @@ function PlayerView({title, learning, position, showMoves = true, currentPlyInde
     onMoveToPly: (index: number) => void,
     setShowMoves?: (flag: boolean) => void,
     onPrevProblem?: () => void,
-    onNextProblem?: () => void,
-    onOpenDetailDialog?: () => void,
+    onNextProblem?: () => void,    
     onOpenListDialog?: () => void,    
-    footerActions?: React.ReactNode
-}){
+    
+    }) {
     return (
-        <AppLayout
-            header={title}
-            footer={footerActions}
-            rightActions={
-                <Button onClick={onOpenDetailDialog}>
-                    Detail
-                </Button>
-            }
-            >
-            <Stack sx={{ minHeight: 0, height: "100%" }} spacing={1} >
-                { /* --- 盤面 ---*/ }
-                <BoardPanel position={position}
-                    onAdvancePly={advancePly}
-                    onRetreatPly={retreatPly}
-                    onNextProblem={onNextProblem}
-                    onPrevProblem={onPrevProblem} />
-                <Stack direction="row" sx={{ minHeight: 0, flexGrow: 1, p: 1}} spacing={1}>                    
-                    { /* --- 手筋 ---*/ }
-                    
-                    <MovesPanel>
-                        {showMoves ?
-                            <MovesView moves={moves} currentPlyIndex={currentPlyIndex} onMoveToPly={onMoveToPly} />                            
-                            : (<Stack>
+
+        <Stack sx={{ minHeight: 0, height: "100%" }} spacing={1} >
+            { /* --- 盤面 ---*/}
+            <BoardPanel position={position}
+                onAdvancePly={advancePly}
+                onRetreatPly={retreatPly}
+                onNextProblem={onNextProblem}
+                onPrevProblem={onPrevProblem} />
+            <Stack direction="row" sx={{ minHeight: 0, flexGrow: 1, p: 1 }} spacing={1}>
+                { /* --- 手筋 ---*/}
+
+                <MovesPanel>
+                    {showMoves ?
+                        <MovesView moves={moves} currentPlyIndex={currentPlyIndex} onMoveToPly={onMoveToPly} />
+                        : (<Stack>
                             <Button onClick={() => setShowMoves?.(true)} >
                                 手筋を表示
                             </Button>
                             {moves.length}手詰め
-                            </Stack>)
-                        }
-                    </MovesPanel>                    
-                        
-                    { /* --- コントロールパネル ---*/ }
-                    <Box flex={0.75} sx={{ border: 1, borderColor: "divider" }}>
-                        <PlyControlPanel
-                            currentPlyIndex={currentPlyIndex}
-                            maxPlyIndex={moves.length}
-                            onPrevPly={retreatPly}
-                            onNextPly={() => {
-                                advancePly()
-                            }}
-                        />
-                        <Button onClick={onOpenListDialog}>
-                            リスト表示
-                        </Button>
-                        { learning && formatLearning(learning)}
-                    </Box>
-                </Stack>
+                        </Stack>)
+                    }
+                </MovesPanel>
+
+                { /* --- コントロールパネル ---*/}
+                <Box flex={0.75} sx={{ border: 1, borderColor: "divider" }}>
+                    <PlyControlPanel
+                        currentPlyIndex={currentPlyIndex}
+                        maxPlyIndex={moves.length}
+                        onPrevPly={retreatPly}
+                        onNextPly={() => {
+                            advancePly()
+                        }}
+                    />
+                    <Button onClick={onOpenListDialog}>
+                        リスト表示
+                    </Button>
+                    {learning && formatLearning(learning)}
+                </Box>
             </Stack>
-        </AppLayout>
+        </Stack>
     )    
 }
 

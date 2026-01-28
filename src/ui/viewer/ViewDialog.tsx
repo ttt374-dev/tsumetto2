@@ -43,7 +43,6 @@ export function ViewerDialog({ problem, open, onClose }: {
             <DialogTitle>{problem.title}</DialogTitle>
             <DialogContent>
                 <PlayerView
-                    title={problem.title}
                     moves={problem.kifData.moves}
                     position={replay.position}
                     retreatPly={replay.retreatPly}

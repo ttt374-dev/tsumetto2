@@ -10,6 +10,8 @@ import { Problem, type ProblemId } from "@/domain/problem/Problem"
 import { Board, Hand, Hands, KifData, Position } from "@/domain/kif/types"
 import { ListDialog } from "../mission/ListDialog"
 import { useProblemDetailDialog } from "../common/useProblemDetailDialog"
+import { AppLayout } from "../common/AppLayout"
+import { Button } from "@mui/material"
 
 export function useShowMovesController(problemId: ProblemId, plyIndex: number){
     const [ showMoves, setShowMoves ] = useState(false)     
@@ -57,10 +59,22 @@ export function PlayerScreen() {
     //console.log("titleprefx", titlePrefix)
 
     const [openListDialog, setOpenListDialog] = useState(false)
+    const title = `${titlePrefix}${problem.title}`
+    const footerActions = (
+        <PlayerFooterActions onAnswer={answer} />
+    )
     return (
-        <>
+
+        <AppLayout
+            header={title}
+            footer={footerActions}
+            rightActions={
+                <Button onClick={detailDialog.openDialog}>
+                    Detail
+                </Button>
+            }
+            >
         <PlayerView
-            title={`${titlePrefix}${problem.title}`}
             learning={learning}
             showMoves={showMovesController.showMoves}
             moves={problem.kifData.moves}
@@ -72,13 +86,11 @@ export function PlayerScreen() {
 
             onNextProblem={next}
             onPrevProblem={prev}
-            
-            onOpenDetailDialog={detailDialog.openDialog}
+           
+
             onOpenListDialog={()=> setOpenListDialog(true)}
             setShowMoves={showMovesController.setShowMoves}
-            footerActions={
-                <PlayerFooterActions onAnswer={answer} />
-            }
+
         />
 
             {detailDialog.dialogElement}
@@ -87,6 +99,7 @@ export function PlayerScreen() {
                 onClose={() => setOpenListDialog(false)}
                 problemIds={snapshot.problemIds}
             />
-        </>
+
+        </AppLayout>
     )
 }

@@ -48,25 +48,17 @@ export function ViewerView({problem}: { problem: Problem}){
     return (
         <>
         <PlayerView
-            title={problem.title}
             moves={problem.kifData.moves}
             position={replay.position}
             retreatPly={replay.retreatPly}
             advancePly={replay.advancePly}
             onMoveToPly={replay.moveToPly}
-            onOpenDetailDialog={detailDialog?.openDialog}
             currentPlyIndex={replay.plyIndex}            
 
             showMoves={showMovesController.showMoves}
             setShowMoves={showMovesController.setShowMoves}
 
-                footerActions={
-                    <Button onClick={()=>navigate(-1)}>
-                        戻る
-                    </Button>
-                }
         />
-        { detailDialog?.dialogElement}
         </>
     )
 
