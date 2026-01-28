@@ -37,7 +37,14 @@ export function ViewerDialog({ problem, open, onClose }: {
     const replay = useReplayController(initialPosition, moves)
     const showMovesController = useShowMovesController(problem.id, replay.plyIndex)
     
-
+    const handlers = {
+         ply: {
+            advance: replay.advancePly,
+            retreat: replay.retreatPly,
+            moveTo: replay.moveToPly
+        },
+        showMoves: showMovesController.setShowMoves,
+    }
     return (
         <Dialog open={open} onClose={onClose} fullScreen>
             <DialogTitle>{problem.title}</DialogTitle>
@@ -45,13 +52,9 @@ export function ViewerDialog({ problem, open, onClose }: {
                 <PlayerView
                     moves={problem.kifData.moves}
                     position={replay.position}
-                    retreatPly={replay.retreatPly}
-                    advancePly={replay.advancePly}
-                    onMoveToPly={replay.moveToPly}
                     currentPlyIndex={replay.plyIndex}
-
                     showMoves={showMovesController.showMoves}
-                    setShowMoves={showMovesController.setShowMoves} />
+                    handlers={handlers}/>
             </DialogContent>
             <DialogActions>
                 <Button onClick={onClose}>
@@ -59,6 +62,7 @@ export function ViewerDialog({ problem, open, onClose }: {
                 </Button>
 
             </DialogActions>
-        </Dialog>)
+        </Dialog>
+    )
 
 }

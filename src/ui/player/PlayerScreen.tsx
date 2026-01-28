@@ -5,7 +5,6 @@ import { useMissionPlayer } from "./useMissionPlayer"
 import { useReplayController } from "./useReplayController"
 import { useLearningEventStore } from "@/application/store/useLearningEventStore"
 import { useRepositoryContext } from "../App/providers/RepositoryProvider"
-import { useProblemStore } from "@/application/store/useProblemStore"
 import { Problem, type ProblemId } from "@/domain/problem/Problem"
 import { Board, Hand, Hands, KifData, Position } from "@/domain/kif/types"
 import { ListDialog } from "../mission/ListDialog"
@@ -63,8 +62,19 @@ export function PlayerScreen() {
     const footerActions = (
         <PlayerFooterActions onAnswer={answer} />
     )
+    const handlers = {
+        ply: {
+            advance: replay.advancePly,
+            retreat: replay.retreatPly,
+            moveTo: replay.moveToPly
+        },
+        navigation: {
+            next: next,
+            prev: prev,
+        },
+        showMoves: showMovesController.setShowMoves,
+    }
     return (
-
         <AppLayout
             header={title}
             footer={footerActions}
@@ -79,18 +89,12 @@ export function PlayerScreen() {
             showMoves={showMovesController.showMoves}
             moves={problem.kifData.moves}
             position={replay.position}
-            retreatPly={replay.retreatPly}
-            advancePly={replay.advancePly}
-            onMoveToPly={replay.moveToPly}
+
+            handlers={handlers}
             currentPlyIndex={replay.plyIndex}
-
-            onNextProblem={next}
-            onPrevProblem={prev}
-           
-
+            
             onOpenListDialog={()=> setOpenListDialog(true)}
-            setShowMoves={showMovesController.setShowMoves}
-
+            
         />
 
             {detailDialog.dialogElement}
@@ -99,7 +103,6 @@ export function PlayerScreen() {
                 onClose={() => setOpenListDialog(false)}
                 problemIds={snapshot.problemIds}
             />
-
         </AppLayout>
     )
 }

@@ -41,22 +41,27 @@ export function PlayerLearningStats({ learning }: {
     )
 }
 
+type PlayerViewHandlers = {
+    ply: {
+        advance: () => void,
+        retreat: () => void,
+        moveTo: (index: number) => void,        
+    },
+    navigation?: {
+        next: () => void,
+        prev: () => void,
+    },
+    setShowMoves?: (flag: boolean) => void,
+}
 ///////////////////////////////////////////////////////////////
-function PlayerView({learning, position, showMoves = true, currentPlyIndex, 
-    onNextProblem, onPrevProblem,  onOpenListDialog,
-    retreatPly, advancePly, moves, setShowMoves, onMoveToPly}: {
-    
+function PlayerView({learning, position, moves, showMoves = true, currentPlyIndex, 
+    onOpenListDialog, handlers}: {    
     learning?: Learning,
     position: Position,
     moves: Move[],
     showMoves?: boolean,
-    currentPlyIndex: number,
-    retreatPly: () => void,
-    advancePly: () => void,
-    onMoveToPly: (index: number) => void,
-    setShowMoves?: (flag: boolean) => void,
-    onPrevProblem?: () => void,
-    onNextProblem?: () => void,    
+    currentPlyIndex: number,    
+    handlers: PlayerViewHandlers,
     onOpenListDialog?: () => void,    
     
     }) {
@@ -65,18 +70,18 @@ function PlayerView({learning, position, showMoves = true, currentPlyIndex,
         <Stack sx={{ minHeight: 0, height: "100%" }} spacing={1} >
             { /* --- 盤面 ---*/}
             <BoardPanel position={position}
-                onAdvancePly={advancePly}
-                onRetreatPly={retreatPly}
-                onNextProblem={onNextProblem}
-                onPrevProblem={onPrevProblem} />
+                onAdvancePly={handlers.ply.advance}
+                onRetreatPly={handlers.ply.retreat}
+                onNextProblem={handlers.navigation?.next}
+                onPrevProblem={handlers.navigation?.prev} />
             <Stack direction="row" sx={{ minHeight: 0, flexGrow: 1, p: 1 }} spacing={1}>
                 { /* --- 手筋 ---*/}
 
                 <MovesPanel>
                     {showMoves ?
-                        <MovesView moves={moves} currentPlyIndex={currentPlyIndex} onMoveToPly={onMoveToPly} />
+                        <MovesView moves={moves} currentPlyIndex={currentPlyIndex} onMoveToPly={handlers.ply.moveTo} />
                         : (<Stack>
-                            <Button onClick={() => setShowMoves?.(true)} >
+                            <Button onClick={() => handlers.setShowMoves?.(true)} >
                                 手筋を表示
                             </Button>
                             {moves.length}手詰め
@@ -89,9 +94,9 @@ function PlayerView({learning, position, showMoves = true, currentPlyIndex,
                     <PlyControlPanel
                         currentPlyIndex={currentPlyIndex}
                         maxPlyIndex={moves.length}
-                        onPrevPly={retreatPly}
+                        onPrevPly={handlers.ply.retreat}
                         onNextPly={() => {
-                            advancePly()
+                            handlers.ply.advance()
                         }}
                     />
                     <Button onClick={onOpenListDialog}>

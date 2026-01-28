@@ -11,6 +11,7 @@ import { PlayerFooterActions } from "../player/components/PlayerFooterActions";
 import type { SolvedResult } from "@/domain/MissionEvent/MissionSummary";
 import { useLearningEventStore } from "@/application/store/useLearningEventStore";
 import { Button } from "@mui/material";
+import { PlyControlPanel } from "../player/components/PlyControlPanel";
 
 export function ViewerScreen() {
     const { id } = useParams()    
@@ -44,20 +45,23 @@ export function ViewerView({problem}: { problem: Problem}){
         })
         navigate(-1)
     }
-    
+    const handlers = {
+        ply: {
+            advance: replay.advancePly,
+            retreat: replay.retreatPly,
+            moveTo: replay.moveToPly,
+        },
+        setShowMoves: showMovesController.setShowMoves,
+    }
     return (
         <>
         <PlayerView
             moves={problem.kifData.moves}
             position={replay.position}
-            retreatPly={replay.retreatPly}
-            advancePly={replay.advancePly}
-            onMoveToPly={replay.moveToPly}
             currentPlyIndex={replay.plyIndex}            
-
             showMoves={showMovesController.showMoves}
-            setShowMoves={showMovesController.setShowMoves}
-
+            
+            handlers={handlers}
         />
         </>
     )
