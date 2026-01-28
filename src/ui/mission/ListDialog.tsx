@@ -6,10 +6,11 @@ import type { ProblemId } from "@/domain/problem/Problem"
 import { ListView } from "./ListView"
 import { useNavigate } from "react-router-dom"
 
-export function ListDialog({ problemIds, open, onClose }: {
+export function ListDialog({ problemIds, open, onClose, onSelectProblem }: {
     problemIds: ProblemId[],
     open: boolean,
     onClose: () => void,
+    onSelectProblem: ( id: ProblemId) => void,
 }) {
   const repos = useRepositoryContext()
   const problemStore = useProblemStore(repos.problem)
@@ -31,7 +32,7 @@ export function ListDialog({ problemIds, open, onClose }: {
     >
         <DialogTitle>リスト一覧</DialogTitle>
         <DialogContent>
-            <ListView problems={problems} />
+            <ListView problems={problems} onSelectProblem={onSelectProblem} />
         </DialogContent>
         <DialogActions>
             <Button onClick={onClose}>

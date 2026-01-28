@@ -1,5 +1,4 @@
 import { Box, Button, Grid, Stack } from "@mui/material"
-import { AppLayout } from "@/ui/common/AppLayout"
 import type { Move, Position } from "@/domain/kif/types"
 import MovesPanel from "./MovesPanel"
 import MovesView from "./MovesView"
@@ -7,39 +6,6 @@ import { PlyControlPanel } from "./PlyControlPanel"
 import { Learning } from "@/domain/learning/Learning"
 import BoardPanel from "./BoardPanel"
 import { formatLearning } from "@/ui/library/components/LibraryListItem"
-
-export function InfoView({mateLength, learning}: {
-    mateLength: number
-    learning?: Learning
-}){
-    return (
-        <Stack>
-            <Box>
-                {mateLength} 手詰め
-            </Box>
-            {learning && formatLearning(learning)}
-        </Stack>
-    )
-}
-
-export function PlayerLearningStats({ learning }: { 
-    learning: Learning 
-}) {
-    if (!learning) return
-    return (
-        <Stack spacing={0}>
-            <Box>
-                { `${learning.solvedCount} : ${learning.failedCount}`}
-            </Box>
-            <Box>
-                ef{learning.easeFactor.toFixed(2)}
-            </Box>
-            <Box>
-                in {new Date(learning.nextReviewedAt).toLocaleString()}
-            </Box>
-        </Stack>
-    )
-}
 
 type PlayerViewHandlers = {
     ply: {
@@ -55,16 +21,16 @@ type PlayerViewHandlers = {
 }
 ///////////////////////////////////////////////////////////////
 function PlayerView({learning, position, moves, showMoves = true, currentPlyIndex, 
-    onOpenListDialog, handlers}: {    
-    learning?: Learning,
+    onOpenListDialog, handlers}: {
     position: Position,
     moves: Move[],
     showMoves?: boolean,
     currentPlyIndex: number,    
     handlers: PlayerViewHandlers,
+
     onOpenListDialog?: () => void,    
-    
-    }) {
+    learning?: Learning,
+}) {
     return (
 
         <Stack sx={{ minHeight: 0, height: "100%" }} spacing={1} >

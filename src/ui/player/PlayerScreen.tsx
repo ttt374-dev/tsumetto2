@@ -34,7 +34,7 @@ export function useShowMovesController(problemId: ProblemId, plyIndex: number){
 export function PlayerScreen() {   
     const missionPlayer = useMissionPlayer()
     const { index, problem: nullableProblem, snapshot, 
-        next, prev, answer,
+        next, prev, answer, moveTo,
     } = missionPlayer
     //const problem = nullableProblem ?? Problem.create()
     const problem = nullableProblem ?? Problem.create({
@@ -71,6 +71,7 @@ export function PlayerScreen() {
         navigation: {
             next: next,
             prev: prev,
+            moveTo: moveTo,
         },
         showMoves: showMovesController.setShowMoves,
     }
@@ -101,6 +102,10 @@ export function PlayerScreen() {
             <ListDialog
                 open={openListDialog}
                 onClose={() => setOpenListDialog(false)}
+                onSelectProblem = {(pid) => {
+                    handlers.navigation.moveTo(pid)
+                    setOpenListDialog(false)
+                }}
                 problemIds={snapshot.problemIds}
             />
         </AppLayout>

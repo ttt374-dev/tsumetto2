@@ -5,7 +5,6 @@ import { useLearningEventStore } from "@/application/store/useLearningEventStore
 import { useRepositoryContext } from "../App/providers/RepositoryProvider"
 import { useProblemStore } from "@/application/store/useProblemStore"
 import { useMissionEventStoreContext } from "../App/providers/MissionEventStoreProvider"
-import type { LearningEvent } from "@/domain/LearningEvent"
 import type { MissionSnapshot } from "@/domain/MissionEvent/MissionEvent"
 
 function requireSnapshot(snapshot: MissionSnapshot | null): MissionSnapshot {
@@ -71,11 +70,17 @@ export function useMissionPlayer() {
         } else {
             missionStore.finish()
         }
-    }
+    }    
 
     const prev = () => {
         if (!snapshot || index <= 0) return
         setCurrentProblemId(ids[index - 1])
+    }
+    const moveTo = (id: ProblemId) => {        
+        console.log("moveto", id, snapshot, index)
+        //if (!snapshot || index <= 0) return 
+        
+        setCurrentProblemId(id)
     }
 
     // --- answer handling ---
@@ -105,7 +110,7 @@ export function useMissionPlayer() {
     return {
         status: "playing" as const,  
         index, problem, snapshot,
-        answer, next, prev,
+        answer, next, prev, moveTo,
     }
 }
 

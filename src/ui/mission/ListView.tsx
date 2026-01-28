@@ -1,4 +1,4 @@
-import type { Problem } from "@/domain/problem/Problem"
+import type { Problem, ProblemId } from "@/domain/problem/Problem"
 import { List } from "@mui/material"
 import { LibraryListItem } from "../library/components/LibraryListItem"
 import { useMissionEventStoreContext } from "../App/providers/MissionEventStoreProvider"
@@ -7,8 +7,9 @@ import { useRepositoryContext } from "../App/providers/RepositoryProvider"
 import { useLearningEventStore } from "@/application/store/useLearningEventStore"
 
 
-export function ListView({ problems }: {
-    problems: Problem[]
+export function ListView({ problems, onSelectProblem }: {
+    problems: Problem[],
+    onSelectProblem: (id: ProblemId) => void
 }) {
     const repos = useRepositoryContext()
     const learningRecords = useLearningEventStore(repos.learningEvent).records
@@ -23,13 +24,13 @@ export function ListView({ problems }: {
                     isCheckboxMode={false}
                     isChecked={false}
                     onToggleChecked={alert}
+                    onClick={()=> onSelectProblem(p.id)}
                 />
             ))}
-
         </List>
     )
 }
-
+/*
 export function ListScreen({}: {}){
     const repos = useRepositoryContext()
     const problemStore = useProblemStore(repos.problem)
@@ -41,3 +42,4 @@ export function ListScreen({}: {}){
         <ListView problems={problems}/>
     )
 }
+*/
