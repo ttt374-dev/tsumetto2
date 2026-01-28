@@ -38,6 +38,11 @@ export const applyFilter = (
         (e) =>
             !filter.mateBuckets ||
             matchMateBuckets(e.problem.kifData.moves.length, filter.mateBuckets),
+        // tags
+        (e) => 
+            !filter.tags || filter.tags.length === 0 || 
+            filter.tags!.some(tag => e.problem.tags.includes(tag))
+
     ]
 
     const list = createProblemWithLearningList(problems, learningRecords)

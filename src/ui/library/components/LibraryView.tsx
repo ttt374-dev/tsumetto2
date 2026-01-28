@@ -94,6 +94,7 @@ export function LibraryView({
                             isCheckboxMode={selection.isCheckboxMode}
                             onClick={() => handleItemClick(p.id)}
                             isChecked={selection.isChecked(p.id)}
+                            onToggleCheckboxMode={handlers.checkbox.onToggleCheckboxMode}
                             onToggleChecked={() => handlers.checkbox.onToggleChecked(p.id)}
                         />
                     ))}

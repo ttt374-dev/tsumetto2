@@ -3,6 +3,7 @@ export type FilterState = {
     unansweredOnly: boolean;    
     isMissionTarget: boolean,
     starredOnly: boolean,
+    tags?: string[],
 
     //mateLength?: MateLengthFilter
     mateBuckets?: MateBucket[]

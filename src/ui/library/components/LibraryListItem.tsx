@@ -1,22 +1,34 @@
 import type { Learning } from "@/domain/learning/Learning";
 import type { Problem } from "@/domain/problem/Problem";
 import { Box, Checkbox, colors, ListItem, ListItemButton, ListItemIcon, ListItemText, Stack, Typography } from "@mui/material";
+import { useLongPress } from "../hooks/useLongPress";
 
-export function LibraryListItem({ problem, learning, onClick, isCheckboxMode, isChecked, onToggleChecked, selected}: {
+export function LibraryListItem({ problem, learning, onClick, 
+    isCheckboxMode, onToggleCheckboxMode, isChecked, onToggleChecked, selected}: {
     problem: Problem,
     learning?: Learning,
     isCheckboxMode: boolean,
     onClick?: () => void,
     isChecked: boolean,
     onToggleChecked: () => void,
+    onToggleCheckboxMode: () => void,
     selected?: boolean,
     
 }) {
+    const { bind, isLongPressedRef } = useLongPress({
+        onLongPress: () => {
+            onToggleCheckboxMode()
+            onToggleChecked()
+        },
+
+    })
     return (
         <ListItemButton 
             key={problem.id}
             selected={selected}
+            {...bind}
             sx={{ borderBottom: 1, borderColor: "divider" }}>     
+            
             { isCheckboxMode &&
             <ListItemIcon>
                 <Checkbox size="small" edge="start" checked={isChecked} onChange={onToggleChecked}/>

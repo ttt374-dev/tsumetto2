@@ -10,8 +10,10 @@ import { useMissionEventStoreContext } from "../App/providers/MissionEventStoreP
 import { useToast } from "../App/providers/ToastProvider";
 import { useImporter } from "@/application/useImporter";
 import { ListDialog } from "../mission/ListDialog";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useRepositoryContext } from "../App/providers/RepositoryProvider";
+import { useProblemDetailDialog } from "../common/useProblemDetailDialog";
+import { useProblemStore } from "@/application/store/useProblemStore";
 
 /////////////////////////////////////////////
 
@@ -19,7 +21,13 @@ export function DashboardScreen() {
     const { query, missionSummary, problemIds, reloadStores } = useFilterProblems()
     const { start } = useMissionEventStoreContext()
     const toast = useToast()
-        const repos = useRepositoryContext()
+    const repos = useRepositoryContext()
+    const store = useProblemStore(repos.problem)
+    const problems = store.problems
+    const allTags = useMemo(
+        () => Array.from(new Set(problems.flatMap(p => p.tags))),
+        [problems]
+    )
     
     const { openFileDialog, inputElement } = useImporter((files: File[]) => {
         reloadStores()
@@ -51,7 +59,9 @@ export function DashboardScreen() {
             <Button onClick={ () => deleteAll()}>
                 全削除
             </Button>
-            <DashboardFilterControl filter={query.filterState}
+            <DashboardFilterControl 
+                filter={query.filterState}
+                allTags={allTags}
                 onToggleFilter={query.toggleFilter}
                 onSetFilter={query.setFilter}/>
             <SummaryView summary={missionSummary}/>

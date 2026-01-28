@@ -14,7 +14,7 @@ export function LibraryCheckboxControl({ isCheckboxMode, onCheckAll, onUncheckAl
 }) {
     return (
         <>
-            {isCheckboxMode ?
+            {isCheckboxMode &&
                 <>
                     { /* --- 全選択 --- */}
                     <IconButton
@@ -35,14 +35,7 @@ export function LibraryCheckboxControl({ isCheckboxMode, onCheckAll, onUncheckAl
                     </IconButton>
 
                 </>
-                :
-                (
-                    <IconButton
-                        onClick={onToggleCheckboxMode}
-                        color="primary">
-                        <CheckBoxOutlineBlankIcon />
-                    </IconButton>
-                )
+
             }
         </>)
 }

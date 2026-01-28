@@ -86,27 +86,29 @@ export default function ProblemDetailDialog({
                         学習データをリセット
                     </Button>
                     <Box>
-                        Tags: { tags.map(tag=> tag).join(", ")}
+                        Tags: {tags.map(tag => tag).join(", ")}
                     </Box>
-                    <TextField
-                        size="small"
-                        label="タグを追加"
-                        value={newTag}
-                        onChange={e => setNewTag(e.target.value)}
-                        onKeyDown={e => {
-                            if (e.key === "Enter" && newTag.trim()) {
+                    <Stack direction="row">
+                        <TextField
+                            size="small"
+                            label="タグを追加"
+                            value={newTag}
+                            onChange={e => setNewTag(e.target.value)}
+                            onKeyDown={e => {
+                                if (e.key === "Enter" && newTag.trim()) {
+                                    handleAddTag(newTag)
+                                }
+                            }}
+                        />
+                        <Button
+                            onClick={() => {
+                                if (!newTag.trim()) return
                                 handleAddTag(newTag)
-                            }
-                        }}
-                    />
-                    <Button
-                        onClick={() => {
-                            if (!newTag.trim()) return
-                            handleAddTag(newTag)
-                        }}
-                    >
-                        追加
-                    </Button>
+                            }}
+                        >
+                            追加
+                        </Button>
+                    </Stack>
                 </Stack>
             </DialogContent>
             

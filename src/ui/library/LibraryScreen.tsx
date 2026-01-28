@@ -42,7 +42,7 @@ export function LibraryScreen() {
 
     const checkboxControl = useLibraryCheckbox(libraryItems.map(p => p.id))
     const toast = useToast()
-    const navigate = useNavigate()
+    //const navigate = useNavigate()
     const importer = useImporter((files: File[]) => { problemStore.reload() })
 
     const handlers = {
