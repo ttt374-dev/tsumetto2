@@ -23,7 +23,7 @@ export function MateLengthCheckboxes({ mateBuckets = [], onChange }: Props) {
   }
 
   return (
-    <Paper sx={{p: 1}}>
+    <Paper sx={{m: 1}}>
       <FormControl component="fieldset">
         <FormLabel component="legend">詰み手数</FormLabel>
         <FormGroup row>

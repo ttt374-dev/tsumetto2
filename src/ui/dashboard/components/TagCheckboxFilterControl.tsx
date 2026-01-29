@@ -4,7 +4,8 @@ import {
   FormGroup,
   Box,
   Typography,
-  Paper
+  Paper,
+  Chip
 } from "@mui/material"
 
 export function TagCheckboxFilterControl({
@@ -12,9 +13,9 @@ export function TagCheckboxFilterControl({
   selectedTags,
   onChange,
 }: {
-    allTags: string[],
-    selectedTags: string[],
-    onChange: (tags: string[]) => void,
+  allTags: string[],
+  selectedTags: string[],
+  onChange: (tags: string[]) => void,
 }) {
 
   const toggle = (tag: string) => {
@@ -26,28 +27,31 @@ export function TagCheckboxFilterControl({
   }
 
   return (
-    <Paper sx={{p:1}}>
+    <Paper sx={{ m: 1, p: 1 }}>
       <Typography variant="subtitle2" gutterBottom>
         タグ
       </Typography>
 
-    
+
       <FormGroup row>
         {allTags.map(tag => (
-          <FormControlLabel
-            key={tag}
-            control={
-              <Checkbox
-                size="small"
-                checked={selectedTags.includes(tag)}
-                onChange={() => toggle(tag)}
-              />
-            }
+
+          <Chip
             label={tag}
+            clickable
+            color={selectedTags.includes(tag) ? "primary" : "default"}
+            onClick={() => toggle(tag)}
           />
+          /*
+          <Checkbox
+            size="small"
+            checked={selectedTags.includes(tag)}
+            onChange={() => toggle(tag)}
+          />*/
+
         ))}
       </FormGroup>
-    
+
     </Paper>
   )
 }

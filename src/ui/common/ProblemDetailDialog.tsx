@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { useRepositoryContext } from '../App/providers/RepositoryProvider';
 import { useProblemDetailDialog } from './useProblemDetailDialog';
 import { useProblemStore } from '@/application/store/useProblemStore';
+import { EditableText } from './EditableText';
 
 type Props = {
     open: boolean
@@ -15,13 +16,13 @@ type Props = {
     onClose: () => void
     onDelete: () => void
     onResetLearning: () => void
-    onUpdateProblem?: (problem: Problem) => void
+    onUpdateProblem: (problem: Problem) => void
 }
 
 export default function ProblemDetailDialog({
     open,
     problemId,
-    onConfirm: onPlayProblem,
+    
     onClose,
     onDelete,
     onResetLearning,
@@ -61,7 +62,9 @@ export default function ProblemDetailDialog({
         setNewTag("")
         problem && onUpdateProblem?.(problem.setTags(newTags))
     }
+    
     if (!problem) return null
+    const tagsString = tags.join(" ")
     ///////////////////////////////////////////////////////
     return (
         <Dialog open={open} onClose={onClose} fullScreen
@@ -76,7 +79,10 @@ export default function ProblemDetailDialog({
                 <Stack>
                     {/* タイトル編集 */}
                     <Box display="flex" alignItems="center" gap={2} mt={1}>
-                        {problem.title}
+                        <EditableText initialText={problem.title} onUpdateText={
+                            title => {
+                            onUpdateProblem(problem.setTitle(title))
+                            }}/>
                     </Box>
                     <Divider />
 
@@ -85,8 +91,11 @@ export default function ProblemDetailDialog({
                     <Button onClick={handleResetAccuracy}>
                         学習データをリセット
                     </Button>
-                    <Box>
-                        Tags: {tags.map(tag => tag).join(", ")}
+                    <Box display="flex">                        
+                        <EditableText initialText={tagsString} onUpdateText={
+                            text => onUpdateProblem(problem.setTags(text.split(" ")))
+                        }
+                        />
                     </Box>
                     <Stack direction="row">
                         <TextField

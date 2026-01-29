@@ -11,8 +11,9 @@ export function DashboardFilterControl({ filter, allTags, onToggleFilter, onSetF
     allTags: string[]
 }) {
     return (
-        <Paper>
-            <FormControl sx={{ p: 2 }}>
+        
+        <FormControl sx={{ p: 1 }}>
+            <Paper sx={{m: 1}}>
                 <FormControlLabel control={
                     <Checkbox checked={filter.unansweredOnly}
                         onChange={() => { onToggleFilter("unansweredOnly") }} />}
@@ -26,19 +27,19 @@ export function DashboardFilterControl({ filter, allTags, onToggleFilter, onSetF
                     <Checkbox checked={filter.isMissionTarget}
                         onChange={() => { onToggleFilter("isMissionTarget") }} />}
                     label="ミッションのみ" />
-                <MateLengthCheckboxes
-                    mateBuckets={filter.mateBuckets}
-                    onChange={(buckets) => {
-                        //console.log("dsbd filter ", buckets)
-                        onSetFilter({ mateBuckets: buckets })
-                    }}                
-                />
+            </Paper>
+            <MateLengthCheckboxes
+                mateBuckets={filter.mateBuckets}
+                onChange={(buckets) => {
+                    onSetFilter({ mateBuckets: buckets })
+                }}
+            />
 
-                <TagCheckboxFilterControl
-                    allTags={allTags} selectedTags={filter.tags ?? []} 
-                    onChange={(tags => { onSetFilter({tags: tags})})}
-                />
-            </FormControl>
-        </Paper>
+            <TagCheckboxFilterControl
+                allTags={allTags} selectedTags={filter.tags ?? []}
+                onChange={(tags => { onSetFilter({ tags: tags }) })}
+            />
+        </FormControl>
+
     )
 }

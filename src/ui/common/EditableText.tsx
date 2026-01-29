@@ -1,0 +1,70 @@
+import { useEffect, useRef, useState } from "react"
+import { IconButton, TextField, Typography } from "@mui/material"
+import DoneIcon from '@mui/icons-material/Done'
+import CloseIcon from '@mui/icons-material/Close'
+import EditIcon from '@mui/icons-material/Edit';
+import type { Problem } from "@/domain/problem/Problem";
+
+
+
+type Props = {
+    initialText: string,
+    onUpdateText: (title: string) => void
+}
+
+export function EditableText({initialText, onUpdateText }: Props) {
+    const [text, setText] = useState("")
+    const [editing, setEditing] = useState(false);
+
+    const handleSetText = () => {
+        onUpdateText(text.trim())
+        setEditing(false)
+    }
+    const handleEditFinish = () => {
+        setText(initialText)
+        setEditing(false)
+    }
+    const inputRef = useRef<HTMLInputElement | null>(null)
+
+        useEffect(() => {
+            setText(initialText)
+        }, [initialText])
+    useEffect(() => {
+        if (editing) {
+            inputRef.current?.focus()
+            //inputRef.current?.select() // ついでに全選択（おすすめ）
+        }
+    }, [editing])
+        const handleEdit = () => {
+        //setDraft(title); // 現在のタイトルで初期化
+        setEditing(true);
+    };
+
+    return (
+        editing ?
+            <>
+                <TextField
+                    label="タイトル"
+                    fullWidth
+                    value={text}
+                    inputRef={inputRef}
+                    onChange={(e: any) => setText(e.target.value)}
+                />
+                <IconButton onClick={handleSetText}>
+                    <DoneIcon />
+                </IconButton>
+                <IconButton onClick={handleEditFinish}>
+                    <CloseIcon />
+                </IconButton>
+
+            </>
+            : (<>
+                <Typography flexGrow={1}>{text}</Typography>
+
+                <IconButton onClick={handleEdit}>
+                    <EditIcon />
+                </IconButton>
+            </>
+            )
+        )
+    }

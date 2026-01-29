@@ -29,7 +29,7 @@ export function useProblemDetailDialog(onUpdateProblem: (problem: Problem) => vo
     }
     
     const dialogElement = (
-        problem &&
+        problem && open &&
         <ProblemDetailDialog    
             open={open}
             problemId={problem.id}

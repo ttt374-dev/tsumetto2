@@ -62,6 +62,8 @@ export function PlayerScreenContent({ problem, problemIds,
         onAnswer: (r: SolvedResult, sec?: number) => void,
     }) {
     const repos = useRepositoryContext()
+    const problemStore = useProblemStore(repos.problem)
+    const learningEventStore = useLearningEventStore(repos.learningEvent)
     // replay
     const { initialPosition, moves } = problem.kifData
     const replay = useReplayController(initialPosition, moves)
@@ -69,8 +71,6 @@ export function PlayerScreenContent({ problem, problemIds,
 
     // dialog
     const handleUpdateProblem = async (p: Problem) => {
-        const problemStore = useProblemStore(repos.problem)
-
         await repos.problem.update(p)
         await problemStore.reload()
 
@@ -88,8 +88,7 @@ export function PlayerScreenContent({ problem, problemIds,
 
     const handleAnswer = async (solvedResult: SolvedResult, secToTaken?: number) => {
         // learning    
-        onAnswer(solvedResult, secToTaken) // mission アクション        
-        const learningEventStore = useLearningEventStore(repos.learningEvent)
+        onAnswer(solvedResult, secToTaken) // mission アクション                
         await learningEventStore.append({
             type: "reviewed",
             problemId: problem.id,
