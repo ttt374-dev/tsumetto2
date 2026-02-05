@@ -1,56 +1,47 @@
-import {
-  Box,
-  Chip,
-  TextField,
-  Stack
-} from "@mui/material"
-import { useState } from "react"
+import { Autocomplete, Chip, TextField } from "@mui/material"
 
 type Props = {
-  tags: string[]
-  onChange: (tags: string[]) => void
+  value: string[]
+  allTags: string[]
+  onChange: (nextTags: string[]) => void
+  label?: string
 }
 
-export function ProblemTagEditor({ tags, onChange }: Props) {
-  const [input, setInput] = useState("")
-
-  const addTag = () => {
-    const tag = input.trim()
-    if (!tag || tags.includes(tag)) return
-    onChange([...tags, tag])
-    setInput("")
-  }
-
-  const removeTag = (tag: string) => {
-    onChange(tags.filter(t => t !== tag))
-  }
-
+export function ProblemTagEditor({
+  value,
+  allTags,
+  onChange,
+  label = "タグ",
+}: Props) {
   return (
-    <Box>
-      <Stack direction="row" spacing={1} flexWrap="wrap">
-        {tags.map(tag => (
+    <Autocomplete
+      multiple
+      freeSolo
+      options={allTags}
+      value={value}
+      onChange={(_, newValue) => {
+        // 重複除去 + trim
+        const uniq = Array.from(
+          new Set(newValue.map(t => t.trim()).filter(Boolean))
+        )
+        onChange(uniq)
+      }}
+      renderTags={(tags, getTagProps) =>
+        tags.map((tag, index) => (
           <Chip
-            key={tag}
             label={tag}
-            onDelete={() => removeTag(tag)}
-            size="small"
+            {...getTagProps({ index })}
+            key={tag}
           />
-        ))}
-      </Stack>
-
-      <TextField
-        size="small"
-        label="タグ追加"
-        value={input}
-        onChange={e => setInput(e.target.value)}
-        onKeyDown={e => {
-          if (e.key === "Enter") {
-            e.preventDefault()
-            addTag()
-          }
-        }}
-        sx={{ mt: 1 }}
-      />
-    </Box>
+        ))
+      }
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          label={label}
+          placeholder="タグを追加"
+        />
+      )}
+    />
   )
 }

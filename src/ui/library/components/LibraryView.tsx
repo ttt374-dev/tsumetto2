@@ -1,6 +1,8 @@
 
 import { Box, Button, Checkbox, Fab, IconButton, List, Stack } from "@mui/material"
 import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+
 
 import type { useLibraryQueryContext } from "../../App/providers/QueryProvider"
 import { AppLayout } from "../../common/AppLayout"
@@ -13,6 +15,7 @@ import { LibraryCheckboxControl } from "./LibraryCheckboxControl";
 
 export type LibraryViewHandlers = {
     view: { onViewProblem: (id: ProblemId) => void }
+    edit: { onEditTags: (ids: ProblemId[]) => void }
     import: { onOpenImportFileDialog: () => void }
     delete: { onDeleteAll: () => void; onDeleteChecked: () => void }
     checkbox: {
@@ -66,12 +69,18 @@ export function LibraryView({
                 />
 
                 {selection.isCheckboxMode &&
+                <>
                     <IconButton
                         onClick={handlers.delete.onDeleteChecked}
                         disabled={selection.checkedIds.size === 0}
                     >
                         <DeleteIcon />
                     </IconButton>
+                    <IconButton
+                        onClick={()=>handlers.edit.onEditTags(Array.from(selection.checkedIds))}>
+                        <EditIcon/>
+                    </IconButton>
+                  </>  
                 }
 
                 <Box sx={{ flexGrow: 1 }} />

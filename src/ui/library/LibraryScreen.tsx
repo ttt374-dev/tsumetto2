@@ -19,9 +19,11 @@ import { useMissionEventStore } from "@/application/store/useMissionEventStore";
 import { useProblemDetailDialog } from "../common/useProblemDetailDialog";
 import type { Problem, ProblemId } from "@/domain/problem/Problem";
 import { useViewerDialog } from "../viewer/ViewDialog";
+import { useMultipleProblemsTagEditDialog } from "../common/MultipleProblemsTagEditDialog";
 
 //////////////////////////////////////////////////
 // LibraryScreen.tsx
+
 export function LibraryScreen() {
     const [checkboxMode, setCheckboxMode] = useState(false)
     const repos = useRepositoryContext()
@@ -34,6 +36,29 @@ export function LibraryScreen() {
         await repos.problem.update(p)
         await problemStore.reload()
     }) // TODO
+    
+    const handleApplyEditTags = async (ids: ProblemId[], addTag: string|undefined, removeTags: string[]|undefined) => {
+        for (const id of ids) {
+            const p = problemStore.findById(id)
+            if (!p) continue
+            if (addTag && p.tags.includes(addTag)) continue
+            const nextTags = [...p.tags, addTag]
+            console.log("apply edit tags", p.tags, addTag, nextTags)
+            //await repos.problem.update(p.setTags(nextTags))
+        }        
+        await problemStore.reload()
+    }
+    const handleUpdateProblems = async (problems: Problem[]) => {
+        for (const p of problems) {
+            await repos.problem.update(p)
+        }
+
+        //await repos.problem.update(p)
+        await problemStore.reload()
+        
+    }
+
+    const tagEditDialog = useMultipleProblemsTagEditDialog(handleUpdateProblems)
 
     const libraryItems = useMemo(
         () => applyQuery(problems, learningRecords, query.sortState, query.filterState),
@@ -48,6 +73,7 @@ export function LibraryScreen() {
     const handlers = {
         //view: { onViewProblem: (id: string) => navigate(`/view/${id}`) },
         view: { onViewProblem: (id: string) => { detailDialog.openDialog(id)}},
+        edit: { onEditTags: (ids: ProblemId[]) => { tagEditDialog.openDialog(ids)}},
         import: {
             onOpenImportFileDialog: importer.openFileDialog,
         },
@@ -103,6 +129,7 @@ export function LibraryScreen() {
             {importer.inputElement}
             {viewerDialog.dialogElement}
             {detailDialog.dialogElement}
+            {tagEditDialog.dialogElement}
         </>
     )
 }

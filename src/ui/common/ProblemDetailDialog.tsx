@@ -7,6 +7,7 @@ import { useRepositoryContext } from '../App/providers/RepositoryProvider';
 import { useProblemDetailDialog } from './useProblemDetailDialog';
 import { useProblemStore } from '@/application/store/useProblemStore';
 import { EditableText } from './EditableText';
+import { ProblemTagEditor } from './ProblemTagEditor';
 
 type Props = {
     open: boolean
@@ -39,8 +40,11 @@ export default function ProblemDetailDialog({
     
 
     const [tags, setTags] = useState<string[]>(problem?.tags ?? [])
-    const [newTag, setNewTag] = useState("")
-    
+    const allTags = Array.from(
+        new Set(store.problems.flatMap(p => p.tags))
+    )
+
+
 
     // handlers
     const handleDelete = () => {
@@ -56,12 +60,7 @@ export default function ProblemDetailDialog({
         if (!window.confirm("本当に正答データをリセットしますか？")) return
         onResetLearning()             
     }    
-    const handleAddTag = (newTag: string) => {
-        const newTags = [...tags, newTag.trim()]
-        setTags(newTags)
-        setNewTag("")
-        problem && onUpdateProblem?.(problem.setTags(newTags))
-    }
+
     
     if (!problem) return null
     const tagsString = tags.join(" ")
@@ -90,13 +89,16 @@ export default function ProblemDetailDialog({
                     {/*  { record && `正答：${record.solvedCount}, 誤答：${record.failedCount}` }*/}
                     <Button onClick={handleResetAccuracy}>
                         学習データをリセット
-                    </Button>
-                    <Box display="flex">                        
-                        <EditableText initialText={tagsString} onUpdateText={
-                            text => onUpdateProblem(problem.setTags(text.split(" ")))
-                        }
-                        />
-                    </Box>
+                    </Button>                    
+                    <ProblemTagEditor
+                        allTags={allTags}
+                        value = {tags}
+                        onChange={ (tags) => {
+                            setTags(tags)
+                            onUpdateProblem(problem.setTags(tags))
+                        }}
+                    />
+                    {/*
                     <Stack direction="row">
                         <TextField
                             size="small"
@@ -117,14 +119,12 @@ export default function ProblemDetailDialog({
                         >
                             追加
                         </Button>
-                    </Stack>
+                    </Stack>*/}
                 </Stack>
             </DialogContent>
             
             <DialogActions>
-                <Button color="error" onClick={handleDelete}>
-                    削除
-                </Button>
+                
                 <Button onClick={handleCancel}>閉じる</Button>
             </DialogActions>
         </Dialog>
