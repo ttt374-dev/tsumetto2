@@ -1,4 +1,5 @@
-import { Box, Button,  } from "@mui/material";
+import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
+import { Box, Button, IconButton,  } from "@mui/material";
 import { Fab } from "@mui/material"
 import AddIcon from "@mui/icons-material/Add"
 
@@ -42,23 +43,24 @@ export function DashboardScreen() {
         <AppLayout
             header={ "Dashboard"}
             footer={
-            <Button onClick={()=> start(problemIds)} sx={{ height: 100 }}
+            <Button onClick={()=> start(problemIds)}
+                    sx={{height: 64}}
                     variant="contained" fullWidth 
                     disabled={missionSummary.problemCount === 0}>
                     Start
                 </Button>
             }
-            fab={
-                <Fab onClick={openFileDialog}>
-                    <AddIcon />
-                </Fab>
+            rightActions={
+                <>
+                    <Button onClick={() => setOpen(true)} sx={{color: "white"}}>
+                        リスト
+                    </Button>
+                    <IconButton onClick={openFileDialog}>
+                        <AddOutlinedIcon sx={{ color: "#fff" }} />
+                    </IconButton>
+                </>
             }>
-            <Button onClick={ () => setOpen(true)}>
-                リスト
-            </Button>
-            <Button onClick={ () => deleteAll()}>
-                全削除
-            </Button>
+            
             <DashboardFilterControl 
                 filter={query.filterState}
                 allTags={allTags}

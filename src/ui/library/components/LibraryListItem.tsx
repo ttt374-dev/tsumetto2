@@ -1,10 +1,13 @@
+import StarIcon from "@mui/icons-material/Star"
+import StarBorderIcon from "@mui/icons-material/StarBorder"
 import type { Learning } from "@/domain/learning/Learning";
 import type { Problem } from "@/domain/problem/Problem";
-import { Box, Checkbox, colors, ListItem, ListItemButton, ListItemIcon, ListItemText, Stack, Typography } from "@mui/material";
+import { Box, Checkbox, colors, IconButton, ListItem, ListItemButton, ListItemIcon, ListItemText, Stack, Typography } from "@mui/material";
 import { useLongPress } from "../hooks/useLongPress";
 
 export function LibraryListItem({ problem, learning, onClick, 
-    isCheckboxMode, onToggleCheckboxMode, isChecked, onToggleChecked, selected}: {
+    isCheckboxMode, onToggleCheckboxMode, isChecked, onToggleChecked, onToggleStar,
+    selected}: {
     problem: Problem,
     learning?: Learning,
     isCheckboxMode: boolean,
@@ -12,6 +15,7 @@ export function LibraryListItem({ problem, learning, onClick,
     isChecked: boolean,
     onToggleChecked: () => void,
     onToggleCheckboxMode: () => void,
+    onToggleStar: () => void,
     selected?: boolean,
     
 }) {
@@ -28,20 +32,29 @@ export function LibraryListItem({ problem, learning, onClick,
             selected={selected}
             {...bind}
             sx={{ borderBottom: 1, borderColor: "divider" }}>     
-            
-            { isCheckboxMode &&
-            <ListItemIcon>
-                <Checkbox size="small" edge="start" checked={isChecked} onChange={onToggleChecked}/>
-            </ListItemIcon>       
+            {isCheckboxMode &&
+                <ListItemIcon>
+                    <Checkbox size="small" edge="start" checked={isChecked} onChange={onToggleChecked} />
+                </ListItemIcon>
             }
-            
             <ListItemText  onClick={onClick}>
                 {/* 一行目: タイトル */}
-                <Box>
-                    <Typography variant="subtitle1" fontWeight="bold">
+                <Stack direction="row" justifyContent={"space-between"}  alignItems="center">
+                    <Typography variant="subtitle1" fontWeight="bold" flex={7}>
                         {problem.title}
                     </Typography>
-                </Box>
+                    <Typography variant="body2" color="text.secondary" flex={1}>
+                        {problem.kifData.moves.length}手詰め
+                    </Typography>
+                    <Box flex={1}>
+                        <IconButton onClick={(e: React.MouseEvent) => {
+                            e.stopPropagation()
+                            onToggleStar()
+                        }}>
+                            {problem.starred ? <StarIcon /> : <StarBorderIcon />}
+                        </IconButton>
+                    </Box>
+                </Stack>
 
                 {/* 二行目: タグ・追加日・学習結果 */}
                 <Stack direction="row" justifyContent={"space-between"}>

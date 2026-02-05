@@ -46,14 +46,20 @@ export function ViewerDialog({ problem, open, onClose }: {
         showMoves: showMovesController.setShowMoves,
     }
     return (
-        <Dialog open={open} onClose={onClose} fullScreen>
+        <Dialog open={open} onClose={onClose} 
+            sx={{
+                paddingTop: 'env(safe-area-inset-top)',
+                paddingBottom: 'env(safe-area-inset-bottom)',
+            }}
+        fullScreen>
             <DialogTitle>{problem.title}</DialogTitle>
             <DialogContent>
                 <PlayerView
                     moves={problem.kifData.moves}
                     position={replay.position}
                     currentPlyIndex={replay.plyIndex}
-                    showMoves={showMovesController.showMoves}
+                    //showMoves={showMovesController.showMoves}
+                    showMoves={true}
                     tags={problem.tags}
                     handlers={handlers}/>
             </DialogContent>

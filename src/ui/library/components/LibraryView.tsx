@@ -15,7 +15,10 @@ import { LibraryCheckboxControl } from "./LibraryCheckboxControl";
 
 export type LibraryViewHandlers = {
     view: { onViewProblem: (id: ProblemId) => void }
-    edit: { onEditTags: (ids: ProblemId[]) => void }
+    edit: { 
+        onEditTags: (ids: ProblemId[]) => void,
+        onToggleStar: (p: Problem) => void,
+    },
     import: { onOpenImportFileDialog: () => void }
     delete: { onDeleteAll: () => void; onDeleteChecked: () => void }
     checkbox: {
@@ -105,6 +108,7 @@ export function LibraryView({
                             isChecked={selection.isChecked(p.id)}
                             onToggleCheckboxMode={handlers.checkbox.onToggleCheckboxMode}
                             onToggleChecked={() => handlers.checkbox.onToggleChecked(p.id)}
+                            onToggleStar={()=>handlers.edit.onToggleStar(p)}
                         />
                     ))}
                 </List>

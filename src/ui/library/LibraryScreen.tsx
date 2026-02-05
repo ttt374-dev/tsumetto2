@@ -32,7 +32,9 @@ export function LibraryScreen() {
     const learningRecords = useLearningEventStore(repos.learningEvent).records
     const query = useLibraryQueryContext()
     const viewerDialog = useViewerDialog()
-    const detailDialog = useProblemDetailDialog(async (p: Problem)=>{
+    const detailDialog = useProblemDetailDialog(
+        (id: ProblemId) => { viewerDialog.openDialog(id)},
+        async (p: Problem)=>{
         await repos.problem.update(p)
         await problemStore.reload()
     }) // TODO
@@ -73,7 +75,14 @@ export function LibraryScreen() {
     const handlers = {
         //view: { onViewProblem: (id: string) => navigate(`/view/${id}`) },
         view: { onViewProblem: (id: string) => { detailDialog.openDialog(id)}},
-        edit: { onEditTags: (ids: ProblemId[]) => { tagEditDialog.openDialog(ids)}},
+        edit: { 
+            onEditTags: (ids: ProblemId[]) => { tagEditDialog.openDialog(ids)},
+            onToggleStar: async (p: Problem) => { 
+                await repos.problem.update(p.toggleStar())
+                await problemStore.reload()
+
+            },
+        },
         import: {
             onOpenImportFileDialog: importer.openFileDialog,
         },

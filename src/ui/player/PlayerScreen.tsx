@@ -1,3 +1,5 @@
+import StarIcon from "@mui/icons-material/Star"
+import StarBorderIcon from "@mui/icons-material/StarBorder"
 import { useEffect, useMemo, useState } from "react"
 import { PlayerFooterActions } from "./components/PlayerFooterActions"
 import PlayerView, { type PlayerViewNavigationHandlers } from "./components/PlayerView"
@@ -9,7 +11,7 @@ import { Problem, type ProblemId } from "@/domain/problem/Problem"
 import { ListDialog } from "../mission/ListDialog"
 import { useProblemDetailDialog } from "../common/useProblemDetailDialog"
 import { AppLayout } from "../common/AppLayout"
-import { Button } from "@mui/material"
+import { Button, IconButton } from "@mui/material"
 import { useProblemStore } from "@/application/store/useProblemStore"
 import type { SolvedResult } from "@/domain/MissionEvent/MissionSummary"
 
@@ -44,9 +46,11 @@ export function PlayerScreen() {
     const navigationHandlers = {
         next: next, prev: prev, moveTo: moveTo
     }
+    
     return (
         <PlayerScreenContent problem={problem} problemIds={snapshot.problemIds}
-            index={index} onAnswer={answer} navigationHandlers={navigationHandlers} />
+            index={index} onAnswer={answer} 
+            navigationHandlers={navigationHandlers} />
     )
 }
 
@@ -61,6 +65,7 @@ export function PlayerScreenContent({ problem, problemIds,
         navigationHandlers: PlayerViewNavigationHandlers
         onAnswer: (r: SolvedResult, sec?: number) => void,
     }) {
+    const [starred, setStarred] = useState(problem.starred)
     const repos = useRepositoryContext()
     const problemStore = useProblemStore(repos.problem)
     const learningEventStore = useLearningEventStore(repos.learningEvent)
@@ -75,7 +80,12 @@ export function PlayerScreenContent({ problem, problemIds,
         await problemStore.reload()
 
     }
-    const detailDialog = useProblemDetailDialog(handleUpdateProblem)
+    const handleToggleStar = async () => {
+        setStarred(prev=>!prev)
+        await repos.problem.update(problem.toggleStar())
+        await problemStore.reload()
+    }
+    const detailDialog = useProblemDetailDialog(() => {}, handleUpdateProblem)
     //console.log("playscre", problem, index, snapshot)
     //if (!index || !snapshot) return null
 
@@ -96,14 +106,15 @@ export function PlayerScreenContent({ problem, problemIds,
             sec: secToTaken,
         })
     }
+    
     const handlers = {
         ply: {
             advance: replay.advancePly,
             retreat: replay.retreatPly,
             moveTo: replay.moveToPly
         },
-        navigation: navigationHandlers,
-        showMoves: showMovesController.setShowMoves,
+        navigation: navigationHandlers,        
+        //showMoves: showMovesController.setShowMoves,
     }
     return (
         <AppLayout
@@ -111,6 +122,11 @@ export function PlayerScreenContent({ problem, problemIds,
             footer={<PlayerFooterActions onAnswer={handleAnswer} />}
             rightActions={
                 <>
+                    <IconButton onClick={handleToggleStar}
+                    disableRipple
+                    sx={{ color: "white" }}>
+                        { starred ? <StarIcon/> : <StarBorderIcon/>}
+                    </IconButton>
                     <Button onClick={() => detailDialog.openDialog(problem.id)} sx={{ color: "#fff" }}>
                         Detail
                     </Button>

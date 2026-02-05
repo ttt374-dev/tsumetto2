@@ -3,13 +3,19 @@ import { useEffect, useState } from "react";
 import { useRepositoryContext } from "../App/providers/RepositoryProvider";
 import { useProblemStore } from "@/application/store/useProblemStore";
 import ProblemDetailDialog from "./ProblemDetailDialog";
+import { useNavigate } from "react-router-dom";
+import { useViewerDialog } from "../viewer/ViewDialog";
 
-export function useProblemDetailDialog(onUpdateProblem: (problem: Problem) => void){
+export function useProblemDetailDialog(
+    onViewProblem: (id: ProblemId) => void,
+    onUpdateProblem: (problem: Problem) => void){
     const [ open, setOpen] = useState(false)
     const [problem, setProblem] = useState<Problem|undefined>(undefined)
 
     const repos = useRepositoryContext()
     const store = useProblemStore(repos.problem)
+    const navigate =useNavigate()
+    const viewDialog = useViewerDialog()
     //const problem = problemId && problemStore.findById(problemId)
    
         useEffect(()=> {
@@ -30,7 +36,12 @@ export function useProblemDetailDialog(onUpdateProblem: (problem: Problem) => vo
         await repos.problem.remove(problem.id)
         await store.reload()
     }
-    
+    const handleViewProblem = () => {
+        
+        problem && onViewProblem(problem.id)
+        //closeDialog()
+    }
+
     const dialogElement = (
         problem && open &&
         <ProblemDetailDialog    
@@ -41,6 +52,7 @@ export function useProblemDetailDialog(onUpdateProblem: (problem: Problem) => vo
             onDelete={deleteProblem}
             onResetLearning={alert}  // TODO
             onUpdateProblem={onUpdateProblem}
+            onViewProblem={handleViewProblem}
         />
     )
 

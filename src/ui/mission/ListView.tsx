@@ -11,9 +11,7 @@ export function ListView({ problems, onSelectProblem, currentProblemId }: {
     currentProblemId?: ProblemId
 }) {
     const repos = useRepositoryContext()
-    const learningRecords = useLearningEventStore(repos.learningEvent).records
-
-    
+    const learningRecords = useLearningEventStore(repos.learningEvent).records    
 
     return (
         <List>
@@ -26,6 +24,7 @@ export function ListView({ problems, onSelectProblem, currentProblemId }: {
                     isChecked={false}
                     onToggleChecked={alert}
                     onToggleCheckboxMode={alert}
+                    onToggleStar={alert}
                     onClick={()=> onSelectProblem?.(p.id)}
                     selected={currentProblemId === p.id}
                 />
