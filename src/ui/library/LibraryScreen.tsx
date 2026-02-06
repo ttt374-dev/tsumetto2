@@ -39,7 +39,8 @@ export function LibraryScreen() {
         await repos.problem.update(p)
         await problemStore.reload()
     }) // TODO
-    const backupRestoreDialog = useBackupRestoreDialog((res) => { problemStore.reload()})
+    const backupRestoreDialog = useBackupRestoreDialog((res) => { 
+        if (res.ok) problemStore.reload()})
     const handleUpdateProblems = async (problems: Problem[]) => {
         for (const p of problems) {
             await repos.problem.update(p)
