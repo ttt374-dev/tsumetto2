@@ -19,14 +19,14 @@ import { useViewerDialog } from "../viewer/ViewDialog";
 import { useMultipleProblemsTagEditDialog } from "../common/MultipleProblemsTagEditDialog";
 import { useImportController } from "@/application/useImportControler";
 import type { ImportFilesResult, ImportResult } from "@/usecase/importProblemsUsecase";
-import BackupRestoreDialog from "../common/BackupRestoreDialog";
+import BackupRestoreDialog, { useBackupRestoreDialog } from "../common/BackupRestoreDialog";
 
 //////////////////////////////////////////////////
 // LibraryScreen.tsx
 
 export function LibraryScreen() {
     const [checkboxMode, setCheckboxMode] = useState(false)
-    const [backupDialogOpen, setBackupDialogOpen] = useState(false);
+    
     const repos = useRepositoryContext()
     const problemStore = useProblemStore(repos.problem)
     const problems = problemStore.problems
@@ -39,18 +39,7 @@ export function LibraryScreen() {
         await repos.problem.update(p)
         await problemStore.reload()
     }) // TODO
-    /*
-    const handleApplyEditTags = async (ids: ProblemId[], addTag: string|undefined, removeTags: string[]|undefined) => {
-        for (const id of ids) {
-            const p = problemStore.findById(id)
-            if (!p) continue
-            if (addTag && p.tags.includes(addTag)) continue
-            const nextTags = [...p.tags, addTag]
-            console.log("apply edit tags", p.tags, addTag, nextTags)
-            //await repos.problem.update(p.setTags(nextTags))
-        }        
-        await problemStore.reload()
-    }*/
+    const backupRestoreDialog = useBackupRestoreDialog((res) => { problemStore.reload()})
     const handleUpdateProblems = async (problems: Problem[]) => {
         for (const p of problems) {
             await repos.problem.update(p)
@@ -127,7 +116,7 @@ export function LibraryScreen() {
                 header="Library"
                 rightActions={
                     <>
-                        <IconButton onClick={() => setBackupDialogOpen(true)}>
+                        <IconButton onClick={backupRestoreDialog.openDialog}>
                             <BackupIcon  sx={{ color: "#fff" }}/>
                         </IconButton>
                         <IconButton onClick={handlers.import.onOpenImportFileDialog}>
@@ -151,8 +140,7 @@ export function LibraryScreen() {
             {viewerDialog.dialogElement}
             {detailDialog.dialogElement}
             {tagEditDialog.dialogElement}
-            <BackupRestoreDialog open={backupDialogOpen}
-                onClose={() => { setBackupDialogOpen(false); problemStore.reload()}} />
+            {backupRestoreDialog.dialogElement}
         </>
     )
 }

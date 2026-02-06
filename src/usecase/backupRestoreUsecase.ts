@@ -6,19 +6,37 @@ import type { LearningEventRepository } from "@/domain/LearningEvent/LearningEve
 import { Problem, type ProblemDTO } from "@/domain/problem/Problem"
 import type { ProblemRepository } from "@/domain/problem/ProblemRepository"
 
+export type Result<T, E> =
+  | { ok: true; value: T }
+  | { ok: false; error: E}
+
+export type BackupResult = Result<BackupResultOk, BackupRestoreError>
+export type BackupResultOk = {
+  filename: string
+  problemCount: number
+  learningCount: number
+}
+
+export type RestoreResultOk = {
+    problemCount: number
+  learningCount: number
+}
+export type BackupRestoreError =
+| { code: "file-io-error", message?: string}
+  | { code: "invalid-format" }
+  | { code: "parse-failed"; cause?: unknown }
+  | { code: "persist-failed"; cause?: unknown }
+
+export type RestoreResult = Result<RestoreResultOk, BackupRestoreError>
+///////////////////////////
 export interface BackupRestoreUsecase {
-    backup(): Promise<BackupRestoreResult> // TODO
-    restore(data: BackupData): Promise<BackupRestoreResult>
+    backup(): Promise<BackupResult> // TODO
+    restore(data: BackupData): Promise<RestoreResult>
 }
 
 export type BackupData = {
     problem: ProblemDTO[]
     learning: LearningEventLog
-}
-
-export type BackupRestoreResult = {
-    count: { problem: number, learning: number },
-    filename?: string,
 }
 
 export function createBackupRestoreUsecase(
@@ -28,49 +46,71 @@ export function createBackupRestoreUsecase(
 ): BackupRestoreUsecase {
     // TODO: error check
     return {
-        async backup(): Promise<BackupRestoreResult> {
-            const problems = await problemRepo.load()
-            const backupData: BackupData = {
-                problem: problems.map(p => p.toDTO()),
-                learning: await learningRepo.load(),
-            }
-            const json = JSON.stringify(backupData, null, 2)
-            console.log("backup", json)
+        async backup(): Promise<BackupResult> {
             const filename = `kif-backup-${Date.now()}.json`
+
+            let problems: Problem[]
+            let learnings: LearningEventLog
+            let backupData: BackupData
+            let json: string
+            
             try {
-                await writer.write(json, filename)
-            } catch (e) {
-                const message = e instanceof Error ? e.message : `Backup failed to save: ${filename}`
-                console.error(message)
-                throw new Error(message)
+                problems = await problemRepo.load()
+                learnings = await learningRepo.load()
+            } catch (e){
+                return { ok: false, error: { code: "persist-failed"}}
             }
 
+            try {
+                backupData = {
+                    problem: problems.map(p => p.toDTO()),
+                    learning: learnings,
+                }
+                json = JSON.stringify(backupData, null, 2)
+            } catch (e) {
+                return { ok: false, error: { code: "parse-failed"}}
+            }            
+            try {
+                
+                await writer.write(json, filename)
+            } catch (e) {
+                return { ok: false, error: { code: "file-io-error"} }
+            }
             return {
-                count: {
-                    problem: Object.keys(backupData.problem).length,
-                    learning: Object.keys(backupData.learning).length
-                },
-                filename: filename
+                ok: true,
+                value: { 
+                    filename: filename, 
+                    problemCount: problems.length,
+                    learningCount: learnings.length,
+                }
             }
         },
 
-        async restore(backupData: BackupData): Promise<BackupRestoreResult> {
-            if (!backupData.problem) {
-                throw new Error("Invalid Backup Data")
+        async restore(backupData: BackupData): Promise<RestoreResult> {            
+            if (!backupData.problem || !backupData.learning) {
+                    return { ok: false, error: { code: "invalid-format"} }
             }
-
-            console.log("restore", backupData.problem)
-            const problems = backupData.problem.map(dto => Problem.fromDTO(dto))
-            console.log("restore", problems)
-            await problemRepo.replaceAll(problems)
-            await learningRepo.replaceAll(backupData.learning)
+            let problems: Problem[]
+            try {
+                problems = backupData.problem.map(dto => Problem.fromDTO(dto))
+            } catch (e){
+                return { ok: false, error: { code: "parse-failed"}}
+            }
+            try {
+                await problemRepo.replaceAll(problems)
+                await learningRepo.replaceAll(backupData.learning)
+            } catch (e){
+                return { ok: false, error: { code: "persist-failed"}}
+            }
 
             return {
-                count: {
-                    problem: Object.keys(backupData.problem).length,
-                    learning: Object.keys(backupData.learning).length
+                ok: true,
+                value: {
+                    problemCount: backupData.problem.length,
+                    learningCount: backupData.learning.length,
                 },
             }
+
         }
     }
 }

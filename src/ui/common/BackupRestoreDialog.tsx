@@ -1,71 +1,78 @@
-import { useRef } from "react"
+import { useRef, useState } from "react"
 import { Dialog, DialogTitle, DialogContent, DialogActions,
     Button, Box, Typography, Divider } from "@mui/material"
 import { useToast } from "../App/providers/ToastProvider"
 import { useRepositoryContext } from "../App/providers/RepositoryProvider"
-import { createBackupRestoreUsecase, type BackupData } from "@/usecase/backupRestoreUsecase"
+import { createBackupRestoreUsecase, type BackupData, type BackupResult, type RestoreResult } from "@/usecase/backupRestoreUsecase"
 import { fileBackupWriter } from "@/infra/fileBackupWriter"
 
 
-type DialogProps = {
+export function useBackupRestoreDialog(onRestoreFinished?: (res: RestoreResult) => void){
+    const [open, setOpen] = useState(false)
+    const toast = useToast()
+    const openDialog = () => { setOpen(true)}
+
+    const dialogElement = (
+        <BackupRestoreDialog open={open}
+            onBackupFinished={(res) => {
+                if (res.ok)
+                    toast({ message: `${res.value.problemCount}件を${res.value.filename}にバックアップしました` })
+                else
+                    toast({ message: `バックアップに失敗しました：${res.error.code}`, severity: "error" })
+            }}
+            onRestoreFinished={(res) => {
+                if (res.ok)
+                    toast({ message: `${res.value.problemCount}件をリストアしました` })
+                else
+                    toast({ message: `リストアに失敗しました：${res.error.code}`, severity: "error" })
+                onRestoreFinished?.(res)
+            }}
+            onClose={() => { setOpen(false) }} />
+    )
+
+    return { openDialog, dialogElement}
+}
+
+///////////////////////////////////////////////////
+export default function BackupRestoreDialog({ open, onClose, onBackupFinished, onRestoreFinished }: { 
     open: boolean
     onClose: () => void
-}
-
-export const useBackupRestore = () => {
+    onBackupFinished?: (res: BackupResult) => void
+    onRestoreFinished?: (res: RestoreResult) => void
+}) {
     const repos = useRepositoryContext()
-    //const store = useStoreContext()
-
     const usecase = createBackupRestoreUsecase(repos.problem, repos.learningEvent, fileBackupWriter)
-    const backup = async () => {
-        await usecase.backup()        
-    }
-    const restore = async (data: BackupData) => {
-        await usecase.restore(data)
-        //await store.reload()        
-    }
-    return {
-        backup, restore
-    }    
-}
-///////////////////////////////////////////////////
-export default function BackupRestoreDialog({ open, onClose }: DialogProps) {
-    const { backup, restore } = useBackupRestore()
     const fileInputRef = useRef<HTMLInputElement>(null)
-    const toast = useToast()
 
     /* ===== backup ===== */   
     const handleBackup = async () => {
-        try {
-            const result = await backup()
-            //toast({message: `バックアップ完了しました(${result.filename}): problem: ${result.count.problem}件, learing: ${result.count.learning}件`})
-            onClose()
-        } catch (e){
-            const message = e instanceof Error ? e.message :  "バックアップエラー"
-            toast({message: message, severity: "error"})
-        }
-        
+        const result = await usecase.backup()            
+        onBackupFinished?.(result)        
+        if (result.ok) onClose()
     }
 
     /* ===== restore ===== */
     const handleRestoreFile = async (file: File) => {
+        let json: BackupData
+
         try {
             const text = await file.text()
-            const json = JSON.parse(text)
-
-            if (!window.confirm("現在の棋譜・学習履歴はすべて上書きされます。よろしいですか？")) {
-                return
-            }
-            const result = await restore(json)           
-
-            //toast({ message: `リストア完了しました: problem: ${result.count.problem}件, learing: ${result.count.learning}件` })
-
-            onClose()
-        } catch (e) {
-            const message = e instanceof Error ? e.message :  "リストアエラー"
-            toast({message: message, severity: "error"})
+            json = JSON.parse(text)
+        } catch {
+            onRestoreFinished?.({
+                ok: false,
+                error: { code: "invalid-format"}
+            })
+            return
         }
-
+        if (!window.confirm(
+            "現在の棋譜・学習履歴はすべて上書きされます。よろしいですか？"
+        )) {
+            return
+        }
+        const result = await usecase.restore(json)
+        onClose()
+        onRestoreFinished?.(result)
     }
 
     return (
