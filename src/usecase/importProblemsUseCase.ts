@@ -1,13 +1,45 @@
 import { useProblemStore } from "@/application/store/useProblemStore";
 import type { ImportOptions } from "@/application/useImportControler";
-import { Problem } from "@/domain/problem/Problem";
+import { Problem, type ProblemId } from "@/domain/problem/Problem";
 import type { ProblemRepository } from "@/domain/problem/ProblemRepository";
 import { useRepositoryContext } from "@/ui/App/providers/RepositoryProvider";
 
-export type ImportResult = 
-    | { ok: true, count: number}
-    | { ok: false, message: string }
+export type ImportStatus =
+  | "imported"   // 正常に追加 or 上書き
+  | "skipped"    // 同名などで取り込まなかった
+  | "failed"     // 技術的・業務的エラー
 
+export type ImportResult =
+  | {
+      status: "imported"
+      problemId: ProblemId
+    }
+  | {
+      status: "skipped"
+      reason: "duplicate-title" | "user-cancelled"
+    }
+  | {
+      status: "failed"
+      message: string
+    }
+
+export type ImportFilesResult = {
+  summary: {
+    total: number
+    imported: number
+    skipped: number
+    failed: number
+  }
+  results: ImportResult[]  // 1ファイルごとの結果
+}
+
+//export type ImportResult = 
+    //| { ok: true, count: number}
+    //| { ok: false, message: string }
+
+abstract class ImportError extends Error {
+  abstract readonly code: string
+}
 
 async function getExsitingTitle(repo: ProblemRepository): Promise<Set<string>>{
     //const store = useProblemStore(repo)
@@ -24,39 +56,63 @@ export function createImportProblemsUsecase(problemRepo: ProblemRepository) {
     const importFile = async (file: File, options: ImportOptions): Promise<ImportResult> => {
         try {
             const buf = await file.arrayBuffer();
-            const text = new TextDecoder("shift_jis").decode(buf);            
-            const title = resolveTitle(file.name, await getExsitingTitle(problemRepo))
-            console.log("import tags", options)
+            const text = new TextDecoder("shift_jis").decode(buf);    
+            const existingTitles = await getExsitingTitle(problemRepo)
+            let title = file.name
+            if (existingTitles.has(title)){
+                switch(options.duplicateTitleStrategy){
+                    case "rename":
+                        title = resolveTitle(file.name, existingTitles)
+                        break;
+                    case "skip":
+                        console.warn(`skipped by duplicated title: ${title}`)
+                        return { status: "skipped", reason: "duplicate-title"}
+                        break;
+                    case "overwrite":
+                        break   // TODO                        
+                }
+            }
+            //const title = resolveTitle(file.name, existingTitles)
+            //console.log("import tags", options)
             const newProblem = Problem.createFromText(text, title)?.setTags(options.tags)
 
-            if (!newProblem) { return { ok: false, message: "parse failed" }}
+            if (!newProblem) { return { status: "failed", message: "parse error"}}
             await problemRepo.add(newProblem)
             console.log("import file", newProblem)
-            return { ok: true, count: 1}
+            return { status: "imported", problemId: newProblem.id}
         } catch (e) {
             const message = `Failed to import file ${file.name}:`
             console.error(message, e);
             
-            return { ok: false, message: message }
+            return { status: "failed", message: message }
         }
     }
-    const importFiles =  async (files: File[], options: ImportOptions): Promise<ImportResult> => {
-        let successCount = 0
-        let failedCount = 0
+    const importFiles =  async (files: File[], options: ImportOptions): Promise<ImportFilesResult> => {
+        let imported = 0
+        let skipped = 0
+        let failed = 0
+        const results = []
 
         console.log("import files", files)
         for (const file of files) {
             const result = await importFile(file, options)
-            if (result.ok){
-                successCount++
-            } else {
-                failedCount++
+            results.push(result)
+            switch(result.status){
+                case "imported": imported++; break
+                case "skipped": skipped++; break
+                case "failed": failed++; break
             }
         }
-        if (failedCount > 0){
-            return { ok: false, message: `failed to import ${failedCount} files`}    
+        return {
+            summary: {
+                total: imported + skipped + failed,
+                imported: imported,
+                skipped: skipped,
+                failed: failed,
+            },
+            results: results
         }
-        return { ok: true, count: successCount}        
+
     }
     return {
         importFile,

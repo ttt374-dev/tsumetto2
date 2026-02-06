@@ -12,6 +12,7 @@ import { useMemo, useState } from "react";
 import { useRepositoryContext } from "../App/providers/RepositoryProvider";
 import { useProblemStore } from "@/application/store/useProblemStore";
 import { useImportController } from "@/application/useImportControler";
+import type { ImportFilesResult, ImportResult } from "@/usecase/importProblemsUseCase";
 
 /////////////////////////////////////////////
 
@@ -22,9 +23,10 @@ export function DashboardScreen() {
     const repos = useRepositoryContext()
     const store = useProblemStore(repos.problem)
     
-    const importController = useImportController(async (files: File[]) => {
+    const importController = useImportController(async (res: ImportFilesResult) => {
         await store.reload()
-        toast({message: `imported ${files.length} file`})
+        toast({message: `imported: ${res.summary.imported}, skipped: ${res.summary.skipped}, failed: ${res.summary.failed}`})
+        
     })
     const [openListDialog, setOpenListDialog] = useState(false)
 

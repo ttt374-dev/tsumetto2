@@ -17,6 +17,7 @@ import type { Problem, ProblemId } from "@/domain/problem/Problem";
 import { useViewerDialog } from "../viewer/ViewDialog";
 import { useMultipleProblemsTagEditDialog } from "../common/MultipleProblemsTagEditDialog";
 import { useImportController } from "@/application/useImportControler";
+import type { ImportFilesResult, ImportResult } from "@/usecase/importProblemsUseCase";
 
 //////////////////////////////////////////////////
 // LibraryScreen.tsx
@@ -65,9 +66,10 @@ export function LibraryScreen() {
     const toast = useToast()
     //const navigate = useNavigate()
     //const importer = useImportFilePicker((files: File[]) => { problemStore.reload() })
-    const importer = useImportController(async (files: File[]) => {
+    const importer = useImportController(async (res: ImportFilesResult) => {
         await problemStore.reload()
-        toast({message: `imported ${files.length} file`})
+        toast({message: `imported: ${res.summary.imported}, skipped: ${res.summary.skipped}, failed: ${res.summary.failed}`})
+        
      })
 
     const handlers = {

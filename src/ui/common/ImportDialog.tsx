@@ -1,15 +1,17 @@
 import { Filesystem } from "@capacitor/filesystem";
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from "@mui/material";
 import { ProblemTagEditor } from "./ProblemTagEditor";
-import type { ImportOptions } from "@/application/useImportControler";
+import type { DuplicateTitleStrategy, ImportOptions } from "@/application/useImportControler";
 import { useState } from "react";
 
-export function ImportDialog({open, onImport, allTags=[] }: {
+export function ImportDialog({open, onClose, onImport, allTags=[] }: {
     open: boolean
+    onClose: () => void
     onImport: (options: ImportOptions) => void
     allTags?: string[]
 }){
-    const [tags, setTags] = useState<string[]>([])
+    //const [tags, setTags] = useState<string[]>([])
+    const [options, setOptions] = useState<ImportOptions>({tags: [], duplicateTitleStrategy: "skip"})
     return (
         <Dialog open={open} >
             <DialogTitle>
@@ -20,15 +22,48 @@ export function ImportDialog({open, onImport, allTags=[] }: {
 
                 <ProblemTagEditor
                     label={"tags"}
-                    value={tags}
+                    value={options.tags}
                     allTags={allTags}
-                    onChange={(next) => { setTags(next)}}
+                    onChange={(next) => { setOptions({...options, tags: next})}}
                 />
+                {/* オプション*/ }
+                <FormControl>
+                    <FormLabel>同名タイトルがあった場合</FormLabel>
+
+                    <RadioGroup
+                        value={options.duplicateTitleStrategy}
+                        onChange={(e) =>
+                            setOptions({
+                                ...options,
+                                duplicateTitleStrategy:
+                                    e.target.value as DuplicateTitleStrategy
+                            })
+                        }
+                    >
+                        <FormControlLabel
+                            value="overwrite"
+                            control={<Radio />}
+                            label="上書きする"
+                        />
+                        <FormControlLabel
+                            value="rename"
+                            control={<Radio />}
+                            label="名前を変えて保存"
+                        />
+                        <FormControlLabel
+                            value="skip"
+                            control={<Radio />}
+                            label="スキップする"
+                        />
+                    </RadioGroup>
+                </FormControl>
+
             </DialogContent>
             <DialogActions>
-                <Button onClick={() => onImport({
-                    tags: tags, duplicateStrategy: "rename"
-                })}>
+                <Button onClick={onClose}>
+                    キャンセル
+                </Button>
+                <Button onClick={() => onImport(options)}>
                     Import
                 </Button>
             </DialogActions>

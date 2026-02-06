@@ -2,7 +2,7 @@ import { v4 } from 'uuid'
 import { KifData, type KifDataDTO } from '../kif/types'
 import { parseKif } from '../kif/parser/parseKif'
 
-export type Tags = readonly string[]
+export type Tags = string[]
 
 export type ProblemData = {
     id: string
