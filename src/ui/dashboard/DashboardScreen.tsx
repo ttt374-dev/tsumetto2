@@ -1,7 +1,5 @@
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import { Box, Button, IconButton,  } from "@mui/material";
-import { Fab } from "@mui/material"
-import AddIcon from "@mui/icons-material/Add"
 
 import { AppLayout } from "../common/AppLayout";
 import { useFilterProblems } from "./hooks/useFilterProblems";
@@ -9,12 +7,11 @@ import { DashboardFilterControl } from "./components/DashboardFilterControl";
 import { SummaryView } from "../summary/SummaryView";
 import { useMissionEventStoreContext } from "../App/providers/MissionEventStoreProvider";
 import { useToast } from "../App/providers/ToastProvider";
-import { useImporter } from "@/application/useImporter";
 import { ListDialog } from "../mission/ListDialog";
 import { useMemo, useState } from "react";
 import { useRepositoryContext } from "../App/providers/RepositoryProvider";
-import { useProblemDetailDialog } from "../common/useProblemDetailDialog";
 import { useProblemStore } from "@/application/store/useProblemStore";
+import { useImportController } from "@/application/useImportControler";
 
 /////////////////////////////////////////////
 
@@ -24,17 +21,24 @@ export function DashboardScreen() {
     const toast = useToast()
     const repos = useRepositoryContext()
     const store = useProblemStore(repos.problem)
-    const problems = store.problems
-    const allTags = useMemo(
-        () => Array.from(new Set(problems.flatMap(p => p.tags))),
-        [problems]
-    )
+    //const problems = store.problems
     
-    const { openFileDialog, inputElement } = useImporter((files: File[]) => {
+    const importController = useImportController(async (files: File[]) => {
+        await reloadStores()
+        toast({message: `imported ${files.length} file`})
+    })
+    //const importDialog = useImportDialog()
+
+    /*
+    const { openFileDialog, inputElement } = useImportFilePicker(async (files: File[]) => {
+        //const importer = createImportProblemsUsecase(repos.problem)
+        //await importer.importFiles(files)
+        importDialog.openDialog()
         reloadStores()
         toast({message: `imported ${files.length} file`})
-    })    
-    const [open, setOpen] = useState(false)
+    })
+        */    
+    const [openListDialog, setOpenListDialog] = useState(false)
     const deleteAll = () => {
         repos.problem.removeAll()
         reloadStores()
@@ -52,10 +56,10 @@ export function DashboardScreen() {
             }
             rightActions={
                 <>
-                    <Button onClick={() => setOpen(true)} sx={{color: "white"}}>
+                    <Button onClick={() => setOpenListDialog(true)} sx={{color: "white"}}>
                         リスト
                     </Button>
-                    <IconButton onClick={openFileDialog}>
+                    <IconButton onClick={importController.openFileDialog}>
                         <AddOutlinedIcon sx={{ color: "#fff" }} />
                     </IconButton>
                 </>
@@ -63,16 +67,16 @@ export function DashboardScreen() {
             
             <DashboardFilterControl 
                 filter={query.filterState}
-                allTags={allTags}
+                allTags={store.allTags}
                 onToggleFilter={query.toggleFilter}
                 onSetFilter={query.setFilter}/>
             <SummaryView summary={missionSummary}/>
 
-            {inputElement}
+            {importController.pickerElement} { importController.dialogElement}
             
             <ListDialog
-                open={open}
-                onClose={() => setOpen(false)}
+                open={openListDialog}
+                onClose={() => setOpenListDialog(false)}
                 problemIds={problemIds}
                 onSelectProblem={()=>{}}
             />

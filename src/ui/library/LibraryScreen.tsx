@@ -11,7 +11,7 @@ import { useMemo, useState } from "react";
 import { useRepositoryContext } from "../App/providers/RepositoryProvider";
 import { useProblemStore } from "@/application/store/useProblemStore";
 import { useLearningEventStore } from "@/application/store/useLearningEventStore";
-import { useImporter } from "@/application/useImporter";
+import { useImportFilePicker } from "@/application/useImportFilePicker";
 import { useMissionEventStoreContext } from "../App/providers/MissionEventStoreProvider";
 import { AppLayout } from "../common/AppLayout";
 import { Fab, IconButton } from "@mui/material";
@@ -20,6 +20,7 @@ import { useProblemDetailDialog } from "../common/useProblemDetailDialog";
 import type { Problem, ProblemId } from "@/domain/problem/Problem";
 import { useViewerDialog } from "../viewer/ViewDialog";
 import { useMultipleProblemsTagEditDialog } from "../common/MultipleProblemsTagEditDialog";
+import { useImportController } from "@/application/useImportControler";
 
 //////////////////////////////////////////////////
 // LibraryScreen.tsx
@@ -38,7 +39,7 @@ export function LibraryScreen() {
         await repos.problem.update(p)
         await problemStore.reload()
     }) // TODO
-    
+    /*
     const handleApplyEditTags = async (ids: ProblemId[], addTag: string|undefined, removeTags: string[]|undefined) => {
         for (const id of ids) {
             const p = problemStore.findById(id)
@@ -49,7 +50,7 @@ export function LibraryScreen() {
             //await repos.problem.update(p.setTags(nextTags))
         }        
         await problemStore.reload()
-    }
+    }*/
     const handleUpdateProblems = async (problems: Problem[]) => {
         for (const p of problems) {
             await repos.problem.update(p)
@@ -70,7 +71,11 @@ export function LibraryScreen() {
     const checkboxControl = useLibraryCheckbox(libraryItems.map(p => p.id))
     const toast = useToast()
     //const navigate = useNavigate()
-    const importer = useImporter((files: File[]) => { problemStore.reload() })
+    //const importer = useImportFilePicker((files: File[]) => { problemStore.reload() })
+    const importer = useImportController(async (files: File[]) => {
+        await problemStore.reload()
+        toast({message: `imported ${files.length} file`})
+     })
 
     const handlers = {
         //view: { onViewProblem: (id: string) => navigate(`/view/${id}`) },
@@ -106,7 +111,10 @@ export function LibraryScreen() {
             onCheckAll: checkboxControl.checkAll,
             onUncheckAll: checkboxControl.uncheckAll,
             onToggleChecked: checkboxControl.toggleChecked,
-            onToggleCheckboxMode: () => setCheckboxMode(prev => !prev)
+            onToggleCheckboxMode: () => {
+                setCheckboxMode(prev => !prev)
+                checkboxControl.uncheckAll()
+            }
         }
     }
 
@@ -135,7 +143,8 @@ export function LibraryScreen() {
                     selection={selection}
                 />
             </AppLayout>
-            {importer.inputElement}
+            {importer.pickerElement}
+            {importer.dialogElement}
             {viewerDialog.dialogElement}
             {detailDialog.dialogElement}
             {tagEditDialog.dialogElement}
