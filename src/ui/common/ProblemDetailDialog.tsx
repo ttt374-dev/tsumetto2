@@ -39,13 +39,16 @@ export default function ProblemDetailDialog({
     const problem = store.findById(problemId)
     useEffect(() => {
         if (open && problem) {
-            setTags(problem.tags ?? [])
+            setTags(problem.tags as string[] ?? [])
         }
     }, [open, problem?.tags])
     const learningStore = useLearningEventStore(repo.learningEvent)
     const learning = learningStore.records[problemId]
+    
+    const [tags, setTags] = useState<string[]>(
+        () => problem?.tags ? [...problem.tags] : []
+    )
 
-    const [tags, setTags] = useState<string[]>(problem?.tags ?? [])
     const allTags = Array.from(
         new Set(store.problems.flatMap(p => p.tags))
     )

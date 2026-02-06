@@ -3,7 +3,6 @@ import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 
 import { LibraryView } from "./components/LibraryView";
 import { useToast } from "../App/providers/ToastProvider";
-import { useNavigate } from "react-router-dom";
 import { useLibraryCheckbox } from "./hooks/useLibraryCheckbox";
 import { useLibraryQueryContext } from "../App/providers/QueryProvider";
 import { applyQuery } from "@/domain/problem/query/applyQuery";
@@ -11,11 +10,8 @@ import { useMemo, useState } from "react";
 import { useRepositoryContext } from "../App/providers/RepositoryProvider";
 import { useProblemStore } from "@/application/store/useProblemStore";
 import { useLearningEventStore } from "@/application/store/useLearningEventStore";
-import { useImportFilePicker } from "@/application/useImportFilePicker";
-import { useMissionEventStoreContext } from "../App/providers/MissionEventStoreProvider";
 import { AppLayout } from "../common/AppLayout";
 import { Fab, IconButton } from "@mui/material";
-import { useMissionEventStore } from "@/application/store/useMissionEventStore";
 import { useProblemDetailDialog } from "../common/useProblemDetailDialog";
 import type { Problem, ProblemId } from "@/domain/problem/Problem";
 import { useViewerDialog } from "../viewer/ViewDialog";
@@ -55,16 +51,13 @@ export function LibraryScreen() {
         for (const p of problems) {
             await repos.problem.update(p)
         }
-
-        //await repos.problem.update(p)
-        await problemStore.reload()
-        
+        await problemStore.reload()        
     }
 
     const tagEditDialog = useMultipleProblemsTagEditDialog(handleUpdateProblems)
 
-    const libraryItems = useMemo(
-        () => applyQuery(problems, learningRecords, query.sortState, query.filterState),
+    const libraryItems = useMemo(() => 
+        applyQuery(problems, learningRecords, query.sortState, query.filterState),
         [problems, learningRecords, query.sortState, query.filterState]
     )
 
@@ -143,6 +136,8 @@ export function LibraryScreen() {
                     selection={selection}
                 />
             </AppLayout>
+
+            { /* ダイアログ */}
             {importer.pickerElement}
             {importer.dialogElement}
             {viewerDialog.dialogElement}

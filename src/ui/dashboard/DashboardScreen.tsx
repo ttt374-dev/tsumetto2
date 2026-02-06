@@ -16,33 +16,18 @@ import { useImportController } from "@/application/useImportControler";
 /////////////////////////////////////////////
 
 export function DashboardScreen() {
-    const { query, missionSummary, problemIds, reloadStores } = useFilterProblems()
+    const { query, missionSummary, problemIds } = useFilterProblems()
     const { start } = useMissionEventStoreContext()
     const toast = useToast()
     const repos = useRepositoryContext()
     const store = useProblemStore(repos.problem)
-    //const problems = store.problems
     
     const importController = useImportController(async (files: File[]) => {
-        await reloadStores()
+        await store.reload()
         toast({message: `imported ${files.length} file`})
     })
-    //const importDialog = useImportDialog()
-
-    /*
-    const { openFileDialog, inputElement } = useImportFilePicker(async (files: File[]) => {
-        //const importer = createImportProblemsUsecase(repos.problem)
-        //await importer.importFiles(files)
-        importDialog.openDialog()
-        reloadStores()
-        toast({message: `imported ${files.length} file`})
-    })
-        */    
     const [openListDialog, setOpenListDialog] = useState(false)
-    const deleteAll = () => {
-        repos.problem.removeAll()
-        reloadStores()
-    }
+
     return (
         <AppLayout
             header={ "Dashboard"}

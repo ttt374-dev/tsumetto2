@@ -2,6 +2,8 @@ import { v4 } from 'uuid'
 import { KifData, type KifDataDTO } from '../kif/types'
 import { parseKif } from '../kif/parser/parseKif'
 
+export type Tags = readonly string[]
+
 export type ProblemData = {
     id: string
     title: string
@@ -31,7 +33,7 @@ export class Problem {
         readonly kifData: KifData,
         readonly createdAt: number,
         readonly starred: boolean,
-        readonly tags: string[],
+        readonly tags: Tags,
     ) { }
 
     // 生成時
@@ -47,7 +49,7 @@ export class Problem {
             kifData: this.kifData.toDTO(),
             createdAt: this.createdAt,
             starred: this.starred,
-            tags: this.tags,
+            tags: [...this.tags],
         }
     }
 
