@@ -12,8 +12,7 @@ import { useMemo, useState } from "react";
 import { useRepositoryContext } from "../App/providers/RepositoryProvider";
 import { useProblemStore } from "@/application/store/useProblemStore";
 import { useImportController } from "@/application/useImportControler";
-import type { ImportFilesResult, ImportResult } from "@/usecase/importProblemsUseCase";
-
+import type { ImportFilesResult, ImportResult } from "@/usecase/importProblemsUsecase";
 /////////////////////////////////////////////
 
 export function DashboardScreen() {

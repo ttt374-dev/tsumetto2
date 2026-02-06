@@ -1,5 +1,6 @@
 import AddIcon from "@mui/icons-material/Add"
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
+import BackupIcon from "@mui/icons-material/Backup";
 
 import { LibraryView } from "./components/LibraryView";
 import { useToast } from "../App/providers/ToastProvider";
@@ -17,13 +18,15 @@ import type { Problem, ProblemId } from "@/domain/problem/Problem";
 import { useViewerDialog } from "../viewer/ViewDialog";
 import { useMultipleProblemsTagEditDialog } from "../common/MultipleProblemsTagEditDialog";
 import { useImportController } from "@/application/useImportControler";
-import type { ImportFilesResult, ImportResult } from "@/usecase/importProblemsUseCase";
+import type { ImportFilesResult, ImportResult } from "@/usecase/importProblemsUsecase";
+import BackupRestoreDialog from "../common/BackupRestoreDialog";
 
 //////////////////////////////////////////////////
 // LibraryScreen.tsx
 
 export function LibraryScreen() {
     const [checkboxMode, setCheckboxMode] = useState(false)
+    const [backupDialogOpen, setBackupDialogOpen] = useState(false);
     const repos = useRepositoryContext()
     const problemStore = useProblemStore(repos.problem)
     const problems = problemStore.problems
@@ -68,8 +71,7 @@ export function LibraryScreen() {
     //const importer = useImportFilePicker((files: File[]) => { problemStore.reload() })
     const importer = useImportController(async (res: ImportFilesResult) => {
         await problemStore.reload()
-        toast({message: `imported: ${res.summary.imported}, skipped: ${res.summary.skipped}, failed: ${res.summary.failed}`})
-        
+        toast({message: `imported: ${res.summary.imported}, skipped: ${res.summary.skipped}, failed: ${res.summary.failed}`})        
      })
 
     const handlers = {
@@ -118,16 +120,20 @@ export function LibraryScreen() {
         isChecked: checkboxControl.isChecked,
         isCheckboxMode: checkboxMode
     }
-
     
     return (
         <>
             <AppLayout
-                header="Library"                
+                header="Library"
                 rightActions={
-                    <IconButton onClick={handlers.import.onOpenImportFileDialog}>
-                        <AddOutlinedIcon sx={{ color: "#fff" }}/>
-                    </IconButton>
+                    <>
+                        <IconButton onClick={() => setBackupDialogOpen(true)}>
+                            <BackupIcon  sx={{ color: "#fff" }}/>
+                        </IconButton>
+                        <IconButton onClick={handlers.import.onOpenImportFileDialog}>
+                            <AddOutlinedIcon sx={{ color: "#fff" }} />
+                        </IconButton>
+                    </>
                 }
             >
                 <LibraryView
@@ -145,6 +151,8 @@ export function LibraryScreen() {
             {viewerDialog.dialogElement}
             {detailDialog.dialogElement}
             {tagEditDialog.dialogElement}
+            <BackupRestoreDialog open={backupDialogOpen}
+                onClose={() => { setBackupDialogOpen(false); problemStore.reload()}} />
         </>
     )
 }

@@ -51,6 +51,9 @@ export class ProblemRepository {
     async removeAll(): Promise<void>{
         await this.save([])
     }
+    async replaceAll(problems: Problem[]){
+        await this.save(problems)
+    }
 }
 
 
@@ -76,10 +79,10 @@ export class FileProblemPersistence implements ProblemPersistence {
                     ? result.data
                     : await result.data.text()
             const dtos: ProblemDTO[] = JSON.parse(dataStr)
-            dtos.map(dto => {
-                const p = Problem.fromDTO(dto)
-
-            })
+            //dtos.map(dto => {
+            //    const p = Problem.fromDTO(dto)
+            //
+            //})
             return dtos.map(dto =>
                 Problem.fromDTO(dto)
             )

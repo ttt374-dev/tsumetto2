@@ -1,5 +1,6 @@
 import { Filesystem, Directory, Encoding } from "@capacitor/filesystem";
-import type { LearningEvent } from "./LearningEvent";
+import type { LearningEvent, LearningEventLog } from "./LearningEvent";
+import type { LearningRecord } from "../learning/Learning";
 
 
 export class LearningEventRepository {
@@ -31,6 +32,9 @@ export class LearningEventRepository {
     }
     async removeAll(){
         await this.store.save([])
+    }
+    async replaceAll(events: LearningEventLog){
+        await this.store.save(events)
     }
 }
 ////////////////////////////////////

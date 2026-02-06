@@ -1,6 +1,6 @@
 import { useRepositoryContext } from "@/ui/App/providers/RepositoryProvider"
 import { useFileSelector } from "@/ui/sharedComponents/useFileSelector"
-import { createImportProblemsUsecase } from "@/usecase/importProblemsUseCase"
+import { createImportProblemsUsecase } from "@/usecase/importProblemsUsecase"
 import { useState } from "react"
 
 export function useImportFilePicker(onFilesSelected: (files: File[]) => void){    
