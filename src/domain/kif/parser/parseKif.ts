@@ -1,11 +1,11 @@
 import type { Result } from "@/application/result";
 import { Board, Position, Hands, KifData, type Handicap, type KifHeader } from "../types"
-import type { ParseError, ParseMoveLinesError } from "./ParseError";
+import type { ParseError, ParseInitialBoardError, ParseMoveLinesError } from "./ParseError";
 import { parseHand } from "./parseHand";
 import { parseInitialBoard } from "./parseInitialPosition"
 import { parseMoves } from "./parseMove"
 
-type ParseKifResult = Result<KifData, ParseError|ParseMoveLinesError>
+type ParseKifResult = Result<KifData, ParseError>
   
 export function parseKif(text: string): ParseKifResult {
     const lines = text.split(/\r?\n/)
@@ -17,11 +17,14 @@ export function parseKif(text: string): ParseKifResult {
     let inMoves = false
 
     for (const line of lines) {
-        if (line.startsWith("手数----指手---------消費時間--")) {
+        const trimmed = line.trim()
+        if (!trimmed) continue
+        //if (line.startsWith("手数----指手---------消費時間--")) {
+        if (line.includes("指手") && line.includes("消費時間")) {
             inMoves = true
             continue
         }
-        if (!line.trim()) continue
+        //if (!line.trim()) continue
 
         if (!inMoves) {
             const m = line.match(/^(.+?)：(.+)$/)
@@ -36,12 +39,13 @@ export function parseKif(text: string): ParseKifResult {
         }
 
     }
-    if (!inMoves) return { ok: false, error: { code: "no-valid-splitter"}}
+    if (!inMoves) return { ok: false, error: { code: "missing-move-section"}}
 
 
     //const handicap = headers["手合割"]     
-    const board = parseInitialBoard(initialPositionLines) ?? Board.create()            
-    
+    const resboard = parseInitialBoard(initialPositionLines)
+    if (!resboard.ok) return { ok: false, error:resboard.error}
+    const board = resboard.value.kind === "board" ? resboard.value.board : Board.create()
     
     //console.log("後手の持ち駒", headers["後手の持駒"])
     const resBlack = parseHand(headers["先手の持駒"])
@@ -50,6 +54,7 @@ export function parseKif(text: string): ParseKifResult {
     if (!resWhite.ok) return { ok: false, error: resWhite.error}
 
     const hands = Hands.create(resBlack.value, resWhite.value)
+    
     const initialPosition = new Position(board, hands, "black")
     const resMoves = parseMoves(moveLines, initialPosition)
     if (!resMoves.ok) return { ok: false, error: resMoves.error }

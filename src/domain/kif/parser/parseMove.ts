@@ -2,35 +2,40 @@ import type { Result } from "@/application/result"
 import { Position, kanjiToPieceItem, Move, type KifData, type KifHeader, type PieceType, type Player, type Square } from "../types"
 import type { ParseError, ParseMoveLinesError } from "./ParseError"
 
-type ParseMoveResult = 
-    | { status: "parsed", value: Move}
-    | { status: "skipped", reason: "empty-line" | "resign"}
-    | { status: "error", error: ParseError }
+type SkipReason = "empty-line" | "comment-out" | "resign"
 
+type ParseMoveOutcome =
+  | { kind: "move"; move: Move }
+  | { kind: "skip"; reason: SkipReason }
+
+type ParseMoveResult = Result<ParseMoveOutcome, ParseError>
 type ParseMoveLinesResult = Result<Move[], ParseMoveLinesError>
 
 export function parseMoves(lines: string[], initial: Position): ParseMoveLinesResult {
-    let state = initial
+    //let state = initial
     const moves: Move[] = []
     let prevSquare: Square | undefined = undefined
 
     for (let i = 0; i < lines.length; i++) {
     //for (const line of lines){
         const res = parseMoveLine(lines[i], prevSquare)
-        switch (res.status){
-            case "parsed":
-                moves.push(res.value)
-                prevSquare = res.value.to        
-                break
-            case "error":
-                return { ok: false, error: { moveError: res.error, line: i+1, text: lines[i]}}
-        }
+        if (!res.ok) return { ok: false, error: { moveError: res.error, line: i+1, text: lines[i]}}
+        if (res.value.kind !== "move") continue        
+        moves.push(res.value.move)
+        prevSquare = res.value.move.to
     }
 
     return { ok: true, value: moves }
 }
 export function parseMoveLine(line: string, prevSquare?: Square): ParseMoveResult {
     const trimmed = line.trim()
+
+    if (trimmed === "") {
+        return { ok: true, value: { kind: "skip", reason: "empty-line" } }
+    }
+    if (trimmed.startsWith("*")) {
+        return { ok: true, value: { kind: "skip", reason: "comment-out" } }
+    }
 
     // ① thinkingTime（行末）
     const timeMatch = trimmed.match(/\s+\(([^)]*)\)$/)
@@ -42,13 +47,13 @@ export function parseMoveLine(line: string, prevSquare?: Square): ParseMoveResul
 
     // ② plyIndex（先頭）
     const plyMatch = withoutTime.match(/^(\d+)\s+(.*)$/)    
-    if (!plyMatch) return { status: "error", error: { code: "invalid-move-body", cause: line}}
+    if (!plyMatch) return { ok: false, error: { code: "invalid-move-body", cause: line}}
 
     //const plyIndex = Number(plyMatch[1])
     const rawText = plyMatch[2]
 
     //console.log("pasre moveline", rawText)
-    if (rawText.startsWith("投了")) return { status: "skipped", reason: "resign"}
+    if (rawText.startsWith("投了")) return { ok: true, value: { kind: "skip", reason: "resign"}}
     if (rawText.includes("打")) {
         return parseDropMove(rawText, )
     } else {
@@ -60,42 +65,48 @@ export function parseMoveLine(line: string, prevSquare?: Square): ParseMoveResul
 
 function parseDropMove(text: string): ParseMoveResult {
     // 例: "５五桂打"
-    const m = text.match(/(.)(.)(.+?)打/)
-    if (!m) return { status: "error", error: { code: "invalid-move-body", cause: text}}
+    //const m = text.match(/(.)(.)(.+?)打/)
+    const m = text.match(/^(.)(.)([^打]+)打$/)
+    if (!m) return { ok: false, error: { code: "invalid-move-body", cause: text}}
 
-    const file = kanjiToFile(m[1])
-    const rank = kanjiToRank(m[2])
+    const resfile = kanjiToFile(m[1])
+    const resrank = kanjiToRank(m[2])
     const pieceItem = kanjiToPieceItem[m[3]]
+    if (!pieceItem) {
+        return { ok: false, error: { code: "unknown-piece-kanji", cause: m[3] } }
+    }
     const { type, promoted } = pieceItem
 
-    return { status: "parsed", value: new Move(null, { file, rank }, type, false, text)}
+    if (!resfile.ok) return { ok: false, error: resfile.error}
+    if (!resrank.ok) return { ok: false, error: resrank.error}
+    const to = { file: resfile.value, rank: resrank.value }
+    return { ok: true, value: { kind: "move", move: new Move(null, to, type, false, text)}}
 }
 
-function parseNormalMove(rawtext: string, prevSquare?: Square): ParseMoveResult {    
-    
+function parseNormalMove(rawtext: string, prevSquare?: Square): ParseMoveResult {        
     // ７六歩(77)
     const mr = rawtext.match(/^(..)(.+)\((\d\d)\)$/)
-    if (!mr) throw new Error("invalid body")
+    if (!mr) return { ok: false, error: { code: "invalid-move-body", cause: rawtext}}
     const [_, toText, piecetypeText, fromText] = mr
 
     //console.log("parse normal move", toText, piecetypeText, fromText, rawtext)
     const resTo = parseTo(toText, prevSquare)
-    if (!resTo.ok) return { status: "error", error: resTo.error}
+    if (!resTo.ok) return { ok: false, error: resTo.error}
     //const pieceKey = parsePieceType(piecetypeText)
     const resFrom = parseFrom(fromText)
-    if (!resFrom.ok) return { status: "error", error: resFrom.error}
+    if (!resFrom.ok) return { ok: false, error: resFrom.error}
     
     //const { pieceType, promote} = parsePieceType(piecetypeText)
     const resPiece = parsePieceType(piecetypeText)
-    if (!resPiece.ok) return { status: "error", error: resPiece.error}
+    if (!resPiece.ok) return { ok: false, error: resPiece.error}
     //console.log("parsemove", rawtext, pieceType, promote, prevSquare)
-    return { status: "parsed", value: new Move(
+    return { ok: true, value: { kind: "move", move: new Move(
         resFrom.value,
         resTo.value,
         resPiece.value.pieceType,
         resPiece.value.promote,
         rawtext
-    )}
+    )}}
 }
 
 type ParseSquareResult = Result<Square, ParseError>
@@ -108,11 +119,13 @@ function parseTo(text: string, prevSquare?: Square): ParseSquareResult {
         if (!prevSquare) return { ok: false, error: { code: "no-previous-square-given", cause: text}}
         return  { ok: true, value: prevSquare}
     }
+    const resfile = kanjiToFile(m[1])
+    const resrank = kanjiToRank(m[2])
+    
+    if (!resfile.ok) return { ok: false, error: resfile.error}
+    if (!resrank.ok) return { ok: false, error: resrank.error}
     return {
-        ok: true, value: {
-            file: kanjiToFile(m[1]),
-            rank: kanjiToRank(m[2])
-        }
+        ok: true, value: {file: resfile.value, rank: resrank.value }
     }
 
 }
@@ -125,10 +138,10 @@ function parsePieceType(text: string): ParsePieceTypeResult {
         t = text.slice(0, -2)
     } else if (t.endsWith("成")){
         t = text.slice(0, 1)
-        console.log("成", text)
+        //console.log("成", text)
         promoteIntent = true
     }
-    if (["打", "右", "左", "引", "直", "寄", "上"].some(s => t.endsWith(s))) {
+    while (["打", "右", "左", "引", "直", "寄", "上"].some(s => t.endsWith(s))) {
         t = t.slice(0, -1)
     }
     const pieceItem = kanjiToPieceItem[t] // misdisambiguish の処理
@@ -152,11 +165,16 @@ function parseFrom(text: string): ParseSquareResult {
         rank: Number(rankText),
     }}
 }
-function kanjiToFile(k: string): number {
-    return "１２３４５６７８９".indexOf(k) + 1
+function kanjiToFile(k: string): Result<number, ParseError> {
+    //return "１２３４５６７８９".indexOf(k) + 1
+    const i = "１２３４５６７８９".indexOf(k)
+    if (i === -1) return { ok: false, error: { code: "invalid-number-kanji", cause: k } }
+    return { ok: true, value: i + 1 }
 }
 
-function kanjiToRank(k: string): number {
-    return "一二三四五六七八九".indexOf(k) + 1
+function kanjiToRank(k: string): Result<number, ParseError> {
+    const i = "一二三四五六七八九".indexOf(k)
+    if (i === -1) return { ok: false, error: { code: "invalid-number-kanji", cause: k } }
+    return { ok: true, value: i + 1 }
 }
 
