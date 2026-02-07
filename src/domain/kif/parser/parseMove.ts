@@ -1,6 +1,6 @@
 import type { Result } from "@/application/result"
 import { Position, kanjiToPieceItem, Move, type KifData, type KifHeader, type PieceType, type Player, type Square } from "../types"
-import type { ParseError, ParseMoveLinesError } from "./ParseError"
+import type { ParseError, ParseMoveError } from "./ParseError"
 
 type SkipReason = "empty-line" | "comment-out" | "resign"
 
@@ -8,10 +8,10 @@ type ParseMoveOutcome =
   | { kind: "move"; move: Move }
   | { kind: "skip"; reason: SkipReason }
 
-type ParseMoveResult = Result<ParseMoveOutcome, ParseError>
-type ParseMoveLinesResult = Result<Move[], ParseMoveLinesError>
+type ParseMoveResult = Result<ParseMoveOutcome, ParseMoveError>
 
-export function parseMoves(lines: string[], initial: Position): ParseMoveLinesResult {
+
+export function parseMoves(lines: string[], initial: Position): Result<Move[], ParseMoveError> {
     //let state = initial
     const moves: Move[] = []
     let prevSquare: Square | undefined = undefined
@@ -19,7 +19,7 @@ export function parseMoves(lines: string[], initial: Position): ParseMoveLinesRe
     for (let i = 0; i < lines.length; i++) {
     //for (const line of lines){
         const res = parseMoveLine(lines[i], prevSquare)
-        if (!res.ok) return { ok: false, error: { moveError: res.error, line: i+1, text: lines[i]}}
+        if (!res.ok) return { ok: false, error: res.error}
         if (res.value.kind !== "move") continue        
         moves.push(res.value.move)
         prevSquare = res.value.move.to
@@ -109,7 +109,7 @@ function parseNormalMove(rawtext: string, prevSquare?: Square): ParseMoveResult 
     )}}
 }
 
-type ParseSquareResult = Result<Square, ParseError>
+type ParseSquareResult = Result<Square, ParseMoveError>
 
 function parseTo(text: string, prevSquare?: Square): ParseSquareResult {
     const m = text.match(/(.)(.)/)
@@ -129,7 +129,7 @@ function parseTo(text: string, prevSquare?: Square): ParseSquareResult {
     }
 
 }
-type ParsePieceTypeResult = Result<{pieceType: PieceType, promote: boolean}, ParseError>
+type ParsePieceTypeResult = Result<{pieceType: PieceType, promote: boolean}, ParseMoveError>
 
 function parsePieceType(text: string): ParsePieceTypeResult {
     let t = text
@@ -165,14 +165,14 @@ function parseFrom(text: string): ParseSquareResult {
         rank: Number(rankText),
     }}
 }
-function kanjiToFile(k: string): Result<number, ParseError> {
+function kanjiToFile(k: string): Result<number, ParseMoveError> {
     //return "１２３４５６７８９".indexOf(k) + 1
     const i = "１２３４５６７８９".indexOf(k)
     if (i === -1) return { ok: false, error: { code: "invalid-number-kanji", cause: k } }
     return { ok: true, value: i + 1 }
 }
 
-function kanjiToRank(k: string): Result<number, ParseError> {
+function kanjiToRank(k: string): Result<number, ParseMoveError> {
     const i = "一二三四五六七八九".indexOf(k)
     if (i === -1) return { ok: false, error: { code: "invalid-number-kanji", cause: k } }
     return { ok: true, value: i + 1 }

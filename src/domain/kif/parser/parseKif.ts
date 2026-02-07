@@ -1,6 +1,6 @@
 import type { Result } from "@/application/result";
 import { Board, Position, Hands, KifData, type Handicap, type KifHeader } from "../types"
-import type { ParseError, ParseInitialBoardError, ParseMoveLinesError } from "./ParseError";
+import type { ParseError } from "./ParseError";
 import { parseHand } from "./parseHand";
 import { parseInitialBoard } from "./parseInitialPosition"
 import { parseMoves } from "./parseMove"
