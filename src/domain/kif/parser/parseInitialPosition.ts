@@ -34,7 +34,6 @@ function extractBoardBodyLines(lines: string[]): string[] | null {
   return body;
 }
 
-
 //////////////////////////////////
 
 export function createBoardStateFromKif(boardLines: string[]): Board {
@@ -67,13 +66,6 @@ export function createBoardStateFromKif(boardLines: string[]): Board {
       board = board.set(file, rank, piece)
       //console.log("parse board", file, rank, piece.type, piece.promoted, piece.owner)
 
-
-      /*
-      board[rank][file] = {
-        key: name as PieceTypeKey,
-        owner: isWhite ? "white" : "black",
-      };
-      */
     }
   }
   //const hands = Hands.empty()  // TODO
@@ -82,21 +74,3 @@ export function createBoardStateFromKif(boardLines: string[]): Board {
   //board.dump()
   return board
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

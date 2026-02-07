@@ -1,31 +1,29 @@
 // backupRestoreUsecase.ts
 
-import type { LearningRecord } from "@/domain/learning/Learning"
+import type { Result } from "@/application/result"
 import type { LearningEventLog } from "@/domain/LearningEvent"
 import type { LearningEventRepository } from "@/domain/LearningEvent/LearningEventRepository"
 import { Problem, type ProblemDTO } from "@/domain/problem/Problem"
 import type { ProblemRepository } from "@/domain/problem/ProblemRepository"
 
-export type Result<T, E> =
-  | { ok: true; value: T }
-  | { ok: false; error: E}
+
 
 export type BackupResult = Result<BackupResultOk, BackupRestoreError>
-export type BackupResultOk = {
-  filename: string
-  problemCount: number
-  learningCount: number
-}
 
-export type RestoreResultOk = {
+type ResultCount = {
     problemCount: number
-  learningCount: number
+    learningCount: number
 }
+export type BackupResultOk = {
+    filename: string
+} & ResultCount
+
+export type RestoreResultOk = ResultCount
 export type BackupRestoreError =
-| { code: "file-io-error", message?: string}
-  | { code: "invalid-format" }
-  | { code: "parse-failed"; cause?: unknown }
-  | { code: "persist-failed"; cause?: unknown }
+    | { code: "file-io-error" }
+    | { code: "invalid-format" }
+    | { code: "parse-failed"; cause?: unknown }
+    | { code: "persist-failed"; cause?: unknown }
 
 export type RestoreResult = Result<RestoreResultOk, BackupRestoreError>
 ///////////////////////////
@@ -53,12 +51,12 @@ export function createBackupRestoreUsecase(
             let learnings: LearningEventLog
             let backupData: BackupData
             let json: string
-            
+
             try {
                 problems = await problemRepo.load()
                 learnings = await learningRepo.load()
-            } catch (e){
-                return { ok: false, error: { code: "persist-failed"}}
+            } catch (e) {
+                return { ok: false, error: { code: "persist-failed" } }
             }
 
             try {
@@ -68,39 +66,39 @@ export function createBackupRestoreUsecase(
                 }
                 json = JSON.stringify(backupData, null, 2)
             } catch (e) {
-                return { ok: false, error: { code: "parse-failed"}}
-            }            
+                return { ok: false, error: { code: "parse-failed" } }
+            }
             try {
-                
+
                 await writer.write(json, filename)
             } catch (e) {
-                return { ok: false, error: { code: "file-io-error"} }
+                return { ok: false, error: { code: "file-io-error" } }
             }
             return {
                 ok: true,
-                value: { 
-                    filename: filename, 
+                value: {
+                    filename: filename,
                     problemCount: problems.length,
                     learningCount: learnings.length,
                 }
             }
         },
 
-        async restore(backupData: BackupData): Promise<RestoreResult> {            
+        async restore(backupData: BackupData): Promise<RestoreResult> {
             if (!backupData.problem || !backupData.learning) {
-                    return { ok: false, error: { code: "invalid-format"} }
+                return { ok: false, error: { code: "invalid-format" } }
             }
             let problems: Problem[]
             try {
                 problems = backupData.problem.map(dto => Problem.fromDTO(dto))
-            } catch (e){
-                return { ok: false, error: { code: "parse-failed"}}
+            } catch (e) {
+                return { ok: false, error: { code: "parse-failed" } }
             }
             try {
                 await problemRepo.replaceAll(problems)
                 await learningRepo.replaceAll(backupData.learning)
-            } catch (e){
-                return { ok: false, error: { code: "persist-failed"}}
+            } catch (e) {
+                return { ok: false, error: { code: "persist-failed" } }
             }
 
             return {

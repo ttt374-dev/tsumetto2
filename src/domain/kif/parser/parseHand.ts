@@ -1,8 +1,16 @@
+import type { Result } from "@/application/result"
 import { Hand, kanjiToPieceItem, type PieceType } from "../types"
+import type { ParseError } from "./ParseError"
 
-export function parseHand(handStr: string): Hand {
+
+
+export type ParseHandResult = Result<Hand, ParseError>
+
+export function parseHand(handStr: string): ParseHandResult {
     const counts: Partial<Record<PieceType, number>> = {}
-    if (!handStr || handStr === "なし") return Hand.empty()
+    if (!handStr || handStr === "なし") return {
+        ok: true, value: Hand.empty()
+    }
 
     const str = handStr.replace(/\s/g, '')
 
@@ -15,7 +23,8 @@ export function parseHand(handStr: string): Hand {
         const numStr = match[2]
 
         const item = kanjiToPieceItem[kanji]
-        if (!item) throw new Error(`Unknown piece kanji: ${kanji}`)
+        //if (!item) throw new Error(`Unknown piece kanji: ${kanji}`)
+        if (!item) return { ok: false, error: { code: "unknown-piece-kanji", cause: {kanji}}}
 
         const n = numStr
             ? (/^[0-9]+$/.test(numStr)
@@ -29,7 +38,7 @@ export function parseHand(handStr: string): Hand {
         //console.log("parse hand", pieceType, counts[pieceType])
     }
 
-    return new Hand(counts)
+    return { ok: true, value: new Hand(counts) }
 }
 
 
