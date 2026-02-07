@@ -4,6 +4,7 @@ export type ParseError =
     | { code: "invalid-square", cause?: any}
     | { code: "no-previous-square-given", cause?: any}
     | { code: "unknown-piece-type", cause?: any}
+    | { code: "no-valid-splitter", cause?: any}
 
 export type ParseMoveLinesError = 
     {

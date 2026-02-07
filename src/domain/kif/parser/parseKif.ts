@@ -1,14 +1,13 @@
+import type { Result } from "@/application/result";
 import { Board, Position, Hands, KifData, type Handicap, type KifHeader } from "../types"
+import type { ParseError, ParseMoveLinesError } from "./ParseError";
 import { parseHand } from "./parseHand";
 import { parseInitialBoard } from "./parseInitialPosition"
 import { parseMoves } from "./parseMove"
 
-export type ParseResult<T> =
-  | { ok: true; value: T }
-  | { ok: false; message: string };
-
+type ParseKifResult = Result<KifData, ParseError|ParseMoveLinesError>
   
-export function parseKif(text: string): ParseResult<KifData> {
+export function parseKif(text: string): ParseKifResult {
     const lines = text.split(/\r?\n/)
 
     const headers: KifHeader = {}
@@ -37,7 +36,7 @@ export function parseKif(text: string): ParseResult<KifData> {
         }
 
     }
-    if (!inMoves) return { ok: false, message: "invalid format: no valid splitter"}
+    if (!inMoves) return { ok: false, error: { code: "no-valid-splitter"}}
 
 
     //const handicap = headers["手合割"]     
@@ -45,13 +44,16 @@ export function parseKif(text: string): ParseResult<KifData> {
     
     
     //console.log("後手の持ち駒", headers["後手の持駒"])
-    const hands = Hands.create(
-        parseHand(headers["先手の持駒"]),
-        parseHand(headers["後手の持駒"]),
-    )
+    const resBlack = parseHand(headers["先手の持駒"])
+    const resWhite = parseHand(headers["後手の持駒"])
+    if (!resBlack.ok) return { ok: false, error: resBlack.error}
+    if (!resWhite.ok) return { ok: false, error: resWhite.error}
+
+    const hands = Hands.create(resBlack.value, resWhite.value)
     const initialPosition = new Position(board, hands, "black")
-    const moves = parseMoves(moveLines, initialPosition)
-    const kifData = new KifData(headers, initialPosition, moves)
+    const resMoves = parseMoves(moveLines, initialPosition)
+    if (!resMoves.ok) return { ok: false, error: resMoves.error }
+    const kifData = new KifData(headers, initialPosition, resMoves.value)
     
     return { ok: true, value: kifData}
 }
