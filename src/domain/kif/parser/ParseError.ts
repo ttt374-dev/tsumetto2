@@ -1,4 +1,7 @@
-export type ParseError = ParseMoveError  | ParseInitialBoardError
+export type ParseError = 
+  | { domain: "move", detail: ParseMoveError}
+  | { domain: "board", detail: ParseInitialBoardError}
+  | { domain: "hand", detail: ParseHandError }
 
 export type ParseMoveError = 
     | { code: "unknown-piece-kanji", cause?: any}
@@ -13,15 +16,18 @@ export type ParseMoveError =
 export type ParseInitialBoardError =
   | { code: "no-board-section" }
   | { code: "invalid-board-format";}
-  | { code: "unknown-piece-kanji"; kanji: string }
+  | { code: "unknown-piece-kanji"; cause?: string }
   | { code: "unknown-piece", cause?: string}
   | { code: "board-not-closed" }
   | { code: "invalid-board-line-count"; actual: number }
   | { code: "invalid-board-row"; row: number }
 
+export type ParseHandError = 
+  | { code: "unknown-number-kanji"; cause?: string }
+  | { code: "invalid-hand-format", cause?: string}
 
 export type ParseErrorWithContext =  {
   error: ParseError,
   line: number
-  text?: string
+  text: string
 }

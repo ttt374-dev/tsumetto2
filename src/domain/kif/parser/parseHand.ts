@@ -1,10 +1,8 @@
 import type { Result } from "@/application/result"
 import { Hand, kanjiToPieceItem, type PieceType } from "../types"
-import type { ParseError } from "./ParseError"
+import type { ParseError, ParseHandError } from "./ParseError"
 
-
-
-export type ParseHandResult = Result<Hand, ParseError>
+export type ParseHandResult = Result<Hand, ParseHandError>
 
 export function parseHand(handStr: string): ParseHandResult {
     const counts: Partial<Record<PieceType, number>> = {}
@@ -13,6 +11,7 @@ export function parseHand(handStr: string): ParseHandResult {
     }
 
     const str = handStr.replace(/\s/g, '')
+    let consumed = ""
 
     // 正規表現：漢字1文字 + 数字または漢数字（0～2桁 or 一二三…十百）
     const regex = /([歩香桂銀金角馬飛])([0-9一二三四五六七八九十百]+)?/g
@@ -21,16 +20,18 @@ export function parseHand(handStr: string): ParseHandResult {
     while ((match = regex.exec(str)) !== null) {
         const kanji = match[1]
         const numStr = match[2]
+        consumed += match[0]
 
         const item = kanjiToPieceItem[kanji]
         //if (!item) throw new Error(`Unknown piece kanji: ${kanji}`)
-        if (!item) return { ok: false, error: { code: "unknown-piece-kanji", cause: {kanji}}}
+        if (!item) return { ok: false, error: { code: "unknown-number-kanji", cause: kanji}}
 
-        const n = numStr
-            ? (/^[0-9]+$/.test(numStr)
-                ? parseInt(numStr, 10)
-                : kanjiNumberToInt(numStr))
-            : 1
+        const nRes: Result<number, ParseHandError> = /^[0-9]+$/.test(numStr)
+                ? { ok: true, value: parseInt(numStr, 10)}
+                : kanjiNumberToInt(numStr)
+
+        if (!nRes.ok) return nRes // { ok: false, error: nRes.error }
+        const n = nRes.value
 
         // 成り駒は手駒にする場合、promoted を無視
         const pieceType = item.type
@@ -38,13 +39,14 @@ export function parseHand(handStr: string): ParseHandResult {
         //console.log("parse hand", pieceType, counts[pieceType])
     }
 
+    if (consumed !== str) {
+        return { ok: false, error: { code: "invalid-hand-format", cause: str } }
+    }
     return { ok: true, value: new Hand(counts) }
 }
 
-
-
-function kanjiNumberToInt(kanjiNum: string): number {
-    if (!kanjiNum) return 1
+function kanjiNumberToInt(kanjiNum: string): Result<number, ParseHandError> {
+    if (!kanjiNum) return { ok: false, error: { code: "unknown-number-kanji", cause: kanjiNum }}
 
     const kanjiMap: Record<string, number> = {
         '一': 1, '二': 2, '三': 3, '四': 4, '五': 5,
@@ -52,22 +54,24 @@ function kanjiNumberToInt(kanjiNum: string): number {
     }
 
     // 「十」「十一」～「十九」まで対応
-    if (kanjiNum === '十') return 10
+    if (kanjiNum === '十') return { ok: true, value: 10}
     if (kanjiNum.startsWith('十')) {
         const unit = kanjiMap[kanjiNum[1]] ?? 0
-        return 10 + unit
+        return { ok: true, value: 10 + unit}
     }
     if (kanjiNum.endsWith('十')) {
         const ten = kanjiMap[kanjiNum[0]] ?? 0
-        return ten * 10
+        return { ok: true, value: ten * 10}
     }
     if (kanjiNum.includes('十')) {
         const parts = kanjiNum.split('十')
         const ten = kanjiMap[parts[0]] ?? 1
         const unit = parts[1] ? kanjiMap[parts[1]] ?? 0 : 0
-        return ten * 10 + unit
+        return { ok: true, value: ten * 10 + unit}
     }
 
     // 単純な一桁
-    return kanjiMap[kanjiNum] ?? 1
+    const num = kanjiMap[kanjiNum]
+    if (!num) return { ok: false, error: { code: "unknown-number-kanji", cause: num.toString()}}
+    return { ok: true, value: num}
 }

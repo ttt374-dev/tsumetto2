@@ -1,5 +1,5 @@
 import type { Result } from "@/application/result"
-import { Position, kanjiToPieceItem, Move, type KifData, type KifHeader, type PieceType, type Player, type Square } from "../types"
+import { kanjiToPieceItem, Move, type PieceType, type Square } from "../types"
 import type { ParseError, ParseErrorWithContext, ParseMoveError } from "./ParseError"
 import { withContext } from "./ParseContext"
 
@@ -18,7 +18,7 @@ export function parseMoves(lines: string[]): Result<Move[], ParseErrorWithContex
     for (let i = 0; i < lines.length; i++) {
     //for (const line of lines){
         const res = parseMoveLine(lines[i], prevSquare)
-        if (!res.ok) return { ok: false, error: withContext(res.error, i+1, lines[i])}
+        if (!res.ok) return { ok: false, error: withContext( { domain: "move", detail: res.error}, i+1, lines[i])}
         if (res.value.kind !== "move") continue        
         moves.push(res.value.move)
         prevSquare = res.value.move.to
@@ -54,12 +54,11 @@ export function parseMoveLine(line: string, prevSquare?: Square): ParseMoveResul
     //console.log("pasre moveline", rawText)
     if (rawText.startsWith("投了")) return { ok: true, value: { kind: "skip", reason: "resign"}}
     if (rawText.includes("打")) {
-        return parseDropMove(rawText, )
+        return parseDropMove(rawText)
     } else {
         return parseNormalMove(rawText, prevSquare)        
         //return { status: "parsed", value: move}
-    }
- 
+    } 
 }
 
 function parseDropMove(text: string): ParseMoveResult {
@@ -74,7 +73,7 @@ function parseDropMove(text: string): ParseMoveResult {
     if (!pieceItem) {
         return { ok: false, error: { code: "unknown-piece-kanji", cause: m[3] } }
     }
-    const { type, promoted } = pieceItem
+    const { type } = pieceItem
 
     if (!resfile.ok) return { ok: false, error: resfile.error}
     if (!resrank.ok) return { ok: false, error: resrank.error}
@@ -88,17 +87,15 @@ function parseNormalMove(rawtext: string, prevSquare?: Square): ParseMoveResult 
     if (!mr) return { ok: false, error: { code: "invalid-move-body", cause: rawtext}}
     const [_, toText, piecetypeText, fromText] = mr
 
-    //console.log("parse normal move", toText, piecetypeText, fromText, rawtext)
     const resTo = parseTo(toText, prevSquare)
     if (!resTo.ok) return { ok: false, error: resTo.error}
-    //const pieceKey = parsePieceType(piecetypeText)
+
     const resFrom = parseFrom(fromText)
     if (!resFrom.ok) return { ok: false, error: resFrom.error}
     
-    //const { pieceType, promote} = parsePieceType(piecetypeText)
     const resPiece = parsePieceType(piecetypeText)
     if (!resPiece.ok) return { ok: false, error: resPiece.error}
-    //console.log("parsemove", rawtext, pieceType, promote, prevSquare)
+
     return { ok: true, value: { kind: "move", move: new Move(
         resFrom.value,
         resTo.value,
