@@ -57,7 +57,7 @@ export function parseKif(text: string): ParseKifResult {
     
     const initialPosition = new Position(board, hands, "black")
     const resMoves = parseMoves(moveLines, initialPosition)
-    if (!resMoves.ok) return { ok: false, error: resMoves.error }
+    if (!resMoves.ok) return { ok: false, error: resMoves.error.error }
     const kifData = new KifData(headers, initialPosition, resMoves.value)
     
     return { ok: true, value: kifData}

@@ -20,7 +20,8 @@ export type ParseInitialBoardError =
   | { code: "invalid-board-row"; row: number }
 
 
-export type ParseErrorWithContext = ParseError & {
+export type ParseErrorWithContext =  {
+  error: ParseError,
   line: number
   text?: string
 }

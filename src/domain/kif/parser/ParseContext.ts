@@ -19,20 +19,10 @@ export type ParseContext = {
   warnings: ParseWarning[];
 }
 
-function withLine<T>(
-  ctx: ParseContext,
-  fn: () => Result<T, ParseError>
-): Result<T, ParseErrorWithContext> {
-  const res = fn()
-  if (!res.ok) {
-    return {
-      ok: false,
-      error: {
-        ...res.error,
-        line: ctx.lineIndex + 1,
-        text: ctx.currentLine
-      }
-    }
-  }
-  return res
+export function withContext(
+  error: ParseError,
+  line: number,
+  text?: string
+): ParseErrorWithContext {
+  return { error, line, text }
 }

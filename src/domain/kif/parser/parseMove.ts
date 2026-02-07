@@ -1,6 +1,7 @@
 import type { Result } from "@/application/result"
 import { Position, kanjiToPieceItem, Move, type KifData, type KifHeader, type PieceType, type Player, type Square } from "../types"
-import type { ParseError, ParseMoveError } from "./ParseError"
+import type { ParseError, ParseErrorWithContext, ParseMoveError } from "./ParseError"
+import { withContext } from "./ParseContext"
 
 type SkipReason = "empty-line" | "comment-out" | "resign"
 
@@ -10,8 +11,7 @@ type ParseMoveOutcome =
 
 type ParseMoveResult = Result<ParseMoveOutcome, ParseMoveError>
 
-
-export function parseMoves(lines: string[], initial: Position): Result<Move[], ParseMoveError> {
+export function parseMoves(lines: string[], initial: Position): Result<Move[], ParseErrorWithContext> {
     //let state = initial
     const moves: Move[] = []
     let prevSquare: Square | undefined = undefined
@@ -19,7 +19,7 @@ export function parseMoves(lines: string[], initial: Position): Result<Move[], P
     for (let i = 0; i < lines.length; i++) {
     //for (const line of lines){
         const res = parseMoveLine(lines[i], prevSquare)
-        if (!res.ok) return { ok: false, error: res.error}
+        if (!res.ok) return { ok: false, error: withContext(res.error, i+1, lines[i])}
         if (res.value.kind !== "move") continue        
         moves.push(res.value.move)
         prevSquare = res.value.move.to
