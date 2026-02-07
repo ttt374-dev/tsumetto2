@@ -24,6 +24,7 @@ export type ParseInitialBoardError =
 
 export type ParseHandError = 
   | { code: "unknown-number-kanji"; cause?: string }
+  | { code: "unknown-piece-kanji"; cause?: string }
   | { code: "invalid-hand-format", cause?: string}
 
 export type ParseErrorWithContext =  {

@@ -41,7 +41,6 @@ export function parseKif(text: string): ParseKifResult {
     }
     if (!inMoves) return { ok: false, error: { domain: "move", detail: { "code": "missing-move-section"}}}
 
-
     //const handicap = headers["手合割"]     
     const resboard = parseInitialBoard(initialPositionLines)
     if (!resboard.ok) return { ok: false, error: { domain: "board", detail: resboard.error}}

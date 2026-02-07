@@ -22,7 +22,7 @@ export type ParseContext = {
 export function withContext(
   error: ParseError,
   line: number,
-  text?: string
+  text: string
 ): ParseErrorWithContext {
   return { error, line, text }
 }

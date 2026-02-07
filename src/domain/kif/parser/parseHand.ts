@@ -24,11 +24,15 @@ export function parseHand(handStr: string): ParseHandResult {
 
         const item = kanjiToPieceItem[kanji]
         //if (!item) throw new Error(`Unknown piece kanji: ${kanji}`)
-        if (!item) return { ok: false, error: { code: "unknown-number-kanji", cause: kanji}}
+        if (!item) return { ok: false, error: { code: "unknown-piece-kanji", cause: kanji}}
 
-        const nRes: Result<number, ParseHandError> = /^[0-9]+$/.test(numStr)
-                ? { ok: true, value: parseInt(numStr, 10)}
-                : kanjiNumberToInt(numStr)
+        const nRes: Result<number, ParseHandError> =
+            numStr == null
+                ? { ok: true, value: 1 }
+                : /^[0-9]+$/.test(numStr)
+                    ? { ok: true, value: parseInt(numStr, 10) }
+                    : kanjiNumberToInt(numStr)
+
 
         if (!nRes.ok) return nRes // { ok: false, error: nRes.error }
         const n = nRes.value
@@ -70,8 +74,6 @@ function kanjiNumberToInt(kanjiNum: string): Result<number, ParseHandError> {
         return { ok: true, value: ten * 10 + unit}
     }
 
-    // 単純な一桁
-    const num = kanjiMap[kanjiNum]
-    if (!num) return { ok: false, error: { code: "unknown-number-kanji", cause: num.toString()}}
-    return { ok: true, value: num}
+    // 単純な一桁    
+    return { ok: true, value: kanjiMap[kanjiNum]}
 }
