@@ -11,8 +11,7 @@ type ParseMoveOutcome =
 
 type ParseMoveResult = Result<ParseMoveOutcome, ParseMoveError>
 
-export function parseMoves(lines: string[], initial: Position): Result<Move[], ParseErrorWithContext> {
-    //let state = initial
+export function parseMoves(lines: string[]): Result<Move[], ParseErrorWithContext> {
     const moves: Move[] = []
     let prevSquare: Square | undefined = undefined
 
