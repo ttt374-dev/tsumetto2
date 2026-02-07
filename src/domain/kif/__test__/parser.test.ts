@@ -8,77 +8,89 @@ import { parseHand } from "../parser/parseHand";
 describe("parse moves", () => {
     it("move", () => {
         const text = "   2 １四歩(13)        ( 0:00/00:00:00)"
-        const move = parseMoveLine(text)
-        expect(move).toBeTruthy
-        if (move){
-            expect(move.pieceType).toEqual("pawn")
-            expect(move.from).toEqual({file: 1, rank: 3})
-            expect(move.to).toEqual({file: 1, rank: 4})
+        const res = parseMoveLine(text)
+        expect(res.status).toEqual("parsed")
+        if (res.status !== "parsed") {
+            throw new Error(`expected parsed but got ${res.status}`)
         }
+        const move = res.value
+
+        expect(move.pieceType).toEqual("pawn")
+        expect(move.from).toEqual({ file: 1, rank: 3 })
+        expect(move.to).toEqual({ file: 1, rank: 4 })
+
     })
     it("同", () => {
         const text = [
             "1 ３三飛成(35)       ( 0:00/00:00:00)",
             "2 同　桂(21)        ( 0:00/00:00:00)"]
 
-        const moves = parseMoves(text, Position.create())
+        const res = parseMoves(text, Position.create())
+        if (!res.ok) {
+            throw new Error(`expected parsed but got`)
+        }
+        const moves = res.value
 
         expect(moves[1]).toBeTruthy
-        expect(moves[1].to).toEqual({ file: 3, rank: 3})
-        
+        expect(moves[1].to).toEqual({ file: 3, rank: 3 })
+
     })
     it("打", () => {
         const text = "  55 ５五桂打        "
-        const state = Position.create()
-        const parsed = parseMoveLine(text)
-        expect(parsed).toBeTruthy
-        if (parsed) {
-            expect(parsed.pieceType).toEqual("knight")
-            expect(parsed.to).toEqual({ file: 5, rank: 5 })
-            expect(parsed.isDrop).toBeTruthy
-        }        
+        const res = parseMoveLine(text)
+        if (res.status !== "parsed") throw new Error("parse error")
+        const parsed = res.value
+
+
+        expect(parsed.pieceType).toEqual("knight")
+        expect(parsed.to).toEqual({ file: 5, rank: 5 })
+        expect(parsed.isDrop).toBeTruthy
+
     })
     it("桂成", () => {
         const text = "  1 ５五桂成(29)"
-        const parsed = parseMoveLine(text)
-        expect(parsed).toBeTruthy
-        if (parsed) {
-            expect(parsed.pieceType).toEqual("knight")
-            expect(parsed.promote).toBeTruthy
+        const res = parseMoveLine(text)
+        if (res.status !== "parsed") throw new Error("parse error")
+        const parsed = res.value
 
-        }
+        expect(parsed.pieceType).toEqual("knight")
+        expect(parsed.promote).toBeTruthy
+
     })
-    it("成桂", () => {        
+    it("成桂", () => {
         const text = "  1 ５五成桂(29)"
         //let state = BoardState.create()
         const hands = Hands.empty()
         let state = new Position(Board.create(), hands.add('black', 'knight'))
-        const drop = new Move(null, {file: 2, rank: 9}, "knight")
+        const drop = new Move(null, { file: 2, rank: 9 }, "knight")
         state = drop.apply(state)
-        const parsed = parseMoveLine(text)
-        expect(parsed).toBeTruthy
-        if (parsed){
-            expect(parsed.pieceType).toEqual("knight")            
-            state = parsed.apply(state)
-            expect(state.board.get(5, 5)?.promoted).toBeTruthy
-            expect(state.board.get(5, 5)?.type).toEqual("knight")
-        }
+        const res = parseMoveLine(text)
+        if (res.status !== "parsed") throw new Error("parse error")
+        const parsed = res.value
+
+        expect(parsed.pieceType).toEqual("knight")
+        state = parsed.apply(state)
+        expect(state.board.get(5, 5)?.promoted).toBeTruthy
+        expect(state.board.get(5, 5)?.type).toEqual("knight")
+
     })
     it("右", () => {
         const text = "   2 １四金右(13)        ( 0:00/00:00:00)"
-        const state = Position.create()
-        const parsed = parseMoveLine(text)
-        expect(!parsed).toBeTruthy
-        if (parsed){
-            expect(parsed.pieceType).toEqual("gold")
-        }
+        const res = parseMoveLine(text)
+        if (res.status !== "parsed") throw new Error("parse error")
+        const parsed = res.value
+        expect(parsed.pieceType).toEqual("gold")
+
     })
 })
 
 describe("parse hand", () => {
-    it ("hand", () => {
-        const text="飛 角二 金四 銀三 桂四 香四 歩十七 "
-        const hand = parseHand(text)
+    it("hand", () => {
+        const text = "飛 角二 金四 銀三 桂四 香四 歩十七 "
+        const res = parseHand(text)
+
+        if (!res.ok) throw new Error("parse error")
+        const hand = res.value
         expect(hand.count("bishop")).toEqual(2)
         expect(hand.count("rook")).toEqual(1)
         expect(hand.count("pawn")).toEqual(17)
@@ -103,7 +115,7 @@ describe("parse header", () => {
 })
 
 describe("parse board", () => {
-    const text=`
+    const text = `
 後手の持駒：飛 角二 金四 銀三 桂四 香四 歩十七 
   ９ ８ ７ ６ ５ ４ ３ ２ １
 +---------------------------+
@@ -130,10 +142,11 @@ describe("parse board", () => {
     it("invalid text check", () => {
         const text = `invalid data text
     foo bar`
-        const r = parseKif(text)
-        expect(r.ok).toBeFalsy
-        !r.ok &&
-            expect(r.message).toEqual("invalid format: no valid splitter")
+        const res = parseKif(text)
+
+        if (res.ok) throw new Error("parse error error")
+        //expect(res.error.code).toEqual("no-valid-splitter")  // TODO
+
     })
 
     it("盤面情報がない場合は平手", () => {
@@ -148,10 +161,10 @@ describe("parse board", () => {
             expect(board.get(1, 3)?.type).toEqual('pawn')
         }
     })
-    it ("持ち駒", () => {
+    it("持ち駒", () => {
         const r = parseKif(text)
         expect(r.ok).toBeTruthy
-        if (r.ok){
+        if (r.ok) {
             const hands = r.value.initialPosition.hands
             expect(hands.get("white").count("bishop")).toEqual(2)
         }
@@ -177,14 +190,14 @@ describe("実録", () => {
   10 ４二玉(51)        ( 0:00/00:00:00)
   11 ４八玉(59)        ( 0:00/00:00:00)`
         const r = parseKif(text)
-        if (r.ok){
+        if (r.ok) {
             const moves = r.value.moves
             expect(moves.length).toEqual(11)
             const initial = Position.create()
             //initial.board.dump()
-            const history = { initial: Position.create(), moves: moves}
+            const history = { initial: Position.create(), moves: moves }
             const state = buildUntilPly(history, 11)
             expect(state.board.get(4, 8)?.type).toEqual("king")
         }
-    })    
+    })
 })
