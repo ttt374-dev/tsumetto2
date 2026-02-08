@@ -9,15 +9,14 @@ describe("parse moves", () => {
     it("move", () => {
         const text = "   2 １四歩(13)        ( 0:00/00:00:00)"
         const res = parseMoveLine(text)
-        expect(res.status).toEqual("parsed")
-        if (res.status !== "parsed") {
-            throw new Error(`expected parsed but got ${res.status}`)
-        }
-        const move = res.value
+        expect(res.ok).toBeTruthy
+        if (!res.ok || res.value.kind === "skip") {
+            throw new Error(`expected parsed but got`)
+        }       
 
-        expect(move.pieceType).toEqual("pawn")
-        expect(move.from).toEqual({ file: 1, rank: 3 })
-        expect(move.to).toEqual({ file: 1, rank: 4 })
+        expect(res.value.move.pieceType).toEqual("pawn")
+        expect(res.value.move.from).toEqual({ file: 1, rank: 3 })
+        expect(res.value.move.to).toEqual({ file: 1, rank: 4 })
 
     })
     it("同", () => {
@@ -25,7 +24,7 @@ describe("parse moves", () => {
             "1 ３三飛成(35)       ( 0:00/00:00:00)",
             "2 同　桂(21)        ( 0:00/00:00:00)"]
 
-        const res = parseMoves(text, Position.create())
+        const res = parseMoves(text)
         if (!res.ok) {
             throw new Error(`expected parsed but got`)
         }
@@ -38,23 +37,24 @@ describe("parse moves", () => {
     it("打", () => {
         const text = "  55 ５五桂打        "
         const res = parseMoveLine(text)
-        if (res.status !== "parsed") throw new Error("parse error")
-        const parsed = res.value
+        if (!res.ok || res.value.kind === "skip") {
+            throw new Error(`expected parsed but got`)
+        }    
 
-
-        expect(parsed.pieceType).toEqual("knight")
-        expect(parsed.to).toEqual({ file: 5, rank: 5 })
-        expect(parsed.isDrop).toBeTruthy
+        expect(res.value.move.pieceType).toEqual("knight")
+        expect(res.value.move.to).toEqual({ file: 5, rank: 5 })
+        expect(res.value.move.isDrop).toBeTruthy
 
     })
     it("桂成", () => {
         const text = "  1 ５五桂成(29)"
         const res = parseMoveLine(text)
-        if (res.status !== "parsed") throw new Error("parse error")
-        const parsed = res.value
+        if (!res.ok || res.value.kind === "skip") {
+            throw new Error(`expected parsed but got`)
+        }
 
-        expect(parsed.pieceType).toEqual("knight")
-        expect(parsed.promote).toBeTruthy
+        expect(res.value.move.pieceType).toEqual("knight")
+        expect(res.value.move.promote).toBeTruthy
 
     })
     it("成桂", () => {
@@ -65,11 +65,12 @@ describe("parse moves", () => {
         const drop = new Move(null, { file: 2, rank: 9 }, "knight")
         state = drop.apply(state)
         const res = parseMoveLine(text)
-        if (res.status !== "parsed") throw new Error("parse error")
-        const parsed = res.value
+        if (!res.ok || res.value.kind === "skip") {
+            throw new Error(`expected parsed but got`)
+        }
 
-        expect(parsed.pieceType).toEqual("knight")
-        state = parsed.apply(state)
+        expect(res.value.move.pieceType).toEqual("knight")
+        state = res.value.move.apply(state)
         expect(state.board.get(5, 5)?.promoted).toBeTruthy
         expect(state.board.get(5, 5)?.type).toEqual("knight")
 
@@ -77,9 +78,10 @@ describe("parse moves", () => {
     it("右", () => {
         const text = "   2 １四金右(13)        ( 0:00/00:00:00)"
         const res = parseMoveLine(text)
-        if (res.status !== "parsed") throw new Error("parse error")
-        const parsed = res.value
-        expect(parsed.pieceType).toEqual("gold")
+        if (!res.ok || res.value.kind === "skip") {
+            throw new Error(`expected parsed but got`)
+        }
+        expect(res.value.move.pieceType).toEqual("gold")
 
     })
 })

@@ -1,17 +1,12 @@
-import { Navigate, useNavigate, useParams } from "react-router-dom";
-import { useReplayController } from "../player/useReplayController";
-import { KifData } from "@/domain/kif/types";
-import PlayerView from "../player/components/PlayerView";
-import { useProblemStore } from "@/application/store/useProblemStore";
-import { useRepositoryContext } from "../App/providers/RepositoryProvider";
-import { useProblemDetailDialog } from "../common/useProblemDetailDialog";
-import { Problem, type ProblemId } from "@/domain/problem/Problem";
-import { useShowMovesController } from "../player/PlayerScreen";
-import { PlayerFooterActions } from "../player/components/PlayerFooterActions";
-import type { SolvedResult } from "@/domain/MissionEvent/MissionSummary";
-import { useLearningEventStore } from "@/application/store/useLearningEventStore";
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 import { useState } from "react";
+
+import { useReplayController } from "@/ui/player/useReplayController";
+import PlayerView, { type PlayerViewHandlers } from "@/ui/player/components/PlayerView";
+import { useProblemStore } from "@/application/store/useProblemStore";
+import { useRepositoryContext } from "@/ui/App/providers/RepositoryProvider";
+import { Problem, type ProblemId } from "@/domain/problem/Problem";
+import { useShowMovesController } from "@/ui/player/PlayerScreen";
 
 export function useViewerDialog(){
     const [open, setOpen] = useState(false)
@@ -37,13 +32,14 @@ export function ViewerDialog({ problem, open, onClose }: {
     const replay = useReplayController(initialPosition, moves)
     const showMovesController = useShowMovesController(problem.id, replay.plyIndex)
     
-    const handlers = {
+    const handlers:  PlayerViewHandlers = {
          ply: {
             advance: replay.advancePly,
             retreat: replay.retreatPly,
             moveTo: replay.moveToPly
         },
-        showMoves: showMovesController.setShowMoves,
+        setShowMoves: showMovesController.setShowMoves,
+        navigation: { next: alert, prev: alert, moveTo: alert, }
     }
     return (
         <Dialog open={open} onClose={onClose} 

@@ -14,14 +14,14 @@ export type PlayerViewNavigationHandlers = {
     moveTo: (problemId: ProblemId) => void,
 }
 
-type PlayerViewHandlers = {
+export type PlayerViewHandlers = {
     ply: {
         advance: () => void,
         retreat: () => void,
         moveTo: (index: number) => void,        
     },
-    navigation?: PlayerViewNavigationHandlers,
-    setShowMoves?: (flag: boolean) => void,
+    navigation: PlayerViewNavigationHandlers,
+    setShowMoves: (flag: boolean) => void,
 }
 ///////////////////////////////////////////////////////////////
 function PlayerView({learning, position, moves, showMoves = true, tags, currentPlyIndex, handlers}: {
@@ -29,7 +29,7 @@ function PlayerView({learning, position, moves, showMoves = true, tags, currentP
     moves: Move[],
     currentPlyIndex: number,    
     handlers: PlayerViewHandlers,    
-    showMoves?: boolean,
+    showMoves: boolean,
     learning?: Learning,
     tags: string[],
 }){
@@ -49,11 +49,11 @@ function PlayerView({learning, position, moves, showMoves = true, tags, currentP
                     {showMoves ?
                         <MovesView moves={moves} currentPlyIndex={currentPlyIndex} onMoveToPly={handlers.ply.moveTo} />
                         : (<Stack>
-                            <Button onClick={() => handlers.setShowMoves?.(true)} >
+                            <Button onClick={() => handlers.setShowMoves(true)} >
                                 手筋を表示
                             </Button>
                             <Box>{moves.length}手詰め</Box>
-                            <Box>Tags: { tags.join(",")}</Box>
+                            <Box>{ tags.join(",")}</Box>
 
                         </Stack>)
                     }

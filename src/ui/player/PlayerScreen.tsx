@@ -1,3 +1,4 @@
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 import StarIcon from "@mui/icons-material/Star"
 import StarBorderIcon from "@mui/icons-material/StarBorder"
 import { useEffect, useMemo, useState } from "react"
@@ -14,6 +15,7 @@ import { AppLayout } from "../common/AppLayout"
 import { Button, IconButton } from "@mui/material"
 import { useProblemStore } from "@/application/store/useProblemStore"
 import type { SolvedResult } from "@/domain/MissionEvent/MissionSummary"
+import { RightActionsDrawer } from "./components/RightActionsDrawer";
 
 export function useShowMovesController(problemId: ProblemId | undefined, plyIndex: number) {
     const [showMoves, setShowMoves] = useState(false)
@@ -94,6 +96,7 @@ export function PlayerScreenContent({ problem, problemIds,
     //console.log("titleprefx", titlePrefix)
 
     const [openListDialog, setOpenListDialog] = useState(false)
+    const [openActionDrawer, setOpenActionDrawer] = useState(false)
     const title = `${titlePrefix}${problem.title}`
 
     const handleAnswer = async (solvedResult: SolvedResult, secToTaken?: number) => {
@@ -114,7 +117,7 @@ export function PlayerScreenContent({ problem, problemIds,
             moveTo: replay.moveToPly
         },
         navigation: navigationHandlers,        
-        //showMoves: showMovesController.setShowMoves,
+        setShowMoves: showMovesController.setShowMoves,
     }
     return (
         <AppLayout
@@ -133,6 +136,9 @@ export function PlayerScreenContent({ problem, problemIds,
                     <Button onClick={() => setOpenListDialog(true)} sx={{ color: "#fff" }}>
                         リスト
                     </Button>
+                    <IconButton onClick={() => setOpenActionDrawer(true)}>
+                        <MoreVertIcon sx={{color: "white"}}/>
+                    </IconButton>
                 </>
             }
         >
@@ -156,6 +162,12 @@ export function PlayerScreenContent({ problem, problemIds,
                 }}
                 problemIds={problemIds}
                 currentProblemId={problem.id}
+            />
+            <RightActionsDrawer 
+                isOpen={openActionDrawer}
+                onClose={()=>setOpenActionDrawer(false)}
+                onOpenDetailDialog={() => detailDialog.openDialog(problem.id)}
+                onOpenListDialog={() => setOpenListDialog(true)}
             />
         </AppLayout>
     )
