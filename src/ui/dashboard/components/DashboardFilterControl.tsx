@@ -24,9 +24,9 @@ export function DashboardFilterControl({ filter, allTags, onToggleFilter, onSetF
                         onChange={() => { onToggleFilter("starredOnly") }} />}
                     label="スターのみ" />
                 <FormControlLabel control={
-                    <Checkbox checked={filter.isMissionTarget}
-                        onChange={() => { onToggleFilter("isMissionTarget") }} />}
-                    label="ミッションのみ" />
+                    <Checkbox checked={filter.dueForReviewOnly}
+                        onChange={() => { onToggleFilter("dueForReviewOnly") }} />}
+                    label="レビュー対象のみ" />
             </Paper>
             <MateLengthCheckboxes
                 mateBuckets={filter.mateBuckets}

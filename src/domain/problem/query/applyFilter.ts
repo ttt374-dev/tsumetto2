@@ -21,7 +21,7 @@ export const applyFilter = (
 
         // ミッション対象
         (e) =>
-            !filter.isMissionTarget ||
+            !filter.dueForReviewOnly ||
             e.learning?.nextReviewedAt === undefined ||
             e.learning.nextReviewedAt <= now,
 

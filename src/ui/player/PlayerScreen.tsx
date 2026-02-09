@@ -87,7 +87,8 @@ export function PlayerScreenContent({ problem, problemIds,
         await repos.problem.update(problem.toggleStar())
         await problemStore.reload()
     }
-    const detailDialog = useProblemDetailDialog(() => {}, handleUpdateProblem)
+    const detailDialog = useProblemDetailDialog(() => {}, handleUpdateProblem, 
+    () => {navigationHandlers.next()})
     //console.log("playscre", problem, index, snapshot)
     //if (!index || !snapshot) return null
 
@@ -130,12 +131,6 @@ export function PlayerScreenContent({ problem, problemIds,
                     sx={{ color: "white" }}>
                         { starred ? <StarIcon/> : <StarBorderIcon/>}
                     </IconButton>
-                    <Button onClick={() => detailDialog.openDialog(problem.id)} sx={{ color: "#fff" }}>
-                        Detail
-                    </Button>
-                    <Button onClick={() => setOpenListDialog(true)} sx={{ color: "#fff" }}>
-                        リスト
-                    </Button>
                     <IconButton onClick={() => setOpenActionDrawer(true)}>
                         <MoreVertIcon sx={{color: "white"}}/>
                     </IconButton>

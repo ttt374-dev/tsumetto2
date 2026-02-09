@@ -9,7 +9,7 @@ export const LibraryQueryContext = createContext<QueryContextValue | null > (nul
 
 // mission
 export const MissionQueryProvider = ({children}: { children: ReactNode}) => {
-    const query = useQuery({filter: { isMissionTarget: true}})
+    const query = useQuery({filter: { dueForReviewOnly: true}})
     return (
         <MissionQueryContext.Provider value={query}>
             {children}

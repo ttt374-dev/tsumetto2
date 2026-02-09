@@ -165,6 +165,7 @@ export default function ProblemDetailDialog({
             </DialogContent>
             
             <DialogActions>
+                <Button color="error" onClick={handleDelete}>削除</Button>
                 { onViewProblem && <Button onClick={onViewProblem}>問題を見る</Button>} 
                 <Button onClick={handleCancel}>閉じる</Button>
             </DialogActions>

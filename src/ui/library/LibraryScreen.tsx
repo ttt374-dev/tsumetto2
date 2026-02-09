@@ -38,7 +38,8 @@ export function LibraryScreen() {
         async (p: Problem)=>{
         await repos.problem.update(p)
         await problemStore.reload()
-    }) // TODO
+    },  async ()=>{ await problemStore.reload()}
+) // TODO
     const backupRestoreDialog = useBackupRestoreDialog((res) => { 
         if (res.ok) problemStore.reload()})
     const handleUpdateProblems = async (problems: Problem[]) => {
@@ -83,7 +84,7 @@ export function LibraryScreen() {
                 if (!window.confirm("Are you sure to delete all?")) return
                 await repos.problem.removeAll()
                 await repos.learningEvent.removeAll()
-                problemStore.reload()
+                await problemStore.reload()
                 toast({ message: "Deleted all problems" })
             },
             onDeleteChecked: async () => {

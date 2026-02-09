@@ -8,7 +8,9 @@ import { useViewerDialog } from "../viewer/ViewDialog";
 
 export function useProblemDetailDialog(
     onViewProblem: (id: ProblemId) => void,
-    onUpdateProblem: (problem: Problem) => void){
+    onUpdateProblem: (problem: Problem) => void,
+    onAfterDeleteProblem?: () => void,
+){
     const [ open, setOpen] = useState(false)
     const [problem, setProblem] = useState<Problem|undefined>(undefined)
 
@@ -34,10 +36,10 @@ export function useProblemDetailDialog(
     const deleteProblem = async () => {
         if (!problem) return
         await repos.problem.remove(problem.id)
-        await store.reload()
+        onAfterDeleteProblem?.()
+        //await store.reload()
     }
-    const handleViewProblem = () => {
-        
+    const handleViewProblem = () => {        
         problem && onViewProblem(problem.id)
         //closeDialog()
     }

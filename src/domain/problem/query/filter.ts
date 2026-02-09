@@ -1,7 +1,7 @@
 export type FilterState = {
     text?: string;
     unansweredOnly: boolean;    
-    isMissionTarget: boolean,
+    dueForReviewOnly: boolean,
     starredOnly: boolean,
     tags?: string[],
 
@@ -13,7 +13,7 @@ export type FilterState = {
 export const DefaultFilterState: FilterState = {
     text: undefined,
     unansweredOnly: false,
-    isMissionTarget: false,
+    dueForReviewOnly: false,
     starredOnly: false,
 }
 
