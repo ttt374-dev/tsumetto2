@@ -1,3 +1,6 @@
+import SaveOutlinedIcon from "@mui/icons-material/SaveOutlined"
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline"
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline"
 import { Box, Button, IconButton, List, ListItem, Stack, type SelectChangeEvent,  } from "@mui/material";
 import { AppLayout } from "../common/AppLayout";
 import { useFilterProblems } from "./hooks/useFilterProblems";
@@ -14,112 +17,42 @@ import { v4 } from "uuid";
 import { DeckSelectMenu } from "./components/SelectDeckMenu";
 import { CreateDeckDialog } from "./components/CreateDeckDialog";
 import type { useQuery } from "@/application/useQuery";
+import { useDeckController } from "@/application/useDeckController";
+import { createFilterSnapshot, DEFAULT_DECK_ID } from "@/domain/deck/Deck";
 /////////////////////////////////////////////
 
-type FilterSnapshot = {
-  filterState: FilterState
-  // 将来用
-  // order?: ProblemOrder
-  // limit?: number
+
+function deepEqual(a: any, b: any): boolean {
+  if (a === b) return true
+  if (typeof a !== "object" || typeof b !== "object" || !a || !b)
+    return false
+
+  const keysA = Object.keys(a)
+  const keysB = Object.keys(b)
+  if (keysA.length !== keysB.length) return false
+
+  return keysA.every(key =>
+    deepEqual(a[key], b[key])
+  )
 }
-function createFilterSnapshot(query: ReturnType<typeof useMissionQueryContext>): FilterSnapshot {
-  return {
-    filterState: structuredClone(query.filterState)
-  }
-}
 
-const DEFAULT_DECK_ID = "default-id"
-const DEFAULT_DECK_NAME = "default"
-
-export type Deck = {
-  id: string
-  name: string
-  snapshot: FilterSnapshot
-  createdAt: Date
-}
-function useDashboard(query: ReturnType<typeof useQuery>){
-    const deckRepository = useRepositoryContext().deck
-    const [decks, setDecks] = useState<Deck[]>([])
-    const [selectedDeck, setSelectedDeck] = useState<Deck|null>(null)
-
-    // 起動時：default deck を読み込んで適用
-    // run once on mount: initialize default deck
-    useEffect(() => {
-        (async () => {
-            const deck = await ensureDefaultDeck()
-            await loadDecks()
-        })()
-    }, [])
-
-    const loadDecks = async () => {
-        const list = await deckRepository.list()
-        setDecks(list)
-    }
-
-
-    const ensureDefaultDeck = async () => {
-        let deck = await deckRepository.get(DEFAULT_DECK_ID)
-
-        if (!deck) {
-            deck = {
-                id: DEFAULT_DECK_ID,
-                name: DEFAULT_DECK_NAME,
-                snapshot: createFilterSnapshot(query),
-                createdAt: new Date(),
-            }
-            await deckRepository.save(deck)
-        }
-
-        setSelectedDeck(deck)
-        query.setFilter(deck.snapshot.filterState)
-        return deck
-    }
-    const selectDeck = (deck: Deck) => {
-        setSelectedDeck(deck)
-        query.setFilter(deck.snapshot.filterState)
-    }
-
-    // 保存ボタン
-    const saveDeck = async (deck: Deck) => {
-        await deckRepository.save(deck)
-        await loadDecks()
-        setSelectedDeck(deck)
-    }
-    const deleteDeck = async (deck: Deck) => {
-        if (deck.id === DEFAULT_DECK_ID) return
-
-        await deckRepository.delete(deck.id)
-
-        const nextDeck =
-            selectedDeck?.id === deck.id
-                ? await deckRepository.get(DEFAULT_DECK_ID)
-                : selectedDeck
-
-        await loadDecks()
-
-        if (nextDeck) {
-            setSelectedDeck(nextDeck)
-            query.setFilter(nextDeck.snapshot.filterState)
-        }
-    }
-
-
-    return { decks, selectedDeck, 
-        selectDeck, saveDeck, deleteDeck }
-}
 
 ////////////////////////////////
 export function DashboardScreen() {
     const { query, missionSummary, problemIds } = useFilterProblems()
     const { start } = useMissionEventStoreContext()
-    const repos = useRepositoryContext()
+            const repos = useRepositoryContext()
     const { allTags }= useProblemStore(repos.problem)
+
+
     const [openCreateDialog, setOpenCreateDialog] = useState(false)
 
-    const { decks, selectedDeck, 
-        selectDeck, saveDeck, deleteDeck} = useDashboard(query)
-    
-
+    const { decks, selectedDeck,
+        selectDeck, saveDeck, deleteDeck} = useDeckController(query)    
+    const isDirty = !deepEqual(
+        selectedDeck?.snapshot.filterState,
+        query.filterState
+    )
     const handleSaveDeck = async () => {
         if (!selectedDeck) return
 
@@ -139,7 +72,12 @@ export function DashboardScreen() {
     }    
     const handleDeleteDeck = () => {
         const deck = selectedDeck
-        if (!deck || !confirm(`プリセット「${deck.name}」を削除しますか？`)) return
+        if (!deck) return
+        if (deck.id === DEFAULT_DECK_ID) {
+            alert("デフォルトプリセットは削除できません")
+            return
+        }
+        if (!confirm(`プリセット「${deck.name}」を削除しますか？`)) return
         deleteDeck(deck)
     }
     return (
@@ -159,24 +97,25 @@ export function DashboardScreen() {
                 allTags={allTags}
                 onToggleFilter={query.toggleFilter}
                 onSetFilter={query.setFilter}/>
-            <SummaryView summary={missionSummary}/>
+            { `${missionSummary.problemCount}, ${missionSummary.solvedCount}:${missionSummary.failedCount}=${(missionSummary.accuracy*100).toFixed(0)}%`}
             
-            <DeckSelectMenu
-                decks={decks}
-                selectedDeckId={selectedDeck?.id}
-                onSelect={selectDeck}
-            />
-
             <Stack direction="row">
-                <Button onClick={handleSaveDeck}>
-                    保存
-                </Button>
-                <Button onClick={() => setOpenCreateDialog(true)}>
-                    新規
-                </Button>
-                <Button onClick={handleDeleteDeck}>
-                    削除
-                </Button>
+                <DeckSelectMenu
+                    decks={decks}
+                    selectedDeckId={selectedDeck?.id}
+                    onSelect={selectDeck}
+                />
+
+
+                <IconButton onClick={handleSaveDeck} disabled={!isDirty}>
+                    <SaveOutlinedIcon />
+                </IconButton>
+                <IconButton onClick={() => setOpenCreateDialog(true)}>
+                    <AddCircleOutlineIcon />
+                </IconButton>
+                <IconButton onClick={handleDeleteDeck}>
+                    <DeleteOutlineIcon />
+                </IconButton>
             </Stack>
 
             <CreateDeckDialog

@@ -1,3 +1,4 @@
+/*
 import { v4 } from "uuid"
 import type { useMissionEventStore } from "./store/useMissionEventStore"
 import type { MissionId } from "@/domain/MissionEvent/MissionEvent"
@@ -91,3 +92,4 @@ export class MissionCoordinator {
     })
   }
 }
+*/

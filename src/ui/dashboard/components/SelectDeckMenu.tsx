@@ -1,3 +1,4 @@
+import type { Deck } from "@/domain/deck/Deck";
 import { Box, Button, IconButton, List, ListItem, type SelectChangeEvent,  } from "@mui/material";
 import {
   MenuItem,
@@ -5,7 +6,6 @@ import {
   FormControl,
   InputLabel,
 } from "@mui/material"
-import type { Deck } from "../DashboardScreen"
 
 type DeckSelectMenuProps = {
   decks: Deck[]

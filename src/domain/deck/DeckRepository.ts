@@ -1,5 +1,6 @@
-import type { DeckId } from "@/application/missionCoordinator"
-import type { Deck } from "@/ui/dashboard/DashboardScreen"
+import type { Deck } from "./Deck"
+
+export type DeckId = string
 
 // domain/deck/DeckRepository.ts
 export interface DeckRepository {

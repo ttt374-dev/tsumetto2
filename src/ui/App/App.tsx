@@ -9,6 +9,7 @@ import { DashboardScreen } from '../dashboard/DashboardScreen';
 import { PlayerScreen } from '../player/PlayerScreen';
 import { SummaryScreen } from '../summary/SummaryScreen';
 import DecksScreen from '../decks/DecksScreen';
+import { DeckEditScreen } from '../decks/DeckEditScreen';
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
             </Route>
 
             <Route path="/decks" element={<DecksScreen />} />
+            <Route path="/deck/:id" element={<DeckEditScreen />} />
           </Route>
 
           <Route path="/library" element={<LibraryScreen />} />

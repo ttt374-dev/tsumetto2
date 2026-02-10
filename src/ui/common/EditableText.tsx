@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react"
-import { IconButton, TextField, Typography } from "@mui/material"
+import { IconButton, Stack, TextField, Typography } from "@mui/material"
 import DoneIcon from '@mui/icons-material/Done'
 import CloseIcon from '@mui/icons-material/Close'
 import EditIcon from '@mui/icons-material/Edit';
@@ -26,23 +26,23 @@ export function EditableText({initialText, onUpdateText }: Props) {
     }
     const inputRef = useRef<HTMLInputElement | null>(null)
 
-        useEffect(() => {
-            setText(initialText)
-        }, [initialText])
+    useEffect(() => {
+        setText(initialText)
+    }, [initialText])
     useEffect(() => {
         if (editing) {
             inputRef.current?.focus()
             //inputRef.current?.select() // ついでに全選択（おすすめ）
         }
     }, [editing])
-        const handleEdit = () => {
+    const handleEdit = () => {
         //setDraft(title); // 現在のタイトルで初期化
         setEditing(true);
     };
 
     return (
         editing ?
-            <>
+            <Stack direction="row">
                 <TextField
                     label="タイトル"
                     fullWidth
@@ -57,14 +57,14 @@ export function EditableText({initialText, onUpdateText }: Props) {
                     <CloseIcon />
                 </IconButton>
 
-            </>
-            : (<>
+            </Stack>
+            : (<Stack direction="row"  onClick={handleEdit}>
                 <Typography flexGrow={1}>{text}</Typography>
 
                 <IconButton onClick={handleEdit}>
                     <EditIcon />
                 </IconButton>
-            </>
+            </Stack>
             )
         )
     }
