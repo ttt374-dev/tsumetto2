@@ -1,4 +1,4 @@
-import { Box, Button, IconButton, List, ListItem, type SelectChangeEvent,  } from "@mui/material";
+import { Box, Button, IconButton, List, ListItem, Stack, type SelectChangeEvent,  } from "@mui/material";
 import { AppLayout } from "../common/AppLayout";
 import { useFilterProblems } from "./hooks/useFilterProblems";
 import { DashboardFilterControl } from "./components/DashboardFilterControl";
@@ -85,9 +85,27 @@ function useDashboard(query: ReturnType<typeof useQuery>){
         await loadDecks()
         setSelectedDeck(deck)
     }
+    const deleteDeck = async (deck: Deck) => {
+        if (deck.id === DEFAULT_DECK_ID) return
+
+        await deckRepository.delete(deck.id)
+
+        const nextDeck =
+            selectedDeck?.id === deck.id
+                ? await deckRepository.get(DEFAULT_DECK_ID)
+                : selectedDeck
+
+        await loadDecks()
+
+        if (nextDeck) {
+            setSelectedDeck(nextDeck)
+            query.setFilter(nextDeck.snapshot.filterState)
+        }
+    }
+
 
     return { decks, selectedDeck, 
-        selectDeck, saveDeck,}
+        selectDeck, saveDeck, deleteDeck }
 }
 
 ////////////////////////////////
@@ -99,7 +117,7 @@ export function DashboardScreen() {
     const [openCreateDialog, setOpenCreateDialog] = useState(false)
 
     const { decks, selectedDeck, 
-        selectDeck, saveDeck} = useDashboard(query)
+        selectDeck, saveDeck, deleteDeck} = useDashboard(query)
     
 
     const handleSaveDeck = async () => {
@@ -119,6 +137,11 @@ export function DashboardScreen() {
         })
         setOpenCreateDialog(false)
     }    
+    const handleDeleteDeck = () => {
+        const deck = selectedDeck
+        if (!deck || !confirm(`プリセット「${deck.name}」を削除しますか？`)) return
+        deleteDeck(deck)
+    }
     return (
         <AppLayout
             header={"Dashboard"}
@@ -143,13 +166,18 @@ export function DashboardScreen() {
                 selectedDeckId={selectedDeck?.id}
                 onSelect={selectDeck}
             />
-            
-            <Button onClick={handleSaveDeck}>
-                プリセットを保存
-            </Button>
-            <Button onClick={() => setOpenCreateDialog(true)}>
-                新規プリセットを作る
-            </Button>
+
+            <Stack direction="row">
+                <Button onClick={handleSaveDeck}>
+                    保存
+                </Button>
+                <Button onClick={() => setOpenCreateDialog(true)}>
+                    新規
+                </Button>
+                <Button onClick={handleDeleteDeck}>
+                    削除
+                </Button>
+            </Stack>
 
             <CreateDeckDialog
                 open={openCreateDialog}
