@@ -1,29 +1,19 @@
-import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import { Box, Button, IconButton, List, ListItem, type SelectChangeEvent,  } from "@mui/material";
-import {
-  MenuItem,
-  Select,
-  FormControl,
-  InputLabel,
-} from "@mui/material"
-
 import { AppLayout } from "../common/AppLayout";
 import { useFilterProblems } from "./hooks/useFilterProblems";
 import { DashboardFilterControl } from "./components/DashboardFilterControl";
 import { SummaryView } from "../summary/SummaryView";
 import { useMissionEventStoreContext } from "../App/providers/MissionEventStoreProvider";
 import { useToast } from "../App/providers/ToastProvider";
-import { ListDialog } from "../mission/ListDialog";
 import { useEffect, useMemo, useState } from "react";
 import { useRepositoryContext } from "../App/providers/RepositoryProvider";
 import { useProblemStore } from "@/application/store/useProblemStore";
 import type { FilterState } from "@/domain/problem/query/filter";
 import type { useMissionQueryContext } from "../App/providers/QueryProvider";
-import { DeckRepositoryImpl, LocalStorageDeckPersistence } from "@/domain/deck/DeckRepository";
 import { v4 } from "uuid";
-import DecksScreen from "../decks/DecksScreen";
 import { DeckSelectMenu } from "./components/SelectDeckMenu";
 import { CreateDeckDialog } from "./components/CreateDeckDialog";
+import type { useQuery } from "@/application/useQuery";
 /////////////////////////////////////////////
 
 type FilterSnapshot = {
@@ -47,39 +37,26 @@ export type Deck = {
   snapshot: FilterSnapshot
   createdAt: Date
 }
-function useDashboard(){
-    
-}
-
-////////////////////////////////
-export function DashboardScreen() {
-    const { query, missionSummary, problemIds } = useFilterProblems()
-    const { start } = useMissionEventStoreContext()
-    const repos = useRepositoryContext()
-    const { allTags }= useProblemStore(repos.problem)
-    //const deckRepository = new DeckRepositoryImpl(new LocalStorageDeckPersistence)
+function useDashboard(query: ReturnType<typeof useQuery>){
     const deckRepository = useRepositoryContext().deck
+    const [decks, setDecks] = useState<Deck[]>([])
     const [selectedDeck, setSelectedDeck] = useState<Deck|null>(null)
-    const [openCreateDialog, setOpenCreateDialog] = useState(false)
 
     // 起動時：default deck を読み込んで適用
+    // run once on mount: initialize default deck
     useEffect(() => {
-        loadDecks()
-        loadDefaultDeck()  
-        ensureDefaultDeck()      
+        (async () => {
+            const deck = await ensureDefaultDeck()
+            await loadDecks()
+        })()
     }, [])
-    const [decks, setDecks] = useState<Deck[]>([])
 
     const loadDecks = async () => {
-        deckRepository.list().then(setDecks)
+        const list = await deckRepository.list()
+        setDecks(list)
     }
-    const loadDefaultDeck = async () => {
-        console.log("load default deck")
-        const deck = await deckRepository.get(DEFAULT_DECK_ID)
-        if (!deck) return
 
-        query.setFilter(deck.snapshot.filterState)
-    }
+
     const ensureDefaultDeck = async () => {
         let deck = await deckRepository.get(DEFAULT_DECK_ID)
 
@@ -95,6 +72,11 @@ export function DashboardScreen() {
 
         setSelectedDeck(deck)
         query.setFilter(deck.snapshot.filterState)
+        return deck
+    }
+    const selectDeck = (deck: Deck) => {
+        setSelectedDeck(deck)
+        query.setFilter(deck.snapshot.filterState)
     }
 
     // 保存ボタン
@@ -103,6 +85,23 @@ export function DashboardScreen() {
         await loadDecks()
         setSelectedDeck(deck)
     }
+
+    return { decks, selectedDeck, 
+        selectDeck, saveDeck,}
+}
+
+////////////////////////////////
+export function DashboardScreen() {
+    const { query, missionSummary, problemIds } = useFilterProblems()
+    const { start } = useMissionEventStoreContext()
+    const repos = useRepositoryContext()
+    const { allTags }= useProblemStore(repos.problem)
+    const [openCreateDialog, setOpenCreateDialog] = useState(false)
+
+    const { decks, selectedDeck, 
+        selectDeck, saveDeck} = useDashboard(query)
+    
+
     const handleSaveDeck = async () => {
         if (!selectedDeck) return
 
@@ -119,11 +118,7 @@ export function DashboardScreen() {
             createdAt: new Date(),
         })
         setOpenCreateDialog(false)
-    }
-    const handleSelectDeck = (deck: Deck) => {
-        setSelectedDeck(deck)
-        query.setFilter(deck.snapshot.filterState)
-    }
+    }    
     return (
         <AppLayout
             header={"Dashboard"}
@@ -146,7 +141,7 @@ export function DashboardScreen() {
             <DeckSelectMenu
                 decks={decks}
                 selectedDeckId={selectedDeck?.id}
-                onSelect={handleSelectDeck}
+                onSelect={selectDeck}
             />
             
             <Button onClick={handleSaveDeck}>
