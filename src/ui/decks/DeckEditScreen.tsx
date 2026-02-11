@@ -1,24 +1,16 @@
-import SaveOutlinedIcon from "@mui/icons-material/SaveOutlined"
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline"
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline"
-
 import { useNavigate, useParams } from "react-router-dom";
+import DeleteIcon from '@mui/icons-material/Delete';
 import { AppLayout } from "../common/AppLayout";
-import { useMissionQueryContext } from "../App/providers/QueryProvider";
 import { useEffect, useState } from "react";
-import { useMissionEventStoreContext } from "../App/providers/MissionEventStoreProvider";
 import { useRepositoryContext } from "../App/providers/RepositoryProvider";
 import { useProblemStore } from "@/application/store/useProblemStore";
 import { Box, Button, IconButton, Stack } from "@mui/material";
-import { v4 } from "uuid";
-import { useFilterProblems } from "../dashboard/hooks/useFilterProblems";
 import { DashboardFilterControl } from "../dashboard/components/DashboardFilterControl";
-import { SummaryView } from "../summary/SummaryView";
-import { DeckSelectMenu } from "../dashboard/components/SelectDeckMenu";
-import { CreateDeckDialog } from "../dashboard/components/CreateDeckDialog";
 import { EditableText } from "../common/EditableText";
+import { createQuerySnapshot } from "@/domain/deck/Deck";
+import LibrarySortControl from "../library/components/LibrarySortControl";
+import { useQuery } from "@/application/useQuery";
 import { useDeckController } from "@/application/useDeckController";
-import { DEFAULT_DECK_ID, type FilterSnapshot } from "@/domain/deck/Deck";
 
 function deepEqual(a: any, b: any): boolean {
   if (a === b) return true
@@ -33,17 +25,12 @@ function deepEqual(a: any, b: any): boolean {
     deepEqual(a[key], b[key])
   )
 }
-function createFilterSnapshot(query: ReturnType<typeof useMissionQueryContext>): FilterSnapshot {
-  return {
-    filterState: structuredClone(query.filterState)
-  }
-}
-
 /////////////////////////////////////////////
 export function DeckEditScreen() {
     const { id } = useParams<{ id: string }>()
-    const { query, missionSummary, problemIds } = useFilterProblems()
-    const { decks, saveDeck, deleteDeck } = useDeckController(query)
+    //const { query, missionSummary, problemIds } = useFilterProblems()
+    const query = useQuery()
+    const { decks, loadDecks } = useDeckController()
     
     const repos = useRepositoryContext()
     const { allTags } = useProblemStore(repos.problem)
@@ -52,84 +39,87 @@ export function DeckEditScreen() {
     const deck = decks.find(d => d.id === id)
     const [name, setName] = useState<string>(deck?.name ?? "")
     useEffect(()=> {
-        setName(deck?.name ?? "")
+        if (deck){
+            setName(deck.name ?? "")
+            query.setFilterState(deck.snapshot.filterState)
+            query.setSortState(deck.snapshot.sortState)
+            console.log("edit deck", deck)
+        }
     }, [deck])
     //////////////
-    if (!id) return null
-    if (!deck) return null    
+    if (!id || !deck) return null
 
-    const isDirty = !deepEqual(
-        deck.snapshot.filterState,
-        query.filterState
-    )
     const handleSaveAndExit = async () => {
         if (!deck) return
 
         const newDeck = {
             ...deck,
             name: name,
-            snapshot: createFilterSnapshot(query),
+            snapshot: createQuerySnapshot(query),
         }
-        saveDeck(newDeck)
+        await repos.deck.save(newDeck)
+        await loadDecks()
         console.log("save and exit", newDeck)
         navigate(-1)
     }
     const handleDeleteDeck = async () => {        
         if (!deck) return
-        if (deck.id === DEFAULT_DECK_ID) {
-            alert("デフォルトプリセットは削除できません")
-            return
-        }
         if (!confirm(`プリセット「${deck.name}」を削除しますか？`)) return
-        await deleteDeck(deck)
+        await repos.deck.delete(deck.id)
+        await loadDecks()
         navigate(-1)
     }
     const handleUpdateName = (title: string) => {        
         console.log("updatename", title)
         setName(title)
     }
+    ///////////////////////////////////////////////////////////////////
     return (
         <AppLayout
             header={"Dashboard"}
             footer={
                 <Stack direction="row">
-                    <Button onClick={handleDeleteDeck}
-                    sx={{ height: 64 }}
-                    variant="contained" color="error" fullWidth>
-                        削除
-                    </Button>
-                <Button onClick={handleSaveAndExit}
-                    sx={{ height: 64 }}
-                    variant="contained" fullWidth
+                    <Button onClick={handleSaveAndExit}
+                        sx={{ height: 64 }}
+                        variant="contained" fullWidth
                     >
-                    保存して戻る
-                </Button>
-                <Button onClick={() => navigate(-1)}
-                    sx={{ height: 64 }}
-                    variant="outlined" color="info" fullWidth>
-                    キャンセル
-                </Button>
+                        保存して戻る
+                    </Button>
+                    <Button onClick={() => navigate(-1)}
+                        sx={{ height: 64 }}
+                        variant="outlined" color="info" fullWidth>
+                        キャンセル
+                    </Button>
                 </Stack>
             }>
 
-            <Box>
-                <EditableText
-                    initialText={name}
-                    onUpdateText={handleUpdateName}
-                />
-            </Box>
+            <Stack direction="row"
+                alignItems="center"
+                justifyContent="space-between"
+                sx={{ width: "100%" }}>
+                <Box sx={{ flexGrow: 1 }}>
+                    <EditableText
+                        initialText={name}
+                        onUpdateText={handleUpdateName}
+                    />
+                </Box>
+                <IconButton onClick={handleDeleteDeck}>
+                    <DeleteIcon />
+                </IconButton>
+            </Stack>
+            <LibrarySortControl sort={query.sortState} onSetSortKey={query.toggleSort}
+                onSetSortOrder={order => query.setSortState(p => ({ ...p, order }))} />
+
+            
             <DashboardFilterControl
                 filter={query.filterState}
                 allTags={allTags}
                 onToggleFilter={query.toggleFilter}
-                onSetFilter={query.setFilter} />
-            
+                onSetFilter={query.setFilter} />            
             
             <Box>
-                問題数：{ missionSummary.problemCount}
+                問題数 : TBD
             </Box>
-
-
         </AppLayout>
     )
 }

@@ -41,7 +41,7 @@ export function CreateDeckDialog({
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>キャンセル</Button>
-        <Button variant="contained" onClick={handleCreate}>
+        <Button variant="contained" onClick={handleCreate} disabled={name===""}>
           作成
         </Button>
       </DialogActions>

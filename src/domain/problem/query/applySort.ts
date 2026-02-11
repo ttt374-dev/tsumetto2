@@ -36,6 +36,10 @@ export function applySort(
                 vA = la?.nextReviewedAt ?? 0;
                 vB = lb?.nextReviewedAt ?? 0;
                 break;
+            case "random":
+                vA = Math.random()
+                vB = Math.random()
+                break;
         }
 
         if (vA < vB) return sortState.order === "asc" ? -1 : 1;

@@ -18,7 +18,9 @@ import { DeckSelectMenu } from "./components/SelectDeckMenu";
 import { CreateDeckDialog } from "./components/CreateDeckDialog";
 import type { useQuery } from "@/application/useQuery";
 import { useDeckController } from "@/application/useDeckController";
-import { createFilterSnapshot, DEFAULT_DECK_ID } from "@/domain/deck/Deck";
+import { useDashboardController } from "@/application/useDashboardController";
+import { createQuerySnapshot } from "@/domain/deck/Deck";
+;
 /////////////////////////////////////////////
 
 
@@ -48,7 +50,7 @@ export function DashboardScreen() {
     const [openCreateDialog, setOpenCreateDialog] = useState(false)
 
     const { decks, selectedDeck,
-        selectDeck, saveDeck, deleteDeck} = useDeckController(query)    
+        selectDeck, saveDeck, deleteDeck} = useDashboardController()    
     const isDirty = !deepEqual(
         selectedDeck?.snapshot.filterState,
         query.filterState
@@ -58,25 +60,21 @@ export function DashboardScreen() {
 
         saveDeck({
             ...selectedDeck,
-            snapshot: createFilterSnapshot(query),
+            snapshot: createQuerySnapshot(query),
         })
     }
     const handleCreateDeck = async (name: string) => {
         saveDeck({
             id: v4(),
             name,
-            snapshot: createFilterSnapshot(query),
+            snapshot: createQuerySnapshot(query),
             createdAt: new Date(),
         })
         setOpenCreateDialog(false)
     }    
     const handleDeleteDeck = () => {
         const deck = selectedDeck
-        if (!deck) return
-        if (deck.id === DEFAULT_DECK_ID) {
-            alert("デフォルトプリセットは削除できません")
-            return
-        }
+        if (!deck) return        
         if (!confirm(`プリセット「${deck.name}」を削除しますか？`)) return
         deleteDeck(deck)
     }

@@ -32,9 +32,12 @@ export function useQuery(options?: UseQueryOptions){
         //console.log("setfilter", partial, filterState)
         //setFilterState(prev => ({...prev, [key]: value}))
     }
+    const resetFilter = () => {
+        setFilter({ ...DefaultFilterState})
+    }
 
     return {
-        filterState, setFilterState, toggleFilter, setFilter,
+        filterState, setFilterState, toggleFilter, setFilter, resetFilter,
         sortState, setSortState, toggleSort, 
     }
 }

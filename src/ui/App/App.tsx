@@ -36,7 +36,7 @@ function App() {
 
           <Route path="/library" element={<LibraryScreen />} />
 
-          <Route path="/" element={<Navigate to="/mission" />} />
+          <Route path="/" element={<Navigate to="/decks" />} />
         </Routes>
       </BrowserRouter>
     </AllProviders>

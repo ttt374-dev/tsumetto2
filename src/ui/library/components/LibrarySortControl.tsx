@@ -19,6 +19,8 @@ export default function LibrarySortControl({ sort, onSetSortKey, onSetSortOrder 
                 <option key="accuracy" value="accuracy">正答率</option>
                 <option key="easeFactor" value="easeFactor">習熟度</option>
                 <option key="nextReviewedAt" value="nextReviewedAt">次レビュー日</option>
+                <option key="random" value="random">ランダム</option>
+
             </select>
 
             <IconButton onClick={() => {
