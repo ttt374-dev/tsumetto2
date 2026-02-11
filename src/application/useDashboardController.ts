@@ -19,7 +19,7 @@ export function useDashboardController(){ // (query: ReturnType<typeof useQuery>
     }, [])
 
     const loadDecks = async () => {
-        const list = await deckRepository.list()
+        const list = await deckRepository.load()
         console.log("load decks", list)
         setDecks(list)
     }
@@ -64,7 +64,7 @@ export function useDashboardController(){ // (query: ReturnType<typeof useQuery>
         await loadDecks()
 
         if (wasSelected) {
-            const remaining = await deckRepository.list()
+            const remaining = await deckRepository.load()
 
             const nextDeck = remaining[0] ?? null
 

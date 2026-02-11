@@ -5,8 +5,8 @@ import { useDeckStore } from "./useDeckStore";
 import { useMemo } from "react";
 
 
-export function useStores() {
-    const repos = useRepositoryContext()
+export function useStores(customRepos?: ReturnType<typeof useRepositoryContext>) {
+    const repos = customRepos ?? useRepositoryContext()
 
     const problem = useProblemStore(repos.problem)
     const learningEvent = useLearningEventStore(repos.learningEvent)

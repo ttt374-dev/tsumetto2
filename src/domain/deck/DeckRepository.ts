@@ -1,6 +1,4 @@
-import type { Deck } from "./Deck"
-
-export type DeckId = string
+import type { Deck, DeckId } from "./Deck"
 
 // domain/deck/DeckRepository.ts
 /*

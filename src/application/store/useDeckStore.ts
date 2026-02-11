@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { type Deck } from "@/domain/deck/Deck"
+import { type Deck, type DeckId } from "@/domain/deck/Deck"
 import type { DeckRepository } from "@/domain/deck/DeckRepository"
 
 export function useDeckStore(repository: DeckRepository){ // (query: ReturnType<typeof useQuery>){
@@ -18,15 +18,13 @@ export function useDeckStore(repository: DeckRepository){ // (query: ReturnType<
         setDecks(list)
     }
 
-
     // 保存ボタン
     const saveDeck = async (deck: Deck) => {
         await repository.update(deck)
         await loadDecks()
     }
-    const deleteDeck = async (deck: Deck) => {
-        console.log("delete deck", deck)
-        await repository.remove(deck.id)
+    const deleteDeck = async (id: DeckId) => {
+        await repository.remove(id)
         await loadDecks()
     }
 

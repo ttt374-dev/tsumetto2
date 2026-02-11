@@ -20,7 +20,7 @@ export function SummaryScreen() {
                 Done. Good Job
             </Box>
 
-            <SummaryView summary={stats}/>
+            <SummaryView stats={stats}/>
 
             <Button onClick={missionStore.reset}>
                 Dashboard

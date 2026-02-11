@@ -2,17 +2,15 @@ import { useNavigate, useParams } from "react-router-dom";
 import DeleteIcon from '@mui/icons-material/Delete';
 import { AppLayout } from "../common/AppLayout";
 import { useEffect, useState } from "react";
-import { useRepositoryContext } from "../App/providers/RepositoryProvider";
-import { useProblemStore } from "@/application/store/useProblemStore";
 import { Box, Button, IconButton, Stack } from "@mui/material";
 import { DashboardFilterControl } from "../dashboard/components/DashboardFilterControl";
 import { EditableText } from "../common/EditableText";
 import { createQuerySnapshot } from "@/domain/deck/Deck";
 import LibrarySortControl from "../library/components/LibrarySortControl";
 import { useQuery } from "@/application/useQuery";
-import { useDeckStore } from "@/application/store/useDeckStore";
 import { applyFilter } from "@/domain/problem/query/applyFilter";
-import { useLearningEventStore } from "@/application/store/useLearningEventStore";
+import { useStores } from "@/application/store/useStores";
+import { ProblemStats } from "@/domain/problem/ProblemStats";
 
 function deepEqual(a: any, b: any): boolean {
   if (a === b) return true
@@ -31,12 +29,11 @@ function deepEqual(a: any, b: any): boolean {
 export function DeckEditScreen() {
     const { id } = useParams<{ id: string }>()
     const query = useQuery()
-    const { decks, loadDecks } = useDeckStore()
-    
-    const repos = useRepositoryContext()
-    const store = useProblemStore(repos.problem)
-    const learningEventStore = useLearningEventStore(repos.learningEvent)
-    const { allTags } = useProblemStore(repos.problem)
+    const stores = useStores()
+    const { decks, loadDecks } = stores.deck    
+    //const store = stores.problem
+    //const learningEventStore = stores.learningEvent
+    const { allTags } = stores.problem
     const navigate = useNavigate()    
     
     const deck = decks.find(d => d.id === id)
@@ -51,7 +48,9 @@ export function DeckEditScreen() {
     }, [deck])
     //////////////
     if (!id || !deck) return null
-    const length = applyFilter(store.problems, learningEventStore.records, deck.snapshot.filterState).length
+    const filteredProblems = applyFilter(stores.problem.problems, stores.learningEvent.records, deck.snapshot.filterState)
+    //const length = applyFilter(store.problems, learningEventStore.records, deck.snapshot.filterState).length
+    const stats = ProblemStats.create(filteredProblems, stores.learningEvent.records)
 
     const handleSaveAndExit = async () => {
         if (!deck) return
@@ -61,7 +60,7 @@ export function DeckEditScreen() {
             name: name,
             snapshot: createQuerySnapshot(query),
         }
-        await repos.deck.update(newDeck)
+        await stores.deck.saveDeck(newDeck)
         await loadDecks()
         console.log("save and exit", newDeck)
         navigate(-1)
@@ -69,7 +68,7 @@ export function DeckEditScreen() {
     const handleDeleteDeck = async () => {        
         if (!deck) return
         if (!confirm(`プリセット「${deck.name}」を削除しますか？`)) return
-        await repos.deck.remove(deck.id)
+        await stores.deck.deleteDeck(deck.id)
         await loadDecks()
         navigate(-1)
     }
@@ -122,7 +121,7 @@ export function DeckEditScreen() {
                 onSetFilter={query.setFilter} />            
             
             <Box>
-                全{ length}問
+                全{ stats.problemCount}問、正答率 {(stats.accuracy*100).toFixed(0)}%
             </Box>
         </AppLayout>
     )

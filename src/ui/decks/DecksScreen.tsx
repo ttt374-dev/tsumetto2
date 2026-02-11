@@ -21,31 +21,34 @@ import { useToast } from "../App/providers/ToastProvider";
 import { ProblemStats } from "@/domain/problem/ProblemStats";
 import { useBackupRestoreDialog } from "../common/BackupRestoreDialog";
 import { useQuery } from "@/application/useQuery";
+import { useStores } from "@/application/store/useStores";
 
 export default function DecksScreen(){
     const query = useQuery() 
-    const { decks, loadDecks } = useDeckStore()
+    
     const { start } = useMissionEventStoreContext()
     const repos = useRepositoryContext()
-    const store = useProblemStore(repos.problem)
-    const learningEventStore = useLearningEventStore(repos.learningEvent)
+    //const { decks, loadDecks } = useDeckStore(repos.deck)
+    //const store = useProblemStore(repos.problem)
+    //const learningEventStore = useLearningEventStore(repos.learningEvent)
+    const stores = useStores()
     const navigate = useNavigate()
     const toast = useToast()
 
     // import files
     const importer = useImportController(async (res: ImportFilesResult) => {
-        await store.reload()
+        await stores.problem.reload()
         toast({message: `imported: ${res.summary.imported}, skipped: ${res.summary.skipped}, failed: ${res.summary.failed}`})        
      })
     // backup, restore
     const backupRestoreDialog = useBackupRestoreDialog((res) => {
-        if (res.ok) store.reload()
+        if (res.ok) stores.problem.reload()
     })            
     
     //  handlers
     const handleStartMission = (deck: Deck) => {
         const filterState = deck.snapshot.filterState
-        const filtered = applyQuery(store.problems, learningEventStore.records, deck.snapshot.sortState, filterState)
+        const filtered = applyQuery(stores.problem.problems, stores.learningEvent.records, deck.snapshot.sortState, filterState)
 
         //query.setFilter(filterState)
         start(filtered.map(p=>p.id))
@@ -59,27 +62,27 @@ export default function DecksScreen(){
             createdAt: new Date(),
         }
         repos.deck.update(newDeck)
-        loadDecks()
+        stores.deck.loadDecks()
         //setOpenCreateDialog(false)
         navigate(`/deck/${newDeck.id}`)
     }    
 
     const deckStats = useMemo(() => {
         return new Map(
-            decks.map(deck => {
+            stores.deck.decks.map(deck => {
                 const filteredProblems = applyFilter(
-                    store.problems,
-                    learningEventStore.records,
+                    stores.problem.problems,
+                    stores.learningEvent.records,
                     deck.snapshot.filterState
                 )
-                const stats = ProblemStats.create(filteredProblems, learningEventStore.records)
+                const stats = ProblemStats.create(filteredProblems, stores.learningEvent.records)
                 return [
                     deck.id,
                     stats,
                 ]
             })
         )
-    }, [decks, store.problems, learningEventStore.records])
+    }, [stores.deck.decks, stores.problem.problems, stores.learningEvent.records])
 
     return (
         <AppLayout
@@ -101,7 +104,7 @@ export default function DecksScreen(){
             <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto" }}>
                 <List>
                     {
-                        decks.map(deck => {
+                        stores.deck.decks.map(deck => {
                             const stats = deckStats.get(deck.id) 
                             return (
                                 <ListItem key={deck.id} disablePadding
