@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react"
 import { Problem, type ProblemId } from "@/domain/problem/Problem"
-import type { SolvedResult } from "@/domain/MissionEvent/MissionSummary"
 import { useMissionEventStoreContext } from "../App/providers/MissionEventStoreProvider"
 import type { MissionSnapshot } from "@/domain/MissionEvent/MissionEvent"
+import type { SolvedResult } from "@/domain/learning/Learning"
 
 function requireSnapshot(snapshot: MissionSnapshot | null): MissionSnapshot {
     if (!snapshot) {

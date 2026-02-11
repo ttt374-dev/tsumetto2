@@ -113,29 +113,27 @@ export function LibraryScreen() {
     }
     
     return (
-        <>
-            <AppLayout
-                header="Library"
-                rightActions={
-                    <>
-                        <IconButton onClick={backupRestoreDialog.openDialog}>
-                            <BackupIcon  sx={{ color: "#fff" }}/>
-                        </IconButton>
-                        <IconButton onClick={handlers.import.onOpenImportFileDialog}>
-                            <AddOutlinedIcon sx={{ color: "#fff" }} />
-                        </IconButton>
-                    </>
-                }
-            >
-                <LibraryView
-                    problems={libraryItems}
-                    learningRecords={learningRecords}
-                    query={query}
-                    handlers={handlers}
-                    selection={selection}
-                />
-            </AppLayout>
 
+        <AppLayout
+            header="Library"
+            rightActions={
+                <>
+                    <IconButton onClick={backupRestoreDialog.openDialog}>
+                        <BackupIcon sx={{ color: "#fff" }} />
+                    </IconButton>
+                    <IconButton onClick={handlers.import.onOpenImportFileDialog}>
+                        <AddOutlinedIcon sx={{ color: "#fff" }} />
+                    </IconButton>
+                </>
+            }
+        >
+            <LibraryView
+                problems={libraryItems}
+                learningRecords={learningRecords}
+                query={query}
+                handlers={handlers}
+                selection={selection}
+            />
             { /* ダイアログ */}
             {importer.pickerElement}
             {importer.dialogElement}
@@ -143,6 +141,6 @@ export function LibraryScreen() {
             {detailDialog.dialogElement}
             {tagEditDialog.dialogElement}
             {backupRestoreDialog.dialogElement}
-        </>
+        </AppLayout>
     )
 }

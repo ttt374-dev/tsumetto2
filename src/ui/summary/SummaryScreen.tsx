@@ -1,9 +1,10 @@
-import { MissionSummary, type MissionResultEntry } from "@/domain/MissionEvent/MissionSummary";
+//import { MissionSummary, type MissionResultEntry } from "@/domain/MissionEvent/MissionSummary";
 import { Box, Button, Stack } from "@mui/material";
 import { AppLayout } from "../common/AppLayout";
 import { SummaryView } from "./SummaryView";
 import { useMissionEventStoreContext } from "../App/providers/MissionEventStoreProvider";
 import type { MissionSnapshot } from "@/domain/MissionEvent/MissionEvent";
+import { ProblemStats } from "@/domain/problem/ProblemStats";
 
 /////////////////////////////////////////////
 export function SummaryScreen() {
@@ -12,7 +13,8 @@ export function SummaryScreen() {
     if (!missionStore.snapshot) return null
 
     const missionResultEntryList = snapshotToResultList(missionStore.snapshot)
-    const summary = MissionSummary.createFromResultList(missionResultEntryList)
+    //const summary = MissionSummary.createFromResultList(missionResultEntryList)
+    const stats = ProblemStats.createFromMissionResultList(missionResultEntryList)
     
     return (
         <AppLayout>
@@ -20,7 +22,7 @@ export function SummaryScreen() {
                 Done. Good Job
             </Box>
 
-            <SummaryView summary={summary}/>
+            <SummaryView summary={stats}/>
 
             <Button onClick={missionStore.reset}>
                 Dashboard

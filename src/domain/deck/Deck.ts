@@ -1,6 +1,6 @@
-import type { useMissionQueryContext } from "@/ui/App/providers/QueryProvider"
 import type { FilterState } from "../problem/query/filter"
 import type { SortState } from "../problem/query/sort"
+import type { useQuery } from "@/application/useQuery"
 
 export type QuerySnapshot = {
   filterState: FilterState
@@ -17,7 +17,7 @@ export type Deck = {
   
   createdAt: Date
 }
-export function createQuerySnapshot(query: ReturnType<typeof useMissionQueryContext>): QuerySnapshot {
+export function createQuerySnapshot(query: ReturnType<typeof useQuery>): QuerySnapshot {
   return {
     filterState: structuredClone(query.filterState),
     sortState: structuredClone(query.sortState)

@@ -5,19 +5,13 @@ import { Box, Button, IconButton, List, ListItem, Stack, type SelectChangeEvent,
 import { AppLayout } from "../common/AppLayout";
 import { useFilterProblems } from "./hooks/useFilterProblems";
 import { DashboardFilterControl } from "./components/DashboardFilterControl";
-import { SummaryView } from "../summary/SummaryView";
 import { useMissionEventStoreContext } from "../App/providers/MissionEventStoreProvider";
-import { useToast } from "../App/providers/ToastProvider";
 import { useEffect, useMemo, useState } from "react";
 import { useRepositoryContext } from "../App/providers/RepositoryProvider";
 import { useProblemStore } from "@/application/store/useProblemStore";
-import type { FilterState } from "@/domain/problem/query/filter";
-import type { useMissionQueryContext } from "../App/providers/QueryProvider";
 import { v4 } from "uuid";
 import { DeckSelectMenu } from "./components/SelectDeckMenu";
 import { CreateDeckDialog } from "./components/CreateDeckDialog";
-import type { useQuery } from "@/application/useQuery";
-import { useDeckController } from "@/application/useDeckController";
 import { useDashboardController } from "@/application/useDashboardController";
 import { createQuerySnapshot } from "@/domain/deck/Deck";
 ;
@@ -41,7 +35,7 @@ function deepEqual(a: any, b: any): boolean {
 
 ////////////////////////////////
 export function DashboardScreen() {
-    const { query, missionSummary, problemIds } = useFilterProblems()
+    const { query, stats, problemIds } = useFilterProblems()
     const { start } = useMissionEventStoreContext()
             const repos = useRepositoryContext()
     const { allTags }= useProblemStore(repos.problem)
@@ -85,7 +79,7 @@ export function DashboardScreen() {
                 <Button onClick={() => start(problemIds)}
                     sx={{ height: 64 }}
                     variant="contained" fullWidth
-                    disabled={missionSummary.problemCount === 0}>
+                    disabled={stats.problemCount === 0}>
                     Start
                 </Button>
             }>
@@ -95,7 +89,7 @@ export function DashboardScreen() {
                 allTags={allTags}
                 onToggleFilter={query.toggleFilter}
                 onSetFilter={query.setFilter}/>
-            { `${missionSummary.problemCount}, ${missionSummary.solvedCount}:${missionSummary.failedCount}=${(missionSummary.accuracy*100).toFixed(0)}%`}
+            { `${stats.problemCount}, ${stats.solvedCount}:${stats.failedCount}=${(stats.accuracy*100).toFixed(0)}%`}
             
             <Stack direction="row">
                 <DeckSelectMenu

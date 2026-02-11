@@ -1,7 +1,8 @@
-import type { SolvedResult } from "../MissionEvent/MissionSummary";
 import type { ProblemId } from "../problem/Problem";
 
 const MAX_INTERVAL_DAYS = 60
+
+export type SolvedResult = "solved" | "failed"
 
 export type LearningData = {
     problemId: ProblemId

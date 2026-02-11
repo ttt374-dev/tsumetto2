@@ -1,5 +1,5 @@
 import type { LearningRecord } from "../learning/Learning"
-import { MissionSummary, type MissionResultEntry } from "../MissionEvent/MissionSummary"
+import type { MissionResultEntry } from "../MissionEvent/MissionEvent"
 import type { Problem } from "./Problem"
 
 
@@ -28,8 +28,8 @@ export class ProblemStats {
             failed,
         )
     }
-    static createFromResultList(missionResultList: MissionResultEntry[]): MissionSummary {
-        return new MissionSummary(
+    static createFromMissionResultList(missionResultList: MissionResultEntry[]): ProblemStats {
+        return new ProblemStats(
             missionResultList.length,
             missionResultList.filter(r => r.solvedResult === "solved").length,
             missionResultList.filter(r => r.solvedResult === "failed").length

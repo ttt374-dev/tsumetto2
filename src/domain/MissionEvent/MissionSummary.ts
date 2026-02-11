@@ -1,12 +1,7 @@
 import type { LearningRecord } from "../learning/Learning"
-import type { ProblemId } from "../problem/Problem"
+import type { MissionResultEntry } from "./MissionEvent"
 
-export type SolvedResult = "solved" | "failed"
 
-export type MissionResultEntry = {
-    problemId: ProblemId,
-    solvedResult: SolvedResult,
-}
 
 export class MissionSummary {
     constructor(

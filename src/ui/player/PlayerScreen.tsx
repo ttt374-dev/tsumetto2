@@ -14,8 +14,8 @@ import { useProblemDetailDialog } from "../common/useProblemDetailDialog"
 import { AppLayout } from "../common/AppLayout"
 import { Button, IconButton } from "@mui/material"
 import { useProblemStore } from "@/application/store/useProblemStore"
-import type { SolvedResult } from "@/domain/MissionEvent/MissionSummary"
 import { RightActionsDrawer } from "./components/RightActionsDrawer";
+import type { SolvedResult } from "@/domain/learning/Learning";
 
 export function useShowMovesController(problemId: ProblemId | undefined, plyIndex: number) {
     const [showMoves, setShowMoves] = useState(false)

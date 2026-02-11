@@ -1,6 +1,7 @@
 import { Box, Button, Fab, IconButton, List, ListItem, ListItemButton, ListItemText, Stack } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from "@mui/icons-material/Add";
+import BackupIcon from "@mui/icons-material/Backup";
 import { AppLayout } from "../common/AppLayout";
 import { useMissionEventStoreContext } from "../App/providers/MissionEventStoreProvider";
 import { useNavigate } from "react-router-dom";
@@ -11,7 +12,6 @@ import { useLearningEventStore } from "@/application/store/useLearningEventStore
 import { v4 } from "uuid";
 import { useMemo, useState } from "react";
 import { createQuerySnapshot, type Deck } from "@/domain/deck/Deck";
-import { useMissionQueryContext } from "../App/providers/QueryProvider";
 import { applyQuery } from "@/domain/problem/query/applyQuery";
 import { useDeckController } from "@/application/useDeckController";
 import FabMenu from "./FabMenu";
@@ -19,10 +19,11 @@ import { useImportController } from "@/application/useImportControler";
 import type { ImportFilesResult } from "@/usecase/importProblemsUsecase";
 import { useToast } from "../App/providers/ToastProvider";
 import { ProblemStats } from "@/domain/problem/ProblemStats";
+import { useBackupRestoreDialog } from "../common/BackupRestoreDialog";
+import { useQuery } from "@/application/useQuery";
 
 export default function DecksScreen(){
-    const [openCreateDialog, setOpenCreateDialog] = useState(false)
-    const query = useMissionQueryContext()
+    const query = useQuery() 
     const { decks, loadDecks } = useDeckController()
     const { start } = useMissionEventStoreContext()
     const repos = useRepositoryContext()
@@ -36,11 +37,14 @@ export default function DecksScreen(){
         await store.reload()
         toast({message: `imported: ${res.summary.imported}, skipped: ${res.summary.skipped}, failed: ${res.summary.failed}`})        
      })
+    // backup, restore
+    const backupRestoreDialog = useBackupRestoreDialog((res) => {
+        if (res.ok) store.reload()
+    })            
+    
     //  handlers
-
     const handleStartMission = (deck: Deck) => {
         const filterState = deck.snapshot.filterState
-        //const filtered = applyFilter(store.problems, learningEventStore.records, filterState)
         const filtered = applyQuery(store.problems, learningEventStore.records, deck.snapshot.sortState, filterState)
 
         //query.setFilter(filterState)
@@ -56,7 +60,7 @@ export default function DecksScreen(){
         }
         repos.deck.update(newDeck)
         loadDecks()
-        setOpenCreateDialog(false)
+        //setOpenCreateDialog(false)
         navigate(`/deck/${newDeck.id}`)
     }    
 
@@ -80,6 +84,13 @@ export default function DecksScreen(){
     return (
         <AppLayout
             header={ "Decks"}
+            rightActions={
+                <>
+                    <IconButton onClick={backupRestoreDialog.openDialog}>
+                        <BackupIcon sx={{ color: "#fff" }} />
+                    </IconButton>
+</>
+            }
             fab={
                 <FabMenu 
                     onCreateNewDeck={() => handleCreateDeck("untitled")} 
@@ -117,9 +128,10 @@ export default function DecksScreen(){
                     }
                 </List>
             </Box>
-
+            { /* ダイアログ */}
             {importer.pickerElement}
             {importer.dialogElement}
+            {backupRestoreDialog.dialogElement}
         </AppLayout>
     )
 }
