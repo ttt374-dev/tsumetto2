@@ -11,6 +11,8 @@ import { createQuerySnapshot } from "@/domain/deck/Deck";
 import LibrarySortControl from "../library/components/LibrarySortControl";
 import { useQuery } from "@/application/useQuery";
 import { useDeckController } from "@/application/useDeckController";
+import { applyFilter } from "@/domain/problem/query/applyFilter";
+import { useLearningEventStore } from "@/application/store/useLearningEventStore";
 
 function deepEqual(a: any, b: any): boolean {
   if (a === b) return true
@@ -33,6 +35,8 @@ export function DeckEditScreen() {
     const { decks, loadDecks } = useDeckController()
     
     const repos = useRepositoryContext()
+    const store = useProblemStore(repos.problem)
+    const learningEventStore = useLearningEventStore(repos.learningEvent)
     const { allTags } = useProblemStore(repos.problem)
     const navigate = useNavigate()    
     
@@ -48,6 +52,7 @@ export function DeckEditScreen() {
     }, [deck])
     //////////////
     if (!id || !deck) return null
+    const length = applyFilter(store.problems, learningEventStore.records, deck.snapshot.filterState).length
 
     const handleSaveAndExit = async () => {
         if (!deck) return
@@ -57,7 +62,7 @@ export function DeckEditScreen() {
             name: name,
             snapshot: createQuerySnapshot(query),
         }
-        await repos.deck.save(newDeck)
+        await repos.deck.update(newDeck)
         await loadDecks()
         console.log("save and exit", newDeck)
         navigate(-1)
@@ -65,7 +70,7 @@ export function DeckEditScreen() {
     const handleDeleteDeck = async () => {        
         if (!deck) return
         if (!confirm(`プリセット「${deck.name}」を削除しますか？`)) return
-        await repos.deck.delete(deck.id)
+        await repos.deck.remove(deck.id)
         await loadDecks()
         navigate(-1)
     }
@@ -118,7 +123,7 @@ export function DeckEditScreen() {
                 onSetFilter={query.setFilter} />            
             
             <Box>
-                問題数 : TBD
+                全{ length}問
             </Box>
         </AppLayout>
     )

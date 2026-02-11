@@ -41,7 +41,7 @@ export default function BackupRestoreDialog({ open, onClose, onBackupFinished, o
     onRestoreFinished?: (res: RestoreResult) => void
 }) {
     const repos = useRepositoryContext()
-    const usecase = createBackupRestoreUsecase(repos.problem, repos.learningEvent, fileBackupWriter)
+    const usecase = createBackupRestoreUsecase(repos.problem, repos.learningEvent, repos.deck, fileBackupWriter)
     const fileInputRef = useRef<HTMLInputElement>(null)
 
     /* ===== backup ===== */   

@@ -15,7 +15,7 @@ export function useDeckController(){ // (query: ReturnType<typeof useQuery>){
     }, [])
 
     const loadDecks = async () => {
-        const list = await deckRepository.list()
+        const list = await deckRepository.load()
         console.log("load decks", list)
         setDecks(list)
     }
@@ -23,12 +23,12 @@ export function useDeckController(){ // (query: ReturnType<typeof useQuery>){
 
     // 保存ボタン
     const saveDeck = async (deck: Deck) => {
-        await deckRepository.save(deck)
+        await deckRepository.update(deck)
         await loadDecks()
     }
     const deleteDeck = async (deck: Deck) => {
         console.log("delete deck", deck)
-        await deckRepository.delete(deck.id)
+        await deckRepository.remove(deck.id)
 
         await loadDecks()
     }

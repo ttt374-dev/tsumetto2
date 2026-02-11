@@ -134,4 +134,4 @@ export class Learning {
             */
 }
 
-export type LearningRecord = Record<string, Learning>
+export type LearningRecord = Record<ProblemId, Learning>

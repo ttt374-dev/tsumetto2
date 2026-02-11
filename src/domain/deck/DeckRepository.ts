@@ -3,15 +3,17 @@ import type { Deck } from "./Deck"
 export type DeckId = string
 
 // domain/deck/DeckRepository.ts
+/*
 export interface DeckRepository {
   list(): Promise<Deck[]>
   get(id: DeckId): Promise<Deck | undefined>
   save(deck: Deck): Promise<void>
   delete(id: DeckId): Promise<void>
 }
+  */
 // infra/deck/DeckRepositoryImpl.ts
 
-export class DeckRepositoryImpl implements DeckRepository {
+export class DeckRepository {
   private decks: Deck[] | null = null
 
   constructor(
@@ -25,9 +27,12 @@ export class DeckRepositoryImpl implements DeckRepository {
     return this.decks
   }
 
-  async list(): Promise<Deck[]> {
+  async load(): Promise<Deck[]> {
     const decks = await this.ensureLoaded()
     return [...decks]
+  }
+  private async save(decks: Deck[]){ 
+    await this.persistence.save(decks)
   }
 
   async get(id: DeckId): Promise<Deck | undefined> {
@@ -35,7 +40,7 @@ export class DeckRepositoryImpl implements DeckRepository {
     return decks.find(d => d.id === id)
   }
 
-  async save(deck: Deck): Promise<void> {
+  async update(deck: Deck): Promise<void> {
     const decks = await this.ensureLoaded()
     const index = decks.findIndex(d => d.id === deck.id)
 
@@ -48,14 +53,17 @@ export class DeckRepositoryImpl implements DeckRepository {
     await this.persistence.save(decks)
   }
 
-  async delete(id: DeckId): Promise<void> {
+  async remove(id: DeckId): Promise<void> {
     const decks = await this.ensureLoaded()
     const next = decks.filter(d => d.id !== id)
 
     if (next.length !== decks.length) {
       this.decks = next
-      await this.persistence.save(next)
+      await this.save(next)
     }
+  }
+  async replaceAll(decks: Deck[]){
+    await this.save(decks)
   }
 }
 // infra/deck/DeckPersistence.ts

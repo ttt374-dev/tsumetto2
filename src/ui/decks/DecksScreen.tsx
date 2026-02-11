@@ -1,4 +1,4 @@
-import { Button, Fab, IconButton, List, ListItem, ListItemButton, ListItemText, Stack } from "@mui/material";
+import { Box, Button, Fab, IconButton, List, ListItem, ListItemButton, ListItemText, Stack } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from "@mui/icons-material/Add";
 import { AppLayout } from "../common/AppLayout";
@@ -9,7 +9,6 @@ import { useRepositoryContext } from "../App/providers/RepositoryProvider";
 import { useProblemStore } from "@/application/store/useProblemStore";
 import { useLearningEventStore } from "@/application/store/useLearningEventStore";
 import { v4 } from "uuid";
-import { CreateDeckDialog } from "../dashboard/components/CreateDeckDialog";
 import { useMemo, useState } from "react";
 import { createQuerySnapshot, type Deck } from "@/domain/deck/Deck";
 import { useMissionQueryContext } from "../App/providers/QueryProvider";
@@ -19,6 +18,7 @@ import FabMenu from "./FabMenu";
 import { useImportController } from "@/application/useImportControler";
 import type { ImportFilesResult } from "@/usecase/importProblemsUsecase";
 import { useToast } from "../App/providers/ToastProvider";
+import { ProblemStats } from "@/domain/problem/ProblemStats";
 
 export default function DecksScreen(){
     const [openCreateDialog, setOpenCreateDialog] = useState(false)
@@ -54,18 +54,26 @@ export default function DecksScreen(){
             snapshot: createQuerySnapshot(query),
             createdAt: new Date(),
         }
-        repos.deck.save(newDeck)
+        repos.deck.update(newDeck)
         loadDecks()
         setOpenCreateDialog(false)
         navigate(`/deck/${newDeck.id}`)
     }    
 
-    const problemCounts = useMemo(() => {
+    const deckStats = useMemo(() => {
         return new Map(
-            decks.map(deck => [
-                deck.id,
-                applyFilter(store.problems, learningEventStore.records, deck.snapshot.filterState).length
-            ])
+            decks.map(deck => {
+                const filteredProblems = applyFilter(
+                    store.problems,
+                    learningEventStore.records,
+                    deck.snapshot.filterState
+                )
+                const stats = ProblemStats.create(filteredProblems, learningEventStore.records)
+                return [
+                    deck.id,
+                    stats,
+                ]
+            })
         )
     }, [decks, store.problems, learningEventStore.records])
 
@@ -79,35 +87,36 @@ export default function DecksScreen(){
                 />
             }
         >
-            <List>
-                {
-                    decks.map(deck=>{
-                        const length = problemCounts.get(deck.id) ?? 0
-                        return (
-                            <ListItem key={deck.id} disablePadding                                       
-                                secondaryAction={
-                                    <IconButton
-                                        edge="end"
-                                        onClick={() => navigate(`/deck/${deck.id}`)}
-                                    >
-                                        <EditIcon />
-                                    </IconButton>
-                                }
-                            >
-                                <ListItemButton onClick={() => handleStartMission(deck)}
-                                    disabled={length===0}>
-                                    <ListItemText
-                                        primary={deck.name}
-                                        secondary={`問題数：${length}`}
-                                    >                                       
-                                        
-
-                                    </ListItemText>
-                                </ListItemButton>
-                            </ListItem>)
-                    })
-                }
-            </List>
+            <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto" }}>
+                <List>
+                    {
+                        decks.map(deck => {
+                            const stats = deckStats.get(deck.id) 
+                            return (
+                                <ListItem key={deck.id} disablePadding
+                                    sx={{ borderBottom: 1, borderColor: "divider" }}
+                                    secondaryAction={
+                                        <IconButton
+                                            edge="end"
+                                            onClick={() => navigate(`/deck/${deck.id}`)}
+                                        >
+                                            <EditIcon />
+                                        </IconButton>
+                                    }
+                                >
+                                    <ListItemButton onClick={() => handleStartMission(deck)}
+                                        disabled={stats?.problemCount === 0}>
+                                        <ListItemText
+                                            primary={deck.name}
+                                            secondary={`問題数：${stats?.problemCount}, 正答率：${((stats?.accuracy??0)*100).toFixed(0)}%`}
+                                        >
+                                        </ListItemText>
+                                    </ListItemButton>
+                                </ListItem>)
+                        })
+                    }
+                </List>
+            </Box>
 
             {importer.pickerElement}
             {importer.dialogElement}

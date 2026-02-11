@@ -2,7 +2,7 @@ import type { ReactNode, } from "react"
 import { createContext, useContext, useState, useRef } from "react"
 import { FileProblemPersistence, ProblemRepository } from "@/domain/problem/ProblemRepository"
 import { JsonLearningEventPersistence, LearningEventRepository } from "@/domain/LearningEvent/LearningEventRepository"
-import { DeckRepositoryImpl, LocalStorageDeckPersistence, type DeckRepository } from "@/domain/deck/DeckRepository"
+import { DeckRepository, LocalStorageDeckPersistence} from "@/domain/deck/DeckRepository"
 
 type RepositoryContextValue = {
     readonly problem: ProblemRepository
@@ -24,7 +24,7 @@ export const RepositoryProvider = ({ children }: { children: ReactNode }) => {
         learningEventLogRepoRef.current = new LearningEventRepository(persistence)
     }
     if (!deckRepoRef.current){
-        deckRepoRef.current = new DeckRepositoryImpl(new LocalStorageDeckPersistence())
+        deckRepoRef.current = new DeckRepository(new LocalStorageDeckPersistence())
     }
     return (
         <RepositoryContext.Provider value={{

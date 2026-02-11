@@ -61,7 +61,7 @@ export function AppLayout({ header, footer, children, rightActions, fab }: Props
                 <Box
                     sx={{
                         position: "fixed",
-                        bottom: 116,
+                        bottom: 16,
                         right: 16,
                         zIndex: theme => theme.zIndex.drawer + 1,
 
@@ -70,7 +70,6 @@ export function AppLayout({ header, footer, children, rightActions, fab }: Props
                         width: "100%",
                         maxWidth: 500, // App の max-width と合わせる
                         pointerEvents: "none",
-
                     }}
                 >
                     <Box sx={{ display: "flex", justifyContent: "flex-end", pr: 2, pointerEvents: "auto", height: 100 }}>

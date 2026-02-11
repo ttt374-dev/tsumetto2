@@ -50,7 +50,7 @@ export function useDashboardController(){ // (query: ReturnType<typeof useQuery>
 
     // 保存ボタン
     const saveDeck = async (deck: Deck) => {
-        await deckRepository.save(deck)
+        await deckRepository.update(deck)
         await loadDecks()
         setSelectedDeck(deck)
     }
@@ -59,7 +59,7 @@ export function useDashboardController(){ // (query: ReturnType<typeof useQuery>
 
         const wasSelected = selectedDeck?.id === deck.id
 
-        await deckRepository.delete(deck.id)
+        await deckRepository.remove(deck.id)
 
         await loadDecks()
 

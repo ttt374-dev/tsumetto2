@@ -19,22 +19,32 @@ export default function FabMenu({onCreateNewDeck, onImportFiles}: {
     console.log("ファイルインポート");
   };
 
-  return (
-    <SpeedDial
-      ariaLabel="add actions"
-      sx={{ position: "fixed", bottom: 16, right: 16 }}
-      icon={<SpeedDialIcon />}
-    >
-      <SpeedDialAction
-        icon={<FolderIcon />}
-        tooltipTitle="デッキを追加"
-        onClick={onCreateNewDeck}
-      />
-      <SpeedDialAction
-        icon={<UploadFileIcon />}
-        tooltipTitle="ファイルをインポート"
-        onClick={onImportFiles}
-      />
-    </SpeedDial>
-  );
+    return (
+        <SpeedDial
+            ariaLabel="add actions"
+            sx={{ position: "fixed", bottom: 16, right: 16 }}
+            icon={<SpeedDialIcon />}
+        >
+            <SpeedDialAction
+                icon={<FolderIcon />}
+                onClick={onCreateNewDeck}
+                slotProps={{
+                    tooltip: {
+                        title: "デッキを追加",
+                        open: true,
+                    },
+                }}
+            />
+            <SpeedDialAction
+                icon={<UploadFileIcon />}
+                onClick={onImportFiles}
+                slotProps={{
+                    tooltip: {
+                        title: "ファイルをインポート",
+                        open: true,
+                    },
+                }}
+            />
+        </SpeedDial>
+    );
 }
