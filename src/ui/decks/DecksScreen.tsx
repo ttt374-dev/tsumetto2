@@ -22,6 +22,7 @@ import { ProblemStats } from "@/domain/problem/ProblemStats";
 import { useBackupRestoreDialog } from "../common/BackupRestoreDialog";
 import { useQuery } from "@/application/useQuery";
 import { useStores } from "@/application/store/useStores";
+import { useLearningRecordByProblem } from "@/application/useLearningRecordByProblem";
 
 export default function DecksScreen(){
     const query = useQuery() 
@@ -32,6 +33,7 @@ export default function DecksScreen(){
     //const store = useProblemStore(repos.problem)
     //const learningEventStore = useLearningEventStore(repos.learningEvent)
     const stores = useStores()
+    const learningRecords = useLearningRecordByProblem(stores.learningEvent.eventLog)
     const navigate = useNavigate()
     const toast = useToast()
 
@@ -48,7 +50,7 @@ export default function DecksScreen(){
     //  handlers
     const handleStartMission = (deck: Deck) => {
         const filterState = deck.snapshot.filterState
-        const filtered = applyQuery(stores.problem.problems, stores.learningEvent.records, deck.snapshot.sortState, filterState)
+        const filtered = applyQuery(stores.problem.problems, learningRecords, deck.snapshot.sortState, filterState)
 
         //query.setFilter(filterState)
         start(filtered.map(p=>p.id))
@@ -72,17 +74,17 @@ export default function DecksScreen(){
             stores.deck.decks.map(deck => {
                 const filteredProblems = applyFilter(
                     stores.problem.problems,
-                    stores.learningEvent.records,
+                    learningRecords,
                     deck.snapshot.filterState
                 )
-                const stats = ProblemStats.create(filteredProblems, stores.learningEvent.records)
+                const stats = ProblemStats.create(filteredProblems, learningRecords)
                 return [
                     deck.id,
                     stats,
                 ]
             })
         )
-    }, [stores.deck.decks, stores.problem.problems, stores.learningEvent.records])
+    }, [stores.deck.decks, stores.problem.problems, learningRecords])
 
     return (
         <AppLayout

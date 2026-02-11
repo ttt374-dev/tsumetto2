@@ -21,6 +21,7 @@ import { useImportController } from "@/application/useImportControler";
 import type { ImportFilesResult, ImportResult } from "@/usecase/importProblemsUsecase";
 import BackupRestoreDialog, { useBackupRestoreDialog } from "../common/BackupRestoreDialog";
 import { useStores } from "@/application/store/useStores";
+import { useLearningRecordByProblem } from "@/application/useLearningRecordByProblem";
 
 //////////////////////////////////////////////////
 // LibraryScreen.tsx
@@ -30,7 +31,7 @@ export function LibraryScreen() {
 
     //const repos = useRepositoryContext()
     const stores = useStores()    
-    
+    const learningRecords = useLearningRecordByProblem(stores.learningEvent.eventLog)
     //const problemStore = stores.problem
     const problems = stores.problem.problems
     //const learningRecords = stores.learningEvent.records
@@ -53,8 +54,8 @@ export function LibraryScreen() {
     const tagEditDialog = useMultipleProblemsTagEditDialog(handleUpdateProblems)
 
     const libraryItems = useMemo(() => 
-        applyQuery(problems, stores.learningEvent.records, query.sortState, query.filterState),
-        [problems, stores.learningEvent.records, query.sortState, query.filterState]
+        applyQuery(problems, learningRecords, query.sortState, query.filterState),
+        [problems, stores.learningEvent.eventLog, query.sortState, query.filterState]
     )
 
     const checkboxControl = useLibraryCheckbox(libraryItems.map(p => p.id))
@@ -127,7 +128,7 @@ export function LibraryScreen() {
         >
             <LibraryView
                 problems={libraryItems}
-                learningRecords={stores.learningEvent.records}
+                learningRecords={learningRecords}
                 query={query}
                 handlers={handlers}
                 selection={selection}

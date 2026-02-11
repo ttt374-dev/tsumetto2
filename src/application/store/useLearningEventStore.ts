@@ -7,17 +7,17 @@ import type { ProblemId } from "@/domain/problem/Problem";
 
 export function useLearningEventStore(repository: LearningEventRepository){
     const [eventLog, setEventLog] = useState<LearningEventLog>([])
-    const [snapshot, setSnapshot] = useState<LearningRecord>({})
+    //const [snapshot, setSnapshot] = useState<LearningRecord>({})
 
     const reload = async () => {
         try {
             const data: LearningEventLog = await repository.load();
             //console.log("event store reload", data)
             setEventLog(data)
-            setSnapshot(projectLearning(data))
+            //setSnapshot(projectLearning(data))
         } catch {
             setEventLog([])
-            setSnapshot({})
+            //setSnapshot({})
         }
     };
     useEffect(() => {
@@ -26,7 +26,7 @@ export function useLearningEventStore(repository: LearningEventRepository){
 
     useEffect(() => {
         //console.log("setsnapshot on effect", eventLog)
-        setSnapshot(projectLearning(eventLog))
+        //setSnapshot(projectLearning(eventLog))
     }, [eventLog])
 
     const appendQueue = useRef<LearningEvent[]>([]);
@@ -50,7 +50,6 @@ export function useLearningEventStore(repository: LearningEventRepository){
     }
     const deleteByProblemIds = async (ids: ProblemId[]) => {
         const idSet = new Set(ids)
-
         const newLog = eventLog.filter(e => !idSet.has(e.problemId))
 
         setEventLog(newLog)
@@ -59,7 +58,7 @@ export function useLearningEventStore(repository: LearningEventRepository){
 
     return {
         eventLog, 
-        records: snapshot,
+        //records: snapshot,
         reload, 
         
         append, deleteAll, deleteByProblemIds,
