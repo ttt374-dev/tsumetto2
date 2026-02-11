@@ -1,6 +1,6 @@
 import type { LearningRecord } from "../learning/Learning"
 import type { MissionResultEntry } from "../MissionEvent/MissionEvent"
-import type { Problem } from "./Problem"
+import type { Problem, ProblemId } from "./Problem"
 
 
 export class ProblemStats {
@@ -10,12 +10,12 @@ export class ProblemStats {
         readonly failedCount: number,        
     ){}
 
-    static create(problems: Problem[], learningRecords: LearningRecord) {
+    static create(ids: ProblemId[], learningRecords: LearningRecord) {
         let solved = 0
         let failed = 0
 
-        for (const p of problems) {
-            const learning = learningRecords[p.id]
+        for (const id of ids) {
+            const learning = learningRecords[id]
             if (!learning) continue
 
             solved += learning.solvedCount
@@ -23,7 +23,7 @@ export class ProblemStats {
         }
 
         return new ProblemStats(
-            problems.length,
+            ids.length,
             solved,
             failed,
         )

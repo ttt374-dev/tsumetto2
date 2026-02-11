@@ -11,7 +11,8 @@ import { useQuery } from "@/application/useQuery";
 import { applyFilter } from "@/domain/problem/query/applyFilter";
 import { useStores } from "@/application/store/useStores";
 import { ProblemStats } from "@/domain/problem/ProblemStats";
-import { useLearningRecordByProblem } from "@/application/useLearningRecordByProblem";
+import { useLearningRecord } from "@/application/useLearningRecord";
+import { useProblemStats } from "@/application/useProblemStats";
 
 function deepEqual(a: any, b: any): boolean {
   if (a === b) return true
@@ -49,10 +50,9 @@ export function DeckEditScreen() {
     }, [deck])
     //////////////
     if (!id || !deck) return null
-    const learningRecords = useLearningRecordByProblem(stores.learningEvent.eventLog)
+    const learningRecords = useLearningRecord(stores.learningEvent.eventLog)
     const filteredProblems = applyFilter(stores.problem.problems, learningRecords, deck.snapshot.filterState)
-    //const length = applyFilter(store.problems, learningEventStore.records, deck.snapshot.filterState).length
-    const stats = ProblemStats.create(filteredProblems, learningRecords)
+    const stats = useProblemStats(filteredProblems.map(p=>p.id), learningRecords)
 
     const handleSaveAndExit = async () => {
         if (!deck) return

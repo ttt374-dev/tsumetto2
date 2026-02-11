@@ -8,9 +8,6 @@ import { useLibraryCheckbox } from "./hooks/useLibraryCheckbox";
 import { useLibraryQueryContext } from "../App/providers/QueryProvider";
 import { applyQuery } from "@/domain/problem/query/applyQuery";
 import { useMemo, useState } from "react";
-import { useRepositoryContext } from "../App/providers/RepositoryProvider";
-import { useProblemStore } from "@/application/store/useProblemStore";
-import { useLearningEventStore } from "@/application/store/useLearningEventStore";
 import { AppLayout } from "../common/AppLayout";
 import { Fab, IconButton } from "@mui/material";
 import { useProblemDetailDialog } from "../common/useProblemDetailDialog";
@@ -21,7 +18,7 @@ import { useImportController } from "@/application/useImportControler";
 import type { ImportFilesResult, ImportResult } from "@/usecase/importProblemsUsecase";
 import BackupRestoreDialog, { useBackupRestoreDialog } from "../common/BackupRestoreDialog";
 import { useStores } from "@/application/store/useStores";
-import { useLearningRecordByProblem } from "@/application/useLearningRecordByProblem";
+import { useLearningRecord } from "@/application/useLearningRecord";
 
 //////////////////////////////////////////////////
 // LibraryScreen.tsx
@@ -31,7 +28,7 @@ export function LibraryScreen() {
 
     //const repos = useRepositoryContext()
     const stores = useStores()    
-    const learningRecords = useLearningRecordByProblem(stores.learningEvent.eventLog)
+    const learningRecords = useLearningRecord(stores.learningEvent.eventLog)
     //const problemStore = stores.problem
     const problems = stores.problem.problems
     //const learningRecords = stores.learningEvent.records

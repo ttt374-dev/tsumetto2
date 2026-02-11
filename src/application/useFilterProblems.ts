@@ -6,14 +6,14 @@ import { useRepositoryContext } from "@/ui/App/providers/RepositoryProvider";
 import { useProblemStore } from "@/application/store/useProblemStore";
 import { useQuery } from "@/application/useQuery";
 import { ProblemStats } from "@/domain/problem/ProblemStats";
-import { useLearningRecordByProblem } from "@/application/useLearningRecordByProblem";
+import { useLearningRecord } from "@/application/useLearningRecord";
 
 
 export function useFilterProblems(){
     const repos = useRepositoryContext()
     const problemStore = useProblemStore(repos.problem)
     const learningStore = useLearningEventStore(repos.learningEvent)
-    const learningRecords = useLearningRecordByProblem(learningStore.eventLog)
+    const learningRecords = useLearningRecord(learningStore.eventLog)
     const query = useQuery() //  useMissionQueryContext()
 
     const reloadStores = async () => {
@@ -40,12 +40,12 @@ export function useFilterProblems(){
     ])
     //const learningRecords = learningStore.records
     // stats
-    const stats = useMemo(()=> 
-        ProblemStats.create(filteredProblems, learningRecords),
-    [filteredProblems, learningRecords])
+    //const stats = useMemo(()=> 
+    //    ProblemStats.create(filteredProblems, learningRecords),
+    //[filteredProblems, learningRecords])
     return {
         filteredProblems, reloadStores, query,
         problemIds: filteredProblems.map(p=>p.id),        
-        stats
+        //stats
     }
 }

@@ -3,7 +3,7 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline"
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline"
 import { Box, Button, IconButton, List, ListItem, Stack, type SelectChangeEvent,  } from "@mui/material";
 import { AppLayout } from "../common/AppLayout";
-import { useFilterProblems } from "./hooks/useFilterProblems";
+import { useFilterProblems } from "../../application/useFilterProblems";
 import { DashboardFilterControl } from "./components/DashboardFilterControl";
 import { useMissionEventStoreContext } from "../App/providers/MissionEventStoreProvider";
 import { useEffect, useMemo, useState } from "react";
@@ -35,7 +35,7 @@ function deepEqual(a: any, b: any): boolean {
 
 ////////////////////////////////
 export function DashboardScreen() {
-    const { query, stats, problemIds } = useFilterProblems()
+    const { query, problemIds } = useFilterProblems()
     const { start } = useMissionEventStoreContext()
             const repos = useRepositoryContext()
     const { allTags }= useProblemStore(repos.problem)
@@ -79,7 +79,7 @@ export function DashboardScreen() {
                 <Button onClick={() => start(problemIds)}
                     sx={{ height: 64 }}
                     variant="contained" fullWidth
-                    disabled={stats.problemCount === 0}>
+                    >
                     Start
                 </Button>
             }>
@@ -89,7 +89,7 @@ export function DashboardScreen() {
                 allTags={allTags}
                 onToggleFilter={query.toggleFilter}
                 onSetFilter={query.setFilter}/>
-            { `${stats.problemCount}, ${stats.solvedCount}:${stats.failedCount}=${(stats.accuracy*100).toFixed(0)}%`}
+            
             
             <Stack direction="row">
                 <DeckSelectMenu

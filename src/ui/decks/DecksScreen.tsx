@@ -22,18 +22,17 @@ import { ProblemStats } from "@/domain/problem/ProblemStats";
 import { useBackupRestoreDialog } from "../common/BackupRestoreDialog";
 import { useQuery } from "@/application/useQuery";
 import { useStores } from "@/application/store/useStores";
-import { useLearningRecordByProblem } from "@/application/useLearningRecordByProblem";
+import { useLearningRecord } from "@/application/useLearningRecord";
+import { useProblemStats } from "@/application/useProblemStats";
+import { useDeckStats } from "./useDeckStats";
 
 export default function DecksScreen(){
     const query = useQuery() 
     
     const { start } = useMissionEventStoreContext()
-    const repos = useRepositoryContext()
-    //const { decks, loadDecks } = useDeckStore(repos.deck)
-    //const store = useProblemStore(repos.problem)
-    //const learningEventStore = useLearningEventStore(repos.learningEvent)
+    //const repos = useRepositoryContext()
     const stores = useStores()
-    const learningRecords = useLearningRecordByProblem(stores.learningEvent.eventLog)
+    const learningRecords = useLearningRecord(stores.learningEvent.eventLog)
     const navigate = useNavigate()
     const toast = useToast()
 
@@ -46,7 +45,8 @@ export default function DecksScreen(){
     const backupRestoreDialog = useBackupRestoreDialog((res) => {
         if (res.ok) stores.problem.reload()
     })            
-    
+    //
+    const deckStats = useDeckStats(stores, learningRecords)
     //  handlers
     const handleStartMission = (deck: Deck) => {
         const filterState = deck.snapshot.filterState
@@ -63,28 +63,12 @@ export default function DecksScreen(){
             snapshot: createQuerySnapshot(query),
             createdAt: new Date(),
         }
-        repos.deck.update(newDeck)
-        stores.deck.loadDecks()
+        stores.deck.saveDeck(newDeck)
+        //repos.deck.update(newDeck)
+        //stores.deck.loadDecks()
         //setOpenCreateDialog(false)
         navigate(`/deck/${newDeck.id}`)
     }    
-
-    const deckStats = useMemo(() => {
-        return new Map(
-            stores.deck.decks.map(deck => {
-                const filteredProblems = applyFilter(
-                    stores.problem.problems,
-                    learningRecords,
-                    deck.snapshot.filterState
-                )
-                const stats = ProblemStats.create(filteredProblems, learningRecords)
-                return [
-                    deck.id,
-                    stats,
-                ]
-            })
-        )
-    }, [stores.deck.decks, stores.problem.problems, learningRecords])
 
     return (
         <AppLayout
