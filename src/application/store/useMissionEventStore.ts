@@ -2,7 +2,7 @@ import { useEffect, useReducer, useRef, useState } from "react"
 import type { MissionEvent, MissionProblemAnswered, MissionSnapshot, MissionStarted } from "../../domain/MissionEvent/MissionEvent"
 import { projectMission } from "../../domain/MissionEvent/projectionMission"
 import type { ProblemId } from "@/domain/problem/Problem"
-import type { SolvedResult } from "@/domain/MissionEvent/MissionSummary"
+import type { SolvedResult } from "@/domain/learning/Learning"
 
 //type MissionState = {
 //    eventLog: MissionEvent[]

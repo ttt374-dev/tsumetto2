@@ -1,4 +1,4 @@
-import type { SolvedResult } from "@/domain/MissionEvent/MissionSummary"
+import type { SolvedResult } from "@/domain/learning/Learning"
 import { Button, Stack, type ButtonProps, type Color, type PaletteColor } from "@mui/material"
 
 type AnswerAction = {

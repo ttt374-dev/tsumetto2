@@ -4,7 +4,6 @@ import type { SortState } from "@/domain/problem/query/sort";
 import { useLearningEventStore } from "@/application/store/useLearningEventStore";
 import { useRepositoryContext } from "@/ui/App/providers/RepositoryProvider";
 import { useProblemStore } from "@/application/store/useProblemStore";
-//import { MissionSummary } from "@/domain/MissionEvent/MissionSummary";
 import { useQuery } from "@/application/useQuery";
 import { ProblemStats } from "@/domain/problem/ProblemStats";
 
@@ -45,7 +44,6 @@ export function useFilterProblems(){
     return {
         filteredProblems, reloadStores, query,
         problemIds: filteredProblems.map(p=>p.id),        
-        //missionSummary
         stats
     }
 }

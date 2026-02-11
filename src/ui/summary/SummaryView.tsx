@@ -1,5 +1,5 @@
 
-import { MissionSummary, type MissionResultEntry } from "@/domain/MissionEvent/MissionSummary";
+import type { ProblemStats } from "@/domain/problem/ProblemStats";
 import { Box, Button, Paper, Stack } from "@mui/material";
 
 function SummaryRow({
@@ -25,16 +25,16 @@ function SummaryRow({
         </Stack>
     )
 }
-export function SummaryView({ summary }: {
-    summary: MissionSummary
+export function SummaryView({ stats }: {
+    stats: ProblemStats,
 }) {
     return (
         <Paper>
             <Stack spacing={2} p={2}>
-                <SummaryRow label="総問題数" value={summary.problemCount} />
-                <SummaryRow label="正解" value={summary.solvedCount} />
-                <SummaryRow label="不正解" value={summary.failedCount} />
-                <SummaryRow label="正解率" value={`${Math.round(summary.accuracy * 100)} %`} />
+                <SummaryRow label="総問題数" value={stats.problemCount} />
+                <SummaryRow label="正解" value={stats.solvedCount} />
+                <SummaryRow label="不正解" value={stats.failedCount} />
+                <SummaryRow label="正解率" value={`${Math.round(stats.accuracy * 100)} %`} />
             </Stack>
         </Paper>
     )

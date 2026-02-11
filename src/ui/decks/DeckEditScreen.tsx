@@ -30,7 +30,6 @@ function deepEqual(a: any, b: any): boolean {
 /////////////////////////////////////////////
 export function DeckEditScreen() {
     const { id } = useParams<{ id: string }>()
-    //const { query, missionSummary, problemIds } = useFilterProblems()
     const query = useQuery()
     const { decks, loadDecks } = useDeckController()
     

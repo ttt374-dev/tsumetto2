@@ -1,4 +1,3 @@
-//import { MissionSummary, type MissionResultEntry } from "@/domain/MissionEvent/MissionSummary";
 import { Box, Button, Stack } from "@mui/material";
 import { AppLayout } from "../common/AppLayout";
 import { SummaryView } from "./SummaryView";
@@ -13,7 +12,6 @@ export function SummaryScreen() {
     if (!missionStore.snapshot) return null
 
     const missionResultEntryList = snapshotToResultList(missionStore.snapshot)
-    //const summary = MissionSummary.createFromResultList(missionResultEntryList)
     const stats = ProblemStats.createFromMissionResultList(missionResultEntryList)
     
     return (
