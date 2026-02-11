@@ -4,18 +4,14 @@ import { projectMission } from "../../domain/MissionEvent/projectionMission"
 import type { ProblemId } from "@/domain/problem/Problem"
 import type { SolvedResult } from "@/domain/learning/Learning"
 
-//type MissionState = {
-//    eventLog: MissionEvent[]
-//    snapshot: MissionSnapshot | null
-//}
-type MissionState =
-  | { phase: "idle"; eventLog: MissionEvent[] }
-  | MissionPlayingState
-  | { phase: "finished"; eventLog: MissionEvent[]; snapshot: MissionSnapshot }
+export type MissionPhase = "playing" | "finished";
 
-  export type MissionPlayingState = {
-    phase: "playing"; eventLog: MissionEvent[]; snapshot: MissionSnapshot 
-}
+export type MissionState = {
+    phase: MissionPhase;
+    eventLog: MissionEvent[];
+    snapshot: MissionSnapshot;
+};
+
 type MissionAction =
     | { type: "append"; event: MissionEvent }
     | { type: "reset" }
@@ -38,15 +34,15 @@ function missionReducer(
             }
         }
         case "reset":
-            return { eventLog: [], phase: "idle" }
+            return { eventLog: [], phase: "playing", snapshot: projectMission([]) }
     }
 }
 //////////////////////////////////////////////////
 export function useMissionEventStore() {
     const [state, dispatch] = useReducer(missionReducer, {
         eventLog: [],
-        phase: "idle",
-        //snapshot: null,
+        phase: "playing",
+        snapshot: projectMission([]),
     })
 
     const start = (ids: ProblemId[]) => {
@@ -86,7 +82,7 @@ export function useMissionEventStore() {
 
     return {
         eventLog: state.eventLog,
-        snapshot: state.phase === "idle" ? null : state.snapshot,
+        snapshot: state.snapshot,
 
         start, answer, finish,
         append,

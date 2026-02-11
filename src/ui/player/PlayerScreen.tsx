@@ -16,6 +16,7 @@ import { useProblemStore } from "@/application/store/useProblemStore"
 import { RightActionsDrawer } from "./components/RightActionsDrawer";
 import type { SolvedResult } from "@/domain/learning/Learning";
 import { useProblemDetailDialog } from "../common/problemDetail/useProblemDetailDialog";
+import { useStores } from "@/application/store/useStores";
 
 export function useShowMovesController(problemId: ProblemId | undefined, plyIndex: number) {
     const [showMoves, setShowMoves] = useState(false)
@@ -40,17 +41,18 @@ export function PlayerScreen() {
         next, prev, answer, moveTo,
     } = useMissionPlayer()
 
-    const repos = useRepositoryContext()
-    const store = useProblemStore(repos.problem)
+    //const repos = useRepositoryContext()
+    const stores = useStores()
+    //const store = useProblemStore(repos.problem)
     const problem = currentProblemId !== undefined ?
-        store.findById(currentProblemId) : undefined
+        stores.problem.findById(currentProblemId) : undefined
     if (!problem) return (<>Loading...</>)
     const navigationHandlers = {
         next: next, prev: prev, moveTo: moveTo
     }
     
     return (
-        <PlayerScreenContent problem={problem} problemIds={snapshot.problemIds}
+        <PlayerScreenContent problem={problem} problemIds={snapshot?.problemIds ?? []}
             index={index} onAnswer={answer} 
             navigationHandlers={navigationHandlers} />
     )
@@ -68,9 +70,10 @@ export function PlayerScreenContent({ problem, problemIds,
         onAnswer: (r: SolvedResult, sec?: number) => void,
     }) {
     const [starred, setStarred] = useState(problem.starred)
-    const repos = useRepositoryContext()
-    const problemStore = useProblemStore(repos.problem)
-    const learningEventStore = useLearningEventStore(repos.learningEvent)
+    //const repos = useRepositoryContext()
+    
+    const { problem: problemStore, learningEvent: learningEventStore } = useStores()
+    
     // replay
     const { initialPosition, moves } = problem.kifData
     const replay = useReplayController(initialPosition, moves)
@@ -78,14 +81,13 @@ export function PlayerScreenContent({ problem, problemIds,
 
     // dialog
     const handleUpdateProblem = async (p: Problem) => {
-        await repos.problem.update(p)
-        await problemStore.reload()
+        await problemStore.updateProblem(p)        
 
     }
     const handleToggleStar = async () => {
         setStarred(prev=>!prev)
-        await repos.problem.update(problem.toggleStar())
-        await problemStore.reload()
+        await problemStore.updateProblem(problem.toggleStar())
+        
     }
     const detailDialog = useProblemDetailDialog(() => {}, handleUpdateProblem, 
     () => {navigationHandlers.next()})

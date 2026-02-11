@@ -9,9 +9,9 @@ export function MissionScreen() {
 
     useEffect(() => {
         switch (phase) {
-            case "idle":
-                navigate("/mission", { replace: true })
-                break
+            //case "idle":
+            //    navigate("/mission", { replace: true })
+            //    break
             case "playing":
                 navigate("/mission/play", { replace: true })
                 break

@@ -28,7 +28,7 @@ export function useProblemStore(repository: ProblemRepository) {
         [problems]
     )
     // --- commands ---
-    const update = async (problem: Problem) => {
+    const updateProblem = async (problem: Problem) => {
         await repository.update(problem)
         await reload()
     }
@@ -50,7 +50,7 @@ export function useProblemStore(repository: ProblemRepository) {
         allTags,
 
         // command
-        update,
+        updateProblem,
         deleteProblems,
         deleteAll,
     }

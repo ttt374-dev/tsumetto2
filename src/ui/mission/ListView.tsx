@@ -3,6 +3,7 @@ import { List } from "@mui/material"
 import { LibraryListItem } from "../library/components/LibraryListItem"
 import { useRepositoryContext } from "../App/providers/RepositoryProvider"
 import { useLearningEventStore } from "@/application/store/useLearningEventStore"
+import { useLearningRecord } from "@/application/useLearningRecord"
 
 
 export function ListView({ problems, onSelectProblem, currentProblemId }: {
@@ -11,7 +12,8 @@ export function ListView({ problems, onSelectProblem, currentProblemId }: {
     currentProblemId?: ProblemId
 }) {
     const repos = useRepositoryContext()
-    const learningRecords = useLearningEventStore(repos.learningEvent).records    
+    const learningEvent = useLearningEventStore(repos.learningEvent)
+    const learningRecords = useLearningRecord(learningEvent.eventLog)
 
     return (
         <List>

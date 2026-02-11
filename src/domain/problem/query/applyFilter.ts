@@ -1,7 +1,7 @@
 import { createProblemWithLearningList, type ProblemWithLearning } from "../PwL";
 import type { FilterState } from "./filter";
 import { matchMateBuckets } from "./mateFilter";
-import type { LearningRecord } from "@/domain/learning/Learning";
+import type { Learning, LearningRecord } from "@/domain/learning/Learning";
 import type { Problem } from "@/domain/problem/Problem";
 
 
@@ -12,41 +12,45 @@ export const applyFilter = (
     filter: FilterState
 ): Problem[] => {
     const now = Date.now()
-
-    const predicates: Array<(pwl: ProblemWithLearning) => boolean> = [
+    
+    const predicates: Array<(problem: Problem, learning: Learning | undefined) => boolean> = [
         // 未回答のみ
-        (e) =>
+        (_, learning) =>
             !filter.unansweredOnly ||
-            !(e.learning && e.learning.solvedCount + e.learning.failedCount > 0),
+            !(learning && learning.solvedCount + learning.failedCount > 0),
 
         // ミッション対象
-        (e) =>
+        (problem, learning) =>
             !filter.dueForReviewOnly ||
-            e.learning?.nextReviewedAt === undefined ||
-            e.learning.nextReviewedAt <= now,
+            learning?.nextReviewedAt === undefined ||
+            learning.nextReviewedAt <= now,
 
         // スターつきのみ
-        (e) =>
+        (problem, _) =>
             !filter.starredOnly ||
-            e.problem.starred,
+            problem.starred,
 
         // 手数
         //(e) =>
         //  !filter.mateLength ||
         //  matchMateLength(e.problem.kifData, filter.mateLength),
         // 手数バケット
-        (e) =>
+        (problem, _) =>
             !filter.mateBuckets ||
-            matchMateBuckets(e.problem.kifData.moves.length, filter.mateBuckets),
+            matchMateBuckets(problem.kifData.moves.length, filter.mateBuckets),
         // tags
-        (e) => 
+        (problem, _) => 
             !filter.tags || filter.tags.length === 0 || 
-            filter.tags!.some(tag => e.problem.tags.includes(tag))
+            filter.tags!.some(tag => problem.tags.includes(tag))
 
     ]
-
+    return problems.filter(problem => 
+        predicates.every(p => p(problem, learningRecords[problem.id])
+    ))
+    /*
     const list = createProblemWithLearningList(problems, learningRecords)
     return list.filter(e =>
-        predicates.every(p => p(e))
+        predicates.every(p => p(e.problem, e.learning))
     ).map(e => e.problem)
+    */
 }

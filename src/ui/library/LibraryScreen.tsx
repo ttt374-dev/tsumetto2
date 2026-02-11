@@ -26,7 +26,6 @@ import { useProblemDetailDialog } from "../common/problemDetail/useProblemDetail
 export function LibraryScreen() {
     const [checkboxMode, setCheckboxMode] = useState(false)
 
-    //const repos = useRepositoryContext()
     const stores = useStores()    
     const learningRecords = useLearningRecord(stores.learningEvent.eventLog)
     //const problemStore = stores.problem
@@ -37,14 +36,14 @@ export function LibraryScreen() {
     const detailDialog = useProblemDetailDialog(
         (id: ProblemId) => { viewerDialog.openDialog(id) },
         async (p: Problem) => {
-            await stores.problem.update(p)
+            await stores.problem.updateProblem(p)
         }, async () => { await stores.problem.reload() }
     ) // TODO
     const backupRestoreDialog = useBackupRestoreDialog((res) => { 
         if (res.ok) stores.problem.reload()})
     const handleUpdateProblems = async (problems: Problem[]) => {
         for (const p of problems) {
-            await stores.problem.update(p)
+            await stores.problem.updateProblem(p)
         }    
     }
 
@@ -70,7 +69,7 @@ export function LibraryScreen() {
         edit: { 
             onEditTags: (ids: ProblemId[]) => { tagEditDialog.openDialog(ids)},
             onToggleStar: async (p: Problem) => { 
-                await stores.problem.update(p.toggleStar())
+                await stores.problem.updateProblem(p.toggleStar())
 
             },
         },

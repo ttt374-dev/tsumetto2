@@ -5,7 +5,7 @@ export function projectMission(
 ): MissionSnapshot {
     let snapshot: MissionSnapshot = {
         missionId: "",
-        phase: "idle",
+        phase: "playing",
         problemIds: [],
         answered: {},
         solvedCount: 0,

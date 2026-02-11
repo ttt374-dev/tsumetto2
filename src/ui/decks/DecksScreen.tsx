@@ -1,36 +1,36 @@
-import { Box, Button, Fab, IconButton, List, ListItem, ListItemButton, ListItemText, Stack } from "@mui/material";
+import { Box, IconButton, List, ListItem, ListItemButton, ListItemText } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
-import AddIcon from "@mui/icons-material/Add";
 import BackupIcon from "@mui/icons-material/Backup";
 import { AppLayout } from "../common/layout/AppLayout";
-import { useMissionEventStoreContext } from "../App/providers/MissionEventStoreProvider";
 import { useNavigate } from "react-router-dom";
-import { applyFilter } from "@/domain/problem/query/applyFilter";
-import { useRepositoryContext } from "../App/providers/RepositoryProvider";
-import { useProblemStore } from "@/application/store/useProblemStore";
-import { useLearningEventStore } from "@/application/store/useLearningEventStore";
 import { v4 } from "uuid";
-import { useMemo, useState } from "react";
 import { createQuerySnapshot, type Deck } from "@/domain/deck/Deck";
 import { applyQuery } from "@/domain/problem/query/applyQuery";
-import { useDeckStore } from "@/application/store/useDeckStore";
 import FabMenu from "./FabMenu";
 import { useImportController } from "@/application/useImportControler";
 import type { ImportFilesResult } from "@/usecase/importProblemsUsecase";
 import { useToast } from "../App/providers/ToastProvider";
-import { ProblemStats } from "@/domain/problem/ProblemStats";
 import { useBackupRestoreDialog } from "../common/dialogs/BackupRestoreDialog";
 import { useQuery } from "@/application/useQuery";
 import { useStores } from "@/application/store/useStores";
 import { useLearningRecord } from "@/application/useLearningRecord";
-import { useProblemStats } from "@/application/useProblemStats";
-import { useDeckStats } from "./useDeckStats";
+import { useDeckStats } from "./hooks/useDeckStats";
+import { useMissionCoordinator } from "@/domain/MissionEvent/useMissionCoordinator";
+import { DefaultFilterState } from "@/domain/problem/query/filter";
+import { DefaultSortState } from "@/domain/problem/query/sort";
 
-export default function DecksScreen(){
-    const query = useQuery() 
-    
-    const { start } = useMissionEventStoreContext()
-    //const repos = useRepositoryContext()
+
+function createDeck(name: string): Deck {
+    return {
+        id: v4(),
+        name,
+        snapshot: { filterState: DefaultFilterState, sortState: DefaultSortState},
+        createdAt: new Date(),
+    }
+}
+/////////////////////////////////////////////////////////////
+export default function DecksScreen(){    
+    const { startMission } = useMissionCoordinator()
     const stores = useStores()
     const learningRecords = useLearningRecord(stores.learningEvent.eventLog)
     const navigate = useNavigate()
@@ -45,28 +45,19 @@ export default function DecksScreen(){
     const backupRestoreDialog = useBackupRestoreDialog((res) => {
         if (res.ok) stores.problem.reload()
     })            
-    //
+    // stats
     const deckStats = useDeckStats(stores, learningRecords)
     //  handlers
     const handleStartMission = (deck: Deck) => {
         const filterState = deck.snapshot.filterState
         const filtered = applyQuery(stores.problem.problems, learningRecords, deck.snapshot.sortState, filterState)
 
-        //query.setFilter(filterState)
-        start(filtered.map(p=>p.id))
+        startMission(filtered.map(p=>p.id))
         navigate("/mission/play")
     }
     const handleCreateDeck = async (name: string) => {
-        const newDeck = {
-            id: v4(),
-            name,
-            snapshot: createQuerySnapshot(query),
-            createdAt: new Date(),
-        }
+        const newDeck = createDeck(name)
         stores.deck.saveDeck(newDeck)
-        //repos.deck.update(newDeck)
-        //stores.deck.loadDecks()
-        //setOpenCreateDialog(false)
         navigate(`/deck/${newDeck.id}`)
     }    
 
@@ -78,7 +69,7 @@ export default function DecksScreen(){
                     <IconButton onClick={backupRestoreDialog.openDialog}>
                         <BackupIcon sx={{ color: "#fff" }} />
                     </IconButton>
-</>
+                </>
             }
             fab={
                 <FabMenu 

@@ -1,13 +1,10 @@
 import type { LearningEvent, LearningEventLog } from "@/domain/LearningEvent";
 import type { LearningEventRepository } from "@/domain/LearningEvent/LearningEventRepository";
-import type { LearningRecord } from "@/domain/learning/Learning";
 import { useEffect, useRef, useState } from "react";
-import { projectLearning } from "../../domain/learning/projectionLearning";
 import type { ProblemId } from "@/domain/problem/Problem";
 
 export function useLearningEventStore(repository: LearningEventRepository){
     const [eventLog, setEventLog] = useState<LearningEventLog>([])
-    //const [snapshot, setSnapshot] = useState<LearningRecord>({})
 
     const reload = async () => {
         try {

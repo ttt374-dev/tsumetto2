@@ -1,3 +1,4 @@
+import type { MissionPhase } from "@/application/store/useMissionEventStore"
 import type { SolvedResult } from "../learning/Learning"
 import type { ProblemId } from "../problem/Problem"
 
@@ -39,7 +40,7 @@ export type MissionFinished = {
 ////////////////////////////////////////
 export type MissionSnapshot = {
     missionId: MissionId
-    phase: "idle" | "playing" | "finished"
+    phase: MissionPhase
 
     problemIds: ProblemId[]
     answered: Record<ProblemId, MissionProblemAnswered>

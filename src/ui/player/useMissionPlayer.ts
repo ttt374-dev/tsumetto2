@@ -1,21 +1,13 @@
 import { useEffect, useState } from "react"
 import { Problem, type ProblemId } from "@/domain/problem/Problem"
 import { useMissionEventStoreContext } from "../App/providers/MissionEventStoreProvider"
-import type { MissionSnapshot } from "@/domain/MissionEvent/MissionEvent"
 import type { SolvedResult } from "@/domain/learning/Learning"
 
-function requireSnapshot(snapshot: MissionSnapshot | null): MissionSnapshot {
-    if (!snapshot) {
-        throw new Error("Invariant violation: snapshot must exist in playing phase")
-    }
-    return snapshot
-}
 
 /////////////////////////////
 export function useMissionPlayer() {
-    //const [ index, setIndex] = useState(0)    
     const missionStore = useMissionEventStoreContext()
-    const snapshot = requireSnapshot(missionStore.snapshot)
+    const snapshot = missionStore.snapshot
 
     // --- 主状態は ID ---
     const [currentProblemId, setCurrentProblemId] =

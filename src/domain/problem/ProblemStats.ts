@@ -1,6 +1,8 @@
 import type { LearningRecord } from "../learning/Learning"
 import type { MissionResultEntry } from "../MissionEvent/MissionEvent"
 import type { Problem, ProblemId } from "./Problem"
+import { applyFilter } from "./query/applyFilter"
+import type { FilterState } from "./query/filter"
 
 
 export class ProblemStats {
@@ -27,6 +29,10 @@ export class ProblemStats {
             solved,
             failed,
         )
+    }
+    static createWithFilter(problems: Problem[], learningRecords: LearningRecord, filterState: FilterState){
+        const filtered = applyFilter(problems, learningRecords, filterState)
+        return this.create(filtered.map(p=>p.id), learningRecords)
     }
     static createFromMissionResultList(missionResultList: MissionResultEntry[]): ProblemStats {
         return new ProblemStats(

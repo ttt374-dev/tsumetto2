@@ -1,18 +1,16 @@
 import { useNavigate, useParams } from "react-router-dom";
 import DeleteIcon from '@mui/icons-material/Delete';
 import { AppLayout } from "../common/layout/AppLayout";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Box, Button, IconButton, Stack } from "@mui/material";
 import { FilterControl } from "../common/components/FilterControl";
 import { EditableText } from "../common/components/EditableText";
 import { createQuerySnapshot } from "@/domain/deck/Deck";
 import LibrarySortControl from "../library/components/LibrarySortControl";
 import { useQuery } from "@/application/useQuery";
-import { applyFilter } from "@/domain/problem/query/applyFilter";
 import { useStores } from "@/application/store/useStores";
 import { ProblemStats } from "@/domain/problem/ProblemStats";
 import { useLearningRecord } from "@/application/useLearningRecord";
-import { useProblemStats } from "@/application/useProblemStats";
 
 function deepEqual(a: any, b: any): boolean {
   if (a === b) return true
@@ -32,9 +30,7 @@ export function DeckEditScreen() {
     const { id } = useParams<{ id: string }>()
     const query = useQuery()
     const stores = useStores()
-    const { decks, loadDecks } = stores.deck    
-    //const store = stores.problem
-    //const learningEventStore = stores.learningEvent
+    const { decks } = stores.deck        
     const { allTags } = stores.problem
     const navigate = useNavigate()    
     
@@ -49,11 +45,17 @@ export function DeckEditScreen() {
         }
     }, [deck])
     //////////////
-    if (!id || !deck) return null
-    const learningRecords = useLearningRecord(stores.learningEvent.eventLog)
-    const filteredProblems = applyFilter(stores.problem.problems, learningRecords, deck.snapshot.filterState)
-    const stats = useProblemStats(filteredProblems.map(p=>p.id), learningRecords)
 
+    useEffect(()=> {
+        if (deck) query.setFilter(deck.snapshot.filterState)
+    }, [])
+    
+    //const learningRecords = useLearningRecord(stores.learningEvent.eventLog)
+    const stats = useMemo(()=> {
+        return ProblemStats.createWithFilter(stores.problem.problems, stores.learningRecords, query.filterState)
+    }, 
+        [stores.problem.problems, stores.learningRecords, query])
+    if (!id || !deck) return null
     const handleSaveAndExit = async () => {
         if (!deck) return
 
@@ -63,7 +65,6 @@ export function DeckEditScreen() {
             snapshot: createQuerySnapshot(query),
         }
         await stores.deck.saveDeck(newDeck)
-        await loadDecks()
         console.log("save and exit", newDeck)
         navigate(-1)
     }
@@ -71,13 +72,9 @@ export function DeckEditScreen() {
         if (!deck) return
         if (!confirm(`プリセット「${deck.name}」を削除しますか？`)) return
         await stores.deck.deleteDeck(deck.id)
-        await loadDecks()
         navigate(-1)
     }
-    const handleUpdateName = (title: string) => {        
-        console.log("updatename", title)
-        setName(title)
-    }
+    
     ///////////////////////////////////////////////////////////////////
     return (
         <AppLayout
@@ -105,7 +102,7 @@ export function DeckEditScreen() {
                 <Box sx={{ flexGrow: 1 }}>
                     <EditableText
                         initialText={name}
-                        onUpdateText={handleUpdateName}
+                        onUpdateText={setName}
                     />
                 </Box>
                 <IconButton onClick={handleDeleteDeck}>
@@ -123,7 +120,7 @@ export function DeckEditScreen() {
                 onSetFilter={query.setFilter} />            
             
             <Box>
-                全{ stats.problemCount}問、正答率 {(stats.accuracy*100).toFixed(0)}%
+                全{stats.problemCount}問、正答率 {(stats.accuracy*100).toFixed(0)}%
             </Box>
         </AppLayout>
     )
