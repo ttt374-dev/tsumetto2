@@ -10,7 +10,7 @@ import { EditableText } from "../common/EditableText";
 import { createQuerySnapshot } from "@/domain/deck/Deck";
 import LibrarySortControl from "../library/components/LibrarySortControl";
 import { useQuery } from "@/application/useQuery";
-import { useDeckController } from "@/application/useDeckController";
+import { useDeckStore } from "@/application/store/useDeckStore";
 import { applyFilter } from "@/domain/problem/query/applyFilter";
 import { useLearningEventStore } from "@/application/store/useLearningEventStore";
 
@@ -31,7 +31,7 @@ function deepEqual(a: any, b: any): boolean {
 export function DeckEditScreen() {
     const { id } = useParams<{ id: string }>()
     const query = useQuery()
-    const { decks, loadDecks } = useDeckController()
+    const { decks, loadDecks } = useDeckStore()
     
     const repos = useRepositoryContext()
     const store = useProblemStore(repos.problem)

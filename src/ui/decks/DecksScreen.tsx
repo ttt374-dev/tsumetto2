@@ -13,7 +13,7 @@ import { v4 } from "uuid";
 import { useMemo, useState } from "react";
 import { createQuerySnapshot, type Deck } from "@/domain/deck/Deck";
 import { applyQuery } from "@/domain/problem/query/applyQuery";
-import { useDeckController } from "@/application/useDeckController";
+import { useDeckStore } from "@/application/store/useDeckStore";
 import FabMenu from "./FabMenu";
 import { useImportController } from "@/application/useImportControler";
 import type { ImportFilesResult } from "@/usecase/importProblemsUsecase";
@@ -24,7 +24,7 @@ import { useQuery } from "@/application/useQuery";
 
 export default function DecksScreen(){
     const query = useQuery() 
-    const { decks, loadDecks } = useDeckController()
+    const { decks, loadDecks } = useDeckStore()
     const { start } = useMissionEventStoreContext()
     const repos = useRepositoryContext()
     const store = useProblemStore(repos.problem)

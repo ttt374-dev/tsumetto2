@@ -1,10 +1,8 @@
-import { useRepositoryContext } from "@/ui/App/providers/RepositoryProvider"
-import { useQuery } from "./useQuery"
 import { useEffect, useState } from "react"
 import { type Deck } from "@/domain/deck/Deck"
+import type { DeckRepository } from "@/domain/deck/DeckRepository"
 
-export function useDeckController(){ // (query: ReturnType<typeof useQuery>){
-    const deckRepository = useRepositoryContext().deck
+export function useDeckStore(repository: DeckRepository){ // (query: ReturnType<typeof useQuery>){
     const [decks, setDecks] = useState<Deck[]>([])
 
     useEffect(() => {
@@ -15,7 +13,7 @@ export function useDeckController(){ // (query: ReturnType<typeof useQuery>){
     }, [])
 
     const loadDecks = async () => {
-        const list = await deckRepository.load()
+        const list = await repository.load()
         console.log("load decks", list)
         setDecks(list)
     }
@@ -23,17 +21,14 @@ export function useDeckController(){ // (query: ReturnType<typeof useQuery>){
 
     // 保存ボタン
     const saveDeck = async (deck: Deck) => {
-        await deckRepository.update(deck)
+        await repository.update(deck)
         await loadDecks()
     }
     const deleteDeck = async (deck: Deck) => {
         console.log("delete deck", deck)
-        await deckRepository.remove(deck.id)
-
+        await repository.remove(deck.id)
         await loadDecks()
     }
-
-
 
     return { decks, loadDecks,
         saveDeck, deleteDeck }
