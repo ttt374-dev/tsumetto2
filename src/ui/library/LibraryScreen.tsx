@@ -20,40 +20,41 @@ import { useMultipleProblemsTagEditDialog } from "../common/MultipleProblemsTagE
 import { useImportController } from "@/application/useImportControler";
 import type { ImportFilesResult, ImportResult } from "@/usecase/importProblemsUsecase";
 import BackupRestoreDialog, { useBackupRestoreDialog } from "../common/BackupRestoreDialog";
+import { useStores } from "@/application/store/useStores";
 
 //////////////////////////////////////////////////
 // LibraryScreen.tsx
 
 export function LibraryScreen() {
     const [checkboxMode, setCheckboxMode] = useState(false)
+
+    //const repos = useRepositoryContext()
+    const stores = useStores()    
     
-    const repos = useRepositoryContext()
-    const problemStore = useProblemStore(repos.problem)
-    const problems = problemStore.problems
-    const learningRecords = useLearningEventStore(repos.learningEvent).records
+    //const problemStore = stores.problem
+    const problems = stores.problem.problems
+    //const learningRecords = stores.learningEvent.records
     const query = useLibraryQueryContext()
     const viewerDialog = useViewerDialog()
     const detailDialog = useProblemDetailDialog(
-        (id: ProblemId) => { viewerDialog.openDialog(id)},
-        async (p: Problem)=>{
-        await repos.problem.update(p)
-        await problemStore.reload()
-    },  async ()=>{ await problemStore.reload()}
-) // TODO
+        (id: ProblemId) => { viewerDialog.openDialog(id) },
+        async (p: Problem) => {
+            await stores.problem.update(p)
+        }, async () => { await stores.problem.reload() }
+    ) // TODO
     const backupRestoreDialog = useBackupRestoreDialog((res) => { 
-        if (res.ok) problemStore.reload()})
+        if (res.ok) stores.problem.reload()})
     const handleUpdateProblems = async (problems: Problem[]) => {
         for (const p of problems) {
-            await repos.problem.update(p)
-        }
-        await problemStore.reload()        
+            await stores.problem.update(p)
+        }    
     }
 
     const tagEditDialog = useMultipleProblemsTagEditDialog(handleUpdateProblems)
 
     const libraryItems = useMemo(() => 
-        applyQuery(problems, learningRecords, query.sortState, query.filterState),
-        [problems, learningRecords, query.sortState, query.filterState]
+        applyQuery(problems, stores.learningEvent.records, query.sortState, query.filterState),
+        [problems, stores.learningEvent.records, query.sortState, query.filterState]
     )
 
     const checkboxControl = useLibraryCheckbox(libraryItems.map(p => p.id))
@@ -61,7 +62,7 @@ export function LibraryScreen() {
     //const navigate = useNavigate()
     //const importer = useImportFilePicker((files: File[]) => { problemStore.reload() })
     const importer = useImportController(async (res: ImportFilesResult) => {
-        await problemStore.reload()
+        await stores.problem.reload()
         toast({message: `imported: ${res.summary.imported}, skipped: ${res.summary.skipped}, failed: ${res.summary.failed}`})        
      })
 
@@ -71,8 +72,7 @@ export function LibraryScreen() {
         edit: { 
             onEditTags: (ids: ProblemId[]) => { tagEditDialog.openDialog(ids)},
             onToggleStar: async (p: Problem) => { 
-                await repos.problem.update(p.toggleStar())
-                await problemStore.reload()
+                await stores.problem.update(p.toggleStar())
 
             },
         },
@@ -82,16 +82,14 @@ export function LibraryScreen() {
         delete: {
             onDeleteAll: async () => {
                 if (!window.confirm("Are you sure to delete all?")) return
-                await repos.problem.removeAll()
-                await repos.learningEvent.removeAll()
-                await problemStore.reload()
+                await stores.problem.deleteAll()
+                await stores.learningEvent.deleteAll()
                 toast({ message: "Deleted all problems" })
             },
             onDeleteChecked: async () => {
                 if (!window.confirm("Are you sure to delete selected?")) return
                 const ids = Array.from(checkboxControl.checkedIds)
-                await repos.problem.removeMany(ids)
-                problemStore.reload()
+                await stores.problem.deleteProblems(ids)
                 toast({ message: `Deleted ${ids.length} problems` })
             }
         },
@@ -129,7 +127,7 @@ export function LibraryScreen() {
         >
             <LibraryView
                 problems={libraryItems}
-                learningRecords={learningRecords}
+                learningRecords={stores.learningEvent.records}
                 query={query}
                 handlers={handlers}
                 selection={selection}

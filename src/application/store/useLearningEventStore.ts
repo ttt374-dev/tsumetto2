@@ -42,11 +42,17 @@ export function useLearningEventStore(repository: LearningEventRepository){
             appendQueue.current.shift();
         }
     }
+    // commnad
+    const deleteAll = async () => {
+        await repository.removeAll()
+        await reload()
+    }
 
     return {
         eventLog, 
         records: snapshot,
-
-        reload, append
+        reload, 
+        
+        append, deleteAll,
     }
 }

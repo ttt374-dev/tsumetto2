@@ -27,6 +27,20 @@ export function useProblemStore(repository: ProblemRepository) {
         () => Array.from(new Set(problems.flatMap(p => p.tags))),
         [problems]
     )
+    // --- commands ---
+    const update = async (problem: Problem) => {
+        await repository.update(problem)
+        await reload()
+    }
+    const deleteProblems = async (ids: ProblemId[]) => {
+        await repository.removeMany(ids)
+        await reload()
+    }
+    const deleteAll = async () => {
+        await repository.removeAll()
+        await reload()
+    }
+
 
     return {
         // query
@@ -34,5 +48,10 @@ export function useProblemStore(repository: ProblemRepository) {
         reload,
         findById,
         allTags,
+
+        // command
+        update,
+        deleteProblems,
+        deleteAll,
     }
 }

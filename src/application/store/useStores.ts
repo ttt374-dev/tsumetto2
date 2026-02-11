@@ -15,6 +15,7 @@ export function useStores(customRepos?: ReturnType<typeof useRepositoryContext>)
     return useMemo(() => ({
         problem,
         learningEvent,
-        deck
+        deck,
+        //repos
     }), [problem, learningEvent, deck])
 }
