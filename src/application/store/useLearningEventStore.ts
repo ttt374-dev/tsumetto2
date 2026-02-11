@@ -3,6 +3,7 @@ import type { LearningEventRepository } from "@/domain/LearningEvent/LearningEve
 import type { LearningRecord } from "@/domain/learning/Learning";
 import { useEffect, useRef, useState } from "react";
 import { projectLearning } from "../../domain/learning/projectionLearning";
+import type { ProblemId } from "@/domain/problem/Problem";
 
 export function useLearningEventStore(repository: LearningEventRepository){
     const [eventLog, setEventLog] = useState<LearningEventLog>([])
@@ -37,7 +38,7 @@ export function useLearningEventStore(repository: LearningEventRepository){
 
         while (appendQueue.current.length) {
             const e = appendQueue.current[0];
-            setEventLog(prev => [...prev, event])
+            setEventLog(prev => [...prev, e])
             await repository.append(e);
             appendQueue.current.shift();
         }
@@ -47,12 +48,20 @@ export function useLearningEventStore(repository: LearningEventRepository){
         await repository.removeAll()
         await reload()
     }
+    const deleteByProblemIds = async (ids: ProblemId[]) => {
+        const idSet = new Set(ids)
+
+        const newLog = eventLog.filter(e => !idSet.has(e.problemId))
+
+        setEventLog(newLog)
+        await repository.replaceAll(newLog)
+    }
 
     return {
         eventLog, 
         records: snapshot,
         reload, 
         
-        append, deleteAll,
+        append, deleteAll, deleteByProblemIds,
     }
 }

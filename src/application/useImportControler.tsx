@@ -1,7 +1,7 @@
 import { useRepositoryContext } from "@/ui/App/providers/RepositoryProvider"
 import { useState } from "react"
 import { useImportFilePicker } from "./useImportFilePicker"
-import { createImportProblemsUsecase, type ImportFilesResult, type ImportResult } from "@/usecase/importProblemsUsecase"
+import { useImportProblemsUsecase, type ImportFilesResult, type ImportResult } from "@/usecase/importProblemsUsecase"
 import { ImportDialog } from "@/ui/common/ImportDialog"
 import { useProblemDetailDialog } from "@/ui/common/useProblemDetailDialog"
 import { useProblemStore } from "./store/useProblemStore"
@@ -44,7 +44,7 @@ export function useImportController(
         if (!files) return
         try {
             setImporting(true)
-            const usecase = createImportProblemsUsecase(repos.problem)
+            const usecase = useImportProblemsUsecase(repos.problem)
             const result = await usecase.importFiles(files, options)
             onAfterImported?.(result)
         } finally {

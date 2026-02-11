@@ -1,7 +1,5 @@
 import { Filesystem, Directory, Encoding } from "@capacitor/filesystem";
 import type { LearningEvent, LearningEventLog } from "./LearningEvent";
-import type { LearningRecord } from "../learning/Learning";
-
 
 export class LearningEventRepository {
     constructor(
@@ -33,9 +31,10 @@ export class LearningEventRepository {
     async removeAll(){
         await this.store.save([])
     }
-    async replaceAll(events: LearningEventLog){
+    async replaceAll(events: LearningEventLog) {
         await this.store.save(events)
-    }
+    }    
+
 }
 ////////////////////////////////////
 const LEARNING_EVENT_LOG_FILE = "learning_event_log.json";

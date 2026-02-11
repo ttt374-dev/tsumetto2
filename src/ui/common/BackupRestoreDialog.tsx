@@ -3,7 +3,7 @@ import { Dialog, DialogTitle, DialogContent, DialogActions,
     Button, Box, Typography, Divider } from "@mui/material"
 import { useToast } from "../App/providers/ToastProvider"
 import { useRepositoryContext } from "../App/providers/RepositoryProvider"
-import { createBackupRestoreUsecase, type BackupData, type BackupResult, type RestoreResult } from "@/usecase/backupRestoreUsecase"
+import { useBackupRestoreUsecase, type BackupData, type BackupResult, type RestoreResult } from "@/usecase/backupRestoreUsecase"
 import { fileBackupWriter } from "@/infra/fileBackupWriter"
 
 
@@ -41,7 +41,7 @@ export default function BackupRestoreDialog({ open, onClose, onBackupFinished, o
     onRestoreFinished?: (res: RestoreResult) => void
 }) {
     const repos = useRepositoryContext()
-    const usecase = createBackupRestoreUsecase(repos.problem, repos.learningEvent, repos.deck, fileBackupWriter)
+    const usecase = useBackupRestoreUsecase(repos.problem, repos.learningEvent, repos.deck, fileBackupWriter)
     const fileInputRef = useRef<HTMLInputElement>(null)
 
     /* ===== backup ===== */   

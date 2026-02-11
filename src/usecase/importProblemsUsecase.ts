@@ -53,7 +53,7 @@ function resolveTitle(title: string, existing: Set<string>) {
   return `${title} (${i})`
 }
 /////////////////////////////////////////////////
-export function createImportProblemsUsecase(problemRepo: ProblemRepository) {    
+export function useImportProblemsUsecase(problemRepo: ProblemRepository) {    
     const importFile = async (file: File, options: ImportOptions): Promise<ImportResult> => {
         try {
             const buf = await file.arrayBuffer();

@@ -41,7 +41,7 @@ export type BackupData = {
     decks: Deck[]
 }
 
-export function createBackupRestoreUsecase(
+export function useBackupRestoreUsecase(
     problemRepo: ProblemRepository,
     learningRepo: LearningEventRepository,
     deckRepo: DeckRepository,
