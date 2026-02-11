@@ -8,17 +8,17 @@ import { useLibraryCheckbox } from "./hooks/useLibraryCheckbox";
 import { useLibraryQueryContext } from "../App/providers/QueryProvider";
 import { applyQuery } from "@/domain/problem/query/applyQuery";
 import { useMemo, useState } from "react";
-import { AppLayout } from "../common/AppLayout";
+import { AppLayout } from "../common/layout/AppLayout";
 import { Fab, IconButton } from "@mui/material";
-import { useProblemDetailDialog } from "../common/useProblemDetailDialog";
 import type { Problem, ProblemId } from "@/domain/problem/Problem";
 import { useViewerDialog } from "../viewer/ViewDialog";
-import { useMultipleProblemsTagEditDialog } from "../common/MultipleProblemsTagEditDialog";
+import { useMultipleProblemsTagEditDialog } from "../common/dialogs/MultipleProblemsTagEditDialog";
 import { useImportController } from "@/application/useImportControler";
 import type { ImportFilesResult, ImportResult } from "@/usecase/importProblemsUsecase";
-import BackupRestoreDialog, { useBackupRestoreDialog } from "../common/BackupRestoreDialog";
+import BackupRestoreDialog, { useBackupRestoreDialog } from "../common/dialogs/BackupRestoreDialog";
 import { useStores } from "@/application/store/useStores";
 import { useLearningRecord } from "@/application/useLearningRecord";
+import { useProblemDetailDialog } from "../common/problemDetail/useProblemDetailDialog";
 
 //////////////////////////////////////////////////
 // LibraryScreen.tsx

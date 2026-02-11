@@ -5,7 +5,7 @@ import { AllProviders } from './providers/AllProviders';
 import { MissionScreen } from '../mission/MissionScreen';
 import { LibraryScreen } from '../library/LibraryScreen';
 import { MissionEventStoreProvider } from './providers/MissionEventStoreProvider';
-import { DashboardScreen } from '../dashboard/DashboardScreen';
+//import { DashboardScreen } from '../dashboard/DashboardScreen';
 import { PlayerScreen } from '../player/PlayerScreen';
 import { SummaryScreen } from '../summary/SummaryScreen';
 import DecksScreen from '../decks/DecksScreen';
@@ -24,8 +24,7 @@ function App() {
               </MissionEventStoreProvider>
             }
           >
-            <Route path="/mission" element={<MissionScreen />}>
-              <Route index element={<DashboardScreen />} />
+            <Route path="/mission" element={<MissionScreen />}>              
               <Route path="play" element={<PlayerScreen />} />
               <Route path="summary" element={<SummaryScreen />} />
             </Route>

@@ -2,7 +2,7 @@ import { useRepositoryContext } from "@/ui/App/providers/RepositoryProvider"
 import { useState } from "react"
 import { useImportFilePicker } from "./useImportFilePicker"
 import { useImportProblemsUsecase, type ImportFilesResult, type ImportResult } from "@/usecase/importProblemsUsecase"
-import { ImportDialog } from "@/ui/common/ImportDialog"
+import { ImportDialog } from "@/ui/common/dialogs/ImportDialog"
 import { useProblemDetailDialog } from "@/ui/common/useProblemDetailDialog"
 import { useProblemStore } from "./store/useProblemStore"
 

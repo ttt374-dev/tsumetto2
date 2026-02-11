@@ -2,10 +2,10 @@ import { Box, Button, Checkbox, FormControl, FormControlLabel, List, ListItem, P
 import { type FilterState } from "@/domain/problem/query/filter";
 import { MateLengthCheckboxes } from "./MateLengthCheckbox";
 import { useQuery } from "@/application/useQuery";
-import { TagCheckboxFilterControl } from "./TagCheckboxFilterControl";
+import { TagCheckboxFilterControl } from "../../dashboard/components/TagCheckboxFilterControl";
 
 
-export function DashboardFilterControl({ filter, allTags, onToggleFilter, onSetFilter }: {
+export function FilterControl({ filter, allTags, onToggleFilter, onSetFilter }: {
     filter: FilterState, onToggleFilter: (key: keyof FilterState) => void
     onSetFilter: (partial: Partial<FilterState>) => void
     allTags: string[]

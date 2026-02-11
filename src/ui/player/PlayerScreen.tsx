@@ -10,12 +10,12 @@ import { useLearningEventStore } from "@/application/store/useLearningEventStore
 import { useRepositoryContext } from "../App/providers/RepositoryProvider"
 import { Problem, type ProblemId } from "@/domain/problem/Problem"
 import { ListDialog } from "../mission/ListDialog"
-import { useProblemDetailDialog } from "../common/useProblemDetailDialog"
-import { AppLayout } from "../common/AppLayout"
+import { AppLayout } from "../common/layout/AppLayout"
 import { Button, IconButton } from "@mui/material"
 import { useProblemStore } from "@/application/store/useProblemStore"
 import { RightActionsDrawer } from "./components/RightActionsDrawer";
 import type { SolvedResult } from "@/domain/learning/Learning";
+import { useProblemDetailDialog } from "../common/problemDetail/useProblemDetailDialog";
 
 export function useShowMovesController(problemId: ProblemId | undefined, plyIndex: number) {
     const [showMoves, setShowMoves] = useState(false)

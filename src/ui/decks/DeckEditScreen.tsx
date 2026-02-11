@@ -1,10 +1,10 @@
 import { useNavigate, useParams } from "react-router-dom";
 import DeleteIcon from '@mui/icons-material/Delete';
-import { AppLayout } from "../common/AppLayout";
+import { AppLayout } from "../common/layout/AppLayout";
 import { useEffect, useState } from "react";
 import { Box, Button, IconButton, Stack } from "@mui/material";
-import { DashboardFilterControl } from "../dashboard/components/DashboardFilterControl";
-import { EditableText } from "../common/EditableText";
+import { FilterControl } from "../common/components/FilterControl";
+import { EditableText } from "../common/components/EditableText";
 import { createQuerySnapshot } from "@/domain/deck/Deck";
 import LibrarySortControl from "../library/components/LibrarySortControl";
 import { useQuery } from "@/application/useQuery";
@@ -116,7 +116,7 @@ export function DeckEditScreen() {
                 onSetSortOrder={order => query.setSortState(p => ({ ...p, order }))} />
 
             
-            <DashboardFilterControl
+            <FilterControl
                 filter={query.filterState}
                 allTags={allTags}
                 onToggleFilter={query.toggleFilter}

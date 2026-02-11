@@ -5,12 +5,13 @@ import StarBorderIcon from "@mui/icons-material/StarBorder"
 
 import { Problem, type ProblemId } from "@/domain/problem/Problem";
 import { useEffect, useState } from 'react';
-import { useRepositoryContext } from '../App/providers/RepositoryProvider';
+import { useRepositoryContext } from '@/ui/App/providers/RepositoryProvider';
 import { useProblemDetailDialog } from './useProblemDetailDialog';
 import { useProblemStore } from '@/application/store/useProblemStore';
-import { EditableText } from './EditableText';
-import { ProblemTagEditor } from './ProblemTagEditor';
+import { EditableText } from '../components/EditableText';
+import { ProblemTagEditor } from '../components/ProblemTagEditor';
 import { useLearningEventStore } from '@/application/store/useLearningEventStore';
+import { useLearningRecord } from '@/application/useLearningRecord';
 
 type Props = {
     open: boolean
@@ -43,7 +44,9 @@ export default function ProblemDetailDialog({
         }
     }, [open, problem?.tags])
     const learningStore = useLearningEventStore(repo.learningEvent)
-    const learning = learningStore.records[problemId]
+    //const learning = learningStore.records[problemId]
+    const learningRecords = useLearningRecord(learningStore.eventLog)
+    const learning = learningRecords[problemId]
     
     const [tags, setTags] = useState<string[]>(
         () => problem?.tags ? [...problem.tags] : []

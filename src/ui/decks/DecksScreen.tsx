@@ -2,7 +2,7 @@ import { Box, Button, Fab, IconButton, List, ListItem, ListItemButton, ListItemT
 import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from "@mui/icons-material/Add";
 import BackupIcon from "@mui/icons-material/Backup";
-import { AppLayout } from "../common/AppLayout";
+import { AppLayout } from "../common/layout/AppLayout";
 import { useMissionEventStoreContext } from "../App/providers/MissionEventStoreProvider";
 import { useNavigate } from "react-router-dom";
 import { applyFilter } from "@/domain/problem/query/applyFilter";
@@ -19,7 +19,7 @@ import { useImportController } from "@/application/useImportControler";
 import type { ImportFilesResult } from "@/usecase/importProblemsUsecase";
 import { useToast } from "../App/providers/ToastProvider";
 import { ProblemStats } from "@/domain/problem/ProblemStats";
-import { useBackupRestoreDialog } from "../common/BackupRestoreDialog";
+import { useBackupRestoreDialog } from "../common/dialogs/BackupRestoreDialog";
 import { useQuery } from "@/application/useQuery";
 import { useStores } from "@/application/store/useStores";
 import { useLearningRecord } from "@/application/useLearningRecord";

@@ -1,5 +1,5 @@
 import { Box, Button, Stack } from "@mui/material";
-import { AppLayout } from "../common/AppLayout";
+import { AppLayout } from "../common/layout/AppLayout";
 import { SummaryView } from "./SummaryView";
 import { useMissionEventStoreContext } from "../App/providers/MissionEventStoreProvider";
 import type { MissionSnapshot } from "@/domain/MissionEvent/MissionEvent";

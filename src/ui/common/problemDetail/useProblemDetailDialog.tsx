@@ -1,10 +1,11 @@
 import type { Problem, ProblemId } from "@/domain/problem/Problem";
 import { useEffect, useState } from "react";
-import { useRepositoryContext } from "../App/providers/RepositoryProvider";
 import { useProblemStore } from "@/application/store/useProblemStore";
 import ProblemDetailDialog from "./ProblemDetailDialog";
 import { useNavigate } from "react-router-dom";
-import { useViewerDialog } from "../viewer/ViewDialog";
+import { useRepositoryContext } from "@/ui/App/providers/RepositoryProvider";
+import { useViewerDialog } from "@/ui/viewer/ViewDialog";
+
 
 export function useProblemDetailDialog(
     onViewProblem: (id: ProblemId) => void,

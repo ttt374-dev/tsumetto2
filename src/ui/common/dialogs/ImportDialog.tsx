@@ -1,6 +1,6 @@
 import { Filesystem } from "@capacitor/filesystem";
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from "@mui/material";
-import { ProblemTagEditor } from "./ProblemTagEditor";
+import { ProblemTagEditor } from "../components/ProblemTagEditor";
 import type { DuplicateTitleStrategy, ImportOptions } from "@/application/useImportControler";
 import { useState } from "react";
 

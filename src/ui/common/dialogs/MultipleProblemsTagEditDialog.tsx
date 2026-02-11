@@ -3,9 +3,9 @@ import { Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, IconBu
 import ClearIcon from "@mui/icons-material/Clear"
 
 
-import { ProblemTagEditor } from "./ProblemTagEditor";
+import { ProblemTagEditor } from "../components/ProblemTagEditor";
 import { useEffect, useState } from "react";
-import { useRepositoryContext } from "../App/providers/RepositoryProvider";
+import { useRepositoryContext } from "../../App/providers/RepositoryProvider";
 import { useProblemStore } from "@/application/store/useProblemStore";
 
 
