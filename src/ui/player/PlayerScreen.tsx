@@ -17,6 +17,7 @@ import { RightActionsDrawer } from "./components/RightActionsDrawer";
 import type { SolvedResult } from "@/domain/learning/Learning";
 import { useProblemDetailDialog } from "../common/problemDetail/useProblemDetailDialog";
 import { useStores } from "@/application/store/useStores";
+import { useStarController } from "../../application/useStarController";
 
 export function useShowMovesController(problemId: ProblemId | undefined, plyIndex: number) {
     const [showMoves, setShowMoves] = useState(false)
@@ -67,9 +68,11 @@ export function PlayerScreenContent({ problem, problemIds,
         problemIds: ProblemId[]
         index: number
         navigationHandlers: PlayerViewNavigationHandlers
-        onAnswer: (r: SolvedResult, sec?: number) => void,
+        onAnswer: (r: SolvedResult, sec?: number) => Promise<void>,
     }) {
-    const [starred, setStarred] = useState(problem.starred)
+    //const [starred, setStarred] = useState(problem.starred)
+    const { starred, toggleStar } = useStarController(problem)
+
     //const repos = useRepositoryContext()
     
     const { problem: problemStore, learningEvent: learningEventStore } = useStores()
@@ -84,11 +87,12 @@ export function PlayerScreenContent({ problem, problemIds,
         await problemStore.updateProblem(p)        
 
     }
-    const handleToggleStar = async () => {
-        setStarred(prev=>!prev)
-        await problemStore.updateProblem(problem.toggleStar())
+    //const handleToggleStar = async () => {
+        //setStarred(prev=>!prev)
+
+        //await problemStore.updateProblem(problem.toggleStar())
         
-    }
+    //}
     const detailDialog = useProblemDetailDialog(() => {}, handleUpdateProblem, 
     () => {navigationHandlers.next()})
     //console.log("playscre", problem, index, snapshot)
@@ -104,7 +108,7 @@ export function PlayerScreenContent({ problem, problemIds,
 
     const handleAnswer = async (solvedResult: SolvedResult, secToTaken?: number) => {
         // learning    
-        onAnswer(solvedResult, secToTaken) // mission アクション                
+        await onAnswer(solvedResult, secToTaken) // mission アクション                
         await learningEventStore.append({
             type: "reviewed",
             problemId: problem.id,
@@ -128,7 +132,7 @@ export function PlayerScreenContent({ problem, problemIds,
             footer={<PlayerFooterActions onAnswer={handleAnswer} />}
             rightActions={
                 <>
-                    <IconButton onClick={handleToggleStar}
+                    <IconButton onClick={toggleStar}
                     disableRipple
                     sx={{ color: "white" }}>
                         { starred ? <StarIcon/> : <StarBorderIcon/>}

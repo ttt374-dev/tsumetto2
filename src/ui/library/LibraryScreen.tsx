@@ -9,69 +9,105 @@ import { useLibraryQueryContext } from "../App/providers/QueryProvider";
 import { applyQuery } from "@/domain/problem/query/applyQuery";
 import { useMemo, useState } from "react";
 import { AppLayout } from "../common/layout/AppLayout";
-import { Fab, IconButton } from "@mui/material";
+import { IconButton } from "@mui/material";
 import type { Problem, ProblemId } from "@/domain/problem/Problem";
 import { useViewerDialog } from "../viewer/ViewDialog";
 import { useMultipleProblemsTagEditDialog } from "../common/dialogs/MultipleProblemsTagEditDialog";
 import { useImportController } from "@/application/useImportControler";
-import type { ImportFilesResult, ImportResult } from "@/usecase/importProblemsUsecase";
-import BackupRestoreDialog, { useBackupRestoreDialog } from "../common/dialogs/BackupRestoreDialog";
+import type { ImportFilesResult } from "@/usecase/importProblemsUsecase";
+import { useBackupRestoreDialog } from "../common/dialogs/BackupRestoreDialog";
 import { useStores } from "@/application/store/useStores";
 import { useLearningRecord } from "@/application/useLearningRecord";
 import { useProblemDetailDialog } from "../common/problemDetail/useProblemDetailDialog";
+import type { useQuery } from "@/application/useQuery";
+import type { LearningRecord } from "@/domain/learning/Learning";
 
-//////////////////////////////////////////////////
-// LibraryScreen.tsx
+function useLibraryItems(problems: Problem[], learningRecords: LearningRecord, query: ReturnType<typeof useQuery>){
+    return useMemo(() =>
+        applyQuery(problems, learningRecords, query.sortState, query.filterState),
+        [problems, learningRecords, query.sortState, query.filterState]
+    )    
+}
 
-export function LibraryScreen() {
-    const [checkboxMode, setCheckboxMode] = useState(false)
+function useLibraryController(stores: ReturnType<typeof useStores>) {
+    // command
+    const reload = async () => {
+        await stores.problem.reload()
+    }
+    const deleteAll = async () => {
+        await stores.problem.deleteAll()
+        await stores.learningEvent.deleteAll()        
+    }
+    const deleteMany = async (ids: ProblemId[]) => {        
+        await stores.problem.deleteProblems(ids)   
+        return ids.length     
+    }
+    const toggleStar = async (p: Problem) => {
+        await stores.problem.updateProblem(p.toggleStar())
 
-    const stores = useStores()    
-    const learningRecords = useLearningRecord(stores.learningEvent.eventLog)
-    //const problemStore = stores.problem
-    const problems = stores.problem.problems
-    //const learningRecords = stores.learningEvent.records
-    const query = useLibraryQueryContext()
+    }
+    const updateProblem = async (p: Problem) => {
+        await stores.problem.updateProblem(p)
+    }
+    return {
+        //libraryItems,
+        reload,
+        deleteAll, deleteMany,
+        toggleStar, updateProblem,
+    }
+}
+function useLibraryPresenter (controller: ReturnType<typeof useLibraryController>){
+     // dialogs
     const viewerDialog = useViewerDialog()
+    const backupRestoreDialog = useBackupRestoreDialog((res) => {
+        if (res.ok) controller.reload()
+    })
     const detailDialog = useProblemDetailDialog(
         (id: ProblemId) => { viewerDialog.openDialog(id) },
         async (p: Problem) => {
-            await stores.problem.updateProblem(p)
-        }, async () => { await stores.problem.reload() }
-    ) // TODO
-    const backupRestoreDialog = useBackupRestoreDialog((res) => { 
-        if (res.ok) stores.problem.reload()})
+            await controller.updateProblem(p)
+        }, async () => { await controller.reload() }
+    )
     const handleUpdateProblems = async (problems: Problem[]) => {
         for (const p of problems) {
-            await stores.problem.updateProblem(p)
-        }    
+            await controller.updateProblem(p)
+        }
     }
-
     const tagEditDialog = useMultipleProblemsTagEditDialog(handleUpdateProblems)
+    const dialogs = {
+        viewer: viewerDialog,
+        detail: detailDialog,
+        backupRestore: backupRestoreDialog,
+        tagEdit: tagEditDialog,
+    }
+    return { dialogs }
+}
+//////////////////////////////////////////////////
+export function LibraryScreen() {
+    const stores = useStores()
+    const learningRecords = useLearningRecord(stores.learningEvent.eventLog)
+    const query = useLibraryQueryContext()
+    const controller = useLibraryController(stores)
 
-    const libraryItems = useMemo(() => 
-        applyQuery(problems, learningRecords, query.sortState, query.filterState),
-        [problems, stores.learningEvent.eventLog, query.sortState, query.filterState]
-    )
+    const [checkboxMode, setCheckboxMode] = useState(false)
+    const presenter = useLibraryPresenter(controller)
 
+    const libraryItems = useLibraryItems(stores.problem.problems, learningRecords, query)
     const checkboxControl = useLibraryCheckbox(libraryItems.map(p => p.id))
     const toast = useToast()
-    //const navigate = useNavigate()
-    //const importer = useImportFilePicker((files: File[]) => { problemStore.reload() })
+
+    // importer
     const importer = useImportController(async (res: ImportFilesResult) => {
-        await stores.problem.reload()
-        toast({message: `imported: ${res.summary.imported}, skipped: ${res.summary.skipped}, failed: ${res.summary.failed}`})        
-     })
-
+        await controller.reload()
+        toast({ message: `imported: ${res.summary.imported}, skipped: ${res.summary.skipped}, failed: ${res.summary.failed}` })
+    })
+    
+    
     const handlers = {
-        //view: { onViewProblem: (id: string) => navigate(`/view/${id}`) },
-        view: { onViewProblem: (id: string) => { detailDialog.openDialog(id)}},
-        edit: { 
-            onEditTags: (ids: ProblemId[]) => { tagEditDialog.openDialog(ids)},
-            onToggleStar: async (p: Problem) => { 
-                await stores.problem.updateProblem(p.toggleStar())
-
-            },
+        view: { onViewProblem: (id: string) => { presenter.dialogs.detail.openDialog(id) } },
+        edit: {
+            onEditTags: (ids: ProblemId[]) => { presenter.dialogs.tagEdit.openDialog(ids) },
+            onToggleStar: controller.toggleStar,
         },
         import: {
             onOpenImportFileDialog: importer.openFileDialog,
@@ -79,16 +115,15 @@ export function LibraryScreen() {
         delete: {
             onDeleteAll: async () => {
                 if (!window.confirm("Are you sure to delete all?")) return
-                await stores.problem.deleteAll()
-                await stores.learningEvent.deleteAll()
+                await controller.deleteAll()
                 toast({ message: "Deleted all problems" })
-            },
+            } ,
             onDeleteChecked: async () => {
                 if (!window.confirm("Are you sure to delete selected?")) return
                 const ids = Array.from(checkboxControl.checkedIds)
-                await stores.problem.deleteProblems(ids)
-                toast({ message: `Deleted ${ids.length} problems` })
-            }
+                const res = await controller.deleteMany(ids)
+                toast({ message: `Deleted ${res} problems` })
+            },
         },
         checkbox: {
             onCheckAll: checkboxControl.checkAll,
@@ -106,14 +141,13 @@ export function LibraryScreen() {
         isChecked: checkboxControl.isChecked,
         isCheckboxMode: checkboxMode
     }
-    
-    return (
 
+    return (
         <AppLayout
             header="Library"
             rightActions={
                 <>
-                    <IconButton onClick={backupRestoreDialog.openDialog}>
+                    <IconButton onClick={presenter.dialogs.backupRestore.openDialog}>
                         <BackupIcon sx={{ color: "#fff" }} />
                     </IconButton>
                     <IconButton onClick={handlers.import.onOpenImportFileDialog}>
@@ -132,10 +166,10 @@ export function LibraryScreen() {
             { /* ダイアログ */}
             {importer.pickerElement}
             {importer.dialogElement}
-            {viewerDialog.dialogElement}
-            {detailDialog.dialogElement}
-            {tagEditDialog.dialogElement}
-            {backupRestoreDialog.dialogElement}
+            {presenter.dialogs.viewer.dialogElement}
+            {presenter.dialogs.detail.dialogElement}
+            {presenter.dialogs.tagEdit.dialogElement}
+            {presenter.dialogs.backupRestore.dialogElement}
         </AppLayout>
     )
 }

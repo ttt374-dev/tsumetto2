@@ -5,7 +5,6 @@ import EditIcon from '@mui/icons-material/Edit';
 
 
 import type { useLibraryQueryContext } from "../../App/providers/QueryProvider"
-import { AppLayout } from "../../common/layout/AppLayout"
 import LibrarySortControl from "./LibrarySortControl"
 import { LibraryListItem } from "./LibraryListItem"
 import type { Problem, ProblemId } from "@/domain/problem/Problem"
