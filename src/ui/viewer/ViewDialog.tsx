@@ -1,7 +1,7 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 import { useState } from "react";
 
-import { useReplayController } from "@/ui/player/useReplayController";
+import { useReplayController } from "@/ui/player/hooks/useReplayController";
 import PlayerView, { type PlayerViewHandlers } from "@/ui/player/components/PlayerView";
 import { useProblemStore } from "@/application/store/useProblemStore";
 import { useRepositoryContext } from "@/ui/App/providers/RepositoryProvider";

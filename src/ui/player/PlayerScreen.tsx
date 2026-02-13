@@ -1,19 +1,19 @@
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import StarIcon from "@mui/icons-material/Star"
-import StarBorderIcon from "@mui/icons-material/StarBorder"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { PlayerAnswerActions } from "./components/PlayerAnswerActions"
 import PlayerView, { type PlayerViewNavigationHandlers } from "./components/PlayerView"
-import { useMissionPlayer } from "./useMissionPlayer"
-import { useReplayController } from "./useReplayController"
+import { useMissionPlayer } from "./hooks/useMissionPlayer"
+import { useReplayController } from "./hooks/useReplayController"
 import { Problem, type ProblemId } from "@/domain/problem/Problem"
-import { Button, IconButton } from "@mui/material"
+import { Button, IconButton, type SxProps } from "@mui/material"
 import type { SolvedResult } from "@/domain/learning/Learning";
 import { useStores } from "@/application/store/useStores";
-import { useStarController } from "../../application/useStarController";
-import { usePlayerPresenter } from "./usePlayerPresenter";
-import { usePlayerController } from "./usePlayerController";
+import { usePlayerPresenter } from "./hooks/usePlayerPresenter";
+import { usePlayerController } from "./hooks/usePlayerController";
 import { AppShell } from "../common/layout/AppShell";
+import type { Theme } from "@emotion/react";
+import { StarToggleButton } from "../common/components/StarToggleButton";
+import { useStarToggleButton } from "@/application/useStarToggleButton";
 
 export function useShowMovesController(problemId: ProblemId | undefined, plyIndex: number) {
     const [showMoves, setShowMoves] = useState(false)
@@ -29,40 +29,32 @@ export function useShowMovesController(problemId: ProblemId | undefined, plyInde
     }, [problemId])
     return { showMoves, setShowMoves }
 }
-
+//////////////////////////////////////////////////////////////
 export function PlayerScreen() {
-    const { index, currentProblemId, snapshot,
-        next, prev, answer, moveTo,
-    } = useMissionPlayer()
-
+    const { currentProblemId } = useMissionPlayer()
     const stores = useStores()
     const problem = currentProblemId !== undefined ?
         stores.problem.findById(currentProblemId) : undefined    
-    const navigationHandlers = useMemo(() => ({
-        next, prev, moveTo
-    }), [next, prev, moveTo])
+
     if (!problem) return (<>Loading...</>)
     return (
-        <PlayerScreenContent problem={problem} problemIds={snapshot?.problemIds ?? []}
-            index={index} onAnswer={answer}
-            navigationHandlers={navigationHandlers} />
+        <PlayerScreenContent problem={problem}  />
     )
 }
+
 
 ////////////////////////////////
 // problem の実体を受け取り、スクリーンとして view に渡す。
 //  (これをかまさないと防御コードばかりになっちゃう)
-export function PlayerScreenContent({ problem, problemIds,
-    index, navigationHandlers, onAnswer }: {
-        problem: Problem
-        problemIds: ProblemId[]
-        index: number
-        navigationHandlers: PlayerViewNavigationHandlers
-        onAnswer: (r: SolvedResult, sec?: number) => Promise<void>,
-    }) {
-    //const { starred, toggleStar } = useStarController(problem)
-    const starController = useStarController(problem)
-    const controller = usePlayerController(onAnswer)
+export function PlayerScreenContent({ problem}: {problem: Problem }) {
+    const starController = useStarToggleButton(problem)
+    const mission = useMissionPlayer()
+    const controller = usePlayerController(mission.answer)
+    const problemIds = mission.snapshot.problemIds
+    
+    const navigationHandlers = useMemo(() => ({
+        next: mission.next, prev: mission.prev, moveTo: mission.moveTo
+    }), [mission])
 
     // replay
     const { initialPosition, moves } = problem.kifData
@@ -83,8 +75,13 @@ export function PlayerScreenContent({ problem, problemIds,
         answer: controller.answer,
         setShowMoves: showMovesController.setShowMoves,
     }
-    const titlePrefix = `${(index ?? 0) + 1}/${problemIds.length}: `
-    const title = `${titlePrefix}${problem.title}`
+    const formatTitle = (rawTitle: string, index: number, length: number): string => {
+        const titlePrefix = `${(index ?? 0) + 1}/${length}: `
+        const title = `${titlePrefix}${rawTitle}`
+        return title
+    }
+
+    const title = formatTitle(problem.title, mission.index, problemIds.length)
     const answerCurrent = useCallback(
         (res: SolvedResult, sec?: number) =>
             controller.answer(problem.id, res, sec),
@@ -98,11 +95,10 @@ export function PlayerScreenContent({ problem, problemIds,
             footer={<PlayerAnswerActions onAnswer={answerCurrent} />}
             rightActions={
                 <>
-                    <IconButton onClick={starController.toggleStar}
+                    <StarToggleButton 
                         sx={{color: "white"}}
-                    >
-                        {starController.starred ? <StarIcon /> : <StarBorderIcon />}
-                    </IconButton>
+                        starred={starController.starred} onToggle={starController.toggleStar} />
+                    
                     <IconButton onClick={presenter.rightActionsDrawer.openDialog}>
                         <MoreVertIcon sx={{ color: "white" }} />
                     </IconButton>

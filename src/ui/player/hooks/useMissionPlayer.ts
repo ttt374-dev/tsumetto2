@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { Problem, type ProblemId } from "@/domain/problem/Problem"
-import { useMissionEventStoreContext } from "../App/providers/MissionEventStoreProvider"
+import { useMissionEventStoreContext } from "../../App/providers/MissionEventStoreProvider"
 import type { SolvedResult } from "@/domain/learning/Learning"
 
 

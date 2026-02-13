@@ -12,7 +12,8 @@ import { EditableText } from '../components/EditableText';
 import { ProblemTagEditor } from '../components/ProblemTagEditor';
 import { useLearningEventStore } from '@/application/store/useLearningEventStore';
 import { useLearningRecord } from '@/application/useLearningRecord';
-import { useStarController } from '@/application/useStarController';
+import { StarToggleButton } from '../components/StarToggleButton';
+import { useStarToggleButton } from '@/application/useStarToggleButton';
 
 type Props = {
     open: boolean
@@ -57,7 +58,7 @@ export default function ProblemDetailDialog({
         new Set(store.problems.flatMap(p => p.tags))
     )
     //const [ starred, setStarred] = useState(problem?.starred)
-    const starController = useStarController(problem)
+    const starController = useStarToggleButton(problem)
 
     // handlers
     const handleDelete = () => {
@@ -74,13 +75,9 @@ export default function ProblemDetailDialog({
         onResetLearning()             
     }    
 
-    
-    const handleToggleStar = () => {
-        onUpdateProblem(problem.toggleStar())
-        //setStarred(!starred)
-    }
+
     if (!problem) return null
-    //const tagsString = tags.join(" ")
+
 
     ///////////////////////////////////////////////////////
     return (
@@ -123,9 +120,9 @@ export default function ProblemDetailDialog({
                             <Stack direction="row" justifyContent="space-between">
                                 <Box>スター</Box>
                                 <Box>
-                                    <IconButton onClick={handleToggleStar}>
-                                        { starController.starred ? <StarIcon/> : <StarBorderIcon/>}
-                                    </IconButton>
+                                    <StarToggleButton starred={starController.starred}
+                                        onToggle={starController.toggleStar}
+                                    />
                                 </Box>
                             </Stack>
                         </Stack>

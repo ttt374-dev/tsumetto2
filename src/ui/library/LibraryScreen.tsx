@@ -22,6 +22,7 @@ import { useProblemDetailDialog } from "../common/problemDetail/useProblemDetail
 import type { useQuery } from "@/application/useQuery";
 import type { LearningRecord } from "@/domain/learning/Learning";
 import { AppShell } from "../common/layout/AppShell";
+import { useSelectItems } from "./hooks/useSelectItems";
 
 function useLibraryItems(problems: Problem[], learningRecords: LearningRecord, query: ReturnType<typeof useQuery>){
     return useMemo(() =>
@@ -43,18 +44,13 @@ function useLibraryController(stores: ReturnType<typeof useStores>) {
         await stores.problem.deleteProblems(ids)   
         return ids.length     
     }
-    const toggleStar = async (p: Problem) => {
-        await stores.problem.updateProblem(p.toggleStar())
-
-    }
     const updateProblem = async (p: Problem) => {
         await stores.problem.updateProblem(p)
     }
     return {
-        //libraryItems,
         reload,
         deleteAll, deleteMany,
-        toggleStar, updateProblem,
+        updateProblem,
     }
 }
 function useLibraryPresenter (controller: ReturnType<typeof useLibraryController>){
@@ -96,6 +92,7 @@ export function LibraryScreen() {
     const libraryItems = useLibraryItems(stores.problem.problems, learningRecords, query)
     const checkboxControl = useLibraryCheckbox(libraryItems.map(p => p.id))
     const toast = useToast()
+    const selectionController = useSelectItems(libraryItems.map(p=>p.id))
 
     // importer
     const importer = useImportController(async (res: ImportFilesResult) => {
@@ -108,7 +105,6 @@ export function LibraryScreen() {
         view: { onViewProblem: (p: Problem) => { presenter.dialogs.detail.openDialog(p) } },
         edit: {
             onEditTags: (ids: ProblemId[]) => { presenter.dialogs.tagEdit.openDialog(ids) },
-            onToggleStar: controller.toggleStar,
         },
         import: {
             onOpenImportFileDialog: importer.openFileDialog,
@@ -119,9 +115,9 @@ export function LibraryScreen() {
                 await controller.deleteAll()
                 toast({ message: "Deleted all problems" })
             } ,
-            onDeleteChecked: async () => {
+            onDeleteMany: async (ids: ProblemId[]) => {
                 if (!window.confirm("Are you sure to delete selected?")) return
-                const ids = Array.from(checkboxControl.checkedIds)
+                //const ids = Array.from(checkboxControl.checkedIds)
                 const res = await controller.deleteMany(ids)
                 toast({ message: `Deleted ${res} problems` })
             },
@@ -130,6 +126,9 @@ export function LibraryScreen() {
             onCheckAll: checkboxControl.checkAll,
             onUncheckAll: checkboxControl.uncheckAll,
             onToggleChecked: checkboxControl.toggleChecked,
+            
+        },
+        mode: {
             onToggleCheckboxMode: () => {
                 setCheckboxMode(prev => !prev)
                 checkboxControl.uncheckAll()

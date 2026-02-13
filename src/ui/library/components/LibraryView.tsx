@@ -3,7 +3,6 @@ import { Box, Button, Checkbox, Fab, IconButton, List, Stack } from "@mui/materi
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 
-
 import type { useLibraryQueryContext } from "../../App/providers/QueryProvider"
 import LibrarySortControl from "./LibrarySortControl"
 import { LibraryListItem } from "./LibraryListItem"
@@ -11,25 +10,24 @@ import type { Problem, ProblemId } from "@/domain/problem/Problem"
 import type { LearningRecord } from "@/domain/learning/Learning";
 import { LibraryCheckboxControl } from "./LibraryCheckboxControl";
 
-
 export type LibraryViewHandlers = {
     view: { onViewProblem: (p: Problem) => void }
     edit: { 
         onEditTags: (ids: ProblemId[]) => void,
-        onToggleStar: (p: Problem) => void,
     },
     import: { onOpenImportFileDialog: () => void }
-    delete: { onDeleteAll: () => void; onDeleteChecked: () => void }
+    delete: { onDeleteAll: () => void; onDeleteMany: (ids: ProblemId[]) => void }
     checkbox: {
         onCheckAll: () => void
         onUncheckAll: () => void
-        onToggleChecked: (id: ProblemId) => void
-        onToggleCheckboxMode: () => void
-    }
+        onToggleChecked: (id: ProblemId) => void        
+    },
+    mode: { onToggleCheckboxMode: () => void }
 }
 
 export type LibrarySelection = {
-    checkedIds: Set<ProblemId>
+    //checkedIds: Set<ProblemId>
+    checkedIds: ProblemId[]
     isChecked: (id: ProblemId) => boolean
     isCheckboxMode: boolean
 }
@@ -50,9 +48,8 @@ export function LibraryView({
     handlers,
     selection
 }: LibraryViewProps) {
-
-
-    const handleItemClick = (p: Problem) => {
+   
+    const onItemClick = (p: Problem) => {
         if (selection.isCheckboxMode) {
             handlers.checkbox.onToggleChecked(p.id)
         } else {
@@ -66,18 +63,20 @@ export function LibraryView({
                 <LibraryCheckboxControl
                     onCheckAll={handlers.checkbox.onCheckAll}
                     onUncheckAll={handlers.checkbox.onUncheckAll}
-                    onToggleCheckboxMode={handlers.checkbox.onToggleCheckboxMode}
+                    onToggleCheckboxMode={handlers.mode.onToggleCheckboxMode}
                     isCheckboxMode={selection.isCheckboxMode}
                 />
 
                 {selection.isCheckboxMode &&
                 <>
+                    { /* 削除ボタン */}
                     <IconButton
-                        onClick={handlers.delete.onDeleteChecked}
-                        disabled={selection.checkedIds.size === 0}
+                        onClick={()=>handlers.delete.onDeleteMany(selection.checkedIds)}
+                        disabled={selection.checkedIds.length === 0}
                     >
                         <DeleteIcon />
                     </IconButton>
+                    { /* タグ編集 */}
                     <IconButton
                         onClick={()=>handlers.edit.onEditTags(Array.from(selection.checkedIds))}>
                         <EditIcon/>
@@ -103,16 +102,14 @@ export function LibraryView({
                             problem={p}
                             learning={learningRecords[p.id]}
                             isCheckboxMode={selection.isCheckboxMode}
-                            onClick={() => handleItemClick(p)}
+                            onClick={onItemClick}
                             isChecked={selection.isChecked(p.id)}
-                            onToggleCheckboxMode={handlers.checkbox.onToggleCheckboxMode}
-                            onToggleChecked={() => handlers.checkbox.onToggleChecked(p.id)}
-                            onToggleStar={()=>handlers.edit.onToggleStar(p)}
+                            onToggleCheckboxMode={handlers.mode.onToggleCheckboxMode}
+                            onToggleChecked={handlers.checkbox.onToggleChecked}
                         />
                     ))}
                 </List>
             </Box>
-
         </>
     )
 }

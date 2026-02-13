@@ -1,37 +1,51 @@
-import { useState } from "react"
+import { useState, useCallback, useMemo } from "react";
 
+export function useLibraryCheckbox(problemIds: string[]) {
+    // 内部状態は Record<string, boolean> で管理
+    const [checkedMap, setCheckedMap] = useState<Record<string, boolean>>(() =>
+        Object.fromEntries(problemIds.map(id => [id, false]))
+    );
 
-export function useLibraryCheckbox(problemIds: string[]): {
-    checkedIds: Set<string>
-    isChecked(id: string): boolean
-    toggleChecked: (id: string) => void
-    isAllChecked: boolean
-    uncheckAll: () => void
-    checkAll: () => void    
-} {
-    const [ checkedIds, setCheckedIds] = useState<Set<string>>(()=>new Set())
+    // id がチェックされているか
+    const isChecked = useCallback(
+        (id: string) => !!checkedMap[id],
+        [checkedMap]
+    );
 
-    const isAllChecked = checkedIds.size === Object.keys(problemIds).length
-    const isChecked = (id: string) => checkedIds.has(id)
-    const toggleChecked = (id: string) => setCheckedIds(prev=>{
-        const next = new Set(prev)
-        if (next.has(id)) { 
-            next.delete(id)
-        } else {
-            next.add(id)
-        }
-        return next
-    })
+    // toggle する
+    const toggleChecked = useCallback((id: string) => {
+        setCheckedMap(prev => ({ ...prev, [id]: !prev[id] }));
+    }, []);
 
-    const checkAll = () => setCheckedIds(new Set(problemIds))
-    const uncheckAll = () => setCheckedIds(new Set())
+    // 全チェックかどうか
+    const isAllChecked = useMemo(
+        () => problemIds.every(id => checkedMap[id]),
+        [checkedMap, problemIds]
+    );
+
+    // 全チェック／全解除
+    const checkAll = useCallback(() => {
+        const next = Object.fromEntries(problemIds.map(id => [id, true]));
+        setCheckedMap(next);
+    }, [problemIds]);
+
+    const uncheckAll = useCallback(() => {
+        const next = Object.fromEntries(problemIds.map(id => [id, false]));
+        setCheckedMap(next);
+    }, [problemIds]);
+
+    // 外部に見せる "セット" は配列として返す
+    const checkedIds = useMemo(
+        () => problemIds.filter(id => checkedMap[id]),
+        [checkedMap, problemIds]
+    );
 
     return {
-        checkedIds,        
-
-        isChecked, toggleChecked,
+        checkedIds,     // 外部には配列として見せる
+        isChecked,
+        toggleChecked,
         isAllChecked,
-        uncheckAll, checkAll,
-
-    }
+        checkAll,
+        uncheckAll,
+    };
 }

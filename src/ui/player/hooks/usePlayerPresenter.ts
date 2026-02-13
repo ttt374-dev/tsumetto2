@@ -1,8 +1,8 @@
 import type { Problem, ProblemId } from "@/domain/problem/Problem";
-import { useProblemDetailDialog } from "../common/problemDetail/useProblemDetailDialog";
-import { useListDialog } from "../mission/ListDialog";
-import type { PlayerViewNavigationHandlers } from "./components/PlayerView";
-import { useRightActionsDrawer } from "./components/RightActionsDrawer";
+import { useProblemDetailDialog } from "../../common/problemDetail/useProblemDetailDialog";
+import { useListDialog } from "../../mission/ListDialog";
+import type { PlayerViewNavigationHandlers } from "../components/PlayerView";
+import { useRightActionsDrawer } from "../components/RightActionsDrawer";
 import type { usePlayerController } from "./usePlayerController";
 
 
