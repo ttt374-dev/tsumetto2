@@ -16,7 +16,7 @@ export type LibraryViewHandlers = {
         onEditTags: (ids: ProblemId[]) => void,
     },
     import: { onOpenImportFileDialog: () => void }
-    delete: { onDeleteAll: () => void; onDeleteMany: (ids: ProblemId[]) => void }
+    delete: { onDeleteMany: (ids: ProblemId[]) => void }
     checkbox: {
         onCheckAll: () => void
         onUncheckAll: () => void

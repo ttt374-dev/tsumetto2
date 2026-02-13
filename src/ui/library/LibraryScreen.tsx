@@ -1,4 +1,3 @@
-import AddIcon from "@mui/icons-material/Add"
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import BackupIcon from "@mui/icons-material/Backup";
 
@@ -8,21 +7,18 @@ import { useLibraryCheckbox } from "./hooks/useLibraryCheckbox";
 import { useLibraryQueryContext } from "../App/providers/QueryProvider";
 import { applyQuery } from "@/domain/problem/query/applyQuery";
 import { useMemo, useState } from "react";
-import { AppLayout } from "../common/layout/AppLayout";
 import { IconButton } from "@mui/material";
 import type { Problem, ProblemId } from "@/domain/problem/Problem";
-import { useViewerDialog } from "../viewer/ViewDialog";
-import { useMultipleProblemsTagEditDialog } from "../common/dialogs/MultipleProblemsTagEditDialog";
 import { useImportController } from "@/application/useImportControler";
 import type { ImportFilesResult } from "@/usecase/importProblemsUsecase";
-import { useBackupRestoreDialog } from "../common/dialogs/BackupRestoreDialog";
 import { useStores } from "@/application/store/useStores";
 import { useLearningRecord } from "@/application/useLearningRecord";
-import { useProblemDetailDialog } from "../common/problemDetail/useProblemDetailDialog";
 import type { useQuery } from "@/application/useQuery";
 import type { LearningRecord } from "@/domain/learning/Learning";
 import { AppShell } from "../common/layout/AppShell";
 import { useSelectItems } from "./hooks/useSelectItems";
+import { useLibraryController } from "./hooks/useLibraryController";
+import { useLibraryPresenter } from "./hooks/useLibraryPresenter";
 
 function useLibraryItems(problems: Problem[], learningRecords: LearningRecord, query: ReturnType<typeof useQuery>){
     return useMemo(() =>
@@ -31,60 +27,12 @@ function useLibraryItems(problems: Problem[], learningRecords: LearningRecord, q
     )    
 }
 
-function useLibraryController(stores: ReturnType<typeof useStores>) {
-    // command
-    const reload = async () => {
-        await stores.problem.reload()
-    }
-    const deleteAll = async () => {
-        await stores.problem.deleteAll()
-        await stores.learningEvent.deleteAll()        
-    }
-    const deleteMany = async (ids: ProblemId[]) => {        
-        await stores.problem.deleteProblems(ids)   
-        return ids.length     
-    }
-    const updateProblem = async (p: Problem) => {
-        await stores.problem.updateProblem(p)
-    }
-    return {
-        reload,
-        deleteAll, deleteMany,
-        updateProblem,
-    }
-}
-function useLibraryPresenter (controller: ReturnType<typeof useLibraryController>){
-     // dialogs
-    const viewerDialog = useViewerDialog()
-    const backupRestoreDialog = useBackupRestoreDialog((res) => {
-        if (res.ok) controller.reload()
-    })
-    const detailDialog = useProblemDetailDialog(
-        (id: ProblemId) => { viewerDialog.openDialog(id) },
-        async (p: Problem) => {
-            await controller.updateProblem(p)
-        }, async () => { await controller.reload() }
-    )
-    const handleUpdateProblems = async (problems: Problem[]) => {
-        for (const p of problems) {
-            await controller.updateProblem(p)
-        }
-    }
-    const tagEditDialog = useMultipleProblemsTagEditDialog(handleUpdateProblems)
-    const dialogs = {
-        viewer: viewerDialog,
-        detail: detailDialog,
-        backupRestore: backupRestoreDialog,
-        tagEdit: tagEditDialog,
-    }
-    return { dialogs }
-}
 //////////////////////////////////////////////////
 export function LibraryScreen() {
     const stores = useStores()
     const learningRecords = useLearningRecord(stores.learningEvent.eventLog)
     const query = useLibraryQueryContext()
-    const controller = useLibraryController(stores)
+    const controller = useLibraryController(stores.problem)
 
     const [checkboxMode, setCheckboxMode] = useState(false)
     const presenter = useLibraryPresenter(controller)
@@ -110,11 +58,6 @@ export function LibraryScreen() {
             onOpenImportFileDialog: importer.openFileDialog,
         },
         delete: {
-            onDeleteAll: async () => {
-                if (!window.confirm("Are you sure to delete all?")) return
-                await controller.deleteAll()
-                toast({ message: "Deleted all problems" })
-            } ,
             onDeleteMany: async (ids: ProblemId[]) => {
                 if (!window.confirm("Are you sure to delete selected?")) return
                 //const ids = Array.from(checkboxControl.checkedIds)
