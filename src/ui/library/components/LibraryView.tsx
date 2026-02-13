@@ -13,7 +13,7 @@ import { LibraryCheckboxControl } from "./LibraryCheckboxControl";
 
 
 export type LibraryViewHandlers = {
-    view: { onViewProblem: (id: ProblemId) => void }
+    view: { onViewProblem: (p: Problem) => void }
     edit: { 
         onEditTags: (ids: ProblemId[]) => void,
         onToggleStar: (p: Problem) => void,
@@ -52,11 +52,11 @@ export function LibraryView({
 }: LibraryViewProps) {
 
 
-    const handleItemClick = (id: string) => {
+    const handleItemClick = (p: Problem) => {
         if (selection.isCheckboxMode) {
-            handlers.checkbox.onToggleChecked(id)
+            handlers.checkbox.onToggleChecked(p.id)
         } else {
-            handlers.view.onViewProblem(id)
+            handlers.view.onViewProblem(p)
         }
     }
 
@@ -103,7 +103,7 @@ export function LibraryView({
                             problem={p}
                             learning={learningRecords[p.id]}
                             isCheckboxMode={selection.isCheckboxMode}
-                            onClick={() => handleItemClick(p.id)}
+                            onClick={() => handleItemClick(p)}
                             isChecked={selection.isChecked(p.id)}
                             onToggleCheckboxMode={handlers.checkbox.onToggleCheckboxMode}
                             onToggleChecked={() => handlers.checkbox.onToggleChecked(p.id)}

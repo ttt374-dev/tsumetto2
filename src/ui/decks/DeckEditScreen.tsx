@@ -11,6 +11,7 @@ import { useQuery } from "@/application/useQuery";
 import { useStores } from "@/application/store/useStores";
 import { ProblemStats } from "@/domain/problem/ProblemStats";
 import { useLearningRecord } from "@/application/useLearningRecord";
+import { useToast } from "../App/providers/ToastProvider";
 
 function deepEqual(a: any, b: any): boolean {
   if (a === b) return true
@@ -33,6 +34,7 @@ export function DeckEditScreen() {
     const { decks } = stores.deck        
     const { allTags } = stores.problem
     const navigate = useNavigate()    
+    const toast = useToast()
     
     const deck = decks.find(d => d.id === id)
     const [name, setName] = useState<string>(deck?.name ?? "")
@@ -70,9 +72,14 @@ export function DeckEditScreen() {
     }
     const handleDeleteDeck = async () => {        
         if (!deck) return
-        if (!confirm(`プリセット「${deck.name}」を削除しますか？`)) return
-        await stores.deck.deleteDeck(deck.id)
-        navigate(-1)
+        if (!confirm(`デッキ「${deck.name}」を削除しますか？`)) return
+        try {
+            await stores.deck.deleteDeck(deck.id)
+            toast({ message: "削除しました" })
+            navigate(-1)
+        } catch (e) {
+            toast({ message: "削除に失敗しました" })
+        }
     }
     
     ///////////////////////////////////////////////////////////////////

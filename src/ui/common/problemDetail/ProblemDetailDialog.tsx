@@ -12,10 +12,11 @@ import { EditableText } from '../components/EditableText';
 import { ProblemTagEditor } from '../components/ProblemTagEditor';
 import { useLearningEventStore } from '@/application/store/useLearningEventStore';
 import { useLearningRecord } from '@/application/useLearningRecord';
+import { useStarController } from '@/application/useStarController';
 
 type Props = {
     open: boolean
-    problemId: ProblemId
+    problem: Problem
     //onUpdateTitle: (title: string) => void;
     onConfirm: (problemId: string) => void;
     onClose: () => void
@@ -27,7 +28,7 @@ type Props = {
 
 export default function ProblemDetailDialog({
     open,
-    problemId,
+    problem,
     
     onClose,
     onDelete,
@@ -37,7 +38,7 @@ export default function ProblemDetailDialog({
 }: Props) {
     const repo = useRepositoryContext()
     const store = useProblemStore(repo.problem)
-    const problem = store.findById(problemId)
+    //const problem = store.findById(problemId)
     useEffect(() => {
         if (open && problem) {
             setTags(problem.tags as string[] ?? [])
@@ -46,7 +47,7 @@ export default function ProblemDetailDialog({
     const learningStore = useLearningEventStore(repo.learningEvent)
     //const learning = learningStore.records[problemId]
     const learningRecords = useLearningRecord(learningStore.eventLog)
-    const learning = learningRecords[problemId]
+    const learning = learningRecords[problem.id]
     
     const [tags, setTags] = useState<string[]>(
         () => problem?.tags ? [...problem.tags] : []
@@ -55,7 +56,8 @@ export default function ProblemDetailDialog({
     const allTags = Array.from(
         new Set(store.problems.flatMap(p => p.tags))
     )
-    const [ starred, setStarred] = useState(problem?.starred)
+    //const [ starred, setStarred] = useState(problem?.starred)
+    const starController = useStarController(problem)
 
     // handlers
     const handleDelete = () => {
@@ -74,8 +76,8 @@ export default function ProblemDetailDialog({
 
     
     const handleToggleStar = () => {
-        problem && onUpdateProblem(problem.toggleStar())
-        setStarred(!starred)
+        onUpdateProblem(problem.toggleStar())
+        //setStarred(!starred)
     }
     if (!problem) return null
     //const tagsString = tags.join(" ")
@@ -122,7 +124,7 @@ export default function ProblemDetailDialog({
                                 <Box>スター</Box>
                                 <Box>
                                     <IconButton onClick={handleToggleStar}>
-                                        { starred ? <StarIcon/> : <StarBorderIcon/>}
+                                        { starController.starred ? <StarIcon/> : <StarBorderIcon/>}
                                     </IconButton>
                                 </Box>
                             </Stack>

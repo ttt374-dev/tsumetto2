@@ -17,19 +17,17 @@ export function useProblemDetailDialog(
 
     const repos = useRepositoryContext()
     const store = useProblemStore(repos.problem)
-    const navigate =useNavigate()
-    const viewDialog = useViewerDialog()
+    //const viewDialog = useViewerDialog()
     //const problem = problemId && problemStore.findById(problemId)
    
-        useEffect(()=> {
-            store.reload()
-        }, [open])
+    useEffect(() => {
+        store.reload()
+    }, [open])
 
-    const openDialog = (problemId: ProblemId) => { 
-        setOpen(true);         
-        const next = store.findById(problemId)
-        setProblem(next)
-        console.log("open detail dialog", next)
+    const openDialog = (p: Problem) => { 
+        setOpen(true);
+        setProblem(p)
+        console.log("open detail dialog", p)
 
      }
     const closeDialog = () => { setOpen(false)}
@@ -49,7 +47,7 @@ export function useProblemDetailDialog(
         problem && open &&
         <ProblemDetailDialog    
             open={open}
-            problemId={problem.id}
+            problem={problem}
             onConfirm={alert}
             onClose={closeDialog}
             onDelete={deleteProblem}

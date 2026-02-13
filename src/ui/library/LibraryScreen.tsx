@@ -105,7 +105,7 @@ export function LibraryScreen() {
     
     
     const handlers = {
-        view: { onViewProblem: (id: string) => { presenter.dialogs.detail.openDialog(id) } },
+        view: { onViewProblem: (p: Problem) => { presenter.dialogs.detail.openDialog(p) } },
         edit: {
             onEditTags: (ids: ProblemId[]) => { presenter.dialogs.tagEdit.openDialog(ids) },
             onToggleStar: controller.toggleStar,

@@ -14,7 +14,7 @@ const ANSWER_ACTIONS: AnswerAction[] = [
   //{ label: "Easy", result: "solved", color: "primary", secToTaken: 5 },
 ]
 
-export function PlayerFooterActions({onAnswer}: {
+export function PlayerAnswerActions({onAnswer}: {
     onAnswer: (answerResult: SolvedResult, secToTaken?: number) => void,    
 }){
   const height = "64px"

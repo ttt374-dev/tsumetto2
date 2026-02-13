@@ -1,4 +1,4 @@
-import type { ProblemId } from "@/domain/problem/Problem";
+import type { Problem, ProblemId } from "@/domain/problem/Problem";
 import { useProblemDetailDialog } from "../common/problemDetail/useProblemDetailDialog";
 import { useListDialog } from "../mission/ListDialog";
 import type { PlayerViewNavigationHandlers } from "./components/PlayerView";
@@ -7,7 +7,7 @@ import type { usePlayerController } from "./usePlayerController";
 
 
 export function usePlayerPresenter(
-    id: ProblemId,
+    p: Problem,
     ids: ProblemId[],
     controller: ReturnType<typeof usePlayerController>,
     navigationHandlers: PlayerViewNavigationHandlers,
@@ -16,9 +16,9 @@ export function usePlayerPresenter(
         () => { },
         controller.updateProblem, //handleUpdateProblem, 
         () => { navigationHandlers.next() })
-    const listDialog = useListDialog(id, ids, navigationHandlers.moveTo)
+    const listDialog = useListDialog(p.id, ids, navigationHandlers.moveTo)
     const rightActionsDrawer = useRightActionsDrawer(
-        () => detailDialog.openDialog(id),
+        () => detailDialog.openDialog(p),
         listDialog.openDialog
     )
 

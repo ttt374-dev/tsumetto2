@@ -2,20 +2,13 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import StarIcon from "@mui/icons-material/Star"
 import StarBorderIcon from "@mui/icons-material/StarBorder"
 import { useCallback, useEffect, useMemo, useState } from "react"
-import { PlayerFooterActions } from "./components/PlayerFooterActions"
+import { PlayerAnswerActions } from "./components/PlayerAnswerActions"
 import PlayerView, { type PlayerViewNavigationHandlers } from "./components/PlayerView"
 import { useMissionPlayer } from "./useMissionPlayer"
 import { useReplayController } from "./useReplayController"
-import { useLearningEventStore } from "@/application/store/useLearningEventStore"
-import { useRepositoryContext } from "../App/providers/RepositoryProvider"
 import { Problem, type ProblemId } from "@/domain/problem/Problem"
-import { ListDialog, useListDialog } from "../mission/ListDialog"
-import { AppLayout } from "../common/layout/AppLayout"
 import { Button, IconButton } from "@mui/material"
-import { useProblemStore } from "@/application/store/useProblemStore"
-import { RightActionsDrawer } from "./components/RightActionsDrawer";
 import type { SolvedResult } from "@/domain/learning/Learning";
-import { useProblemDetailDialog } from "../common/problemDetail/useProblemDetailDialog";
 import { useStores } from "@/application/store/useStores";
 import { useStarController } from "../../application/useStarController";
 import { usePlayerPresenter } from "./usePlayerPresenter";
@@ -31,13 +24,10 @@ export function useShowMovesController(problemId: ProblemId | undefined, plyInde
             setShowMoves(false)
         }
     }, [plyIndex])
-
     useEffect(() => {
         setShowMoves(false)
     }, [problemId])
-
     return { showMoves, setShowMoves }
-
 }
 
 export function PlayerScreen() {
@@ -45,7 +35,6 @@ export function PlayerScreen() {
         next, prev, answer, moveTo,
     } = useMissionPlayer()
 
-    //const repos = useRepositoryContext()
     const stores = useStores()
     const problem = currentProblemId !== undefined ?
         stores.problem.findById(currentProblemId) : undefined    
@@ -60,7 +49,6 @@ export function PlayerScreen() {
     )
 }
 
-
 ////////////////////////////////
 // problem の実体を受け取り、スクリーンとして view に渡す。
 //  (これをかまさないと防御コードばかりになっちゃう)
@@ -72,7 +60,8 @@ export function PlayerScreenContent({ problem, problemIds,
         navigationHandlers: PlayerViewNavigationHandlers
         onAnswer: (r: SolvedResult, sec?: number) => Promise<void>,
     }) {
-    const { starred, toggleStar } = useStarController(problem)
+    //const { starred, toggleStar } = useStarController(problem)
+    const starController = useStarController(problem)
     const controller = usePlayerController(onAnswer)
 
     // replay
@@ -81,7 +70,7 @@ export function PlayerScreenContent({ problem, problemIds,
     const showMovesController = useShowMovesController(problem.id, replay.plyIndex)
 
     // presenter
-    const presenter = usePlayerPresenter(problem.id, problemIds, controller, navigationHandlers)
+    const presenter = usePlayerPresenter(problem, problemIds, controller, navigationHandlers)
 
     // handlers
     const handlers = {
@@ -106,13 +95,13 @@ export function PlayerScreenContent({ problem, problemIds,
     return (
         <AppShell
             header={title}
-            footer={<PlayerFooterActions onAnswer={answerCurrent} />}
+            footer={<PlayerAnswerActions onAnswer={answerCurrent} />}
             rightActions={
                 <>
-                    <IconButton onClick={toggleStar}
-                        disableRipple
-                        sx={{ color: "white" }}>
-                        {starred ? <StarIcon /> : <StarBorderIcon />}
+                    <IconButton onClick={starController.toggleStar}
+                        sx={{color: "white"}}
+                    >
+                        {starController.starred ? <StarIcon /> : <StarBorderIcon />}
                     </IconButton>
                     <IconButton onClick={presenter.rightActionsDrawer.openDialog}>
                         <MoreVertIcon sx={{ color: "white" }} />
