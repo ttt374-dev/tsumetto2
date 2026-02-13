@@ -5,7 +5,30 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/
 import type { ProblemId } from "@/domain/problem/Problem"
 import { ListView } from "./ListView"
 
+export function useListDialog(id: ProblemId, ids: ProblemId[], onMoveTo: (pid: ProblemId) => void){
+    const [open, setOpen] = useState(false)
 
+    const openDialog = () => { setOpen(true)}
+    const closeDialog  = () => { setOpen(false)}
+
+    const dialogElement = (
+        <ListDialog
+                open={open}
+                onClose={closeDialog}
+                onSelectProblem={(pid) => {
+                    onMoveTo(pid),
+                    //handlers.navigation.moveTo(pid)
+                    closeDialog()
+                }}
+                problemIds={ids}
+                currentProblemId={id}
+            />
+    )
+
+    return { openDialog, dialogElement}
+    
+
+}
 export function ListDialog({ problemIds, open, onClose, onSelectProblem, currentProblemId }: {
     problemIds: ProblemId[],
     open: boolean,

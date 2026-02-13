@@ -1,7 +1,7 @@
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import StarIcon from "@mui/icons-material/Star"
 import StarBorderIcon from "@mui/icons-material/StarBorder"
-import { useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { PlayerFooterActions } from "./components/PlayerFooterActions"
 import PlayerView, { type PlayerViewNavigationHandlers } from "./components/PlayerView"
 import { useMissionPlayer } from "./useMissionPlayer"
@@ -9,7 +9,7 @@ import { useReplayController } from "./useReplayController"
 import { useLearningEventStore } from "@/application/store/useLearningEventStore"
 import { useRepositoryContext } from "../App/providers/RepositoryProvider"
 import { Problem, type ProblemId } from "@/domain/problem/Problem"
-import { ListDialog } from "../mission/ListDialog"
+import { ListDialog, useListDialog } from "../mission/ListDialog"
 import { AppLayout } from "../common/layout/AppLayout"
 import { Button, IconButton } from "@mui/material"
 import { useProblemStore } from "@/application/store/useProblemStore"
@@ -18,6 +18,8 @@ import type { SolvedResult } from "@/domain/learning/Learning";
 import { useProblemDetailDialog } from "../common/problemDetail/useProblemDetailDialog";
 import { useStores } from "@/application/store/useStores";
 import { useStarController } from "../../application/useStarController";
+import { usePlayerPresenter } from "./usePlayerPresenter";
+import { usePlayerController } from "./usePlayerController";
 
 export function useShowMovesController(problemId: ProblemId | undefined, plyIndex: number) {
     const [showMoves, setShowMoves] = useState(false)
@@ -44,20 +46,20 @@ export function PlayerScreen() {
 
     //const repos = useRepositoryContext()
     const stores = useStores()
-    //const store = useProblemStore(repos.problem)
     const problem = currentProblemId !== undefined ?
         stores.problem.findById(currentProblemId) : undefined
     if (!problem) return (<>Loading...</>)
-    const navigationHandlers = {
-        next: next, prev: prev, moveTo: moveTo
-    }
-    
+    const navigationHandlers = useMemo(() => ({
+        next, prev, moveTo
+    }), [next, prev, moveTo])
+
     return (
         <PlayerScreenContent problem={problem} problemIds={snapshot?.problemIds ?? []}
-            index={index} onAnswer={answer} 
+            index={index} onAnswer={answer}
             navigationHandlers={navigationHandlers} />
     )
 }
+
 
 ////////////////////////////////
 // problem の実体を受け取り、スクリーンとして view に渡す。
@@ -70,75 +72,50 @@ export function PlayerScreenContent({ problem, problemIds,
         navigationHandlers: PlayerViewNavigationHandlers
         onAnswer: (r: SolvedResult, sec?: number) => Promise<void>,
     }) {
-    //const [starred, setStarred] = useState(problem.starred)
     const { starred, toggleStar } = useStarController(problem)
+    const controller = usePlayerController(onAnswer)
 
-    //const repos = useRepositoryContext()
-    
-    const { problem: problemStore, learningEvent: learningEventStore } = useStores()
-    
     // replay
     const { initialPosition, moves } = problem.kifData
     const replay = useReplayController(initialPosition, moves)
     const showMovesController = useShowMovesController(problem.id, replay.plyIndex)
 
-    // dialog
-    const handleUpdateProblem = async (p: Problem) => {
-        await problemStore.updateProblem(p)        
+    // presenter
+    const presenter = usePlayerPresenter(problem.id, problemIds, controller, navigationHandlers)
 
-    }
-    //const handleToggleStar = async () => {
-        //setStarred(prev=>!prev)
-
-        //await problemStore.updateProblem(problem.toggleStar())
-        
-    //}
-    const detailDialog = useProblemDetailDialog(() => {}, handleUpdateProblem, 
-    () => {navigationHandlers.next()})
-    //console.log("playscre", problem, index, snapshot)
-    //if (!index || !snapshot) return null
-
-    //console.log("play screen: learning", learning)
-    const titlePrefix = `${(index ?? 0) + 1}/${problemIds.length}: `
-    //console.log("titleprefx", titlePrefix)
-
-    const [openListDialog, setOpenListDialog] = useState(false)
-    const [openActionDrawer, setOpenActionDrawer] = useState(false)
-    const title = `${titlePrefix}${problem.title}`
-
-    const handleAnswer = async (solvedResult: SolvedResult, secToTaken?: number) => {
-        // learning    
-        await onAnswer(solvedResult, secToTaken) // mission アクション                
-        await learningEventStore.append({
-            type: "reviewed",
-            problemId: problem.id,
-            quality: solvedResult,
-            sec: secToTaken,
-        })
-    }
-    
+    // handlers
     const handlers = {
         ply: {
             advance: replay.advancePly,
             retreat: replay.retreatPly,
             moveTo: replay.moveToPly
         },
-        navigation: navigationHandlers,        
+        navigation: navigationHandlers,
+        answer: controller.answer,
         setShowMoves: showMovesController.setShowMoves,
     }
+    const titlePrefix = `${(index ?? 0) + 1}/${problemIds.length}: `
+    const title = `${titlePrefix}${problem.title}`
+    const answerCurrent = useCallback(
+        (res: SolvedResult, sec?: number) =>
+            controller.answer(problem.id, res, sec),
+        [controller, problem.id]
+    )
+
+    //////////////////////////////////////////
     return (
         <AppLayout
             header={title}
-            footer={<PlayerFooterActions onAnswer={handleAnswer} />}
+            footer={<PlayerFooterActions onAnswer={answerCurrent} />}
             rightActions={
                 <>
                     <IconButton onClick={toggleStar}
-                    disableRipple
-                    sx={{ color: "white" }}>
-                        { starred ? <StarIcon/> : <StarBorderIcon/>}
+                        disableRipple
+                        sx={{ color: "white" }}>
+                        {starred ? <StarIcon /> : <StarBorderIcon />}
                     </IconButton>
-                    <IconButton onClick={() => setOpenActionDrawer(true)}>
-                        <MoreVertIcon sx={{color: "white"}}/>
+                    <IconButton onClick={presenter.rightActionsDrawer.openDialog}>
+                        <MoreVertIcon sx={{ color: "white" }} />
                     </IconButton>
                 </>
             }
@@ -151,25 +128,10 @@ export function PlayerScreenContent({ problem, problemIds,
 
                 handlers={handlers}
                 currentPlyIndex={replay.plyIndex}
-
             />
-            {detailDialog.dialogElement}
-            <ListDialog
-                open={openListDialog}
-                onClose={() => setOpenListDialog(false)}
-                onSelectProblem={(pid) => {
-                    handlers.navigation.moveTo(pid)
-                    setOpenListDialog(false)
-                }}
-                problemIds={problemIds}
-                currentProblemId={problem.id}
-            />
-            <RightActionsDrawer 
-                isOpen={openActionDrawer}
-                onClose={()=>setOpenActionDrawer(false)}
-                onOpenDetailDialog={() => detailDialog.openDialog(problem.id)}
-                onOpenListDialog={() => setOpenListDialog(true)}
-            />
+            {presenter.dialogs.detail.dialogElement}
+            {presenter.dialogs.list.dialogElement}
+            {presenter.rightActionsDrawer.drawerElement}
         </AppLayout>
     )
 }

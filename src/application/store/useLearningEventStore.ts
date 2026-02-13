@@ -2,6 +2,7 @@ import type { LearningEvent, LearningEventLog } from "@/domain/LearningEvent";
 import type { LearningEventRepository } from "@/domain/LearningEvent/LearningEventRepository";
 import { useEffect, useRef, useState } from "react";
 import type { ProblemId } from "@/domain/problem/Problem";
+import type { SolvedResult } from "@/domain/learning/Learning";
 
 export function useLearningEventStore(repository: LearningEventRepository){
     const [eventLog, setEventLog] = useState<LearningEventLog>([])
@@ -28,6 +29,7 @@ export function useLearningEventStore(repository: LearningEventRepository){
 
     const appendQueue = useRef<LearningEvent[]>([]);
 
+
     const append = async (learningEvent: Omit<LearningEvent, "at">) => {
         const event = {...learningEvent, at: Date.now()}
         appendQueue.current.push(event);
@@ -39,6 +41,14 @@ export function useLearningEventStore(repository: LearningEventRepository){
             await repository.append(e);
             appendQueue.current.shift();
         }
+    }
+    const review = async (problemId: ProblemId, quality: SolvedResult, sec?: number) => {
+        await append({
+            type: "reviewed",
+            problemId: problemId,
+            quality: quality,
+            sec: sec,
+        })
     }
     // commnad
     const deleteAll = async () => {
@@ -58,6 +68,6 @@ export function useLearningEventStore(repository: LearningEventRepository){
         //records: snapshot,
         reload, 
         
-        append, deleteAll, deleteByProblemIds,
+        append, deleteAll, deleteByProblemIds, review,
     }
 }
