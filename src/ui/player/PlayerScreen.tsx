@@ -20,6 +20,7 @@ import { useStores } from "@/application/store/useStores";
 import { useStarController } from "../../application/useStarController";
 import { usePlayerPresenter } from "./usePlayerPresenter";
 import { usePlayerController } from "./usePlayerController";
+import { AppShell } from "../common/layout/AppShell";
 
 export function useShowMovesController(problemId: ProblemId | undefined, plyIndex: number) {
     const [showMoves, setShowMoves] = useState(false)
@@ -47,12 +48,11 @@ export function PlayerScreen() {
     //const repos = useRepositoryContext()
     const stores = useStores()
     const problem = currentProblemId !== undefined ?
-        stores.problem.findById(currentProblemId) : undefined
-    if (!problem) return (<>Loading...</>)
+        stores.problem.findById(currentProblemId) : undefined    
     const navigationHandlers = useMemo(() => ({
         next, prev, moveTo
     }), [next, prev, moveTo])
-
+    if (!problem) return (<>Loading...</>)
     return (
         <PlayerScreenContent problem={problem} problemIds={snapshot?.problemIds ?? []}
             index={index} onAnswer={answer}
@@ -104,7 +104,7 @@ export function PlayerScreenContent({ problem, problemIds,
 
     //////////////////////////////////////////
     return (
-        <AppLayout
+        <AppShell
             header={title}
             footer={<PlayerFooterActions onAnswer={answerCurrent} />}
             rightActions={
@@ -132,6 +132,6 @@ export function PlayerScreenContent({ problem, problemIds,
             {presenter.dialogs.detail.dialogElement}
             {presenter.dialogs.list.dialogElement}
             {presenter.rightActionsDrawer.drawerElement}
-        </AppLayout>
+        </AppShell>
     )
 }

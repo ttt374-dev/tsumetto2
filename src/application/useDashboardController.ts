@@ -20,7 +20,6 @@ export function useDashboardController(){ // (query: ReturnType<typeof useQuery>
 
     const loadDecks = async () => {
         const list = await deckRepository.load()
-        console.log("load decks", list)
         setDecks(list)
     }
 

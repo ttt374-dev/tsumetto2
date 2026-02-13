@@ -37,6 +37,7 @@ export function TagCheckboxFilterControl({
         {allTags.map(tag => (
 
           <Chip
+            key={tag}
             label={tag}
             clickable
             color={selectedTags.includes(tag) ? "primary" : "default"}

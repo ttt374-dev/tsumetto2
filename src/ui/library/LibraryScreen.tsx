@@ -21,6 +21,7 @@ import { useLearningRecord } from "@/application/useLearningRecord";
 import { useProblemDetailDialog } from "../common/problemDetail/useProblemDetailDialog";
 import type { useQuery } from "@/application/useQuery";
 import type { LearningRecord } from "@/domain/learning/Learning";
+import { AppShell } from "../common/layout/AppShell";
 
 function useLibraryItems(problems: Problem[], learningRecords: LearningRecord, query: ReturnType<typeof useQuery>){
     return useMemo(() =>
@@ -143,7 +144,7 @@ export function LibraryScreen() {
     }
 
     return (
-        <AppLayout
+        <AppShell
             header="Library"
             rightActions={
                 <>
@@ -170,6 +171,6 @@ export function LibraryScreen() {
             {presenter.dialogs.detail.dialogElement}
             {presenter.dialogs.tagEdit.dialogElement}
             {presenter.dialogs.backupRestore.dialogElement}
-        </AppLayout>
+        </AppShell>
     )
 }

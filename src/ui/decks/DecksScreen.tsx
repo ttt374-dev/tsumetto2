@@ -18,6 +18,7 @@ import { useDeckStats } from "./hooks/useDeckStats";
 import { useMissionCoordinator } from "@/domain/MissionEvent/useMissionCoordinator";
 import { DefaultFilterState } from "@/domain/problem/query/filter";
 import { DefaultSortState } from "@/domain/problem/query/sort";
+import { AppShell } from "../common/layout/AppShell";
 
 
 function createDeck(name: string): Deck {
@@ -62,7 +63,7 @@ export default function DecksScreen(){
     }    
 
     return (
-        <AppLayout
+        <AppShell
             header={ "Decks"}
             rightActions={
                 <>
@@ -112,6 +113,6 @@ export default function DecksScreen(){
             {importer.pickerElement}
             {importer.dialogElement}
             {backupRestoreDialog.dialogElement}
-        </AppLayout>
+        </AppShell>
     )
 }

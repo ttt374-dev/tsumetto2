@@ -2,7 +2,6 @@ import type { ProblemId } from "@/domain/problem/Problem";
 import { useProblemDetailDialog } from "../common/problemDetail/useProblemDetailDialog";
 import { useListDialog } from "../mission/ListDialog";
 import type { PlayerViewNavigationHandlers } from "./components/PlayerView";
-import type { useReplayController } from "./useReplayController";
 import { useRightActionsDrawer } from "./components/RightActionsDrawer";
 import type { usePlayerController } from "./usePlayerController";
 

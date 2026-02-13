@@ -14,7 +14,6 @@ export function useDeckStore(repository: DeckRepository){ // (query: ReturnType<
 
     const loadDecks = async () => {
         const list = await repository.load()
-        console.log("load decks", list)
         setDecks(list)
     }
 

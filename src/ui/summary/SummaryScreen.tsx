@@ -4,6 +4,7 @@ import { SummaryView } from "./SummaryView";
 import { useMissionEventStoreContext } from "../App/providers/MissionEventStoreProvider";
 import type { MissionSnapshot } from "@/domain/MissionEvent/MissionEvent";
 import { ProblemStats } from "@/domain/problem/ProblemStats";
+import { AppShell } from "../common/layout/AppShell";
 
 /////////////////////////////////////////////
 export function SummaryScreen() {
@@ -15,7 +16,7 @@ export function SummaryScreen() {
     const stats = ProblemStats.createFromMissionResultList(missionResultEntryList)
     
     return (
-        <AppLayout>
+        <AppShell>
             <Box>
                 Done. Good Job
             </Box>
@@ -25,7 +26,7 @@ export function SummaryScreen() {
             <Button onClick={missionStore.reset}>
                 Dashboard
             </Button>
-        </AppLayout>
+        </AppShell>
     )
 }
 //////////////////
