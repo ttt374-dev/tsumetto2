@@ -1,7 +1,6 @@
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import BackupIcon from "@mui/icons-material/Backup";
 
-import { LibraryView } from "./components/LibraryView";
 import { useToast } from "../App/providers/ToastProvider";
 import { useLibraryCheckbox } from "./hooks/useLibraryCheckbox";
 import { useLibraryQueryContext } from "../App/providers/QueryProvider";
@@ -19,6 +18,7 @@ import { AppShell } from "../common/layout/AppShell";
 import { useSelectItems } from "./hooks/useSelectItems";
 import { useLibraryController } from "./hooks/useLibraryController";
 import { useLibraryPresenter } from "./hooks/useLibraryPresenter";
+import { LibraryView } from "./components/LibraryView";
 
 function useLibraryItems(problems: Problem[], learningRecords: LearningRecord, query: ReturnType<typeof useQuery>){
     return useMemo(() =>
@@ -40,49 +40,51 @@ export function LibraryScreen() {
     const libraryItems = useLibraryItems(stores.problem.problems, learningRecords, query)
     const checkboxControl = useLibraryCheckbox(libraryItems.map(p => p.id))
     const toast = useToast()
-    const selectionController = useSelectItems(libraryItems.map(p=>p.id))
+    //const selectionController = useSelectItems(libraryItems.map(p=>p.id))
 
     // importer
     const importer = useImportController(async (res: ImportFilesResult) => {
         await controller.reload()
         toast({ message: `imported: ${res.summary.imported}, skipped: ${res.summary.skipped}, failed: ${res.summary.failed}` })
-    })
-    
-    
-    const handlers = {
-        view: { onViewProblem: (p: Problem) => { presenter.dialogs.detail.openDialog(p) } },
-        edit: {
-            onEditTags: (ids: ProblemId[]) => { presenter.dialogs.tagEdit.openDialog(ids) },
+    })   
+    const itemActions = {
+        editTags: (ids: ProblemId[]) => {
+            presenter.dialogs.tagEdit.openDialog(ids)
         },
-        import: {
-            onOpenImportFileDialog: importer.openFileDialog,
-        },
-        delete: {
-            onDeleteMany: async (ids: ProblemId[]) => {
-                if (!window.confirm("Are you sure to delete selected?")) return
-                //const ids = Array.from(checkboxControl.checkedIds)
-                const res = await controller.deleteMany(ids)
-                toast({ message: `Deleted ${res} problems` })
-            },
-        },
-        checkbox: {
-            onCheckAll: checkboxControl.checkAll,
-            onUncheckAll: checkboxControl.uncheckAll,
-            onToggleChecked: checkboxControl.toggleChecked,
-            
-        },
-        mode: {
-            onToggleCheckboxMode: () => {
-                setCheckboxMode(prev => !prev)
-                checkboxControl.uncheckAll()
-            }
+        /*
+        deleteMany: async (ids: ProblemId[]) => {
+            if (!window.confirm("Are you sure to delete selected?")) return
+            const res = await controller.deleteMany(ids)
+            toast({ message: `Deleted ${res} problems` })
+        },*/
+        deleteChecked: async () => {
+            if (!window.confirm("Are you sure to delete selected?")) return            
+            const res = await controller.deleteMany(selection.checkedIds)
+            toast({ message: `Deleted ${res} problems` })
         }
+    }
+    const handlers = {        
+        onSelectAll: checkboxControl.checkAll,
+        onClearAll: checkboxControl.uncheckAll,
+        onToggleChecked: checkboxControl.toggleChecked,
+        onToggleCheckboxMode: () => {
+            setCheckboxMode(prev => !prev)
+            checkboxControl.uncheckAll()
+        }
+
     }
 
     const selection = {
         checkedIds: checkboxControl.checkedIds,
         isChecked: checkboxControl.isChecked,
         isCheckboxMode: checkboxMode
+    }
+    const onItemClick = (p: Problem) => {
+        if (selection.isCheckboxMode) {
+            checkboxControl.toggleChecked
+        } else {
+            presenter.dialogs.detail.openDialog(p) 
+        }
     }
 
     return (
@@ -93,9 +95,6 @@ export function LibraryScreen() {
                     <IconButton onClick={presenter.dialogs.backupRestore.openDialog}>
                         <BackupIcon sx={{ color: "#fff" }} />
                     </IconButton>
-                    <IconButton onClick={handlers.import.onOpenImportFileDialog}>
-                        <AddOutlinedIcon sx={{ color: "#fff" }} />
-                    </IconButton>
                 </>
             }
         >
@@ -103,7 +102,9 @@ export function LibraryScreen() {
                 problems={libraryItems}
                 learningRecords={learningRecords}
                 query={query}
-                handlers={handlers}
+                itemActions={itemActions}
+                selectActions={handlers}
+                onItemClick={onItemClick}
                 selection={selection}
             />
             { /* ダイアログ */}

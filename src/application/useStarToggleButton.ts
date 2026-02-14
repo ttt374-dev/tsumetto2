@@ -11,6 +11,7 @@ export function useStarToggleButton(problem: Problem){
     const repos = useRepositoryContext()
     const [starred, setStarred] = useState(problem.starred)
     const toggleStar = useCallback(async () => {
+            setStarred(prev => !prev)
             await repos.problem.update(problem.toggleStar())
     }, [problem.id])
 

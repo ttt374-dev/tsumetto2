@@ -10,78 +10,58 @@ import type { Problem, ProblemId } from "@/domain/problem/Problem"
 import type { LearningRecord } from "@/domain/learning/Learning";
 import { LibraryCheckboxControl } from "./LibraryCheckboxControl";
 
-export type LibraryViewHandlers = {
-    view: { onViewProblem: (p: Problem) => void }
-    edit: { 
-        onEditTags: (ids: ProblemId[]) => void,
-    },
-    import: { onOpenImportFileDialog: () => void }
-    delete: { onDeleteMany: (ids: ProblemId[]) => void }
-    checkbox: {
-        onCheckAll: () => void
-        onUncheckAll: () => void
-        onToggleChecked: (id: ProblemId) => void        
-    },
-    mode: { onToggleCheckboxMode: () => void }
-}
-
-export type LibrarySelection = {
-    //checkedIds: Set<ProblemId>
-    checkedIds: ProblemId[]
-    isChecked: (id: ProblemId) => boolean
-    isCheckboxMode: boolean
-}
-
-export type LibraryViewProps = {
+type LibraryViewProps = {
     problems: Problem[]
     learningRecords: LearningRecord
     query: ReturnType<typeof useLibraryQueryContext>
-    handlers: LibraryViewHandlers
-    selection: LibrarySelection
+    itemActions: {
+        editTags: (ids: ProblemId[]) => void
+        deleteChecked: () => void
+    },
+    selectActions: {
+        onSelectAll: () => void
+        onClearAll: () => void
+        onToggleChecked: (id: ProblemId) => void
+        onToggleCheckboxMode: () => void
+    }
+    selection: {
+        checkedIds: ProblemId[]
+        isChecked: (id: ProblemId) => boolean
+        isCheckboxMode: boolean
+    }
+    onItemClick: (p: Problem) => void
 }
 
+
 /////////////////////////////////////////
-export function LibraryView({
-    problems,
-    learningRecords,
-    query,
-    handlers,
-    selection
-}: LibraryViewProps) {
-   
-    const onItemClick = (p: Problem) => {
-        if (selection.isCheckboxMode) {
-            handlers.checkbox.onToggleChecked(p.id)
-        } else {
-            handlers.view.onViewProblem(p)
-        }
-    }
+export function LibraryView({problems, learningRecords, query,
+    itemActions, selectActions, onItemClick, selection}: LibraryViewProps) {
 
     return (
         <>
             <Stack direction="row">
-                <LibraryCheckboxControl
-                    onCheckAll={handlers.checkbox.onCheckAll}
-                    onUncheckAll={handlers.checkbox.onUncheckAll}
-                    onToggleCheckboxMode={handlers.mode.onToggleCheckboxMode}
-                    isCheckboxMode={selection.isCheckboxMode}
-                />
 
                 {selection.isCheckboxMode &&
-                <>
-                    { /* 削除ボタン */}
-                    <IconButton
-                        onClick={()=>handlers.delete.onDeleteMany(selection.checkedIds)}
-                        disabled={selection.checkedIds.length === 0}
-                    >
-                        <DeleteIcon />
-                    </IconButton>
-                    { /* タグ編集 */}
-                    <IconButton
-                        onClick={()=>handlers.edit.onEditTags(Array.from(selection.checkedIds))}>
-                        <EditIcon/>
-                    </IconButton>
-                  </>  
+                    <Stack direction="row">
+                        <LibraryCheckboxControl
+                            onCheckAll={selectActions.onSelectAll}
+                            onUncheckAll={selectActions.onClearAll}
+                            onToggleCheckboxMode={selectActions.onToggleCheckboxMode}
+                        />
+                        { /* 削除ボタン */}
+                        <IconButton
+                            onClick={() =>
+                                itemActions.deleteChecked()}
+                            disabled={selection.checkedIds.length === 0}
+                        >
+                            <DeleteIcon />
+                        </IconButton>
+                        { /* タグ編集 */}
+                        <IconButton
+                            onClick={() => itemActions.editTags(Array.from(selection.checkedIds))}>
+                            <EditIcon />
+                        </IconButton>
+                    </Stack>
                 }
 
                 <Box sx={{ flexGrow: 1 }} />
@@ -101,11 +81,11 @@ export function LibraryView({
                             key={p.id}
                             problem={p}
                             learning={learningRecords[p.id]}
-                            isCheckboxMode={selection.isCheckboxMode}
-                            onClick={onItemClick}
+                            showCheckbox={selection.isCheckboxMode}
+                            onItemClick={onItemClick}
                             isChecked={selection.isChecked(p.id)}
-                            onToggleCheckboxMode={handlers.mode.onToggleCheckboxMode}
-                            onToggleChecked={handlers.checkbox.onToggleChecked}
+                            onToggleCheckboxMode={selectActions.onToggleCheckboxMode}
+                            onToggleChecked={selectActions.onToggleChecked}
                         />
                     ))}
                 </List>

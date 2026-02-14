@@ -6,18 +6,18 @@ import { Box, Checkbox, colors, IconButton, ListItem, ListItemButton, ListItemIc
 import { useLongPress } from "../hooks/useLongPress";
 import { StarToggleButton } from "@/ui/common/components/StarToggleButton";
 import { useStarToggleButton } from "@/application/useStarToggleButton";
+import React from "react";
 
-export function LibraryListItem({ problem, learning, onClick,
-    isCheckboxMode, onToggleCheckboxMode, isChecked, onToggleChecked,
+export const LibraryListItem = React.memo(function LibraryListItem({ problem, learning, onItemClick,
+    showCheckbox, onToggleCheckboxMode, isChecked, onToggleChecked,
     selected }: {
         problem: Problem,
         learning?: Learning,
-        isCheckboxMode: boolean,
-        onClick?: (p: Problem) => void,
+        showCheckbox: boolean,
+        onItemClick: (p: Problem) => void,
         isChecked: boolean,
         onToggleChecked: (id: ProblemId) => void,
         onToggleCheckboxMode: () => void,
-        //onToggleStar: (p: Problem) => void,
         selected?: boolean,
 
     }) {
@@ -35,16 +35,17 @@ export function LibraryListItem({ problem, learning, onClick,
         <ListItem>
             <ListItemButton
                 disableRipple
-                onClick={() => onClick?.(problem)}
+                onClick={() => {
+                    if (isLongPressedRef.current) return
+                    onItemClick(problem)}}
                 selected={selected}
                 {...bind}
                 sx={{ borderBottom: 1, borderColor: "divider" }}>
-                {isCheckboxMode &&
+                {showCheckbox &&
                     <ListItemIcon>
-                        <Checkbox 
-                            disableRipple
-                            onClick={(e) => e.stopPropagation()}
-                        size="small" edge="start" checked={isChecked} onChange={() => onToggleChecked(problem.id)} />
+                        <Checkbox disableRipple onClick={(e) => e.stopPropagation()}
+                        size="small" edge="start" checked={isChecked}
+                        onChange={() => onToggleChecked(problem.id)} />
                     </ListItemIcon>
                 }
                 <ListItemText >
@@ -82,10 +83,12 @@ export function LibraryListItem({ problem, learning, onClick,
             </ListItemButton>
         </ListItem>
     )
-}
+})
 
+const DAY_MS = 60 * 60 * 24 * 1000
 export function inDays(date: number, now: number = Date.now()): number {
-    return (date - now) / (60 * 60 * 24 * 1000)
+    //return (date - now) / (60 * 60 * 24 * 1000)
+    return Math.ceil((date - now) / DAY_MS)    
 }
 export function formatLearning(learning: Learning): string {
     const indays = inDays(learning.nextReviewedAt)
