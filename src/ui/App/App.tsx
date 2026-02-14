@@ -14,6 +14,10 @@ import { initProblemStore, useProblemStore } from '@/application/store/useProble
 import { FileProblemPersistence, ProblemRepository } from '@/domain/problem/ProblemRepository';
 import { DeckRepository, LocalStorageDeckPersistence } from '@/domain/deck/DeckRepository';
 import { initDeckStore, useDeckStore } from '@/application/store/useDeckStore';
+import { JsonLearningEventPersistence, LearningEventRepository } from '@/domain/LearningEvent/LearningEventRepository';
+import { getInputLabelUtilityClasses } from '@mui/material';
+import { useLearningEventStore } from '@/application/store/useLearningEventStore';
+import { useEffect } from 'react';
 
 function App() {
 
@@ -24,6 +28,16 @@ function App() {
     const deckRepository = new DeckRepository(new LocalStorageDeckPersistence())
     initDeckStore(deckRepository)
     useDeckStore.getState().loadDecks()
+
+    
+    const initRepo = useLearningEventStore(s => s.initLearningEventRepository);   
+    
+    useEffect(()=> {
+        const learningEventRepository = new LearningEventRepository(new JsonLearningEventPersistence())
+        initRepo(learningEventRepository);
+        // 初期ロード
+        useLearningEventStore.getState().reload();
+    }, [])
 
     return (
         <AllProviders>

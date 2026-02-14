@@ -1,73 +1,81 @@
+import { create } from "zustand";
 import type { LearningEvent, LearningEventLog } from "@/domain/LearningEvent";
 import type { LearningEventRepository } from "@/domain/LearningEvent/LearningEventRepository";
-import { useEffect, useRef, useState } from "react";
 import type { ProblemId } from "@/domain/problem/Problem";
 import type { SolvedResult } from "@/domain/learning/Learning";
 
-export function useLearningEventStore(repository: LearningEventRepository){
-    const [eventLog, setEventLog] = useState<LearningEventLog>([])
+type LearningEventStoreState = {
+  eventLog: LearningEventLog;
+  repository?: LearningEventRepository;
 
-    const reload = async () => {
-        try {
-            const data: LearningEventLog = await repository.load();
-            //console.log("event store reload", data)
-            setEventLog(data)
-            //setSnapshot(projectLearning(data))
-        } catch {
-            setEventLog([])
-            //setSnapshot({})
-        }
-    };
-    useEffect(() => {
-        reload()
-    }, [repository])
+  // repository 注入用
+  initLearningEventRepository: (repo: LearningEventRepository) => void;
 
-    useEffect(() => {
-        //console.log("setsnapshot on effect", eventLog)
-        //setSnapshot(projectLearning(eventLog))
-    }, [eventLog])
+  reload: () => Promise<void>;
+  append: (learningEvent: Omit<LearningEvent, "at">) => Promise<void>;
+  review: (problemId: ProblemId, quality: SolvedResult, sec?: number) => Promise<void>;
+  deleteAll: () => Promise<void>;
+  deleteByProblemIds: (ids: ProblemId[]) => Promise<void>;
+};
 
-    const appendQueue = useRef<LearningEvent[]>([]);
+export const useLearningEventStore = create<LearningEventStoreState>((set, get) => {
+  const appendQueue: LearningEvent[] = [];
 
-
-    const append = async (learningEvent: Omit<LearningEvent, "at">) => {
-        const event = {...learningEvent, at: Date.now()}
-        appendQueue.current.push(event);
-        if (appendQueue.current.length > 1) return; // 既に処理中
-
-        while (appendQueue.current.length) {
-            const e = appendQueue.current[0];
-            setEventLog(prev => [...prev, e])
-            await repository.append(e);
-            appendQueue.current.shift();
-        }
+  const processQueue = async (repository: LearningEventRepository) => {
+    while (appendQueue.length > 0) {
+      const e = appendQueue[0];
+      set(state => ({ eventLog: [...state.eventLog, e] }));
+      await repository.append(e);
+      appendQueue.shift();
     }
-    const review = async (problemId: ProblemId, quality: SolvedResult, sec?: number) => {
-        await append({
-            type: "reviewed",
-            problemId: problemId,
-            quality: quality,
-            sec: sec,
-        })
-    }
-    // commnad
-    const deleteAll = async () => {
-        await repository.removeAll()
-        await reload()
-    }
-    const deleteByProblemIds = async (ids: ProblemId[]) => {
-        const idSet = new Set(ids)
-        const newLog = eventLog.filter(e => !idSet.has(e.problemId))
+  };
 
-        setEventLog(newLog)
-        await repository.replaceAll(newLog)
-    }
+  return {
+    eventLog: [],
+    repository: undefined,
 
-    return {
-        eventLog, 
-        //records: snapshot,
-        reload, 
-        
-        append, deleteAll, deleteByProblemIds, review,
-    }
-}
+    initLearningEventRepository: (repo) => {
+      set({ repository: repo });
+    },
+
+    reload: async () => {
+      const repo = get().repository;
+      if (!repo) return;
+      try {
+        const data = await repo.load();
+        set({ eventLog: data });
+      } catch {
+        set({ eventLog: [] });
+      }
+    },
+
+    append: async (learningEvent) => {
+      const repo = get().repository;
+      if (!repo) return;
+      const event: LearningEvent = { ...learningEvent, at: Date.now() };
+      appendQueue.push(event);
+      if (appendQueue.length > 1) return;
+      await processQueue(repo);
+    },
+
+    review: async (problemId, quality, sec) => {
+      await get().append({ type: "reviewed", problemId, quality, sec });
+    },
+
+    deleteAll: async () => {
+      const repo = get().repository;
+      if (!repo) return;
+      await repo.removeAll();
+      await get().reload();
+    },
+
+    deleteByProblemIds: async (ids) => {
+      const repo = get().repository;
+      if (!repo) return;
+
+      const idSet = new Set(ids);
+      set(state => ({ eventLog: state.eventLog.filter(e => !idSet.has(e.problemId)) }));
+      await repo.replaceAll(get().eventLog);
+    },
+  };
+});

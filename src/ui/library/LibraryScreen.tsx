@@ -11,7 +11,7 @@ import type { Problem, ProblemId } from "@/domain/problem/Problem";
 import { useImportController } from "@/application/useImportControler";
 import type { ImportFilesResult } from "@/usecase/importProblemsUsecase";
 import { useStores } from "@/application/store/useStores";
-import { useLearningRecordStore } from "@/application/useLearningRecord";
+import { useLearningRecordStore } from "@/application/useLearningRecordStore";
 import type { useQuery } from "@/application/useQuery";
 import type { LearningRecord } from "@/domain/learning/Learning";
 import { AppShell } from "../common/layout/AppShell";

@@ -12,7 +12,7 @@ import { useStores } from "@/application/store/useStores";
 import { ProblemStats } from "@/domain/problem/ProblemStats";
 import { useToast } from "../App/providers/ToastProvider";
 import { useProblemStore } from "@/application/store/useProblemStore";
-import { useLearningRecordStore } from "@/application/useLearningRecord";
+import { useLearningRecordStore } from "@/application/useLearningRecordStore";
 import { useDeckStore } from "@/application/store/useDeckStore";
 
 /////////////////////////////////////////////
@@ -48,12 +48,6 @@ export function DeckEditScreen() {
 
     //const learningRecords = useLearningRecord(stores.learningEvent.eventLog)
     
-    const eventLog = useStores().learningEvent.eventLog
-    const setRecords = useLearningRecordStore.getState().setFromEventLog
-    // eventLog 更新時に projection 更新
-    useEffect(() => {
-        setRecords(eventLog)
-    }, [eventLog, setRecords])
     const learningRecords = useLearningRecordStore(s=>s.records)
     const stats = useMemo(() => {
         return ProblemStats.createWithFilter(problems, learningRecords, query.filterState)

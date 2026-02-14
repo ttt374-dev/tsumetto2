@@ -3,7 +3,7 @@ import { List } from "@mui/material"
 import { LibraryListItem } from "../library/components/LibraryListItem"
 import { useRepositoryContext } from "../App/providers/RepositoryProvider"
 import { useLearningEventStore } from "@/application/store/useLearningEventStore"
-import { useLearningRecordStore } from "@/application/useLearningRecord"
+import { useLearningRecordStore } from "@/application/useLearningRecordStore"
 import { useStores } from "@/application/store/useStores"
 import { useEffect } from "react"
 

@@ -52,11 +52,14 @@ export const useMissionPlayerStore = create<MissionPlayerState>((set, get) => ({
         const idx = ids.indexOf(currentProblemId)
         if (idx === -1) return
 
-        if (idx < ids.length - 1) set({ currentProblemId: ids[idx + 1], index: idx + 1 })
-        else {
+        if (idx < ids.length - 1) {
+            set({ currentProblemId: ids[idx + 1], index: idx + 1 })
+            console.log("mission: next", idx+1, currentProblemId)
+        } else {
             missionEventStore.finish()
             set({ currentProblemId: undefined, index: -1 })
         }
+        
     },
 
     prev: () => {
@@ -72,6 +75,7 @@ export const useMissionPlayerStore = create<MissionPlayerState>((set, get) => ({
         const { missionEventStore } = get()
         if ( !missionEventStore) return
         missionEventStore.answer(id, solvedResult, secToTaken)
+        console.log("mission answer", id, solvedResult)
         get().next()
     },
 }))

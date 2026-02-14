@@ -17,6 +17,8 @@ import { useProblemStore } from "@/application/store/useProblemStore";
 import { useRightActionsDrawer } from "./components/RightActionsDrawer";
 import { useMissionPlayerStore } from "./hooks/useMissionPlayerStore";
 import { useMissionEventStoreContext } from "../App/providers/MissionEventStoreProvider";
+import { useLearningRecordStore } from "@/application/useLearningRecordStore";
+import { useLearningEventStore } from "@/application/store/useLearningEventStore";
 
 export function useShowMovesController(problemId: ProblemId | undefined, plyIndex: number) {
     const [showMoves, setShowMoves] = useState(false)
@@ -57,7 +59,9 @@ export function PlayerScreen() {
     const currentProblemId = useMissionPlayerStore(s=>s.currentProblemId)
     const problem = useProblemStore(s=>
         currentProblemId ? s.byId[currentProblemId] : undefined)
-    const learningEventStore = useStores().learningEvent
+    //const learningEventStore = useStores().learningEvent
+    const review = useLearningEventStore(s=>s.review)
+    const missionAnswer = useMissionPlayerStore(s=>s.answer)
 
     const navigationHandlers = {
         next: useMissionPlayerStore(s => s.next),
@@ -65,8 +69,9 @@ export function PlayerScreen() {
         moveTo: useMissionPlayerStore(s => s.moveTo),
     }
     const onAnswer = async (id: ProblemId, r: SolvedResult, sec?: number) => {
-        useMissionPlayerStore(s => s.answer(id, r, sec))
-        await learningEventStore.review(id, r, sec)
+        missionAnswer(id, r, sec)
+        await review(id, r, sec)
+        console.log("onanswer", r)
     }
     const title = formatTitle(problem?.title ?? "", useMissionPlayerStore(s=>s.index),
         useMissionPlayerStore(s=>s.snapshot.problemIds.length),

@@ -11,10 +11,10 @@ import { useProblemStore } from '@/application/store/useProblemStore';
 import { EditableText } from '../components/EditableText';
 import { ProblemTagEditor } from '../components/ProblemTagEditor';
 import { useLearningEventStore } from '@/application/store/useLearningEventStore';
-import { useLearningRecordStore } from '@/application/useLearningRecord';
 import { StarToggleButton } from '../components/StarToggleButton';
 import { useStarToggleButton } from '@/application/useStarToggleButton';
 import { useStores } from '@/application/store/useStores';
+import { useLearningRecordStore } from '@/application/useLearningRecordStore';
 
 type Props = {
     open: boolean
@@ -48,13 +48,10 @@ export default function ProblemDetailDialog({
     }, [open, problem?.tags])
 
     
-    const eventLog = useStores().learningEvent.eventLog
-    const setRecords = useLearningRecordStore.getState().setFromEventLog
-    // eventLog 更新時に projection 更新
-    useEffect(() => {
-        setRecords(eventLog)
-    }, [eventLog, setRecords])
-    const learning = useLearningRecordStore(s=>s.records[problem.id])
+    //const eventLog = useLearningEventStore(s=>s.eventLog)
+    //const setRecords = useLearningRecordsStore.getState().setFromEventLog
+    const learningRecords = useLearningRecordStore(s=>s.records)
+    const learning = learningRecords[problem.id]
     
     const [tags, setTags] = useState<string[]>(
         () => problem?.tags ? [...problem.tags] : []

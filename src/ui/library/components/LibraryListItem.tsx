@@ -9,7 +9,7 @@ import { useStarToggleButton } from "@/application/useStarToggleButton";
 import React, { useEffect } from "react";
 import { useProblemStore } from "@/application/store/useProblemStore";
 import { useStores } from "@/application/store/useStores";
-import { useLearningRecordStore } from "@/application/useLearningRecord";
+import { useLearningRecordStore } from "@/application/useLearningRecordStore";
 
 export const LibraryListItem = React.memo(function LibraryListItem({ id, onItemClick,
     showCheckbox, onToggleCheckboxMode, isChecked, onToggleChecked,
@@ -25,14 +25,7 @@ export const LibraryListItem = React.memo(function LibraryListItem({ id, onItemC
         selected?: boolean,
 
     }) {
-    const problem = useProblemStore(s => s.byId[id])
-    
-    const eventLog = useStores().learningEvent.eventLog
-    const setRecords = useLearningRecordStore.getState().setFromEventLog
-    // eventLog 更新時に projection 更新
-    useEffect(() => {
-        setRecords(eventLog)
-    }, [eventLog, setRecords])
+    const problem = useProblemStore(s => s.byId[id])    
     const learning = useLearningRecordStore(s=>s.records[id])
 
 
