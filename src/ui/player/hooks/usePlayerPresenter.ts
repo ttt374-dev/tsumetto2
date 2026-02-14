@@ -8,15 +8,14 @@ import type { usePlayerController } from "./usePlayerController";
 
 export function usePlayerPresenter(
     p: Problem,
-    ids: ProblemId[],
-    controller: ReturnType<typeof usePlayerController>,
+    onUpdateProblem: (p: Problem) => void,
     navigationHandlers: PlayerViewNavigationHandlers,
 ) {
     const detailDialog = useProblemDetailDialog(
         () => { },
-        controller.updateProblem, //handleUpdateProblem, 
+        onUpdateProblem, //handleUpdateProblem, 
         () => { navigationHandlers.next() })
-    const listDialog = useListDialog(p.id, ids, navigationHandlers.moveTo)
+    const listDialog = useListDialog(p.id, navigationHandlers.moveTo)
     const rightActionsDrawer = useRightActionsDrawer(
         () => detailDialog.openDialog(p),
         listDialog.openDialog

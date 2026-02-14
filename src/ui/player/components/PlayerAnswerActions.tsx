@@ -5,7 +5,7 @@ type AnswerAction = {
   label: string
   result: SolvedResult
   color:  ButtonProps['color']
-  secToTaken?: number
+  //secToTaken?: number
 }
 
 const ANSWER_ACTIONS: AnswerAction[] = [
@@ -14,20 +14,20 @@ const ANSWER_ACTIONS: AnswerAction[] = [
   //{ label: "Easy", result: "solved", color: "primary", secToTaken: 5 },
 ]
 
-export function PlayerAnswerActions({onAnswer}: {
-    onAnswer: (answerResult: SolvedResult, secToTaken?: number) => void,    
+export function PlayerAnswerActions({onAnswerClick}: {
+    onAnswerClick: (answerResult: SolvedResult) => void,    
 }){
   const height = "64px"
   return (  
     <Stack direction="row" spacing={1}>
-      {ANSWER_ACTIONS.map(({ label, result, color, secToTaken }) => (
+      {ANSWER_ACTIONS.map(({ label, result, color }) => (
         <Button
           key={label}
           fullWidth
           color={color}
           variant="contained"
           sx={{height: height}}
-          onClick={() => { onAnswer(result, secToTaken)}}
+          onClick={() => { onAnswerClick(result)}}
         >
           {label}
         </Button>

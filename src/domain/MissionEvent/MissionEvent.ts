@@ -4,7 +4,6 @@ import type { ProblemId } from "../problem/Problem"
 
 export type MissionId = string
 
-
 export type MissionResultEntry = {
     problemId: ProblemId,
     solvedResult: SolvedResult,

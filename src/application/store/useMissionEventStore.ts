@@ -38,6 +38,8 @@ function missionReducer(
     }
 }
 //////////////////////////////////////////////////
+export type MissionEventStore = ReturnType<typeof useMissionEventStore>
+
 export function useMissionEventStore() {
     const [state, dispatch] = useReducer(missionReducer, {
         eventLog: [],

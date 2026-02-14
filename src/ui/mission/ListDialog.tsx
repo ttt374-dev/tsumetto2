@@ -1,11 +1,11 @@
-import { useProblemStore } from "@/application/store/useProblemStore"
 import { useRepositoryContext } from "../App/providers/RepositoryProvider"
 import { useMemo, useState } from "react"
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material"
 import type { ProblemId } from "@/domain/problem/Problem"
 import { ListView } from "./ListView"
+import { useProblemStore } from "@/application/store/useProblemStore"
 
-export function useListDialog(id: ProblemId, ids: ProblemId[], onMoveTo: (pid: ProblemId) => void) {
+export function useListDialog(id: ProblemId, onMoveTo: (pid: ProblemId) => void) {
     const [open, setOpen] = useState(false)
 
     const openDialog = () => { setOpen(true) }
@@ -20,7 +20,6 @@ export function useListDialog(id: ProblemId, ids: ProblemId[], onMoveTo: (pid: P
                     //handlers.navigation.moveTo(pid)
                     closeDialog()
             }}
-            problemIds={ids}
             currentProblemId={id}
         />
     )
@@ -29,25 +28,13 @@ export function useListDialog(id: ProblemId, ids: ProblemId[], onMoveTo: (pid: P
 
 
 }
-export function ListDialog({ problemIds, open, onClose, onSelectProblem, currentProblemId }: {
-    problemIds: ProblemId[],
+export function ListDialog({ open, onClose, onSelectProblem, currentProblemId }: {
     open: boolean,
     onClose: () => void,
     onSelectProblem: (id: ProblemId) => void,
     currentProblemId?: ProblemId,
 }) {
-    const repos = useRepositoryContext()
-    //const problemStore = useProblemStore(repos.problem)
-    //const navigate = useNavigate()
-
-    /*
-    const problems = useMemo(
-      () => problemIds
-        .map(id => problemStore.findById(id))
-        .filter(p=>p!==undefined),
-      [problemIds, problemStore]
-    )*/
-    
+    const problemIds = useProblemStore(s=>s.ids)
 
     return (
         <Dialog fullScreen open={open} onClose={onClose}
