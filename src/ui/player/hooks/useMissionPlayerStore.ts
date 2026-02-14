@@ -1,81 +1,81 @@
-import { create } from "zustand"
-import type { ProblemId } from "@/domain/problem/Problem"
+import { useEffect, useState } from "react"
+import { Problem, type ProblemId } from "@/domain/problem/Problem"
+import { useMissionEventStoreContext } from "../../App/providers/MissionEventStoreProvider"
 import type { SolvedResult } from "@/domain/learning/Learning"
-import type { MissionEventStore } from "@/application/store/useMissionEventStore"
 
-export type MissionPlayerState = {
-    snapshot: { problemIds: ProblemId[] }   // 常に存在
-    currentProblemId?: ProblemId
-    index: number
 
-    // --- external dependency ---
-    missionEventStore?: MissionEventStore
-    setMissionEventStore: (store: MissionEventStore) => void
+/////////////////////////////
+export function useMissionPlayer() {
+    const missionStore = useMissionEventStoreContext()
+    const snapshot = missionStore.snapshot
 
-    // --- actions ---
-    setSnapshot: (snapshot: { problemIds: ProblemId[] }) => void
-    moveTo: (id: ProblemId) => void
-    next: () => void
-    prev: () => void
-    answer: (id: ProblemId, solvedResult: SolvedResult, secToTaken?: number) => void
-}
+    // --- 主状態は ID ---
+    const [currentProblemId, setCurrentProblemId] =
+        useState<ProblemId | undefined>(undefined)
 
-export const useMissionPlayerStore = create<MissionPlayerState>((set, get) => ({
-    // --- initial state ---
-    snapshot: { problemIds: [] },
-    currentProblemId: undefined,
-    index: -1,
-    missionEventStore: undefined,
+    // --- mission 開始時に初期化 ---
+    useEffect(() => {
+        if (snapshot && snapshot.problemIds.length > 0 && !currentProblemId) {
+            setCurrentProblemId(snapshot.problemIds[0])
+        }
+    }, [snapshot])
 
-    // --- external dependency setter ---
-    setMissionEventStore: (store) => set({ missionEventStore: store }),
+    // --- 派生 ---
+    const ids = snapshot?.problemIds ?? []
+    const index = currentProblemId
+        ? ids.indexOf(currentProblemId)
+        : -1
 
-    // --- snapshot / initialization ---
-    setSnapshot: (snapshot) => {
-        const ids = snapshot.problemIds
-        const current = ids.length > 0 ? ids[0] : undefined
-        set({ snapshot, currentProblemId: current, index: current ? 0 : -1 })
-    },
+    // --- 問題削除 / reload 耐性 ---
+    useEffect(() => {
+        if (!currentProblemId || !snapshot) return
+
+        // ID が mission から消えた or problem が消えた
+        if (!ids.includes(currentProblemId)){ //} || !problem) {
+            if (index >= 0 && index < ids.length - 1) {
+                setCurrentProblemId(ids[index + 1])
+            } else if (ids.length > 0) {
+                setCurrentProblemId(ids[0])
+            } else {
+                missionStore.finish()
+            }
+        }
+    }, [ids, currentProblemId])
 
     // --- navigation ---
-    moveTo: (id) => {
-        const idx = get().snapshot.problemIds.indexOf(id)
-        if (idx === -1) return
-        set({ currentProblemId: id, index: idx })
-    },
+    const next = () => {
+        if (!snapshot || index < 0) return
 
-    next: () => {
-        const { currentProblemId, snapshot, missionEventStore } = get()
-        if (!currentProblemId || !missionEventStore) return
-
-        const ids = snapshot.problemIds
-        const idx = ids.indexOf(currentProblemId)
-        if (idx === -1) return
-
-        if (idx < ids.length - 1) {
-            set({ currentProblemId: ids[idx + 1], index: idx + 1 })
-            console.log("mission: next", idx+1, currentProblemId)
+        if (index < ids.length - 1) {
+            setCurrentProblemId(ids[index + 1])
         } else {
-            missionEventStore.finish()
-            set({ currentProblemId: undefined, index: -1 })
+            missionStore.finish()
         }
-        
-    },
+    }    
 
-    prev: () => {
-        const { currentProblemId, snapshot } = get()
-        if (!currentProblemId) return
+    const prev = () => {
+        if (!snapshot || index <= 0) return
+        setCurrentProblemId(ids[index - 1])
+    }
+    const moveTo = (id: ProblemId) => {        
+        console.log("moveto", id, snapshot, index)
+        //if (!snapshot || index <= 0) return         
+        setCurrentProblemId(id)
+    }
 
-        const ids = snapshot.problemIds
-        const idx = ids.indexOf(currentProblemId)
-        if (idx > 0) set({ currentProblemId: ids[idx - 1], index: idx - 1 })
-    },
-
-    answer: (id, solvedResult, secToTaken) => {
-        const { missionEventStore } = get()
-        if ( !missionEventStore) return
-        missionEventStore.answer(id, solvedResult, secToTaken)
-        console.log("mission answer", id, solvedResult)
-        get().next()
-    },
-}))
+    // --- answer handling ---
+    const answer = async (
+        solvedResult: SolvedResult,
+        secToTaken?: number
+    ) => {
+        if (!snapshot || !currentProblemId) return
+        missionStore.answer(currentProblemId, solvedResult, secToTaken)
+        next()
+    }
+    return {
+        status: "playing" as const,  
+        currentProblemId,
+        index, snapshot,  // problem, 
+        answer, next, prev, moveTo,
+    }
+}

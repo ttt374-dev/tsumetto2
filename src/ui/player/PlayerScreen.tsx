@@ -1,3 +1,4 @@
+
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { PlayerAnswerActions } from "./components/PlayerAnswerActions"
@@ -14,11 +15,7 @@ import type { Theme } from "@emotion/react";
 import { StarToggleButton } from "../common/components/StarToggleButton";
 import { useStarToggleButton } from "@/application/useStarToggleButton";
 import { useProblemStore } from "@/application/store/useProblemStore";
-import { useRightActionsDrawer } from "./components/RightActionsDrawer";
-import { useMissionPlayerStore } from "./hooks/useMissionPlayerStore";
-import { useMissionEventStoreContext } from "../App/providers/MissionEventStoreProvider";
-import { useLearningRecordStore } from "@/application/useLearningRecordStore";
-import { useLearningEventStore } from "@/application/store/useLearningEventStore";
+import { useMissionPlayer } from "./hooks/useMissionPlayerStore";
 
 export function useShowMovesController(problemId: ProblemId | undefined, plyIndex: number) {
     const [showMoves, setShowMoves] = useState(false)
@@ -35,80 +32,44 @@ export function useShowMovesController(problemId: ProblemId | undefined, plyInde
     return { showMoves, setShowMoves }
 }
 //////////////////////////////////////////////////////////////
-
-const formatTitle = (rawTitle: string, index: number, length: number, missionName: string): string => {
-    const titlePrefix = `${missionName} [${(index ?? 0) + 1}/${length}]: `
-    const title = `${titlePrefix}${rawTitle}`
-    return title
-}
-
-
-export function PlayerScreen() {    
-    // store に依存注入
-    const missionEventStore = useMissionEventStoreContext()
-    useEffect(() => {
-        const store = useMissionPlayerStore.getState()
-        store.setMissionEventStore(missionEventStore)
-
-        // missionEventStore から snapshot を取得して初期化
-        if (missionEventStore.snapshot.problemIds.length > 0) {
-            store.setSnapshot(missionEventStore.snapshot)
-        }
-    }, [missionEventStore])
-
-    const currentProblemId = useMissionPlayerStore(s=>s.currentProblemId)
+export function PlayerScreen() {
+    const { currentProblemId } = useMissionPlayer()
     const problem = useProblemStore(s=>
         currentProblemId ? s.byId[currentProblemId] : undefined)
-    //const learningEventStore = useStores().learningEvent
-    const review = useLearningEventStore(s=>s.review)
-    const missionAnswer = useMissionPlayerStore(s=>s.answer)
-
-    const navigationHandlers = {
-        next: useMissionPlayerStore(s => s.next),
-        prev: useMissionPlayerStore(s => s.prev),
-        moveTo: useMissionPlayerStore(s => s.moveTo),
-    }
-    const onAnswer = async (id: ProblemId, r: SolvedResult, sec?: number) => {
-        missionAnswer(id, r, sec)
-        await review(id, r, sec)
-        console.log("onanswer", r)
-    }
-    const title = formatTitle(problem?.title ?? "", useMissionPlayerStore(s=>s.index),
-        useMissionPlayerStore(s=>s.snapshot.problemIds.length),
-        ""
-    )
+    
     if (!problem) return (<>Loading...</>)
     return (
-        <PlayerScreenContent 
-            problem={problem} 
-            navigationHandlers={navigationHandlers}
-            title={title}
-            onAnswer={onAnswer}
-            
-        />
+        <PlayerScreenContent problem={problem} 
+        
+         />
     )
 }
+
 
 ////////////////////////////////
 // problem の実体を受け取り、スクリーンとして view に渡す。
 //  (これをかまさないと防御コードばかりになっちゃう)
-// mission には非依存
-export function PlayerScreenContent({ problem, navigationHandlers, onAnswer, title }: {
-    problem: Problem     
-    navigationHandlers: {
-        next: () => void, 
-        prev: () => void,
-        moveTo: (id: ProblemId) => void,
-    },
-    onAnswer: (id: ProblemId, r: SolvedResult, s?: number) => void
-    title: string,
-}) {
+export function PlayerScreenContent({ problem}: {problem: Problem }) {
     const starController = useStarToggleButton(problem)
+    const mission = useMissionPlayer()
+    const controller = usePlayerController(mission.answer)
+    const problemIds = mission.snapshot.problemIds
     
+    
+    const navigationHandlers: PlayerViewNavigationHandlers = useMemo(() => ({
+        next: mission.next, prev: mission.prev, moveTo: mission.moveTo
+    }), [mission])
+
     // replay
     const { initialPosition, moves } = problem.kifData
     const replay = useReplayController(initialPosition, moves)
     const showMovesController = useShowMovesController(problem.id, replay.plyIndex)
+
+    // presenter
+    const presenter = usePlayerPresenter(problem, useProblemStore(s=>s.updateProblem), navigationHandlers)
+    
+
+    // handlers
     const handlers = {
         ply: {
             advance: replay.advancePly,
@@ -116,19 +77,27 @@ export function PlayerScreenContent({ problem, navigationHandlers, onAnswer, tit
             moveTo: replay.moveToPly
         },
         navigation: navigationHandlers,
-        answer: onAnswer,
+        answer: controller.answer,
         setShowMoves: showMovesController.setShowMoves,
     }
-    
-    // presenter
-    const presenter = usePlayerPresenter(problem, useProblemStore(s=>s.updateProblem), navigationHandlers)
-    
+    const formatTitle = (rawTitle: string, index: number, length: number): string => {
+        const titlePrefix = `${(index ?? 0) + 1}/${length}: `
+        const title = `${titlePrefix}${rawTitle}`
+        return title
+    }
+
+    const title = formatTitle(problem.title, mission.index, problemIds.length)
+    const answerCurrent = useCallback(
+        (id: ProblemId, res: SolvedResult, sec?: number) =>
+            controller.answer(problem.id, res, sec),
+        [controller, problem.id]
+    )
 
     //////////////////////////////////////////
     return (
         <AppShell
             header={title}
-            footer={<PlayerAnswerActions onAnswerClick={(r) => onAnswer(problem.id, r)} />}
+            footer={<PlayerAnswerActions onAnswerClick={(r) => answerCurrent(problem.id, r)}/>}
             rightActions={
                 <>
                     <StarToggleButton 
