@@ -12,14 +12,14 @@ export function useStores(customRepos?: ReturnType<typeof useRepositoryContext>)
     //const problem = useProblemStore(repos.problem)
     const learningEvent = useLearningEventStore(repos.learningEvent)
     //const learningRecords = useLearningRecordStore(learningEvent.eventLog)
-    const deck = useDeckStore(repos.deck)
+    //const deck = useDeckStore(repos.deck)
 
     return useMemo(() => ({
         //problem,
 
         learningEvent,
         //learningRecords,
-        deck,
+        //deck,
         //repos
-    }), [learningEvent, deck])
+    }), [learningEvent])
 }

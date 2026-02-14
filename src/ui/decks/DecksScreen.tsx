@@ -21,6 +21,7 @@ import { DefaultSortState } from "@/domain/problem/query/sort";
 import { AppShell } from "../common/layout/AppShell";
 import { useProblemStore } from "@/application/store/useProblemStore";
 import { useEffect } from "react";
+import { useDeckStore } from "@/application/store/useDeckStore";
 
 
 function createDeck(name: string): Deck {
@@ -60,7 +61,8 @@ export default function DecksScreen(){
         setRecords(eventLog)
     }, [eventLog, setRecords])
     const learningRecords = useLearningRecordStore(s=>s.records)
-    const deckStats = useDeckStats(problems, stores.deck.decks, learningRecords)
+    const decks = useDeckStore(s=>s.decks)
+    const deckStats = useDeckStats(problems, decks, learningRecords)
     //  handlers
     const handleStartMission = (deck: Deck) => {
         const filterState = deck.snapshot.filterState
@@ -71,7 +73,7 @@ export default function DecksScreen(){
     }
     const handleCreateDeck = async (name: string) => {
         const newDeck = createDeck(name)
-        stores.deck.saveDeck(newDeck)
+        useDeckStore(s=>s.saveDeck(newDeck))
         navigate(`/deck/${newDeck.id}`)
     }    
 
@@ -95,7 +97,7 @@ export default function DecksScreen(){
             <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto" }}>
                 <List>
                     {
-                        stores.deck.decks.map(deck => {
+                        decks.map(deck => {
                             const stats = deckStats.get(deck.id)
                             return (
                                 <ListItem key={deck.id} disablePadding

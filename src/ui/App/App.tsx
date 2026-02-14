@@ -12,41 +12,47 @@ import DecksScreen from '../decks/DecksScreen';
 import { DeckEditScreen } from '../decks/DeckEditScreen';
 import { initProblemStore, useProblemStore } from '@/application/store/useProblemStore';
 import { FileProblemPersistence, ProblemRepository } from '@/domain/problem/ProblemRepository';
+import { DeckRepository, LocalStorageDeckPersistence } from '@/domain/deck/DeckRepository';
+import { initDeckStore, useDeckStore } from '@/application/store/useDeckStore';
 
 function App() {
 
-  const problemRepository = new ProblemRepository(new FileProblemPersistence())
-  initProblemStore(problemRepository)
-  useProblemStore.getState().reload()
+    const problemRepository = new ProblemRepository(new FileProblemPersistence())
+    initProblemStore(problemRepository)
+    useProblemStore.getState().reload()
 
-  return (
-    <AllProviders>
-      <BrowserRouter>
-        <Routes>
+    const deckRepository = new DeckRepository(new LocalStorageDeckPersistence())
+    initDeckStore(deckRepository)
+    useDeckStore.getState().loadDecks()
 
-          <Route
-            element={
-              <MissionEventStoreProvider>
-                <Outlet />
-              </MissionEventStoreProvider>
-            }
-          >
-            <Route path="/mission" element={<MissionScreen />}>              
-              <Route path="play" element={<PlayerScreen />} />
-              <Route path="summary" element={<SummaryScreen />} />
-            </Route>
+    return (
+        <AllProviders>
+            <BrowserRouter>
+                <Routes>
 
-            <Route path="/decks" element={<DecksScreen />} />
-            <Route path="/deck/:id" element={<DeckEditScreen />} />
-          </Route>
+                    <Route
+                        element={
+                            <MissionEventStoreProvider>
+                                <Outlet />
+                            </MissionEventStoreProvider>
+                        }
+                    >
+                        <Route path="/mission" element={<MissionScreen />}>
+                            <Route path="play" element={<PlayerScreen />} />
+                            <Route path="summary" element={<SummaryScreen />} />
+                        </Route>
 
-          <Route path="/library" element={<LibraryScreen />} />
+                        <Route path="/decks" element={<DecksScreen />} />
+                        <Route path="/deck/:id" element={<DeckEditScreen />} />
+                    </Route>
 
-          <Route path="/" element={<Navigate to="/decks" />} />
-        </Routes>
-      </BrowserRouter>
-    </AllProviders>
-  )
+                    <Route path="/library" element={<LibraryScreen />} />
+
+                    <Route path="/" element={<Navigate to="/decks" />} />
+                </Routes>
+            </BrowserRouter>
+        </AllProviders>
+    )
 }
 
 export default App

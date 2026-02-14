@@ -13,19 +13,21 @@ import { ProblemStats } from "@/domain/problem/ProblemStats";
 import { useToast } from "../App/providers/ToastProvider";
 import { useProblemStore } from "@/application/store/useProblemStore";
 import { useLearningRecordStore } from "@/application/useLearningRecord";
+import { useDeckStore } from "@/application/store/useDeckStore";
 
 /////////////////////////////////////////////
 export function DeckEditScreen() {
     const { id } = useParams<{ id: string }>()
     const query = useQuery()
     const stores = useStores()
-    const { decks } = stores.deck
     //const { allTags } = stores.problem
     const allTags: string[] = [] // TODO
     const navigate = useNavigate()
     const toast = useToast()
 
-    const deck = decks.find(d => d.id === id)
+    const deck = useDeckStore(s=>s.decks).find(d => d.id == id)
+
+    //const deck = decks.find(d => d.id === id)
     const [name, setName] = useState<string>(deck?.name ?? "")
     useEffect(() => {
         if (deck) {
@@ -66,7 +68,7 @@ export function DeckEditScreen() {
             name: name,
             snapshot: createQuerySnapshot(query),
         }
-        await stores.deck.saveDeck(newDeck)
+        await useDeckStore(s=>s.saveDeck(newDeck))
         console.log("save and exit", newDeck)
         navigate(-1)
     }
@@ -74,7 +76,7 @@ export function DeckEditScreen() {
         if (!deck) return
         if (!confirm(`デッキ「${deck.name}」を削除しますか？`)) return
         try {
-            await stores.deck.deleteDeck(deck.id)
+            await useDeckStore(s=>s.deleteDeck(deck.id))
             toast({ message: "削除しました" })
             navigate(-1)
         } catch (e) {

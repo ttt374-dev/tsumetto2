@@ -1,32 +1,38 @@
-import { useEffect, useState } from "react"
-import { type Deck, type DeckId } from "@/domain/deck/Deck"
+import { create } from "zustand"
+import type { Deck, DeckId } from "@/domain/deck/Deck"
 import type { DeckRepository } from "@/domain/deck/DeckRepository"
 
-export function useDeckStore(repository: DeckRepository){ // (query: ReturnType<typeof useQuery>){
-    const [decks, setDecks] = useState<Deck[]>([])
+let repository: DeckRepository
 
-    useEffect(() => {
-        (async () => {
-            //const deck = await ensureDefaultDeck()
-            await loadDecks()
-        })()
-    }, [])
-
-    const loadDecks = async () => {
-        const list = await repository.load()
-        setDecks(list)
-    }
-
-    // 保存ボタン
-    const saveDeck = async (deck: Deck) => {
-        await repository.update(deck)
-        await loadDecks()
-    }
-    const deleteDeck = async (id: DeckId) => {
-        await repository.remove(id)
-        await loadDecks()
-    }
-
-    return { decks, loadDecks,
-        saveDeck, deleteDeck }
+export const initDeckStore = (repo: DeckRepository) => {
+    repository = repo
 }
+
+type DeckStoreState = {
+    decks: Deck[]
+    loadDecks: () => Promise<void>
+    saveDeck: (deck: Deck) => Promise<void>
+    deleteDeck: (id: DeckId) => Promise<void>
+    //setRepository: (repo: DeckRepository) => void
+}
+
+export const useDeckStore = create<DeckStoreState>((set, get) => ({
+    decks: [],
+
+
+
+    loadDecks: async () => {
+        const list = await repository.load()
+        set({ decks: list })
+    },
+
+    saveDeck: async (deck: Deck) => {
+        await repository.update(deck)
+        await get().loadDecks()
+    },
+
+    deleteDeck: async (id: DeckId) => {
+        await repository.remove(id)
+        await get().loadDecks()
+    },
+}))
