@@ -10,8 +10,15 @@ import { PlayerScreen } from '../player/PlayerScreen';
 import { SummaryScreen } from '../summary/SummaryScreen';
 import DecksScreen from '../decks/DecksScreen';
 import { DeckEditScreen } from '../decks/DeckEditScreen';
+import { initProblemStore, useProblemStore } from '@/application/store/useProblemStore';
+import { FileProblemPersistence, ProblemRepository } from '@/domain/problem/ProblemRepository';
 
 function App() {
+
+  const problemRepository = new ProblemRepository(new FileProblemPersistence())
+  initProblemStore(problemRepository)
+  useProblemStore.getState().reload()
+
   return (
     <AllProviders>
       <BrowserRouter>

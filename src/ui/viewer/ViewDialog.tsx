@@ -12,9 +12,10 @@ export function useViewerDialog(){
     const [open, setOpen] = useState(false)
     const [problem, setProblem ] = useState<Problem|undefined>(undefined)
     const repos = useRepositoryContext()
-    const problemStore = useProblemStore(repos.problem)
+    //const problemStore = useProblemStore(repos.problem)
     const openDialog = (id: ProblemId) => {
-        setProblem(problemStore.findById(id))
+        //setProblem(problemStore.findById(id))
+        setProblem(useProblemStore(s=>s.byId[id]))
         setOpen(true)
     }
 

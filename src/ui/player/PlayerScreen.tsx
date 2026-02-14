@@ -14,6 +14,8 @@ import { AppShell } from "../common/layout/AppShell";
 import type { Theme } from "@emotion/react";
 import { StarToggleButton } from "../common/components/StarToggleButton";
 import { useStarToggleButton } from "@/application/useStarToggleButton";
+import { useProblemStore } from "@/application/store/useProblemStore";
+import { useRightActionsDrawer } from "./components/RightActionsDrawer";
 
 export function useShowMovesController(problemId: ProblemId | undefined, plyIndex: number) {
     const [showMoves, setShowMoves] = useState(false)
@@ -34,14 +36,18 @@ export function PlayerScreen() {
     const { currentProblemId } = useMissionPlayer()
     const stores = useStores()
     const problem = currentProblemId !== undefined ?
-        stores.problem.findById(currentProblemId) : undefined    
-
+        //stores.problem.findById(currentProblemId) : undefined    
+        useProblemStore(s=>s.byId[currentProblemId]) :  undefined
     if (!problem) return (<>Loading...</>)
     return (
         <PlayerScreenContent problem={problem}  />
     )
 }
 
+type PlayerCommand = {
+    updateProblem: (p: Problem) => void
+    answer: (id: ProblemId, SolvedResult: SolvedResult, secToTaken?: number) => void
+}
 
 ////////////////////////////////
 // problem の実体を受け取り、スクリーンとして view に渡す。
@@ -49,7 +55,7 @@ export function PlayerScreen() {
 export function PlayerScreenContent({ problem}: {problem: Problem }) {
     const starController = useStarToggleButton(problem)
     const mission = useMissionPlayer()
-    const controller = usePlayerController(mission.answer)
+    //const controller = usePlayerController(mission.answer)
     const problemIds = mission.snapshot.problemIds
     
     const navigationHandlers = useMemo(() => ({
@@ -62,7 +68,15 @@ export function PlayerScreenContent({ problem}: {problem: Problem }) {
     const showMovesController = useShowMovesController(problem.id, replay.plyIndex)
 
     // presenter
-    const presenter = usePlayerPresenter(problem, problemIds, controller, navigationHandlers)
+    const stores = useStores() // TODO
+    const playerCommands = {
+        updateProblem: async (p: Problem) => { await useProblemStore.getState().updateProblem(p) },
+        answer: async (id: ProblemId, solvedResult: SolvedResult, secToTaken?: number) => {
+            await mission.answer(solvedResult, secToTaken) // mission アクション 
+            await stores.learningEvent.review(id, solvedResult, secToTaken)
+        }
+    }
+    const presenter = usePlayerPresenter(problem, problemIds, playerCommands, navigationHandlers)
 
     // handlers
     const handlers = {
@@ -72,7 +86,7 @@ export function PlayerScreenContent({ problem}: {problem: Problem }) {
             moveTo: replay.moveToPly
         },
         navigation: navigationHandlers,
-        answer: controller.answer,
+        answer: playerCommands.answer,
         setShowMoves: showMovesController.setShowMoves,
     }
     const formatTitle = (rawTitle: string, index: number, length: number): string => {
@@ -84,8 +98,8 @@ export function PlayerScreenContent({ problem}: {problem: Problem }) {
     const title = formatTitle(problem.title, mission.index, problemIds.length)
     const answerCurrent = useCallback(
         (res: SolvedResult, sec?: number) =>
-            controller.answer(problem.id, res, sec),
-        [controller, problem.id]
+            playerCommands.answer(problem.id, res, sec),
+        [playerCommands, problem.id]
     )
 
     //////////////////////////////////////////

@@ -6,7 +6,8 @@ export function usePlayerController(missionAnswer: (solvedResult: SolvedResult, 
     const stores = useStores()
 
     const updateProblem = async (p: Problem) => {
-        await stores.problem.updateProblem(p)
+        //await stores.problem.updateProblem(p)
+        
     }
     const answer = async (id: ProblemId, solvedResult: SolvedResult, secToTaken?: number) => {
         await missionAnswer(solvedResult, secToTaken) // mission アクション 

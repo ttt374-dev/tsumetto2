@@ -11,7 +11,8 @@ import type { LearningRecord } from "@/domain/learning/Learning";
 import { LibraryCheckboxControl } from "./LibraryCheckboxControl";
 
 type LibraryViewProps = {
-    problems: Problem[]
+    //problems: Problem[]
+    ids: ProblemId[]
     learningRecords: LearningRecord
     query: ReturnType<typeof useLibraryQueryContext>
     itemActions: {
@@ -34,7 +35,7 @@ type LibraryViewProps = {
 
 
 /////////////////////////////////////////
-export function LibraryView({problems, learningRecords, query,
+export function LibraryView({ids, learningRecords, query,
     itemActions, selectActions, onItemClick, selection}: LibraryViewProps) {
 
     return (
@@ -76,14 +77,15 @@ export function LibraryView({problems, learningRecords, query,
 
             <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto" }}>
                 <List>
-                    {problems.map(p => (
+                    {ids.map(id => (
                         <LibraryListItem
-                            key={p.id}
-                            problem={p}
-                            learning={learningRecords[p.id]}
+                            key={id}
+                            //problem={p}
+                            id={id}
+                            learning={learningRecords[id]}
                             showCheckbox={selection.isCheckboxMode}
                             onItemClick={onItemClick}
-                            isChecked={selection.isChecked(p.id)}
+                            isChecked={selection.isChecked(id)}
                             onToggleCheckboxMode={selectActions.onToggleCheckboxMode}
                             onToggleChecked={selectActions.onToggleChecked}
                         />

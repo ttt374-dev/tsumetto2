@@ -6,8 +6,8 @@ import { useLearningEventStore } from "@/application/store/useLearningEventStore
 import { useLearningRecord } from "@/application/useLearningRecord"
 
 
-export function ListView({ problems, onSelectProblem, currentProblemId }: {
-    problems: Problem[],
+export function ListView({ ids, onSelectProblem, currentProblemId }: {
+    ids: ProblemId[],
     onSelectProblem?: (id: ProblemId) => void,
     currentProblemId?: ProblemId
 }) {
@@ -17,17 +17,17 @@ export function ListView({ problems, onSelectProblem, currentProblemId }: {
 
     return (
         <List>
-            {problems.map(p => (
+            {ids.map(id => (
                 <LibraryListItem
-                    key={p.id}
-                    problem={p}
-                    learning={learningRecords[p.id]}
-                    isCheckboxMode={false}
+                    key={id}
+                    id={id}
+                    learning={learningRecords[id]}
+                    showCheckbox={false}
                     isChecked={false}
                     onToggleChecked={alert}
                     onToggleCheckboxMode={alert}
-                    onClick={()=> onSelectProblem?.(p.id)}
-                    selected={currentProblemId === p.id}
+                    onItemClick={()=> onSelectProblem?.(id)}
+                    selected={currentProblemId === id}
                 />
             ))}
         </List>

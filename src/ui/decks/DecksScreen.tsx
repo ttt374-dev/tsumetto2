@@ -19,6 +19,7 @@ import { useMissionCoordinator } from "@/domain/MissionEvent/useMissionCoordinat
 import { DefaultFilterState } from "@/domain/problem/query/filter";
 import { DefaultSortState } from "@/domain/problem/query/sort";
 import { AppShell } from "../common/layout/AppShell";
+import { useProblemStore } from "@/application/store/useProblemStore";
 
 
 function createDeck(name: string): Deck {
@@ -36,22 +37,25 @@ export default function DecksScreen(){
     const learningRecords = useLearningRecord(stores.learningEvent.eventLog)
     const navigate = useNavigate()
     const toast = useToast()
+    const problems = useProblemStore(s => s.getAllProblems())
+    console.log("problems", problems)
 
     // import files
     const importer = useImportController(async (res: ImportFilesResult) => {
-        await stores.problem.reload()
+        //await stores.problem.reload()
+        useProblemStore.getState().reload()
         toast({message: `imported: ${res.summary.imported}, skipped: ${res.summary.skipped}, failed: ${res.summary.failed}`})        
      })
     // backup, restore
     const backupRestoreDialog = useBackupRestoreDialog((res) => {
-        if (res.ok) stores.problem.reload()
+        if (res.ok) useProblemStore.getState().reload()
     })            
     // stats
-    const deckStats = useDeckStats(stores, learningRecords)
+    const deckStats = useDeckStats(problems, stores.deck.decks, learningRecords)
     //  handlers
     const handleStartMission = (deck: Deck) => {
         const filterState = deck.snapshot.filterState
-        const filtered = applyQuery(stores.problem.problems, learningRecords, deck.snapshot.sortState, filterState)
+        const filtered = applyQuery(problems, learningRecords, deck.snapshot.sortState, filterState)
 
         startMission(filtered.map(p=>p.id))
         navigate("/mission/play")
@@ -83,7 +87,7 @@ export default function DecksScreen(){
                 <List>
                     {
                         stores.deck.decks.map(deck => {
-                            const stats = deckStats.get(deck.id) 
+                            const stats = deckStats.get(deck.id)
                             return (
                                 <ListItem key={deck.id} disablePadding
                                     sx={{ borderBottom: 1, borderColor: "divider" }}
@@ -100,7 +104,7 @@ export default function DecksScreen(){
                                         disabled={stats?.problemCount === 0}>
                                         <ListItemText
                                             primary={deck.name}
-                                            secondary={`問題数：${stats?.problemCount}, 正答率：${((stats?.accuracy??0)*100).toFixed(0)}%`}
+                                            secondary={`問題数：${stats?.problemCount}, 正答率：${((stats?.accuracy ?? 0) * 100).toFixed(0)}%`}
                                         >
                                         </ListItemText>
                                     </ListItemButton>

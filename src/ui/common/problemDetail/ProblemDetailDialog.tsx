@@ -38,7 +38,7 @@ export default function ProblemDetailDialog({
     onViewProblem,
 }: Props) {
     const repo = useRepositoryContext()
-    const store = useProblemStore(repo.problem)
+    //const store = useProblemStore(repo.problem)
     //const problem = store.findById(problemId)
     useEffect(() => {
         if (open && problem) {
@@ -54,9 +54,9 @@ export default function ProblemDetailDialog({
         () => problem?.tags ? [...problem.tags] : []
     )
 
-    const allTags = Array.from(
-        new Set(store.problems.flatMap(p => p.tags))
-    )
+    const allTags: string[] = [] // TODOArray.from(
+//        new Set(store.problems.flatMap(p => p.tags))
+//    )
     //const [ starred, setStarred] = useState(problem?.starred)
     const starController = useStarToggleButton(problem)
 

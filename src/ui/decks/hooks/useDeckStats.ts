@@ -5,19 +5,21 @@ import type { Deck } from "@/domain/deck/Deck";
 import type { Problem } from "@/domain/problem/Problem";
 import { applyFilter } from "@/domain/problem/query/applyFilter";
 
+/*
 type Stores = {
     deck: { decks: Deck[] };
     problem: { problems: Problem[] };
 };
+*/
 
-export function useDeckStats(stores: Stores, learningRecords: LearningRecord) {
+export function useDeckStats(problems: Problem[], decks: Deck[], learningRecords: LearningRecord) {
     const deckStats = useMemo(() => {
         const map = new Map<string, ProblemStats>();
 
-        for (const deck of stores.deck.decks) {
+        for (const deck of decks) {
             // デッキに対応する問題をフィルタ
             const filteredProblems = applyFilter(
-                stores.problem.problems,
+                problems,
                 learningRecords,
                 deck.snapshot.filterState
             );
@@ -29,7 +31,7 @@ export function useDeckStats(stores: Stores, learningRecords: LearningRecord) {
         }
 
         return map;
-    }, [stores.deck.decks, stores.problem.problems, learningRecords]);
+    }, [decks, problems, learningRecords]);
 
     return deckStats;
 }

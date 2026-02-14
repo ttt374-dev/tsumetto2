@@ -19,6 +19,7 @@ import { useSelectItems } from "./hooks/useSelectItems";
 import { useLibraryController } from "./hooks/useLibraryController";
 import { useLibraryPresenter } from "./hooks/useLibraryPresenter";
 import { LibraryView } from "./components/LibraryView";
+import { useProblemStore } from "@/application/store/useProblemStore";
 
 function useLibraryItems(problems: Problem[], learningRecords: LearningRecord, query: ReturnType<typeof useQuery>){
     return useMemo(() =>
@@ -27,24 +28,37 @@ function useLibraryItems(problems: Problem[], learningRecords: LearningRecord, q
     )    
 }
 
+export type LibraryCommand = {
+  reload: () => Promise<void>
+  updateProblem: (p: Problem) => Promise<void>
+  deleteProblems: (ids: ProblemId[]) => Promise<void>
+}
 //////////////////////////////////////////////////
 export function LibraryScreen() {
     const stores = useStores()
     const learningRecords = useLearningRecord(stores.learningEvent.eventLog)
     const query = useLibraryQueryContext()
-    const controller = useLibraryController(stores.problem)
+    //const controller = useLibraryController(stores.problem)
 
+    const commands: LibraryCommand = {
+        reload: useProblemStore(s=>s.reload),
+        updateProblem: useProblemStore(s=>s.updateProblem),
+        deleteProblems: useProblemStore(s=>s.deleteProblems),
+    }
     const [checkboxMode, setCheckboxMode] = useState(false)
-    const presenter = useLibraryPresenter(controller)
+    const presenter = useLibraryPresenter(commands)
 
-    const libraryItems = useLibraryItems(stores.problem.problems, learningRecords, query)
-    const checkboxControl = useLibraryCheckbox(libraryItems.map(p => p.id))
+    //const libraryItems = useLibraryItems(stores.problem.problems, learningRecords, query)
+    const allIds = useProblemStore(s => s.ids)
+
+    const ids = allIds // TODO: sort
+    const checkboxControl = useLibraryCheckbox(ids)
     const toast = useToast()
     //const selectionController = useSelectItems(libraryItems.map(p=>p.id))
-
+    
     // importer
     const importer = useImportController(async (res: ImportFilesResult) => {
-        await controller.reload()
+        await commands.reload()
         toast({ message: `imported: ${res.summary.imported}, skipped: ${res.summary.skipped}, failed: ${res.summary.failed}` })
     })   
     const itemActions = {
@@ -59,7 +73,7 @@ export function LibraryScreen() {
         },*/
         deleteChecked: async () => {
             if (!window.confirm("Are you sure to delete selected?")) return            
-            const res = await controller.deleteMany(selection.checkedIds)
+            const res = await commands.deleteProblems(selection.checkedIds)
             toast({ message: `Deleted ${res} problems` })
         }
     }
@@ -87,19 +101,21 @@ export function LibraryScreen() {
         }
     }
 
+    console.log("ids", ids)
     return (
         <AppShell
             header="Library"
             rightActions={
                 <>
                     <IconButton onClick={presenter.dialogs.backupRestore.openDialog}>
-                        <BackupIcon sx={{ color: "#fff" }} />
+                        <BackupIcon sx={{ color: "white" }} />
                     </IconButton>
                 </>
             }
         >
             <LibraryView
-                problems={libraryItems}
+                //problems={libraryItems}
+                ids={ids}
                 learningRecords={learningRecords}
                 query={query}
                 itemActions={itemActions}

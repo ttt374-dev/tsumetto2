@@ -7,11 +7,13 @@ import { useLongPress } from "../hooks/useLongPress";
 import { StarToggleButton } from "@/ui/common/components/StarToggleButton";
 import { useStarToggleButton } from "@/application/useStarToggleButton";
 import React from "react";
+import { useProblemStore } from "@/application/store/useProblemStore";
 
-export const LibraryListItem = React.memo(function LibraryListItem({ problem, learning, onItemClick,
+export const LibraryListItem = React.memo(function LibraryListItem({ id, learning, onItemClick,
     showCheckbox, onToggleCheckboxMode, isChecked, onToggleChecked,
     selected }: {
-        problem: Problem,
+        //problem: Problem,
+        id: ProblemId,
         learning?: Learning,
         showCheckbox: boolean,
         onItemClick: (p: Problem) => void,
@@ -21,10 +23,11 @@ export const LibraryListItem = React.memo(function LibraryListItem({ problem, le
         selected?: boolean,
 
     }) {
+    const problem = useProblemStore(s => s.byId[id])
     const { bind, isLongPressedRef } = useLongPress({
         onLongPress: () => {
             onToggleCheckboxMode()
-            onToggleChecked(problem.id)
+            onToggleChecked(id)
         },
 
     })
@@ -45,7 +48,7 @@ export const LibraryListItem = React.memo(function LibraryListItem({ problem, le
                     <ListItemIcon>
                         <Checkbox disableRipple onClick={(e) => e.stopPropagation()}
                         size="small" edge="start" checked={isChecked}
-                        onChange={() => onToggleChecked(problem.id)} />
+                        onChange={() => onToggleChecked(id)} />
                     </ListItemIcon>
                 }
                 <ListItemText >

@@ -9,17 +9,17 @@ import { useLearningRecord } from "../useLearningRecord";
 export function useStores(customRepos?: ReturnType<typeof useRepositoryContext>) {
     const repos = customRepos ?? useRepositoryContext()
 
-    const problem = useProblemStore(repos.problem)
+    //const problem = useProblemStore(repos.problem)
     const learningEvent = useLearningEventStore(repos.learningEvent)
     const learningRecords = useLearningRecord(learningEvent.eventLog)
     const deck = useDeckStore(repos.deck)
 
     return useMemo(() => ({
-        problem,
+        //problem,
 
         learningEvent,
         learningRecords,
         deck,
         //repos
-    }), [problem, learningEvent, learningRecords, deck])
+    }), [learningEvent, learningRecords, deck])
 }

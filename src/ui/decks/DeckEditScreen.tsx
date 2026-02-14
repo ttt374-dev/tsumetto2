@@ -12,27 +12,17 @@ import { useStores } from "@/application/store/useStores";
 import { ProblemStats } from "@/domain/problem/ProblemStats";
 import { useLearningRecord } from "@/application/useLearningRecord";
 import { useToast } from "../App/providers/ToastProvider";
+import { useProblemStore } from "@/application/store/useProblemStore";
 
-function deepEqual(a: any, b: any): boolean {
-  if (a === b) return true
-  if (typeof a !== "object" || typeof b !== "object" || !a || !b)
-    return false
 
-  const keysA = Object.keys(a)
-  const keysB = Object.keys(b)
-  if (keysA.length !== keysB.length) return false
-
-  return keysA.every(key =>
-    deepEqual(a[key], b[key])
-  )
-}
 /////////////////////////////////////////////
 export function DeckEditScreen() {
     const { id } = useParams<{ id: string }>()
     const query = useQuery()
     const stores = useStores()
     const { decks } = stores.deck        
-    const { allTags } = stores.problem
+    //const { allTags } = stores.problem
+    const allTags: string[] = [] // TODO
     const navigate = useNavigate()    
     const toast = useToast()
     
@@ -51,12 +41,14 @@ export function DeckEditScreen() {
     useEffect(()=> {
         if (deck) query.setFilter(deck.snapshot.filterState)
     }, [])
-    
+
+    const problems = useProblemStore(s => s.ids.map(id => s.byId[id]))
+
     //const learningRecords = useLearningRecord(stores.learningEvent.eventLog)
     const stats = useMemo(()=> {
-        return ProblemStats.createWithFilter(stores.problem.problems, stores.learningRecords, query.filterState)
+        return ProblemStats.createWithFilter(problems, stores.learningRecords, query.filterState)
     }, 
-        [stores.problem.problems, stores.learningRecords, query])
+        [problems, stores.learningRecords, query])
     if (!id || !deck) return null
     const handleSaveAndExit = async () => {
         if (!deck) return

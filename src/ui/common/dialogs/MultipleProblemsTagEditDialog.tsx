@@ -18,15 +18,15 @@ export function useMultipleProblemsTagEditDialog(
     const [initialTags, setInitialTags] = useState<string[]>([])
 
     const repos = useRepositoryContext()
-    const store = useProblemStore(repos.problem)
+    //const store = useProblemStore(repos.problem)
 
     useEffect(() => {
-        store.reload()
+        useProblemStore.getState().reload()
     }, [open])
 
     const openDialog = (ids: ProblemId[]) => {
         setOpen(true)
-        const problems = ids.map(id => (store.findById(id))).filter(p => p !== undefined)
+        const problems = ids.map(id => (useProblemStore(s=>s.byId[id]))).filter(p => p !== undefined)
         console.log("opendialog edittag", problems)
         //const tags = problems.map(p => p.tags)
         const uniqTags = Array.from(

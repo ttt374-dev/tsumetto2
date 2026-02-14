@@ -4,6 +4,8 @@ import { useImportFilePicker } from "./useImportFilePicker"
 import { useImportProblemsUsecase, type ImportFilesResult, type ImportResult } from "@/usecase/importProblemsUsecase"
 import { ImportDialog } from "@/ui/common/dialogs/ImportDialog"
 import { useProblemStore } from "./store/useProblemStore"
+import { selectAllTags } from "./store/ProblemSelector"
+import { shallow } from "zustand/shallow"    
 
 export type DuplicateTitleStrategy = "skip" | "rename" | "overwrite"
 export type ImportOptions = {
@@ -22,9 +24,10 @@ export function useImportController(
         tags: [], duplicateTitleStrategy: "rename"
     })
     const [importing, setImporting] = useState(false)
-    const store = useProblemStore(repos.problem)
-    const allTags = store.allTags
+    //const store = useProblemStore(repos.problem)
 
+    //const allTags = useProblemStore(selectAllTags)  // TODO
+    const allTags: string[] = []
     const onPicked = (files: File[]) => {
         setFiles(files)
         setOpen(true)

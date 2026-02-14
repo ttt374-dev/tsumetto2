@@ -16,12 +16,12 @@ export function useProblemDetailDialog(
     const [problem, setProblem] = useState<Problem|undefined>(undefined)
 
     const repos = useRepositoryContext()
-    const store = useProblemStore(repos.problem)
+    //const store = useProblemStore(repos.problem)
     //const viewDialog = useViewerDialog()
     //const problem = problemId && problemStore.findById(problemId)
    
     useEffect(() => {
-        store.reload()
+        useProblemStore.getState().reload()
     }, [open])
 
     const openDialog = (p: Problem) => { 
