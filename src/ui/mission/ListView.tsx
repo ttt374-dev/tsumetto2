@@ -3,7 +3,9 @@ import { List } from "@mui/material"
 import { LibraryListItem } from "../library/components/LibraryListItem"
 import { useRepositoryContext } from "../App/providers/RepositoryProvider"
 import { useLearningEventStore } from "@/application/store/useLearningEventStore"
-import { useLearningRecord } from "@/application/useLearningRecord"
+import { useLearningRecordStore } from "@/application/useLearningRecord"
+import { useStores } from "@/application/store/useStores"
+import { useEffect } from "react"
 
 
 export function ListView({ ids, onSelectProblem, currentProblemId }: {
@@ -12,8 +14,6 @@ export function ListView({ ids, onSelectProblem, currentProblemId }: {
     currentProblemId?: ProblemId
 }) {
     const repos = useRepositoryContext()
-    const learningEvent = useLearningEventStore(repos.learningEvent)
-    const learningRecords = useLearningRecord(learningEvent.eventLog)
 
     return (
         <List>
@@ -21,7 +21,7 @@ export function ListView({ ids, onSelectProblem, currentProblemId }: {
                 <LibraryListItem
                     key={id}
                     id={id}
-                    learning={learningRecords[id]}
+                    //learning={learningRecords[id]}
                     showCheckbox={false}
                     isChecked={false}
                     onToggleChecked={alert}

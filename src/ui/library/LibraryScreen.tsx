@@ -5,13 +5,13 @@ import { useToast } from "../App/providers/ToastProvider";
 import { useLibraryCheckbox } from "./hooks/useLibraryCheckbox";
 import { useLibraryQueryContext } from "../App/providers/QueryProvider";
 import { applyQuery } from "@/domain/problem/query/applyQuery";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { IconButton } from "@mui/material";
 import type { Problem, ProblemId } from "@/domain/problem/Problem";
 import { useImportController } from "@/application/useImportControler";
 import type { ImportFilesResult } from "@/usecase/importProblemsUsecase";
 import { useStores } from "@/application/store/useStores";
-import { useLearningRecord } from "@/application/useLearningRecord";
+import { useLearningRecordStore } from "@/application/useLearningRecord";
 import type { useQuery } from "@/application/useQuery";
 import type { LearningRecord } from "@/domain/learning/Learning";
 import { AppShell } from "../common/layout/AppShell";
@@ -35,8 +35,6 @@ export type LibraryCommand = {
 }
 //////////////////////////////////////////////////
 export function LibraryScreen() {
-    const stores = useStores()
-    const learningRecords = useLearningRecord(stores.learningEvent.eventLog)
     const query = useLibraryQueryContext()
     //const controller = useLibraryController(stores.problem)
 
@@ -115,8 +113,8 @@ export function LibraryScreen() {
         >
             <LibraryView
                 //problems={libraryItems}
+                
                 ids={ids}
-                learningRecords={learningRecords}
                 query={query}
                 itemActions={itemActions}
                 selectActions={handlers}

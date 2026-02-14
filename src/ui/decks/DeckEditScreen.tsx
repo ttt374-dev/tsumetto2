@@ -12,6 +12,7 @@ import { useStores } from "@/application/store/useStores";
 import { ProblemStats } from "@/domain/problem/ProblemStats";
 import { useToast } from "../App/providers/ToastProvider";
 import { useProblemStore } from "@/application/store/useProblemStore";
+import { useLearningRecordStore } from "@/application/useLearningRecord";
 
 /////////////////////////////////////////////
 export function DeckEditScreen() {
@@ -44,10 +45,18 @@ export function DeckEditScreen() {
     const problems = useProblemStore(s => s.all)
 
     //const learningRecords = useLearningRecord(stores.learningEvent.eventLog)
+    
+    const eventLog = useStores().learningEvent.eventLog
+    const setRecords = useLearningRecordStore.getState().setFromEventLog
+    // eventLog 更新時に projection 更新
+    useEffect(() => {
+        setRecords(eventLog)
+    }, [eventLog, setRecords])
+    const learningRecords = useLearningRecordStore(s=>s.records)
     const stats = useMemo(() => {
-        return ProblemStats.createWithFilter(problems, stores.learningRecords, query.filterState)
+        return ProblemStats.createWithFilter(problems, learningRecords, query.filterState)
     },
-        [problems, stores.learningRecords, query])
+        [problems, learningRecords, query])
     if (!id || !deck) return null
     const handleSaveAndExit = async () => {
         if (!deck) return

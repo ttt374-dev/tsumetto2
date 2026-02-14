@@ -13,13 +13,14 @@ import { useToast } from "../App/providers/ToastProvider";
 import { useBackupRestoreDialog } from "../common/dialogs/BackupRestoreDialog";
 import { useQuery } from "@/application/useQuery";
 import { useStores } from "@/application/store/useStores";
-import { useLearningRecord } from "@/application/useLearningRecord";
+import { useLearningRecordStore } from "@/application/useLearningRecord";
 import { useDeckStats } from "./hooks/useDeckStats";
 import { useMissionCoordinator } from "@/domain/MissionEvent/useMissionCoordinator";
 import { DefaultFilterState } from "@/domain/problem/query/filter";
 import { DefaultSortState } from "@/domain/problem/query/sort";
 import { AppShell } from "../common/layout/AppShell";
 import { useProblemStore } from "@/application/store/useProblemStore";
+import { useEffect } from "react";
 
 
 function createDeck(name: string): Deck {
@@ -34,7 +35,7 @@ function createDeck(name: string): Deck {
 export default function DecksScreen(){    
     const { startMission } = useMissionCoordinator()
     const stores = useStores()
-    const learningRecords = useLearningRecord(stores.learningEvent.eventLog)
+    //const learningRecords = useLearningRecordStore(stores.learningEvent.eventLog)
     const navigate = useNavigate()
     const toast = useToast()
     const problems = useProblemStore(s => s.all)
@@ -52,6 +53,13 @@ export default function DecksScreen(){
         if (res.ok) useProblemStore(s=>s.reload())
     })            
     // stats
+    const eventLog = useStores().learningEvent.eventLog
+        const setRecords = useLearningRecordStore.getState().setFromEventLog
+    // eventLog 更新時に projection 更新
+    useEffect(() => {
+        setRecords(eventLog)
+    }, [eventLog, setRecords])
+    const learningRecords = useLearningRecordStore(s=>s.records)
     const deckStats = useDeckStats(problems, stores.deck.decks, learningRecords)
     //  handlers
     const handleStartMission = (deck: Deck) => {

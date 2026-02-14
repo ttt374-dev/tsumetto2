@@ -6,15 +6,17 @@ import { Box, Checkbox, colors, IconButton, ListItem, ListItemButton, ListItemIc
 import { useLongPress } from "../hooks/useLongPress";
 import { StarToggleButton } from "@/ui/common/components/StarToggleButton";
 import { useStarToggleButton } from "@/application/useStarToggleButton";
-import React from "react";
+import React, { useEffect } from "react";
 import { useProblemStore } from "@/application/store/useProblemStore";
+import { useStores } from "@/application/store/useStores";
+import { useLearningRecordStore } from "@/application/useLearningRecord";
 
-export const LibraryListItem = React.memo(function LibraryListItem({ id, learning, onItemClick,
+export const LibraryListItem = React.memo(function LibraryListItem({ id, onItemClick,
     showCheckbox, onToggleCheckboxMode, isChecked, onToggleChecked,
     selected }: {
         //problem: Problem,
         id: ProblemId,
-        learning?: Learning,
+        //learning?: Learning,
         showCheckbox: boolean,
         onItemClick: (p: Problem) => void,
         isChecked: boolean,
@@ -24,6 +26,16 @@ export const LibraryListItem = React.memo(function LibraryListItem({ id, learnin
 
     }) {
     const problem = useProblemStore(s => s.byId[id])
+    
+    const eventLog = useStores().learningEvent.eventLog
+    const setRecords = useLearningRecordStore.getState().setFromEventLog
+    // eventLog 更新時に projection 更新
+    useEffect(() => {
+        setRecords(eventLog)
+    }, [eventLog, setRecords])
+    const learning = useLearningRecordStore(s=>s.records[id])
+
+
     const { bind, isLongPressedRef } = useLongPress({
         onLongPress: () => {
             onToggleCheckboxMode()

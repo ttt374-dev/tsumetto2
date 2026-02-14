@@ -13,7 +13,7 @@ import { LibraryCheckboxControl } from "./LibraryCheckboxControl";
 type LibraryViewProps = {
     //problems: Problem[]
     ids: ProblemId[]
-    learningRecords: LearningRecord
+    //learningRecords: LearningRecord
     query: ReturnType<typeof useLibraryQueryContext>
     itemActions: {
         editTags: (ids: ProblemId[]) => void
@@ -35,7 +35,7 @@ type LibraryViewProps = {
 
 
 /////////////////////////////////////////
-export function LibraryView({ids, learningRecords, query,
+export function LibraryView({ids, query,
     itemActions, selectActions, onItemClick, selection}: LibraryViewProps) {
 
     return (
@@ -82,7 +82,6 @@ export function LibraryView({ids, learningRecords, query,
                             key={id}
                             //problem={p}
                             id={id}
-                            learning={learningRecords[id]}
                             showCheckbox={selection.isCheckboxMode}
                             onItemClick={onItemClick}
                             isChecked={selection.isChecked(id)}

@@ -11,7 +11,7 @@ import { useProblemStore } from '@/application/store/useProblemStore';
 import { EditableText } from '../components/EditableText';
 import { ProblemTagEditor } from '../components/ProblemTagEditor';
 import { useLearningEventStore } from '@/application/store/useLearningEventStore';
-import { useLearningRecord } from '@/application/useLearningRecord';
+import { useLearningRecordStore } from '@/application/useLearningRecord';
 import { StarToggleButton } from '../components/StarToggleButton';
 import { useStarToggleButton } from '@/application/useStarToggleButton';
 
@@ -47,7 +47,7 @@ export default function ProblemDetailDialog({
     }, [open, problem?.tags])
     const learningStore = useLearningEventStore(repo.learningEvent)
     //const learning = learningStore.records[problemId]
-    const learningRecords = useLearningRecord(learningStore.eventLog)
+    const learningRecords = useLearningRecordStore(learningStore.eventLog)
     const learning = learningRecords[problem.id]
     
     const [tags, setTags] = useState<string[]>(
