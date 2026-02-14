@@ -5,6 +5,7 @@ import { useMissionEventStoreContext } from "../App/providers/MissionEventStoreP
 import type { MissionSnapshot } from "@/domain/MissionEvent/MissionEvent";
 import { ProblemStats } from "@/domain/problem/ProblemStats";
 import { AppShell } from "../common/layout/AppShell";
+import { Navigate, useNavigate } from "react-router-dom";
 
 /////////////////////////////////////////////
 export function SummaryScreen() {
@@ -14,6 +15,7 @@ export function SummaryScreen() {
 
     const missionResultEntryList = snapshotToResultList(missionStore.snapshot)
     const stats = ProblemStats.createFromMissionResultList(missionResultEntryList)
+    const navigate=useNavigate()
     
     return (
         <AppShell>
@@ -23,7 +25,10 @@ export function SummaryScreen() {
 
             <SummaryView stats={stats}/>
 
-            <Button onClick={missionStore.reset}>
+            <Button onClick={()=>{
+                    //missionStore.reset()
+                    navigate("/decks")
+                }}>
                 Dashboard
             </Button>
         </AppShell>
