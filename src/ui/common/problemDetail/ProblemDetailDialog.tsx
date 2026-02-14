@@ -14,6 +14,7 @@ import { useLearningEventStore } from '@/application/store/useLearningEventStore
 import { useLearningRecordStore } from '@/application/useLearningRecord';
 import { StarToggleButton } from '../components/StarToggleButton';
 import { useStarToggleButton } from '@/application/useStarToggleButton';
+import { useStores } from '@/application/store/useStores';
 
 type Props = {
     open: boolean
@@ -45,10 +46,15 @@ export default function ProblemDetailDialog({
             setTags(problem.tags as string[] ?? [])
         }
     }, [open, problem?.tags])
-    const learningStore = useLearningEventStore(repo.learningEvent)
-    //const learning = learningStore.records[problemId]
-    const learningRecords = useLearningRecordStore(learningStore.eventLog)
-    const learning = learningRecords[problem.id]
+
+    
+    const eventLog = useStores().learningEvent.eventLog
+    const setRecords = useLearningRecordStore.getState().setFromEventLog
+    // eventLog 更新時に projection 更新
+    useEffect(() => {
+        setRecords(eventLog)
+    }, [eventLog, setRecords])
+    const learning = useLearningRecordStore(s=>s.records[problem.id])
     
     const [tags, setTags] = useState<string[]>(
         () => problem?.tags ? [...problem.tags] : []
