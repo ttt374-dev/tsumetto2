@@ -6,10 +6,13 @@ import type { Problem, ProblemId } from "../../domain/problem/Problem"
 export type ProblemState = {
     ids: ProblemId[]
     byId: Record<ProblemId, Problem>    
-    
-    getAllProblems: () => Problem[]
+    all: Problem[]
+
+    //getAllProblems: () => Problem[]
 
     reload: () => Promise<void>
+    setProblems: (problems: Problem[]) => void
+  //addProblem: (problem: Problem) => void
     updateProblem: (p: Problem) => Promise<void>
     deleteProblems: (ids: ProblemId[]) => Promise<void>
     deleteAll: () => Promise<void>
@@ -24,13 +27,7 @@ export const initProblemStore = (repo: ProblemRepository) => {
 export const useProblemStore = create<ProblemState>((set, get) => ({
     ids: [],
     byId: {},
-
-    // store 側
-    getAllProblems: () => {
-        const { ids, byId } = get()
-        return ids.map(id => byId[id])
-    },
-
+    all: [],
 
     reload: async () => {
         try {
@@ -42,12 +39,29 @@ export const useProblemStore = create<ProblemState>((set, get) => ({
             for (const p of data) {
                 byId[p.id] = p
                 ids.push(p.id)
-            }
+            }            
+          
 
-            set({ ids, byId })
+            set({ ids, byId, all: data })
         } catch {
-            set({ ids: [], byId: {} })
+            set({ ids: [], byId: {}, all: [] })
         }
+    },
+
+    setProblems: (problems) => {
+        const byId: Record<string, Problem> = {}
+        const ids: string[] = []
+
+        for (const p of problems) {
+            byId[p.id] = p
+            ids.push(p.id)
+        }
+
+        set({
+            ids,
+            byId,
+            all: problems, // ← ここが重要
+        })
     },
 
     updateProblem: async (problem) => {

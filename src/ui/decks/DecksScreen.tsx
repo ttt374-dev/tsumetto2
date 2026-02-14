@@ -37,18 +37,19 @@ export default function DecksScreen(){
     const learningRecords = useLearningRecord(stores.learningEvent.eventLog)
     const navigate = useNavigate()
     const toast = useToast()
-    const problems = useProblemStore(s => s.getAllProblems())
+    const problems = useProblemStore(s => s.all)
     console.log("problems", problems)
 
     // import files
     const importer = useImportController(async (res: ImportFilesResult) => {
         //await stores.problem.reload()
-        useProblemStore.getState().reload()
+        ////useProblemStore.getState().reload()
+        useProblemStore(s=>s.reload())
         toast({message: `imported: ${res.summary.imported}, skipped: ${res.summary.skipped}, failed: ${res.summary.failed}`})        
      })
     // backup, restore
     const backupRestoreDialog = useBackupRestoreDialog((res) => {
-        if (res.ok) useProblemStore.getState().reload()
+        if (res.ok) useProblemStore(s=>s.reload())
     })            
     // stats
     const deckStats = useDeckStats(problems, stores.deck.decks, learningRecords)

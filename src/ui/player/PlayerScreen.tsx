@@ -33,11 +33,10 @@ export function useShowMovesController(problemId: ProblemId | undefined, plyInde
 }
 //////////////////////////////////////////////////////////////
 export function PlayerScreen() {
-    const { currentProblemId } = useMissionPlayer()
-    const stores = useStores()
-    const problem = currentProblemId !== undefined ?
-        //stores.problem.findById(currentProblemId) : undefined    
-        useProblemStore(s=>s.byId[currentProblemId]) :  undefined
+    const { currentProblemId } = useMissionPlayer()    
+    const problem = useProblemStore(s=>
+        currentProblemId ? s.byId[currentProblemId] : undefined)
+    
     if (!problem) return (<>Loading...</>)
     return (
         <PlayerScreenContent problem={problem}  />
