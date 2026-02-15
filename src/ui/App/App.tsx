@@ -6,7 +6,7 @@ import { MissionScreen } from '../mission/MissionScreen';
 import { LibraryScreen } from '../library/LibraryScreen';
 import { MissionEventStoreProvider } from './providers/MissionEventStoreProvider';
 //import { DashboardScreen } from '../dashboard/DashboardScreen';
-import { SummaryScreen } from '../summary/SummaryScreen';
+import { MissionSummaryScreen } from '../summary/MissionSummaryScreen';
 import DecksScreen from '../decks/DecksScreen';
 import { DeckEditScreen } from '../decks/DeckEditScreen';
 import { initProblemStore, useProblemStore } from '@/application/store/useProblemStore';
@@ -18,6 +18,7 @@ import { getInputLabelUtilityClasses } from '@mui/material';
 import { useLearningEventStore } from '@/application/store/useLearningEventStore';
 import { useEffect } from 'react';
 import { MissionPlayerScreen } from '../mission/MissionPlayerScreen';
+import { ViewerScreen } from '../viewer/ViewerScreen';
 
 function App() {
 
@@ -45,13 +46,14 @@ function App() {
                 <Routes>
                     <Route path="/mission" element={<MissionScreen />}>
                         <Route path="play" element={<MissionPlayerScreen />} />
-                        <Route path="summary" element={<SummaryScreen />} />
+                        <Route path="summary" element={<MissionSummaryScreen />} />
                     </Route>
 
                     <Route path="/decks" element={<DecksScreen />} />
                     <Route path="/deck/:id" element={<DeckEditScreen />} />
 
                     <Route path="/library" element={<LibraryScreen />} />
+                    <Route path="/view/:id" element={<ViewerScreen />} />
 
                     <Route path="/" element={<Navigate to="/decks" />} />
                 </Routes>

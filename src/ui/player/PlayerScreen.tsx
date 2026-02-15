@@ -33,7 +33,7 @@ export function useShowMovesController(problemId: ProblemId | undefined, plyInde
 export function PlayerScreen({ problem, title, onAnswer, navigationHandlers}: {
     problem: Problem
     title: string
-    onAnswer: (id: ProblemId, res: SolvedResult, sec?: number) => void
+    onAnswer?: (id: ProblemId, res: SolvedResult, sec?: number) => void
     navigationHandlers: PlayerViewNavigationHandlers
  }) {
     // star
@@ -62,14 +62,14 @@ export function PlayerScreen({ problem, title, onAnswer, navigationHandlers}: {
     
     const answerCurrent = async (res: SolvedResult, sec?: number)  => {
         await review(problem.id, res, sec)
-        onAnswer(problem.id, res, sec)
+        onAnswer?.(problem.id, res, sec)
     }    
 
     //////////////////////////////////////////
     return (
         <AppShell
             header={title}
-            footer={<PlayerAnswerActions onAnswerClick={answerCurrent}/>}
+            footer={onAnswer &&<PlayerAnswerActions onAnswerClick={answerCurrent}/>}
             rightActions={
                 <>
                     <StarToggleButton 

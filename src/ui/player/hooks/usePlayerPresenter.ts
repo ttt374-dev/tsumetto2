@@ -3,7 +3,6 @@ import { useProblemDetailDialog } from "../../common/problemDetail/useProblemDet
 import { useListDialog } from "../../mission/ListDialog";
 import type { PlayerViewNavigationHandlers } from "../components/PlayerView";
 import { useRightActionsDrawer } from "../components/RightActionsDrawer";
-import type { usePlayerController } from "./usePlayerController";
 
 
 export function usePlayerPresenter(
@@ -18,7 +17,7 @@ export function usePlayerPresenter(
     const listDialog = useListDialog(p.id, navigationHandlers.moveTo)
     const rightActionsDrawer = useRightActionsDrawer(
         () => detailDialog.openDialog(p),
-        listDialog.openDialog
+        //listDialog.openDialog
     )
 
     return {

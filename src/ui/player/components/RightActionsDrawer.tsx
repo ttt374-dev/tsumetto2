@@ -4,7 +4,7 @@ import { useState } from "react";
 
 export function useRightActionsDrawer(
     onOpenDetailDialog: () => void,
-    onOpenListDialog: () => void
+    //onOpenListDialog: () => void
 ) {
     const [open, setOpen] = useState(false)
 
@@ -12,29 +12,21 @@ export function useRightActionsDrawer(
     const closeDialog =() => setOpen(false)
 
     const drawerElement = (
-        <Drawer anchor="right" open={open} onClose={closeDialog} >
-            <Box width={250} mt={3} role="presentation">
-                <List>
-                    <ListItemButton onClick={() => { onOpenDetailDialog(); closeDialog() }}>
-                        <ListItemText primary="詳細・編集" />
-                    </ListItemButton>
-                    <ListItemButton onClick={() => { onOpenListDialog(); closeDialog(); }}>
-                        <ListItemText primary="ミッションリスト" />
-                    </ListItemButton>
-                </List>
-            </Box>
-        </Drawer>
+        <RightActionsDrawer
+            isOpen={open}
+            onClose={closeDialog}
+            onOpenDetailDialog={onOpenDetailDialog}
+         />
     )
-
     return { openDialog, drawerElement}
 
 
 }
-export function RightActionsDrawer({ isOpen, onClose, onOpenDetailDialog, onOpenListDialog }: {
+export function RightActionsDrawer({ isOpen, onClose, onOpenDetailDialog }: {
     isOpen: boolean
     onClose: () => void
     onOpenDetailDialog: () => void
-    onOpenListDialog: () => void
+    //onOpenListDialog: () => void
 }) {
     return (
         <Drawer anchor="right" open={isOpen} onClose={onClose} >
@@ -42,9 +34,6 @@ export function RightActionsDrawer({ isOpen, onClose, onOpenDetailDialog, onOpen
                 <List>
                     <ListItemButton onClick={() => { onOpenDetailDialog(); onClose() }}>
                         <ListItemText primary="詳細・編集" />
-                    </ListItemButton>
-                    <ListItemButton onClick={() => { onOpenListDialog(); onClose(); }}>
-                        <ListItemText primary="ミッションリスト" />
                     </ListItemButton>
                 </List>
             </Box>

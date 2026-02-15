@@ -19,6 +19,7 @@ export function useProblemDetailDialog(
     //const store = useProblemStore(repos.problem)
     //const viewDialog = useViewerDialog()
     //const problem = problemId && problemStore.findById(problemId)
+    const navigate = useNavigate()
    
     useEffect(() => {
         useProblemStore.getState().reload()
@@ -39,7 +40,9 @@ export function useProblemDetailDialog(
         //await store.reload()
     }
     const handleViewProblem = () => {        
-        problem && onViewProblem(problem.id)
+        //problem && onViewProblem(problem.id)
+        problem && navigate(`/view/${problem.id}`)
+
         //closeDialog()
     }
 

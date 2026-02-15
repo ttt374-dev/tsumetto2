@@ -4,8 +4,7 @@ import type { Problem } from "@/domain/problem/Problem"
 import { PlayerScreen } from "../player/PlayerScreen"
 
 
-export function MissionPlayerScreen() {    
-    
+export function MissionPlayerScreen() {        
     const currentProblemId = useMissionStore(s=>s.snapshot.currentProblemId)
     const index = useMissionStore(s=>s.index())
     const count = useMissionStore(s=>s.count())
