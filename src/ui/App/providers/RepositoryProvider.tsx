@@ -4,7 +4,7 @@ import { FileProblemPersistence, ProblemRepository } from "@/domain/problem/Prob
 import { JsonLearningEventPersistence, LearningEventRepository } from "@/domain/LearningEvent/LearningEventRepository"
 import { DeckRepository, LocalStorageDeckPersistence} from "@/domain/deck/DeckRepository"
 
-type RepositoryContextValue = {
+export type RepositoryContextValue = {
     readonly problem: ProblemRepository
     readonly learningEvent: LearningEventRepository
     readonly deck: DeckRepository
