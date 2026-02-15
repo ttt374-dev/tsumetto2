@@ -15,7 +15,7 @@ import { DeckRepository, LocalStorageDeckPersistence } from '@/domain/deck/DeckR
 import { initDeckStore, useDeckStore } from '@/application/store/useDeckStore';
 import { JsonLearningEventPersistence, LearningEventRepository } from '@/domain/LearningEvent/LearningEventRepository';
 import { getInputLabelUtilityClasses } from '@mui/material';
-import { useLearningEventStore } from '@/application/store/useLearningEventStore';
+import { initLearningEventRepository, useLearningEventStore } from '@/application/store/useLearningEventStore';
 import { useEffect } from 'react';
 import { MissionPlayerScreen } from '../mission/MissionPlayerScreen';
 import { ViewerScreen } from '../viewer/ViewerScreen';
@@ -30,16 +30,10 @@ function App() {
     initDeckStore(deckRepository)
     useDeckStore.getState().loadDecks()
 
+    const learningEventRepository = new LearningEventRepository(new JsonLearningEventPersistence())
+    initLearningEventRepository(learningEventRepository)
+    useLearningEventStore.getState().reload()    
     
-    const initRepo = useLearningEventStore(s => s.initLearningEventRepository);   
-    
-    useEffect(()=> {
-        const learningEventRepository = new LearningEventRepository(new JsonLearningEventPersistence())
-        initRepo(learningEventRepository);
-        // 初期ロード
-        useLearningEventStore.getState().reload();
-    }, [])
-
     return (
         <AllProviders>
             <BrowserRouter>
