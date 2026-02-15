@@ -6,7 +6,7 @@ import PlayerView, { type PlayerViewHandlers } from "@/ui/player/components/Play
 import { useProblemStore } from "@/application/store/useProblemStore";
 import { useRepositoryContext } from "@/ui/App/providers/RepositoryProvider";
 import { Problem, type ProblemId } from "@/domain/problem/Problem";
-import { useShowMovesController } from "@/ui/player/PlayerScreen";
+import { useShowMovesController } from "../player/hooks/usePlayerViewModel";
 
 export function useViewerDialog(){
     const [open, setOpen] = useState(false)

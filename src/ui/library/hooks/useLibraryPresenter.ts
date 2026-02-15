@@ -4,7 +4,7 @@ import { useBackupRestoreDialog } from "@/ui/common/dialogs/BackupRestoreDialog"
 import { useProblemDetailDialog } from "@/ui/common/problemDetail/useProblemDetailDialog"
 import type { Problem, ProblemId } from "@/domain/problem/Problem"
 import { useMultipleProblemsTagEditDialog } from "@/ui/common/dialogs/MultipleProblemsTagEditDialog"
-import type { LibraryCommand } from "../LibraryScreen"
+import type { LibraryCommand } from "./useLibraryViewModel"
 
 
 

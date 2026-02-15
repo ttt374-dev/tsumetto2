@@ -3,7 +3,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import BackupIcon from "@mui/icons-material/Backup";
 import { AppShell } from "../common/layout/AppShell";
 import FabMenu from "./FabMenu";
-import { useDecksViewModel } from "./useDecksViewModel";
+import { useDecksViewModel } from "./hooks/useDecksViewModel";
 
 
 

@@ -7,13 +7,13 @@ import { DefaultFilterState } from "@/domain/problem/query/filter";
 import { DefaultSortState } from "@/domain/problem/query/sort";
 import { v4 } from "uuid";
 import { useNavigate } from "react-router-dom";
-import { useToast } from "../App/providers/ToastProvider";
+import { useToast } from "../../App/providers/ToastProvider";
 import { useImportController } from "@/application/useImportControler";
-import { useBackupRestoreDialog } from "../common/dialogs/BackupRestoreDialog";
+import { useBackupRestoreDialog } from "../../common/dialogs/BackupRestoreDialog";
 import type { Deck } from "@/domain/deck/Deck";
 import type { ImportFilesResult } from "@/usecase/importProblemsUsecase";
 import { useMemo, useCallback } from "react";
-import { useDeckStats } from "./hooks/useDeckStats";
+import { useDeckStats } from "./useDeckStats";
 
 export function useDecksViewModel() {
     const navigate = useNavigate();

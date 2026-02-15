@@ -4,7 +4,7 @@ import { AppLayout } from "../common/layout/AppLayout";
 import { EditableText } from "../common/components/EditableText";
 import { FilterControl } from "../common/components/FilterControl";
 import LibrarySortControl from "../library/components/LibrarySortControl";
-import { useDeckEditViewModel } from "./useDeckEditScreenViewModel";
+import { useDeckEditViewModel } from "./hooks/useDeckEditScreenViewModel";
 
 export function DeckEditScreen() {
     const {

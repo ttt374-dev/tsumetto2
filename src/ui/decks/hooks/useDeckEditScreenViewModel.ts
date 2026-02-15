@@ -4,7 +4,7 @@ import { useQuery } from "@/application/useQuery";
 import { createQuerySnapshot } from "@/domain/deck/Deck";
 import { ProblemStats } from "@/domain/problem/ProblemStats";
 import { useNavigate, useParams } from "react-router-dom";
-import { useToast } from "../App/providers/ToastProvider";
+import { useToast } from "../../App/providers/ToastProvider";
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useLearningRecordStore } from "@/application/useLearningRecordStore";
 
