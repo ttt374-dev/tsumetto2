@@ -7,6 +7,7 @@ export type ProblemState = {
     ids: ProblemId[]
     byId: Record<ProblemId, Problem>    
     all: Problem[]
+    allTags: string[]
 
     //getAllProblems: () => Problem[]
 
@@ -28,6 +29,13 @@ export const useProblemStore = create<ProblemState>((set, get) => ({
     ids: [],
     byId: {},
     all: [],
+    // 全タグを返すセレクタ
+    get allTags() {
+        const problems = get().all;
+        const tagSet = new Set<string>();
+        problems.forEach(p => p.tags?.forEach(tag => tagSet.add(tag)));
+        return Array.from(tagSet).sort();
+    },
 
     reload: async () => {
         try {

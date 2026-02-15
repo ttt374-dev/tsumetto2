@@ -14,16 +14,14 @@ type MissionStore = {
     deckId?: DeckId;
     problemIds: ProblemId[];
     currentIndex: number; // ⭐ マスター
+    currentProblemId: ProblemId;
     answers: MissionResultEntry[];
 
     // ===== derived (必要最低限だけ) =====
-    phase: () => MissionPhase;
-    //currentProblemId: () => ProblemId | undefined;
-
-    // ===== query =====
-    //count: () => number;
-    isFirst: () => boolean;
-    isLast: () => boolean;
+    isFirst: boolean
+    isLast: boolean
+    phase: MissionPhase
+    count: number
 
     // ===== command =====
     start: (deckId: DeckId, ids: ProblemId[]) => void;
@@ -38,7 +36,6 @@ type MissionStore = {
 /////////////////////////////////////
 
 export const useMissionStore = create<MissionStore>((set, get) => ({
-
     // ======================
     // state
     // ======================
@@ -46,11 +43,19 @@ export const useMissionStore = create<MissionStore>((set, get) => ({
     problemIds: [],
     currentIndex: -1,
     answers: [],
-
+    
     // ======================
     // derived
     // ======================
-    phase: () => {
+    get isFirst(){
+        return get().currentIndex === 0
+    },
+    get isLast(){
+        const { currentIndex, problemIds } = get();
+        return currentIndex === problemIds.length - 1;
+    },
+
+    get phase(){
         const { problemIds, currentIndex } = get();
 
         if (problemIds.length === 0) return "idle";
@@ -58,18 +63,8 @@ export const useMissionStore = create<MissionStore>((set, get) => ({
             return "finished";
         return "playing";
     },
-
-
-    // ======================
-    // query
-    // ======================
-
-    isFirst: () => get().currentIndex === 0,
-
-    isLast: () => {
-        const { currentIndex, problemIds } = get();
-        return currentIndex === problemIds.length - 1;
-    },
+    get count(){ return get().problemIds.length},
+    get currentProblemId(){ return get().problemIds[get().currentIndex]},
 
     // ======================
     // command

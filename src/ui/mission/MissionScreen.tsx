@@ -3,7 +3,7 @@ import { Outlet, useNavigate } from "react-router-dom";
 import { useMissionStore } from "@/application/store/useMissionStore";
 
 export function MissionScreen() {    
-    const phase = useMissionStore(s=>s.phase())
+    const phase = useMissionStore(s=>s.phase)
     const navigate = useNavigate()
 
     useEffect(() => {
