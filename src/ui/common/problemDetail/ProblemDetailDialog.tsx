@@ -57,7 +57,7 @@ export default function ProblemDetailDialog({
         () => problem?.tags ? [...problem.tags] : []
     )
 
-    const allTags: string[] = [] // TODOArray.from(
+    const allTags: string[] = useProblemStore(s=>s.allTags) // TODOArray.from(
 //        new Set(store.problems.flatMap(p => p.tags))
 //    )
     //const [ starred, setStarred] = useState(problem?.starred)

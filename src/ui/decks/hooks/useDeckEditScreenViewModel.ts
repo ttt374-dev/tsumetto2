@@ -13,6 +13,8 @@ export function useDeckEditViewModel() {
     const navigate = useNavigate();
     const toast = useToast();
     const query = useQuery();
+    const allTags: string[] = useProblemStore(s=>s.allTags);
+    console.log("alltags", allTags)
 
     const deckStore = useDeckStore();
     const problemStore = useProblemStore();
@@ -70,6 +72,7 @@ export function useDeckEditViewModel() {
         deck,
         name,
         setName,
+        allTags,
         query,
         stats,
         handleSaveAndExit,

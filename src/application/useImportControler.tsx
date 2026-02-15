@@ -27,7 +27,7 @@ export function useImportController(
     //const store = useProblemStore(repos.problem)
 
     //const allTags = useProblemStore(selectAllTags)  // TODO
-    const allTags: string[] = []
+    const allTags: string[] = useProblemStore(s=>s.allTags)
     const onPicked = (files: File[]) => {
         setFiles(files)
         setOpen(true)
