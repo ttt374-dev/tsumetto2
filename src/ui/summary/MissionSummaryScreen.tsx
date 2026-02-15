@@ -8,7 +8,7 @@ import { useMissionStore } from "@/application/store/useMissionStore";
 
 /////////////////////////////////////////////
 export function MissionSummaryScreen() {
-    const missionResultEntryList = useMissionStore(s => s.snapshot.answers)
+    const missionResultEntryList = useMissionStore(s => s.answers)
     const stats = ProblemStats.createFromMissionResultList(missionResultEntryList)
     //console.log("stats", stats)
     const reset = useMissionStore(s => s.reset)

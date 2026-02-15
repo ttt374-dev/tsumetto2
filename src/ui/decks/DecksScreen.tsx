@@ -44,13 +44,14 @@ export default function DecksScreen(){
     //console.log("problems", problems)
 
     // import files
+    const reloadProblems = useProblemStore(s => s.reload)
     const importer = useImportController(async (res: ImportFilesResult) => {
-        useProblemStore(s=>s.reload())
+        reloadProblems()
         toast({message: `imported: ${res.summary.imported}, skipped: ${res.summary.skipped}, failed: ${res.summary.failed}`})        
      })
     // backup, restore
     const backupRestoreDialog = useBackupRestoreDialog((res) => {
-        if (res.ok) useProblemStore(s=>s.reload())
+        if (res.ok) reloadProblems()
     })            
     // stats
     const learningRecords = useLearningRecordStore(s=>s.records)
@@ -61,7 +62,7 @@ export default function DecksScreen(){
         const filterState = deck.snapshot.filterState
         const filtered = applyQuery(problems, learningRecords, deck.snapshot.sortState, filterState)
 
-        start(filtered.map(p=>p.id))
+        start(deck.id, filtered.map(p=>p.id))
         navigate("/mission/play")
     }
     const handleCreateDeck = async (name: string) => {

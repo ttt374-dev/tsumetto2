@@ -1,3 +1,4 @@
+import type { DeckId } from "@/domain/deck/Deck";
 import type { SolvedResult } from "@/domain/learning/Learning";
 import type { MissionResultEntry } from "@/domain/MissionEvent/MissionEvent";
 import type { ProblemId } from "@/domain/problem/Problem";
@@ -8,156 +9,133 @@ export type MissionPhase =
     | "playing"
     | "finished";
 
-export type MissionSnapshot = {
-    //deckId?: string;
-    problemIds: ProblemId[];
-    currentProblemId?: ProblemId;
-    answers:  MissionResultEntry[] // Record<ProblemId, SolvedResult>;
-};
-
 type MissionStore = {
-    snapshot: MissionSnapshot;
+    // ===== state =====
+    deckId?: DeckId;
+    problemIds: ProblemId[];
+    currentIndex: number; // ⭐ マスター
+    answers: MissionResultEntry[];
 
-    // derived
+    // ===== derived (必要最低限だけ) =====
     phase: () => MissionPhase;
-
-    // query
-    index: () => number;
-    count: () => number;
-    isFirst: () => boolean;
-    isLast: () => boolean;
     //currentProblemId: () => ProblemId | undefined;
 
-    // command
-    start: (ids: ProblemId[]) => void;
+    // ===== query =====
+    //count: () => number;
+    isFirst: () => boolean;
+    isLast: () => boolean;
+
+    // ===== command =====
+    start: (deckId: DeckId, ids: ProblemId[]) => void;
     answer: (result: SolvedResult) => void;
     next: () => void;
     prev: () => void;
-    moveTo: (id: ProblemId) => void;
+    moveToIndex: (index: number) => void;
+    moveToId: (id: ProblemId) => void;
     reset: () => void;
 };
 
-////////////////////////////
-
-const initialSnapshot: MissionSnapshot = {
-    problemIds: [],
-    currentProblemId: undefined,
-    answers: [],
-};
+/////////////////////////////////////
 
 export const useMissionStore = create<MissionStore>((set, get) => ({
-    snapshot: initialSnapshot,
+
+    // ======================
+    // state
+    // ======================
+    deckId: undefined,
+    problemIds: [],
+    currentIndex: -1,
+    answers: [],
 
     // ======================
     // derived
     // ======================
     phase: () => {
-        const { problemIds, currentProblemId } = get().snapshot;
+        const { problemIds, currentIndex } = get();
 
         if (problemIds.length === 0) return "idle";
-        if (!currentProblemId) return "finished";
+        if (currentIndex < 0 || currentIndex >= problemIds.length)
+            return "finished";
         return "playing";
     },
+
 
     // ======================
     // query
     // ======================
-    //currentProblemId: () => get().snapshot.currentProblemId,
-    index: () => {
-        const { problemIds, currentProblemId } = get().snapshot;
-        if (!currentProblemId) return -1;
-        return problemIds.indexOf(currentProblemId);
-    },
 
-    count: () => get().snapshot.problemIds.length,
-
-    isFirst: () => get().index() === 0,
+    isFirst: () => get().currentIndex === 0,
 
     isLast: () => {
-        const i = get().index();
-        const total = get().count();
-        return i === total - 1;
+        const { currentIndex, problemIds } = get();
+        return currentIndex === problemIds.length - 1;
     },
 
     // ======================
     // command
     // ======================
-    start: (ids: ProblemId[]) =>
+    start: (deckId, ids) =>
         set({
-            snapshot: {
-                //deckId,
-                problemIds: ids,
-                currentProblemId: ids[0],
-                answers: []
-                //answers: Object.fromEntries(
-                //    ids.map(id => [id, "unanswered"])
-                //),
-            },
+            deckId,
+            problemIds: ids,
+            currentIndex: ids.length > 0 ? 0 : -1,
+            answers: [],
         }),
 
     answer: (result) =>
         set((s) => {
-            const { currentProblemId, answers } = s.snapshot;
-            if (!currentProblemId) return s;
+            const { currentIndex, problemIds, answers } = s;
+            if (currentIndex < 0) return s;
 
-            console.log("answer", result, answers)
+            const problemId = problemIds[currentIndex];
             return {
-                snapshot: {
-                    ...s.snapshot,
-                    answers: [...answers, {
-                        problemId: currentProblemId,
+                answers: [
+                    ...answers,
+                    {
+                        problemId,
                         solvedResult: result,
-                    }],
-                },
+                    },
+                ],
             };
         }),
 
     next: () =>
         set((s) => {
-            const { problemIds, currentProblemId } = s.snapshot;
-            if (!currentProblemId) return s;
+            const nextIndex = s.currentIndex + 1;
 
-            const index = problemIds.indexOf(currentProblemId);
-            const nextId = problemIds[index + 1];
+            if (nextIndex >= s.problemIds.length) {
+                return { currentIndex: s.problemIds.length }; // finished状態
+            }
 
-            return {
-                snapshot: {
-                    ...s.snapshot,
-                    currentProblemId: nextId,
-                },
-            };
+            return { currentIndex: nextIndex };
         }),
 
     prev: () =>
         set((s) => {
-            const { problemIds, currentProblemId } = s.snapshot;
-            if (!currentProblemId) return s;
-
-            const index = problemIds.indexOf(currentProblemId);
-            const prevId = problemIds[index - 1] ?? currentProblemId;
-
+            const prevIndex = s.currentIndex - 1;
             return {
-                snapshot: {
-                    ...s.snapshot,
-                    currentProblemId: prevId,
-                },
+                currentIndex: prevIndex < 0 ? 0 : prevIndex,
             };
         }),
 
-    moveTo: (id) =>
+    moveToIndex: (index) =>
         set((s) => {
-            if (!s.snapshot.problemIds.includes(id)) return s;
+            if (index < 0 || index >= s.problemIds.length) return s;
+            return { currentIndex: index };
+        }),
 
-            return {
-                snapshot: {
-                    ...s.snapshot,
-                    currentProblemId: id,
-                },
-            };
+    moveToId: (id) =>
+        set((s) => {
+            const index = s.problemIds.indexOf(id);
+            if (index === -1) return s;
+            return { currentIndex: index };
         }),
 
     reset: () =>
         set({
-            snapshot: initialSnapshot,
+            deckId: undefined,
+            problemIds: [],
+            currentIndex: -1,
+            answers: [],
         }),
 }));

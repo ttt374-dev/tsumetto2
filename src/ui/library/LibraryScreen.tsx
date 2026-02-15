@@ -46,9 +46,10 @@ export function LibraryScreen() {
     const [checkboxMode, setCheckboxMode] = useState(false)
     const presenter = useLibraryPresenter(commands)
 
-    const ids = useLibraryItems(
-        useProblemStore(s=>s.all), 
-        useLearningRecordStore(s=>s.records), query).map(p=>p.id)
+    const problems = useProblemStore(s => s.all)
+    const learningRecords = useLearningRecordStore(s => s.records)
+    const libraryItems = useLibraryItems(problems, learningRecords, query)
+    const ids = useMemo(() => libraryItems.map(p => p.id), [libraryItems])
     //const allIds = useProblemStore(s => s.ids)
 
     //const ids = libraryItems.map(p=>p.id)
@@ -61,6 +62,15 @@ export function LibraryScreen() {
         await commands.reload()
         toast({ message: `imported: ${res.summary.imported}, skipped: ${res.summary.skipped}, failed: ${res.summary.failed}` })
     })   
+
+    const deleteChecked = async () => {
+        const idsToDelete = checkboxControl.checkedIds
+        if (!idsToDelete.length) return
+        if (!window.confirm("Are you sure to delete selected?")) return
+        const res = await commands.deleteProblems(idsToDelete)
+        toast({ message: `Deleted ${res} problems` })
+    }
+
     const itemActions = {
         editTags: (ids: ProblemId[]) => {
             presenter.dialogs.tagEdit.openDialog(ids)
@@ -71,11 +81,7 @@ export function LibraryScreen() {
             const res = await controller.deleteMany(ids)
             toast({ message: `Deleted ${res} problems` })
         },*/
-        deleteChecked: async () => {
-            if (!window.confirm("Are you sure to delete selected?")) return            
-            const res = await commands.deleteProblems(selection.checkedIds)
-            toast({ message: `Deleted ${res} problems` })
-        }
+        deleteChecked: deleteChecked
     }
     const handlers = {        
         onSelectAll: checkboxControl.checkAll,
@@ -83,10 +89,13 @@ export function LibraryScreen() {
         onToggleChecked: checkboxControl.toggleChecked,
         onToggleCheckboxMode: () => {
             setCheckboxMode(prev => !prev)
-            checkboxControl.uncheckAll()
+            //checkboxControl.uncheckAll()
         }
-
     }
+
+    useEffect(() => {
+        if (!checkboxMode) checkboxControl.uncheckAll()
+    }, [checkboxMode])
 
     const selection = {
         checkedIds: checkboxControl.checkedIds,
@@ -95,12 +104,11 @@ export function LibraryScreen() {
     }
     const onItemClick = (p: Problem) => {
         if (selection.isCheckboxMode) {
-            checkboxControl.toggleChecked
+            checkboxControl.toggleChecked(p.id)
         } else {
             presenter.dialogs.detail.openDialog(p) 
         }
     }
-
     console.log("ids", ids)
     return (
         <AppShell

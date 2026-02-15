@@ -2,38 +2,63 @@ import { useMissionStore } from "@/application/store/useMissionStore"
 import { useProblemStore } from "@/application/store/useProblemStore"
 import type { Problem } from "@/domain/problem/Problem"
 import { PlayerScreen } from "../player/PlayerScreen"
+import { useDeckStore } from "@/application/store/useDeckStore"
+import { useCallback, useMemo } from "react"
+import type { SolvedResult } from "@/domain/learning/Learning"
 
+export function useMissionPlayerViewModel() {
+    const problemIds = useMissionStore(s => s.problemIds)
+    const index = useMissionStore(s => s.currentIndex)
+    const deckId = useMissionStore(s => s.deckId)
 
-export function MissionPlayerScreen() {        
-    const currentProblemId = useMissionStore(s=>s.snapshot.currentProblemId)
-    const index = useMissionStore(s=>s.index())
-    const count = useMissionStore(s=>s.count())
-    const missionAnswer = useMissionStore(s=>s.answer)
-    const problem: Problem | undefined = useProblemStore(s=>
-        currentProblemId !== undefined ? s.byId[currentProblemId] : undefined)
-    const navigationHandlers = {
-        next: useMissionStore(s=>s.next),
-        prev: useMissionStore(s=>s.prev),
-        moveTo: useMissionStore(s=>s.moveTo),
+    const answer = useMissionStore(s => s.answer)
+    const next = useMissionStore(s => s.next)
+    const prev = useMissionStore(s => s.prev)
+    const moveTo = useMissionStore(s => s.moveToId)
+
+    const currentProblemId = problemIds[index]
+    const count = problemIds.length
+
+    // Invalid state チェック
+    if (index < 0 || index >= count || !currentProblemId) {
+        return undefined
     }
-    console.log("playscree", currentProblemId)
-    
-    if (!problem) return (<>Loading...</>)
 
-    const title = formatTitle(problem.title, index, count)
+    // problem
+    const problem = useProblemStore(s => s.byId[currentProblemId])
+    if (!problem) return undefined
+
+    // deckName
+    const deckName = useDeckStore(
+        s => deckId ? s.decks.find(d => d.id === deckId)?.name ?? "" : ""
+    )
+
+    // navigation
+    const navigationHandlers = useMemo(() => ({ next, prev, moveTo }), [next, prev, moveTo])
+
+    const handleAnswer = useCallback(
+        (_id: string, res: SolvedResult, _sec?: number) => {
+            answer(res)
+            next()
+        },
+        [answer, next]
+    )
+
+    const title = `[${deckName} (${index + 1}/${count})]: ${problem.title}`
+
+    return { problem, title, navigationHandlers, index, count, handleAnswer }
+}
+
+export function MissionPlayerScreen() {
+    const vm = useMissionPlayerViewModel()
+
+    if (!vm) return (<>Loading...</>)
+    
     return (
-        <PlayerScreen problem={problem}
-            title={title}
-            onAnswer={(id, res, sec) => {
-                missionAnswer(res)
-                navigationHandlers.next()
-            }}
-            navigationHandlers={navigationHandlers}            
+        <PlayerScreen problem={vm.problem}
+            title={vm.title}
+            onAnswer={vm.handleAnswer}
+            navigationHandlers={vm.navigationHandlers}            
         />
     )
-}
-const formatTitle = (rawTitle: string, index: number, length: number): string => {
-    const titlePrefix = `${(index ?? 0) + 1}/${length}: `
-    const title = `${titlePrefix}${rawTitle}`
-    return title
 }
