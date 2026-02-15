@@ -7,7 +7,7 @@ import { useCallback, useMemo } from "react"
 import type { SolvedResult } from "@/domain/learning/Learning"
 
 export function useMissionPlayerViewModel() {
-    //const problemIds = useMissionStore(s => s.problemIds)
+    const problemIds = useMissionStore(s => s.problemIds)
     const index = useMissionStore(s => s.currentIndex)
     const deckId = useMissionStore(s => s.deckId)
 
@@ -16,15 +16,17 @@ export function useMissionPlayerViewModel() {
     const prev = useMissionStore(s => s.prev)
     const moveTo = useMissionStore(s => s.moveToId)
 
-    const currentProblemId = useMissionStore(s=>s.currentProblemId)
-    const count = useMissionStore(s=>s.count)
+    const currentProblemId = problemIds[index]
+    const count = problemIds.length
 
     // Invalid state チェック
+    console.log("misionplayervm ", index, currentProblemId)
     if (index < 0 || index >= count || !currentProblemId) {
         return undefined
     }
 
     // problem
+    
     const problem = useProblemStore(s => s.byId[currentProblemId])
     if (!problem) return undefined
 

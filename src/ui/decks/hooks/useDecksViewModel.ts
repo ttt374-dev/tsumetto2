@@ -47,6 +47,7 @@ export function useDecksViewModel() {
     // --- ミッション開始 ---
     const handleStartMission = useCallback((deck: Deck) => {
         const filtered = applyQuery(problems, learningRecords, deck.snapshot.sortState, deck.snapshot.filterState);
+        console.log("start mission", deck.id, filtered.map(p => p.id))
         startMission(deck.id, filtered.map(p => p.id));
         navigate("/mission/play");
     }, [problems, learningRecords, startMission, navigate]);

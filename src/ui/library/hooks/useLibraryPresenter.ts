@@ -25,7 +25,7 @@ export function useLibraryPresenter(commands: LibraryCommand) {
     // 問題詳細ダイアログ
     // -----------------------------
     const detailDialog = useProblemDetailDialog(
-        (id: ProblemId) => { viewerDialog.openDialog(id) },
+        //(id: ProblemId) => { viewerDialog.openDialog(id) },
         async (p: Problem) => { await commands.updateProblem(p) },
         async () => { await commands.reload() }
     )

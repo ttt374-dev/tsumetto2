@@ -14,14 +14,13 @@ type MissionStore = {
     deckId?: DeckId;
     problemIds: ProblemId[];
     currentIndex: number; // ⭐ マスター
-    currentProblemId: ProblemId;
     answers: MissionResultEntry[];
 
     // ===== derived (必要最低限だけ) =====
-    isFirst: boolean
-    isLast: boolean
-    phase: MissionPhase
-    count: number
+    //isFirst: boolean
+    //isLast: boolean
+    //currentProblemId: () => ProblemId | undefined;
+    phase: () => MissionPhase    
 
     // ===== command =====
     start: (deckId: DeckId, ids: ProblemId[]) => void;
@@ -47,34 +46,39 @@ export const useMissionStore = create<MissionStore>((set, get) => ({
     // ======================
     // derived
     // ======================
+    /*
     get isFirst(){
         return get().currentIndex === 0
     },
     get isLast(){
         const { currentIndex, problemIds } = get();
         return currentIndex === problemIds.length - 1;
-    },
+    },*/
 
-    get phase(){
+    phase: () => {
         const { problemIds, currentIndex } = get();
+        console.log("phase", problemIds, currentIndex)
 
         if (problemIds.length === 0) return "idle";
         if (currentIndex < 0 || currentIndex >= problemIds.length)
             return "finished";
         return "playing";
     },
-    get count(){ return get().problemIds.length},
-    get currentProblemId(){ return get().problemIds[get().currentIndex]},
+    //count: () => { return get().problemIds.length},
+    //currentProblemId: () => { return get().problemIds[get().currentIndex]},
 
     // ======================
     // command
     // ======================
     start: (deckId, ids) =>
-        set({
-            deckId,
-            problemIds: ids,
-            currentIndex: ids.length > 0 ? 0 : -1,
-            answers: [],
+        set((s) => {
+            console.log("start", deckId, ids, ids.length > 0 ? 0 : -1)
+            return {
+                deckId,
+                problemIds: ids,
+                currentIndex: ids.length > 0 ? 0 : -1,
+                answers: [],
+            }
         }),
 
     answer: (result) =>
