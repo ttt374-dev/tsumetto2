@@ -8,7 +8,7 @@ import { useViewerDialog } from "@/ui/viewer/ViewDialog";
 
 
 export function useProblemDetailDialog(
-    onViewProblem: (id: ProblemId) => void,
+    //onViewProblem: (id: ProblemId) => void,
     onUpdateProblem: (problem: Problem) => void,
     onAfterDeleteProblem?: () => void,
 ){

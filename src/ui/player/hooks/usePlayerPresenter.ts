@@ -11,7 +11,7 @@ export function usePlayerPresenter(
     navigationHandlers: PlayerViewNavigationHandlers,
 ) {
     const detailDialog = useProblemDetailDialog(
-        () => { },
+        //() => { },
         onUpdateProblem, //handleUpdateProblem, 
         () => { navigationHandlers.next() })
     const listDialog = useListDialog(p.id, navigationHandlers.moveTo)
