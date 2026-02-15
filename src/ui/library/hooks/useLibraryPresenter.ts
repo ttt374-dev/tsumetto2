@@ -7,29 +7,49 @@ import { useMultipleProblemsTagEditDialog } from "@/ui/common/dialogs/MultiplePr
 import type { LibraryCommand } from "../LibraryScreen"
 
 
-export function useLibraryPresenter (commands: LibraryCommand){
-     // dialogs
+
+export function useLibraryPresenter(commands: LibraryCommand) {
+    // -----------------------------
+    // ビューアーダイアログ
+    // -----------------------------
     const viewerDialog = useViewerDialog()
+
+    // -----------------------------
+    // バックアップ / リストア
+    // -----------------------------
     const backupRestoreDialog = useBackupRestoreDialog((res) => {
         if (res.ok) commands.reload()
     })
+
+    // -----------------------------
+    // 問題詳細ダイアログ
+    // -----------------------------
     const detailDialog = useProblemDetailDialog(
         (id: ProblemId) => { viewerDialog.openDialog(id) },
-        async (p: Problem) => {
-            await commands.updateProblem(p)
-        }, async () => { await commands.reload() }
+        async (p: Problem) => { await commands.updateProblem(p) },
+        async () => { await commands.reload() }
     )
+
+    // -----------------------------
+    // 複数問題タグ編集ダイアログ
+    // -----------------------------
     const handleUpdateProblems = async (problems: Problem[]) => {
+        // commands.updateProblem は VM 経由で呼ぶ
         for (const p of problems) {
             await commands.updateProblem(p)
         }
     }
     const tagEditDialog = useMultipleProblemsTagEditDialog(handleUpdateProblems)
+
+    // -----------------------------
+    // まとめて返す
+    // -----------------------------
     const dialogs = {
         viewer: viewerDialog,
         detail: detailDialog,
         backupRestore: backupRestoreDialog,
         tagEdit: tagEditDialog,
     }
-    return { dialogs }
+
+    return { dialogs, commands }
 }
