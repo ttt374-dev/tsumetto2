@@ -7,17 +7,11 @@ import { useReplayController } from "./hooks/useReplayController"
 import { Problem, type ProblemId } from "@/domain/problem/Problem"
 import { Button, IconButton, type SxProps } from "@mui/material"
 import type { SolvedResult } from "@/domain/learning/Learning";
-import { useStores } from "@/application/store/useStores";
 import { usePlayerPresenter } from "./hooks/usePlayerPresenter";
-import { usePlayerController } from "./hooks/usePlayerController";
 import { AppShell } from "../common/layout/AppShell";
-import type { Theme } from "@emotion/react";
 import { StarToggleButton } from "../common/components/StarToggleButton";
 import { useStarToggleButton } from "@/application/useStarToggleButton";
 import { useProblemStore } from "@/application/store/useProblemStore";
-import { useMissionPlayer } from "./hooks/useMissionPlayerStore";
-import { useMissionStore } from "@/application/store/useMissionStore";
-import { useLearningRecordStore } from "@/application/useLearningRecordStore";
 import { useLearningEventStore } from "@/application/store/useLearningEventStore";
 
 export function useShowMovesController(problemId: ProblemId | undefined, plyIndex: number) {
@@ -35,56 +29,15 @@ export function useShowMovesController(problemId: ProblemId | undefined, plyInde
     return { showMoves, setShowMoves }
 }
 //////////////////////////////////////////////////////////////
-export function MissionPlayerScreen() {    
-    
-    const currentProblemId = useMissionStore(s=>s.snapshot.currentProblemId)
-    const index = useMissionStore(s=>s.index())
-    const count = useMissionStore(s=>s.count())
-    const missionAnswer = useMissionStore(s=>s.answer)
-    const problem: Problem | undefined = useProblemStore(s=>
-        currentProblemId !== undefined ? s.byId[currentProblemId] : undefined)
-    const navigationHandlers = {
-        next: useMissionStore(s=>s.next),
-        prev: useMissionStore(s=>s.prev),
-        moveTo: useMissionStore(s=>s.moveTo),
-    }
-    console.log("playscree", currentProblemId)
-    
-    if (!problem) return (<>Loading...</>)
 
-    const title = formatTitle(problem.title, index, count)
-    return (
-        <PlayerScreen problem={problem}
-            title={title}
-            onAnswer={(id, res, sec) => {
-                missionAnswer(res)
-                navigationHandlers.next()
-            }}
-            navigationHandlers={navigationHandlers}            
-        />
-    )
-}
-const formatTitle = (rawTitle: string, index: number, length: number): string => {
-    const titlePrefix = `${(index ?? 0) + 1}/${length}: `
-    const title = `${titlePrefix}${rawTitle}`
-    return title
-}
-
-
-////////////////////////////////
-// problem の実体を受け取り、スクリーンとして view に渡す。
-//  (これをかまさないと防御コードばかりになっちゃう)
 export function PlayerScreen({ problem, title, onAnswer, navigationHandlers}: {
     problem: Problem
     title: string
     onAnswer: (id: ProblemId, res: SolvedResult, sec?: number) => void
     navigationHandlers: PlayerViewNavigationHandlers
  }) {
-    const starController = useStarToggleButton(problem)
-    //const mission = useMissionStore()
-    //const controller = usePlayerController(mission.answer)
-    //const problemIds = mission.snapshot.problemIds
-    
+    // star
+    const starController = useStarToggleButton(problem)    
     // replay
     const { initialPosition, moves } = problem.kifData
     const replay = useReplayController(initialPosition, moves)

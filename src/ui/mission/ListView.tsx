@@ -21,7 +21,6 @@ export function ListView({ ids, onSelectProblem, currentProblemId }: {
                 <LibraryListItem
                     key={id}
                     id={id}
-                    //learning={learningRecords[id]}
                     showCheckbox={false}
                     isChecked={false}
                     onToggleChecked={alert}
@@ -33,16 +32,3 @@ export function ListView({ ids, onSelectProblem, currentProblemId }: {
         </List>
     )
 }
-/*
-export function ListScreen({}: {}){
-    const repos = useRepositoryContext()
-    const problemStore = useProblemStore(repos.problem)
-    const missionStore = useMissionEventStoreContext()
-    const ids = missionStore.snapshot?.problemIds
-    if (!ids) return (<>null ids</>)
-    const problems = ids.map(id => problemStore.findById(id)).filter(p => p !== undefined)
-    return (
-        <ListView problems={problems}/>
-    )
-}
-*/

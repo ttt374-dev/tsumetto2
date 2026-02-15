@@ -15,7 +15,6 @@ import { useQuery } from "@/application/useQuery";
 import { useStores } from "@/application/store/useStores";
 import { useLearningRecordStore } from "@/application/useLearningRecordStore";
 import { useDeckStats } from "./hooks/useDeckStats";
-import { useMissionCoordinator } from "@/domain/MissionEvent/useMissionCoordinator";
 import { DefaultFilterState } from "@/domain/problem/query/filter";
 import { DefaultSortState } from "@/domain/problem/query/sort";
 import { AppShell } from "../common/layout/AppShell";

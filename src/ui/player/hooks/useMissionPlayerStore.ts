@@ -1,3 +1,4 @@
+/*
 import { useEffect, useState } from "react"
 import { Problem, type ProblemId } from "@/domain/problem/Problem"
 import { useMissionEventStoreContext } from "../../App/providers/MissionEventStoreProvider"
@@ -79,3 +80,4 @@ export function useMissionPlayer() {
         answer, next, prev, moveTo,
     }
 }
+*/

@@ -6,7 +6,6 @@ import { MissionScreen } from '../mission/MissionScreen';
 import { LibraryScreen } from '../library/LibraryScreen';
 import { MissionEventStoreProvider } from './providers/MissionEventStoreProvider';
 //import { DashboardScreen } from '../dashboard/DashboardScreen';
-import { MissionPlayerScreen, PlayerScreen } from '../player/PlayerScreen';
 import { SummaryScreen } from '../summary/SummaryScreen';
 import DecksScreen from '../decks/DecksScreen';
 import { DeckEditScreen } from '../decks/DeckEditScreen';
@@ -18,6 +17,7 @@ import { JsonLearningEventPersistence, LearningEventRepository } from '@/domain/
 import { getInputLabelUtilityClasses } from '@mui/material';
 import { useLearningEventStore } from '@/application/store/useLearningEventStore';
 import { useEffect } from 'react';
+import { MissionPlayerScreen } from '../mission/MissionPlayerScreen';
 
 function App() {
 
@@ -43,22 +43,13 @@ function App() {
         <AllProviders>
             <BrowserRouter>
                 <Routes>
-
-                    <Route
-                        element={
-                            <MissionEventStoreProvider>
-                                <Outlet />
-                            </MissionEventStoreProvider>
-                        }
-                    >
-                        <Route path="/mission" element={<MissionScreen />}>
-                            <Route path="play" element={<MissionPlayerScreen />} />
-                            <Route path="summary" element={<SummaryScreen />} />
-                        </Route>
-
-                        <Route path="/decks" element={<DecksScreen />} />
-                        <Route path="/deck/:id" element={<DeckEditScreen />} />
+                    <Route path="/mission" element={<MissionScreen />}>
+                        <Route path="play" element={<MissionPlayerScreen />} />
+                        <Route path="summary" element={<SummaryScreen />} />
                     </Route>
+
+                    <Route path="/decks" element={<DecksScreen />} />
+                    <Route path="/deck/:id" element={<DeckEditScreen />} />
 
                     <Route path="/library" element={<LibraryScreen />} />
 
