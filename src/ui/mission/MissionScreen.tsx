@@ -2,11 +2,12 @@ import { useEffect } from "react";
 //import { useMissionEventStoreContext } from "../App/providers/MissionEventStoreProvider";
 import { Outlet, useNavigate } from "react-router-dom";
 import { useMissionEventStoreContext } from "../App/providers/MissionEventStoreProvider";
+import { useMissionStore } from "@/application/store/useMissionStore";
 
 export function MissionScreen() {
     const missionEventStore = useMissionEventStoreContext()
-    const phase = missionEventStore.snapshot?.phase ?? "idle"
-    //const phase = useMissionPlayerStore(s=>s.snapshot)
+    //const phase = missionEventStore.snapshot?.phase ?? "idle"
+    const phase = useMissionStore(s=>s.phase())
     const navigate = useNavigate()
 
     useEffect(() => {

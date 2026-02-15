@@ -16,6 +16,9 @@ import { StarToggleButton } from "../common/components/StarToggleButton";
 import { useStarToggleButton } from "@/application/useStarToggleButton";
 import { useProblemStore } from "@/application/store/useProblemStore";
 import { useMissionPlayer } from "./hooks/useMissionPlayerStore";
+import { useMissionStore } from "@/application/store/useMissionStore";
+import { useLearningRecordStore } from "@/application/useLearningRecordStore";
+import { useLearningEventStore } from "@/application/store/useLearningEventStore";
 
 export function useShowMovesController(problemId: ProblemId | undefined, plyIndex: number) {
     const [showMoves, setShowMoves] = useState(false)
@@ -32,32 +35,58 @@ export function useShowMovesController(problemId: ProblemId | undefined, plyInde
     return { showMoves, setShowMoves }
 }
 //////////////////////////////////////////////////////////////
-export function PlayerScreen() {
-    const { currentProblemId } = useMissionPlayer()
+export function PlayerScreen() {    
+    
+    const currentProblemId = useMissionStore(s=>s.snapshot.currentProblemId)
+    const index = useMissionStore(s=>s.index())
+    const count = useMissionStore(s=>s.count())
+    const missionAnswer = useMissionStore(s=>s.answer)
     const problem = useProblemStore(s=>
-        currentProblemId ? s.byId[currentProblemId] : undefined)
+        currentProblemId !== undefined ? s.byId[currentProblemId] : undefined)
+    const navigationHandlers = {
+        next: useMissionStore(s=>s.next),
+        prev: useMissionStore(s=>s.prev),
+        moveTo: useMissionStore(s=>s.moveTo),
+    }
+    console.log("playscree", currentProblemId)
     
     if (!problem) return (<>Loading...</>)
+
+    const title = formatTitle(problem.title, index, count)
     return (
-        <PlayerScreenContent problem={problem} 
-        
-         />
+        <PlayerScreenContent problem={problem}
+            title={title}
+            onAnswer={(id, res, sec) => {
+                missionAnswer(res)
+                navigationHandlers.next()
+            }
+            }
+        />
     )
+}
+const formatTitle = (rawTitle: string, index: number, length: number): string => {
+    const titlePrefix = `${(index ?? 0) + 1}/${length}: `
+    const title = `${titlePrefix}${rawTitle}`
+    return title
 }
 
 
 ////////////////////////////////
 // problem の実体を受け取り、スクリーンとして view に渡す。
 //  (これをかまさないと防御コードばかりになっちゃう)
-export function PlayerScreenContent({ problem}: {problem: Problem }) {
+export function PlayerScreenContent({ problem, title, onAnswer}: {
+    problem: Problem
+    title: string
+    onAnswer: (id: ProblemId, res: SolvedResult, sec?: number) => void
+ }) {
     const starController = useStarToggleButton(problem)
-    const mission = useMissionPlayer()
-    const controller = usePlayerController(mission.answer)
+    const mission = useMissionStore()
+    //const controller = usePlayerController(mission.answer)
     const problemIds = mission.snapshot.problemIds
     
     
     const navigationHandlers: PlayerViewNavigationHandlers = useMemo(() => ({
-        next: mission.next, prev: mission.prev, moveTo: mission.moveTo
+        next: mission.next, prev: alert, moveTo: alert
     }), [mission])
 
     // replay
@@ -66,8 +95,8 @@ export function PlayerScreenContent({ problem}: {problem: Problem }) {
     const showMovesController = useShowMovesController(problem.id, replay.plyIndex)
 
     // presenter
-    const presenter = usePlayerPresenter(problem, useProblemStore(s=>s.updateProblem), navigationHandlers)
-    
+    const presenter = usePlayerPresenter(problem, useProblemStore(s=>s.updateProblem), navigationHandlers)    
+    const review = useLearningEventStore(s=>s.review)
 
     // handlers
     const handlers = {
@@ -77,27 +106,25 @@ export function PlayerScreenContent({ problem}: {problem: Problem }) {
             moveTo: replay.moveToPly
         },
         navigation: navigationHandlers,
-        answer: controller.answer,
+        //answer: controller.answer,
         setShowMoves: showMovesController.setShowMoves,
     }
-    const formatTitle = (rawTitle: string, index: number, length: number): string => {
-        const titlePrefix = `${(index ?? 0) + 1}/${length}: `
-        const title = `${titlePrefix}${rawTitle}`
-        return title
-    }
-
-    const title = formatTitle(problem.title, mission.index, problemIds.length)
-    const answerCurrent = useCallback(
-        (id: ProblemId, res: SolvedResult, sec?: number) =>
-            controller.answer(problem.id, res, sec),
-        [controller, problem.id]
-    )
+    
+    const answerCurrent = async (res: SolvedResult, sec?: number)  => {
+        await review(problem.id, res, sec)
+        onAnswer(problem.id, res, sec)
+    } ///useCallback(
+    //    (id: ProblemId, res: SolvedResult, sec?: number) =>
+    //        controller.answer(problem.id, res, sec),
+    //    [controller, problem.id]
+    //)
+    
 
     //////////////////////////////////////////
     return (
         <AppShell
             header={title}
-            footer={<PlayerAnswerActions onAnswerClick={(r) => answerCurrent(problem.id, r)}/>}
+            footer={<PlayerAnswerActions onAnswerClick={answerCurrent}/>}
             rightActions={
                 <>
                     <StarToggleButton 

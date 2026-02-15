@@ -22,6 +22,7 @@ import { AppShell } from "../common/layout/AppShell";
 import { useProblemStore } from "@/application/store/useProblemStore";
 import { useEffect } from "react";
 import { useDeckStore } from "@/application/store/useDeckStore";
+import { useMissionStore } from "@/application/store/useMissionStore";
 
 
 function createDeck(name: string): Deck {
@@ -34,18 +35,17 @@ function createDeck(name: string): Deck {
 }
 /////////////////////////////////////////////////////////////
 export default function DecksScreen(){    
-    const { startMission } = useMissionCoordinator()
-    const stores = useStores()
+    //const { startMission } = useMissionCoordinator()    
+    const start = useMissionStore((s) => s.start);
+    //const stores = useStores()
     //const learningRecords = useLearningRecordStore(stores.learningEvent.eventLog)
     const navigate = useNavigate()
     const toast = useToast()
     const problems = useProblemStore(s => s.all)
-    console.log("problems", problems)
+    //console.log("problems", problems)
 
     // import files
     const importer = useImportController(async (res: ImportFilesResult) => {
-        //await stores.problem.reload()
-        ////useProblemStore.getState().reload()
         useProblemStore(s=>s.reload())
         toast({message: `imported: ${res.summary.imported}, skipped: ${res.summary.skipped}, failed: ${res.summary.failed}`})        
      })
@@ -62,7 +62,7 @@ export default function DecksScreen(){
         const filterState = deck.snapshot.filterState
         const filtered = applyQuery(problems, learningRecords, deck.snapshot.sortState, filterState)
 
-        startMission(filtered.map(p=>p.id))
+        start(filtered.map(p=>p.id))
         navigate("/mission/play")
     }
     const handleCreateDeck = async (name: string) => {
