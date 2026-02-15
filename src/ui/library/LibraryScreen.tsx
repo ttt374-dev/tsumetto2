@@ -46,10 +46,12 @@ export function LibraryScreen() {
     const [checkboxMode, setCheckboxMode] = useState(false)
     const presenter = useLibraryPresenter(commands)
 
-    //const libraryItems = useLibraryItems(stores.problem.problems, learningRecords, query)
-    const allIds = useProblemStore(s => s.ids)
+    const ids = useLibraryItems(
+        useProblemStore(s=>s.all), 
+        useLearningRecordStore(s=>s.records), query).map(p=>p.id)
+    //const allIds = useProblemStore(s => s.ids)
 
-    const ids = allIds // TODO: sort
+    //const ids = libraryItems.map(p=>p.id)
     const checkboxControl = useLibraryCheckbox(ids)
     const toast = useToast()
     //const selectionController = useSelectItems(libraryItems.map(p=>p.id))
