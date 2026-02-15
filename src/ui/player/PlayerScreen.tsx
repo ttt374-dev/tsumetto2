@@ -35,13 +35,13 @@ export function useShowMovesController(problemId: ProblemId | undefined, plyInde
     return { showMoves, setShowMoves }
 }
 //////////////////////////////////////////////////////////////
-export function PlayerScreen() {    
+export function MissionPlayerScreen() {    
     
     const currentProblemId = useMissionStore(s=>s.snapshot.currentProblemId)
     const index = useMissionStore(s=>s.index())
     const count = useMissionStore(s=>s.count())
     const missionAnswer = useMissionStore(s=>s.answer)
-    const problem = useProblemStore(s=>
+    const problem: Problem | undefined = useProblemStore(s=>
         currentProblemId !== undefined ? s.byId[currentProblemId] : undefined)
     const navigationHandlers = {
         next: useMissionStore(s=>s.next),
@@ -54,13 +54,13 @@ export function PlayerScreen() {
 
     const title = formatTitle(problem.title, index, count)
     return (
-        <PlayerScreenContent problem={problem}
+        <PlayerScreen problem={problem}
             title={title}
             onAnswer={(id, res, sec) => {
                 missionAnswer(res)
                 navigationHandlers.next()
-            }
-            }
+            }}
+            navigationHandlers={navigationHandlers}            
         />
     )
 }
@@ -74,21 +74,17 @@ const formatTitle = (rawTitle: string, index: number, length: number): string =>
 ////////////////////////////////
 // problem の実体を受け取り、スクリーンとして view に渡す。
 //  (これをかまさないと防御コードばかりになっちゃう)
-export function PlayerScreenContent({ problem, title, onAnswer}: {
+export function PlayerScreen({ problem, title, onAnswer, navigationHandlers}: {
     problem: Problem
     title: string
     onAnswer: (id: ProblemId, res: SolvedResult, sec?: number) => void
+    navigationHandlers: PlayerViewNavigationHandlers
  }) {
     const starController = useStarToggleButton(problem)
-    const mission = useMissionStore()
+    //const mission = useMissionStore()
     //const controller = usePlayerController(mission.answer)
-    const problemIds = mission.snapshot.problemIds
+    //const problemIds = mission.snapshot.problemIds
     
-    
-    const navigationHandlers: PlayerViewNavigationHandlers = useMemo(() => ({
-        next: mission.next, prev: alert, moveTo: alert
-    }), [mission])
-
     // replay
     const { initialPosition, moves } = problem.kifData
     const replay = useReplayController(initialPosition, moves)
@@ -96,6 +92,8 @@ export function PlayerScreenContent({ problem, title, onAnswer}: {
 
     // presenter
     const presenter = usePlayerPresenter(problem, useProblemStore(s=>s.updateProblem), navigationHandlers)    
+
+    // learning
     const review = useLearningEventStore(s=>s.review)
 
     // handlers
@@ -106,19 +104,13 @@ export function PlayerScreenContent({ problem, title, onAnswer}: {
             moveTo: replay.moveToPly
         },
         navigation: navigationHandlers,
-        //answer: controller.answer,
         setShowMoves: showMovesController.setShowMoves,
     }
     
     const answerCurrent = async (res: SolvedResult, sec?: number)  => {
         await review(problem.id, res, sec)
         onAnswer(problem.id, res, sec)
-    } ///useCallback(
-    //    (id: ProblemId, res: SolvedResult, sec?: number) =>
-    //        controller.answer(problem.id, res, sec),
-    //    [controller, problem.id]
-    //)
-    
+    }    
 
     //////////////////////////////////////////
     return (

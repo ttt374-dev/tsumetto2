@@ -1,4 +1,5 @@
 import type { SolvedResult } from "@/domain/learning/Learning";
+import type { MissionResultEntry } from "@/domain/MissionEvent/MissionEvent";
 import type { ProblemId } from "@/domain/problem/Problem";
 import { create } from "zustand";
 
@@ -11,7 +12,7 @@ export type MissionSnapshot = {
     //deckId?: string;
     problemIds: ProblemId[];
     currentProblemId?: ProblemId;
-    answers: Record<ProblemId, SolvedResult>;
+    answers:  MissionResultEntry[] // Record<ProblemId, SolvedResult>;
 };
 
 type MissionStore = {
@@ -41,7 +42,7 @@ type MissionStore = {
 const initialSnapshot: MissionSnapshot = {
     problemIds: [],
     currentProblemId: undefined,
-    answers: {},
+    answers: [],
 };
 
 export const useMissionStore = create<MissionStore>((set, get) => ({
@@ -87,9 +88,10 @@ export const useMissionStore = create<MissionStore>((set, get) => ({
                 //deckId,
                 problemIds: ids,
                 currentProblemId: ids[0],
-                answers: Object.fromEntries(
-                    ids.map(id => [id, "unanswered"])
-                ),
+                answers: []
+                //answers: Object.fromEntries(
+                //    ids.map(id => [id, "unanswered"])
+                //),
             },
         }),
 
@@ -98,15 +100,14 @@ export const useMissionStore = create<MissionStore>((set, get) => ({
             const { currentProblemId, answers } = s.snapshot;
             if (!currentProblemId) return s;
 
-            console.log("answer", result)
-
+            console.log("answer", result, answers)
             return {
                 snapshot: {
                     ...s.snapshot,
-                    answers: {
-                        ...answers,
-                        [currentProblemId]: result,
-                    },
+                    answers: [...answers, {
+                        problemId: currentProblemId,
+                        solvedResult: result,
+                    }],
                 },
             };
         }),

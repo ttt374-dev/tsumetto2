@@ -6,17 +6,25 @@ import type { MissionSnapshot } from "@/domain/MissionEvent/MissionEvent";
 import { ProblemStats } from "@/domain/problem/ProblemStats";
 import { AppShell } from "../common/layout/AppShell";
 import { Navigate, useNavigate } from "react-router-dom";
+import { useMissionStore } from "@/application/store/useMissionStore";
 
 /////////////////////////////////////////////
 export function SummaryScreen() {
     //console.log("summary scr", missionResultEntryList)
-    const missionStore = useMissionEventStoreContext()
-    if (!missionStore.snapshot) return null
+    //const missionStore = useMissionEventStoreContext()
 
-    const missionResultEntryList = snapshotToResultList(missionStore.snapshot)
-    const stats = ProblemStats.createFromMissionResultList(missionResultEntryList)
-    const navigate=useNavigate()
+    //if (!missionStore.snapshot) return null
+
+    //const missionResultEntryList = snapshotToResultList(missionStore.snapshot)
+    const missionResultEntryList = useMissionStore(s=>s.snapshot.answers)
+    console.log("results", missionResultEntryList)
+
     
+    const stats = ProblemStats.createFromMissionResultList(missionResultEntryList)
+    console.log("stats", stats)
+    const navigate=useNavigate()
+    const reset = useMissionStore(s=>s.reset)
+    const phase = useMissionStore(s=>s.phase)
     return (
         <AppShell>
             <Box>
@@ -27,7 +35,9 @@ export function SummaryScreen() {
 
             <Button onClick={()=>{
                     //missionStore.reset()
-                    navigate("/decks")
+                    //navigate("/decks")
+                    reset()           
+                    console.log("summary: reset", phase())
                 }}>
                 Dashboard
             </Button>

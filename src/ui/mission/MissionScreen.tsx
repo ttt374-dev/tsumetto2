@@ -5,14 +5,17 @@ import { useMissionEventStoreContext } from "../App/providers/MissionEventStoreP
 import { useMissionStore } from "@/application/store/useMissionStore";
 
 export function MissionScreen() {
-    const missionEventStore = useMissionEventStoreContext()
+    //const missionEventStore = useMissionEventStoreContext()
     //const phase = missionEventStore.snapshot?.phase ?? "idle"
     const phase = useMissionStore(s=>s.phase())
     const navigate = useNavigate()
 
     useEffect(() => {
+        console.log("phase", phase)
         switch (phase) {
-            //case "idle":
+            case "idle":
+                navigate("/decks")
+                break;
             //    navigate("/mission", { replace: true })
             //    break
             case "playing":
