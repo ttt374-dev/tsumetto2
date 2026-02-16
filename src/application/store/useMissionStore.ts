@@ -57,15 +57,12 @@ export const useMissionStore = create<MissionStore>((set, get) => ({
 
     phase: () => {
         const { problemIds, currentIndex } = get();
-        console.log("phase", problemIds, currentIndex)
 
         if (problemIds.length === 0) return "idle";
         if (currentIndex < 0 || currentIndex >= problemIds.length)
             return "finished";
         return "playing";
     },
-    //count: () => { return get().problemIds.length},
-    //currentProblemId: () => { return get().problemIds[get().currentIndex]},
 
     // ======================
     // command

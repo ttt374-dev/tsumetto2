@@ -7,13 +7,12 @@ import { useProblemStore } from "@/application/store/useProblemStore";
 
 
 export function useMultipleProblemsTagEditDialog(
-    onUpdateProblems: (p: Problem[]) => void
+    //onUpdateProblems: (p: Problem[]) => void
     //onApplyEditTags: (problemIds: ProblemId[], addTag: string|undefined, removeTags: string[]|undefined) => void
 ) {
     const [open, setOpen] = useState(false)
     const [problems, setProblems] = useState<Problem[]>([])
     const [initialTags, setInitialTags] = useState<string[]>([])
-
 
     useEffect(() => {
         useProblemStore.getState().reload()
@@ -39,7 +38,7 @@ export function useMultipleProblemsTagEditDialog(
             problems={problems}
             initialTags={initialTags}
             onClose={closeDialog}
-            onUpdateProblems={onUpdateProblems}
+            //onUpdateProblems={onUpdateProblems}
             //onApplyEditTags={onApplyEditTags}
         />
     )
@@ -47,19 +46,25 @@ export function useMultipleProblemsTagEditDialog(
 }
 
 export default function MultipleProblemsTagEditDialog({
-    open, problems, initialTags, onClose, onUpdateProblems }: {
+    open, problems, initialTags, onClose }: {
         open: boolean
         problems: Problem[]
         initialTags: string[]
 
         onClose: () => void
-        onUpdateProblems: (p: Problem[]) => void
+        //onUpdateProblems: (p: Problem[]) => void
         //onApplyEditTags: (problemIds: ProblemId[], addTag: string|undefined, removeTags: string[]|undefined) => void
     }) {
     //const [tags, setTags] = useState<string[]>(initialTags)
     const [tab, setTab] = useState<0 | 1>(0)
     const [tags, setTags] = useState(initialTags)
-    //const [removeTags, setRemoveTags] = useState<string[]>([])
+    
+    const updateProblem = useProblemStore(s=>s.updateProblem)
+    const updateProblems = async (problems: Problem[]) =>{
+        for (const p of problems){
+            await updateProblem(p)
+        }
+    }
 
     const [input, setInput] = useState("")
     const handleAddTag = () => {
@@ -72,7 +77,7 @@ export default function MultipleProblemsTagEditDialog({
             p.setTags([...new Set([...p.tags, tag])])
         )
         console.log("addtag", newProblems)
-        onUpdateProblems(newProblems)
+        updateProblems(newProblems)
         setInput("")
     }
     const handleDeleteTag = (tagToDelete: string) => {
@@ -81,7 +86,7 @@ export default function MultipleProblemsTagEditDialog({
             //onUpdateProblem(p.setTags(newTags))
             return p.setTags(newTags)
         })
-        onUpdateProblems(newProblems)
+        updateProblems(newProblems)
         setTags(prev=>prev.filter(t=>t!==tagToDelete))
     }
     return (

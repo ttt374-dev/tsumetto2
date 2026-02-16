@@ -7,7 +7,6 @@ export function MissionScreen() {
     const navigate = useNavigate()
 
     useEffect(() => {
-        console.log("phase", phase)
         switch (phase) {
             case "idle":
                 navigate("/decks")

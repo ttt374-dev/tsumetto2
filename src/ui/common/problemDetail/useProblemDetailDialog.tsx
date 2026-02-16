@@ -11,7 +11,7 @@ export function useProblemDetailDialog(
     onAfterDeleteProblem?: () => void,
 ){
     const [ open, setOpen] = useState(false)
-    const [problem, setProblem] = useState<Problem|undefined>(undefined)
+    const [problemId, setProblemId] = useState<ProblemId|undefined>(undefined)
     //const updateProblem = useProblemStore(s=>s.updateProblem)
     const deleteProblems = useProblemStore(s=>s.deleteProblems)
 
@@ -21,26 +21,26 @@ export function useProblemDetailDialog(
         useProblemStore.getState().reload()
     }, [open])
 
-    const openDialog = (p: Problem) => { 
+    const openDialog = (id: ProblemId) => { 
         setOpen(true);
-        setProblem(p)     
+        setProblemId(id)     
      }
     const closeDialog = () => { setOpen(false)}
     // delete
     const deleteProblem = async () => {
-        if (!problem) return
-        await deleteProblems([problem.id])
+        if (!problemId) return
+        await deleteProblems([problemId])
         onAfterDeleteProblem?.()
     }
     const handleViewProblem = () => {        
-        problem && navigate(`/view/${problem.id}`)
+        problemId && navigate(`/view/${problemId}`)
     }
 
     const dialogElement = (
-        problem && open &&
+        problemId && open &&
         <ProblemDetailDialog    
             open={open}
-            problem={problem}
+            problemId={problemId}
             onConfirm={alert}
             onClose={closeDialog}
             onDelete={deleteProblem}

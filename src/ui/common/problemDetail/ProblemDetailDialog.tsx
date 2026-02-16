@@ -12,7 +12,7 @@ import { useLearningRecordStore } from '@/application/useLearningRecordStore';
 
 type Props = {
     open: boolean
-    problem: Problem
+    problemId: ProblemId
     //onUpdateTitle: (title: string) => void;
     onConfirm: (problemId: string) => void;
     onClose: () => void
@@ -24,7 +24,7 @@ type Props = {
 
 export default function ProblemDetailDialog({
     open,
-    problem,
+    problemId,
     
     onClose,
     onDelete,
@@ -32,11 +32,8 @@ export default function ProblemDetailDialog({
     //onUpdateProblem,
     onViewProblem,
 }: Props) {
-    useEffect(() => {
-        if (open && problem) {
-            setTags(problem.tags as string[] ?? [])
-        }
-    }, [open, problem?.tags])
+    const problem = useProblemStore(p=>p.byId[problemId])
+
 
     
     //const eventLog = useLearningEventStore(s=>s.eventLog)
@@ -48,9 +45,14 @@ export default function ProblemDetailDialog({
     const [tags, setTags] = useState<string[]>(
         () => problem?.tags ? [...problem.tags] : []
     )
+        useEffect(() => {
+        if (open && problem) {
+            setTags(problem.tags as string[] ?? [])
+        }
+    }, [open, problem?.tags])
 
     const allTags: string[] = useProblemStore(s=>s.allTags) 
-    const starController = useStarToggleButton(problem)
+    const starController = useStarToggleButton(problemId)
 
     // handlers
     const handleDelete = () => {
@@ -66,11 +68,7 @@ export default function ProblemDetailDialog({
         if (!window.confirm("本当に正答データをリセットしますか？")) return
         onResetLearning()             
     }    
-
-
-    //if (!problem) return null
-
-
+    if (!problem) return null
     ///////////////////////////////////////////////////////
     return (
         <Dialog open={open} onClose={onClose} fullWidth

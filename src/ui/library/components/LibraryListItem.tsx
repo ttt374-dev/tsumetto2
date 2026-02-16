@@ -1,5 +1,3 @@
-import StarIcon from "@mui/icons-material/Star"
-import StarBorderIcon from "@mui/icons-material/StarBorder"
 import type { Learning } from "@/domain/learning/Learning";
 import type { Problem, ProblemId } from "@/domain/problem/Problem";
 import { Box, Checkbox, colors, IconButton, ListItem, ListItemButton, ListItemIcon, ListItemText, Stack, Typography } from "@mui/material";
@@ -36,7 +34,7 @@ export const LibraryListItem = React.memo(function LibraryListItem({ id, onItemC
 
     })
     //console.log("render:", problem.id)
-    const starController = useStarToggleButton(problem)
+    const starController = useStarToggleButton(id)
 
     return (
         <ListItem>

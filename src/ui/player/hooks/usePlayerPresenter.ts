@@ -18,7 +18,7 @@ export function usePlayerPresenter(
     )
     const listDialog = useListDialog(p.id, navigationHandlers.moveTo)
     const rightActionsDrawer = useRightActionsDrawer(
-        () => detailDialog.openDialog(p),
+        () => detailDialog.openDialog(p.id),
         //listDialog.openDialog
     )
 

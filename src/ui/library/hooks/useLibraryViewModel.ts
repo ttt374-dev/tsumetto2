@@ -3,30 +3,26 @@ import { useLearningRecordStore } from "@/application/useLearningRecordStore"
 import type { Problem, ProblemId } from "@/domain/problem/Problem"
 import { useLibraryQueryContext } from "@/ui/App/providers/QueryProvider"
 import { useToast } from "@/ui/App/providers/ToastProvider"
-import { useLibraryPresenter } from "./useLibraryPresenter"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { applyQuery } from "@/domain/problem/query/applyQuery"
 import { useLibraryCheckbox } from "./useLibraryCheckbox"
 import { useImportController } from "@/application/useImportControler"
 import type { ImportFilesResult } from "@/usecase/importProblemsUsecase"
-
-export type LibraryCommand = {
-  reload: () => Promise<void>
-  updateProblem: (p: Problem) => Promise<void>
-  deleteProblems: (ids: ProblemId[]) => Promise<void>
-}
+import { useViewerDialog } from "@/ui/viewer/ViewDialog"
+import { useBackupRestoreDialog } from "@/ui/common/dialogs/BackupRestoreDialog"
+import { useProblemDetailDialog } from "@/ui/common/problemDetail/useProblemDetailDialog"
+import { useMultipleProblemsTagEditDialog } from "@/ui/common/dialogs/MultipleProblemsTagEditDialog"
 
 export function useLibraryViewModel() {
     const query = useLibraryQueryContext()
-    const problems = useProblemStore(s => s.all)
     const learningRecords = useLearningRecordStore(s => s.records)
     const toast = useToast()
-    const commands: LibraryCommand = {
-        reload: useProblemStore(s => s.reload),
-        updateProblem: useProblemStore(s => s.updateProblem),
-        deleteProblems: useProblemStore(s => s.deleteProblems)
-    }
-    const presenter = useLibraryPresenter(commands)
+
+    const {
+        all: problems,
+        reload,
+        deleteProblems
+    } = useProblemStore()
 
     // -----------------------------
     // ライブラリアイテム
@@ -36,7 +32,17 @@ export function useLibraryViewModel() {
         [problems, learningRecords, query.sortState, query.filterState]
     )
     const ids = useMemo(() => libraryItems.map(p => p.id), [libraryItems])
-
+    
+    // -----------------------------
+    // ダイアログ
+    // -----------------------------
+    const detailDialog = useProblemDetailDialog()
+    const viewerDialog = useViewerDialog()
+    const backupRestoreDialog = useBackupRestoreDialog((res) => {
+        if (res.ok) reload()
+    })
+    const tagEditDialog = useMultipleProblemsTagEditDialog()
+    
     // -----------------------------
     // 選択管理
     // -----------------------------
@@ -56,32 +62,32 @@ export function useLibraryViewModel() {
     // -----------------------------
     // 操作ハンドラ
     // -----------------------------
-    const handlers = useMemo(() => ({
-        onSelectAll: checkboxControl.checkAll,
-        onClearAll: checkboxControl.uncheckAll,
-        onToggleChecked: checkboxControl.toggleChecked,
-        onToggleCheckboxMode: () => setCheckboxMode(prev => !prev)
-    }), [checkboxControl])
+    const selectActions = useMemo(() => ({
+        selectAll: checkboxControl.checkAll,
+        clearAll: checkboxControl.uncheckAll,
+        toggleChecked: checkboxControl.toggleChecked,
+        toggleCheckboxMode: () => setCheckboxMode(prev => !prev)
+    }), [checkboxControl.checkAll, checkboxControl.uncheckAll, checkboxControl.toggleChecked])
 
     // -----------------------------
     // アイテムアクション
     // -----------------------------
     const itemActions = useMemo(() => ({
-        editTags: (ids: ProblemId[]) => presenter.dialogs.tagEdit.openDialog(ids),
+        editTags: (ids: ProblemId[]) => tagEditDialog.openDialog(ids),
         deleteChecked: async () => {
             const idsToDelete = checkboxControl.checkedIds
             if (!idsToDelete.length) return
             if (!window.confirm("Are you sure to delete selected?")) return
-            const res = await presenter.commands.deleteProblems(idsToDelete)
+            const res = await deleteProblems(idsToDelete)
             toast({ message: `Deleted ${res} problems` })
         }
-    }), [checkboxControl.checkedIds, presenter.commands, toast])
+    }), [checkboxControl.checkedIds, deleteProblems, toast])
 
     // -----------------------------
     // インポート
     // -----------------------------
     const importer = useImportController(async (res: ImportFilesResult) => {
-        await presenter.commands.reload()
+        await reload()
         toast({
             message: `imported: ${res.summary.imported}, skipped: ${res.summary.skipped}, failed: ${res.summary.failed}`
         })
@@ -94,19 +100,23 @@ export function useLibraryViewModel() {
         if (selection.isCheckboxMode) {
             checkboxControl.toggleChecked(p.id)
         } else {
-            presenter.dialogs.detail.openDialog(p)
+            detailDialog.openDialog(p.id)
         }
-    }, [selection.isCheckboxMode, checkboxControl, presenter.dialogs.detail])
-
+    }, [selection.isCheckboxMode, checkboxControl, detailDialog])
+    
     return {
         ids,
         query,
-        libraryItems,
         selection,
-        handlers,
+        selectActions,
         itemActions,
         onItemClick,
         importer,
-        presenter
+        dialogs: {
+            viewer: viewerDialog,
+            detail: detailDialog,
+            backupRestore: backupRestoreDialog,
+            tagEdit: tagEditDialog,
+        }
     }
 }

@@ -8,13 +8,13 @@ import { useLibraryViewModel } from "./hooks/useLibraryViewModel";
 //////////////////////////////////////////////////
 
 export function LibraryScreen() {
-    const vm = useLibraryViewModel()
+    const vm = useLibraryViewModel()   
 
     return (
         <AppShell
             header="Library"
             rightActions={
-                <IconButton onClick={vm.presenter.dialogs.backupRestore.openDialog}>
+                <IconButton onClick={vm.dialogs.backupRestore.openDialog}>
                     <BackupIcon sx={{ color: "white" }} />
                 </IconButton>
             }
@@ -23,16 +23,16 @@ export function LibraryScreen() {
                 ids={vm.ids}
                 query={vm.query}
                 itemActions={vm.itemActions}
-                selectActions={vm.handlers}
+                selectActions={vm.selectActions}
                 onItemClick={vm.onItemClick}
                 selection={vm.selection}
             />
             {vm.importer.pickerElement}
             {vm.importer.dialogElement}
-            {vm.presenter.dialogs.viewer.dialogElement}
-            {vm.presenter.dialogs.detail.dialogElement}
-            {vm.presenter.dialogs.tagEdit.dialogElement}
-            {vm.presenter.dialogs.backupRestore.dialogElement}
+            {vm.dialogs.viewer.dialogElement}
+            {vm.dialogs.detail.dialogElement}
+            {vm.dialogs.tagEdit.dialogElement}
+            {vm.dialogs.backupRestore.dialogElement}
         </AppShell>
     )
 }

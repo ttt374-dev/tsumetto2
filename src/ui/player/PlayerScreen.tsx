@@ -9,7 +9,6 @@ import { AppShell } from "../common/layout/AppShell";
 import { StarToggleButton } from "../common/components/StarToggleButton";
 import { usePlayerViewModel } from "./hooks/usePlayerViewModel";
 
-
 //////////////////////////////////////////////////////////////
 export function PlayerScreen({ problem, title, onAnswer, navigationHandlers}: {
     problem: Problem

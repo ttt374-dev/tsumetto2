@@ -22,6 +22,7 @@ export type ProblemState = {
     //addProblem: (problem: Problem) => void
     updateProblem: (p: Problem) => Promise<void>
     deleteProblems: (ids: ProblemId[]) => Promise<void>
+    toggleStar: (id: ProblemId) => Promise<void>
     deleteAll: () => Promise<void>
 }
 
@@ -110,6 +111,10 @@ export const useProblemStore = create<ProblemState>((set, get) => ({
                 allTags: extractTags(newAll),
             }
         })
+    },
+    toggleStar: async (id: ProblemId) => {
+        const p = get().byId[id]
+        get().updateProblem(p.toggleStar())
     },
 
     deleteProblems: async (idsToDelete) => {

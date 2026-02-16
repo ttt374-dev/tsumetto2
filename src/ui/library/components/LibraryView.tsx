@@ -20,10 +20,10 @@ type LibraryViewProps = {
         deleteChecked: () => void
     },
     selectActions: {
-        onSelectAll: () => void
-        onClearAll: () => void
-        onToggleChecked: (id: ProblemId) => void
-        onToggleCheckboxMode: () => void
+        selectAll: () => void
+        clearAll: () => void
+        toggleChecked: (id: ProblemId) => void
+        toggleCheckboxMode: () => void
     }
     selection: {
         checkedIds: ProblemId[]
@@ -45,9 +45,9 @@ export function LibraryView({ids, query,
                 {selection.isCheckboxMode &&
                     <Stack direction="row">
                         <LibraryCheckboxControl
-                            onCheckAll={selectActions.onSelectAll}
-                            onUncheckAll={selectActions.onClearAll}
-                            onToggleCheckboxMode={selectActions.onToggleCheckboxMode}
+                            onCheckAll={selectActions.selectAll}
+                            onUncheckAll={selectActions.clearAll}
+                            onToggleCheckboxMode={selectActions.toggleCheckboxMode}
                         />
                         { /* 削除ボタン */}
                         <IconButton
@@ -85,8 +85,8 @@ export function LibraryView({ids, query,
                             showCheckbox={selection.isCheckboxMode}
                             onItemClick={onItemClick}
                             isChecked={selection.isChecked(id)}
-                            onToggleCheckboxMode={selectActions.onToggleCheckboxMode}
-                            onToggleChecked={selectActions.onToggleChecked}
+                            onToggleCheckboxMode={selectActions.toggleCheckboxMode}
+                            onToggleChecked={selectActions.toggleChecked}
                         />
                     ))}
                 </List>
