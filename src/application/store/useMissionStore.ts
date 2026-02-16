@@ -1,13 +1,9 @@
 import type { DeckId } from "@/domain/deck/Deck";
 import type { SolvedResult } from "@/domain/learning/Learning";
-import type { MissionResultEntry } from "@/domain/MissionEvent/MissionEvent";
+import type { MissionPhase, MissionResultEntry } from "@/domain/Mission/Mission";
 import type { ProblemId } from "@/domain/problem/Problem";
 import { create } from "zustand";
 
-export type MissionPhase =
-    | "idle"
-    | "playing"
-    | "finished";
 
 type MissionStore = {
     // ===== state =====
@@ -17,10 +13,7 @@ type MissionStore = {
     answers: MissionResultEntry[];
 
     // ===== derived (必要最低限だけ) =====
-    //isFirst: boolean
-    //isLast: boolean
-    //currentProblemId: () => ProblemId | undefined;
-    phase: () => MissionPhase    
+    phase: () => MissionPhase
 
     // ===== command =====
     start: (deckId: DeckId, ids: ProblemId[]) => void;
@@ -46,14 +39,6 @@ export const useMissionStore = create<MissionStore>((set, get) => ({
     // ======================
     // derived
     // ======================
-    /*
-    get isFirst(){
-        return get().currentIndex === 0
-    },
-    get isLast(){
-        const { currentIndex, problemIds } = get();
-        return currentIndex === problemIds.length - 1;
-    },*/
 
     phase: () => {
         const { problemIds, currentIndex } = get();

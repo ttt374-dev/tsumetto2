@@ -66,7 +66,7 @@ export interface ProblemPersistence {
     save(problems: Problem[]): Promise<void>    
 }
 
-export class FileProblemPersistence implements ProblemPersistence {
+export class LocalStrorageProblemPersistence implements ProblemPersistence {
     async load(): Promise<Problem[]> {
         try {
             const result = await Filesystem.readFile({

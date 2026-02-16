@@ -7,10 +7,10 @@ import { MissionSummaryScreen } from '../summary/MissionSummaryScreen';
 import DecksScreen from '../decks/DecksScreen';
 import { DeckEditScreen } from '../decks/DeckEditScreen';
 import { initProblemStore, useProblemStore } from '@/application/store/useProblemStore';
-import { FileProblemPersistence, ProblemRepository } from '@/domain/problem/ProblemRepository';
+import { LocalStrorageProblemPersistence, ProblemRepository } from '@/domain/problem/ProblemRepository';
 import { DeckRepository, LocalStorageDeckPersistence } from '@/domain/deck/DeckRepository';
 import { initDeckStore, useDeckStore } from '@/application/store/useDeckStore';
-import { JsonLearningEventPersistence, LearningEventRepository } from '@/domain/LearningEvent/LearningEventRepository';
+import { LocalStorageLearningEventPersistence, LearningEventRepository } from '@/domain/LearningEvent/LearningEventRepository';
 import { initLearningEventRepository, useLearningEventStore } from '@/application/store/useLearningEventStore';
 import { MissionPlayerScreen } from '../mission/MissionPlayerScreen';
 import { ViewerScreen } from '../viewer/ViewerScreen';
@@ -21,7 +21,7 @@ import { useEffect } from 'react';
 
 function App() {
     // シングルトンレポジトリの生成
-    const problemRepository = new ProblemRepository(new FileProblemPersistence())
+    const problemRepository = new ProblemRepository(new LocalStrorageProblemPersistence())
     initProblemStore(problemRepository)
     useProblemStore.getState().reload()
 
@@ -29,7 +29,7 @@ function App() {
     initDeckStore(deckRepository)
     useDeckStore.getState().loadDecks()
 
-    const learningEventRepository = new LearningEventRepository(new JsonLearningEventPersistence())
+    const learningEventRepository = new LearningEventRepository(new LocalStorageLearningEventPersistence())
     initLearningEventRepository(learningEventRepository)
     useLearningEventStore.getState().reload()
 
@@ -58,6 +58,7 @@ function App() {
 
                             <Route path="/decks" element={<DecksScreen />} />
                             <Route path="/deck/:id" element={<DeckEditScreen />} />
+                            
 
                             <Route path="/library" element={<LibraryScreen />} />
                             <Route path="/view/:id" element={<ViewerScreen />} />

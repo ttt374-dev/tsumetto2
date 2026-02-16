@@ -90,8 +90,7 @@ export function useLibraryViewModel() {
         editTags: (ids: ProblemId[]) => dialogs.tagEdit.openDialog(ids),
         deleteChecked: async (confirmFn: () => boolean) => {
             const idsToDelete = selection.checkedIds
-            if (!idsToDelete.length) return
-            if (!confirmFn()) return
+            if (!idsToDelete.length || !confirmFn()) return            
             const res = await deleteProblems(idsToDelete)
             toast({ message: `Deleted ${res} problems` })
         }

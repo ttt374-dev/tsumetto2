@@ -44,7 +44,7 @@ export interface LearningEventPersistence {
     save(events: LearningEvent[]): Promise<void>
 }
 
-export class JsonLearningEventPersistence implements LearningEventPersistence {
+export class LocalStorageLearningEventPersistence implements LearningEventPersistence {
     async load(): Promise<LearningEvent[]> {
         try {
             const result = await Filesystem.readFile({

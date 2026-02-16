@@ -5,8 +5,6 @@ import { AppShell } from "../common/layout/AppShell";
 import FabMenu from "./FabMenu";
 import { useDecksViewModel } from "./hooks/useDecksViewModel";
 
-
-
 export default function DecksScreen() {
     const {
         decks,

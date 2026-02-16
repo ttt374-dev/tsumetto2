@@ -4,8 +4,7 @@ import { useImportFilePicker } from "./useImportFilePicker"
 import { useImportProblemsUsecase, type ImportFilesResult, type ImportResult } from "@/usecase/importProblemsUsecase"
 import { ImportDialog } from "@/ui/common/dialogs/ImportDialog"
 import { useProblemStore } from "./store/useProblemStore"
-import { selectAllTags } from "./store/ProblemSelector"
-import { shallow } from "zustand/shallow"    
+
 
 export type DuplicateTitleStrategy = "skip" | "rename" | "overwrite"
 export type ImportOptions = {

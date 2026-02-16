@@ -13,13 +13,10 @@ type DeckStoreState = {
     loadDecks: () => Promise<void>
     saveDeck: (deck: Deck) => Promise<void>
     deleteDeck: (id: DeckId) => Promise<void>
-    //setRepository: (repo: DeckRepository) => void
 }
 
 export const useDeckStore = create<DeckStoreState>((set, get) => ({
     decks: [],
-
-
 
     loadDecks: async () => {
         const list = await repository.load()

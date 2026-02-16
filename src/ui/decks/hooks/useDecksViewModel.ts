@@ -40,8 +40,9 @@ export function useDecksViewModel() {
 
     const handleCreateDeck = useCallback((name: string) => {
         const newDeck = createDeck(name);
-        saveDeck(newDeck);
-        navigate(`/deck/${newDeck.id}`);
+        //saveDeck(newDeck);
+        //navigate(`/deck/${newDeck.id}`);
+        navigate("/deck/new")
     }, [createDeck, saveDeck, navigate]);
 
     // --- ミッション開始 ---

@@ -8,11 +8,11 @@ import { useDeckEditViewModel } from "./hooks/useDeckEditScreenViewModel";
 
 export function DeckEditScreen() {
     const {
-        deck, name, allTags, query, stats,
+        id, deck, name, allTags, query, stats,
         setName, handleSaveAndExit, handleDeleteDeck,
     } = useDeckEditViewModel();
     
-    if (!deck) return null;    
+    if (!deck) return <>Loading...</>;    
 
     return (
         <AppLayout

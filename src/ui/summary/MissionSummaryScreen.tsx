@@ -1,6 +1,5 @@
 import { Box, Button, Stack } from "@mui/material";
 import { SummaryView } from "./SummaryView";
-import type { MissionSnapshot } from "@/domain/MissionEvent/MissionEvent";
 import { ProblemStats } from "@/domain/problem/ProblemStats";
 import { AppShell } from "../common/layout/AppShell";
 import { Navigate, useNavigate } from "react-router-dom";
@@ -25,7 +24,7 @@ export function MissionSummaryScreen() {
                 reset()
                 //console.log("summary: reset", phase())
             }}>
-                Dashboard
+                Deck
             </Button>
         </AppShell>
     )

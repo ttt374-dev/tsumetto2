@@ -1,5 +1,5 @@
 import type { LearningRecord } from "../learning/Learning"
-import type { MissionResultEntry } from "../MissionEvent/MissionEvent"
+import type { MissionResultEntry } from "../Mission/Mission"
 import type { Problem, ProblemId } from "./Problem"
 import { applyFilter } from "./query/applyFilter"
 import type { FilterState } from "./query/filter"
