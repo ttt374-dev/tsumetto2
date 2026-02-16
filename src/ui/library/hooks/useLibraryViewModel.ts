@@ -13,6 +13,26 @@ import { useBackupRestoreDialog } from "@/ui/common/dialogs/BackupRestoreDialog"
 import { useProblemDetailDialog } from "@/ui/common/problemDetail/useProblemDetailDialog"
 import { useMultipleProblemsTagEditDialog } from "@/ui/common/dialogs/MultipleProblemsTagEditDialog"
 
+
+function useLibraryDialogVM(reload: () => Promise<void>){
+    // -----------------------------
+    // ダイアログ
+    // -----------------------------
+    const detailDialog = useProblemDetailDialog()
+    const viewerDialog = useViewerDialog()
+    const backupRestoreDialog = useBackupRestoreDialog((res) => {
+        if (res.ok) reload()
+    })
+    const tagEditDialog = useMultipleProblemsTagEditDialog()
+
+    return {
+        viewer: viewerDialog,
+        detail: detailDialog,
+        backupRestore: backupRestoreDialog,
+        tagEdit: tagEditDialog,
+    }
+}
+
 export function useLibraryViewModel() {
     const query = useLibraryQueryContext()
     const learningRecords = useLearningRecordStore(s => s.records)
@@ -24,6 +44,8 @@ export function useLibraryViewModel() {
         deleteProblems
     } = useProblemStore()
 
+    const dialogs = useLibraryDialogVM(reload)
+
     // -----------------------------
     // ライブラリアイテム
     // -----------------------------
@@ -33,15 +55,7 @@ export function useLibraryViewModel() {
     )
     const ids = useMemo(() => libraryItems.map(p => p.id), [libraryItems])
     
-    // -----------------------------
-    // ダイアログ
-    // -----------------------------
-    const detailDialog = useProblemDetailDialog()
-    const viewerDialog = useViewerDialog()
-    const backupRestoreDialog = useBackupRestoreDialog((res) => {
-        if (res.ok) reload()
-    })
-    const tagEditDialog = useMultipleProblemsTagEditDialog()
+
     
     // -----------------------------
     // 選択管理
@@ -73,7 +87,7 @@ export function useLibraryViewModel() {
     // アイテムアクション
     // -----------------------------
     const itemActions = useMemo(() => ({
-        editTags: (ids: ProblemId[]) => tagEditDialog.openDialog(ids),
+        editTags: (ids: ProblemId[]) => dialogs.tagEdit.openDialog(ids),
         deleteChecked: async () => {
             const idsToDelete = checkboxControl.checkedIds
             if (!idsToDelete.length) return
@@ -100,9 +114,9 @@ export function useLibraryViewModel() {
         if (selection.isCheckboxMode) {
             checkboxControl.toggleChecked(p.id)
         } else {
-            detailDialog.openDialog(p.id)
+            dialogs.detail.openDialog(p.id)
         }
-    }, [selection.isCheckboxMode, checkboxControl, detailDialog])
+    }, [selection.isCheckboxMode, checkboxControl, dialogs.detail])
     
     return {
         ids,
@@ -112,11 +126,6 @@ export function useLibraryViewModel() {
         itemActions,
         onItemClick,
         importer,
-        dialogs: {
-            viewer: viewerDialog,
-            detail: detailDialog,
-            backupRestore: backupRestoreDialog,
-            tagEdit: tagEditDialog,
-        }
+        dialogs
     }
 }
