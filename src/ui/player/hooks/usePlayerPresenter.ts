@@ -7,13 +7,14 @@ import { useRightActionsDrawer } from "../components/RightActionsDrawer";
 
 export function usePlayerPresenter(
     p: Problem,
-    onUpdateProblem: (p: Problem) => void,
+    //onUpdateProblem: (p: Problem) => void,
     navigationHandlers: PlayerViewNavigationHandlers,
 ) {
     const detailDialog = useProblemDetailDialog(
         //() => { },
-        onUpdateProblem, //handleUpdateProblem, 
-        () => { navigationHandlers.next() }
+        //onUpdateProblem, //handleUpdateProblem, 
+        navigationHandlers.next
+        //() => { navigationHandlers.next() }
     )
     const listDialog = useListDialog(p.id, navigationHandlers.moveTo)
     const rightActionsDrawer = useRightActionsDrawer(

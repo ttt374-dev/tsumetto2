@@ -36,7 +36,7 @@ export function usePlayerViewModel(problem: Problem, navigationHandlers: PlayerV
     const showMovesController = useShowMovesController(problem.id, replay.plyIndex)
 
     // presenter
-    const presenter = usePlayerPresenter(problem, useProblemStore(s=>s.updateProblem), navigationHandlers)
+    const presenter = usePlayerPresenter(problem, navigationHandlers)
 
     // learning / answer
     const review = useLearningEventStore(s=>s.review)

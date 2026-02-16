@@ -1,6 +1,6 @@
 // application/store/problemStore.ts
 import { create } from "zustand"
-import type { ProblemRepository } from "../../domain/problem/ProblemRepository"
+import { ProblemRepository } from "../../domain/problem/ProblemRepository"
 import type { Problem, ProblemId } from "../../domain/problem/Problem"
 
 export type ProblemState = {
@@ -8,6 +8,14 @@ export type ProblemState = {
     byId: Record<ProblemId, Problem>
     all: Problem[]
     allTags: string[]
+
+    // loading state
+    loading: boolean,
+    hydrated: boolean,
+    hydrate: () => Promise<void>,
+
+    //hydrated: boolean   // 永続化読み込み完了
+    //loading: boolean    // API取得中など
 
     reload: () => Promise<void>
     setProblems: (problems: Problem[]) => void
@@ -29,81 +37,100 @@ export function extractTags(problems: Problem[]): string[] {
 }
 
 export const useProblemStore = create<ProblemState>((set, get) => ({
-  ids: [],
-  byId: {},
-  all: [],
-  allTags: [],
+    ids: [],
+    byId: {},
+    all: [],
+    allTags: [],
 
-  reload: async () => {
-    try {
-      const data = await repository.load()
-      const byId: Record<ProblemId, Problem> = {}
-      const ids: ProblemId[] = []
+    loading: false,
+    hydrated: false,
+    hydrate: async () => {
+        set({ loading: true })
+        const problems = await repository.load()
 
-      data.forEach(p => {
-        byId[p.id] = p
-        ids.push(p.id)
-      })
+        const map: Record<ProblemId, Problem> = {}
+        for (const p of problems) {
+            map[p.id] = p
+        }
 
-      set({
-        ids,
-        byId,
-        all: data,
-        allTags: extractTags(data),
-      })
-    } catch {
-      set({ ids: [], byId: {}, all: [], allTags: [] })
-    }
-  },
+        set({
+            byId: map,
+            hydrated: true,
+            loading: false,
+        })
+    },
 
-  setProblems: (problems) => {
-    const byId: Record<ProblemId, Problem> = {}
-    const ids: ProblemId[] = []
 
-    problems.forEach(p => {
-      byId[p.id] = p
-      ids.push(p.id)
-    })
+    reload: async () => {
+        try {
+            const data = await repository.load()
+            const byId: Record<ProblemId, Problem> = {}
+            const ids: ProblemId[] = []
 
-    set({
-      ids,
-      byId,
-      all: problems,
-      allTags: extractTags(problems),
-    })
-  },
+            data.forEach(p => {
+                byId[p.id] = p
+                ids.push(p.id)
+            })
 
-  updateProblem: async (problem) => {
-    await repository.update(problem)
-    set((prev) => {
-      const newAll = prev.all.map(p => p.id === problem.id ? problem : p)
-      return {
-        byId: { ...prev.byId, [problem.id]: problem },
-        all: newAll,
-        allTags: extractTags(newAll),
-      }
-    })
-  },
+            set({
+                ids,
+                byId,
+                all: data,
+                allTags: extractTags(data),
+            })
+        } catch {
+            set({ ids: [], byId: {}, all: [], allTags: [] })
+        }
+    },
 
-  deleteProblems: async (idsToDelete) => {
-    await repository.removeMany(idsToDelete)
-    const deleteSet = new Set(idsToDelete)
+    setProblems: (problems) => {
+        const byId: Record<ProblemId, Problem> = {}
+        const ids: ProblemId[] = []
 
-    set((prev) => {
-      const newAll = prev.all.filter(p => !deleteSet.has(p.id))
-      const newById = { ...prev.byId }
-      deleteSet.forEach(id => delete newById[id])
-      return {
-        ids: prev.ids.filter(id => !deleteSet.has(id)),
-        byId: newById,
-        all: newAll,
-        allTags: extractTags(newAll),
-      }
-    })
-  },
+        problems.forEach(p => {
+            byId[p.id] = p
+            ids.push(p.id)
+        })
 
-  deleteAll: async () => {
-    await repository.removeAll()
-    set({ ids: [], byId: {}, all: [], allTags: [] })
-  },
+        set({
+            ids,
+            byId,
+            all: problems,
+            allTags: extractTags(problems),
+        })
+    },
+
+    updateProblem: async (problem) => {
+        await repository.update(problem)
+        set((prev) => {
+            const newAll = prev.all.map(p => p.id === problem.id ? problem : p)
+            return {
+                byId: { ...prev.byId, [problem.id]: problem },
+                all: newAll,
+                allTags: extractTags(newAll),
+            }
+        })
+    },
+
+    deleteProblems: async (idsToDelete) => {
+        await repository.removeMany(idsToDelete)
+        const deleteSet = new Set(idsToDelete)
+
+        set((prev) => {
+            const newAll = prev.all.filter(p => !deleteSet.has(p.id))
+            const newById = { ...prev.byId }
+            deleteSet.forEach(id => delete newById[id])
+            return {
+                ids: prev.ids.filter(id => !deleteSet.has(id)),
+                byId: newById,
+                all: newAll,
+                allTags: extractTags(newAll),
+            }
+        })
+    },
+
+    deleteAll: async () => {
+        await repository.removeAll()
+        set({ ids: [], byId: {}, all: [], allTags: [] })
+    },
 }))

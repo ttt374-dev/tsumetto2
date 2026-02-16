@@ -7,11 +7,12 @@ import { useNavigate } from "react-router-dom";
 
 export function useProblemDetailDialog(
     //onViewProblem: (id: ProblemId) => void,
-    onUpdateProblem: (problem: Problem) => void,
+    //onUpdateProblem: (problem: Problem) => void,
     onAfterDeleteProblem?: () => void,
 ){
     const [ open, setOpen] = useState(false)
     const [problem, setProblem] = useState<Problem|undefined>(undefined)
+    //const updateProblem = useProblemStore(s=>s.updateProblem)
     const deleteProblems = useProblemStore(s=>s.deleteProblems)
 
     const navigate = useNavigate()
@@ -22,17 +23,13 @@ export function useProblemDetailDialog(
 
     const openDialog = (p: Problem) => { 
         setOpen(true);
-        setProblem(p)
-        console.log("open detail dialog", p)
-
+        setProblem(p)     
      }
     const closeDialog = () => { setOpen(false)}
     // delete
     const deleteProblem = async () => {
         if (!problem) return
-        console.log("detial delete probl", problem)
         await deleteProblems([problem.id])
-        console.log("detial deleted", problem)
         onAfterDeleteProblem?.()
     }
     const handleViewProblem = () => {        
@@ -48,7 +45,7 @@ export function useProblemDetailDialog(
             onClose={closeDialog}
             onDelete={deleteProblem}
             onResetLearning={alert}  // TODO
-            onUpdateProblem={onUpdateProblem}
+            //onUpdateProblem={updateProblem}
             onViewProblem={handleViewProblem}
         />
     )

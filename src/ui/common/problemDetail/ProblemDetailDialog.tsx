@@ -18,7 +18,7 @@ type Props = {
     onClose: () => void
     onDelete: () => void
     onResetLearning: () => void
-    onUpdateProblem: (problem: Problem) => void
+    //onUpdateProblem: (problem: Problem) => void
     onViewProblem?: ()=>void
 }
 
@@ -29,7 +29,7 @@ export default function ProblemDetailDialog({
     onClose,
     onDelete,
     onResetLearning,
-    onUpdateProblem,
+    //onUpdateProblem,
     onViewProblem,
 }: Props) {
     useEffect(() => {
@@ -43,15 +43,13 @@ export default function ProblemDetailDialog({
     //const setRecords = useLearningRecordsStore.getState().setFromEventLog
     const learningRecords = useLearningRecordStore(s=>s.records)
     const learning = learningRecords[problem.id]
+    const updateProblem = useProblemStore(s=>s.updateProblem)
     
     const [tags, setTags] = useState<string[]>(
         () => problem?.tags ? [...problem.tags] : []
     )
 
-    const allTags: string[] = useProblemStore(s=>s.allTags) // TODOArray.from(
-//        new Set(store.problems.flatMap(p => p.tags))
-//    )
-    //const [ starred, setStarred] = useState(problem?.starred)
+    const allTags: string[] = useProblemStore(s=>s.allTags) 
     const starController = useStarToggleButton(problem)
 
     // handlers
@@ -70,7 +68,7 @@ export default function ProblemDetailDialog({
     }    
 
 
-    if (!problem) return null
+    //if (!problem) return null
 
 
     ///////////////////////////////////////////////////////
@@ -89,7 +87,7 @@ export default function ProblemDetailDialog({
                     <Box display="flex" alignItems="center" gap={2} mt={1}>
                         <EditableText initialText={problem.title} onUpdateText={
                             title => {
-                            onUpdateProblem(problem.setTitle(title))
+                            updateProblem(problem.setTitle(title))
                             }}/>
                     </Box>
                     <Divider />
@@ -102,7 +100,7 @@ export default function ProblemDetailDialog({
                         value = {tags}
                         onChange={ (tags) => {
                             setTags(tags)
-                            onUpdateProblem(problem.setTags(tags))
+                            updateProblem(problem.setTags(tags))
                         }}
                     />
                     <Paper sx={{ p: 1 }}>

@@ -17,6 +17,7 @@ import { ViewerScreen } from '../viewer/ViewerScreen';
 import { RepositoryContext } from './providers/RepositoryProvider';
 import { LibraryQueryProvider } from './providers/QueryProvider';
 import { ToastProvider } from './providers/ToastProvider';
+import { useEffect } from 'react';
 
 function App() {
     // シングルトンレポジトリの生成
@@ -31,6 +32,13 @@ function App() {
     const learningEventRepository = new LearningEventRepository(new JsonLearningEventPersistence())
     initLearningEventRepository(learningEventRepository)
     useLearningEventStore.getState().reload()
+
+    // hydrate
+    const hydrate = useProblemStore(s => s.hydrate)
+
+    useEffect(() => {
+        hydrate()
+    }, [])
 
     return (
         <ToastProvider>
