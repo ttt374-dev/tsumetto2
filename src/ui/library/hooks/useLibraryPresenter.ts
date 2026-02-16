@@ -1,5 +1,4 @@
 import { useViewerDialog } from "@/ui/viewer/ViewDialog"
-import type { useLibraryController } from "./useLibraryController"
 import { useBackupRestoreDialog } from "@/ui/common/dialogs/BackupRestoreDialog"
 import { useProblemDetailDialog } from "@/ui/common/problemDetail/useProblemDetailDialog"
 import type { Problem, ProblemId } from "@/domain/problem/Problem"
@@ -27,7 +26,7 @@ export function useLibraryPresenter(commands: LibraryCommand) {
     const detailDialog = useProblemDetailDialog(
         //(id: ProblemId) => { viewerDialog.openDialog(id) },
         async (p: Problem) => { await commands.updateProblem(p) },
-        async () => { await commands.reload() }
+        //async () => { await commands.reload() }
     )
 
     // -----------------------------

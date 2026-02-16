@@ -8,7 +8,6 @@ import { StarToggleButton } from "@/ui/common/components/StarToggleButton";
 import { useStarToggleButton } from "@/application/useStarToggleButton";
 import React, { useEffect } from "react";
 import { useProblemStore } from "@/application/store/useProblemStore";
-import { useStores } from "@/application/store/useStores";
 import { useLearningRecordStore } from "@/application/useLearningRecordStore";
 
 export const LibraryListItem = React.memo(function LibraryListItem({ id, onItemClick,

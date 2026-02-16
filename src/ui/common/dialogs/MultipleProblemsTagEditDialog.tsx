@@ -2,10 +2,7 @@ import type { Problem, ProblemId } from "@/domain/problem/Problem";
 import { Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, InputAdornment, Stack, Tab, Tabs, TextField } from "@mui/material";
 import ClearIcon from "@mui/icons-material/Clear"
 
-
-import { ProblemTagEditor } from "../components/ProblemTagEditor";
 import { useEffect, useState } from "react";
-import { useRepositoryContext } from "../../App/providers/RepositoryProvider";
 import { useProblemStore } from "@/application/store/useProblemStore";
 
 
@@ -17,8 +14,6 @@ export function useMultipleProblemsTagEditDialog(
     const [problems, setProblems] = useState<Problem[]>([])
     const [initialTags, setInitialTags] = useState<string[]>([])
 
-    const repos = useRepositoryContext()
-    //const store = useProblemStore(repos.problem)
 
     useEffect(() => {
         useProblemStore.getState().reload()

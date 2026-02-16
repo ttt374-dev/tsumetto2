@@ -1,8 +1,7 @@
 import { Box, Button, Checkbox, FormControl, FormControlLabel, List, ListItem, Paper } from "@mui/material";
 import { type FilterState } from "@/domain/problem/query/filter";
 import { MateLengthCheckboxes } from "./MateLengthCheckbox";
-import { useQuery } from "@/application/useQuery";
-import { TagCheckboxFilterControl } from "../../dashboard/components/TagCheckboxFilterControl";
+import { TagCheckboxFilterControl } from "./TagCheckboxFilterControl";
 
 
 export function FilterControl({ filter, allTags, onToggleFilter, onSetFilter }: {

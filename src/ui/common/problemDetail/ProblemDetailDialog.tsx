@@ -1,19 +1,13 @@
 import { Divider, IconButton, Paper, Stack, TextField } from '@mui/material';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Box, Button } from "@mui/material"
-import StarIcon from "@mui/icons-material/Star"
-import StarBorderIcon from "@mui/icons-material/StarBorder"
 
 import { Problem, type ProblemId } from "@/domain/problem/Problem";
 import { useEffect, useState } from 'react';
-import { useRepositoryContext } from '@/ui/App/providers/RepositoryProvider';
-import { useProblemDetailDialog } from './useProblemDetailDialog';
 import { useProblemStore } from '@/application/store/useProblemStore';
 import { EditableText } from '../components/EditableText';
 import { ProblemTagEditor } from '../components/ProblemTagEditor';
-import { useLearningEventStore } from '@/application/store/useLearningEventStore';
 import { StarToggleButton } from '../components/StarToggleButton';
 import { useStarToggleButton } from '@/application/useStarToggleButton';
-import { useStores } from '@/application/store/useStores';
 import { useLearningRecordStore } from '@/application/useLearningRecordStore';
 
 type Props = {
@@ -38,9 +32,6 @@ export default function ProblemDetailDialog({
     onUpdateProblem,
     onViewProblem,
 }: Props) {
-    const repo = useRepositoryContext()
-    //const store = useProblemStore(repo.problem)
-    //const problem = store.findById(problemId)
     useEffect(() => {
         if (open && problem) {
             setTags(problem.tags as string[] ?? [])

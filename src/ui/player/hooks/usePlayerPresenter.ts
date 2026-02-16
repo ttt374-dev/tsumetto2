@@ -13,7 +13,8 @@ export function usePlayerPresenter(
     const detailDialog = useProblemDetailDialog(
         //() => { },
         onUpdateProblem, //handleUpdateProblem, 
-        () => { navigationHandlers.next() })
+        () => { navigationHandlers.next() }
+    )
     const listDialog = useListDialog(p.id, navigationHandlers.moveTo)
     const rightActionsDrawer = useRightActionsDrawer(
         () => detailDialog.openDialog(p),

@@ -5,20 +5,12 @@ import { EditableText } from "../common/components/EditableText";
 import { FilterControl } from "../common/components/FilterControl";
 import LibrarySortControl from "../library/components/LibrarySortControl";
 import { useDeckEditViewModel } from "./hooks/useDeckEditScreenViewModel";
-import { useProblemStore } from "@/application/store/useProblemStore";
 
 export function DeckEditScreen() {
     const {
-        deck,
-        name,
-        setName,
-        allTags,
-        query,
-        stats,
-        handleSaveAndExit,
-        handleDeleteDeck,
+        deck, name, allTags, query, stats,
+        setName, handleSaveAndExit, handleDeleteDeck,
     } = useDeckEditViewModel();
-
     
     if (!deck) return null;    
 

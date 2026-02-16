@@ -1,8 +1,6 @@
-import { useProblemStore } from "@/application/store/useProblemStore";
 import type { ImportOptions } from "@/application/useImportControler";
 import { Problem, type ProblemId } from "@/domain/problem/Problem";
 import type { ProblemRepository } from "@/domain/problem/ProblemRepository";
-import { useRepositoryContext } from "@/ui/App/providers/RepositoryProvider";
 
 export type ImportStatus =
   | "imported"   // 正常に追加 or 上書き

@@ -3,8 +3,6 @@ import './App.css'
 import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { MissionScreen } from '../mission/MissionScreen';
 import { LibraryScreen } from '../library/LibraryScreen';
-import { MissionEventStoreProvider } from './providers/MissionEventStoreProvider';
-//import { DashboardScreen } from '../dashboard/DashboardScreen';
 import { MissionSummaryScreen } from '../summary/MissionSummaryScreen';
 import DecksScreen from '../decks/DecksScreen';
 import { DeckEditScreen } from '../decks/DeckEditScreen';
@@ -13,9 +11,7 @@ import { FileProblemPersistence, ProblemRepository } from '@/domain/problem/Prob
 import { DeckRepository, LocalStorageDeckPersistence } from '@/domain/deck/DeckRepository';
 import { initDeckStore, useDeckStore } from '@/application/store/useDeckStore';
 import { JsonLearningEventPersistence, LearningEventRepository } from '@/domain/LearningEvent/LearningEventRepository';
-import { getInputLabelUtilityClasses } from '@mui/material';
 import { initLearningEventRepository, useLearningEventStore } from '@/application/store/useLearningEventStore';
-import { useEffect } from 'react';
 import { MissionPlayerScreen } from '../mission/MissionPlayerScreen';
 import { ViewerScreen } from '../viewer/ViewerScreen';
 import { RepositoryContext } from './providers/RepositoryProvider';

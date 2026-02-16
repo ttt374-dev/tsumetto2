@@ -4,14 +4,13 @@ import { useState } from "react";
 import { useReplayController } from "@/ui/player/hooks/useReplayController";
 import PlayerView, { type PlayerViewHandlers } from "@/ui/player/components/PlayerView";
 import { useProblemStore } from "@/application/store/useProblemStore";
-import { useRepositoryContext } from "@/ui/App/providers/RepositoryProvider";
 import { Problem, type ProblemId } from "@/domain/problem/Problem";
 import { useShowMovesController } from "../player/hooks/usePlayerViewModel";
 
 export function useViewerDialog(){
     const [open, setOpen] = useState(false)
     const [problem, setProblem ] = useState<Problem|undefined>(undefined)
-    const repos = useRepositoryContext()
+    
     //const problemStore = useProblemStore(repos.problem)
 
     const openDialog = (id: ProblemId) => {

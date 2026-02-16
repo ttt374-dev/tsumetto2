@@ -21,14 +21,11 @@ export function useMissionPlayerViewModel() {
 
     // Invalid state チェック
     console.log("misionplayervm ", index, currentProblemId)
-    if (index < 0 || index >= count || !currentProblemId) {
-        return undefined
-    }
 
     // problem
     
     const problem = useProblemStore(s => s.byId[currentProblemId])
-    if (!problem) return undefined
+    //if (!problem) return undefined
 
     // deckName
     const deckName = useDeckStore(
@@ -46,13 +43,19 @@ export function useMissionPlayerViewModel() {
         [answer, next]
     )
 
+    if (!problem || index < 0 || index >= count || !currentProblemId) {
+        return undefined
+    }
+
     const title = `[${deckName} (${index + 1}/${count})]: ${problem.title}`
 
     return { problem, title, navigationHandlers, index, count, handleAnswer }
 }
 ////////////////////////////////////////////////
 export function MissionPlayerScreen() {
+    
     const vm = useMissionPlayerViewModel()
+    console.log("missionplayer", vm)
     if (!vm) return (<>Loading...</>)
     
     return (
