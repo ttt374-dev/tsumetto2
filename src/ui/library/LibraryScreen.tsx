@@ -23,7 +23,6 @@ export function LibraryScreen() {
                 ids={vm.ids}
                 query={vm.query}
                 itemActions={vm.itemActions}
-                selectActions={vm.selectActions}
                 onItemClick={vm.onItemClick}
                 selection={vm.selection}
             />

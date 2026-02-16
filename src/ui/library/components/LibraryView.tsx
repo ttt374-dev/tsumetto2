@@ -1,5 +1,5 @@
 
-import { Box, Button, Checkbox, Fab, IconButton, List, Stack } from "@mui/material"
+import { Box, IconButton, List, Stack } from "@mui/material"
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 
@@ -7,36 +7,34 @@ import type { useLibraryQueryContext } from "../../App/providers/QueryProvider"
 import LibrarySortControl from "./LibrarySortControl"
 import { LibraryListItem } from "./LibraryListItem"
 import type { Problem, ProblemId } from "@/domain/problem/Problem"
-import type { LearningRecord } from "@/domain/learning/Learning";
 import { LibraryCheckboxControl } from "./LibraryCheckboxControl";
 
 type LibraryViewProps = {
-    //problems: Problem[]
     ids: ProblemId[]
-    //learningRecords: LearningRecord
     query: ReturnType<typeof useLibraryQueryContext>
     itemActions: {
         editTags: (ids: ProblemId[]) => void
-        deleteChecked: () => void
+        deleteChecked: (confirmFn: () => boolean) => void
     },
-    selectActions: {
+
+    selection: {
+        checkedIds: ProblemId[]
+        isChecked: (id: ProblemId) => boolean
+        isCheckboxMode: boolean
+
         selectAll: () => void
         clearAll: () => void
         toggleChecked: (id: ProblemId) => void
         toggleCheckboxMode: () => void
     }
-    selection: {
-        checkedIds: ProblemId[]
-        isChecked: (id: ProblemId) => boolean
-        isCheckboxMode: boolean
-    }
     onItemClick: (p: Problem) => void
 }
 
-
 /////////////////////////////////////////
 export function LibraryView({ids, query,
-    itemActions, selectActions, onItemClick, selection}: LibraryViewProps) {
+    itemActions, onItemClick, selection}: LibraryViewProps) {
+
+    const confirmFn = () => window.confirm("Are you sure to delete selected?")
 
     return (
         <>
@@ -45,14 +43,14 @@ export function LibraryView({ids, query,
                 {selection.isCheckboxMode &&
                     <Stack direction="row">
                         <LibraryCheckboxControl
-                            onCheckAll={selectActions.selectAll}
-                            onUncheckAll={selectActions.clearAll}
-                            onToggleCheckboxMode={selectActions.toggleCheckboxMode}
+                            onCheckAll={selection.selectAll}
+                            onUncheckAll={selection.clearAll}
+                            onToggleCheckboxMode={selection.toggleCheckboxMode}
                         />
                         { /* 削除ボタン */}
                         <IconButton
                             onClick={() =>
-                                itemActions.deleteChecked()}
+                                itemActions.deleteChecked(confirmFn)}
                             disabled={selection.checkedIds.length === 0}
                         >
                             <DeleteIcon />
@@ -85,8 +83,8 @@ export function LibraryView({ids, query,
                             showCheckbox={selection.isCheckboxMode}
                             onItemClick={onItemClick}
                             isChecked={selection.isChecked(id)}
-                            onToggleCheckboxMode={selectActions.toggleCheckboxMode}
-                            onToggleChecked={selectActions.toggleChecked}
+                            onToggleCheckboxMode={selection.toggleCheckboxMode}
+                            onToggleChecked={selection.toggleChecked}
                         />
                     ))}
                 </List>

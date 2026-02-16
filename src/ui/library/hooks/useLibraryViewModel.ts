@@ -12,8 +12,17 @@ import { useViewerDialog } from "@/ui/viewer/ViewDialog"
 import { useBackupRestoreDialog } from "@/ui/common/dialogs/BackupRestoreDialog"
 import { useProblemDetailDialog } from "@/ui/common/problemDetail/useProblemDetailDialog"
 import { useMultipleProblemsTagEditDialog } from "@/ui/common/dialogs/MultipleProblemsTagEditDialog"
+import type { LearningRecord } from "@/domain/learning/Learning"
+import type { useQuery } from "@/application/useQuery"
 
-
+function useLibraryListVM(problems: Problem[], learningRecords: LearningRecord, query: ReturnType<typeof useQuery>) {
+    const libraryItems = useMemo(() =>
+        applyQuery(problems, learningRecords, query.sortState, query.filterState),
+        [problems, learningRecords, query.sortState, query.filterState]
+    )
+    const ids = useMemo(() => libraryItems.map(p => p.id), [libraryItems])    
+    return { libraryItems, ids}
+}
 function useLibraryDialogVM(reload: () => Promise<void>){
     // -----------------------------
     // ダイアログ
@@ -32,31 +41,7 @@ function useLibraryDialogVM(reload: () => Promise<void>){
         tagEdit: tagEditDialog,
     }
 }
-
-export function useLibraryViewModel() {
-    const query = useLibraryQueryContext()
-    const learningRecords = useLearningRecordStore(s => s.records)
-    const toast = useToast()
-
-    const {
-        all: problems,
-        reload,
-        deleteProblems
-    } = useProblemStore()
-
-    const dialogs = useLibraryDialogVM(reload)
-
-    // -----------------------------
-    // ライブラリアイテム
-    // -----------------------------
-    const libraryItems = useMemo(() =>
-        applyQuery(problems, learningRecords, query.sortState, query.filterState),
-        [problems, learningRecords, query.sortState, query.filterState]
-    )
-    const ids = useMemo(() => libraryItems.map(p => p.id), [libraryItems])
-    
-
-    
+function useLibrarySelectionVM(ids: ProblemId[]){
     // -----------------------------
     // 選択管理
     // -----------------------------
@@ -68,34 +53,49 @@ export function useLibraryViewModel() {
         isCheckboxMode: checkboxMode
     }), [checkboxControl.checkedIds, checkboxControl.isChecked, checkboxMode])
 
-    // checkboxMode 切替時にチェック解除
-    useEffect(() => {
-        if (!checkboxMode) checkboxControl.uncheckAll()
-    }, [checkboxMode])
-
-    // -----------------------------
-    // 操作ハンドラ
-    // -----------------------------
-    const selectActions = useMemo(() => ({
+    const actions = useMemo(()=>({
         selectAll: checkboxControl.checkAll,
         clearAll: checkboxControl.uncheckAll,
         toggleChecked: checkboxControl.toggleChecked,
         toggleCheckboxMode: () => setCheckboxMode(prev => !prev)
     }), [checkboxControl.checkAll, checkboxControl.uncheckAll, checkboxControl.toggleChecked])
+    // checkboxMode 切替時にチェック解除
+    useEffect(() => {
+        if (!checkboxMode) checkboxControl.uncheckAll()
+    }, [checkboxMode, checkboxControl.uncheckAll])
 
+    return  {...selection, ...actions}
+}
+function useLibraryCommands(){
+    const problems = useProblemStore(s => s.all)
+    const reload = useProblemStore(s => s.reload)
+    const deleteProblems = useProblemStore(s => s.deleteProblems)
+
+    return { problems, reload, deleteProblems }
+}
+/////////////////////////////////////////////////
+export function useLibraryViewModel() {
+    const query = useLibraryQueryContext()
+    const learningRecords = useLearningRecordStore(s => s.records)
+    const toast = useToast()
+
+    const { problems, reload, deleteProblems } = useLibraryCommands()
+    const { libraryItems, ids } = useLibraryListVM(problems, learningRecords, query)
+    const dialogs = useLibraryDialogVM(reload)
+    const selection = useLibrarySelectionVM(ids)
     // -----------------------------
     // アイテムアクション
     // -----------------------------
     const itemActions = useMemo(() => ({
         editTags: (ids: ProblemId[]) => dialogs.tagEdit.openDialog(ids),
-        deleteChecked: async () => {
-            const idsToDelete = checkboxControl.checkedIds
+        deleteChecked: async (confirmFn: () => boolean) => {
+            const idsToDelete = selection.checkedIds
             if (!idsToDelete.length) return
-            if (!window.confirm("Are you sure to delete selected?")) return
+            if (!confirmFn()) return
             const res = await deleteProblems(idsToDelete)
             toast({ message: `Deleted ${res} problems` })
         }
-    }), [checkboxControl.checkedIds, deleteProblems, toast])
+    }), [selection.checkedIds, deleteProblems, toast, dialogs.tagEdit])
 
     // -----------------------------
     // インポート
@@ -106,23 +106,22 @@ export function useLibraryViewModel() {
             message: `imported: ${res.summary.imported}, skipped: ${res.summary.skipped}, failed: ${res.summary.failed}`
         })
     })
-
     // -----------------------------
     // アイテムクリック
     // -----------------------------
     const onItemClick = useCallback((p: Problem) => {
         if (selection.isCheckboxMode) {
-            checkboxControl.toggleChecked(p.id)
+            selection.toggleChecked(p.id)
         } else {
             dialogs.detail.openDialog(p.id)
         }
-    }, [selection.isCheckboxMode, checkboxControl, dialogs.detail])
+    }, [selection.isCheckboxMode, selection.toggleChecked, dialogs.detail])
     
     return {
         ids,
+        libraryItems,
         query,
-        selection,
-        selectActions,
+        selection,        
         itemActions,
         onItemClick,
         importer,
