@@ -10,7 +10,7 @@ type MissionPlayerVM =
   | { status: "idle" }
   | { status: "finished" }
   | { status: "loading" }
-  | { status: "missing", problemId: ProblemId }
+  | { status: "missing"}
   | {
       status: "playing"
       problem: Problem
@@ -75,7 +75,8 @@ export function useMissionPlayerViewModel(): MissionPlayerVM {
     
     if (!problem) {
         if (loading) return { status: "loading" }
-        if (hydrated) return { status: "missing", problemId: currentProblemId}
+        return { status: "missing"}
+        
     }
 
     const title = `[${deckName} (${index + 1}/${count})]: ${problem.title}`

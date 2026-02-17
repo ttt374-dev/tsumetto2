@@ -14,6 +14,8 @@ import { useProblemDetailDialog } from "@/ui/common/problemDetail/useProblemDeta
 import { useMultipleProblemsTagEditDialog } from "@/ui/common/dialogs/MultipleProblemsTagEditDialog"
 import type { LearningRecord } from "@/domain/learning/Learning"
 import type { useQuery } from "@/application/useQuery"
+import { useNavigate } from "react-router-dom"
+import { routes } from "@/ui/App/useAppNavigation"
 
 function useLibraryListVM(problems: Problem[], learningRecords: LearningRecord, query: ReturnType<typeof useQuery>) {
     const libraryItems = useMemo(() =>
@@ -24,10 +26,13 @@ function useLibraryListVM(problems: Problem[], learningRecords: LearningRecord, 
     return { libraryItems, ids}
 }
 function useLibraryDialogVM(reload: () => Promise<void>){
+    const navigate = useNavigate()
     // -----------------------------
     // ダイアログ
     // -----------------------------
-    const detailDialog = useProblemDetailDialog()
+    const detailDialog = useProblemDetailDialog(
+          () => { navigate(routes.library)}
+    )
     const viewerDialog = useViewerDialog()
     const backupRestoreDialog = useBackupRestoreDialog((res) => {
         if (res.ok) reload()

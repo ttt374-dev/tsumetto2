@@ -4,6 +4,9 @@ import BackupIcon from "@mui/icons-material/Backup";
 import { AppShell } from "../common/layout/AppShell";
 import FabMenu from "./FabMenu";
 import { useDecksViewModel } from "./hooks/useDecksViewModel";
+import { useLongPress } from "../library/hooks/useLongPress";
+import { Navigate, useNavigate } from "react-router-dom";
+import { routes } from "../App/useAppNavigation";
 
 export default function DecksScreen() {
     const {
@@ -15,6 +18,11 @@ export default function DecksScreen() {
         backupRestoreDialog,
     } = useDecksViewModel();
 
+    const handleNavDeckEdit = (id: string) => {
+        navigate(routes.deckEdit(id))
+    }
+
+    const navigate = useNavigate()
     return (
         <AppShell
             header="Decks"
@@ -34,11 +42,11 @@ export default function DecksScreen() {
             <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto" }}>
                 <List>
                     {decks.map(deck => {
-                        const stats = deckStats.get(deck.id);
+                        const stats = deckStats.get(deck.id);                            
                         return (
                             <ListItem key={deck.id} disablePadding sx={{ borderBottom: 1, borderColor: "divider" }}
                                 secondaryAction={
-                                    <IconButton edge="end" onClick={() => window.location.href = `/deck/${deck.id}`}>
+                                    <IconButton edge="end" onClick={() => navigate(routes.deckEdit(deck.id))}>
                                         <EditIcon />
                                     </IconButton>
                                 }

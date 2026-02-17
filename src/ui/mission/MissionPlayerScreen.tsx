@@ -6,6 +6,7 @@ import { useDeckStore } from "@/application/store/useDeckStore"
 import { useCallback, useMemo } from "react"
 import type { SolvedResult } from "@/domain/learning/Learning"
 import { useMissionPlayerViewModel } from "./hooks/useMissionPlayerViewModel"
+import { Box } from "@mui/material"
 
 ////////////////////////////////////////////////
 export function MissionPlayerScreen() {
@@ -16,8 +17,8 @@ export function MissionPlayerScreen() {
     switch (vm.status) {
         case "loading": return <>Loading..</>
         case "finished": return <>Finished</>
-        case "idle": return <>Idel</>
-        case "missing": return <>Missing: {vm.problemId}</>
+        case "idle": return <>Idel</>        
+        case "missing": return <>Missing</>
         case "playing":
             return (
                 <PlayerScreen problem={vm.problem}

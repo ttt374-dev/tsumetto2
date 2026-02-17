@@ -5,7 +5,9 @@ import ProblemDetailDialog from "./ProblemDetailDialog";
 import { useNavigate } from "react-router-dom";
 
 
-export function useProblemDetailDialog(){
+export function useProblemDetailDialog(
+    onAfterDeleteProblem?: ()=>void
+){
     const [ open, setOpen] = useState(false)
     const [problemId, setProblemId] = useState<ProblemId|undefined>(undefined)    
    
@@ -25,6 +27,7 @@ export function useProblemDetailDialog(){
             open={open}
             problemId={problemId}
             onClose={closeDialog}
+            onAfterDeleteProblem={onAfterDeleteProblem}
         />
     )
 

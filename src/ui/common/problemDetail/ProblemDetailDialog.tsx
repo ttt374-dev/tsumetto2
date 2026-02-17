@@ -14,7 +14,7 @@ import { useLearningRecordStore } from '@/application/useLearningRecordStore';
 export function useProblemDetailDialogViewModel(
     problemId: ProblemId,
     open: boolean,
-    onClose: () => void
+    onClose: () => void,   
 ) {
     const problem = useProblemStore(s => s.byId[problemId])
     const updateProblem = useProblemStore(s => s.updateProblem)
@@ -40,6 +40,7 @@ export function useProblemDetailDialogViewModel(
     const remove = (confirmFn: () => boolean) => {
         if (!problem || !confirmFn()) return
         deleteProblems([problem.id])
+        //onAfterDeleteProblem?.()
         onClose()
     }
     const save = async () => {
@@ -58,8 +59,9 @@ type Props = {
     problemId: ProblemId
     onClose: () => void
     onViewProblem?: ()=>void
+    onAfterDeleteProblem?: () => void
 }
-export default function ProblemDetailDialog({ open, problemId, onClose}: Props) {      
+export default function ProblemDetailDialog({ open, problemId, onAfterDeleteProblem, onClose}: Props) {      
     const {
         problem, learning, title, tags, starred, allTags,
         setTitle,
@@ -71,8 +73,11 @@ export default function ProblemDetailDialog({ open, problemId, onClose}: Props) 
     
     if (!problem) return <></>
     
-    const handleDeleteClick = () =>
+    const handleDeleteClick = () => {
         remove(() => window.confirm("Are you sure to delete?"))
+        onAfterDeleteProblem?.()
+    }
+
 
     ///////////////////////////////////////////////////////
     return (
