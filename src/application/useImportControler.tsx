@@ -53,11 +53,12 @@ export function useImportController(
             cancel()
         }
     }
+    
+    
     const dialogElement = (
-        open &&
         <ImportDialog
             open={open}
-            onClose={()=>setOpen(false)}
+            onClose={cancel}
             onImport={confirm}
             allTags={allTags}
         />

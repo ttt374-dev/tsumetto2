@@ -9,8 +9,6 @@ import { useImportController } from "@/application/useImportControler";
 import { useBackupRestoreDialog } from "../../common/dialogs/BackupRestoreDialog";
 import type { Deck } from "@/domain/deck/Deck";
 import { useDeckStats } from "./useDeckStats";
-import type { Problem } from "@/domain/problem/Problem";
-import type { LearningRecord } from "@/domain/learning/Learning";
 
 export function useDecksQueryVM() {
     const decks = useDeckStore(s => s.decks);

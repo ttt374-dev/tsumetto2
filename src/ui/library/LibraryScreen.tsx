@@ -13,11 +13,12 @@ export function LibraryScreen() {
     return (
         <AppShell
             header="Library"
+            /*
             rightActions={
                 <IconButton onClick={vm.dialogs.backupRestore.openDialog}>
                     <BackupIcon sx={{ color: "white" }} />
                 </IconButton>
-            }
+            }*/
         >
             <LibraryView
                 ids={vm.ids}

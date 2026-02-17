@@ -18,11 +18,12 @@ export default function DecksScreen() {
     return (
         <AppShell
             header="Decks"
+            /*
             rightActions={
                 <IconButton onClick={backupRestoreDialog.openDialog}>
                     <BackupIcon sx={{ color: "#fff" }} />
                 </IconButton>
-            }
+            }*/
             fab={
                 <FabMenu
                     onCreateNewDeck={() => onCreateDeck()}
