@@ -71,7 +71,7 @@ export class Problem {
         //console.log("toggle", r)
         return r
     }
-    setStar(starred: boolean): Problem {
+    setStarred(starred: boolean): Problem {
         return Problem.fromDTO({
             ...this.toDTO(),
             starred: starred

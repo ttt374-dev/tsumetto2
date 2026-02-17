@@ -9,13 +9,8 @@ import { ProblemTagEditor } from '../components/ProblemTagEditor';
 import { StarToggleButton } from '../components/StarToggleButton';
 import { useLearningRecordStore } from '@/application/useLearningRecordStore';
 
-type Props = {
-    open: boolean
-    problemId: ProblemId
-    onClose: () => void
-    onViewProblem?: ()=>void
-}
-export function problemDetailDialogVM(
+
+export function problemDetailDialogViewModel(
     problemId: ProblemId,
     open: boolean,
     onClose: () => void
@@ -31,24 +26,26 @@ export function problemDetailDialogVM(
 
     const [title, setTitle] = useState("")
     const [tags, setTags] = useState<string[]>([])
+    const [starred, setStarred] = useState(false)
 
     useEffect(() => {
         if (open && problem) {
             setTitle(problem.title)
             setTags(problem.tags ?? [])
+            setStarred(problem.starred)
         }
     }, [open, problem])
 
+    //if (!problem) return undefined
+    //////////////////////////////////////////////////////////
     const handleDelete = () => {
-        if (!problem) return
         if (!window.confirm("本当に削除しますか？")) return
         deleteProblems([problem.id])
         onClose()
     }
 
     const handleSave = async () => {
-        if (!problem) return
-        await updateProblem(problem.setTitle(title).setTags(tags))
+        await updateProblem(problem.setTitle(title).setTags(tags).setStarred(starred))
         onClose()
     }
 
@@ -57,61 +54,40 @@ export function problemDetailDialogVM(
         learning,
         title,
         tags,
+        starred,
+        allTags,
+
         setTitle,
         setTags,
-        allTags,
+        setStarred,        
         handleDelete,
         handleSave,
     }
 }
-
-export default function ProblemDetailDialog({ open, problemId, onClose}: Props) {    
-    const problem = useProblemStore(p=>p.byId[problemId])
-    const learningRecords = useLearningRecordStore(s=>s.records)
-    const learning = learningRecords[problem.id]
-    const updateProblem = useProblemStore(s=>s.updateProblem)
-    const deleteProblems = useProblemStore(s=>s.deleteProblems)
+/////////////////////////////////////////////////////////////
+type Props = {
+    open: boolean
+    problemId: ProblemId
+    onClose: () => void
+    onViewProblem?: ()=>void
+}
+export default function ProblemDetailDialog({ open, problemId, onClose}: Props) {  
     
-    // タイトル
-    const [title, setTitle] = useState(problem.title)
-    const handleUpdateTitle = (newTitle: string) => {
-        console.log("set title", newTitle)
-        setTitle(newTitle)
-    }
-    // タグ
-    const [tags, setTags] = useState<string[]>(
-        () => problem?.tags ? [...problem.tags] : []
-    )
-        useEffect(() => {
-        if (open && problem) {
-            setTags(problem.tags as string[] ?? [])
-        }
-    }, [open, problem?.tags])
-
-    const allTags: string[] = useProblemStore(s=>s.allTags)     
-    const [starred, setStarred] = useState(problem.starred)
-
-    // handlers
-    const handleDelete = () => {
-        if (!window.confirm("本当に削除しますか？")) return
-        //onDelete()
-        deleteProblems([problem.id])
-        onClose()
-    }
-    const handleSaveExit = async () => {
-        console.log("save exit", title, tags)
-        await updateProblem(problem.setTitle(title).setTags(tags).setStar(starred))
-        onClose()
-    }
-    const handleCancel = () => {      
-        onClose()
-    }
-    const handleResetAccuracy = () => {
-        if (!window.confirm("本当に正答データをリセットしますか？")) return
-        //onResetLearning()             
-        alert("TBD")
-    }    
-    if (!problem) return null
+    const {
+        problem,
+        learning,
+        title,
+        tags,
+        starred,
+        setTitle,
+        setTags,
+        setStarred,
+        allTags,
+        handleDelete,
+        handleSave,
+    } = problemDetailDialogViewModel(problemId, open, onClose)      
+    
+    if (!problem) return <></>
     ///////////////////////////////////////////////////////
     return (
         <Dialog open={open} onClose={onClose} fullWidth
@@ -126,10 +102,10 @@ export default function ProblemDetailDialog({ open, problemId, onClose}: Props) 
                 <Stack>
                     {/* タイトル編集 */}
                     <Box display="flex" alignItems="center" gap={2} mt={1}>
-                        <EditableText initialText={problem.title} onUpdateText={
+                        <EditableText initialText={title} onUpdateText={
                             title => {
                             //updateProblem(problem.setTitle(title))
-                            handleUpdateTitle(title)
+                            setTitle(title)
                             }}/>
                     </Box>
                     <Divider />
@@ -142,7 +118,6 @@ export default function ProblemDetailDialog({ open, problemId, onClose}: Props) 
                         value = {tags}
                         onChange={ (tags) => {
                             setTags(tags)
-                            //updateProblem(problem.setTags(tags))
                         }}
                     />
                     <Paper sx={{ p: 1 }}>
@@ -192,7 +167,7 @@ export default function ProblemDetailDialog({ open, problemId, onClose}: Props) 
                                     <Box>{learning.intervalDays}</Box>
                                 </Stack>
                             </Stack>
-                            <Button onClick={handleResetAccuracy}>
+                            <Button onClick={alert}>
                                 学習データをリセット
                             </Button>
                         </Paper>
@@ -202,9 +177,8 @@ export default function ProblemDetailDialog({ open, problemId, onClose}: Props) 
             
             <DialogActions>
                 <Button color="error" onClick={handleDelete}>削除</Button>
-                { /* onViewProblem && <Button onClick={onViewProblem}>問題を見る</Button> */} 
-                <Button color="success" onClick={handleSaveExit}>保存して戻る</Button>
-                <Button onClick={handleCancel}>キャンセル</Button>
+                <Button color="success" onClick={handleSave}>保存して戻る</Button>
+                <Button onClick={onClose}>キャンセル</Button>
             </DialogActions>
         </Dialog>
     )
