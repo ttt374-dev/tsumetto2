@@ -5,16 +5,9 @@ import ProblemDetailDialog from "./ProblemDetailDialog";
 import { useNavigate } from "react-router-dom";
 
 
-export function useProblemDetailDialog(
-    //onViewProblem: (id: ProblemId) => void,
-    //onUpdateProblem: (problem: Problem) => void,
-    onAfterDeleteProblem?: () => void,
-){
+export function useProblemDetailDialog(){
     const [ open, setOpen] = useState(false)
     const [problemId, setProblemId] = useState<ProblemId|undefined>(undefined)
-    //const updateProblem = useProblemStore(s=>s.updateProblem)
-    const deleteProblems = useProblemStore(s=>s.deleteProblems)
-
     const navigate = useNavigate()
    
     useEffect(() => {
@@ -26,12 +19,6 @@ export function useProblemDetailDialog(
         setProblemId(id)     
      }
     const closeDialog = () => { setOpen(false)}
-    // delete
-    const deleteProblem = async () => {
-        if (!problemId) return
-        await deleteProblems([problemId])
-        onAfterDeleteProblem?.()
-    }
     const handleViewProblem = () => {        
         problemId && navigate(`/view/${problemId}`)
     }
@@ -41,11 +28,7 @@ export function useProblemDetailDialog(
         <ProblemDetailDialog    
             open={open}
             problemId={problemId}
-            onConfirm={alert}
             onClose={closeDialog}
-            onDelete={deleteProblem}
-            onResetLearning={alert}  // TODO
-            //onUpdateProblem={updateProblem}
             onViewProblem={handleViewProblem}
         />
     )

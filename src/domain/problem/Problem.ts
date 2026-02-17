@@ -71,6 +71,12 @@ export class Problem {
         //console.log("toggle", r)
         return r
     }
+    setStar(starred: boolean): Problem {
+        return Problem.fromDTO({
+            ...this.toDTO(),
+            starred: starred
+        })
+    }
     setTitle(title: string): Problem {
         return Problem.fromDTO({
             ...this.toDTO(),
@@ -84,4 +90,5 @@ export class Problem {
             tags: tags
         })
     }
+    
 }

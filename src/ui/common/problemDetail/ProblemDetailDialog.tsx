@@ -7,41 +7,78 @@ import { useProblemStore } from '@/application/store/useProblemStore';
 import { EditableText } from '../components/EditableText';
 import { ProblemTagEditor } from '../components/ProblemTagEditor';
 import { StarToggleButton } from '../components/StarToggleButton';
-import { useStarToggleButton } from '@/application/useStarToggleButton';
 import { useLearningRecordStore } from '@/application/useLearningRecordStore';
 
 type Props = {
     open: boolean
     problemId: ProblemId
-    //onUpdateTitle: (title: string) => void;
-    onConfirm: (problemId: string) => void;
     onClose: () => void
-    onDelete: () => void
-    onResetLearning: () => void
-    //onUpdateProblem: (problem: Problem) => void
     onViewProblem?: ()=>void
 }
+export function problemDetailDialogVM(
+    problemId: ProblemId,
+    open: boolean,
+    onClose: () => void
+) {
+    const problem = useProblemStore(s => s.byId[problemId])
+    const updateProblem = useProblemStore(s => s.updateProblem)
+    const deleteProblems = useProblemStore(s => s.deleteProblems)
+    const allTags = useProblemStore(s => s.allTags)
 
-export default function ProblemDetailDialog({
-    open,
-    problemId,
-    
-    onClose,
-    onDelete,
-    onResetLearning,
-    //onUpdateProblem,
-    onViewProblem,
-}: Props) {
+    const learning = useLearningRecordStore(
+        s => problem ? s.records[problem.id] : undefined
+    )
+
+    const [title, setTitle] = useState("")
+    const [tags, setTags] = useState<string[]>([])
+
+    useEffect(() => {
+        if (open && problem) {
+            setTitle(problem.title)
+            setTags(problem.tags ?? [])
+        }
+    }, [open, problem])
+
+    const handleDelete = () => {
+        if (!problem) return
+        if (!window.confirm("本当に削除しますか？")) return
+        deleteProblems([problem.id])
+        onClose()
+    }
+
+    const handleSave = async () => {
+        if (!problem) return
+        await updateProblem(problem.setTitle(title).setTags(tags))
+        onClose()
+    }
+
+    return {
+        problem,
+        learning,
+        title,
+        tags,
+        setTitle,
+        setTags,
+        allTags,
+        handleDelete,
+        handleSave,
+    }
+}
+
+export default function ProblemDetailDialog({ open, problemId, onClose}: Props) {    
     const problem = useProblemStore(p=>p.byId[problemId])
-
-
-    
-    //const eventLog = useLearningEventStore(s=>s.eventLog)
-    //const setRecords = useLearningRecordsStore.getState().setFromEventLog
     const learningRecords = useLearningRecordStore(s=>s.records)
     const learning = learningRecords[problem.id]
     const updateProblem = useProblemStore(s=>s.updateProblem)
+    const deleteProblems = useProblemStore(s=>s.deleteProblems)
     
+    // タイトル
+    const [title, setTitle] = useState(problem.title)
+    const handleUpdateTitle = (newTitle: string) => {
+        console.log("set title", newTitle)
+        setTitle(newTitle)
+    }
+    // タグ
     const [tags, setTags] = useState<string[]>(
         () => problem?.tags ? [...problem.tags] : []
     )
@@ -51,22 +88,28 @@ export default function ProblemDetailDialog({
         }
     }, [open, problem?.tags])
 
-    const allTags: string[] = useProblemStore(s=>s.allTags) 
-    const starController = useStarToggleButton(problemId)
+    const allTags: string[] = useProblemStore(s=>s.allTags)     
+    const [starred, setStarred] = useState(problem.starred)
 
     // handlers
     const handleDelete = () => {
         if (!window.confirm("本当に削除しますか？")) return
-        onDelete()
+        //onDelete()
+        deleteProblems([problem.id])
         onClose()
     }
-    
+    const handleSaveExit = async () => {
+        console.log("save exit", title, tags)
+        await updateProblem(problem.setTitle(title).setTags(tags).setStar(starred))
+        onClose()
+    }
     const handleCancel = () => {      
         onClose()
     }
     const handleResetAccuracy = () => {
         if (!window.confirm("本当に正答データをリセットしますか？")) return
-        onResetLearning()             
+        //onResetLearning()             
+        alert("TBD")
     }    
     if (!problem) return null
     ///////////////////////////////////////////////////////
@@ -85,7 +128,8 @@ export default function ProblemDetailDialog({
                     <Box display="flex" alignItems="center" gap={2} mt={1}>
                         <EditableText initialText={problem.title} onUpdateText={
                             title => {
-                            updateProblem(problem.setTitle(title))
+                            //updateProblem(problem.setTitle(title))
+                            handleUpdateTitle(title)
                             }}/>
                     </Box>
                     <Divider />
@@ -98,7 +142,7 @@ export default function ProblemDetailDialog({
                         value = {tags}
                         onChange={ (tags) => {
                             setTags(tags)
-                            updateProblem(problem.setTags(tags))
+                            //updateProblem(problem.setTags(tags))
                         }}
                     />
                     <Paper sx={{ p: 1 }}>
@@ -110,8 +154,8 @@ export default function ProblemDetailDialog({
                             <Stack direction="row" justifyContent="space-between">
                                 <Box>スター</Box>
                                 <Box>
-                                    <StarToggleButton starred={starController.starred}
-                                        onToggle={starController.toggleStar}
+                                    <StarToggleButton starred={starred}
+                                        onToggle={() => setStarred(!starred)}
                                     />
                                 </Box>
                             </Stack>
@@ -158,8 +202,9 @@ export default function ProblemDetailDialog({
             
             <DialogActions>
                 <Button color="error" onClick={handleDelete}>削除</Button>
-                { onViewProblem && <Button onClick={onViewProblem}>問題を見る</Button>} 
-                <Button onClick={handleCancel}>閉じる</Button>
+                { /* onViewProblem && <Button onClick={onViewProblem}>問題を見る</Button> */} 
+                <Button color="success" onClick={handleSaveExit}>保存して戻る</Button>
+                <Button onClick={handleCancel}>キャンセル</Button>
             </DialogActions>
         </Dialog>
     )
