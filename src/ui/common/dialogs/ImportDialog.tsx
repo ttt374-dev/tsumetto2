@@ -4,11 +4,10 @@ import { ProblemTagEditor } from "../components/ProblemTagEditor";
 import type { DuplicateTitleStrategy, ImportOptions } from "@/application/useImportControler";
 import { useState } from "react";
 
-export function ImportDialog({open, onClose, onImport, allTags=[] }: {
+export function ImportDialog({open, onClose, onImport}: {
     open: boolean
     onClose: () => void
     onImport: (options: ImportOptions) => void
-    allTags?: string[]
 }){
     //const [tags, setTags] = useState<string[]>([])
     const [options, setOptions] = useState<ImportOptions>({tags: [], duplicateTitleStrategy: "skip"})
@@ -23,7 +22,6 @@ export function ImportDialog({open, onClose, onImport, allTags=[] }: {
                 <ProblemTagEditor
                     label={"tags"}
                     value={options.tags}
-                    allTags={allTags}
                     onChange={(next) => { setOptions({...options, tags: next})}}
                 />
                 {/* オプション*/ }

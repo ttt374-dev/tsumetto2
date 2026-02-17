@@ -63,7 +63,7 @@ type Props = {
 }
 export default function ProblemDetailDialog({ open, problemId, onAfterDeleteProblem, onClose}: Props) {      
     const {
-        problem, learning, title, tags, starred, allTags,
+        problem, learning, title, tags, starred,
         setTitle,
         setTags,
         setStarred,        
@@ -78,7 +78,6 @@ export default function ProblemDetailDialog({ open, problemId, onAfterDeleteProb
         onAfterDeleteProblem?.()
     }
 
-
     ///////////////////////////////////////////////////////
     return (
         <Dialog open={open} onClose={onClose} fullWidth
@@ -91,7 +90,7 @@ export default function ProblemDetailDialog({ open, problemId, onAfterDeleteProb
             </DialogTitle>
             <DialogContent>
                 <Stack>
-                    {/* タイトル編集 */}
+                    
                     <Stack direction="row" justifyContent="flex-end">
                         <StarToggleButton starred={starred}
                             onToggle={() => setStarred(prev => !prev)}
@@ -100,16 +99,15 @@ export default function ProblemDetailDialog({ open, problemId, onAfterDeleteProb
                             <DeleteIcon/>
                         </IconButton>
                     </Stack>
-                                        
-                        <EditableText key={problem.id} initialText={title} onUpdateText={
-                            title => { setTitle(title) }}/>
-                    
+                    {/* タイトル編集 */}
+                    <EditableText key={problem.id} initialText={title} onUpdateText={
+                        title => { setTitle(title) }} />
+
                     <Divider />
-                                        
+
                     <ProblemTagEditor
-                        allTags={allTags}
-                        value = {tags}
-                        onChange={ (tags) => {
+                        value={tags}
+                        onChange={(tags) => {
                             setTags(tags)
                         }}
                     />

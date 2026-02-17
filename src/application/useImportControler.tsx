@@ -23,10 +23,7 @@ export function useImportController(
         tags: [], duplicateTitleStrategy: "rename"
     })
     const [importing, setImporting] = useState(false)
-    //const store = useProblemStore(repos.problem)
 
-    //const allTags = useProblemStore(selectAllTags)  // TODO
-    const allTags: string[] = useProblemStore(s=>s.allTags)
     const onPicked = (files: File[]) => {
         setFiles(files)
         setOpen(true)
@@ -60,7 +57,6 @@ export function useImportController(
             open={open}
             onClose={cancel}
             onImport={confirm}
-            allTags={allTags}
         />
     )
 

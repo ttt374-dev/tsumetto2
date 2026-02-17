@@ -1,18 +1,18 @@
+import { useProblemStore } from "@/application/store/useProblemStore"
 import { Autocomplete, Chip, TextField } from "@mui/material"
 
 type Props = {
     value: string[]
-    allTags: string[]
     onChange: (nextTags: string[]) => void
     label?: string
 }
 
 export function ProblemTagEditor({
     value,
-    allTags,
     onChange,
     label = "タグ",
 }: Props) {
+    const allTags = useProblemStore(s=>s.allTags)
     return (
         <Autocomplete
             multiple
@@ -26,15 +26,6 @@ export function ProblemTagEditor({
                 )
                 onChange(uniq)
             }}
-            renderTags={(tags, getTagProps) =>
-                tags.map((tag, index) => (
-                    <Chip
-                        label={tag}
-                        {...getTagProps({ index })}
-                        key={tag}
-                    />
-                ))
-            }
             renderInput={(params) => (
                 <TextField
                     {...params}
