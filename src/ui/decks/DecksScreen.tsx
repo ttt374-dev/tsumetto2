@@ -9,8 +9,8 @@ export default function DecksScreen() {
     const {
         decks,
         deckStats,
-        handleCreateDeck,
-        handleStartMission,
+        onCreateDeck,
+        onStartMission,
         importer,
         backupRestoreDialog,
     } = useDecksViewModel();
@@ -25,7 +25,7 @@ export default function DecksScreen() {
             }
             fab={
                 <FabMenu
-                    onCreateNewDeck={() => handleCreateDeck("untitled")}
+                    onCreateNewDeck={() => onCreateDeck()}
                     onImportFiles={importer.openFileDialog}
                 />
             }
@@ -43,7 +43,7 @@ export default function DecksScreen() {
                                 }
                             >
                                 <ListItemButton
-                                    onClick={() => handleStartMission(deck)}
+                                    onClick={() => onStartMission(deck)}
                                     disabled={stats?.problemCount === 0}
                                 >
                                     <ListItemText
