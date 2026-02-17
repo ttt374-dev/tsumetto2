@@ -1,6 +1,8 @@
 import { Divider, IconButton, Paper, Stack, TextField } from '@mui/material';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Box, Button } from "@mui/material"
 
+import DeleteIcon from '@mui/icons-material/Delete';
+
 import { Problem, type ProblemId } from "@/domain/problem/Problem";
 import { useEffect, useState } from 'react';
 import { useProblemStore } from '@/application/store/useProblemStore';
@@ -9,8 +11,7 @@ import { ProblemTagEditor } from '../components/ProblemTagEditor';
 import { StarToggleButton } from '../components/StarToggleButton';
 import { useLearningRecordStore } from '@/application/useLearningRecordStore';
 
-
-export function problemDetailDialogViewModel(
+export function useProblemDetailDialogViewModel(
     problemId: ProblemId,
     open: boolean,
     onClose: () => void
@@ -20,9 +21,8 @@ export function problemDetailDialogViewModel(
     const deleteProblems = useProblemStore(s => s.deleteProblems)
     const allTags = useProblemStore(s => s.allTags)
 
-    const learning = useLearningRecordStore(
-        s => problem ? s.records[problem.id] : undefined
-    )
+    const learningRecords = useLearningRecordStore(s => s.records)
+    const learning = problem ? learningRecords[problem.id] : undefined
 
     const [title, setTitle] = useState("")
     const [tags, setTags] = useState<string[]>([])
@@ -36,32 +36,20 @@ export function problemDetailDialogViewModel(
         }
     }, [open, problem])
 
-    //if (!problem) return undefined
     //////////////////////////////////////////////////////////
-    const handleDelete = () => {
-        if (!window.confirm("本当に削除しますか？")) return
+    const remove = (confirmFn: () => boolean) => {
+        if (!problem || !confirmFn()) return
         deleteProblems([problem.id])
         onClose()
     }
-
-    const handleSave = async () => {
+    const save = async () => {
+        if (!problem) return
         await updateProblem(problem.setTitle(title).setTags(tags).setStarred(starred))
         onClose()
     }
-
     return {
-        problem,
-        learning,
-        title,
-        tags,
-        starred,
-        allTags,
-
-        setTitle,
-        setTags,
-        setStarred,        
-        handleDelete,
-        handleSave,
+        problem, learning, title, tags, starred, allTags,
+        setTitle, setTags, setStarred, remove, save,
     }
 }
 /////////////////////////////////////////////////////////////
@@ -71,23 +59,21 @@ type Props = {
     onClose: () => void
     onViewProblem?: ()=>void
 }
-export default function ProblemDetailDialog({ open, problemId, onClose}: Props) {  
-    
+export default function ProblemDetailDialog({ open, problemId, onClose}: Props) {      
     const {
-        problem,
-        learning,
-        title,
-        tags,
-        starred,
+        problem, learning, title, tags, starred, allTags,
         setTitle,
         setTags,
-        setStarred,
-        allTags,
-        handleDelete,
-        handleSave,
-    } = problemDetailDialogViewModel(problemId, open, onClose)      
+        setStarred,        
+        remove,
+        save: handleSave,
+    } = useProblemDetailDialogViewModel(problemId, open, onClose)      
     
     if (!problem) return <></>
+    
+    const handleDeleteClick = () =>
+        remove(() => window.confirm("Are you sure to delete?"))
+
     ///////////////////////////////////////////////////////
     return (
         <Dialog open={open} onClose={onClose} fullWidth
@@ -101,17 +87,19 @@ export default function ProblemDetailDialog({ open, problemId, onClose}: Props) 
             <DialogContent>
                 <Stack>
                     {/* タイトル編集 */}
-                    <Box display="flex" alignItems="center" gap={2} mt={1}>
-                        <EditableText initialText={title} onUpdateText={
-                            title => {
-                            //updateProblem(problem.setTitle(title))
-                            setTitle(title)
-                            }}/>
-                    </Box>
+                    <Stack direction="row" justifyContent="flex-end">
+                        <StarToggleButton starred={starred}
+                            onToggle={() => setStarred(prev => !prev)}
+                        />                        
+                        <IconButton onClick={handleDeleteClick}>
+                            <DeleteIcon/>
+                        </IconButton>
+                    </Stack>
+                                        
+                        <EditableText key={problem.id} initialText={title} onUpdateText={
+                            title => { setTitle(title) }}/>
+                    
                     <Divider />
-
-                    { /* 正答誤答*/}
-                    {/*  { record && `正答：${record.solvedCount}, 誤答：${record.failedCount}` }*/}
                                         
                     <ProblemTagEditor
                         allTags={allTags}
@@ -124,15 +112,7 @@ export default function ProblemDetailDialog({ open, problemId, onClose}: Props) 
                         <Stack>
                             <Stack direction="row" justifyContent="space-between">
                                 <Box>追加日</Box>
-                                <Box>{new Date(problem.createdAt).toLocaleDateString()}</Box>
-                            </Stack>
-                            <Stack direction="row" justifyContent="space-between">
-                                <Box>スター</Box>
-                                <Box>
-                                    <StarToggleButton starred={starred}
-                                        onToggle={() => setStarred(!starred)}
-                                    />
-                                </Box>
+                                <Box>{new Date(problem.createdAt).toLocaleString()}</Box>
                             </Stack>
                         </Stack>
                     </Paper>
@@ -175,12 +155,10 @@ export default function ProblemDetailDialog({ open, problemId, onClose}: Props) 
                 </Stack>
             </DialogContent>
             
-            <DialogActions>
-                <Button color="error" onClick={handleDelete}>削除</Button>
+            <DialogActions>                
                 <Button color="success" onClick={handleSave}>保存して戻る</Button>
                 <Button onClick={onClose}>キャンセル</Button>
             </DialogActions>
         </Dialog>
     )
-
 }

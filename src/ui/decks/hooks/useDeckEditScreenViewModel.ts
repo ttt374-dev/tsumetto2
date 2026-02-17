@@ -7,6 +7,7 @@ import { createQuerySnapshot, type Deck } from "@/domain/deck/Deck"
 import { ProblemStats } from "@/domain/problem/ProblemStats"
 import type { QueryContextValue } from "@/ui/App/providers/QueryProvider"
 import { useToast } from "@/ui/App/providers/ToastProvider"
+import { routes } from "@/ui/App/useAppNavigation"
 import { useCallback, useEffect, useMemo } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 
@@ -59,7 +60,7 @@ function useDeckEditorActions(id: string | undefined) {
 
     toast({ message: "保存しました" })
     reset()
-    navigate(-1)
+    navigate(routes.back)
   }, [draft, deckStore, query])
 
   const remove = useCallback(async () => {
@@ -68,7 +69,7 @@ function useDeckEditorActions(id: string | undefined) {
     await deckStore.deleteDeck(draft.id)
     toast({ message: "削除しました" })
     reset()
-    navigate(-1)
+    navigate(routes.back)
   }, [draft, id, deckStore])
 
   return { save, remove }
@@ -83,6 +84,7 @@ export function useDeckEditViewModel() {
     const {
         draft,
         setName,
+        reset,
     } = useDeckEditorStore()
 
     const allTags = useProblemStore(s => s.allTags)

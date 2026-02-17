@@ -7,6 +7,7 @@ import { useImportController } from "@/application/useImportControler";
 import { useToast } from "@/ui/App/providers/ToastProvider";
 import { useProblemStore } from "@/application/store/useProblemStore";
 import { useBackupRestoreDialog } from "../dialogs/BackupRestoreDialog";
+import { routes } from "@/ui/App/useAppNavigation";
 
 interface Props {
     header?: React.ReactNode;
@@ -42,8 +43,8 @@ export function AppShell({ header, footer, rightActions, fab, children }: Props)
             onMenuClick={() => setDrawerOpen(true)}
             drawer={
                 <DrawerMenu isOpen={drawerOpen} onClose={() => setDrawerOpen(false)}
-                    onNavigateToDashboard={() => navigate("/")}
-                    onNavigateToLibrary={() => navigate("/library")}
+                    onNavigateToDashboard={() => navigate(routes.home)}
+                    onNavigateToLibrary={() => navigate(routes.library)}
                     onImport={importer.openFileDialog}
                     onBackupRestore={backupRestoreDialog.openDialog}
                 />

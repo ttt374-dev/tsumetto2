@@ -7,8 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 export function useProblemDetailDialog(){
     const [ open, setOpen] = useState(false)
-    const [problemId, setProblemId] = useState<ProblemId|undefined>(undefined)
-    const navigate = useNavigate()
+    const [problemId, setProblemId] = useState<ProblemId|undefined>(undefined)    
    
     useEffect(() => {
         useProblemStore.getState().reload()
@@ -18,10 +17,7 @@ export function useProblemDetailDialog(){
         setOpen(true);
         setProblemId(id)     
      }
-    const closeDialog = () => { setOpen(false)}
-    const handleViewProblem = () => {        
-        problemId && navigate(`/view/${problemId}`)
-    }
+    const closeDialog = () => { setOpen(false)}    
 
     const dialogElement = (
         problemId && open &&
@@ -29,7 +25,6 @@ export function useProblemDetailDialog(){
             open={open}
             problemId={problemId}
             onClose={closeDialog}
-            onViewProblem={handleViewProblem}
         />
     )
 

@@ -1,3 +1,5 @@
+import VisibilityIcon from '@mui/icons-material/Visibility';
+
 import type { Learning } from "@/domain/learning/Learning";
 import type { Problem, ProblemId } from "@/domain/problem/Problem";
 import { Box, Checkbox, colors, IconButton, ListItem, ListItemButton, ListItemIcon, ListItemText, Stack, Typography } from "@mui/material";
@@ -7,6 +9,8 @@ import { useStarToggleButton } from "@/application/useStarToggleButton";
 import React, { useEffect } from "react";
 import { useProblemStore } from "@/application/store/useProblemStore";
 import { useLearningRecordStore } from "@/application/useLearningRecordStore";
+import { useNavigate } from 'react-router-dom';
+import { routes } from '@/ui/App/useAppNavigation';
 
 export const LibraryListItem = React.memo(function LibraryListItem({ id, onItemClick,
     showCheckbox, onToggleCheckboxMode, isChecked, onToggleChecked,
@@ -33,6 +37,13 @@ export const LibraryListItem = React.memo(function LibraryListItem({ id, onItemC
         },
 
     })
+    const navigate = useNavigate()
+    const handleViewProblem = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.stopPropagation()
+        //navigate(`/view/${problem.id}`)
+        navigate(routes.problemView(problem.id))
+
+    }
     //console.log("render:", problem.id)
     const starController = useStarToggleButton(id)
 
@@ -65,6 +76,11 @@ export const LibraryListItem = React.memo(function LibraryListItem({ id, onItemC
                         <Box flex={1}>
                             <StarToggleButton starred={starController.starred}
                                 onToggle={starController.toggleStar} />
+                        </Box>
+                        <Box flex={1}>
+                            <IconButton onClick={handleViewProblem}>
+                                <VisibilityIcon/>
+                            </IconButton>
                         </Box>
                     </Stack>
 
