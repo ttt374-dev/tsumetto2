@@ -13,7 +13,7 @@ export type Deck = {
   name: string
   snapshot: QuerySnapshot
   
-  createdAt: Date
+  createdAt: number //  Date
 }
 export function createQuerySnapshot(query: ReturnType<typeof useQuery>): QuerySnapshot {
   return {

@@ -16,7 +16,7 @@ export class DeckRepository {
 
   constructor(
     private readonly persistence: DeckPersistence
-  ) {}
+  ) { }
 
   private async ensureLoaded(): Promise<Deck[]> {
     if (this.decks === null) {
@@ -29,7 +29,7 @@ export class DeckRepository {
     const decks = await this.ensureLoaded()
     return [...decks]
   }
-  private async save(decks: Deck[]){ 
+  private async save(decks: Deck[]) {
     await this.persistence.save(decks)
   }
 
@@ -60,7 +60,7 @@ export class DeckRepository {
       await this.save(next)
     }
   }
-  async replaceAll(decks: Deck[]){
+  async replaceAll(decks: Deck[]) {
     await this.save(decks)
   }
 }
@@ -80,10 +80,7 @@ export class LocalStorageDeckPersistence implements DeckPersistence {
     if (!raw) return []
 
     const data = JSON.parse(raw) as any[]
-    return data.map(d => ({
-      ...d,
-      createdAt: new Date(d.createdAt),
-    }))
+    return data
   }
 
   async save(decks: Deck[]): Promise<void> {

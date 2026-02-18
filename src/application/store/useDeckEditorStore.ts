@@ -28,7 +28,7 @@ export const useDeckEditorStore = create<DeckEditorState>((set) => ({
           filterState: DefaultFilterState,
           sortState: DefaultSortState,
         },
-        createdAt: new Date(),
+        createdAt: Date.now(),
       },
     }),
 

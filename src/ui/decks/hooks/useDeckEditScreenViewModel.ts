@@ -13,66 +13,66 @@ import { useNavigate, useParams } from "react-router-dom"
 
 
 function useDeckEditorInitializer(id: string | undefined) {
-  const { startNew, startEdit, reset } = useDeckEditorStore()
-  const decks = useDeckStore(s => s.decks)
+    const { startNew, startEdit, reset } = useDeckEditorStore()
+    const decks = useDeckStore(s => s.decks)
 
-  useEffect(() => {
-    if (!id) return
+    useEffect(() => {
+        if (!id) return
 
-    if (id === "new") {
-      startNew()
-    } else {
-      const existing = decks.find(d => d.id === id)
-      if (existing) startEdit(existing)
-    }
+        if (id === "new") {
+            startNew()
+        } else {
+            const existing = decks.find(d => d.id === id)
+            if (existing) startEdit(existing)
+        }
 
-    return () => reset()
-  }, [id, decks])
+        return () => reset()
+    }, [id, decks])
 }
 function useDeckEditorStats(draft: Deck | null, query: QueryContextValue) {
-  const problems = useProblemStore(s => s.activeProblems)
-  const records = useLearningRecordStore(s => s.records)
+    const problems = useProblemStore(s => s.activeProblems)
+    const records = useLearningRecordStore(s => s.records)
 
-  return useMemo(() => {
-    if (!draft) return { problemCount: 0, accuracy: 0 }
-    return ProblemStats.createWithFilter(
-      problems,
-      records,
-      query.filterState
-    )
-  }, [draft, problems, records, query.filterState])
+    return useMemo(() => {
+        if (!draft) return { problemCount: 0, accuracy: 0 }
+        return ProblemStats.createWithFilter(
+            problems,
+            records,
+            query.filterState
+        )
+    }, [draft, problems, records, query.filterState])
 }
 function useDeckEditorActions(id: string | undefined) {
-  const draft = useDeckEditorStore(s => s.draft)
-  const reset = useDeckEditorStore(s => s.reset)
-  const deckStore = useDeckStore()
-  const navigate = useNavigate()
-  const toast = useToast()
-  const query = useQuery()
+    const draft = useDeckEditorStore(s => s.draft)
+    const reset = useDeckEditorStore(s => s.reset)
+    const deckStore = useDeckStore()
+    const navigate = useNavigate()
+    const toast = useToast()
+    const query = useQuery()
 
-  const save = useCallback(async () => {
-    if (!draft) return
+    const save = useCallback(async () => {
+        if (!draft) return
 
-    await deckStore.saveDeck({
-      ...draft,
-      snapshot: createQuerySnapshot(query),
-    })
+        await deckStore.saveDeck({
+            ...draft,
+            snapshot: createQuerySnapshot(query),
+        })
 
-    toast({ message: "保存しました" })
-    reset()
-    navigate(routes.back)
-  }, [draft, deckStore, query])
+        toast({ message: "保存しました" })
+        reset()
+        navigate(routes.back)
+    }, [draft, deckStore, query])
 
-  const remove = useCallback(async () => {
-    if (!draft || id === "new") return
+    const remove = useCallback(async () => {
+        if (!draft || id === "new") return
 
-    await deckStore.deleteDeck(draft.id)
-    toast({ message: "削除しました" })
-    reset()
-    navigate(routes.back)
-  }, [draft, id, deckStore])
+        await deckStore.deleteDeck(draft.id)
+        toast({ message: "削除しました" })
+        reset()
+        navigate(routes.back)
+    }, [draft, id, deckStore])
 
-  return { save, remove }
+    return { save, remove }
 }
 
 
