@@ -1,7 +1,6 @@
 import { DefaultSortState, type SortKey, type SortState } from "@/domain/problem/query/sort"
 import { DefaultFilterState, type FilterState } from "@/domain/problem/query/filter"
 import { useState } from "react"
-//import { useMediaQuery } from "@mui/material"
 
 type UseQueryOptions = {
   sort?: Partial<SortState>
@@ -22,15 +21,11 @@ export function useQuery(options?: UseQueryOptions){
     }
 
     const toggleFilter = (key: keyof FilterState) => {
-        //console.log("toggle filter", key)
         setFilterState(prev => ({ ...prev, [key]: !prev[key] }))
     }
-    //const setFilter = (key: keyof FilterState, value: boolean) => {
     const setFilter = (partial: Partial<FilterState>) => {    
         
         setFilterState(prev => ({...prev, ...partial }))
-        //console.log("setfilter", partial, filterState)
-        //setFilterState(prev => ({...prev, [key]: value}))
     }
     const resetFilter = () => {
         setFilter({ ...DefaultFilterState})

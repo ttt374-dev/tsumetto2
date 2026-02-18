@@ -3,7 +3,7 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, Box, Button } from "
 
 import DeleteIcon from '@mui/icons-material/Delete';
 
-import { Problem, type ProblemId } from "@/domain/problem/Problem";
+import { type ProblemId } from "@/domain/problem/Problem";
 import { useEffect, useState } from 'react';
 import { useProblemStore } from '@/application/store/useProblemStore';
 import { EditableText } from '../components/EditableText';
@@ -11,24 +11,31 @@ import { ProblemTagEditor } from '../components/ProblemTagEditor';
 import { StarToggleButton } from '../components/StarToggleButton';
 import { useLearningRecordStore } from '@/application/useLearningRecordStore';
 import { useLearningEventStore } from '@/application/store/useLearningEventStore';
+import type { NewLearningEvent } from '@/domain/LearningEvent';
+import type { SolvedResult } from '@/domain/learning/Learning';
 
 export function useProblemDetailDialogViewModel(
     problemId: ProblemId,
     open: boolean,
-    onClose: () => void,   
+    onClose: () => void,
 ) {
+    // problem store
     const problem = useProblemStore(s => s.byId[problemId])
     const updateProblem = useProblemStore(s => s.updateProblem)
     const deleteProblems = useProblemStore(s => s.deleteProblems)
     const allTags = useProblemStore(s => s.allTags)
 
+    // learning store
+    const appendLearning = useLearningEventStore(s => s.append)
     const learningRecords = useLearningRecordStore(s => s.records)
     const learning = problem ? learningRecords[problem.id] : undefined
 
+    // local state
     const [title, setTitle] = useState("")
     const [tags, setTags] = useState<string[]>([])
     const [starred, setStarred] = useState(false)
 
+    // open 時に初期値セット
     useEffect(() => {
         if (open && problem) {
             setTitle(problem.title)
@@ -41,18 +48,46 @@ export function useProblemDetailDialogViewModel(
     const remove = (confirmFn: () => boolean) => {
         if (!problem || !confirmFn()) return
         deleteProblems([problem.id])
-        //onAfterDeleteProblem?.()
         onClose()
     }
+
     const save = async () => {
         if (!problem) return
-        //await updateProblem(problem.setTitle(title).setTags(tags).setStarred(starred))
-        await updateProblem(problemId, prev => prev.setTitle(title).setTags(tags).setStarred(starred) )
+        await updateProblem(problemId, prev =>
+            prev.setTitle(title)
+                .setTags(tags)
+                .setStarred(starred)
+        )
         onClose()
     }
+
+    // 学習データリセット
+    const resetLearning = (confirmFn: () => boolean) => {
+        if (!confirmFn()) return
+        const event: NewLearningEvent = { type: "reset", problemId }
+        appendLearning(event)
+    }
+
+    // review イベント追加
+    const reviewProblem = (quality: SolvedResult, sec?: number) => {
+        const event: NewLearningEvent = { type: "reviewed", problemId, quality, sec }
+        appendLearning(event)
+    }
+
     return {
-        problem, learning, title, tags, starred, allTags,
-        setTitle, setTags, setStarred, remove, save,
+        problem,
+        learning,
+        title,
+        tags,
+        starred,
+        allTags,
+        setTitle,
+        setTags,
+        setStarred,
+        remove,
+        save,
+        resetLearning,
+        reviewProblem
     }
 }
 /////////////////////////////////////////////////////////////
@@ -60,32 +95,30 @@ type Props = {
     open: boolean
     problemId: ProblemId
     onClose: () => void
-    onViewProblem?: ()=>void
+    onViewProblem?: () => void
     onAfterDeleteProblem?: () => void
 }
-export default function ProblemDetailDialog({ open, problemId, onAfterDeleteProblem, onClose}: Props) {      
+export default function ProblemDetailDialog({ open, problemId, onAfterDeleteProblem, onClose }: Props) {
     const {
         problem, learning, title, tags, starred,
         setTitle,
         setTags,
-        setStarred,        
+        setStarred,
         remove,
         save: handleSave,
-    } = useProblemDetailDialogViewModel(problemId, open, onClose)      
-    
+        resetLearning
+    } = useProblemDetailDialogViewModel(problemId, open, onClose)
+
     if (!problem) return <></>
-    
+
     const handleDeleteClick = () => {
         remove(() => window.confirm("Are you sure to delete?"))
         onAfterDeleteProblem?.()
     }
-    const append = useLearningEventStore(s=>s.append)
     const handleLearningReset = () => {
-        if (!window.confirm("学習データをリセットしてよろしいですか？")) return
-        append({
-            type: "reset", problemId: problemId, at: Date.now()
-        })
+        resetLearning(() => window.confirm(""))
     }
+
 
     ///////////////////////////////////////////////////////
     return (
@@ -99,13 +132,13 @@ export default function ProblemDetailDialog({ open, problemId, onAfterDeleteProb
             </DialogTitle>
             <DialogContent>
                 <Stack>
-                    
+
                     <Stack direction="row" justifyContent="flex-end">
                         <StarToggleButton starred={starred}
                             onToggle={() => setStarred(prev => !prev)}
-                        />                        
+                        />
                         <IconButton onClick={handleDeleteClick}>
-                            <DeleteIcon/>
+                            <DeleteIcon />
                         </IconButton>
                     </Stack>
                     {/* タイトル編集 */}
@@ -134,13 +167,9 @@ export default function ProblemDetailDialog({ open, problemId, onAfterDeleteProb
                             <Stack>
                                 <Stack direction="row" justifyContent="space-between">
                                     <Box>正答・誤答・正答率</Box>
-                                    <Box>{learning.solvedCount}:{learning.failedCount}={(learning.accuracy*100).toFixed(0)}%</Box>
+                                    <Box>{learning.solvedCount}:{learning.failedCount}={(learning.accuracy * 100).toFixed(0)}%</Box>
                                 </Stack>
-                                
-                                <Stack direction="row" justifyContent="space-between">
-                                    <Box>Ease Factor</Box>
-                                    <Box>{learning.easeFactor.toFixed(2)}</Box>
-                                </Stack>
+
 
                                 {learning.lastAnswerResult &&
                                     <Stack direction="row" justifyContent="space-between">
@@ -154,25 +183,30 @@ export default function ProblemDetailDialog({ open, problemId, onAfterDeleteProb
                                         <Box>{new Date(learning.lastAnsweredAt).toLocaleString()}</Box>
                                     </Stack>
                                 }
-                                
+
                                 <Stack direction="row" justifyContent="space-between">
                                     <Box>次回レビュー日</Box>
                                     <Box>{new Date(learning.nextReviewedAt).toLocaleString()}</Box>
                                 </Stack>
-
                                 
+                                <Stack direction="row" justifyContent="space-between">
+                                    <Box>Ease Factor</Box>
+                                    <Box>{learning.easeFactor.toFixed(2)}</Box>
+                                </Stack>
                             </Stack>
-                            <Button onClick={handleLearningReset}>
-                                学習データをリセット
-                            </Button>
+                            <Stack direction="row" justifyContent="flex-end">
+                                <Button onClick={handleLearningReset}>
+                                    学習データをリセット
+                                </Button>
+                            </Stack>
                         </Paper>
                     }
                 </Stack>
             </DialogContent>
-            
-            <DialogActions>                
-                <Button color="success" onClick={handleSave}>保存して戻る</Button>
+
+            <DialogActions>
                 <Button onClick={onClose}>キャンセル</Button>
+                <Button color="success" onClick={handleSave}>保存して戻る</Button>
             </DialogActions>
         </Dialog>
     )

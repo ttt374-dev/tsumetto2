@@ -8,7 +8,6 @@ import { applyQuery } from "@/domain/problem/query/applyQuery"
 import { useLibraryCheckbox } from "./useLibraryCheckbox"
 import { useImportController } from "@/application/useImportControler"
 import type { ImportFilesResult } from "@/usecase/importProblemsUsecase"
-import { useViewerDialog } from "@/ui/viewer/ViewDialog"
 import { useBackupRestoreDialog } from "@/ui/common/dialogs/BackupRestoreDialog"
 import { useProblemDetailDialog } from "@/ui/common/problemDetail/useProblemDetailDialog"
 import { useMultipleProblemsTagEditDialog } from "@/ui/common/dialogs/MultipleProblemsTagEditDialog"
@@ -34,14 +33,14 @@ function useLibraryDialogVM(checkedIds: ProblemId[], reload: () => Promise<void>
     const detailDialog = useProblemDetailDialog(
           () => { navigate(routes.library)}
     )
-    const viewerDialog = useViewerDialog()
+    //const viewerDialog = useViewerDialog()
     const backupRestoreDialog = useBackupRestoreDialog((res) => {
         if (res.ok) reload()
     })
     const tagEditDialog = useMultipleProblemsTagEditDialog(checkedIds)
 
     return {
-        viewer: viewerDialog,
+        //viewer: viewerDialog,
         detail: detailDialog,
         backupRestore: backupRestoreDialog,
         tagEdit: tagEditDialog,

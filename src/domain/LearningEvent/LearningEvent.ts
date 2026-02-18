@@ -1,21 +1,22 @@
 import type { SolvedResult } from "../learning/Learning"
 import type { ProblemId } from "../problem/Problem"
 
-export type LearningEvent =
-    LearningReviewedEvent
+export type NewLearningEvent =
     | {
-        type: "reset"
-        problemId: ProblemId
-        at: number
-    }
-export type LearningReviewedEvent = {
         type: "reviewed"
         problemId: ProblemId
         quality: SolvedResult
         sec?: number
-        at: number
+        //at: number
     } 
+    | {
+        type: "reset"
+        problemId: ProblemId
+        //at: number
+    }
 
+export type LearningEvent =
+  NewLearningEvent & { at: number }
 /*
 export type LearningEvent = 
     | {

@@ -21,8 +21,7 @@ export function LibraryScreen() {
                 onItemClick={vm.onItemClick}
                 selection={vm.selection}
             />
-            
-            {vm.dialogs.viewer.dialogElement}
+                        
             {vm.dialogs.detail.dialogElement}
             {vm.dialogs.tagEdit.dialogElement}
             {vm.dialogs.backupRestore.dialogElement}

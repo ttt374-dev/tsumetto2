@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { LearningEvent, LearningEventLog, LearningReviewedEvent } from "@/domain/LearningEvent";
+import type { LearningEvent, LearningEventLog, NewLearningEvent } from "@/domain/LearningEvent";
 import type { LearningEventRepository } from "@/domain/LearningEvent/LearningEventRepository";
 import type { ProblemId } from "@/domain/problem/Problem";
 import type { SolvedResult } from "@/domain/learning/Learning";
@@ -12,7 +12,7 @@ type LearningEventStoreState = {
     //initLearningEventRepository: (repo: LearningEventRepository) => void;
 
     reload: () => Promise<void>;
-    append: (learningEvent: LearningEvent) => Promise<void>;
+    append: (learningEvent: NewLearningEvent) => Promise<void>;
     review: (problemId: ProblemId, quality: SolvedResult, sec?: number) => Promise<void>;
     //deleteAll: () => Promise<void>;
     //deleteByProblemIds: (ids: ProblemId[]) => Promise<void>;
@@ -48,14 +48,14 @@ export const useLearningEventStore = create<LearningEventStoreState>((set, get) 
             }
         },
 
-        append: async (event: LearningEvent) => {            
-            appendQueue.push(event);
+        append: async (event: NewLearningEvent) => {            
+            appendQueue.push({...event, at: Date.now()});
             if (appendQueue.length > 1) return;
             await processQueue(repository);
         },
 
         review: async (problemId: ProblemId, quality: SolvedResult, sec?: number) => {
-            const reviewEvent: LearningReviewedEvent = { 
+            const reviewEvent: LearningEvent = { 
                 type: "reviewed", problemId, quality, sec, at: Date.now() }
             await get().append(reviewEvent);
         },

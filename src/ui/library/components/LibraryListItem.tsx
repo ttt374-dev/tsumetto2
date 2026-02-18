@@ -24,8 +24,8 @@ export const LibraryListItem = function LibraryListItem({ id, onItemClick,
         selected?: boolean,
 
     }) {
-    const problem = useProblemStore(s => s.byId[id])    
-    const learning = useLearningRecordStore(s=>s.records[id])
+    const problem = useProblemStore(s => s.byId[id])
+    const learning = useLearningRecordStore(s => s.records[id])
 
     const { bind, isLongPressedRef } = useLongPress({
         onLongPress: () => {
@@ -47,57 +47,66 @@ export const LibraryListItem = function LibraryListItem({ id, onItemClick,
 
     //////////////////////////////////////////////////////////
     return (
-        <ListItem>
+        <ListItem disablePadding>
             <ListItemButton
                 disableRipple
                 onClick={() => {
                     if (isLongPressedRef.current) return
-                    onItemClick(problem)}}
+                    onItemClick(problem)
+                }}
                 selected={selected}
                 {...bind}
-                sx={{ borderBottom: 1, borderColor: "divider" }}>
+                sx={{ borderBottom: 1, borderColor: "divider", px: 1, py: 0 }}>
                 {showCheckbox &&
                     <ListItemIcon>
                         <Checkbox disableRipple onClick={(e) => e.stopPropagation()}
-                        size="small" edge="start" checked={isChecked}
-                        onChange={() => onToggleChecked(id)} />
+                            size="small" edge="start" checked={isChecked}
+                            onChange={() => onToggleChecked(id)} />
                     </ListItemIcon>
                 }
-                <ListItemText >
-                    {/* 一行目: タイトル */}
-                    <Stack direction="row" justifyContent={"space-between"} alignItems="center">
-                        <Typography variant="subtitle1" fontWeight="bold" flex={7}>
-                            {problem.title}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary" flex={1}>
-                            {problem.kifData.moves.length}手詰め
-                        </Typography>
-                        <Box flex={1}>
-                            <StarToggleButton starred={starController.starred}
-                                onToggle={starController.toggleStar} />
-                        </Box>
-                        <Box flex={1}>
-                            <IconButton onClick={handleViewProblem}>
-                                <VisibilityIcon/>
-                            </IconButton>
-                        </Box>
-                    </Stack>
+                <ListItemText
+                    primary={
+                        <Stack direction="row" justifyContent={"space-between"} alignItems="center">
+                            <Typography variant="subtitle1" fontWeight="bold" flex={4}
 
-                    {/* 二行目: タグ・追加日・学習結果 */}
-                    <Stack direction="row" justifyContent={"space-between"}>
-                        <Typography variant="body2" color="text.secondary">
-                            {problem.tags.join(",")}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                            {new Date(problem.createdAt).toLocaleString()}
-                        </Typography>
-
-                        {learning && <>
-                            <Typography variant="body2" color="text.primary">
-                                {formatLearning(learning)}
+                            >
+                                {problem.title}
                             </Typography>
-                        </>}
-                    </Stack>
+                            <Typography variant="body2" color="text.secondary" flex={1}>
+                                {problem.kifData.moves.length}手詰め
+                            </Typography>
+                            <Stack direction="row" flex={1}>
+                                <StarToggleButton starred={starController.starred}
+                                    onToggle={starController.toggleStar} />
+
+                                <IconButton onClick={handleViewProblem}>
+                                    <VisibilityIcon />
+                                </IconButton>
+                            </Stack>
+                        </Stack>
+                    }
+                    secondary={
+                        <>
+                            {/* 二行目: タグ・追加日 */}
+                            <Stack direction="row" justifyContent={"space-between"}>
+                                <Typography variant="body2" color="text.secondary">
+                                    {problem.tags.join(",")}
+                                </Typography>
+                                <Typography variant="body2" color="text.secondary">
+                                    {new Date(problem.createdAt).toLocaleString()}
+                                </Typography>
+                            </Stack>
+                            {/* 三行目: タグ・追加日 */}
+                            <Stack direction="row" justifyContent={"flex-end"}>
+                                {learning && <>
+                                    <Typography variant="body2" color="text.primary">
+                                        {formatLearning(learning)}
+                                    </Typography>
+                                </>}
+                            </Stack></>
+                    }
+
+                >
 
                 </ListItemText>
             </ListItemButton>
@@ -107,7 +116,7 @@ export const LibraryListItem = function LibraryListItem({ id, onItemClick,
 const DAY_MS = 60 * 60 * 24 * 1000
 export function inDays(date: number, now: number = Date.now()): number {
     //return (date - now) / (60 * 60 * 24 * 1000)
-    return Math.ceil((date - now) / DAY_MS)    
+    return Math.ceil((date - now) / DAY_MS)
 }
 export function formatLearning(learning: Learning): string {
     const indays = inDays(learning.nextReviewedAt)

@@ -1,11 +1,9 @@
 import { Box, IconButton, List, ListItem, ListItemButton, ListItemText } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
-import BackupIcon from "@mui/icons-material/Backup";
 import { AppShell } from "../common/layout/AppShell";
 import FabMenu from "./FabMenu";
 import { useDecksViewModel } from "./hooks/useDecksViewModel";
-import { useLongPress } from "../library/hooks/useLongPress";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { routes } from "../App/useAppNavigation";
 
 export default function DecksScreen() {
@@ -18,20 +16,10 @@ export default function DecksScreen() {
         backupRestoreDialog,
     } = useDecksViewModel();
 
-    const handleNavDeckEdit = (id: string) => {
-        navigate(routes.deckEdit(id))
-    }
-
     const navigate = useNavigate()
     return (
         <AppShell
             header="Decks"
-            /*
-            rightActions={
-                <IconButton onClick={backupRestoreDialog.openDialog}>
-                    <BackupIcon sx={{ color: "#fff" }} />
-                </IconButton>
-            }*/
             fab={
                 <FabMenu
                     onCreateNewDeck={() => onCreateDeck()}

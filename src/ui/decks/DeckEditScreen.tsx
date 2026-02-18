@@ -12,12 +12,7 @@ export function DeckEditScreen() {
         id, deck, name, allTags, query, stats,
         setName, handleSaveAndExit, handleDeleteDeck,
     } = useDeckEditViewModel();
-    
-    useEffect(()=>{
-        console.log("query", query)
-    }, [query])
-    if (!deck) return <>Loading...</>;    
-    
+   
 
     return (
         <AppLayout
