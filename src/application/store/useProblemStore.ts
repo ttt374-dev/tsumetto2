@@ -21,6 +21,10 @@ export type ProblemState = {
     setProblems: (problems: Problem[]) => void
     //addProblem: (problem: Problem) => void
     updateProblem: (p: Problem) => Promise<void>
+      updateProblems: (
+    ids: string[],
+    updater: (p: Problem) => Problem
+  ) => void
     deleteProblems: (ids: ProblemId[]) => Promise<void>
     toggleStar: (id: ProblemId) => Promise<void>
     deleteAll: () => Promise<void>
@@ -112,6 +116,34 @@ export const useProblemStore = create<ProblemState>((set, get) => ({
             }
         })
     },
+    updateProblems: async (ids, updater) => {
+        const state = get()
+
+        const updated: Problem[] = []
+        const newById = { ...state.byId }
+
+        for (const id of ids) {
+            const current = newById[id]
+            if (!current) continue
+
+            const next = updater(current)
+
+            if (next !== current) {
+                newById[id] = next
+                updated.push(next)
+            }
+        }
+
+        if (updated.length === 0) return
+
+        // ① まず state 更新（楽観的更新）
+        set({ byId: newById })
+
+        // ② 永続化
+        await repository.updateMany(updated)
+    },
+
+
     toggleStar: async (id: ProblemId) => {
         const p = get().byId[id]
         get().updateProblem(p.toggleStar())

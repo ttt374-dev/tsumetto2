@@ -1,176 +1,173 @@
 import type { Problem, ProblemId } from "@/domain/problem/Problem";
-import { Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, InputAdornment, Stack, Tab, Tabs, TextField } from "@mui/material";
+import { Button, Checkbox, checkboxClasses, Chip, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, InputAdornment, List, ListItem, ListItemIcon, ListItemText, Stack, Tab, Tabs, TextField } from "@mui/material";
 import ClearIcon from "@mui/icons-material/Clear"
 
 import { useEffect, useState } from "react";
 import { useProblemStore } from "@/application/store/useProblemStore";
+import { selectAllTags } from "@/application/store/ProblemSelector";
 
 
-export function useMultipleProblemsTagEditDialog(
-    //onUpdateProblems: (p: Problem[]) => void
-    //onApplyEditTags: (problemIds: ProblemId[], addTag: string|undefined, removeTags: string[]|undefined) => void
-) {
+export function useMultipleProblemsTagEditDialog(checkedIds: ProblemId[]) {
     const [open, setOpen] = useState(false)
     const [problems, setProblems] = useState<Problem[]>([])
-    const [initialTags, setInitialTags] = useState<string[]>([])
+    //const [initialTags, setInitialTags] = useState<string[]>([])
 
-    useEffect(() => {
-        useProblemStore.getState().reload()
-    }, [open])
+    //const problems = ids.map(id => (useProblemStore(s=>s.byId[id]))).filter(p => p !== undefined)
+    //useEffect(() => {
+    //    useProblemStore.getState().reload()
+    //}, [open])
 
     const openDialog = (ids: ProblemId[]) => {
         setOpen(true)
-        const problems = ids.map(id => (useProblemStore(s=>s.byId[id]))).filter(p => p !== undefined)
+
         console.log("opendialog edittag", problems)
         //const tags = problems.map(p => p.tags)
         const uniqTags = Array.from(
             new Set(problems.flatMap(p => p.tags))
         )
         setProblems(problems)
-        setInitialTags(uniqTags)
+        //setInitialTags(uniqTags)
     }
     const closeDialog = () => { setOpen(false) }
 
     const dialogElement = (
-        open &&
         <MultipleProblemsTagEditDialog
             open={open}
-            problems={problems}
-            initialTags={initialTags}
+            checkedIds={checkedIds}
+            //initialTags={initialTags}
             onClose={closeDialog}
-            //onUpdateProblems={onUpdateProblems}
-            //onApplyEditTags={onApplyEditTags}
         />
     )
     return { openDialog, dialogElement }
 }
 
-export default function MultipleProblemsTagEditDialog({
-    open, problems, initialTags, onClose }: {
-        open: boolean
-        problems: Problem[]
-        initialTags: string[]
 
-        onClose: () => void
-        //onUpdateProblems: (p: Problem[]) => void
-        //onApplyEditTags: (problemIds: ProblemId[], addTag: string|undefined, removeTags: string[]|undefined) => void
-    }) {
-    //const [tags, setTags] = useState<string[]>(initialTags)
-    const [tab, setTab] = useState<0 | 1>(0)
-    const [tags, setTags] = useState(initialTags)
-    
-    const updateProblem = useProblemStore(s=>s.updateProblem)
-    const updateProblems = async (problems: Problem[]) =>{
-        for (const p of problems){
-            await updateProblem(p)
+type TagEditState = "add" | "remove" | "keep"
+
+function createDraftFromProblems(
+    problems: Problem[],
+    allTags: string[]
+): Record<string, TagEditState> {
+
+    const total = problems.length
+    const tagCount: Record<string, number> = {}
+
+    //console.log("problems", problems)
+    for (const problem of problems) {
+        console.log("problem", problem)
+        for (const tag of problem.tags) {
+            tagCount[tag] = (tagCount[tag] ?? 0) + 1
+            //console.log("tagcount", tagCount[tag], tag)
         }
     }
 
-    const [input, setInput] = useState("")
-    const handleAddTag = () => {
-        const tag = input.trim()
-        //if (!tag || initialTags.includes(tag)) return
-        if (!tag) return
+    const draft: Record<string, TagEditState> = {}
 
-        //onApplyEditTags(problems.map(p => p.id), tag, undefined)
-        const newProblems = problems.map(p =>
-            p.setTags([...new Set([...p.tags, tag])])
-        )
-        console.log("addtag", newProblems)
-        updateProblems(newProblems)
-        setInput("")
+    for (const tag of allTags) {
+        const count = tagCount[tag] ?? 0
+
+        if (count === 0) {
+            draft[tag] = "remove"
+        } else if (count === total) {
+            draft[tag] = "add"
+        } else {
+            draft[tag] = "keep"
+        }
     }
-    const handleDeleteTag = (tagToDelete: string) => {
-        const newProblems = problems.map(p=>{
-            const newTags = p.tags.filter(t=>t!==tagToDelete)
-            //onUpdateProblem(p.setTags(newTags))
+
+    return draft
+}
+
+export default function MultipleProblemsTagEditDialog(props: {
+        open: boolean
+        onClose: () => void
+        checkedIds: ProblemId[]
+    }) {
+// query
+    const selectedProblems = useProblemStore(s=>s.all).filter(p =>
+        props.checkedIds.includes(p.id)
+    )
+    const allTags = useProblemStore(s => s.allTags)
+    const [draft, setDraft] = useState<Record<string, TagEditState>>({})    
+
+    useEffect(()=>{
+        setDraft(createDraftFromProblems(selectedProblems, allTags))
+    }, [allTags, props.checkedIds])
+    const handleToggleChecked = (tag: string, checked: boolean) => {
+        setDraft(prev => ({
+            ...prev,
+            [tag]: checked ? "add" : "remove"
+        }))
+    }
+    const updateProblems = useProblemStore(s=>s.updateProblems)
+    const handleConfirm = () => {
+        updateProblems(props.checkedIds, (p) => {
+            let newTags = [...p.tags]
+            let changed = false
+
+            for (const [tag, action] of Object.entries(draft)) {
+
+                if (action === "add" && !newTags.includes(tag)) {
+                    newTags.push(tag)
+                    changed = true
+                }
+
+                if (action === "remove" && newTags.includes(tag)) {
+                    newTags = newTags.filter(t => t !== tag)
+                    changed = true
+                }
+            }
+
+            if (!changed) return p
+
             return p.setTags(newTags)
         })
-        updateProblems(newProblems)
-        setTags(prev=>prev.filter(t=>t!==tagToDelete))
+
+        props.onClose()
     }
+
+
     return (
-        <Dialog open={open} onClose={onClose}>
+        <Dialog open={props.open} onClose={props.onClose}>
             <DialogTitle>
                 タグ編集
             </DialogTitle>
             <DialogContent>
-                <Tabs
-                    value={tab}
-                    onChange={(_, v) => setTab(v)}
-                    variant="fullWidth"
-                >
-                    <Tab label="追加" />
-                    <Tab label="削除" />
-                </Tabs>
+                <List>
+                    {
+                        allTags.map(tag => {
 
-                { /* 追加 */}
-                {tab === 0 && <>
-                    <Stack direction="row" spacing={1} flexWrap="wrap">
-                        {initialTags.map(tag => (
-                            <Chip
-                                key={tag}
-                                label={tag}
-                                onClick={() => setInput(tag)}
-                                size="small"
-                            />
-                        ))}
-                    </Stack>
+                            return (
 
-                    <Stack direction="row">
-                        <TextField
-                            size="small"
-                            label="タグ追加"
-                            value={input}
-                            onChange={e => setInput(e.target.value)}
-                            onKeyDown={e => {
-                                if (e.key === "Enter") {
-                                    e.preventDefault()
-                                    handleAddTag()
-                                }
-                            }}
-                            sx={{ mt: 1 }}
-                            slotProps={{
-                                input: {
-                                    endAdornment: input && (
-                                        <InputAdornment position="end">
-                                            <IconButton
-                                                size="small"
-                                                onMouseDown={e => e.preventDefault()}
-                                                onClick={() => setInput("")}
-                                            >
-                                                <ClearIcon fontSize="small" />
-                                            </IconButton>
-                                        </InputAdornment>
-                                    ),
-                                },
-                            }}
-                        />
-                        <Button onClick={handleAddTag}>
-                            追加
-                        </Button>
-                    </Stack>
-                </>}
+                            <ListItem>
+                                <ListItemIcon>
+                                    <Checkbox
+                                        onChange={(e) =>
+                                            handleToggleChecked(tag, e.target.checked)}
+                                        checked={draft[tag] === "add"}
+                                        indeterminate={draft[tag] === "keep"}
 
-                { /* 削除 */}
-                {tab === 1 &&
-                    <Stack direction="row" spacing={1} flexWrap="wrap">
-                        {tags.map(tag => (
-                            <Chip
-                                key={tag}
-                                label={tag}
-                                onDelete={()=>handleDeleteTag(tag)}
-                                onClick={() => setInput(tag)}
-                                size="small"
-                            />
-                        ))}
-                    </Stack>
-                }
+                                    />
+                                </ListItemIcon>
+                                <ListItemText>
+                                    {tag}
+                                </ListItemText>
+
+                            </ListItem>
+
+                        )})
+
+                    }
+                </List>
             </DialogContent>
             <DialogActions>
-                <Button onClick={onClose}>
+                <Button onClick={props.onClose}>
                     戻る
                 </Button>
+                <Button color="success" variant="contained" onClick={handleConfirm}>
+                    OK
+                </Button>
+
             </DialogActions>
         </Dialog>
     )

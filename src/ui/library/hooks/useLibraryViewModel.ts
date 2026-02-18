@@ -25,7 +25,7 @@ function useLibraryListVM(problems: Problem[], learningRecords: LearningRecord, 
     const ids = useMemo(() => libraryItems.map(p => p.id), [libraryItems])    
     return { libraryItems, ids}
 }
-function useLibraryDialogVM(reload: () => Promise<void>){
+function useLibraryDialogVM(checkedIds: ProblemId[], reload: () => Promise<void>){
     const navigate = useNavigate()
     // -----------------------------
     // ダイアログ
@@ -37,7 +37,7 @@ function useLibraryDialogVM(reload: () => Promise<void>){
     const backupRestoreDialog = useBackupRestoreDialog((res) => {
         if (res.ok) reload()
     })
-    const tagEditDialog = useMultipleProblemsTagEditDialog()
+    const tagEditDialog = useMultipleProblemsTagEditDialog(checkedIds)
 
     return {
         viewer: viewerDialog,
@@ -86,8 +86,9 @@ export function useLibraryViewModel() {
 
     const { problems, reload, deleteProblems } = useLibraryCommands()
     const { libraryItems, ids } = useLibraryListVM(problems, learningRecords, query)
-    const dialogs = useLibraryDialogVM(reload)
+    
     const selection = useLibrarySelectionVM(ids)
+    const dialogs = useLibraryDialogVM(selection.checkedIds, reload)
     // -----------------------------
     // アイテムアクション
     // -----------------------------

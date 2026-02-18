@@ -12,12 +12,10 @@ import { useLearningRecordStore } from "@/application/useLearningRecordStore";
 import { useNavigate } from 'react-router-dom';
 import { routes } from '@/ui/App/useAppNavigation';
 
-export const LibraryListItem = React.memo(function LibraryListItem({ id, onItemClick,
+export const LibraryListItem = function LibraryListItem({ id, onItemClick,
     showCheckbox, onToggleCheckboxMode, isChecked, onToggleChecked,
     selected }: {
-        //problem: Problem,
         id: ProblemId,
-        //learning?: Learning,
         showCheckbox: boolean,
         onItemClick: (p: Problem) => void,
         isChecked: boolean,
@@ -29,7 +27,6 @@ export const LibraryListItem = React.memo(function LibraryListItem({ id, onItemC
     const problem = useProblemStore(s => s.byId[id])    
     const learning = useLearningRecordStore(s=>s.records[id])
 
-
     const { bind, isLongPressedRef } = useLongPress({
         onLongPress: () => {
             onToggleCheckboxMode()
@@ -40,13 +37,15 @@ export const LibraryListItem = React.memo(function LibraryListItem({ id, onItemC
     const navigate = useNavigate()
     const handleViewProblem = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.stopPropagation()
-        //navigate(`/view/${problem.id}`)
         navigate(routes.problemView(problem.id))
-
     }
-    //console.log("render:", problem.id)
     const starController = useStarToggleButton(id)
 
+    useEffect(() => {
+        console.log("rerender:", id, problem.title, problem.tags)
+    }, [problem])
+
+    //////////////////////////////////////////////////////////
     return (
         <ListItem>
             <ListItemButton
@@ -104,8 +103,7 @@ export const LibraryListItem = React.memo(function LibraryListItem({ id, onItemC
             </ListItemButton>
         </ListItem>
     )
-})
-
+}
 const DAY_MS = 60 * 60 * 24 * 1000
 export function inDays(date: number, now: number = Date.now()): number {
     //return (date - now) / (60 * 60 * 24 * 1000)

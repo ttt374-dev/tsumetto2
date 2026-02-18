@@ -35,6 +35,30 @@ export class ProblemRepository {
 
         await this.save(next);
     }
+    async updateMany(problems: Problem[]): Promise<void> {
+        const prev = await this.load();
+
+        // id → index のマップを作る
+        const indexMap = new Map<string, number>();
+        prev.forEach((p, i) => {
+            indexMap.set(p.id, i);
+        });
+
+        const next = [...prev];
+
+        for (const problem of problems) {
+            const index = indexMap.get(problem.id);
+
+            if (index === undefined) {
+                throw new Error(`problem not found: ${problem.id}`);
+            }
+
+            next[index] = problem;
+        }
+
+        await this.save(next);
+    }
+
     async remove(problemId: string): Promise<void> {
         const prev = await this.load();
         const next = prev.filter(p => p.id !== problemId);
