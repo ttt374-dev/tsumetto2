@@ -11,9 +11,9 @@ export function useProblemDetailDialog(
     const [ open, setOpen] = useState(false)
     const [problemId, setProblemId] = useState<ProblemId|undefined>(undefined)    
    
-    useEffect(() => {
-        useProblemStore.getState().reload()
-    }, [open])
+    //useEffect(() => {
+    //    useProblemStore.getState().reload()
+    //}, [open])
 
     const openDialog = (id: ProblemId) => { 
         setOpen(true);

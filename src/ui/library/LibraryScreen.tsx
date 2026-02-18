@@ -13,12 +13,6 @@ export function LibraryScreen() {
     return (
         <AppShell
             header="Library"
-            /*
-            rightActions={
-                <IconButton onClick={vm.dialogs.backupRestore.openDialog}>
-                    <BackupIcon sx={{ color: "white" }} />
-                </IconButton>
-            }*/
         >
             <LibraryView
                 ids={vm.ids}
@@ -27,8 +21,7 @@ export function LibraryScreen() {
                 onItemClick={vm.onItemClick}
                 selection={vm.selection}
             />
-            {vm.importer.pickerElement}
-            {vm.importer.dialogElement}
+            
             {vm.dialogs.viewer.dialogElement}
             {vm.dialogs.detail.dialogElement}
             {vm.dialogs.tagEdit.dialogElement}

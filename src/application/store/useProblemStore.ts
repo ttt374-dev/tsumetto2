@@ -14,17 +14,13 @@ export type ProblemState = {
     hydrated: boolean,
     hydrate: () => Promise<void>,
 
-    //hydrated: boolean   // 永続化読み込み完了
-    //loading: boolean    // API取得中など
-
     reload: () => Promise<void>
     setProblems: (problems: Problem[]) => void
     //addProblem: (problem: Problem) => void
-    updateProblem: (p: Problem) => Promise<void>
-      updateProblems: (
-    ids: string[],
-    updater: (p: Problem) => Problem
-  ) => void
+    //updateProblem: (p: Problem) => Promise<void>
+    updateProblem: (id: ProblemId, updater: (p: Problem) => Problem) => Promise<void>
+    updateProblems: (ids: string[], updater: (p: Problem) => Problem) => Promise<void>
+    deleteProblem: (id: ProblemId) => Promise<void>
     deleteProblems: (ids: ProblemId[]) => Promise<void>
     toggleStar: (id: ProblemId) => Promise<void>
     deleteAll: () => Promise<void>
@@ -104,9 +100,8 @@ export const useProblemStore = create<ProblemState>((set, get) => ({
             allTags: extractTags(problems),
         })
     },
-
-    updateProblem: async (problem) => {
-        await repository.update(problem)
+    /*
+    updateProblem: async (problem) => {        
         set((prev) => {
             const newAll = prev.all.map(p => p.id === problem.id ? problem : p)
             return {
@@ -115,6 +110,11 @@ export const useProblemStore = create<ProblemState>((set, get) => ({
                 allTags: extractTags(newAll),
             }
         })
+        await repository.update(problem)
+    },
+    */
+    updateProblem: async(id, updater) => {
+        get().updateProblems([id], updater)
     },
     updateProblems: async (ids, updater) => {
         const state = get()
@@ -136,17 +136,27 @@ export const useProblemStore = create<ProblemState>((set, get) => ({
 
         if (updated.length === 0) return
 
-        // ① まず state 更新（楽観的更新）
-        set({ byId: newById })
+        // ① all を再構築
+        const newAll = state.all.map(p =>
+            newById[p.id] ?? p
+        )
 
-        // ② 永続化
+        // ② 楽観的更新
+        set({
+            byId: newById,
+            all: newAll,
+            allTags: extractTags(newAll),
+        })
+
+        // ③ 永続化
         await repository.updateMany(updated)
     },
 
-
     toggleStar: async (id: ProblemId) => {
-        const p = get().byId[id]
-        get().updateProblem(p.toggleStar())
+        get().updateProblem(id, prev => prev.toggleStar())
+    },
+    deleteProblem: async (id: ProblemId) => {
+        get().deleteProblems([id])
     },
 
     deleteProblems: async (idsToDelete) => {

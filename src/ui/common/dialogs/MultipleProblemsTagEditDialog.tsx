@@ -4,7 +4,6 @@ import ClearIcon from "@mui/icons-material/Clear"
 
 import { useEffect, useState } from "react";
 import { useProblemStore } from "@/application/store/useProblemStore";
-import { selectAllTags } from "@/application/store/ProblemSelector";
 
 
 export function useMultipleProblemsTagEditDialog(checkedIds: ProblemId[]) {
@@ -61,21 +60,21 @@ function createDraftFromProblems(
         }
     }
 
-    const draft: Record<string, TagEditState> = {}
+    const tagsState: Record<string, TagEditState> = {}
 
     for (const tag of allTags) {
         const count = tagCount[tag] ?? 0
 
         if (count === 0) {
-            draft[tag] = "remove"
+            tagsState[tag] = "remove"
         } else if (count === total) {
-            draft[tag] = "add"
+            tagsState[tag] = "add"
         } else {
-            draft[tag] = "keep"
+            tagsState[tag] = "keep"
         }
     }
 
-    return draft
+    return tagsState
 }
 
 export default function MultipleProblemsTagEditDialog(props: {
@@ -89,6 +88,7 @@ export default function MultipleProblemsTagEditDialog(props: {
     )
     const allTags = useProblemStore(s => s.allTags)
     const [draft, setDraft] = useState<Record<string, TagEditState>>({})    
+    
 
     useEffect(()=>{
         setDraft(createDraftFromProblems(selectedProblems, allTags))
@@ -125,7 +125,12 @@ export default function MultipleProblemsTagEditDialog(props: {
 
         props.onClose()
     }
-
+    // new tag
+    const [newTag, setNewTag] = useState("")
+    const handleAddNewTag = () => {        
+        setDraft(prev=>({...prev, [newTag]: "add"}))
+        setNewTag("")
+    }
 
     return (
         <Dialog open={props.open} onClose={props.onClose}>
@@ -135,17 +140,15 @@ export default function MultipleProblemsTagEditDialog(props: {
             <DialogContent>
                 <List>
                     {
-                        allTags.map(tag => {
-
-                            return (
+                        Object.entries(draft).map(([tag, tagState]) => (
 
                             <ListItem>
                                 <ListItemIcon>
                                     <Checkbox
                                         onChange={(e) =>
                                             handleToggleChecked(tag, e.target.checked)}
-                                        checked={draft[tag] === "add"}
-                                        indeterminate={draft[tag] === "keep"}
+                                        checked={tagState === "add"}
+                                        indeterminate={tagState === "keep"}
 
                                     />
                                 </ListItemIcon>
@@ -155,10 +158,21 @@ export default function MultipleProblemsTagEditDialog(props: {
 
                             </ListItem>
 
-                        )})
+                        ))
 
                     }
                 </List>
+
+                <Stack direction="row">
+                    <TextField 
+                    value={newTag}
+                    onChange={(e) => setNewTag(e.target.value)}
+                    
+                />
+                <button onClick={handleAddNewTag}>
+                    add</button>    
+                </Stack>
+
             </DialogContent>
             <DialogActions>
                 <Button onClick={props.onClose}>

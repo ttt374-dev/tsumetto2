@@ -103,15 +103,6 @@ export function useLibraryViewModel() {
     }), [selection.checkedIds, deleteProblems, toast, dialogs.tagEdit])
 
     // -----------------------------
-    // インポート
-    // -----------------------------
-    const importer = useImportController(async (res: ImportFilesResult) => {
-        await reload()
-        toast({
-            message: `imported: ${res.summary.imported}, skipped: ${res.summary.skipped}, failed: ${res.summary.failed}`
-        })
-    })
-    // -----------------------------
     // アイテムクリック
     // -----------------------------
     const onItemClick = useCallback((p: Problem) => {
@@ -129,7 +120,7 @@ export function useLibraryViewModel() {
         selection,        
         itemActions,
         onItemClick,
-        importer,
+        //importer,
         dialogs
     }
 }

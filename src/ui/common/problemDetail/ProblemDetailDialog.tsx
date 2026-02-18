@@ -45,7 +45,8 @@ export function useProblemDetailDialogViewModel(
     }
     const save = async () => {
         if (!problem) return
-        await updateProblem(problem.setTitle(title).setTags(tags).setStarred(starred))
+        //await updateProblem(problem.setTitle(title).setTags(tags).setStarred(starred))
+        await updateProblem(problemId, prev => prev.setTitle(title).setTags(tags).setStarred(starred) )
         onClose()
     }
     return {
