@@ -11,6 +11,8 @@ export type ProblemData = {
     createdAt: number
     starred: boolean
     tags: string[]
+
+    deletedAt?: number
 }
 function createDefaultValues(): ProblemData {
     return {
@@ -19,7 +21,9 @@ function createDefaultValues(): ProblemData {
         kifData: KifData.create().toDTO(),
         createdAt: Date.now(),
         starred: false,
-        tags: []
+        tags: [],
+
+        deletedAt: undefined
     }
 }
 //export type ProblemInit = Partial<ProblemData>
@@ -34,6 +38,7 @@ export class Problem {
         readonly createdAt: number,
         readonly starred: boolean,
         readonly tags: Tags,
+        readonly deletedAt?: number,
     ) { }
 
     // 生成時
@@ -50,12 +55,13 @@ export class Problem {
             createdAt: this.createdAt,
             starred: this.starred,
             tags: [...this.tags],
+            deletedAt: this.deletedAt
         }
     }
 
     static fromDTO(dto: ProblemDTO): Problem {
         return new Problem(dto.id, dto.title, KifData.fromDTO(dto.kifData),
-            dto.createdAt, dto.starred, dto.tags)
+            dto.createdAt, dto.starred, dto.tags, dto.deletedAt)
     }
     static createFromText(text: string, title: string): Problem | null{
         const r = parseKif(text)
@@ -90,5 +96,13 @@ export class Problem {
             tags: tags
         })
     }
-    
+    get isDelete(): boolean {
+        return !!this.deletedAt
+    }
+    softDelete(): Problem {
+        return Problem.fromDTO({
+            ...this.toDTO(),
+            deletedAt: Date.now()
+        })
+    }
 }

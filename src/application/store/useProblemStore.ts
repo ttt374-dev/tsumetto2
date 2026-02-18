@@ -15,7 +15,7 @@ export type ProblemState = {
     hydrate: () => Promise<void>,
 
     reload: () => Promise<void>
-    setProblems: (problems: Problem[]) => void
+    //setProblems: (problems: Problem[]) => void
     //addProblem: (problem: Problem) => void
     //updateProblem: (p: Problem) => Promise<void>
     updateProblem: (id: ProblemId, updater: (p: Problem) => Problem) => Promise<void>
@@ -37,6 +37,36 @@ export function extractTags(problems: Problem[]): string[] {
     return Array.from(tagSet)
 }
 
+// internal functions
+function derive(byId: Record<ProblemId, Problem>) {
+    const activeProblems = Object.values(byId)
+        .filter(p => !p.deletedAt)
+
+    const ids = activeProblems.map(p => p.id)
+
+    const tagSet = new Set<string>()
+    activeProblems.forEach(p =>
+        p.tags?.forEach(tag => tagSet.add(tag))
+    )
+
+    return {
+        activeProblems,
+        ids,
+        allTags: Array.from(tagSet),
+    }
+}
+
+function applyById(
+    set: any,
+    byId: Record<ProblemId, Problem>
+) {
+    set({
+        byId,
+        ...derive(byId),
+    })
+}
+
+/////////////
 export const useProblemStore = create<ProblemState>((set, get) => ({
     ids: [],
     byId: {},
@@ -84,35 +114,6 @@ export const useProblemStore = create<ProblemState>((set, get) => ({
         }
     },
 
-    setProblems: (problems) => {
-        const byId: Record<ProblemId, Problem> = {}
-        const ids: ProblemId[] = []
-
-        problems.forEach(p => {
-            byId[p.id] = p
-            ids.push(p.id)
-        })
-
-        set({
-            ids,
-            byId,
-            all: problems,
-            allTags: extractTags(problems),
-        })
-    },
-    /*
-    updateProblem: async (problem) => {        
-        set((prev) => {
-            const newAll = prev.all.map(p => p.id === problem.id ? problem : p)
-            return {
-                byId: { ...prev.byId, [problem.id]: problem },
-                all: newAll,
-                allTags: extractTags(newAll),
-            }
-        })
-        await repository.update(problem)
-    },
-    */
     updateProblem: async(id, updater) => {
         get().updateProblems([id], updater)
     },
