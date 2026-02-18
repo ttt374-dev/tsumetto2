@@ -13,17 +13,9 @@ export class LearningEventRepository {
     async load(){ return this.store.load()}
     //async save(data: LearningEventLog){ this.store.save(data)}
 
-    async append(
-        event: Omit<LearningEvent, "at">
-    ) {
+    async append(event: LearningEvent) {
         const log = await this.store.load()
-
-        const newEvent: LearningEvent = {
-            ...event,
-            at: Date.now(),
-        }
-
-        const nextLog = [...log, newEvent]
+        const nextLog = [...log, event]
 
         //console.log("learning event repo append", newEvent)
         await this.store.save(nextLog)

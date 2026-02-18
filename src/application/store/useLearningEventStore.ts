@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { LearningEvent, LearningEventLog } from "@/domain/LearningEvent";
+import type { LearningEvent, LearningEventLog, LearningReviewEvent } from "@/domain/LearningEvent";
 import type { LearningEventRepository } from "@/domain/LearningEvent/LearningEventRepository";
 import type { ProblemId } from "@/domain/problem/Problem";
 import type { SolvedResult } from "@/domain/learning/Learning";
@@ -12,10 +12,10 @@ type LearningEventStoreState = {
     //initLearningEventRepository: (repo: LearningEventRepository) => void;
 
     reload: () => Promise<void>;
-    append: (learningEvent: Omit<LearningEvent, "at">) => Promise<void>;
+    append: (learningEvent: LearningEvent) => Promise<void>;
     review: (problemId: ProblemId, quality: SolvedResult, sec?: number) => Promise<void>;
-    deleteAll: () => Promise<void>;
-    deleteByProblemIds: (ids: ProblemId[]) => Promise<void>;
+    //deleteAll: () => Promise<void>;
+    //deleteByProblemIds: (ids: ProblemId[]) => Promise<void>;
 };
 
 let repository: LearningEventRepository
@@ -48,17 +48,19 @@ export const useLearningEventStore = create<LearningEventStoreState>((set, get) 
             }
         },
 
-        append: async (learningEvent) => {
-            const event: LearningEvent = { ...learningEvent, at: Date.now() };
+        append: async (event: LearningEvent) => {            
             appendQueue.push(event);
             if (appendQueue.length > 1) return;
             await processQueue(repository);
         },
 
-        review: async (problemId, quality, sec) => {
-            await get().append({ type: "reviewed", problemId, quality, sec });
+        review: async (problemId: ProblemId, quality: SolvedResult, sec?: number) => {
+            const reviewEvent: LearningReviewEvent = { 
+                type: "reviewed", problemId, quality, sec, at: Date.now() }
+            await get().append(reviewEvent);
         },
 
+        /*
         deleteAll: async () => {
             await repository.removeAll();
             await get().reload();
@@ -69,5 +71,6 @@ export const useLearningEventStore = create<LearningEventStoreState>((set, get) 
             set(state => ({ eventLog: state.eventLog.filter(e => !idSet.has(e.problemId)) }));
             await repository.replaceAll(get().eventLog);
         },
+        */
     };
 });

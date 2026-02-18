@@ -10,6 +10,7 @@ import { EditableText } from '../components/EditableText';
 import { ProblemTagEditor } from '../components/ProblemTagEditor';
 import { StarToggleButton } from '../components/StarToggleButton';
 import { useLearningRecordStore } from '@/application/useLearningRecordStore';
+import { useLearningEventStore } from '@/application/store/useLearningEventStore';
 
 export function useProblemDetailDialogViewModel(
     problemId: ProblemId,
@@ -77,6 +78,10 @@ export default function ProblemDetailDialog({ open, problemId, onAfterDeleteProb
     const handleDeleteClick = () => {
         remove(() => window.confirm("Are you sure to delete?"))
         onAfterDeleteProblem?.()
+    }
+    const append = useLearningEventStore(s=>s.append)
+    const handleLearningReset = () => {
+        
     }
 
     ///////////////////////////////////////////////////////
@@ -151,7 +156,7 @@ export default function ProblemDetailDialog({ open, problemId, onAfterDeleteProb
                                     <Box>{learning.intervalDays}</Box>
                                 </Stack>
                             </Stack>
-                            <Button onClick={alert}>
+                            <Button onClick={handleLearningReset}>
                                 学習データをリセット
                             </Button>
                         </Paper>
