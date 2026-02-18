@@ -5,6 +5,7 @@ import { EditableText } from "../common/components/EditableText";
 import { FilterControl } from "../common/components/FilterControl";
 import LibrarySortControl from "../library/components/LibrarySortControl";
 import { useDeckEditViewModel } from "./hooks/useDeckEditScreenViewModel";
+import { useEffect } from "react";
 
 export function DeckEditScreen() {
     const {
@@ -12,7 +13,11 @@ export function DeckEditScreen() {
         setName, handleSaveAndExit, handleDeleteDeck,
     } = useDeckEditViewModel();
     
+    useEffect(()=>{
+        console.log("query", query)
+    }, [query])
     if (!deck) return <>Loading...</>;    
+    
 
     return (
         <AppLayout

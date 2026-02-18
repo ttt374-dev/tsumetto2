@@ -4,39 +4,37 @@ import { Learning, type LearningRecord, type SolvedResult } from "@/domain/learn
 
 const MAX_INTERVAL_DAYS = 60
 const DAY = 60 * 60 * 24 * 1000
-
 export function projectLearning(
-    events: readonly LearningEvent[]
+  events: readonly LearningEvent[]
 ): LearningRecord {
 
-    // ① 最後の reset の位置を探す
-    let startIndex = 0
+  const record: LearningRecord = {}
 
-    for (let i = events.length - 1; i >= 0; i--) {
-        if (events[i].type === "reset") {
-            startIndex = i + 1
-            break
-        }
-    }
+  for (const event of events) {
+    switch (event.type) {
 
-    // ② reset 以降のイベントのみ対象
-    const effectiveEvents = events.slice(startIndex)
-
-    const record: LearningRecord = {}
-
-    for (const event of effectiveEvents) {
-        if (event.type !== "reviewed") continue
-
+      case "reviewed": {
         const prev =
-            record[event.problemId] ??
-            Learning.create(event.problemId)
+          record[event.problemId] ??
+          Learning.create(event.problemId)
 
         record[event.problemId] =
-            applyReviewedEvent(prev, event)
-    }
+          applyReviewedEvent(prev, event)
+        break
+      }
 
-    return record
+      case "reset": {
+        // 👇 その problem だけ初期化
+        record[event.problemId] =
+          Learning.create(event.problemId)
+        break
+      }
+    }
+  }
+
+  return record
 }
+
 
 function applyReviewedEvent(
     prev: Learning,

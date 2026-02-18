@@ -42,17 +42,17 @@ function useDeckEditorStats(draft: Deck | null, query: QueryContextValue) {
         )
     }, [draft, problems, records, query.filterState])
 }
-function useDeckEditorActions(id: string | undefined) {
+function useDeckEditorActions(id: string | undefined, query: QueryContextValue) {
     const draft = useDeckEditorStore(s => s.draft)
     const reset = useDeckEditorStore(s => s.reset)
     const deckStore = useDeckStore()
     const navigate = useNavigate()
     const toast = useToast()
-    const query = useQuery()
+    //const query = useQuery()
 
     const save = useCallback(async () => {
         if (!draft) return
-
+        console.log("save", query, createQuerySnapshot(query))
         await deckStore.saveDeck({
             ...draft,
             snapshot: createQuerySnapshot(query),
@@ -112,7 +112,7 @@ export function useDeckEditViewModel() {
     // --------------------------
     // 保存・削除
     // --------------------------
-    const { save, remove } = useDeckEditorActions(id)
+    const { save, remove } = useDeckEditorActions(id, query)
 
     return {
         id,

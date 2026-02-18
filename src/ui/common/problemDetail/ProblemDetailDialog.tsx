@@ -81,7 +81,10 @@ export default function ProblemDetailDialog({ open, problemId, onAfterDeleteProb
     }
     const append = useLearningEventStore(s=>s.append)
     const handleLearningReset = () => {
-        
+        if (!window.confirm("学習データをリセットしてよろしいですか？")) return
+        append({
+            type: "reset", problemId: problemId, at: Date.now()
+        })
     }
 
     ///////////////////////////////////////////////////////
@@ -130,31 +133,34 @@ export default function ProblemDetailDialog({ open, problemId, onAfterDeleteProb
                         <Paper sx={{ p: 1 }}>
                             <Stack>
                                 <Stack direction="row" justifyContent="space-between">
-                                    <Box>正答数</Box>
-                                    <Box>{learning.solvedCount}</Box>
+                                    <Box>正答・誤答・正答率</Box>
+                                    <Box>{learning.solvedCount}:{learning.failedCount}={(learning.accuracy*100).toFixed(0)}%</Box>
                                 </Stack>
-                                <Stack direction="row" justifyContent="space-between">
-                                    <Box>誤答数</Box>
-                                    <Box>{learning.failedCount}</Box>
-                                </Stack>
-                                <Stack direction="row" justifyContent="space-between">
-                                    <Box>正答率</Box>
-                                    <Box>{(learning.accuracy*100).toFixed(0)}%</Box>
-                                </Stack>
+                                
                                 <Stack direction="row" justifyContent="space-between">
                                     <Box>Ease Factor</Box>
                                     <Box>{learning.easeFactor.toFixed(2)}</Box>
                                 </Stack>
 
+                                {learning.lastAnswerResult &&
+                                    <Stack direction="row" justifyContent="space-between">
+                                        <Box>前回結果</Box>
+                                        <Box>{learning.lastAnswerResult}</Box>
+                                    </Stack>
+                                }
+                                {learning.lastAnsweredAt &&
+                                    <Stack direction="row" justifyContent="space-between">
+                                        <Box>前回解答日</Box>
+                                        <Box>{new Date(learning.lastAnsweredAt).toLocaleString()}</Box>
+                                    </Stack>
+                                }
+                                
                                 <Stack direction="row" justifyContent="space-between">
                                     <Box>次回レビュー日</Box>
-                                    <Box>{new Date(learning.nextReviewedAt).toLocaleDateString()}</Box>
+                                    <Box>{new Date(learning.nextReviewedAt).toLocaleString()}</Box>
                                 </Stack>
 
-                                <Stack direction="row" justifyContent="space-between">
-                                    <Box>interval</Box>
-                                    <Box>{learning.intervalDays}</Box>
-                                </Stack>
+                                
                             </Stack>
                             <Button onClick={handleLearningReset}>
                                 学習データをリセット

@@ -24,6 +24,7 @@ export const useDeckStore = create<DeckStoreState>((set, get) => ({
     },
 
     saveDeck: async (deck: Deck) => {
+        console.log("save deck", deck)
         await repository.update(deck)
         await get().loadDecks()
     },
