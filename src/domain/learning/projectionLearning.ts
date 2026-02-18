@@ -1,4 +1,4 @@
-import type { LearningEvent } from "@/domain/LearningEvent"
+import type { LearningEvent, LearningReviewedEvent } from "@/domain/LearningEvent"
 import { Learning, type LearningRecord, type SolvedResult } from "@/domain/learning/Learning"
 
 
@@ -8,19 +8,39 @@ const DAY = 60 * 60 * 24 * 1000
 export function projectLearning(
     events: readonly LearningEvent[]
 ): LearningRecord {
+
+    // ① 最後の reset の位置を探す
+    let startIndex = 0
+
+    for (let i = events.length - 1; i >= 0; i--) {
+        if (events[i].type === "reset") {
+            startIndex = i + 1
+            break
+        }
+    }
+
+    // ② reset 以降のイベントのみ対象
+    const effectiveEvents = events.slice(startIndex)
+
     const record: LearningRecord = {}
-    for (const event of events) {
-        ///console.log("project learning", event)
+
+    for (const event of effectiveEvents) {
         if (event.type !== "reviewed") continue
 
-        const prev = record[event.problemId] ?? Learning.create(event.problemId)
-        record[event.problemId] = applyReviewedEvent(prev, event)
+        const prev =
+            record[event.problemId] ??
+            Learning.create(event.problemId)
+
+        record[event.problemId] =
+            applyReviewedEvent(prev, event)
     }
+
     return record
 }
+
 function applyReviewedEvent(
     prev: Learning,
-    event: LearningEvent
+    event: LearningReviewedEvent
 ): Learning {
     const base = prev
 
@@ -37,15 +57,15 @@ function applyReviewedEvent(
     } else {
         solvedCnt++
         if (intervalDays === 0) intervalDays = 1
-            else if (intervalDays === 1) intervalDays = 3
-            //else intervalDays = Math.round(intervalDays * easeFactor)
-            else intervalDays = Math.min(Math.round(intervalDays * easeFactor), MAX_INTERVAL_DAYS)
+        else if (intervalDays === 1) intervalDays = 3
+        //else intervalDays = Math.round(intervalDays * easeFactor)
+        else intervalDays = Math.min(Math.round(intervalDays * easeFactor), MAX_INTERVAL_DAYS)
     }
     easeFactor = Math.max(
-            1.3,
-             easeFactor + 0.1 - (3 - quality) * 0.05
-            //easeFactor + (0.1 - (3 - quality) * (0.08 + (3 - quality) * 0.02))
-        )
+        1.3,
+        easeFactor + 0.1 - (3 - quality) * 0.05
+        //easeFactor + (0.1 - (3 - quality) * (0.08 + (3 - quality) * 0.02))
+    )
 
     const nextReviewAt = event.at + intervalDays * DAY
     //console.log("event", event)
@@ -56,9 +76,9 @@ function applyReviewedEvent(
         nextReviewAt, easeFactor, event.at, event.quality
     )
 }
-    // 正解評価
-    function judgeAnswerQuality(answer: SolvedResult, sec: number = 10): number {
-        if (answer === "failed") return 0
-        if (sec < 10) return 5
-        return 2
-    }
+// 正解評価
+function judgeAnswerQuality(answer: SolvedResult, sec: number = 10): number {
+    if (answer === "failed") return 0
+    if (sec < 10) return 5
+    return 2
+}

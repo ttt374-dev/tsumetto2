@@ -2,13 +2,13 @@ import type { SolvedResult } from "../learning/Learning"
 import type { ProblemId } from "../problem/Problem"
 
 export type LearningEvent =
-    LearningReviewEvent
+    LearningReviewedEvent
     | {
         type: "reset"
         problemId: ProblemId
         at: number
     }
-export type LearningReviewEvent = {
+export type LearningReviewedEvent = {
         type: "reviewed"
         problemId: ProblemId
         quality: SolvedResult

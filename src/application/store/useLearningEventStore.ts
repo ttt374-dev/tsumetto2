@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { LearningEvent, LearningEventLog, LearningReviewEvent } from "@/domain/LearningEvent";
+import type { LearningEvent, LearningEventLog, LearningReviewedEvent } from "@/domain/LearningEvent";
 import type { LearningEventRepository } from "@/domain/LearningEvent/LearningEventRepository";
 import type { ProblemId } from "@/domain/problem/Problem";
 import type { SolvedResult } from "@/domain/learning/Learning";
@@ -55,7 +55,7 @@ export const useLearningEventStore = create<LearningEventStoreState>((set, get) 
         },
 
         review: async (problemId: ProblemId, quality: SolvedResult, sec?: number) => {
-            const reviewEvent: LearningReviewEvent = { 
+            const reviewEvent: LearningReviewedEvent = { 
                 type: "reviewed", problemId, quality, sec, at: Date.now() }
             await get().append(reviewEvent);
         },
