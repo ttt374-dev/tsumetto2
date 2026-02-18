@@ -5,34 +5,34 @@ import { Learning, type LearningRecord, type SolvedResult } from "@/domain/learn
 const MAX_INTERVAL_DAYS = 60
 const DAY = 60 * 60 * 24 * 1000
 export function projectLearning(
-  events: readonly LearningEvent[]
+    events: readonly LearningEvent[]
 ): LearningRecord {
 
-  const record: LearningRecord = {}
+    const record: LearningRecord = {}
 
-  for (const event of events) {
-    switch (event.type) {
+    for (const event of events) {
+        switch (event.type) {
 
-      case "reviewed": {
-        const prev =
-          record[event.problemId] ??
-          Learning.create(event.problemId)
+            case "reviewed": {
+                const prev =
+                    record[event.problemId] ??
+                    Learning.create(event.problemId)
 
-        record[event.problemId] =
-          applyReviewedEvent(prev, event)
-        break
-      }
+                record[event.problemId] =
+                    applyReviewedEvent(prev, event)
+                break
+            }
 
-      case "reset": {
-        // 👇 その problem だけ初期化
-        record[event.problemId] =
-          Learning.create(event.problemId)
-        break
-      }
+            case "reset": {
+                // 👇 その problem だけ初期化
+                record[event.problemId] =
+                    Learning.create(event.problemId)
+                break
+            }
+        }
     }
-  }
 
-  return record
+    return record
 }
 
 

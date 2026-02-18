@@ -3,7 +3,7 @@ import { useMissionStore } from "@/application/store/useMissionStore"
 import { useProblemStore } from "@/application/store/useProblemStore"
 import type { SolvedResult } from "@/domain/learning/Learning"
 import type { Problem, ProblemId } from "@/domain/problem/Problem"
-import type { MissionNavigators as MissionNavigators } from "@/ui/player/components/PlayerView"
+import type { PlayerViewNavigationHandlers } from "@/ui/player/components/PlayerView"
 import { useCallback, useMemo } from "react"
 
 type MissionPlayerVM =
@@ -15,7 +15,7 @@ type MissionPlayerVM =
       status: "playing"
       problem: Problem
       title: string
-      missionNavigators: MissionNavigators
+      navigationHandlers: PlayerViewNavigationHandlers  
       index: number
       count: number
       handleAnswer: (id: ProblemId, res: SolvedResult, sec?: number) => void
@@ -49,7 +49,7 @@ export function useMissionPlayerViewModel(): MissionPlayerVM {
     )
 
     // navigation
-    const missionNavigators = useMemo(() => ({ next, prev, moveTo }), [next, prev, moveTo])
+    const navigationHandlers = useMemo(() => ({ next, prev, moveTo }), [next, prev, moveTo])
 
     const handleAnswer = useCallback(
         (_id: string, res: SolvedResult, _sec?: number) => {
@@ -81,5 +81,5 @@ export function useMissionPlayerViewModel(): MissionPlayerVM {
 
     return { 
         status: "playing",
-        problem, title,  missionNavigators, index, count, handleAnswer }
+        problem, title,  navigationHandlers, index, count, handleAnswer }
 }
