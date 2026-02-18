@@ -34,7 +34,7 @@ function App() {
     useLearningEventStore.getState().reload()
 
     // hydrate
-    const hydrate = useProblemStore(s => s.hydrate)
+    const hydrate = useProblemStore(s => s.reload)
 
     useEffect(() => {
         hydrate()

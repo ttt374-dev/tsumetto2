@@ -30,7 +30,7 @@ function useDeckEditorInitializer(id: string | undefined) {
   }, [id, decks])
 }
 function useDeckEditorStats(draft: Deck | null, query: QueryContextValue) {
-  const problems = useProblemStore(s => s.all)
+  const problems = useProblemStore(s => s.activeProblems)
   const records = useLearningRecordStore(s => s.records)
 
   return useMemo(() => {

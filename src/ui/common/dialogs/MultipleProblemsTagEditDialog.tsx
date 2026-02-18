@@ -83,7 +83,7 @@ export default function MultipleProblemsTagEditDialog(props: {
         checkedIds: ProblemId[]
     }) {
 // query
-    const selectedProblems = useProblemStore(s=>s.all).filter(p =>
+    const selectedProblems = useProblemStore(s=>s.activeProblems).filter(p =>
         props.checkedIds.includes(p.id)
     )
     const allTags = useProblemStore(s => s.allTags)

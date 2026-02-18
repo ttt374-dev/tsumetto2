@@ -23,6 +23,7 @@ function useLibraryListVM(problems: Problem[], learningRecords: LearningRecord, 
         [problems, learningRecords, query.sortState, query.filterState]
     )
     const ids = useMemo(() => libraryItems.map(p => p.id), [libraryItems])    
+    console.log("library list", ids, libraryItems, problems)
     return { libraryItems, ids}
 }
 function useLibraryDialogVM(checkedIds: ProblemId[], reload: () => Promise<void>){
@@ -72,7 +73,7 @@ function useLibrarySelectionVM(ids: ProblemId[]){
     return  {...selection, ...actions}
 }
 function useLibraryCommands(){
-    const problems = useProblemStore(s => s.all)
+    const problems = useProblemStore(s => s.activeProblems)
     const reload = useProblemStore(s => s.reload)
     const deleteProblems = useProblemStore(s => s.deleteProblems)
 

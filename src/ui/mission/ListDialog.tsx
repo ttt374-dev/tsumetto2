@@ -33,7 +33,7 @@ export function ListDialog({ open, onClose, onSelectProblem, currentProblemId }:
     onSelectProblem: (id: ProblemId) => void,
     currentProblemId?: ProblemId,
 }) {
-    const problemIds = useProblemStore(s=>s.ids)
+    const problemIds = useProblemStore(s=>s.activeProblems).map(p=>p.id)
 
     return (
         <Dialog fullScreen open={open} onClose={onClose}

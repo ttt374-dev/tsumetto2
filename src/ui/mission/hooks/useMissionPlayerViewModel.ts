@@ -9,7 +9,7 @@ import { useCallback, useMemo } from "react"
 type MissionPlayerVM =
   | { status: "idle" }
   | { status: "finished" }
-  | { status: "loading" }
+  | { status: "loading"}
   | { status: "missing"}
   | {
       status: "playing"
@@ -31,8 +31,6 @@ export function useMissionPlayerViewModel(): MissionPlayerVM {
     const next = useMissionStore(s => s.next)
     const prev = useMissionStore(s => s.prev)
     const moveTo = useMissionStore(s => s.moveToId)
-    const hydrated = useProblemStore(s=>s.hydrated)
-    const loading = useProblemStore(s=>s.loading)
 
     const currentProblemId = problemIds[index]
     const count = problemIds.length
@@ -74,8 +72,8 @@ export function useMissionPlayerViewModel(): MissionPlayerVM {
     }
     
     if (!problem) {
-        if (loading) return { status: "loading" }
-        return { status: "missing"}
+        //if (loading) return { status: "loading" }
+        return { status: "loading"} // TODO
         
     }
 

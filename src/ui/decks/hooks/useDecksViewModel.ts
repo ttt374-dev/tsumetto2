@@ -13,7 +13,7 @@ import { routes } from "@/ui/App/useAppNavigation";
 
 export function useDecksQueryVM() {
     const decks = useDeckStore(s => s.decks);
-    const problems = useProblemStore(s => s.all);
+    const problems = useProblemStore(s => s.activeProblems);
     const learningRecords = useLearningRecordStore(s => s.records);
 
     const deckStats = useDeckStats(problems, decks, learningRecords);
@@ -28,7 +28,7 @@ export function useDecksCommandVM() {
     const navigate = useNavigate();
     const toast = useToast();
 
-    const problems = useProblemStore(s => s.all);
+    const problems = useProblemStore(s => s.activeProblems);
     const learningRecords = useLearningRecordStore(s => s.records);
     const reloadProblems = useProblemStore(s => s.reload);
     const startMission = useMissionStore(s => s.start);

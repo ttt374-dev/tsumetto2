@@ -2,18 +2,16 @@
 import { create } from "zustand"
 import { ProblemRepository } from "../../domain/problem/ProblemRepository"
 import type { Problem, ProblemId } from "../../domain/problem/Problem"
+import { act } from "react"
 
 export type ProblemState = {
+    byId: Record<ProblemId, Problem>   // SoT
+
+    // derived states
     ids: ProblemId[]
-    byId: Record<ProblemId, Problem>
-    all: Problem[]
     allTags: string[]
-
-    // loading state
-    loading: boolean,
-    hydrated: boolean,
-    hydrate: () => Promise<void>,
-
+    activeProblems: Problem[]    
+    
     reload: () => Promise<void>
     //setProblems: (problems: Problem[]) => void
     //addProblem: (problem: Problem) => void
@@ -40,8 +38,7 @@ export function extractTags(problems: Problem[]): string[] {
 // internal functions
 function derive(byId: Record<ProblemId, Problem>) {
     const activeProblems = Object.values(byId)
-        .filter(p => !p.deletedAt)
-
+        .filter(p => !p.deletedAt)    
     const ids = activeProblems.map(p => p.id)
 
     const tagSet = new Set<string>()
@@ -50,68 +47,41 @@ function derive(byId: Record<ProblemId, Problem>) {
     )
 
     return {
-        all: activeProblems,
-        ids,
+        activeProblems, ids,
         allTags: Array.from(tagSet),
     }
 }
-
-function applyById(
-    set: any,
-    byId: Record<ProblemId, Problem>
-) {
-    set({
+function reduceById(byId: Record<ProblemId, Problem>) {
+    return {
         byId,
         ...derive(byId),
-    })
+    }
 }
+
 
 /////////////
 export const useProblemStore = create<ProblemState>((set, get) => ({
     ids: [],
     byId: {},
-    all: [],
+    activeProblems: [],
     allTags: [],
+   
+    
+    reload: async () => {       
+        const data = await repository.load()
+        const byId: Record<ProblemId, Problem> = {}
+        //const ids: ProblemId[] = []
 
-    loading: false,
-    hydrated: false,
-
-    hydrate: async () => {
-        set({ loading: true })
-        const problems = await repository.load()
-
-        const map: Record<ProblemId, Problem> = {}
-        for (const p of problems) {
-            map[p.id] = p
-        }
-
-        set({
-            byId: map,
-            hydrated: true,
-            loading: false,
+        data.forEach(p => {
+            byId[p.id] = p
+            //ids.push(p.id)
         })
-    },
-
-
-    reload: async () => {
-        try {
-            const data = await repository.load()
-            const byId: Record<ProblemId, Problem> = {}
-            //const ids: ProblemId[] = []
-
-            data.forEach(p => {
-                byId[p.id] = p
-                //ids.push(p.id)
-            })
-            applyById(set, byId)
-            
-        } catch {
-            set({ ids: [], byId: {}, all: [], allTags: [] })
-        }
+        set(reduceById(byId))       
+        
     },
 
     updateProblem: async(id, updater) => {
-        get().updateProblems([id], updater)
+        await get().updateProblems([id], updater)
     },
     updateProblems: async (ids, updater) => {
         const state = get()
@@ -127,7 +97,7 @@ export const useProblemStore = create<ProblemState>((set, get) => ({
 
             if (next !== current) {
                 newById[id] = next
-                //updated.push(next)
+                updated.push(next)
             }
         }
 
@@ -139,17 +109,22 @@ export const useProblemStore = create<ProblemState>((set, get) => ({
         //)
 
         // ② 楽観的更新
-        applyById(set, newById)        
+        const prevState = state.byId
+        set(reduceById(newById))
 
         // ③ 永続化
-        await repository.updateMany(updated)
+        try {
+            await repository.updateMany(updated)
+        } catch (e) {
+            set(reduceById(prevState))
+        }
     },
 
     toggleStar: async (id: ProblemId) => {
-        get().updateProblem(id, prev => prev.toggleStar())
+        await get().updateProblem(id, prev => prev.toggleStar())
     },
     deleteProblem: async (id: ProblemId) => {
-        get().deleteProblems([id])
+        await get().deleteProblems([id])
     },
 
     deleteProblems: async (idsToDelete) => {
@@ -169,15 +144,31 @@ export const useProblemStore = create<ProblemState>((set, get) => ({
 
         if (updated.length === 0) return
 
-        applyById(set, newById)
+        set(reduceById(newById))
 
         await repository.updateMany(updated)
     },
 
-
     deleteAll: async () => {
-        await repository.removeAll()
-        applyById(set, {})
-        //set({ ids: [], byId: {}, all: [], allTags: [] })
-    },
+        const state = get()
+        const newById = { ...state.byId }
+        const updated: Problem[] = []
+
+        for (const id in newById) {
+            const current = newById[id]
+            if (current.deletedAt) continue
+
+            const next = current.softDelete()
+            newById[id] = next
+            updated.push(next)
+        }
+
+        if (updated.length === 0) return
+
+        set(reduceById(newById))
+        await repository.updateMany(updated)
+    }
+
+,
+
 }))
