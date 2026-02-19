@@ -6,31 +6,35 @@ import { PlyControlPanel } from "./PlyControlPanel"
 import { Learning } from "@/domain/learning/Learning"
 import BoardPanel from "./BoardPanel"
 import { formatLearning } from "@/ui/library/components/LibraryListItem"
-import type { ProblemId } from "@/domain/problem/Problem"
+import type { Problem, ProblemId } from "@/domain/problem/Problem"
 import { useReplayController } from "../hooks/useReplayController"
-import { useShowMovesController } from "../hooks/usePlayerViewModel"
+import { useEffect, useState } from "react"
+import type { ProblemNavigation } from "../PlayerScreen"
+import { useLearningRecordStore } from "@/application/useLearningRecordStore"
 
-export type ProblemNavigation = {
-    next: () => void,
-    prev: () => void,
-    moveTo: (problemId: ProblemId) => void,
-}
 
-export type PlayerViewHandlers = {
-    navigation: ProblemNavigation,
+
+export function useShowMovesController(plyIndex: number) {
+    const [showMoves, setShowMoves] = useState(false)
+    useEffect(() => {
+        if (plyIndex > 0) {
+            setShowMoves(true)
+        } else if (plyIndex === 0) {
+            setShowMoves(false)
+        }
+    }, [plyIndex])
     
+    return { showMoves, setShowMoves }
 }
 ///////////////////////////////////////////////////////////////
-function PlayerView({learning, position, moves, tags, problemNavigation}: {
-    position: Position,
-    moves: Move[],
-    //handlers: PlayerViewHandlers,    
-    problemNavigation: ProblemNavigation,
-    learning?: Learning,
-    tags: string[],
+function PlayerView({problem, problemNavigation}: {
+    problem: Problem
+    problemNavigation?: ProblemNavigation,   
 }){
-    const replay = useReplayController(position, moves)
+    const moves = problem.kifData.moves
+    const replay = useReplayController(problem.kifData.initialPosition, moves)
     const showMovesController = useShowMovesController(replay.plyIndex)
+    const learning: Learning | undefined = useLearningRecordStore(s=>s.records)[problem.id]
 
     return (
         <Stack sx={{ minHeight: 0, height: "100%" }} spacing={1} >
@@ -38,8 +42,8 @@ function PlayerView({learning, position, moves, tags, problemNavigation}: {
             <BoardPanel position={replay.position}
                 onAdvancePly={replay.advancePly}
                 onRetreatPly={replay.retreatPly}
-                onNextProblem={problemNavigation.next}
-                onPrevProblem={problemNavigation.prev} />
+                onNextProblem={problemNavigation?.next}
+                onPrevProblem={problemNavigation?.prev} />
             <Stack direction="row" sx={{ minHeight: 0, flexGrow: 1, p: 1 }} spacing={1}>
                 { /* --- 手筋 ---*/}
 
@@ -51,7 +55,7 @@ function PlayerView({learning, position, moves, tags, problemNavigation}: {
                                 手筋を表示
                             </Button>
                             <Box>{moves.length}手詰め</Box>
-                            <Box>{ tags.join(",")}</Box>
+                            <Box>{problem.tags.join(",")}</Box>
                         </Stack>)
                     }
                 </MovesPanel>

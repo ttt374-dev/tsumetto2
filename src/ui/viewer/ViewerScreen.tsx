@@ -1,16 +1,17 @@
 import { useProblemStore } from "@/application/store/useProblemStore";
-import { PlayerScreen } from "../player/PlayerScreen";
 import { useParams } from "react-router-dom"
+import PlayerView from "../player/components/PlayerView";
+import { AppShell } from "../common/layout/AppShell";
 
 export function ViewerScreen(){
     const { id } = useParams<{ id: string }>()
       const problem = useProblemStore(s =>id ? s.byId[id] : undefined)
      if (!problem) return <div>Not found</div>
-    return (<>
-        <PlayerScreen 
-            problem={problem}
-            title={problem.title}            
-            navigationHandlers={{prev: alert, next: alert, moveTo: alert}}
+    return (
+        <AppShell header={problem.title}>
+
+        <PlayerView
+            problem={problem}            
         />
-    </>)
+    </AppShell>)
 }

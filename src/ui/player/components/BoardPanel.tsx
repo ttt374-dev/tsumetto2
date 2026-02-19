@@ -23,18 +23,17 @@ function BoardPanel({ position, onAdvancePly, onRetreatPly, onNextProblem, onPre
     }
     return (
         <Stack justifyContent="center" direction="row" alignContent="center">
-            { onPrevProblem &&
-            <Button onClick={onPrevProblem}>&lt;</Button>}
+            {onPrevProblem &&
+                <Button onClick={onPrevProblem}>&lt;</Button>}
             <Box>   { /* センタリングするために必要 */}
                 <SwipeWrapper actions={swipeActions}>
-                <BoardView position={position}/>
+                    <BoardView position={position} />
                 </SwipeWrapper>
             </Box>
-            { onNextProblem &&
-            <Button onClick={onNextProblem}>&gt;</Button>}
-            
-        </Stack>
+            {onNextProblem &&
+                <Button onClick={onNextProblem}>&gt;</Button>}
 
+        </Stack>
     )
 }
 

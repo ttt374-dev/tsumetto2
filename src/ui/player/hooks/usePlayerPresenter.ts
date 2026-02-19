@@ -1,32 +1,18 @@
 import type { Problem, ProblemId } from "@/domain/problem/Problem";
 import { useProblemDetailDialog } from "../../common/problemDetail/useProblemDetailDialog";
-import { useListDialog } from "../../mission/ListDialog";
-import type { ProblemNavigation } from "../components/PlayerView";
 import { useRightActionsDrawer } from "../components/RightActionsDrawer";
 
 
-export function usePlayerPresenter(
-    p: Problem,
-    //onUpdateProblem: (p: Problem) => void,
-    navigationHandlers: ProblemNavigation,
-) {
-    const detailDialog = useProblemDetailDialog(
-        () => { navigationHandlers.next() }
-        //() => { },
-        //onUpdateProblem, //handleUpdateProblem,p 
+export function usePlayerPresenter(p: Problem, onNextProblem: () => void){
+    const detailDialog = useProblemDetailDialog(onNextProblem)
         
-        //() => { navigationHandlers.next() }
-    )
-    const listDialog = useListDialog(p.id, navigationHandlers.moveTo)
     const rightActionsDrawer = useRightActionsDrawer(
         () => detailDialog.openDialog(p.id),
-        //listDialog.openDialog
     )
 
     return {
         dialogs: {
             detail: detailDialog,
-            list: listDialog,
         },
         rightActionsDrawer,
     }
