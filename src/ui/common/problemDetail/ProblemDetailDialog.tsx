@@ -119,7 +119,6 @@ export default function ProblemDetailDialog({ open, problemId, onAfterDeleteProb
         resetLearning(() => window.confirm(""))
     }
 
-
     ///////////////////////////////////////////////////////
     return (
         <Dialog open={open} onClose={onClose} fullWidth
@@ -132,7 +131,6 @@ export default function ProblemDetailDialog({ open, problemId, onAfterDeleteProb
             </DialogTitle>
             <DialogContent>
                 <Stack>
-
                     <Stack direction="row" justifyContent="flex-end">
                         <StarToggleButton starred={starred}
                             onToggle={() => setStarred(prev => !prev)}

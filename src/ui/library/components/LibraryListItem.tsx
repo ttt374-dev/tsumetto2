@@ -41,10 +41,6 @@ export const LibraryListItem = function LibraryListItem({ id, onItemClick,
     }
     const starController = useStarToggleButton(id)
 
-    useEffect(() => {
-        console.log("rerender:", id, problem.title, problem.tags)
-    }, [problem])
-
     //////////////////////////////////////////////////////////
     return (
         <ListItem disablePadding>

@@ -1,10 +1,11 @@
+import type { ReactNode } from 'react';
 import { useDeckStore } from "@/application/store/useDeckStore"
 import { useMissionStore } from "@/application/store/useMissionStore"
 import { useProblemStore } from "@/application/store/useProblemStore"
 import type { SolvedResult } from "@/domain/learning/Learning"
 import type { Problem, ProblemId } from "@/domain/problem/Problem"
-import type { ProblemNavigation } from "@/ui/player/components/PlayerView"
-import { useCallback, useMemo } from "react"
+import type { ProblemNavigation } from "@/ui/player/PlayerScreen"
+import React, { useCallback, useMemo, type ReactHTMLElement } from "react"
 
 type MissionPlayerVM =
   | { status: "idle" }
@@ -15,7 +16,7 @@ type MissionPlayerVM =
       status: "playing"
       problem: Problem
       title: string
-      navigationHandlers: ProblemNavigation  
+      problemNavigation: ProblemNavigation
       index: number
       count: number
       handleAnswer: (id: ProblemId, res: SolvedResult, sec?: number) => void
@@ -49,7 +50,7 @@ export function useMissionPlayerViewModel(): MissionPlayerVM {
     )
 
     // navigation
-    const navigationHandlers = useMemo(() => ({ next, prev, moveTo }), [next, prev, moveTo])
+    const problemNavigation = useMemo(() => ({ next, prev, moveTo }), [next, prev, moveTo])
 
     const handleAnswer = useCallback(
         (_id: string, res: SolvedResult, _sec?: number) => {
@@ -77,9 +78,13 @@ export function useMissionPlayerViewModel(): MissionPlayerVM {
         
     }
 
-    const title = `[${deckName} (${index + 1}/${count})]: ${problem.title}`
+    const title = `[${deckName} (${index + 1}/${count})]: ${problem.title}`       
+
 
     return { 
         status: "playing",
-        problem, title,  navigationHandlers, index, count, handleAnswer }
+        problem, title,  problemNavigation, index, count, handleAnswer
+     }
 }
+
+

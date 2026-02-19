@@ -4,7 +4,6 @@ import { useState } from "react";
 
 export function useRightActionsDrawer(
     onOpenDetailDialog: () => void,
-    //onOpenListDialog: () => void
 ) {
     const [open, setOpen] = useState(false)
 
@@ -19,14 +18,11 @@ export function useRightActionsDrawer(
          />
     )
     return { openDialog, drawerElement}
-
-
 }
 export function RightActionsDrawer({ isOpen, onClose, onOpenDetailDialog }: {
     isOpen: boolean
     onClose: () => void
     onOpenDetailDialog: () => void
-    //onOpenListDialog: () => void
 }) {
     return (
         <Drawer anchor="right" open={isOpen} onClose={onClose} >

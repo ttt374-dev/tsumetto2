@@ -1,4 +1,4 @@
-
+import EditIcon from '@mui/icons-material/Edit';
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { PlayerAnswerActions } from "./components/PlayerAnswerActions"
 import PlayerView from "./components/PlayerView"
@@ -19,7 +19,7 @@ export type ProblemNavigation = {
 //////////////////////////////////////////////////////////////
 export function PlayerScreen({ problem, title, onAnswer, problemNavigation}: {
     problem: Problem
-    title: string
+    title: React.ReactNode
     onAnswer?: (id: ProblemId, res: SolvedResult, sec?: number) => void
     problemNavigation: ProblemNavigation
  }) {    
@@ -43,9 +43,16 @@ export function PlayerScreen({ problem, title, onAnswer, problemNavigation}: {
                         onToggle={starController.toggleStar}
                         sx={{ color: "white" }}
                     />
+                    <IconButton
+                     sx={{ color: "white" }}
+                     onClick={()=>presenter.dialogs.detail.openDialog(problem.id)}>
+                        <EditIcon/>
+                    </IconButton>
+                    { /* 
                     <IconButton onClick={presenter.rightActionsDrawer.openDialog}>
                         <MoreVertIcon sx={{ color: "white" }} />
                     </IconButton>
+                    */ }
                 </>
             }
         >

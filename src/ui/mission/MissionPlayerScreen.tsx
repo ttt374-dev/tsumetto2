@@ -24,7 +24,7 @@ export function MissionPlayerScreen() {
                 <PlayerScreen problem={vm.problem}
                     title={vm.title}
                     onAnswer={vm.handleAnswer}
-                    navigationHandlers={vm.navigationHandlers}
+                    problemNavigation={vm.problemNavigation}
                 />
             )
     }

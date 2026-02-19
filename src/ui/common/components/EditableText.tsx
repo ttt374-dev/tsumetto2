@@ -3,8 +3,6 @@ import { IconButton, Stack, TextField, Typography } from "@mui/material"
 import DoneIcon from '@mui/icons-material/Done'
 import CloseIcon from '@mui/icons-material/Close'
 import EditIcon from '@mui/icons-material/Edit';
-import type { Problem } from "@/domain/problem/Problem";
-
 
 
 type Props = {
