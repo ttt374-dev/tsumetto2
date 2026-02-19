@@ -7,6 +7,7 @@ import { Learning } from "@/domain/learning/Learning"
 import BoardPanel from "./BoardPanel"
 import { formatLearning } from "@/ui/library/components/LibraryListItem"
 import type { ProblemId } from "@/domain/problem/Problem"
+import { useReplayController } from "../hooks/useReplayController"
 
 export type PlayerViewNavigationHandlers = {
     next: () => void,
@@ -24,22 +25,24 @@ export type PlayerViewHandlers = {
     setShowMoves: (flag: boolean) => void,
 }
 ///////////////////////////////////////////////////////////////
-function PlayerView({learning, position, moves, showMoves = true, tags, currentPlyIndex, handlers}: {
+function PlayerView({learning, position, moves, showMoves = true, tags, handlers}: {
     position: Position,
     moves: Move[],
-    currentPlyIndex: number,    
+    //currentPlyIndex: number,    
     handlers: PlayerViewHandlers,    
     showMoves: boolean,
     learning?: Learning,
     tags: string[],
 }){
+    const replay = useReplayController(position, moves)
+
     return (
 
         <Stack sx={{ minHeight: 0, height: "100%" }} spacing={1} >
             { /* --- 盤面 ---*/}
-            <BoardPanel position={position}
-                onAdvancePly={handlers.ply.advance}
-                onRetreatPly={handlers.ply.retreat}
+            <BoardPanel position={replay.position}
+                onAdvancePly={replay.advancePly}
+                onRetreatPly={replay.retreatPly}
                 onNextProblem={handlers.navigation?.next}
                 onPrevProblem={handlers.navigation?.prev} />
             <Stack direction="row" sx={{ minHeight: 0, flexGrow: 1, p: 1 }} spacing={1}>
@@ -47,14 +50,13 @@ function PlayerView({learning, position, moves, showMoves = true, tags, currentP
 
                 <MovesPanel>
                     {showMoves ?
-                        <MovesView moves={moves} currentPlyIndex={currentPlyIndex} onMoveToPly={handlers.ply.moveTo} />
+                        <MovesView moves={moves} currentPlyIndex={replay.plyIndex} onMoveToPly={replay.moveToPly} />
                         : (<Stack>
                             <Button onClick={() => handlers.setShowMoves(true)} >
                                 手筋を表示
                             </Button>
                             <Box>{moves.length}手詰め</Box>
                             <Box>{ tags.join(",")}</Box>
-
                         </Stack>)
                     }
                 </MovesPanel>
@@ -62,12 +64,10 @@ function PlayerView({learning, position, moves, showMoves = true, tags, currentP
                 { /* --- コントロールパネル ---*/}
                 <Box flex={0.75} sx={{ border: 1, borderColor: "divider" }}>
                     <PlyControlPanel
-                        currentPlyIndex={currentPlyIndex}
+                        currentPlyIndex={replay.plyIndex}
                         maxPlyIndex={moves.length}
-                        onPrevPly={handlers.ply.retreat}
-                        onNextPly={() => {
-                            handlers.ply.advance()
-                        }}
+                        onPrevPly={replay.retreatPly}
+                        onNextPly={replay.advancePly}
                     />
                     {learning && formatLearning(learning)}
                 </Box>

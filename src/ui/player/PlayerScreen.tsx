@@ -43,11 +43,10 @@ export function PlayerScreen({ problem, title, onAnswer, navigationHandlers}: {
         >
             <PlayerView
                 showMoves={vm.showMoves}
-                moves={vm.moves}
-                position={vm.replayPosition}
-                tags={vm.tags}
+                moves={problem.kifData.moves}
+                position={problem.kifData.initialPosition}
+                tags={problem.tags}
                 handlers={vm.handlers}
-                currentPlyIndex={vm.currentPlyIndex}
             />
             {vm.presenter.dialogs.detail.dialogElement}
             {vm.presenter.dialogs.list.dialogElement}
