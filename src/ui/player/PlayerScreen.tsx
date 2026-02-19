@@ -10,12 +10,16 @@ import { StarToggleButton } from "../common/components/StarToggleButton";
 import { useStarToggleButton } from "@/application/useStarToggleButton";
 import { usePlayerPresenter } from "./hooks/usePlayerPresenter";
 import { useLearningEventStore } from "@/application/store/useLearningEventStore";
+import { useTimer } from './hooks/useTimer';
+import { useEffect } from 'react';
 
 export type ProblemNavigation = {
     next: () => void,
     prev: () => void,
     moveTo: (problemId: ProblemId) => void,
 }
+
+
 //////////////////////////////////////////////////////////////
 export function PlayerScreen({ problem, title, onAnswer, problemNavigation}: {
     problem: Problem
@@ -25,12 +29,19 @@ export function PlayerScreen({ problem, title, onAnswer, problemNavigation}: {
  }) {    
     const starController = useStarToggleButton(problem.id)    
     const presenter = usePlayerPresenter(problem, problemNavigation.next)
-
+    
     const review = useLearningEventStore(s=>s.review)
-    const handleAnswer = async (res: SolvedResult, sec?: number) => {
+    const handleAnswer = async (res: SolvedResult) => {
+        const sec = timer.seconds
         await review(problem.id, res, sec)  // 学習データを記録
         onAnswer?.(problem.id, res, sec)  // ミッションを進める
     }
+    const timer = useTimer()
+
+    useEffect(() => {
+        timer.reset()
+        timer.start()        
+    }, [problem.id])
     
     return (
         <AppShell
@@ -59,6 +70,7 @@ export function PlayerScreen({ problem, title, onAnswer, problemNavigation}: {
             <PlayerView
                 problem={problem}                
                 problemNavigation={problemNavigation}
+                timer={timer}
             />
             {presenter.dialogs.detail.dialogElement}
             {presenter.rightActionsDrawer.drawerElement}
