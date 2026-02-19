@@ -8,51 +8,46 @@ import BoardPanel from "./BoardPanel"
 import { formatLearning } from "@/ui/library/components/LibraryListItem"
 import type { ProblemId } from "@/domain/problem/Problem"
 import { useReplayController } from "../hooks/useReplayController"
+import { useShowMovesController } from "../hooks/usePlayerViewModel"
 
-export type PlayerViewNavigationHandlers = {
+export type ProblemNavigation = {
     next: () => void,
     prev: () => void,
     moveTo: (problemId: ProblemId) => void,
 }
 
 export type PlayerViewHandlers = {
-    ply: {
-        advance: () => void,
-        retreat: () => void,
-        moveTo: (index: number) => void,        
-    },
-    navigation: PlayerViewNavigationHandlers,
-    setShowMoves: (flag: boolean) => void,
+    navigation: ProblemNavigation,
+    
 }
 ///////////////////////////////////////////////////////////////
-function PlayerView({learning, position, moves, showMoves = true, tags, handlers}: {
+function PlayerView({learning, position, moves, tags, problemNavigation}: {
     position: Position,
     moves: Move[],
-    //currentPlyIndex: number,    
-    handlers: PlayerViewHandlers,    
-    showMoves: boolean,
+    //handlers: PlayerViewHandlers,    
+    problemNavigation: ProblemNavigation,
     learning?: Learning,
     tags: string[],
 }){
     const replay = useReplayController(position, moves)
+    const showMovesController = useShowMovesController(replay.plyIndex)
 
     return (
-
         <Stack sx={{ minHeight: 0, height: "100%" }} spacing={1} >
             { /* --- 盤面 ---*/}
             <BoardPanel position={replay.position}
                 onAdvancePly={replay.advancePly}
                 onRetreatPly={replay.retreatPly}
-                onNextProblem={handlers.navigation?.next}
-                onPrevProblem={handlers.navigation?.prev} />
+                onNextProblem={problemNavigation.next}
+                onPrevProblem={problemNavigation.prev} />
             <Stack direction="row" sx={{ minHeight: 0, flexGrow: 1, p: 1 }} spacing={1}>
                 { /* --- 手筋 ---*/}
 
                 <MovesPanel>
-                    {showMoves ?
+                    {showMovesController.showMoves ?
                         <MovesView moves={moves} currentPlyIndex={replay.plyIndex} onMoveToPly={replay.moveToPly} />
                         : (<Stack>
-                            <Button onClick={() => handlers.setShowMoves(true)} >
+                            <Button onClick={() => showMovesController.setShowMoves(true)} >
                                 手筋を表示
                             </Button>
                             <Box>{moves.length}手詰め</Box>

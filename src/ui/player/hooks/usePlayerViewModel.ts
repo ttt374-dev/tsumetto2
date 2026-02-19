@@ -6,10 +6,10 @@ import { useProblemStore } from "@/application/store/useProblemStore"
 import { useLearningEventStore } from "@/application/store/useLearningEventStore"
 import { usePlayerPresenter } from "./usePlayerPresenter"
 import type { Problem, ProblemId } from "@/domain/problem/Problem"
-import type { PlayerViewNavigationHandlers } from "../components/PlayerView"
+import type { ProblemNavigation } from "../components/PlayerView"
 import type { SolvedResult } from "@/domain/learning/Learning"
 
-export function useShowMovesController(problemId: ProblemId | undefined, plyIndex: number) {
+export function useShowMovesController(plyIndex: number) {
     const [showMoves, setShowMoves] = useState(false)
     useEffect(() => {
         if (plyIndex > 0) {
@@ -18,23 +18,11 @@ export function useShowMovesController(problemId: ProblemId | undefined, plyInde
             setShowMoves(false)
         }
     }, [plyIndex])
-    useEffect(() => {
-        setShowMoves(false)
-    }, [problemId])
+    
     return { showMoves, setShowMoves }
 }
 ///////////////////////////////////////////
-export function usePlayerViewModel(problem: Problem, navigationHandlers: PlayerViewNavigationHandlers) {
-    // star
-    
-
-    // replay / moves
-    const { initialPosition, moves } = problem.kifData
-    const replay = useReplayController(initialPosition, moves)
-
-    // show moves
-    const showMovesController = useShowMovesController(problem.id, replay.plyIndex)
-
+export function usePlayerViewModel(problem: Problem, navigationHandlers: ProblemNavigation) {    
     // presenter
     const presenter = usePlayerPresenter(problem, navigationHandlers)
 
@@ -46,21 +34,13 @@ export function usePlayerViewModel(problem: Problem, navigationHandlers: PlayerV
 
     // handlers 集約
     const handlers = useMemo(() => ({
-        ply: {
-            advance: replay.advancePly,
-            retreat: replay.retreatPly,
-            moveTo: replay.moveToPly,
-        },
         navigation: navigationHandlers,
-        setShowMoves: showMovesController.setShowMoves,
-    }), [replay, navigationHandlers, showMovesController])
+        
+    }), [navigationHandlers])
 
     return {
-        moves,
-        replayPosition: replay.position,
-        currentPlyIndex: replay.plyIndex,
-        tags: problem.tags,
-        showMoves: showMovesController.showMoves,
+
+        //showMoves: showMovesController.showMoves,
         //starController,
         presenter,
         handlers,

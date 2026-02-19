@@ -1,14 +1,14 @@
 import type { Problem, ProblemId } from "@/domain/problem/Problem";
 import { useProblemDetailDialog } from "../../common/problemDetail/useProblemDetailDialog";
 import { useListDialog } from "../../mission/ListDialog";
-import type { PlayerViewNavigationHandlers } from "../components/PlayerView";
+import type { ProblemNavigation } from "../components/PlayerView";
 import { useRightActionsDrawer } from "../components/RightActionsDrawer";
 
 
 export function usePlayerPresenter(
     p: Problem,
     //onUpdateProblem: (p: Problem) => void,
-    navigationHandlers: PlayerViewNavigationHandlers,
+    navigationHandlers: ProblemNavigation,
 ) {
     const detailDialog = useProblemDetailDialog(
         () => { navigationHandlers.next() }
