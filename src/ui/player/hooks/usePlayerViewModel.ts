@@ -26,7 +26,7 @@ export function useShowMovesController(problemId: ProblemId | undefined, plyInde
 ///////////////////////////////////////////
 export function usePlayerViewModel(problem: Problem, navigationHandlers: PlayerViewNavigationHandlers) {
     // star
-    const starController = useStarToggleButton(problem.id)
+    
 
     // replay / moves
     const { initialPosition, moves } = problem.kifData
@@ -61,7 +61,7 @@ export function usePlayerViewModel(problem: Problem, navigationHandlers: PlayerV
         currentPlyIndex: replay.plyIndex,
         tags: problem.tags,
         showMoves: showMovesController.showMoves,
-        starController,
+        //starController,
         presenter,
         handlers,
         answerCurrent,

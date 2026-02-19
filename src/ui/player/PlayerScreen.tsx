@@ -8,6 +8,7 @@ import type { SolvedResult } from "@/domain/learning/Learning";
 import { AppShell } from "../common/layout/AppShell";
 import { StarToggleButton } from "../common/components/StarToggleButton";
 import { usePlayerViewModel } from "./hooks/usePlayerViewModel";
+import { useStarToggleButton } from "@/application/useStarToggleButton";
 
 //////////////////////////////////////////////////////////////
 export function PlayerScreen({ problem, title, onAnswer, navigationHandlers}: {
@@ -22,7 +23,7 @@ export function PlayerScreen({ problem, title, onAnswer, navigationHandlers}: {
         await vm.answerCurrent(res, sec)
         onAnswer?.(problem.id, res, sec)
     }
-
+    const starController = useStarToggleButton(problem.id)
     return (
         <AppShell
             header={title}
@@ -30,8 +31,8 @@ export function PlayerScreen({ problem, title, onAnswer, navigationHandlers}: {
             rightActions={
                 <>
                     <StarToggleButton
-                        starred={vm.starController.starred}
-                        onToggle={vm.starController.toggleStar}
+                        starred={starController.starred}
+                        onToggle={starController.toggleStar}
                         sx={{ color: "white" }}
                     />
                     <IconButton onClick={vm.presenter.rightActionsDrawer.openDialog}>
