@@ -1,69 +1,63 @@
 
-import { Box, IconButton, List, Stack } from "@mui/material"
+import { Box, Button, IconButton, List, Stack, ToggleButton } from "@mui/material"
 import DeleteIcon from '@mui/icons-material/Delete';
+import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import EditIcon from '@mui/icons-material/Edit';
+import SelectAllIcon from "@mui/icons-material/SelectAll";
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import SearchIcon from "@mui/icons-material/Search";
 
 import type { useLibraryQueryContext } from "../../App/providers/QueryProvider"
 import LibrarySortControl from "./LibrarySortControl"
 import { LibraryListItem } from "./LibraryListItem"
 import type { Problem, ProblemId } from "@/domain/problem/Problem"
 import { LibraryCheckboxControl } from "./LibraryCheckboxControl";
+import type { LibraryActionMode } from "../LibraryScreen";
+
+export type LibraryItemActions = {
+    editTags: (ids: ProblemId[]) => void
+    deleteChecked: (confirmFn: () => boolean) => void
+}
 
 type LibraryViewProps = {
     ids: ProblemId[]
     query: ReturnType<typeof useLibraryQueryContext>
-    itemActions: {
-        editTags: (ids: ProblemId[]) => void
-        deleteChecked: (confirmFn: () => boolean) => void
-    },
+    actionMode: LibraryActionMode
+    changeActionMode: (mode: LibraryActionMode) => void
+    itemActions: LibraryItemActions,
 
     selection: {
         checkedIds: ProblemId[]
         isChecked: (id: ProblemId) => boolean
-        isCheckboxMode: boolean
 
         selectAll: () => void
         clearAll: () => void
         toggleChecked: (id: ProblemId) => void
-        toggleCheckboxMode: () => void
     }
     onItemClick: (p: Problem) => void
 }
 
 /////////////////////////////////////////
-export function LibraryView({ids, query,
-    itemActions, onItemClick, selection}: LibraryViewProps) {
-
-    const confirmFn = () => window.confirm("Are you sure to delete selected?")
+export function LibraryView({ ids, query, actionMode, changeActionMode,
+    itemActions, onItemClick, selection }: LibraryViewProps) {
 
     return (
         <>
             <Stack direction="row">
-
-                {selection.isCheckboxMode &&
-                    <Stack direction="row">
-                        <LibraryCheckboxControl
-                            onCheckAll={selection.selectAll}
-                            onUncheckAll={selection.clearAll}
-                            onToggleCheckboxMode={selection.toggleCheckboxMode}
-                        />
-                        { /* 削除ボタン */}
-                        <IconButton
-                            onClick={() =>
-                                itemActions.deleteChecked(confirmFn)}
-                            disabled={selection.checkedIds.length === 0}
-                        >
-                            <DeleteIcon />
-                        </IconButton>
-                        { /* タグ編集 */}
-                        <IconButton
-                            onClick={() => itemActions.editTags(Array.from(selection.checkedIds))}>
-                            <EditIcon />
-                        </IconButton>
-                    </Stack>
-                }
+                { /* チェックボックス・選択操作 */ }
+                <LibraryCheckboxControl
+                    onCheckAll={selection.selectAll}
+                    onUncheckAll={selection.clearAll}
+                    actionMode={actionMode}
+                    checkedIds={selection.checkedIds}
+                    onChangeActionMode={changeActionMode}
+                    itemActions={itemActions}
+                />
 
                 <Box sx={{ flexGrow: 1 }} />
+                <IconButton>
+                    <SearchIcon />
+                </IconButton>
 
                 {/* ソート */}
                 <LibrarySortControl
@@ -78,12 +72,11 @@ export function LibraryView({ids, query,
                     {ids.map(id => (
                         <LibraryListItem
                             key={id}
-                            //problem={p}
                             id={id}
-                            showCheckbox={selection.isCheckboxMode}
+                            showCheckbox={actionMode === "selection"}
                             onItemClick={onItemClick}
                             isChecked={selection.isChecked(id)}
-                            onToggleCheckboxMode={selection.toggleCheckboxMode}
+                            onToggleCheckboxMode={alert}
                             onToggleChecked={selection.toggleChecked}
                         />
                     ))}

@@ -13,6 +13,7 @@ import type { LearningRecord } from "@/domain/learning/Learning"
 import type { useQuery } from "@/application/useQuery"
 import { useNavigate } from "react-router-dom"
 import { routes } from "@/ui/App/useAppNavigation"
+import type { LibraryActionMode } from "../LibraryScreen"
 
 function useLibraryListVM(problems: Problem[], learningRecords: LearningRecord, query: ReturnType<typeof useQuery>) {
     const libraryItems = useMemo(() =>
@@ -48,25 +49,26 @@ function useLibrarySelectionVM(ids: ProblemId[]){
     // -----------------------------
     // 選択管理
     // -----------------------------
-    const [checkboxMode, setCheckboxMode] = useState(false)
+    //const [checkboxMode, setCheckboxMode] = useState(false)
     const checkboxControl = useLibraryCheckbox(ids)
     const selection = useMemo(() => ({
         checkedIds: checkboxControl.checkedIds,
         isChecked: checkboxControl.isChecked,
-        isCheckboxMode: checkboxMode
-    }), [checkboxControl.checkedIds, checkboxControl.isChecked, checkboxMode])
+        //isCheckboxMode: checkboxMode
+    }), [checkboxControl.checkedIds, checkboxControl.isChecked])
 
     const actions = useMemo(()=>({
         selectAll: checkboxControl.checkAll,
         clearAll: checkboxControl.uncheckAll,
         toggleChecked: checkboxControl.toggleChecked,
-        toggleCheckboxMode: () => setCheckboxMode(prev => !prev)
+        //toggleCheckboxMode: () => setCheckboxMode(prev => !prev)
     }), [checkboxControl.checkAll, checkboxControl.uncheckAll, checkboxControl.toggleChecked])
+    /*
     // checkboxMode 切替時にチェック解除
     useEffect(() => {
         if (!checkboxMode) checkboxControl.uncheckAll()
-    }, [checkboxMode, checkboxControl.uncheckAll])
-
+    }, [actionMode, checkboxControl.uncheckAll])
+*/
     return  {...selection, ...actions}
 }
 function useLibraryCommands(){
@@ -80,6 +82,7 @@ function useLibraryCommands(){
 export function useLibraryViewModel() {
     const query = useLibraryQueryContext()
     const learningRecords = useLearningRecordStore(s => s.records)
+    const [actionMode, setActionMode] = useState<LibraryActionMode>("detail")
     const toast = useToast()
 
     const { problems, reload, deleteProblems } = useLibraryCommands()
@@ -87,6 +90,16 @@ export function useLibraryViewModel() {
     
     const selection = useLibrarySelectionVM(ids)
     const dialogs = useLibraryDialogVM(selection.checkedIds, reload)
+    // アクションモード
+    const changeActionMode = (mode: LibraryActionMode) => {
+        setActionMode(mode)
+        selection.clearAll()
+    }
+    /*
+    useEffect(()=>{
+        selection.clearAll()
+    }, [actionMode])
+}*/
     // -----------------------------
     // アイテムアクション
     // -----------------------------
@@ -103,18 +116,29 @@ export function useLibraryViewModel() {
     // -----------------------------
     // アイテムクリック
     // -----------------------------
+    const navigate = useNavigate()
     const onItemClick = useCallback((p: Problem) => {
-        if (selection.isCheckboxMode) {
-            selection.toggleChecked(p.id)
-        } else {
-            dialogs.detail.openDialog(p.id)
+        
+        switch(actionMode){
+            case "selection":
+                selection.toggleChecked(p.id)
+                break;
+            case "detail":
+                dialogs.detail.openDialog(p.id)    
+                break
+            case "view":
+                navigate(routes.problemView(p.id))
+
         }
-    }, [selection.isCheckboxMode, selection.toggleChecked, dialogs.detail])
+        
+    }, [actionMode, selection.toggleChecked, dialogs.detail])
     
+    /////////////////////////////////////////
     return {
         ids,
         libraryItems,
         query,
+        mode: actionMode, changeActionMode,
         selection,        
         itemActions,
         onItemClick,

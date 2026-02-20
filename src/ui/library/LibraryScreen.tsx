@@ -4,6 +4,10 @@ import { IconButton } from "@mui/material";
 import { AppShell } from "../common/layout/AppShell";
 import { LibraryView } from "./components/LibraryView";
 import { useLibraryViewModel } from "./hooks/useLibraryViewModel";
+import { useState } from "react";
+
+
+export type LibraryActionMode = "selection" | "view" | "detail"
 
 //////////////////////////////////////////////////
 
@@ -17,6 +21,8 @@ export function LibraryScreen() {
             <LibraryView
                 ids={vm.ids}
                 query={vm.query}
+                actionMode={vm.mode}
+                changeActionMode={vm.changeActionMode}
                 itemActions={vm.itemActions}
                 onItemClick={vm.onItemClick}
                 selection={vm.selection}

@@ -34,11 +34,6 @@ export const LibraryListItem = function LibraryListItem({ id, onItemClick,
         },
 
     })
-    const navigate = useNavigate()
-    const handleViewProblem = (e: React.MouseEvent<HTMLButtonElement>) => {
-        e.stopPropagation()
-        navigate(routes.problemView(problem.id))
-    }
     const starController = useStarToggleButton(id)
 
     //////////////////////////////////////////////////////////
@@ -75,9 +70,6 @@ export const LibraryListItem = function LibraryListItem({ id, onItemClick,
                                 <StarToggleButton starred={starController.starred}
                                     onToggle={starController.toggleStar} />
 
-                                <IconButton onClick={handleViewProblem}>
-                                    <VisibilityIcon />
-                                </IconButton>
                             </Stack>
                         </Stack>
                     }
