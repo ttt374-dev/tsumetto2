@@ -113,7 +113,9 @@ export function formatLearning(learning: Learning): string {
     const indays = inDays(learning.nextReviewedAt)
     const indaysString = indays >= 0 ? `${indays.toFixed(0)}d` : "due"
     //const indaysString = new Date(learning.nextReviewedAt).toLocaleString()
+    const accuracyString = `${(learning.accuracy * 100).toFixed(0)}%`
 
+    return `${accuracyString}(${learning.solvedCount}:${learning.failedCount})`
     return `${learning.solvedCount}:${learning.failedCount}=${(learning.accuracy * 100).toFixed(0)}%,
 ef${learning.easeFactor.toFixed(2)},
 ${indaysString}

@@ -32,7 +32,7 @@ export default function DecksScreen() {
                     {decks.map(deck => {
                         const stats = deckStats.get(deck.id);                            
                         return (
-                            <ListItem key={deck.id} disablePadding sx={{ borderBottom: 1, borderColor: "divider" }}
+                            <ListItem key={deck.id} disablePadding sx={{ borderBottom: "1px solid", borderColor: "divider" }}
                                 secondaryAction={
                                     <IconButton edge="end" onClick={() => navigate(routes.deckEdit(deck.id))}>
                                         <EditIcon />

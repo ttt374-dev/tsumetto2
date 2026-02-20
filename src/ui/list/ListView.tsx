@@ -1,5 +1,5 @@
 import type { Problem, ProblemId } from "@/domain/problem/Problem"
-import { List } from "@mui/material"
+import { Box, List } from "@mui/material"
 import { LibraryListItem } from "../library/components/LibraryListItem"
 
 
@@ -10,6 +10,7 @@ export function ListView({ ids, onSelectProblem, selectedProblemId }: {
 }) {
 
     return (
+        <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto" }}>
         <List>
             {ids.map(id => (
                 <LibraryListItem
@@ -23,5 +24,6 @@ export function ListView({ ids, onSelectProblem, selectedProblemId }: {
                 />
             ))}
         </List>
+        </Box>
     )
 }

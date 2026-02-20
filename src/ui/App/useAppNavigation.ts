@@ -17,6 +17,9 @@ export const routes = {
     missionPlay: "/mission/play",
     missionSummary: "/mission/summary",
 
+    // list
+    list: "/list",
+    
     // back
     back: -1
 

@@ -75,6 +75,7 @@ function PlayerView({problem, problemNavigation, timer}: {
 
     return (
         <Stack sx={{ minHeight: 0, height: "100%" }} spacing={1} >
+            
             { /* --- 盤面 ---*/}
             <BoardPanel position={replay.position}
                 onAdvancePly={replay.advancePly}
@@ -91,8 +92,10 @@ function PlayerView({problem, problemNavigation, timer}: {
                             <Button onClick={() => showMovesController.setShowMoves(true)} >
                                 手筋を表示
                             </Button>
-                            <Box>{moves.length}手詰め</Box>
-                            <Box>{problem.tags.join(",")}</Box>
+                            <Box>手数：{moves.length}手</Box>
+                            { problem.tags.length > 0 && 
+                            <Box>Tags:{problem.tags.join(",")}</Box>
+}
                         </Stack>)
                     }
                 </MovesPanel>

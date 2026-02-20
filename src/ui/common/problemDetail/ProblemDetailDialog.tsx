@@ -117,7 +117,7 @@ export default function ProblemDetailDialog({ open, problemId, onAfterDeleteProb
         onAfterDeleteProblem?.()
     }
     const handleLearningReset = () => {
-        resetLearning(() => window.confirm(""))
+        resetLearning(() => window.confirm("学習データをクリアしますか？"))
     }
 
     ///////////////////////////////////////////////////////
@@ -131,7 +131,7 @@ export default function ProblemDetailDialog({ open, problemId, onAfterDeleteProb
                 棋譜エントリの詳細
             </DialogTitle>
             <DialogContent>
-                <Stack>
+                <Stack spacing={1}>
                     <Stack direction="row" justifyContent="flex-end">
                         <StarToggleButton starred={starred}
                             onToggle={() => setStarred(prev => !prev)}
@@ -141,19 +141,20 @@ export default function ProblemDetailDialog({ open, problemId, onAfterDeleteProb
                         </IconButton>
                     </Stack>
                     {/* タイトル編集 */}
-                    <EditableText key={problem.id} initialText={title} onUpdateText={
-                        title => { setTitle(title) }} />
 
+                    <Paper sx={{ p: 1 }}>
+                        <EditableText key={problem.id} initialText={title} onUpdateText={
+                            title => { setTitle(title) }} />
+                    </Paper>
                     <Divider />
 
-                    <ProblemTagEditor
-                        value={tags}
-                        onChange={(tags) => {
-                            setTags(tags)
-                        }}
-                    />
+
                     <Paper sx={{ p: 1 }}>
                         <Stack>
+                            <Stack direction="row" justifyContent="space-between">
+                                <Box>UUID</Box>
+                                <Box>{problem.id}</Box>
+                            </Stack>
                             <Stack direction="row" justifyContent="space-between">
                                 <Box>追加日</Box>
                                 <Box>{new Date(problem.createdAt).toLocaleString()}</Box>
@@ -163,14 +164,23 @@ export default function ProblemDetailDialog({ open, problemId, onAfterDeleteProb
                                 <Box>{new Date(problem.updatedAt).toLocaleString()}</Box>
                             </Stack>
                         </Stack>
+                        <Box sx={{ mt: 2 }}>
+                            <ProblemTagEditor
+                                value={tags}
+                                onChange={(tags) => {
+                                    setTags(tags)
+                                }}
+                            />
+                        </Box>
                     </Paper>
+                    <Divider />
 
                     {learning &&
                         <Paper sx={{ p: 1 }}>
                             <Stack>
                                 <Stack direction="row" justifyContent="space-between">
-                                    <Box>正答・誤答・正答率</Box>
-                                    <Box>{learning.solvedCount}:{learning.failedCount}={(learning.accuracy * 100).toFixed(0)}%</Box>
+                                    <Box>正答率（正答：誤答）</Box>
+                                    <Box>{(learning.accuracy * 100).toFixed(0)}%({learning.solvedCount}:{learning.failedCount})</Box>
                                 </Stack>
 
 
@@ -191,34 +201,35 @@ export default function ProblemDetailDialog({ open, problemId, onAfterDeleteProb
                                     <Box>次回レビュー日</Box>
                                     <Box>{new Date(learning.nextReviewedAt).toLocaleString()}</Box>
                                 </Stack>
-                                
+
                                 <Stack direction="row" justifyContent="space-between">
                                     <Box>Ease Factor</Box>
                                     <Box>{learning.easeFactor.toFixed(2)}</Box>
                                 </Stack>
                             </Stack>
                             <Stack direction="row" justifyContent="flex-end">
-                                <Button onClick={handleLearningReset}>
+                                <Button onClick={handleLearningReset} variant='outlined'>
                                     学習データをリセット
                                 </Button>
                             </Stack>
                         </Paper>
                     }
+                    <TextField
+                        label="コメント"
+                        multiline
+                        minRows={3}
+                        fullWidth
+                        value={comment}
+                        onChange={(e) => setComment(e.target.value)}
+                    />
                 </Stack>
-                
-            <TextField
-                label="コメント"
-                multiline
-                minRows={3}
-                fullWidth
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-            />
+
+
             </DialogContent>
 
             <DialogActions>
-                <Button onClick={onClose}>キャンセル</Button>
-                <Button color="success" onClick={handleSave}>保存して戻る</Button>
+                <Button variant="outlined" onClick={onClose}>キャンセル</Button>
+                <Button variant="contained" color="success" onClick={handleSave}>保存して戻る</Button>
             </DialogActions>
         </Dialog>
     )

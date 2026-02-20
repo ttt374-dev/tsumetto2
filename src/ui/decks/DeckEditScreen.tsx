@@ -19,7 +19,10 @@ export function DeckEditScreen() {
 
     const navigate = useNavigate()
     const ListDialog = useListDialog(problemIds, (id) => navigate(routes.problemView(id)))
-    
+    const handleNavigateToList = () => {
+        //console.log("nav: ids", problemIds)
+        navigate(routes.list, { state: { ids: problemIds, title: `デッキ ${name}：問題リスト`}})
+    }
     return (
         <AppShell
             header={"Deck Edit"}
@@ -73,7 +76,7 @@ export function DeckEditScreen() {
                 /> 
             </Stack>
             
-            <Button onClick={ListDialog.openDialog} variant="outlined">
+            <Button onClick={handleNavigateToList} variant="outlined" sx={{m:1}}>
                 全{stats.problemCount}問、正答率 {(stats.accuracy * 100).toFixed(0)}%
             </Button>
             

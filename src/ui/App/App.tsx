@@ -18,6 +18,7 @@ import { RepositoryContext } from './providers/RepositoryProvider';
 import { LibraryQueryProvider } from './providers/QueryProvider';
 import { ToastProvider } from './providers/ToastProvider';
 import { useEffect } from 'react';
+import { ListScreen } from '../list/ListScreen';
 
 function App() {
     // シングルトンレポジトリの生成
@@ -57,11 +58,11 @@ function App() {
                             </Route>
 
                             <Route path="/decks" element={<DecksScreen />} />
-                            <Route path="/deck/:id" element={<DeckEditScreen />} />
-                            
+                            <Route path="/deck/:id" element={<DeckEditScreen />} />                            
 
                             <Route path="/library" element={<LibraryScreen />} />
                             <Route path="/view/:id" element={<ViewerScreen />} />
+                            <Route path="/list" element={<ListScreen />} />
 
                             <Route path="/" element={<Navigate to="/decks" />} />
                         </Routes>

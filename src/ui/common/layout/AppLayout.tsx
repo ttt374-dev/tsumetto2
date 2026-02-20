@@ -39,7 +39,7 @@ export function AppLayout({ header, footer, children, rightActions, fab, drawer,
             { drawer }            
 
             <div className={styles.main}>{children}</div>
-            {footer && <div className={styles.footer}>{footer}</div>}
+            <div className={styles.footer}>{footer}</div>
 
             {fab && (
                 <Box
