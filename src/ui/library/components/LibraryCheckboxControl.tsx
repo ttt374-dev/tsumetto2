@@ -5,10 +5,10 @@ import CloseIcon from "@mui/icons-material/Close";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-import { IconButton, Stack } from '@mui/material';
+import { IconButton, Stack, TextField } from '@mui/material';
 import type { ProblemId } from "@/domain/problem/Problem";
 import type { LibraryItemActions } from "./LibraryView";
-import type { LibraryActionMode } from "../hooks/createLibraryActionModeStore";
+import type { LibraryActionMode } from "../hooks/useLibraryViewModel";
 
 export function LibraryCheckboxControl({ onCheckAll, onUncheckAll,
     onChangeActionMode, actionMode, itemActions, checkedIds,
@@ -64,6 +64,7 @@ export function LibraryCheckboxControl({ onCheckAll, onUncheckAll,
                     </IconButton>
                 </>
             }
+
         </Stack>
 
     )

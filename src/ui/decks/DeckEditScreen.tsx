@@ -2,7 +2,7 @@ import { Box, Button, IconButton, Stack } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 import { AppLayout } from "../common/layout/AppLayout";
 import { EditableText } from "../common/components/EditableText";
-import { FilterControl } from "../common/components/FilterControl";
+import { FilterControl } from "./FilterControl";
 import LibrarySortControl from "../library/components/LibrarySortControl";
 import { useDeckEditViewModel } from "./hooks/useDeckEditScreenViewModel";
 import { useEffect } from "react";

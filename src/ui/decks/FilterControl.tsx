@@ -1,6 +1,6 @@
 import { Box, Button, Checkbox, FormControl, FormControlLabel, List, ListItem, Paper } from "@mui/material";
 import { type FilterState } from "@/domain/problem/query/filter";
-import { MateLengthCheckboxes } from "./MateLengthCheckbox";
+import { MateLengthCheckboxes } from "../common/components/MateLengthCheckbox";
 import { TagCheckboxFilterControl } from "./TagCheckboxFilterControl";
 
 
@@ -16,16 +16,16 @@ export function FilterControl({ filter, allTags, onToggleFilter, onSetFilter }: 
                 <FormControlLabel control={
                     <Checkbox checked={filter.unansweredOnly}
                         onChange={() => { onToggleFilter("unansweredOnly") }} />}
-                    label="未回答のみ" />
+                    label="未回答" />
 
                 <FormControlLabel control={
                     <Checkbox checked={filter.starredOnly}
                         onChange={() => { onToggleFilter("starredOnly") }} />}
-                    label="スターのみ" />
+                    label="スター" />
                 <FormControlLabel control={
                     <Checkbox checked={filter.dueForReviewOnly}
                         onChange={() => { onToggleFilter("dueForReviewOnly") }} />}
-                    label="レビュー対象のみ" />
+                    label="レビュー対象" />
             </Paper>
             <MateLengthCheckboxes
                 mateBuckets={filter.mateBuckets}

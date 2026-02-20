@@ -41,16 +41,17 @@ export const applyFilter = (
         // tags
         (problem, _) => 
             !filter.tags || filter.tags.length === 0 || 
-            filter.tags!.some(tag => problem.tags.includes(tag))
+            filter.tags!.some(tag => problem.tags.includes(tag)),
+
+        // 🔍 text filter
+        (problem, _) =>
+            !filter.text ||
+            filter.text.trim() === "" ||
+            problem.title.toLowerCase().includes(filter.text.toLowerCase()),
 
     ]
     return problems.filter(problem => 
         predicates.every(p => p(problem, learningRecords[problem.id])
     ))
-    /*
-    const list = createProblemWithLearningList(problems, learningRecords)
-    return list.filter(e =>
-        predicates.every(p => p(e.problem, e.learning))
-    ).map(e => e.problem)
-    */
+
 }

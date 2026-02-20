@@ -1,5 +1,5 @@
 
-import { Box, Button, IconButton, List, Stack, ToggleButton } from "@mui/material"
+import { Box, Button, IconButton, List, Stack, TextField, ToggleButton } from "@mui/material"
 import DeleteIcon from '@mui/icons-material/Delete';
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import EditIcon from '@mui/icons-material/Edit';
@@ -13,6 +13,7 @@ import { LibraryListItem } from "./LibraryListItem"
 import type { Problem, ProblemId } from "@/domain/problem/Problem"
 import { LibraryCheckboxControl } from "./LibraryCheckboxControl";
 import type { LibraryActionMode } from "../hooks/useLibraryViewModel";
+import { useEffect, useState } from "react";
 
 export type LibraryItemActions = {
     openTagEditDialog: (ids: ProblemId[]) => void
@@ -41,6 +42,15 @@ type LibraryViewProps = {
 export function LibraryView({ ids, query, actionMode, changeActionMode,
     itemActions, onItemClick, selection }: LibraryViewProps) {
 
+    const [showFilterText, setShowFilterText] = useState(false)
+    const [ filterText, setFilterText] = useState("")
+    useEffect(()=>{ query.setFilter({text: filterText})}, [filterText])
+    const handleToggleShowFilterText = () => { 
+        if (showFilterText) setFilterText("")
+        setShowFilterText(prev => !prev) 
+        
+    }
+
     return (
         <>
             <Stack direction="row">
@@ -55,10 +65,16 @@ export function LibraryView({ ids, query, actionMode, changeActionMode,
                 />
 
                 <Box sx={{ flexGrow: 1 }} />
-                <IconButton>
+
+
+                { /* 検索フィルター */}
+                { showFilterText && 
+                <TextField value={filterText} size="small"
+                  onChange={(e) => setFilterText(e.target.value)}/>
+                }
+                <IconButton onClick={handleToggleShowFilterText}>
                     <SearchIcon />
                 </IconButton>
-
                 {/* ソート */}
                 <LibrarySortControl
                     sort={query.sortState}
