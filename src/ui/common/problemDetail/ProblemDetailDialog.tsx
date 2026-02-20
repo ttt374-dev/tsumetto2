@@ -109,6 +109,7 @@ export default function ProblemDetailDialog({ open, problemId, onAfterDeleteProb
         resetLearning
     } = useProblemDetailDialogViewModel(problemId, open, onClose)
 
+    const [comment, setComment] = useState("")
     if (!problem) return <></>
 
     const handleDeleteClick = () => {
@@ -157,6 +158,10 @@ export default function ProblemDetailDialog({ open, problemId, onAfterDeleteProb
                                 <Box>追加日</Box>
                                 <Box>{new Date(problem.createdAt).toLocaleString()}</Box>
                             </Stack>
+                            <Stack direction="row" justifyContent="space-between">
+                                <Box>更新日</Box>
+                                <Box>{new Date(problem.updatedAt).toLocaleString()}</Box>
+                            </Stack>
                         </Stack>
                     </Paper>
 
@@ -200,6 +205,15 @@ export default function ProblemDetailDialog({ open, problemId, onAfterDeleteProb
                         </Paper>
                     }
                 </Stack>
+                
+            <TextField
+                label="コメント"
+                multiline
+                minRows={3}
+                fullWidth
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+            />
             </DialogContent>
 
             <DialogActions>

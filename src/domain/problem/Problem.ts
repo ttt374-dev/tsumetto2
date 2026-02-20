@@ -12,6 +12,7 @@ export type ProblemData = {
     updatedAt: number
     starred: boolean
     tags: string[]
+    comment: string,
 
     deletedAt?: number
 }
@@ -24,6 +25,7 @@ function createDefaultValues(): ProblemData {
         updatedAt: Date.now(),
         starred: false,
         tags: [],
+        comment: "",
 
         deletedAt: undefined
     }
@@ -41,7 +43,9 @@ export class Problem {
         readonly updatedAt: number,
         readonly starred: boolean,
         readonly tags: Tags,
+        readonly comment: string,
         readonly deletedAt?: number,
+        
     ) { }
 
     // 生成時
@@ -59,13 +63,15 @@ export class Problem {
             updatedAt: this.updatedAt,
             starred: this.starred,
             tags: [...this.tags],
+            comment: this.comment,
+
             deletedAt: this.deletedAt
         }
     }
 
     static fromDTO(dto: ProblemDTO): Problem {
         return new Problem(dto.id, dto.title, KifData.fromDTO(dto.kifData),
-            dto.createdAt, dto.updatedAt, dto.starred, dto.tags, dto.deletedAt)
+            dto.createdAt, dto.updatedAt, dto.starred, dto.tags, dto.comment, dto.deletedAt)
     }
     static createFromText(text: string, title: string): Problem | null{
         const r = parseKif(text)
