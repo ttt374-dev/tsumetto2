@@ -71,6 +71,11 @@ export const LibraryListItem = function LibraryListItem({ id, onItemClick,
                             </Stack>
                         </Stack>
                     }
+                    slotProps={{
+                        secondary: {
+                            component: "div",
+                        },
+                    }}
                     secondary={
                         <>
                             {/* 二行目: タグ・追加日 */}
