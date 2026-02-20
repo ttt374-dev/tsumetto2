@@ -4,12 +4,16 @@ import { useProblemStore } from "@/application/store/useProblemStore"
 import { useLearningRecordStore } from "@/application/useLearningRecordStore"
 import { useQuery } from "@/application/useQuery"
 import { createQuerySnapshot, type Deck } from "@/domain/deck/Deck"
+import { Learning } from "@/domain/learning/Learning"
+import type { ProblemId } from "@/domain/problem/Problem"
 import { ProblemStats } from "@/domain/problem/ProblemStats"
+import { applyQuery } from "@/domain/problem/query/applyQuery"
 import type { QueryContextValue } from "@/ui/App/providers/QueryProvider"
 import { useToast } from "@/ui/App/providers/ToastProvider"
 import { routes } from "@/ui/App/useAppNavigation"
 import { useCallback, useEffect, useMemo } from "react"
 import { useNavigate, useParams } from "react-router-dom"
+import { DeckEditScreen } from "../DeckEditScreen"
 
 
 function useDeckEditorInitializer(id: string | undefined) {
@@ -29,7 +33,22 @@ function useDeckEditorInitializer(id: string | undefined) {
         return () => reset()
     }, [id, decks])
 }
-function useDeckEditorStats(draft: Deck | null, query: QueryContextValue) {
+function useDeckEditorList(query: QueryContextValue){
+    const problems = useProblemStore(s => s.activeProblems)
+    const learningRecords = useLearningRecordStore(s => s.records)
+
+    const activeProblems = useMemo(() =>
+        applyQuery(problems, learningRecords, query.sortState, query.filterState),
+        [problems, learningRecords, query])
+    const ids = activeProblems.map(p => p.id)
+    return { ids, activeProblems, learningRecords}
+}
+
+function useDeckEditorStats(query: QueryContextValue) {
+    //if (!draft) return { problemCount: 0, accuracy: 0 }
+    //const { ids, learningRecords} = useDeckEditorList(query)
+
+    /*
     const problems = useProblemStore(s => s.activeProblems)
     const records = useLearningRecordStore(s => s.records)
 
@@ -41,6 +60,7 @@ function useDeckEditorStats(draft: Deck | null, query: QueryContextValue) {
             query.filterState
         )
     }, [draft, problems, records, query.filterState])
+    */
 }
 function useDeckEditorActions(id: string | undefined, query: QueryContextValue) {
     const draft = useDeckEditorStore(s => s.draft)
@@ -105,9 +125,11 @@ export function useDeckEditViewModel() {
     }, [draft?.id]) // ← 重要：idで依存
 
     // --------------------------
-    // Stats
+    // List, Stats
     // --------------------------
-    const stats = useDeckEditorStats(draft, query)
+    const { ids, learningRecords} = useDeckEditorList(query)
+    const stats =  useMemo(()=> ProblemStats.create(ids, learningRecords),
+        [ids, learningRecords])
 
     // --------------------------
     // 保存・削除
@@ -117,12 +139,14 @@ export function useDeckEditViewModel() {
     return {
         id,
         deck: draft,
-        name: draft?.name ?? "",
-        setName,
+        name: draft?.name ?? "",        
         allTags,
         query,
+        ids, 
         stats,
         isNew: id === "new",
+
+        setName,
         handleSaveAndExit: save,
         handleDeleteDeck: remove,
     }

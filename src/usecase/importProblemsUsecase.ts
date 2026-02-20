@@ -75,6 +75,7 @@ export function useImportProblemsUsecase(problemRepo: ProblemRepository) {
             //console.log("import tags", options)
             const newProblem = Problem.createFromText(text, title)?.setTags(options.tags)
 
+            console.log("import problem", newProblem)
             if (!newProblem) { return { status: "failed", message: "parse error"}}
             await problemRepo.add(newProblem)
             console.log("import file", newProblem)

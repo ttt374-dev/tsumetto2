@@ -9,6 +9,7 @@ export type ProblemData = {
     title: string
     kifData: KifDataDTO
     createdAt: number
+    updatedAt: number
     starred: boolean
     tags: string[]
 
@@ -20,6 +21,7 @@ function createDefaultValues(): ProblemData {
         title: "untitled",
         kifData: KifData.create().toDTO(),
         createdAt: Date.now(),
+        updatedAt: Date.now(),
         starred: false,
         tags: [],
 
@@ -36,6 +38,7 @@ export class Problem {
         readonly title: string,
         readonly kifData: KifData,
         readonly createdAt: number,
+        readonly updatedAt: number,
         readonly starred: boolean,
         readonly tags: Tags,
         readonly deletedAt?: number,
@@ -53,6 +56,7 @@ export class Problem {
             title: this.title,
             kifData: this.kifData.toDTO(),
             createdAt: this.createdAt,
+            updatedAt: this.updatedAt,
             starred: this.starred,
             tags: [...this.tags],
             deletedAt: this.deletedAt
@@ -61,12 +65,28 @@ export class Problem {
 
     static fromDTO(dto: ProblemDTO): Problem {
         return new Problem(dto.id, dto.title, KifData.fromDTO(dto.kifData),
-            dto.createdAt, dto.starred, dto.tags, dto.deletedAt)
+            dto.createdAt, dto.updatedAt, dto.starred, dto.tags, dto.deletedAt)
     }
     static createFromText(text: string, title: string): Problem | null{
         const r = parseKif(text)
-        if (!r.ok) return null
+        //console.log("carete from text", r, text)
+        if (!r.ok) {
+            console.error("parse error", r.error)
+            return null
+        }
         return this.create({title: title, kifData: r.value.toDTO()})
+    }
+    ////
+    touch(): Problem {
+        return Problem.fromDTO({
+            ...this.toDTO(),
+            updatedAt: Date.now(),
+        })
+    }
+    withUpdated(updater: (p: Problem) => Problem): Problem {
+        const next = updater(this)
+        if (next === this) return this
+        return next.touch()
     }
     //////
     toggleStar(): Problem {

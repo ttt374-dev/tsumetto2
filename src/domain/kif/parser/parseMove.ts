@@ -36,6 +36,9 @@ export function parseMoveLine(line: string, prevSquare?: Square): ParseMoveResul
         return { ok: true, value: { kind: "skip", reason: "comment-out" } }
     }
 
+    if (line.includes("投了") || line.includes("勝ち")) return { ok: true, value: { kind: "skip", reason: "resign"}}
+    
+
     // ① thinkingTime（行末）
     const timeMatch = trimmed.match(/\s+\(([^)]*)\)$/)
     //const thinkingTime = timeMatch?.[1]
@@ -46,13 +49,9 @@ export function parseMoveLine(line: string, prevSquare?: Square): ParseMoveResul
 
     // ② plyIndex（先頭）
     const plyMatch = withoutTime.match(/^(\d+)\s+(.*)$/)    
-    if (!plyMatch) return { ok: false, error: { code: "invalid-move-body", cause: line}}
-
-    //const plyIndex = Number(plyMatch[1])
+    if (!plyMatch) return { ok: true, value: { kind: "skip", reason: "resign"}} // TODO
     const rawText = plyMatch[2]
-
-    //console.log("pasre moveline", rawText)
-    if (rawText.startsWith("投了")) return { ok: true, value: { kind: "skip", reason: "resign"}}
+    
     if (rawText.includes("打")) {
         return parseDropMove(rawText)
     } else {

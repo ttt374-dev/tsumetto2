@@ -15,7 +15,7 @@ import { useNavigate } from "react-router-dom"
 import { routes } from "@/ui/App/useAppNavigation"
 
 
-export type LibraryActionMode = "selection" | "view" | "detail"
+export type LibraryActionMode = "selection" | "view" 
 
 function useLibraryListVM(problems: Problem[], learningRecords: LearningRecord, query: ReturnType<typeof useQuery>) {
     const libraryItems = useMemo(() =>
@@ -84,7 +84,7 @@ function useLibraryCommands(){
 export function useLibraryViewModel() {
     const query = useLibraryQueryContext()
     const learningRecords = useLearningRecordStore(s => s.records)
-    const [actionMode, setActionMode] = useState<LibraryActionMode>("detail")
+    const [actionMode, setActionMode] = useState<LibraryActionMode>("view")
     const toast = useToast()
 
     const { problems, reload, deleteProblems } = useLibraryCommands()
@@ -125,9 +125,9 @@ export function useLibraryViewModel() {
             case "selection":
                 selection.toggleChecked(p.id)
                 break;
-            case "detail":
+            /*case "detail":
                 dialogs.detail.openDialog(p.id)    
-                break
+                break*/
             case "view":
                 navigate(routes.problemView(p.id))
 

@@ -13,6 +13,7 @@ import { usePlayerPresenter } from "./hooks/usePlayerPresenter";
 import { useLearningEventStore } from "@/application/store/useLearningEventStore";
 import { useTimer } from './hooks/useTimer';
 import { useEffect } from 'react';
+import { PlayerRightActions } from "./components/PlayerRIghtActions";
 
 export type ProblemNavigation = {
     next: () => void,
@@ -27,8 +28,7 @@ export function PlayerScreen({ problem, title, onAnswer, problemNavigation}: {
     title: React.ReactNode
     onAnswer?: (id: ProblemId, res: SolvedResult, sec?: number) => void
     problemNavigation: ProblemNavigation
- }) {    
-    const starController = useStarToggleButton(problem.id)    
+ }) {     
     const presenter = usePlayerPresenter(problem, problemNavigation.next)
     
     const review = useLearningEventStore(s=>s.review)
@@ -36,6 +36,9 @@ export function PlayerScreen({ problem, title, onAnswer, problemNavigation}: {
         const sec = timer.seconds
         await review(problem.id, res, sec)  // 学習データを記録
         onAnswer?.(problem.id, res, sec)  // ミッションを進める
+    }
+    const handleOpenDetailDialog = () => {
+        presenter.dialogs.detail.openDialog(problem.id)
     }
     const timer = useTimer()
 
@@ -48,25 +51,9 @@ export function PlayerScreen({ problem, title, onAnswer, problemNavigation}: {
         <AppShell
             header={title}
             footer={onAnswer && <PlayerAnswerActions onAnswerClick={handleAnswer} />}
-            rightActions={
-                <>
-                    <StarToggleButton
-                        starred={starController.starred}
-                        onToggle={starController.toggleStar}
-                        sx={{ color: "white" }}
-                    />
-                    <IconButton
-                     sx={{ color: "white" }}
-                     onClick={()=>presenter.dialogs.detail.openDialog(problem.id)}>
-                        <EditIcon/>
-                    </IconButton>
-                    { /* 
-                    <IconButton onClick={presenter.rightActionsDrawer.openDialog}>
-                        <MoreVertIcon sx={{ color: "white" }} />
-                    </IconButton>
-                    */ }
-                </>
-            }
+            rightActions={<PlayerRightActions
+                    problemId={problem.id} 
+                    onOpenDetailDialog={handleOpenDetailDialog}/>}
         >
             <PlayerView
                 problem={problem}                

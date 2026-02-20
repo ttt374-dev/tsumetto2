@@ -3,10 +3,10 @@ import { List } from "@mui/material"
 import { LibraryListItem } from "../library/components/LibraryListItem"
 
 
-export function ListView({ ids, onSelectProblem, currentProblemId }: {
+export function ListView({ ids, onSelectProblem, selectedProblemId }: {
     ids: ProblemId[],
     onSelectProblem?: (id: ProblemId) => void,
-    currentProblemId?: ProblemId
+    selectedProblemId?: ProblemId
 }) {
 
     return (
@@ -19,7 +19,7 @@ export function ListView({ ids, onSelectProblem, currentProblemId }: {
                     isChecked={false}
                     onToggleChecked={alert}
                     onItemClick={()=> onSelectProblem?.(id)}
-                    selected={currentProblemId === id}
+                    selected={selectedProblemId === id}
                 />
             ))}
         </List>

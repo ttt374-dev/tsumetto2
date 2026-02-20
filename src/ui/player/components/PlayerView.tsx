@@ -73,7 +73,6 @@ function PlayerView({problem, problemNavigation, timer}: {
     const learning: Learning | undefined = useLearningRecordStore(s=>s.records)[problem.id]
     //const timerController = useTimerController(problem.id)
 
-
     return (
         <Stack sx={{ minHeight: 0, height: "100%" }} spacing={1} >
             { /* --- 盤面 ---*/}

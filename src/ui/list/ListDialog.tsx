@@ -2,9 +2,8 @@ import { useMemo, useState } from "react"
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material"
 import type { ProblemId } from "@/domain/problem/Problem"
 import { ListView } from "./ListView"
-import { useProblemStore } from "@/application/store/useProblemStore"
 
-export function useListDialog(id: ProblemId, onMoveTo: (pid: ProblemId) => void) {
+export function useListDialog(ids: ProblemId[], onSelectProblem: (id: ProblemId) => void) {
     const [open, setOpen] = useState(false)
 
     const openDialog = () => { setOpen(true) }
@@ -12,29 +11,20 @@ export function useListDialog(id: ProblemId, onMoveTo: (pid: ProblemId) => void)
 
     const dialogElement = (
         <ListDialog
+            ids={ids}
             open={open}
-            onClose={closeDialog}
-            onSelectProblem={(pid) => {
-                onMoveTo(pid),
-                    //handlers.navigation.moveTo(pid)
-                    closeDialog()
-            }}
-            currentProblemId={id}
+            onClose={closeDialog}     
+            onSelectProblem={onSelectProblem}       
         />
     )
-
     return { openDialog, dialogElement }
-
-
 }
-export function ListDialog({ open, onClose, onSelectProblem, currentProblemId }: {
+export function ListDialog({ open, onClose, ids, onSelectProblem}: {
     open: boolean,
     onClose: () => void,
+    ids: ProblemId[]
     onSelectProblem: (id: ProblemId) => void,
-    currentProblemId?: ProblemId,
 }) {
-    const problemIds = useProblemStore(s=>s.activeProblems).map(p=>p.id)
-
     return (
         <Dialog fullScreen open={open} onClose={onClose}
             sx={{
@@ -44,9 +34,7 @@ export function ListDialog({ open, onClose, onSelectProblem, currentProblemId }:
         >
             <DialogTitle>リスト一覧</DialogTitle>
             <DialogContent>
-                <ListView ids={problemIds}
-                    currentProblemId={currentProblemId}
-                    onSelectProblem={onSelectProblem} />
+                <ListView ids={ids} onSelectProblem={onSelectProblem}/>
             </DialogContent>
             <DialogActions>
                 <Button onClick={onClose}>

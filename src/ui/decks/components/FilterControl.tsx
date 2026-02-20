@@ -1,6 +1,6 @@
-import { Box, Button, Checkbox, FormControl, FormControlLabel, List, ListItem, Paper } from "@mui/material";
+import { Box, Button, Checkbox, FormControl, FormControlLabel, FormLabel, List, ListItem, Paper } from "@mui/material";
 import { type FilterState } from "@/domain/problem/query/filter";
-import { MateLengthCheckboxes } from "../common/components/MateLengthCheckbox";
+import { MateLengthFilterControl } from "./MateLengthFilterControl";
 import { TagCheckboxFilterControl } from "./TagCheckboxFilterControl";
 
 
@@ -10,9 +10,15 @@ export function FilterControl({ filter, allTags, onToggleFilter, onSetFilter }: 
     allTags: string[]
 }) {
     return (
-        
-        <FormControl sx={{ p: 1 }}>
-            <Paper sx={{m: 1}}>
+        <Paper sx={{
+            m: 1,
+            p: 1,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-start",
+        }}>
+            <FormControl sx={{ p: 1 }}>
+                <FormLabel component="legend">フィルター</FormLabel>
                 <FormControlLabel control={
                     <Checkbox checked={filter.unansweredOnly}
                         onChange={() => { onToggleFilter("unansweredOnly") }} />}
@@ -26,19 +32,9 @@ export function FilterControl({ filter, allTags, onToggleFilter, onSetFilter }: 
                     <Checkbox checked={filter.dueForReviewOnly}
                         onChange={() => { onToggleFilter("dueForReviewOnly") }} />}
                     label="レビュー対象" />
-            </Paper>
-            <MateLengthCheckboxes
-                mateBuckets={filter.mateBuckets}
-                onChange={(buckets) => {
-                    onSetFilter({ mateBuckets: buckets })
-                }}
-            />
+            </FormControl>
+        </Paper >
 
-            <TagCheckboxFilterControl
-                allTags={allTags} selectedTags={filter.tags ?? []}
-                onChange={(tags => { onSetFilter({ tags: tags }) })}
-            />
-        </FormControl>
 
     )
 }

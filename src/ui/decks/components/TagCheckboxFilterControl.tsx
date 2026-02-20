@@ -1,4 +1,4 @@
-import { FormGroup, Typography, Paper, Chip} from "@mui/material"
+import { FormGroup, Typography, Paper, Chip, FormLabel} from "@mui/material"
 
 export function TagCheckboxFilterControl({
     allTags,
@@ -18,14 +18,15 @@ export function TagCheckboxFilterControl({
     }
 
     return (
-        <Paper sx={{ m: 1, p: 1 }}>
-            <Typography variant="subtitle2" gutterBottom>
-                タグ
-            </Typography>
-
-            <FormGroup row>
+        <Paper sx={{
+            m: 1, p: 1,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-start",
+        }}>
+            <FormLabel component="legend">タグ</FormLabel>
+            <FormGroup row sx={{gap: 0.5}}>
                 {allTags.map(tag => (
-
                     <Chip
                         key={tag}
                         label={tag}
@@ -33,16 +34,8 @@ export function TagCheckboxFilterControl({
                         color={selectedTags.includes(tag) ? "primary" : "default"}
                         onClick={() => toggle(tag)}
                     />
-                    /*
-                    <Checkbox
-                      size="small"
-                      checked={selectedTags.includes(tag)}
-                      onChange={() => toggle(tag)}
-                    />*/
-
                 ))}
             </FormGroup>
-
         </Paper>
     )
 }

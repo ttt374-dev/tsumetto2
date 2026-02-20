@@ -1,7 +1,7 @@
 import { Box, IconButton, List, ListItem, ListItemButton, ListItemText } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
 import { AppShell } from "../common/layout/AppShell";
-import FabMenu from "./FabMenu";
+import FabMenu from "./components/FabMenu";
 import { useDecksViewModel } from "./hooks/useDecksViewModel";
 import { useNavigate } from "react-router-dom";
 import { routes } from "../App/useAppNavigation";

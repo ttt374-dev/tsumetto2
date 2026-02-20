@@ -2,7 +2,6 @@
 import { create } from "zustand"
 import { ProblemRepository } from "../../domain/problem/ProblemRepository"
 import type { Problem, ProblemId } from "../../domain/problem/Problem"
-import { act } from "react"
 
 export type ProblemState = {
     byId: Record<ProblemId, Problem>   // SoT
@@ -13,9 +12,6 @@ export type ProblemState = {
     activeProblems: Problem[]    
     
     reload: () => Promise<void>
-    //setProblems: (problems: Problem[]) => void
-    //addProblem: (problem: Problem) => void
-    //updateProblem: (p: Problem) => Promise<void>
     updateProblem: (id: ProblemId, updater: (p: Problem) => Problem) => Promise<void>
     updateProblems: (ids: string[], updater: (p: Problem) => Problem) => Promise<void>
     deleteProblem: (id: ProblemId) => Promise<void>
@@ -93,9 +89,8 @@ export const useProblemStore = create<ProblemState>((set, get) => ({
             const current = newById[id]
             if (!current) continue
 
-            const next = updater(current)
-
-            if (next !== current) {
+            const next = current.withUpdated(updater)
+            if (next !== current) {                
                 newById[id] = next
                 updated.push(next)
             }
