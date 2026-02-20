@@ -12,10 +12,10 @@ import LibrarySortControl from "./LibrarySortControl"
 import { LibraryListItem } from "./LibraryListItem"
 import type { Problem, ProblemId } from "@/domain/problem/Problem"
 import { LibraryCheckboxControl } from "./LibraryCheckboxControl";
-import type { LibraryActionMode } from "../LibraryScreen";
+import type { LibraryActionMode } from "../hooks/useLibraryViewModel";
 
 export type LibraryItemActions = {
-    editTags: (ids: ProblemId[]) => void
+    openTagEditDialog: (ids: ProblemId[]) => void
     deleteChecked: (confirmFn: () => boolean) => void
 }
 
@@ -75,8 +75,7 @@ export function LibraryView({ ids, query, actionMode, changeActionMode,
                             id={id}
                             showCheckbox={actionMode === "selection"}
                             onItemClick={onItemClick}
-                            isChecked={selection.isChecked(id)}
-                            onToggleCheckboxMode={alert}
+                            isChecked={selection.isChecked(id)}                            
                             onToggleChecked={selection.toggleChecked}
                         />
                     ))}

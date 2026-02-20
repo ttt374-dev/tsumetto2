@@ -13,14 +13,13 @@ import { useNavigate } from 'react-router-dom';
 import { routes } from '@/ui/App/useAppNavigation';
 
 export const LibraryListItem = function LibraryListItem({ id, onItemClick,
-    showCheckbox, onToggleCheckboxMode, isChecked, onToggleChecked,
+    showCheckbox, isChecked, onToggleChecked,
     selected }: {
         id: ProblemId,
         showCheckbox: boolean,
         onItemClick: (p: Problem) => void,
         isChecked: boolean,
         onToggleChecked: (id: ProblemId) => void,
-        onToggleCheckboxMode: () => void,
         selected?: boolean,
 
     }) {
@@ -28,8 +27,7 @@ export const LibraryListItem = function LibraryListItem({ id, onItemClick,
     const learning = useLearningRecordStore(s => s.records[id])
 
     const { bind, isLongPressedRef } = useLongPress({
-        onLongPress: () => {
-            onToggleCheckboxMode()
+        onLongPress: () => {            
             onToggleChecked(id)
         },
 

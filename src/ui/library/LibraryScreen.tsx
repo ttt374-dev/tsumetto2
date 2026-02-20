@@ -6,9 +6,6 @@ import { LibraryView } from "./components/LibraryView";
 import { useLibraryViewModel } from "./hooks/useLibraryViewModel";
 import { useState } from "react";
 
-
-export type LibraryActionMode = "selection" | "view" | "detail"
-
 //////////////////////////////////////////////////
 
 export function LibraryScreen() {

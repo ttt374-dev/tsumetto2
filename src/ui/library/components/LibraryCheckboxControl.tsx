@@ -6,9 +6,9 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 import { IconButton, Stack } from '@mui/material';
-import type { LibraryActionMode } from '../LibraryScreen';
 import type { ProblemId } from "@/domain/problem/Problem";
 import type { LibraryItemActions } from "./LibraryView";
+import type { LibraryActionMode } from "../hooks/createLibraryActionModeStore";
 
 export function LibraryCheckboxControl({ onCheckAll, onUncheckAll,
     onChangeActionMode, actionMode, itemActions, checkedIds,
@@ -21,6 +21,9 @@ export function LibraryCheckboxControl({ onCheckAll, onUncheckAll,
     onChangeActionMode: (mode: LibraryActionMode) => void
 }) {
     const confirmFn = () => window.confirm("Are you sure to delete selected?")
+    const handleOpenTagEditDialog = () => itemActions.openTagEditDialog(checkedIds)
+    const handleDeleteChecked = () => itemActions.deleteChecked(confirmFn)
+
     return (
         <Stack direction="row">
             {actionMode !== "selection" &&
@@ -47,15 +50,14 @@ export function LibraryCheckboxControl({ onCheckAll, onUncheckAll,
 
                     { /* 削除ボタン */}
                     <IconButton
-                        onClick={() =>
-                            itemActions.deleteChecked(confirmFn)}
+                        onClick={handleDeleteChecked}
                         disabled={checkedIds.length === 0}
                     >
                         <DeleteIcon />
                     </IconButton>
                     { /* タグ編集 */}
                     <IconButton
-                        onClick={() => itemActions.editTags(Array.from(checkedIds))}
+                        onClick={handleOpenTagEditDialog}
                         disabled={checkedIds.length === 0}>
 
                         <EditIcon />

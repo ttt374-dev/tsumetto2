@@ -13,7 +13,9 @@ import type { LearningRecord } from "@/domain/learning/Learning"
 import type { useQuery } from "@/application/useQuery"
 import { useNavigate } from "react-router-dom"
 import { routes } from "@/ui/App/useAppNavigation"
-import type { LibraryActionMode } from "../LibraryScreen"
+
+
+export type LibraryActionMode = "selection" | "view" | "detail"
 
 function useLibraryListVM(problems: Problem[], learningRecords: LearningRecord, query: ReturnType<typeof useQuery>) {
     const libraryItems = useMemo(() =>
@@ -104,7 +106,7 @@ export function useLibraryViewModel() {
     // アイテムアクション
     // -----------------------------
     const itemActions = useMemo(() => ({
-        editTags: (ids: ProblemId[]) => dialogs.tagEdit.openDialog(ids),
+        openTagEditDialog: (ids: ProblemId[]) => dialogs.tagEdit.openDialog(ids),
         deleteChecked: async (confirmFn: () => boolean) => {
             const idsToDelete = selection.checkedIds
             if (!idsToDelete.length || !confirmFn()) return            

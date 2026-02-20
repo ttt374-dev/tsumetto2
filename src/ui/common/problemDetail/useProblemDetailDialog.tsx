@@ -22,7 +22,7 @@ export function useProblemDetailDialog(
     const closeDialog = () => { setOpen(false)}    
 
     const dialogElement = (
-        problemId && open &&
+        problemId && 
         <ProblemDetailDialog
             open={open}
             problemId={problemId}
