@@ -12,6 +12,7 @@ export type Deck = {
   id: DeckId
   name: string
   snapshot: QuerySnapshot
+  order: number
   
   createdAt: number //  Date
 }

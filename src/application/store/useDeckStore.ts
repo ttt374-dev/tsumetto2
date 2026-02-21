@@ -13,6 +13,7 @@ type DeckStoreState = {
     loadDecks: () => Promise<void>
     saveDeck: (deck: Deck) => Promise<void>
     deleteDeck: (id: DeckId) => Promise<void>
+    replaceAll: (decks: Deck[]) => Promise<void>
 }
 
 export const useDeckStore = create<DeckStoreState>((set, get) => ({
@@ -33,4 +34,10 @@ export const useDeckStore = create<DeckStoreState>((set, get) => ({
         await repository.remove(id)
         await get().loadDecks()
     },
+    replaceAll: async (newDecks: Deck[]) => {
+        // repository 側でまとめて保存
+        await repository.replaceAll(newDecks)
+        set({ decks: newDecks })
+    }
+
 }))
