@@ -4,17 +4,18 @@ import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import CheckIcon from '@mui/icons-material/Check';
 import { AppShell } from "../common/layout/AppShell";
 import FabMenu from "./components/FabMenu";
-import { useDecksViewModel } from "./hooks/useDecksViewModel";
+import { useDecksReordable, useDecksViewModel } from "./hooks/useDecksViewModel";
 import { useNavigate } from "react-router-dom";
 import { routes } from "../App/useAppNavigation";
 
-import { DndContext, closestCenter, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
+import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, type UniqueIdentifier } from "@dnd-kit/core";
 import { SortableContext, useSortable, arrayMove, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useState, useEffect } from "react";
 
 import type { Deck } from "@/domain/deck/Deck";
 import { useDeckStore } from "@/application/store/useDeckStore";
+
 
 export default function DecksScreen() {
     const { deckStats, onCreateDeck, onStartMission, importer, backupRestoreDialog } = useDecksViewModel();
@@ -28,6 +29,7 @@ export default function DecksScreen() {
     }, [loadDecks]);
 
     // UI用の配列
+    /*
     const [deckArray, setDeckArray] = useState<Deck[]>([]);
 
     useEffect(() => {
@@ -36,15 +38,15 @@ export default function DecksScreen() {
         setDeckArray(sorted);
     }, [decks]);
 
-    // dnd-kit センサー
-    const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
+    
+    //const handleDragEnd = async (event: any) => {
+    const handleDragEnd = async ( activeId: UniqueIdentifier,
+  overId: UniqueIdentifier | null) => {
+        
+        if (!overId || activeId === overId) return;
 
-    const handleDragEnd = async (event: any) => {
-        const { active, over } = event;
-        if (!over || active.id === over.id) return;
-
-        const oldIndex = deckArray.findIndex(d => d.id === active.id);
-        const newIndex = deckArray.findIndex(d => d.id === over.id);
+        const oldIndex = deckArray.findIndex(d => d.id === activeId);
+        const newIndex = deckArray.findIndex(d => d.id === overId);
 
         const newArray = arrayMove(deckArray, oldIndex, newIndex);
         setDeckArray(newArray);
@@ -53,7 +55,10 @@ export default function DecksScreen() {
         const updated = newArray.map((d, i) => ({ ...d, order: i }));
         await replaceAll(updated);
     };
-
+    */
+    const { deckArray, onDragEnd } = useDecksReordable(decks)    
+    // dnd-kit センサー
+    const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
 
     function SortableDeckItem({ deck }: { deck: Deck }) {
         const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: deck.id });
@@ -100,7 +105,7 @@ export default function DecksScreen() {
 
         >
             <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto" }}>
-                <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={e=>onDragEnd(e.active.id, e.over?.id ?? null)}>
                     <SortableContext items={deckArray.map(d => d.id)} strategy={verticalListSortingStrategy}>
                         <List>
                             {deckArray.map(deck => (

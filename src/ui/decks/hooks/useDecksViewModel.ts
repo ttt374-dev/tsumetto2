@@ -10,6 +10,9 @@ import { useBackupRestoreDialog } from "../../common/dialogs/BackupRestoreDialog
 import type { Deck } from "@/domain/deck/Deck";
 import { useDeckStats } from "./useDeckStats";
 import { routes } from "@/ui/App/useAppNavigation";
+import { useEffect, useState } from "react";
+import type { UniqueIdentifier } from "@dnd-kit/core";
+import { arrayMove } from "@dnd-kit/sortable";
 
 export function useDecksQueryVM() {
     const decks = useDeckStore(s => s.decks);
@@ -67,6 +70,36 @@ export function useDecksCommandVM() {
         importer,
         backupRestoreDialog,
     };
+}
+export function useDecksReordable(decks: Deck[]) {
+    const [deckArray, setDeckArray] = useState<Deck[]>([]);
+    const replaceAll = useDeckStore(s=>s.replaceAll)
+
+    useEffect(() => {
+        // orderでソートしてUIに反映
+        const sorted = [...decks].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+        setDeckArray(sorted);
+    }, [decks]);
+
+    const onDragEnd = async (activeId: UniqueIdentifier,
+        overId: UniqueIdentifier | null) => {
+
+        if (!overId || activeId === overId) return;
+
+        const oldIndex = deckArray.findIndex(d => d.id === activeId);
+        const newIndex = deckArray.findIndex(d => d.id === overId);
+
+        const newArray = arrayMove(deckArray, oldIndex, newIndex);
+        setDeckArray(newArray);
+
+        // 並び替え後に order を更新して即永続化
+        const updated = newArray.map((d, i) => ({ ...d, order: i }));
+        await replaceAll(updated);
+    };
+
+    return { deckArray, onDragEnd}
+
+
 }
 export function useDecksViewModel() {
     return {
