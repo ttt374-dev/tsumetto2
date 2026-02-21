@@ -1,44 +1,76 @@
-import { useDeckStore } from "@/application/store/useDeckStore";
-import { useProblemStore } from "@/application/store/useProblemStore";
-import { useMissionStore } from "@/application/store/useMissionStore";
-import { useLearningRecordStore } from "@/application/useLearningRecordStore";
-import { applyQuery } from "@/domain/problem/query/applyQuery";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "../../App/providers/ToastProvider";
 import { useImportController } from "@/application/useImportControler";
 import { useBackupRestoreDialog } from "../../common/dialogs/BackupRestoreDialog";
-import type { Deck } from "@/domain/deck/Deck";
-import { useDeckStats } from "./useDeckStats";
+import { applyQuery } from "@/domain/problem/query/applyQuery";
 import { routes } from "@/ui/App/useAppNavigation";
-import { useEffect, useState } from "react";
-import type { UniqueIdentifier } from "@dnd-kit/core";
+
+import type { Deck } from "@/domain/deck/Deck";
 import { arrayMove } from "@dnd-kit/sortable";
 
-export function useDecksQueryVM() {
-    const decks = useDeckStore(s => s.decks);
-    const problems = useProblemStore(s => s.activeProblems);
-    const learningRecords = useLearningRecordStore(s => s.records);
+import { useDeckStore } from "@/application/store/useDeckStore";
+import { useProblemStore } from "@/application/store/useProblemStore";
+import { useMissionStore } from "@/application/store/useMissionStore";
+import { useLearningRecordStore } from "@/application/useLearningRecordStore";
+import { ProblemStats } from "@/domain/problem/ProblemStats";
+import { applyFilter } from "@/domain/problem/query/applyFilter";
 
-    const deckStats = useDeckStats(problems, decks, learningRecords);
-
-    return {
-        decks,
-        deckStats,
-    };
-}
-
-export function useDecksCommandVM() {
+export function useDecksViewModel() {
     const navigate = useNavigate();
     const toast = useToast();
+
+    // Store
+    const decks = useDeckStore(s => s.decks);
+    const replaceAll = useDeckStore(s => s.replaceAll);
 
     const problems = useProblemStore(s => s.activeProblems);
     const learningRecords = useLearningRecordStore(s => s.records);
     const reloadProblems = useProblemStore(s => s.reload);
     const startMission = useMissionStore(s => s.start);
 
-    const onCreateDeck = () => {
-        navigate(routes.deckNew);
-    };
+    // UI 用配列
+    const [deckArray, setDeckArray] = useState<Deck[]>([]);
+
+    // decks が更新されたら UI 配列を order 順にセット
+    useEffect(() => {
+        const sorted = [...decks].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+        setDeckArray(sorted);
+    }, [decks]);
+
+    // DnD 完了時に配列更新 + 永続化
+    const onDragEnd = useCallback(
+        async (activeId: string | number, overId: string | number | null) => {
+            if (!overId || activeId === overId) return;
+
+            const oldIndex = deckArray.findIndex(d => d.id === activeId);
+            const newIndex = deckArray.findIndex(d => d.id === overId);
+
+            if (oldIndex === -1 || newIndex === -1) return;
+
+            const newArray = arrayMove(deckArray, oldIndex, newIndex);
+            setDeckArray(newArray);
+
+            const updated = newArray.map((d, i) => ({ ...d, order: i }));
+            await replaceAll(updated);
+        },
+        [deckArray, replaceAll]
+    );
+
+    // deckArray に基づく stats
+    const deckStats = useMemo(() => {
+        const map = new Map<string, ProblemStats>();
+        for (const deck of deckArray) {
+            const filtered = applyFilter(problems, learningRecords, deck.snapshot.filterState);
+            const stats = ProblemStats.create(filtered.map(p => p.id), learningRecords);
+            map.set(deck.id, stats);
+        }
+        return map;
+    }, [deckArray, problems, learningRecords]);
+
+
+    // 既存の操作
+    const onCreateDeck = () => navigate(routes.deckNew);
 
     const onStartMission = (deck: Deck) => {
         const filtered = applyQuery(
@@ -49,14 +81,13 @@ export function useDecksCommandVM() {
         );
 
         startMission(deck.id, filtered.map(p => p.id));
-        navigate(routes.missionPlay)
-
+        navigate(routes.missionPlay);
     };
 
     const importer = useImportController(async (res) => {
         await reloadProblems();
         toast({
-            message: `imported: ${res.summary.imported}, skipped: ${res.summary.skipped}, failed: ${res.summary.failed}`
+            message: `imported: ${res.summary.imported}, skipped: ${res.summary.skipped}, failed: ${res.summary.failed}`,
         });
     });
 
@@ -65,45 +96,11 @@ export function useDecksCommandVM() {
     });
 
     return {
+        deckArray,
+        deckStats,
+        onDragEnd,
         onCreateDeck,
         onStartMission,
-        importer,
-        backupRestoreDialog,
-    };
-}
-export function useDecksReordable(decks: Deck[]) {
-    const [deckArray, setDeckArray] = useState<Deck[]>([]);
-    const replaceAll = useDeckStore(s=>s.replaceAll)
-
-    useEffect(() => {
-        // orderでソートしてUIに反映
-        const sorted = [...decks].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-        setDeckArray(sorted);
-    }, [decks]);
-
-    const onDragEnd = async (activeId: UniqueIdentifier,
-        overId: UniqueIdentifier | null) => {
-
-        if (!overId || activeId === overId) return;
-
-        const oldIndex = deckArray.findIndex(d => d.id === activeId);
-        const newIndex = deckArray.findIndex(d => d.id === overId);
-
-        const newArray = arrayMove(deckArray, oldIndex, newIndex);
-        setDeckArray(newArray);
-
-        // 並び替え後に order を更新して即永続化
-        const updated = newArray.map((d, i) => ({ ...d, order: i }));
-        await replaceAll(updated);
-    };
-
-    return { deckArray, onDragEnd}
-
-
-}
-export function useDecksViewModel() {
-    return {
-        ...useDecksQueryVM(),
-        ...useDecksCommandVM(),
+        presenter: { importer, backupRestoreDialog },
     };
 }

@@ -1,64 +1,29 @@
 import { Box, IconButton, List, ListItem, ListItemButton, ListItemText } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
-import CheckIcon from '@mui/icons-material/Check';
 import { AppShell } from "../common/layout/AppShell";
 import FabMenu from "./components/FabMenu";
-import { useDecksReordable, useDecksViewModel } from "./hooks/useDecksViewModel";
+import { useDecksViewModel } from "./hooks/useDecksViewModel";
 import { useNavigate } from "react-router-dom";
 import { routes } from "../App/useAppNavigation";
 
-import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, type UniqueIdentifier } from "@dnd-kit/core";
+import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, type UniqueIdentifier, TouchSensor } from "@dnd-kit/core";
 import { SortableContext, useSortable, arrayMove, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { useState, useEffect } from "react";
+
 
 import type { Deck } from "@/domain/deck/Deck";
-import { useDeckStore } from "@/application/store/useDeckStore";
 
 
 export default function DecksScreen() {
-    const { deckStats, onCreateDeck, onStartMission, importer, backupRestoreDialog } = useDecksViewModel();
+    const { deckArray, onDragEnd, deckStats, onCreateDeck, onStartMission, presenter: { importer, backupRestoreDialog} } =
+         useDecksViewModel();
     const navigate = useNavigate();
 
-    // Zustand store
-    const { decks, loadDecks, replaceAll } = useDeckStore();
-
-    useEffect(() => {
-        loadDecks();
-    }, [loadDecks]);
-
-    // UI用の配列
-    /*
-    const [deckArray, setDeckArray] = useState<Deck[]>([]);
-
-    useEffect(() => {
-        // orderでソートしてUIに反映
-        const sorted = [...decks].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-        setDeckArray(sorted);
-    }, [decks]);
-
-    
-    //const handleDragEnd = async (event: any) => {
-    const handleDragEnd = async ( activeId: UniqueIdentifier,
-  overId: UniqueIdentifier | null) => {
-        
-        if (!overId || activeId === overId) return;
-
-        const oldIndex = deckArray.findIndex(d => d.id === activeId);
-        const newIndex = deckArray.findIndex(d => d.id === overId);
-
-        const newArray = arrayMove(deckArray, oldIndex, newIndex);
-        setDeckArray(newArray);
-
-        // 並び替え後に order を更新して即永続化
-        const updated = newArray.map((d, i) => ({ ...d, order: i }));
-        await replaceAll(updated);
-    };
-    */
-    const { deckArray, onDragEnd } = useDecksReordable(decks)    
     // dnd-kit センサー
-    const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
+    const sensors = useSensors(
+        useSensor(
+            PointerSensor, { activationConstraint: { distance: 5 } }),);
 
     function SortableDeckItem({ deck }: { deck: Deck }) {
         const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: deck.id });
@@ -71,7 +36,9 @@ export default function DecksScreen() {
                 ref={setNodeRef}
                 style={style}
                 disablePadding
-                sx={{ borderBottom: '1px solid', borderColor: 'divider', display: 'flex', alignItems: 'center' }}
+                sx={{ borderBottom: '1px solid', borderColor: 'divider', 
+                    px: 2,
+                    display: 'flex', alignItems: 'center' }}
             >
                 {/* DragHandle */}
                 <IconButton {...attributes} {...listeners} edge="start" sx={{ cursor: 'grab', mr: 1 }}>
@@ -104,7 +71,7 @@ export default function DecksScreen() {
             fab={<FabMenu onCreateNewDeck={onCreateDeck} onImportFiles={importer.openFileDialog} />}
 
         >
-            <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto" }}>
+            <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto", touchAction: "pan-y" }}>
                 <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={e=>onDragEnd(e.active.id, e.over?.id ?? null)}>
                     <SortableContext items={deckArray.map(d => d.id)} strategy={verticalListSortingStrategy}>
                         <List>

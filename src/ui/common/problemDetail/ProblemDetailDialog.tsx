@@ -129,10 +129,7 @@ export default function ProblemDetailDialog({ open, problemId, onAfterDeleteProb
             }}>
             <DialogTitle>
                 棋譜エントリの詳細
-            </DialogTitle>
-            <DialogContent>
-                <Stack spacing={1}>
-                    <Stack direction="row" justifyContent="flex-end">
+                <Stack direction="row" justifyContent="flex-end">
                         <StarToggleButton starred={starred}
                             onToggle={() => setStarred(prev => !prev)}
                         />
@@ -140,6 +137,10 @@ export default function ProblemDetailDialog({ open, problemId, onAfterDeleteProb
                             <DeleteIcon />
                         </IconButton>
                     </Stack>
+            </DialogTitle>
+            <DialogContent>
+                <Stack spacing={1}>
+                    
                     {/* タイトル編集 */}
 
                     <Paper sx={{ p: 1 }}>

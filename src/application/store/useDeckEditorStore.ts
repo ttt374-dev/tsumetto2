@@ -29,6 +29,7 @@ export const useDeckEditorStore = create<DeckEditorState>((set) => ({
                     sortState: DefaultSortState,
                 },
                 createdAt: Date.now(),
+                order: 0,
             },
         }),
 
