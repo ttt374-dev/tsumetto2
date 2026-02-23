@@ -11,4 +11,12 @@ export default defineConfig({
       "@": path.resolve(__dirname, "src"),
     },
   },
+   //server: {
+   // host: '0.0.0.0',  // これで全インターフェース待機
+    //port: 8080,
+   // allowedHosts: [
+   //   '192.168.128.158',
+   //   'localhost'
+   // ]
+ // }
 });

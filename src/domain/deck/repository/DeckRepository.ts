@@ -14,11 +14,18 @@ export class DeckRepository {
         return this.decks
     }
 
-    async load(): Promise<Deck[]> {
+    async findAll(): Promise<Deck[]> {
+        return await this.load()
+    }
+    async replaceAll(decks: Deck[]) {
+        await this.save(decks)
+    }
+    private async load(): Promise<Deck[]> {
         const decks = await this.ensureLoaded()
         return [...decks]
     }
     private async save(decks: Deck[]) {
+        this.decks = decks
         await this.persistence.save(decks)
     }
     /*
@@ -50,9 +57,7 @@ export class DeckRepository {
         }
     }
         */
-    async replaceAll(decks: Deck[]) {
-        await this.save(decks)
-    }
+
 }
 // infra/deck/DeckPersistence.ts
 export interface DeckPersistence {

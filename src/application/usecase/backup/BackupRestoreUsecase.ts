@@ -59,7 +59,7 @@ export function useBackupRestoreUsecase(
             try {
                 problems = await problemRepo.load()
                 learnings = await learningRepo.load()
-                decks = await deckRepo.load()
+                decks = await deckRepo.findAll()
             } catch (e) {
                 if (e instanceof Error) {
                     console.error(e.message)

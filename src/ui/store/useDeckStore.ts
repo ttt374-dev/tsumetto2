@@ -19,7 +19,7 @@ export const useDeckStore = create<DeckStoreState>((set, get) => ({
     decks: [],
 
     loadDecks: async () => {
-        const list = await repository.load()
+        const list = await repository.findAll()
         set({ decks: list })
     },
 

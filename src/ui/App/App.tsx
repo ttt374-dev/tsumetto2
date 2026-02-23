@@ -19,6 +19,7 @@ import { RepositoryContext } from './providers/RepositoryProvider';
 import { ToastProvider } from './providers/ToastProvider';
 import { ListScreen } from '../list/ListScreen';
 import { LocalStrorageProblemPersistence, ProblemRepository } from '@/domain/problem/repository/ProblemRepository';
+import { initializeAppUsecase } from '@/application/usecase/initializeApp/useInitializeAppUsecase';
 
 function App() {
     // シングルトンレポジトリの生成
@@ -37,11 +38,14 @@ function App() {
 
     // hydrate
     const hydrate = useProblemStore(s => s.reload)
-
+    
     useEffect(() => {
-        hydrate()
+        hydrate()      
+        initializeAppUsecase(repos.deck)()
     }, [])
 
+
+    //const repos = bootstrapApp()
     return (
         <ToastProvider>
 

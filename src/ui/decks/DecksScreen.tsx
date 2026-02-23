@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Box, ToggleButton, List, ListItem, ListItemButton, ListItemText, Stack, ToggleButtonGroup, IconButton } from "@mui/material";
+import { Box, ToggleButton, List, ListItem, ListItemButton, ListItemText, Stack, ToggleButtonGroup, IconButton, keyframes } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
@@ -51,9 +51,7 @@ export default function DecksScreen() {
         };
 
         const stats = deckStats.get(deck.id);
-
-        //const isReorder = mode === "reorder";
-        const isReorder = reorderable
+      
 
         return (
             <ListItem
@@ -66,6 +64,7 @@ export default function DecksScreen() {
                     //px: 2,
                     display: 'flex',
                     alignItems: 'center',
+                    //animation: reorderable ? `${shake} 0.2s infinite` : "none",
                     //backgroundColor: isReorder ? "action.hover" : "inherit",
                 }}
                 secondaryAction={
@@ -74,7 +73,7 @@ export default function DecksScreen() {
                         <IconButton edge="end" aria-label="edit" onClick={() => handleDeckEdit(deck.id)}>
                             <EditIcon />
                         </IconButton> }
-                        {isReorder && (
+                        {reorderable && (
                         <IconButton
                             {...sortable.attributes}
                             {...sortable.listeners}
@@ -150,8 +149,11 @@ export default function DecksScreen() {
 
         >
             <ActionMode/>
-            <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto", touchAction: "pan-y" }}>
-                <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={e => onDragEnd(e.active.id, e.over?.id ?? null)}>
+            <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto", touchAction: "pan-y" }}> { /* , touchAction: "pan-y" */ }
+                <DndContext sensors={sensors} 
+                    collisionDetection={closestCenter}
+                    onDragStart={()=>console.log("drag start")}
+                    onDragEnd={e => onDragEnd(e.active.id, e.over?.id ?? null)}>
                     <SortableContext items={deckArray.map(d => d.id)} strategy={verticalListSortingStrategy}>
                         <List>
                             {deckArray.map(deck => (

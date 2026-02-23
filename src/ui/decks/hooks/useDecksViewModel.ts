@@ -52,7 +52,7 @@ export function useDecksViewModel() {
             setDeckArray(newArray);
 
             const updated = newArray.map((d, i) => ({ ...d, order: i }));
-            await replaceAll(updated);
+            replaceAll(updated);
         },
         [deckArray, replaceAll]
     );

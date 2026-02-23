@@ -1,8 +1,6 @@
 import { create } from "zustand"
-import { v4 } from "uuid"
-import { DefaultFilterState } from "@/domain/problem/service/query/filter"
-import { DefaultSortState } from "@/domain/problem/service/query/sort"
 import type { Deck } from "@/domain/deck/entity/Deck"
+import { createDefaultDeck } from "@/domain/deck/entity/createDefaultDeck"
 
 type DeckEditorState = {
     draft: Deck | null
@@ -21,16 +19,7 @@ export const useDeckEditorStore = create<DeckEditorState>((set) => ({
 
     startNew: () =>
         set({
-            draft: {
-                id: v4(),
-                name: "",
-                snapshot: {
-                    filterState: DefaultFilterState,
-                    sortState: DefaultSortState,
-                },
-                createdAt: Date.now(),
-                order: 0,
-            },
+            draft: createDefaultDeck(),
         }),
 
     startEdit: (deck) =>
