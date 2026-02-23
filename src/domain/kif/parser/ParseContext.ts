@@ -1,4 +1,4 @@
-import type { Result } from "@/application/result";
+import type { Result } from "@/shared/result";
 import type { Square } from "../types";
 import type { ParseError, ParseErrorWithContext } from "./ParseError";
 

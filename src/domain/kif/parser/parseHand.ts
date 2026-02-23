@@ -1,4 +1,4 @@
-import type { Result } from "@/application/result"
+import type { Result } from "@/shared/result"
 import { Hand, kanjiToPieceItem, type PieceType } from "../types"
 import type { ParseError, ParseHandError } from "./ParseError"
 

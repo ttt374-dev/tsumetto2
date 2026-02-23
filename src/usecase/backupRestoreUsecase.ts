@@ -1,6 +1,6 @@
 // backupRestoreUsecase.ts
 
-import type { Result } from "@/application/result"
+import type { Result } from "@/shared/result"
 import type { Deck } from "@/domain/deck/Deck"
 import type { DeckRepository } from "@/domain/deck/DeckRepository"
 import type { LearningEventLog } from "@/domain/LearningEvent"

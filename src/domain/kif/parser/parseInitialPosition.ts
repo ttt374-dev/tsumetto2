@@ -1,4 +1,4 @@
-import type { Result } from "@/application/result";
+import type { Result } from "@/shared/result";
 import { Board, kanjiToPieceItem, Piece, type PieceType } from "../types";
 import type { ParseInitialBoardError } from "./ParseError";
 

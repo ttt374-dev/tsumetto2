@@ -1,9 +1,9 @@
 import EditIcon from '@mui/icons-material/Edit';
 
-import { useStarToggleButton } from "@/application/useStarToggleButton"
 import type { ProblemId } from "@/domain/problem/Problem"
-import { StarToggleButton } from "@/ui/common/components/StarToggleButton"
+import { StarToggleButton } from "@/ui/common/components/StarToggleButton/StarToggleButton"
 import { IconButton, Stack } from "@mui/material"
+import { useStarToggleButton } from '@/ui/common/components/StarToggleButton/useStarToggleButton';
 
 export function PlayerRightActions(props: {
     problemId: ProblemId

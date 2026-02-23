@@ -4,13 +4,13 @@ import type { Learning } from "@/domain/learning/Learning";
 import type { Problem, ProblemId } from "@/domain/problem/Problem";
 import { Box, Checkbox, colors, IconButton, ListItem, ListItemButton, ListItemIcon, ListItemText, Stack, Typography } from "@mui/material";
 import { useLongPress } from "../hooks/useLongPress";
-import { StarToggleButton } from "@/ui/common/components/StarToggleButton";
-import { useStarToggleButton } from "@/application/useStarToggleButton";
+import { StarToggleButton } from "@/ui/common/components/StarToggleButton/StarToggleButton";
 import React, { useEffect } from "react";
 import { useProblemStore } from "@/application/store/useProblemStore";
 import { useLearningRecordStore } from "@/application/useLearningRecordStore";
 import { useNavigate } from 'react-router-dom';
 import { routes } from '@/ui/App/useAppNavigation';
+import { useStarToggleButton } from '@/ui/common/components/StarToggleButton/useStarToggleButton';
 
 export const LibraryListItem = function LibraryListItem({ id, onItemClick,
     showCheckbox, isChecked, onToggleChecked,
@@ -56,12 +56,10 @@ export const LibraryListItem = function LibraryListItem({ id, onItemClick,
                 <ListItemText
                     primary={
                         <Stack direction="row" justifyContent={"space-between"} alignItems="center">
-                            <Typography variant="subtitle1" fontWeight="bold" flex={4}
-
-                            >
+                            <Typography variant="subtitle1" fontWeight="bold" flex={4}>
                                 {problem.title}
                             </Typography>
-                            <Typography variant="body2" color="text.secondary" flex={1}>
+                            <Typography variant="body2"flex={1}>
                                 {problem.kifData.moves.length}手詰め
                             </Typography>
                             <Stack direction="row" flex={1}>
@@ -80,21 +78,22 @@ export const LibraryListItem = function LibraryListItem({ id, onItemClick,
                         <>
                             {/* 二行目: タグ・追加日 */}
                             <Stack direction="row" justifyContent={"space-between"}>
-                                <Typography variant="body2" color="text.secondary">
+                                <Typography variant="body2">
                                     {problem.tags.join(",")}
                                 </Typography>
-                                <Typography variant="body2" color="text.secondary">
+                                <Typography variant="body2">
                                     {new Date(problem.createdAt).toLocaleString()}
                                 </Typography>
                             </Stack>
-                            {/* 三行目: タグ・追加日 */}
+                            {/* 学習データ */}
                             <Stack direction="row" justifyContent={"flex-end"}>
                                 {learning && <>
-                                    <Typography variant="body2" color="text.primary">
+                                    <Typography variant="body2">
                                         {formatLearning(learning)}
                                     </Typography>
                                 </>}
-                            </Stack></>
+                            </Stack>
+                        </>
                     }
 
                 >

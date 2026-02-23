@@ -15,7 +15,7 @@ export function DrawerMenu({ isOpen, onClose,
             <Box width={250} mt={3} role="presentation" className={styles.header}>
                 <List>
                     <ListItemButton onClick={() => onNavigateToDashboard()}>
-                        <ListItemText primary="ダッシュボード" />
+                        <ListItemText primary="デッキ" />
                     </ListItemButton>
                     <ListItemButton onClick={() => onNavigateToLibrary()}>
                         <ListItemText primary="ライブラリ" />

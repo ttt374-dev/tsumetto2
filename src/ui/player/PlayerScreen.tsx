@@ -1,14 +1,8 @@
-import { StarToggleButton } from "../common/components/StarToggleButton";
-import EditIcon from '@mui/icons-material/Edit';
-import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { PlayerAnswerActions } from "./components/PlayerAnswerActions"
-
 import PlayerView from "./components/PlayerView"
 import { Problem, type ProblemId } from "@/domain/problem/Problem"
-import { Button, IconButton, type SxProps } from "@mui/material"
 import type { SolvedResult } from "@/domain/learning/Learning";
 import { AppShell } from "../common/layout/AppShell";
-import { useStarToggleButton } from "@/application/useStarToggleButton";
 import { usePlayerPresenter } from "./hooks/usePlayerPresenter";
 import { useLearningEventStore } from "@/application/store/useLearningEventStore";
 import { useTimer } from './hooks/useTimer';
@@ -20,7 +14,6 @@ export type ProblemNavigation = {
     prev: () => void,
     moveTo: (problemId: ProblemId) => void,
 }
-
 
 //////////////////////////////////////////////////////////////
 export function PlayerScreen({ problem, title, onAnswer, problemNavigation}: {

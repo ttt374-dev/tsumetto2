@@ -1,5 +1,5 @@
 import { Box, Button, Grid, Stack, Typography } from "@mui/material"
-import type { Move, Position } from "@/domain/kif/types"
+
 import MovesPanel from "./MovesPanel"
 import MovesView from "./MovesView"
 import { PlyControlPanel } from "./PlyControlPanel"
@@ -13,7 +13,6 @@ import type { ProblemNavigation } from "../PlayerScreen"
 import { useLearningRecordStore } from "@/application/useLearningRecordStore"
 import { useTimer } from "../hooks/useTimer"
 
-
 export function useShowMovesController(plyIndex: number) {
     const [showMoves, setShowMoves] = useState(false)
     useEffect(() => {
@@ -26,7 +25,6 @@ export function useShowMovesController(plyIndex: number) {
     
     return { showMoves, setShowMoves }
 }
-
 
 function formatTime(sec: number) {
     const m = Math.floor(sec / 60)
@@ -94,7 +92,7 @@ function PlayerView({problem, problemNavigation, timer}: {
                             </Button>
                             <Box>手数：{moves.length}手</Box>
                             { problem.tags.length > 0 && 
-                            <Box>Tags:{problem.tags.join(",")}</Box>
+                            <Box>タグ:{problem.tags.join(",")}</Box>
 }
                         </Stack>)
                     }

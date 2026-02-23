@@ -5,7 +5,6 @@ import PlayerView from "../player/components/PlayerView";
 import { AppShell } from "../common/layout/AppShell";
 import { IconButton, Stack } from "@mui/material";
 import { useProblemDetailDialog } from '../common/problemDetail/useProblemDetailDialog';
-import { useStarToggleButton } from "@/application/useStarToggleButton";
 import type { Problem, ProblemId } from "@/domain/problem/Problem";
 import { PlayerRightActions } from "../player/components/PlayerRIghtActions";
 
@@ -16,7 +15,6 @@ export function ViewerScreen() {
 
     return ViewerContent(problem)
 }
-
 
 function ViewerContent(problem: Problem) {
     const detailDialog = useProblemDetailDialog()

@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 import { useProblemStore } from '@/application/store/useProblemStore';
 import { EditableText } from '../components/EditableText';
 import { ProblemTagEditor } from '../components/ProblemTagEditor';
-import { StarToggleButton } from '../components/StarToggleButton';
+import { StarToggleButton } from '../components/StarToggleButton/StarToggleButton';
 import { useLearningRecordStore } from '@/application/useLearningRecordStore';
 import { useLearningEventStore } from '@/application/store/useLearningEventStore';
 import type { NewLearningEvent } from '@/domain/LearningEvent';
