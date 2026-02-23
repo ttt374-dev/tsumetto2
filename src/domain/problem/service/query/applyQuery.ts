@@ -1,4 +1,4 @@
-import type { LearningRecord } from "@/domain/learning/Learning";
+import type { LearningRecord } from "@/domain/learning/entity/Learning";
 import { applyFilter } from "./applyFilter";
 import { applySort } from "./applySort";
 import type { FilterState } from "./filter";

@@ -1,7 +1,7 @@
 // application/store/problemStore.ts
 import { create } from "zustand"
-import { ProblemRepository } from "../../domain/problem/ProblemRepository"
 import type { Problem, ProblemId } from "../../domain/problem/entity/Problem"
+import type { ProblemRepository } from "@/domain/problem/repository/ProblemRepository"
 
 export type ProblemState = {
     byId: Record<ProblemId, Problem>   // SoT

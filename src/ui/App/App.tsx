@@ -7,7 +7,6 @@ import { MissionSummaryScreen } from '../summary/MissionSummaryScreen';
 import DecksScreen from '../decks/DecksScreen';
 import { DeckEditScreen } from '../decks/DeckEditScreen';
 import { initProblemStore, useProblemStore } from '@/ui/store/useProblemStore';
-import { LocalStrorageProblemPersistence, ProblemRepository } from '@/domain/problem/ProblemRepository';
 import { DeckRepository, LocalStorageDeckPersistence } from '@/domain/deck/repository/DeckRepository';
 import { initDeckStore, useDeckStore } from '@/ui/store/useDeckStore';
 import { LocalStorageLearningEventPersistence, LearningEventRepository } from '@/domain/learning/repository/LearningEventRepository';
@@ -19,6 +18,7 @@ import { LibraryQueryProvider } from './providers/QueryProvider';
 import { ToastProvider } from './providers/ToastProvider';
 import { useEffect } from 'react';
 import { ListScreen } from '../list/ListScreen';
+import { LocalStrorageProblemPersistence, ProblemRepository } from '@/domain/problem/repository/ProblemRepository';
 
 function App() {
     // シングルトンレポジトリの生成

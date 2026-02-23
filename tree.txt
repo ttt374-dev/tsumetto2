@@ -86,23 +86,25 @@ src
     │   │   ├── StarToggleButton
     │   │   │   ├── StarToggleButton.tsx
     │   │   │   └── useStarToggleButton.ts
-    │   │   └── dialogs
-    │   │       ├── BackupRestoreDialog.tsx
-    │   │       ├── Import
-    │   │       │   ├── ImportDialog.tsx
-    │   │       │   ├── useImportController.tsx
-    │   │       │   └── useImportFilePicker.ts
-    │   │       └── MultipleProblemsTagEditDialog.tsx
+    │   │   ├── dialogs
+    │   │   │   ├── BackupRestoreDialog.tsx
+    │   │   │   ├── Import
+    │   │   │   │   ├── ImportDialog.tsx
+    │   │   │   │   ├── useImportController.tsx
+    │   │   │   │   └── useImportFilePicker.ts
+    │   │   │   ├── MultipleProblemsTagEditDialog.tsx
+    │   │   │   └── problemDetail
+    │   │   │       ├── ProblemDetailDialog.tsx
+    │   │   │       └── useProblemDetailDialog.tsx
+    │   │   └── layout
+    │   │       ├── AppLayout.module.css
+    │   │       ├── AppLayout.tsx
+    │   │       ├── AppShell.tsx
+    │   │       └── DrawerMenu.tsx
     │   ├── hooks
     │   │   └── useQuery.ts
-    │   ├── layout
-    │   │   ├── AppLayout.module.css
-    │   │   ├── AppLayout.tsx
-    │   │   ├── AppShell.tsx
-    │   │   └── DrawerMenu.tsx
-    │   └── problemDetail
-    │       ├── ProblemDetailDialog.tsx
-    │       └── useProblemDetailDialog.tsx
+    │   └── utils
+    │       └── numberToKanji.ts
     ├── decks
     │   ├── DeckEditScreen.tsx
     │   ├── DecksScreen.tsx
@@ -137,18 +139,20 @@ src
     ├── player
     │   ├── PlayerScreen.tsx
     │   ├── components
-    │   │   ├── BoardPanel.tsx
-    │   │   ├── BoardView.module.css
-    │   │   ├── BoardView.tsx
-    │   │   ├── MovesPanel.tsx
-    │   │   ├── MovesView.tsx
-    │   │   ├── PlayerAnswerActions.tsx
-    │   │   ├── PlayerRightActions.tsx
     │   │   ├── PlayerView.tsx
-    │   │   ├── PlyControlPanel.tsx
     │   │   ├── RightActionsDrawer.tsx
     │   │   ├── SwipeWrapper.tsx
-    │   │   └── numberToKanji.ts
+    │   │   ├── actions
+    │   │   │   ├── PlayerAnswerActions.tsx
+    │   │   │   └── PlayerRightActions.tsx
+    │   │   ├── panels
+    │   │   │   ├── BoardPanel.tsx
+    │   │   │   ├── MovesPanel.tsx
+    │   │   │   └── PlyControlPanel.tsx
+    │   │   └── views
+    │   │       ├── BoardView.module.css
+    │   │       ├── BoardView.tsx
+    │   │       └── MovesView.tsx
     │   └── hooks
     │       ├── usePlayerPresenter.ts
     │       ├── useReplayController.ts
@@ -175,4 +179,4 @@ src
     └── viewer
         └── ViewerScreen.tsx
 
-59 directories, 117 files
+63 directories, 117 files

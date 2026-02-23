@@ -1,9 +1,8 @@
-import type { LearningRecord } from "../learning/Learning"
-import type { MissionResultEntry } from "../mission/Mission"
-import type { Problem, ProblemId } from "./entity/Problem"
-import { applyFilter } from "./query/applyFilter"
-import type { FilterState } from "./query/filter"
-
+import type { LearningRecord } from "@/domain/learning/entity/Learning"
+import type { Problem, ProblemId } from "../entity/Problem"
+import type { FilterState } from "../service/query/filter"
+import { applyFilter } from "../service/query/applyFilter"
+import type { MissionResultEntry } from "@/domain/mission/entity/Mission"
 
 export class ProblemStats {
     constructor(

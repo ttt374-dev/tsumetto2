@@ -1,6 +1,7 @@
 import { create } from "zustand"
-import type { Deck, DeckId } from "@/domain/deck/Deck"
+
 import type { DeckRepository } from "@/domain/deck/repository/DeckRepository"
+import type { Deck, DeckId } from "@/domain/deck/entity/Deck"
 
 let repository: DeckRepository
 

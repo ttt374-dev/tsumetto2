@@ -5,7 +5,7 @@ import { EditableText } from "../common/components/EditableText";
 import { FilterControl } from "./components/FilterControl";
 import LibrarySortControl from "../library/components/LibrarySortControl";
 import { useDeckEditViewModel } from "./hooks/useDeckEditScreenViewModel";
-import { AppShell } from "../common/layout/AppShell";
+import { AppShell } from "../common/components/layout/AppShell";
 import { MateLengthFilterControl } from "./components/MateLengthFilterControl";
 import { TagCheckboxFilterControl } from "./components/TagCheckboxFilterControl";
 import { useListDialog } from "../list/ListDialog";

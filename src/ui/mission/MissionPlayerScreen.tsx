@@ -1,12 +1,5 @@
-import { useMissionStore } from "@/ui/store/useMissionStore"
-import { useProblemStore } from "@/ui/store/useProblemStore"
-import type { Problem } from "@/domain/problem/entity/Problem"
 import { PlayerScreen } from "../player/PlayerScreen"
-import { useDeckStore } from "@/ui/store/useDeckStore"
-import { useCallback, useMemo } from "react"
-import type { SolvedResult } from "@/domain/learning/Learning"
 import { useMissionPlayerViewModel } from "./hooks/useMissionPlayerViewModel"
-import { Box } from "@mui/material"
 
 ////////////////////////////////////////////////
 export function MissionPlayerScreen() {

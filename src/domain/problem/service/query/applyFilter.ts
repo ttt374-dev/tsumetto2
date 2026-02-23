@@ -1,7 +1,6 @@
-import { createProblemWithLearningList, type ProblemWithLearning } from "../PwL";
+import type { Learning, LearningRecord } from "@/domain/learning/entity/Learning";
 import type { FilterState } from "./filter";
 import { matchMateBuckets } from "./mateFilter";
-import type { Learning, LearningRecord } from "@/domain/learning/Learning";
 import type { Problem } from "@/domain/problem/entity/Problem";
 
 

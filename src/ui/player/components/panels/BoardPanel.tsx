@@ -1,7 +1,7 @@
 import type { Position } from "@/domain/kif/entity";
 import { Box, Button, Stack } from "@mui/material";
-import BoardView from "./BoardView";
-import { SwipeWrapper } from "./SwipeWrapper";
+import BoardView from "../views/BoardView";
+import { SwipeWrapper } from "../SwipeWrapper";
 
 function BoardPanel({ position, onAdvancePly, onRetreatPly, onNextProblem, onPrevProblem }: { 
     position: Position

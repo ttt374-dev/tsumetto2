@@ -1,5 +1,5 @@
-import type { DeckId } from "@/domain/deck/Deck";
-import type { SolvedResult } from "@/domain/learning/Learning";
+import type { DeckId } from "@/domain/deck/entity/Deck";
+import type { SolvedResult } from "@/domain/learning/entity/Learning";
 import type { MissionPhase, MissionResultEntry } from "@/domain/mission/entity/Mission";
 import type { ProblemId } from "@/domain/problem/entity/Problem";
 import { create } from "zustand";

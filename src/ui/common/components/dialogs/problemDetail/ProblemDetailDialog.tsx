@@ -6,13 +6,13 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { type ProblemId } from "@/domain/problem/entity/Problem";
 import { useEffect, useState } from 'react';
 import { useProblemStore } from '@/ui/store/useProblemStore';
-import { EditableText } from '../components/EditableText';
-import { ProblemTagEditor } from '../components/ProblemTagEditor';
-import { StarToggleButton } from '../components/StarToggleButton/StarToggleButton';
+import { EditableText } from '../../EditableText';
+import { ProblemTagEditor } from '../../ProblemTagEditor';
+import { StarToggleButton } from '../../StarToggleButton/StarToggleButton';
 import { useLearningRecordStore } from '@/ui/store/useLearningRecordStore';
 import { useLearningEventStore } from '@/ui/store/useLearningEventStore';
-import type { NewLearningEvent } from '@/domain/learning';
-import type { SolvedResult } from '@/domain/learning/Learning';
+import type { NewLearningEvent } from '@/domain/learning/entity/LearningEvent';
+import type { SolvedResult } from '@/domain/learning/entity/Learning';
 
 export function useProblemDetailDialogViewModel(
     problemId: ProblemId,

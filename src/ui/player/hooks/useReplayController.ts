@@ -1,5 +1,5 @@
-import { buildUntilPly } from "@/domain/kif/buildUntilPly"
 import type { Move, Position } from "@/domain/kif/entity"
+import { buildUntilPly } from "@/domain/kif/service/buildUntilPly"
 import { useMemo, useState, useEffect } from "react"
 
 /*

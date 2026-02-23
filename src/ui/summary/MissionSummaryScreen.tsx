@@ -1,9 +1,9 @@
 import { Box, Button, Stack } from "@mui/material";
 import { SummaryView } from "./SummaryView";
-import { ProblemStats } from "@/domain/problem/ProblemStats";
-import { AppShell } from "../common/layout/AppShell";
+import { AppShell } from "../common/components/layout/AppShell";
 import { Navigate, useNavigate } from "react-router-dom";
 import { useMissionStore } from "@/ui/store/useMissionStore";
+import { ProblemStats } from "@/domain/problem/valueObject/ProblemStats";
 
 /////////////////////////////////////////////
 export function MissionSummaryScreen() {

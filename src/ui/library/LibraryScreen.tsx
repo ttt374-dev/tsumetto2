@@ -1,7 +1,7 @@
 import BackupIcon from "@mui/icons-material/Backup";
 
 import { IconButton } from "@mui/material";
-import { AppShell } from "../common/layout/AppShell";
+import { AppShell } from "../common/components/layout/AppShell";
 import { LibraryView } from "./components/LibraryView";
 import { useLibraryViewModel } from "./hooks/useLibraryViewModel";
 import { useState } from "react";

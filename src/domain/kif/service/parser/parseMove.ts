@@ -1,7 +1,7 @@
 import type { Result } from "@/shared/result"
-import { kanjiToPieceItem, Move, type PieceType, type Square } from "../entity"
 import type { ParseError, ParseErrorWithContext, ParseMoveError } from "./ParseError"
 import { withContext } from "./ParseContext"
+import { kanjiToPieceItem, Move, type PieceType, type Square } from "../../entity"
 
 type SkipReason = "empty-line" | "comment-out" | "resign"
 

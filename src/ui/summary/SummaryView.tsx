@@ -1,5 +1,5 @@
 
-import type { ProblemStats } from "@/domain/problem/ProblemStats";
+import type { ProblemStats } from "@/domain/problem/valueObject/ProblemStats";
 import { Box, Button, Paper, Stack } from "@mui/material";
 
 function SummaryRow({

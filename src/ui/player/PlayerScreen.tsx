@@ -1,13 +1,13 @@
-import { PlayerAnswerActions } from "./components/PlayerAnswerActions"
+import { PlayerAnswerActions } from "./components/actions/PlayerAnswerActions"
 import PlayerView from "./components/PlayerView"
 import { Problem, type ProblemId } from "@/domain/problem/entity/Problem"
-import type { SolvedResult } from "@/domain/learning/Learning";
-import { AppShell } from "../common/layout/AppShell";
+import { AppShell } from "../common/components/layout/AppShell";
 import { usePlayerPresenter } from "./hooks/usePlayerPresenter";
 import { useLearningEventStore } from "@/ui/store/useLearningEventStore";
 import { useTimer } from './hooks/useTimer';
 import { useEffect } from 'react';
-import { PlayerRightActions } from "./components/PlayerRightActions";
+import { PlayerRightActions } from "./components/actions/PlayerRightActions";
+import type { SolvedResult } from "@/domain/learning/entity/Learning";
 
 export type ProblemNavigation = {
     next: () => void,

@@ -1,8 +1,9 @@
 import { create } from "zustand";
-import type { LearningEvent, LearningEventLog, NewLearningEvent } from "@/domain/learning";
+
 import type { LearningEventRepository } from "@/domain/learning/repository/LearningEventRepository";
 import type { ProblemId } from "@/domain/problem/entity/Problem";
-import type { SolvedResult } from "@/domain/learning/Learning";
+import type { LearningEvent, LearningEventLog, NewLearningEvent } from "@/domain/learning/entity/LearningEvent";
+import type { SolvedResult } from "@/domain/learning/entity/Learning";
 
 type LearningEventStoreState = {
     eventLog: LearningEventLog;

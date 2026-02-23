@@ -1,5 +1,5 @@
 import type { ProblemId } from "@/domain/problem/entity/Problem";
-import { AppShell } from "../common/layout/AppShell";
+import { AppShell } from "../common/components/layout/AppShell";
 import { ListView } from "./ListView";
 import { useLocation } from "react-router-dom";
 

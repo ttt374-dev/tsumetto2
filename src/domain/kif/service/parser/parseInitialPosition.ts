@@ -1,5 +1,5 @@
 import type { Result } from "@/shared/result";
-import { Board, kanjiToPieceItem, Piece, type PieceType } from "../entity";
+import { Board, kanjiToPieceItem, Piece, type PieceType } from "../../entity";
 import type { ParseInitialBoardError } from "./ParseError";
 
 type InitialBoardOutcome =

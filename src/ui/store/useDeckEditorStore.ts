@@ -2,7 +2,7 @@ import { create } from "zustand"
 import { v4 } from "uuid"
 import { DefaultFilterState } from "@/domain/problem/service/query/filter"
 import { DefaultSortState } from "@/domain/problem/service/query/sort"
-import type { Deck } from "@/domain/deck/Deck"
+import type { Deck } from "@/domain/deck/entity/Deck"
 
 type DeckEditorState = {
     draft: Deck | null

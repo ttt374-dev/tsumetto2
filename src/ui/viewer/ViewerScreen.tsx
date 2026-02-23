@@ -2,11 +2,11 @@
 import { useProblemStore } from "@/ui/store/useProblemStore";
 import { useParams } from "react-router-dom"
 import PlayerView from "../player/components/PlayerView";
-import { AppShell } from "../common/layout/AppShell";
+import { AppShell } from "../common/components/layout/AppShell";
 import { IconButton, Stack } from "@mui/material";
-import { useProblemDetailDialog } from '../common/problemDetail/useProblemDetailDialog';
+import { useProblemDetailDialog } from '../common/components/dialogs/problemDetail/useProblemDetailDialog';
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem";
-import { PlayerRightActions } from "../player/components/PlayerRightActions";
+import { PlayerRightActions } from "../player/components/actions/PlayerRightActions";
 
 export function ViewerScreen() {
     const { id } = useParams<{ id: string }>()

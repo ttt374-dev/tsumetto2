@@ -1,5 +1,5 @@
 import { Filesystem, Directory, Encoding } from "@capacitor/filesystem";
-import { Problem, type ProblemDTO, type ProblemId } from "./entity/Problem"
+import { Problem, type ProblemDTO } from "../entity/Problem";
 
 export class ProblemRepository {
     constructor(
@@ -52,7 +52,6 @@ export class ProblemRepository {
             if (index === undefined) {
                 throw new Error(`problem not found: ${problem.id}`);
             }
-
             next[index] = problem;
         }
 
@@ -79,10 +78,7 @@ export class ProblemRepository {
         await this.save(problems)
     }
 }
-
-
 /////////////////////////
-
 const PROBLEM_FILE = "problems.json"
 
 export interface ProblemPersistence {

@@ -1,5 +1,5 @@
-import type { SolvedResult } from "@/domain/learning/Learning"
-import { Button, Stack, type ButtonProps, type Color, type PaletteColor } from "@mui/material"
+import type { SolvedResult } from "@/domain/learning/entity/Learning"
+import { Button, Stack, type ButtonProps } from "@mui/material"
 
 type AnswerAction = {
   label: string

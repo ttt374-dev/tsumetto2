@@ -1,20 +1,18 @@
+import { useState } from "react";
 import { Box, ToggleButton, List, ListItem, ListItemButton, ListItemText, Stack, ToggleButtonGroup, IconButton } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
-import { AppShell } from "../common/layout/AppShell";
-import FabMenu from "./components/FabMenu";
-import { useDecksViewModel } from "./hooks/useDecksViewModel";
-import { useNavigate } from "react-router-dom";
-import { routes } from "../App/useAppNavigation";
-
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, type UniqueIdentifier, TouchSensor } from "@dnd-kit/core";
 import { SortableContext, useSortable, arrayMove, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
-
-import type { Deck } from "@/domain/deck/Deck";
-import { useState } from "react";
+import { AppShell } from "../common/components/layout/AppShell";
+import FabMenu from "./components/FabMenu";
+import { useDecksViewModel } from "./hooks/useDecksViewModel";
+import { useNavigate } from "react-router-dom";
+import { routes } from "../App/useAppNavigation";
+import type { Deck } from "@/domain/deck/entity/Deck";
 
 type DeckActionMode = "reorder" | "mission" | "edit"
 

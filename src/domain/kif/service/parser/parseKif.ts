@@ -1,5 +1,5 @@
 import type { Result } from "@/shared/result";
-import { Board, Position, Hands, KifData, type Handicap, type KifHeader } from "../entity"
+import { Board, Position, Hands, KifData, type Handicap, type KifHeader } from "../../entity"
 import type { ParseError } from "./ParseError";
 import { parseHand } from "./parseHand";
 import { parseInitialBoard } from "./parseInitialPosition"

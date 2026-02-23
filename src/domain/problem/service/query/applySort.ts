@@ -1,7 +1,7 @@
 // domain/problemRecord/sortProblemRecords.ts
 
+import type { Learning } from "@/domain/learning/entity/Learning";
 import type { SortOrder, SortState } from "./sort"
-import type { Learning, LearningRecord } from "@/domain/learning/Learning"
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem"
 
 //type SortKey = SortState["key"]

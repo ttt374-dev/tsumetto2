@@ -1,6 +1,3 @@
-import VisibilityIcon from '@mui/icons-material/Visibility';
-
-import type { Learning } from "@/domain/learning/Learning";
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem";
 import { Box, Checkbox, colors, IconButton, ListItem, ListItemButton, ListItemIcon, ListItemText, Stack, Typography } from "@mui/material";
 import { useLongPress } from "../hooks/useLongPress";
@@ -11,6 +8,7 @@ import { useLearningRecordStore } from "@/ui/store/useLearningRecordStore";
 import { useNavigate } from 'react-router-dom';
 import { routes } from '@/ui/App/useAppNavigation';
 import { useStarToggleButton } from '@/ui/common/components/StarToggleButton/useStarToggleButton';
+import type { Learning } from "@/domain/learning/entity/Learning";
 
 export const LibraryListItem = function LibraryListItem({ id, onItemClick,
     showCheckbox, isChecked, onToggleChecked,

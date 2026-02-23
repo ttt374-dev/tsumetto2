@@ -1,8 +1,8 @@
-import type { Learning, LearningRecord } from "../learning/Learning"
-import type { Problem } from "./entity/Problem"
+import type { Learning, LearningRecord } from "@/domain/learning/entity/Learning"
+import type { Problem } from "../entity/Problem"
 
 export type ProblemWithLearning = {
-    problem: Problem
+    problem: Problem    
     learning?: Learning
 }
 

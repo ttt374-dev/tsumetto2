@@ -1,6 +1,4 @@
-import { Box, Stack, Typography, type SxProps } from "@mui/material";
-import MovesView from "./MovesView";
-import type { Theme } from "@emotion/react";
+import { Box  } from "@mui/material";
 
 
 export default function MovesPanel

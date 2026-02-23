@@ -1,15 +1,4 @@
-import type { Deck, DeckId } from "./Deck"
-
-// domain/deck/DeckRepository.ts
-/*
-export interface DeckRepository {
-  list(): Promise<Deck[]>
-  get(id: DeckId): Promise<Deck | undefined>
-  save(deck: Deck): Promise<void>
-  delete(id: DeckId): Promise<void>
-}
-  */
-// infra/deck/DeckRepositoryImpl.ts
+import type { Deck, DeckId } from "../entity/Deck"
 
 export class DeckRepository {
   private decks: Deck[] | null = null
