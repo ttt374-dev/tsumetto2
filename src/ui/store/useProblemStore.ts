@@ -2,6 +2,9 @@
 import { create } from "zustand"
 import type { Problem, ProblemId } from "../../domain/problem/entity/Problem"
 import type { ProblemRepository } from "@/domain/problem/repository/ProblemRepository"
+import { debounce } from "lodash"
+
+let repository: ProblemRepository
 
 export type ProblemState = {
     byId: Record<ProblemId, Problem>   // SoT
@@ -20,11 +23,6 @@ export type ProblemState = {
     deleteAll: () => Promise<void>
 }
 
-let repository: ProblemRepository
-
-export const initProblemStore = (repo: ProblemRepository) => {
-    repository = repo
-}
 export function extractTags(problems: Problem[]): string[] {
     const tagSet = new Set<string>()
     problems.forEach(p => p.tags?.forEach(tag => tagSet.add(tag)))
@@ -53,7 +51,6 @@ function reduceById(byId: Record<ProblemId, Problem>) {
         ...derive(byId),
     }
 }
-
 
 /////////////
 export const useProblemStore = create<ProblemState>((set, get) => ({
@@ -167,3 +164,25 @@ export const useProblemStore = create<ProblemState>((set, get) => ({
 ,
 
 }))
+/////////////////////////////////////////////////////////
+export const initProblemStore = (repo: ProblemRepository) => {
+    repository = repo
+
+    const saveRepo = debounce(async (problems: Problem[]) => {
+        try {
+            await repository.replaceAll(problems)
+        } catch (e) {
+            console.error("Failed to save problems", e)
+        }
+    }, 1000) // 1秒ごとにまとめて書き出し
+
+
+    let isInitializing = true
+    useProblemStore.subscribe(state => {
+        if (isInitializing) return
+        const allProblems = Object.values(state.byId)
+        saveRepo(allProblems)
+    })
+    // 初期ロード完了後にフラグを解除
+    isInitializing = false
+}
