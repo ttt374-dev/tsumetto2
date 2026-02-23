@@ -60,7 +60,7 @@ export function ImportDialog({open, onClose, onImport}: {
                 <Button onClick={onClose}>
                     キャンセル
                 </Button>
-                <Button onClick={() => onImport(options)}>
+                <Button onClick={() => onImport(options)} color="success" variant="contained">
                     Import
                 </Button>
             </DialogActions>

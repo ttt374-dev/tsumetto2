@@ -83,6 +83,8 @@ export class Problem {
         return this.create({title: title, kifData: r.value.toDTO()})
     }
     ////
+    get isActive(): boolean{ return !this.deletedAt}
+    
     touch(): Problem {
         return Problem.fromDTO({
             ...this.toDTO(),

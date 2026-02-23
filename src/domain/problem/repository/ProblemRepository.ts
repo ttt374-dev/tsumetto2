@@ -9,7 +9,7 @@ export class ProblemRepository {
     async load(){ return await this.persist.load()}
     private async save(problems: Problem[]){ await this.persist.save(problems)}
 
-    /*
+    
 
     async add(problem: Problem): Promise<void> {
         console.log("add problem", problem)
@@ -76,7 +76,7 @@ export class ProblemRepository {
     async removeAll(): Promise<void>{
         await this.save([])
     }
-        */
+        
     async replaceAll(problems: Problem[]){
         await this.save(problems)
     }
