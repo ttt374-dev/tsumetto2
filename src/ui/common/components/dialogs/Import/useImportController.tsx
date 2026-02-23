@@ -1,14 +1,8 @@
 import { useRepositoryContext } from "@/ui/App/providers/RepositoryProvider"
 import { useState } from "react"
 import { useImportFilePicker } from "./useImportFilePicker"
-import { useImportProblemsUsecase, type ImportFilesResult } from "@/application/usecase/problem/import/ImportProblemsUsecase"
+import { useImportProblemsUsecase, type ImportFilesResult, type ImportOptions } from "@/application/usecase/problem/import/ImportProblemsUsecase"
 import { ImportDialog } from "./ImportDialog"
-
-export type DuplicateTitleStrategy = "skip" | "rename" | "overwrite"
-export type ImportOptions = {
-    tags: string[]
-    duplicateTitleStrategy: DuplicateTitleStrategy
-}
 
 export function useImportController(
     onAfterImported?: (result: ImportFilesResult) => void

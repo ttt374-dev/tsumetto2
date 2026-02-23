@@ -28,9 +28,7 @@ export function AppShell({ header, footer, rightActions, fab, children }: Props)
             message: `imported: ${res.summary.imported}, skipped: ${res.summary.skipped}, failed: ${res.summary.failed}`
         });
     });
-    const backupRestoreDialog = useBackupRestoreDialog(res => {
-        if (res.ok) reload();
-    });
+    const backupRestoreDialog = useBackupRestoreDialog();
 
     return (
 

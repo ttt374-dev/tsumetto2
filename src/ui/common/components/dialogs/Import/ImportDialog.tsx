@@ -1,7 +1,7 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from "@mui/material";
 import { useState } from "react";
-import type { DuplicateTitleStrategy, ImportOptions } from "./useImportController";
 import { ProblemTagEditor } from "../../ProblemTagEditor";
+import type { DuplicateTitleStrategy, ImportOptions } from "@/application/usecase/problem/import/ImportProblemsUsecase";
 
 export function ImportDialog({open, onClose, onImport}: {
     open: boolean

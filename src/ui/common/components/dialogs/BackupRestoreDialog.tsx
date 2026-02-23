@@ -1,15 +1,18 @@
 import { useRef, useState } from "react"
 import { Dialog, DialogTitle, DialogContent, DialogActions,
     Button, Box, Typography, Divider } from "@mui/material"
+
 import { useBackupRestoreUsecase, type BackupData, type BackupResult, type RestoreResult } from "@/application/usecase/backup/BackupRestoreUsecase"
 import { fileBackupWriter } from "@/infrastructure/fileBackupWriter"
 import { useRepositoryContext } from "@/ui/App/providers/RepositoryProvider"
 import { useToast } from "@/ui/App/providers/ToastProvider"
+import { useProblemStore } from "@/ui/store/useProblemStore"
 
-export function useBackupRestoreDialog(onRestoreFinished?: (res: RestoreResult) => void){
+export function useBackupRestoreDialog(){
     const [open, setOpen] = useState(false)
     const toast = useToast()
     const openDialog = () => { setOpen(true)}
+    const reload = useProblemStore(s=>s.reload)    
 
     const dialogElement = (
         <BackupRestoreDialog open={open}
@@ -20,11 +23,13 @@ export function useBackupRestoreDialog(onRestoreFinished?: (res: RestoreResult) 
                     toast({ message: `バックアップに失敗しました：${res.error.code}`, severity: "error" })
             }}
             onRestoreFinished={(res) => {
-                if (res.ok)
+                if (res.ok) {
                     toast({ message: `${res.value.problemCount}件をリストアしました` })
-                else
+                    reload()
+                } else {
                     toast({ message: `リストアに失敗しました：${res.error.code}`, severity: "error" })
-                onRestoreFinished?.(res)
+                }
+                
             }}
             onClose={() => { setOpen(false) }} />
     )

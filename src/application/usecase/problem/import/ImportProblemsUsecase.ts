@@ -1,6 +1,11 @@
 import { Problem, type ProblemId } from "@/domain/problem/entity/Problem";
 import type { ProblemRepository } from "@/domain/problem/repository/ProblemRepository";
-import type { ImportOptions } from "@/ui/common/components/dialogs/Import/useImportController";
+
+export type DuplicateTitleStrategy = "skip" | "rename" | "overwrite"
+export type ImportOptions = {
+    tags: string[]
+    duplicateTitleStrategy: DuplicateTitleStrategy
+}
 
 export type ImportStatus =
   | "imported"   // 正常に追加 or 上書き
