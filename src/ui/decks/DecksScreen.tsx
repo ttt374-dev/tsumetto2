@@ -12,16 +12,21 @@ import FabMenu from "./components/FabMenu";
 import { useDecksViewModel } from "./hooks/useDecksViewModel";
 import { useNavigate } from "react-router-dom";
 import { routes } from "../App/useAppNavigation";
-import type { Deck } from "@/domain/deck/entity/Deck";
-
-type DeckActionMode = "reorder" | "mission" | "edit"
+import type { Deck, DeckId } from "@/domain/deck/entity/Deck";
+import { useDecksModeStore } from "./hooks/useDecksModeStore";
 
 export default function DecksScreen() {
     const { deckArray, onDragEnd, deckStats, onCreateDeck, onStartMission, presenter: { importer, backupRestoreDialog } } =
         useDecksViewModel();
     const navigate = useNavigate();
-    const [mode, setMode] = useState<DeckActionMode>("mission")
+    //const [mode, setMode] = useState<DeckActionMode>("mission")
+    //const [reorderable, setReordable] = useState(false)
+    //const [editable, setEditable] = useState(false)
+    const { editable, toggleEditable, reorderable, toggleReorderable} = useDecksModeStore()
 
+    const handleDeckEdit = (id: DeckId) => {
+        navigate(routes.deckEdit(id));
+    }
     // dnd-kit センサー
     const sensors = useSensors(
         useSensor(PointerSensor, {
@@ -47,12 +52,13 @@ export default function DecksScreen() {
 
         const stats = deckStats.get(deck.id);
 
-        const isReorder = mode === "reorder";
+        //const isReorder = mode === "reorder";
+        const isReorder = reorderable
 
         return (
             <ListItem
-                ref={isReorder ? sortable.setNodeRef : undefined}
-                style={isReorder ? style : undefined}
+                ref={sortable.setNodeRef}
+                style={ reorderable ? style: undefined}
                 disablePadding
                 sx={{
                     borderBottom: '1px solid',
@@ -60,27 +66,35 @@ export default function DecksScreen() {
                     //px: 2,
                     display: 'flex',
                     alignItems: 'center',
-                    backgroundColor: isReorder ? "action.hover" : "inherit",
+                    //backgroundColor: isReorder ? "action.hover" : "inherit",
                 }}
+                secondaryAction={
+                    <>
+                        { editable &&
+                        <IconButton edge="end" aria-label="edit" onClick={() => handleDeckEdit(deck.id)}>
+                            <EditIcon />
+                        </IconButton> }
+                        {isReorder && (
+                        <IconButton
+                            {...sortable.attributes}
+                            {...sortable.listeners}
+                        >
+                            <DragIndicatorIcon />
+                        </IconButton>
+                        )}
+                    </>
+                }
             >
 
-                {isReorder && (
-                    <IconButton
-                        {...sortable.attributes}
-                        {...sortable.listeners}
-                    >
-                        <DragIndicatorIcon />
-                    </IconButton>
-                )}
 
                 {/* 通常動作はモード依存 */}
                 <ListItemButton
-
                     onClick={() => {
-                        if (mode === "mission") onStartMission(deck);
-                        if (mode === "edit") navigate(routes.deckEdit(deck.id));
+                        onStartMission(deck)
+                        //if (mode === "mission") onStartMission(deck);
+                        //if (mode === "edit") navigate(routes.deckEdit(deck.id));
                     }}
-                    disabled={stats?.problemCount === 0 && mode === "mission"}
+                    disabled={stats?.problemCount === 0}
                     
                 >
                     <ListItemText
@@ -92,13 +106,20 @@ export default function DecksScreen() {
             </ListItem>
         );
     }
-    return (
-        <AppShell
-            header="Decks"
-            fab={<FabMenu onCreateNewDeck={onCreateDeck} onImportFiles={importer.openFileDialog} />}
+    function ActionMode(){
+        return (
+               <Stack direction="row" justifyContent="flex-end">
+                <IconButton color={ editable ? "primary" : "default"}
+                    onClick={toggleEditable}>
+                    <EditIcon />
+                </IconButton>
 
-        >
-            <Stack direction="row" justifyContent="flex-end">
+                <IconButton color={ reorderable ? "primary" : "default"}
+                    onClick={toggleReorderable}>
+                    <DragIndicatorIcon />
+                </IconButton>
+
+                { /* 
                 <ToggleButtonGroup
                     value={mode}
                     exclusive
@@ -107,9 +128,7 @@ export default function DecksScreen() {
                     }}
                     size="small"
                 >
-                    <ToggleButton value="mission">
-                        <PlayArrowIcon fontSize="small" />
-                    </ToggleButton>
+                    
 
                     <ToggleButton value="edit">
                         <EditIcon fontSize="small" />
@@ -119,7 +138,18 @@ export default function DecksScreen() {
                         <DragIndicatorIcon fontSize="small" />
                     </ToggleButton>
                 </ToggleButtonGroup>
+                */}
             </Stack>
+        )
+
+    }
+    return (
+        <AppShell
+            header="Decks"
+            fab={<FabMenu onCreateNewDeck={onCreateDeck} onImportFiles={importer.openFileDialog} />}
+
+        >
+            <ActionMode/>
             <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto", touchAction: "pan-y" }}>
                 <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={e => onDragEnd(e.active.id, e.over?.id ?? null)}>
                     <SortableContext items={deckArray.map(d => d.id)} strategy={verticalListSortingStrategy}>
