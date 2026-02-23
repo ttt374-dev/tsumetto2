@@ -36,7 +36,7 @@ function useDeckEditorList(query: QueryContextValue){
     const learningRecords = useLearningRecordStore(s => s.records)
 
     const activeProblems = useMemo(() =>
-        applyQuery(problems, learningRecords, query.sortState, query.filterState),
+        applyQuery(problems, learningRecords, query.sort.state, query.filter.state),
         [problems, learningRecords, query])
     const ids = activeProblems.map(p => p.id)
     return { ids, activeProblems, learningRecords}
@@ -100,8 +100,9 @@ export function useDeckEditViewModel() {
     useEffect(() => {
         if (!draft) return
 
-        query.setFilterState(draft.snapshot.filterState)
-        query.setSortState(draft.snapshot.sortState)
+        query.sort.setState(draft.snapshot.sortState)
+        query.filter.setState(draft.snapshot.filterState)
+        
     }, [draft?.id]) // ← 重要：idで依存
 
     // --------------------------

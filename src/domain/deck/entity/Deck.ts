@@ -18,8 +18,8 @@ export type Deck = {
 }
 export function createQuerySnapshot(query: ReturnType<typeof useQuery>): QuerySnapshot {
   return {
-    filterState: structuredClone(query.filterState),
-    sortState: structuredClone(query.sortState)
+    filterState: structuredClone(query.filter.state),
+    sortState: structuredClone(query.sort.state)
   }
 }
 

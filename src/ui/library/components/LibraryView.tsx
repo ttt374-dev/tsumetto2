@@ -44,7 +44,7 @@ export function LibraryView({ ids, query, actionMode, changeActionMode,
 
     const [showFilterText, setShowFilterText] = useState(false)
     const [ filterText, setFilterText] = useState("")
-    useEffect(()=>{ query.setFilter({text: filterText})}, [filterText])
+    useEffect(()=>{ query.filter.addFilter({text: filterText})}, [filterText])
     const handleToggleShowFilterText = () => { 
         if (showFilterText) setFilterText("")
         setShowFilterText(prev => !prev) 
@@ -77,9 +77,9 @@ export function LibraryView({ ids, query, actionMode, changeActionMode,
                 </IconButton>
                 {/* ソート */}
                 <LibrarySortControl
-                    sort={query.sortState}
-                    onSetSortKey={query.toggleSort}
-                    onSetSortOrder={order => query.setSortState(p => ({ ...p, order }))}
+                    sort={query.sort.state}
+                    onSetSortKey={query.sort.setKey}
+                    onToggleOrder={query.sort.toggleOrder}
                 />
             </Stack>
 

@@ -4,9 +4,9 @@ import { MateLengthFilterControl } from "./MateLengthFilterControl";
 import { TagCheckboxFilterControl } from "./TagCheckboxFilterControl";
 
 
-export function FilterControl({ filter, allTags, onToggleFilter, onSetFilter }: {
-    filter: FilterState, onToggleFilter: (key: keyof FilterState) => void
-    onSetFilter: (partial: Partial<FilterState>) => void
+export function FilterControl({ filter, allTags, onToggleFilter}: {
+    filter: FilterState, 
+    onToggleFilter: (key: keyof FilterState) => void    
     allTags: string[]
 }) {
     return (

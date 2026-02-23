@@ -91,9 +91,7 @@ export function useDecksViewModel() {
         });
     });
 
-    const backupRestoreDialog = useBackupRestoreDialog(res => {
-        if (res.ok) reloadProblems();
-    });
+    const backupRestoreDialog = useBackupRestoreDialog();
 
     return {
         deckArray,

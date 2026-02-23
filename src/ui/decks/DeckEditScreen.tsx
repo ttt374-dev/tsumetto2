@@ -47,23 +47,23 @@ export function DeckEditScreen() {
                 </IconButton>
             </Stack>
 
-            <LibrarySortControl sort={query.sortState} onSetSortKey={query.toggleSort}
-                onSetSortOrder={order => query.setSortState(p => ({ ...p, order }))} />
+            <LibrarySortControl sort={query.sort.state} onSetSortKey={query.sort.setKey}
+                onToggleOrder={query.sort.toggleOrder} />
 
             <Stack direction="row" justifyContent="space-between" >
                 <Box flex={1}>
                     <FilterControl
-                        filter={query.filterState}
+                        filter={query.filter.state}
                         allTags={allTags}
-                        onToggleFilter={query.toggleFilter}
-                        onSetFilter={query.setFilter}
+                        onToggleFilter={query.filter.toggleFilter}
+
                     />
                 </Box>
                 <Box flex={1}>
                     <MateLengthFilterControl
-                        mateBuckets={query.filterState.mateBuckets}
+                        mateBuckets={query.filter.state.mateBuckets}
                         onChange={(buckets) => {
-                            query.setFilter({ mateBuckets: buckets })
+                            query.filter.addFilter({ mateBuckets: buckets })
                         }}
                     />
                 </Box>
@@ -72,8 +72,8 @@ export function DeckEditScreen() {
             
             <Stack direction="row" justifyContent="space-between" >
                 <TagCheckboxFilterControl
-                    allTags={allTags} selectedTags={query.filterState.tags ?? []}
-                    onChange={(tags => { query.setFilter({ tags: tags }) })}
+                    allTags={allTags} selectedTags={query.filter.state.tags ?? []}
+                    onChange={(tags => { query.filter.addFilter({ tags: tags }) })}
                 /> 
             </Stack>
             

@@ -19,8 +19,8 @@ export type LibraryActionMode = "selection" | "view"
 
 function useLibraryListVM(problems: Problem[], learningRecords: LearningRecord, query: ReturnType<typeof useQuery>) {
     const libraryItems = useMemo(() =>
-        applyQuery(problems, learningRecords, query.sortState, query.filterState),
-        [problems, learningRecords, query.sortState, query.filterState]
+        applyQuery(problems, learningRecords, query.sort.state, query.filter.state),
+        [problems, learningRecords, query.sort.state, query.filter.state]
     )
     const ids = useMemo(() => libraryItems.map(p => p.id), [libraryItems])    
     console.log("library list", ids, libraryItems, problems)
@@ -35,9 +35,7 @@ function useLibraryDialogVM(checkedIds: ProblemId[], reload: () => Promise<void>
           () => { navigate(routes.library)}
     )
     //const viewerDialog = useViewerDialog()
-    const backupRestoreDialog = useBackupRestoreDialog((res) => {
-        if (res.ok) reload()
-    })
+    const backupRestoreDialog = useBackupRestoreDialog()
     const tagEditDialog = useMultipleProblemsTagEditDialog(checkedIds)
 
     return {
