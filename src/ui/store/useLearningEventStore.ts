@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { debounce } from "lodash"
 
 import type { LearningEventRepository } from "@/domain/learning/repository/LearningEventRepository";
 import type { ProblemId } from "@/domain/problem/entity/Problem";
@@ -9,34 +10,14 @@ type LearningEventStoreState = {
     eventLog: LearningEventLog;
     repository?: LearningEventRepository;
 
-    // repository 注入用
-    //initLearningEventRepository: (repo: LearningEventRepository) => void;
-
     reload: () => Promise<void>;
     append: (learningEvent: NewLearningEvent) => Promise<void>;
     review: (problemId: ProblemId, quality: SolvedResult, sec?: number) => Promise<void>;
-    //deleteAll: () => Promise<void>;
-    //deleteByProblemIds: (ids: ProblemId[]) => Promise<void>;
 };
 
 let repository: LearningEventRepository
 
-export const initLearningEventRepository = (repo: LearningEventRepository) => {
-    repository = repo
-}
-
 export const useLearningEventStore = create<LearningEventStoreState>((set, get) => {
-    const appendQueue: LearningEvent[] = [];
-
-    const processQueue = async (repository: LearningEventRepository) => {
-        while (appendQueue.length > 0) {
-            const e = appendQueue[0];
-            set(state => ({ eventLog: [...state.eventLog, e] }));
-            await repository.append(e);
-            appendQueue.shift();
-        }
-    };
-
     return {
         eventLog: [],
 
@@ -48,30 +29,35 @@ export const useLearningEventStore = create<LearningEventStoreState>((set, get) 
                 set({ eventLog: [] });
             }
         },
-
-        append: async (event: NewLearningEvent) => {            
-            appendQueue.push({...event, at: Date.now()});
-            if (appendQueue.length > 1) return;
-            await processQueue(repository);
+        append: async (event: NewLearningEvent) => {
+            set(state => ({
+                eventLog: [...state.eventLog, { ...event, at: Date.now() }]
+            }))
         },
-
         review: async (problemId: ProblemId, quality: SolvedResult, sec?: number) => {
-            const reviewEvent: LearningEvent = { 
-                type: "reviewed", problemId, quality, sec, at: Date.now() }
+            const reviewEvent: LearningEvent = {
+                type: "reviewed", problemId, quality, sec, at: Date.now()
+            }
             await get().append(reviewEvent);
         },
-
-        /*
-        deleteAll: async () => {
-            await repository.removeAll();
-            await get().reload();
-        },
-
-        deleteByProblemIds: async (ids) => {
-            const idSet = new Set(ids);
-            set(state => ({ eventLog: state.eventLog.filter(e => !idSet.has(e.problemId)) }));
-            await repository.replaceAll(get().eventLog);
-        },
-        */
     };
 });
+/////////////////////////////////////////////////////////
+// 初期化 + subscribe で debounce 永続化
+export const initLearningEventRepository = (repo: LearningEventRepository) => {
+  repository = repo
+
+  const saveRepo = debounce(async (events: LearningEventLog) => {
+    try {
+      await repository.replaceAll(events)
+    } catch (e) {
+          console.error("Failed to save learning events", e)
+      }
+  }, 1000) // 1秒ごとにまとめて書き出し
+
+    let isInitializing = true
+    useLearningEventStore.subscribe(state => {
+        saveRepo(state.eventLog)
+    })
+    isInitializing = false
+}
