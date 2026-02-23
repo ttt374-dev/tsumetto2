@@ -42,24 +42,6 @@ function useDeckEditorList(query: QueryContextValue){
     return { ids, activeProblems, learningRecords}
 }
 
-function useDeckEditorStats(query: QueryContextValue) {
-    //if (!draft) return { problemCount: 0, accuracy: 0 }
-    //const { ids, learningRecords} = useDeckEditorList(query)
-
-    /*
-    const problems = useProblemStore(s => s.activeProblems)
-    const records = useLearningRecordStore(s => s.records)
-
-    return useMemo(() => {
-        if (!draft) return { problemCount: 0, accuracy: 0 }
-        return ProblemStats.createWithFilter(
-            problems,
-            records,
-            query.filterState
-        )
-    }, [draft, problems, records, query.filterState])
-    */
-}
 function useDeckEditorActions(id: string | undefined, query: QueryContextValue) {
     const draft = useDeckEditorStore(s => s.draft)
     const reset = useDeckEditorStore(s => s.reset)

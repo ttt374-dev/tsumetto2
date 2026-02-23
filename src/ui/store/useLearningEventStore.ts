@@ -11,8 +11,8 @@ type LearningEventStoreState = {
     repository?: LearningEventRepository;
 
     reload: () => Promise<void>;
-    append: (learningEvent: NewLearningEvent) => Promise<void>;
-    review: (problemId: ProblemId, quality: SolvedResult, sec?: number) => Promise<void>;
+    append: (learningEvent: NewLearningEvent) => void
+    review: (problemId: ProblemId, quality: SolvedResult, sec?: number) => void
 };
 
 let repository: LearningEventRepository
@@ -29,16 +29,16 @@ export const useLearningEventStore = create<LearningEventStoreState>((set, get) 
                 set({ eventLog: [] });
             }
         },
-        append: async (event: NewLearningEvent) => {
+        append: (event: NewLearningEvent) => {
             set(state => ({
                 eventLog: [...state.eventLog, { ...event, at: Date.now() }]
             }))
         },
-        review: async (problemId: ProblemId, quality: SolvedResult, sec?: number) => {
+        review: (problemId: ProblemId, quality: SolvedResult, sec?: number) => {
             const reviewEvent: LearningEvent = {
                 type: "reviewed", problemId, quality, sec, at: Date.now()
             }
-            await get().append(reviewEvent);
+            get().append(reviewEvent);
         },
     };
 });

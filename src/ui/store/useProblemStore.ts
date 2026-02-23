@@ -15,12 +15,12 @@ export type ProblemState = {
     activeProblems: Problem[]    
     
     reload: () => Promise<void>
-    updateProblem: (id: ProblemId, updater: (p: Problem) => Problem) => Promise<void>
-    updateProblems: (ids: string[], updater: (p: Problem) => Problem) => Promise<void>
-    deleteProblem: (id: ProblemId) => Promise<void>
-    deleteProblems: (ids: ProblemId[]) => Promise<void>
-    toggleStar: (id: ProblemId) => Promise<void>
-    deleteAll: () => Promise<void>
+    updateProblem: (id: ProblemId, updater: (p: Problem) => Problem) => void
+    updateProblems: (ids: string[], updater: (p: Problem) => Problem) => void
+    deleteProblem: (id: ProblemId) => void
+    deleteProblems: (ids: ProblemId[]) => void
+    toggleStar: (id: ProblemId) => void
+    deleteAll: () => void
 }
 
 export function extractTags(problems: Problem[]): string[] {
@@ -73,10 +73,10 @@ export const useProblemStore = create<ProblemState>((set, get) => ({
         
     },
 
-    updateProblem: async(id, updater) => {
-        await get().updateProblems([id], updater)
+    updateProblem: (id, updater) => {
+        get().updateProblems([id], updater)
     },
-    updateProblems: async (ids, updater) => {
+    updateProblems: (ids, updater) => {
         const state = get()
 
         const updated: Problem[] = []
@@ -103,23 +103,16 @@ export const useProblemStore = create<ProblemState>((set, get) => ({
         // ② 楽観的更新
         const prevState = state.byId
         set(reduceById(newById))
-
-        // ③ 永続化
-        try {
-            await repository.updateMany(updated)
-        } catch (e) {
-            set(reduceById(prevState))
-        }
     },
 
-    toggleStar: async (id: ProblemId) => {
-        await get().updateProblem(id, prev => prev.toggleStar())
+    toggleStar: (id: ProblemId) => {
+        get().updateProblem(id, prev => prev.toggleStar())
     },
-    deleteProblem: async (id: ProblemId) => {
-        await get().deleteProblems([id])
+    deleteProblem: (id: ProblemId) => {
+        get().deleteProblems([id])
     },
 
-    deleteProblems: async (idsToDelete) => {
+    deleteProblems: (idsToDelete) => {
         const state = get()
         const newById = { ...state.byId }
 
@@ -135,13 +128,10 @@ export const useProblemStore = create<ProblemState>((set, get) => ({
         }
 
         if (updated.length === 0) return
-
         set(reduceById(newById))
-
-        await repository.updateMany(updated)
     },
 
-    deleteAll: async () => {
+    deleteAll: () => {
         const state = get()
         const newById = { ...state.byId }
         const updated: Problem[] = []
@@ -157,8 +147,7 @@ export const useProblemStore = create<ProblemState>((set, get) => ({
 
         if (updated.length === 0) return
 
-        set(reduceById(newById))
-        await repository.updateMany(updated)
+        set(reduceById(newById))        
     }
 
 ,

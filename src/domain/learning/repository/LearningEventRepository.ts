@@ -20,9 +20,10 @@ export class LearningEventRepository {
         //console.log("learning event repo append", newEvent)
         await this.store.save(nextLog)
     }
+    /*
     async removeAll(){
         await this.store.save([])
-    }
+    }*/
     async replaceAll(events: LearningEventLog) {
         await this.store.save(events)
     }    
