@@ -2,9 +2,8 @@ import { useDeckEditorStore } from "@/ui/store/useDeckEditorStore"
 import { useDeckStore } from "@/ui/store/useDeckStore"
 import { useProblemStore } from "@/ui/store/useProblemStore"
 import { useLearningRecordStore } from "@/ui/store/useLearningRecordStore"
-import { useQuery } from "@/ui/common/hooks/useQuery"
+import { useQuery, type QueryController } from "@/ui/common/hooks/useQuery"
 import { applyQuery } from "@/domain/problem/service/query/applyQuery"
-import type { QueryContextValue } from "@/ui/App/providers/QueryProvider"
 import { useToast } from "@/ui/App/providers/ToastProvider"
 import { routes } from "@/ui/App/useAppNavigation"
 import { useCallback, useEffect, useMemo } from "react"
@@ -31,7 +30,7 @@ function useDeckEditorInitializer(id: string | undefined) {
         return () => reset()
     }, [id, decks])
 }
-function useDeckEditorList(query: QueryContextValue){
+function useDeckEditorList(query: QueryController){
     const problems = useProblemStore(s => s.activeProblems)
     const learningRecords = useLearningRecordStore(s => s.records)
 
@@ -42,7 +41,7 @@ function useDeckEditorList(query: QueryContextValue){
     return { ids, activeProblems, learningRecords}
 }
 
-function useDeckEditorActions(id: string | undefined, query: QueryContextValue) {
+function useDeckEditorActions(id: string | undefined, query: QueryController) {
     const draft = useDeckEditorStore(s => s.draft)
     const reset = useDeckEditorStore(s => s.reset)
     const deckStore = useDeckStore()

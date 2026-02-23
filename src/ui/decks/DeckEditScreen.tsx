@@ -54,7 +54,6 @@ export function DeckEditScreen() {
                 <Box flex={1}>
                     <FilterControl
                         filter={query.filter.state}
-                        allTags={allTags}
                         onToggleFilter={query.filter.toggleFilter}
 
                     />

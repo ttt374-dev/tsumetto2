@@ -4,10 +4,9 @@ import { MateLengthFilterControl } from "./MateLengthFilterControl";
 import { TagCheckboxFilterControl } from "./TagCheckboxFilterControl";
 
 
-export function FilterControl({ filter, allTags, onToggleFilter}: {
+export function FilterControl({ filter, onToggleFilter}: {
     filter: FilterState, 
-    onToggleFilter: (key: keyof FilterState) => void    
-    allTags: string[]
+    onToggleFilter: (key: keyof FilterState) => void        
 }) {
     return (
         <Paper sx={{

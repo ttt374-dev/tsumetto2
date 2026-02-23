@@ -7,13 +7,13 @@ import SelectAllIcon from "@mui/icons-material/SelectAll";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import SearchIcon from "@mui/icons-material/Search";
 
-import type { useLibraryQueryContext } from "../../App/providers/QueryProvider"
 import LibrarySortControl from "./LibrarySortControl"
 import { LibraryListItem } from "./LibraryListItem"
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem"
 import { LibraryCheckboxControl } from "./LibraryCheckboxControl";
 import type { LibraryActionMode } from "../hooks/useLibraryViewModel";
 import { useEffect, useState } from "react";
+import type { QueryController } from "@/ui/common/hooks/useQuery";
 
 export type LibraryItemActions = {
     openTagEditDialog: (ids: ProblemId[]) => void
@@ -22,7 +22,7 @@ export type LibraryItemActions = {
 
 type LibraryViewProps = {
     ids: ProblemId[]
-    query: ReturnType<typeof useLibraryQueryContext>
+    query: QueryController
     actionMode: LibraryActionMode
     changeActionMode: (mode: LibraryActionMode) => void
     itemActions: LibraryItemActions,

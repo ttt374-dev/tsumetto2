@@ -1,7 +1,6 @@
 import { useProblemStore } from "@/ui/store/useProblemStore"
 import { useLearningRecordStore } from "@/ui/store/useLearningRecordStore"
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem"
-import { useLibraryQueryContext } from "@/ui/App/providers/QueryProvider"
 import { useToast } from "@/ui/App/providers/ToastProvider"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { applyQuery } from "@/domain/problem/service/query/applyQuery"
@@ -13,14 +12,17 @@ import { routes } from "@/ui/App/useAppNavigation"
 import type { LearningRecord } from "@/domain/learning/entity/Learning"
 import { useBackupRestoreDialog } from "@/ui/common/components/dialogs/BackupRestoreDialog"
 import { useMultipleProblemsTagEditDialog } from "@/ui/common/components/dialogs/MultipleProblemsTagEditDialog"
+import { useQueryStore } from "@/ui/store/useQueryStore"
+import type { SortState } from "@/domain/problem/service/query/sort"
+import type { FilterState } from "@/domain/problem/service/query/filter"
 
 
 export type LibraryActionMode = "selection" | "view" 
 
-function useLibraryListVM(problems: Problem[], learningRecords: LearningRecord, query: ReturnType<typeof useQuery>) {
+function useLibraryListVM(problems: Problem[], learningRecords: LearningRecord, sortState: SortState, filterState: FilterState) {
     const libraryItems = useMemo(() =>
-        applyQuery(problems, learningRecords, query.sort.state, query.filter.state),
-        [problems, learningRecords, query.sort.state, query.filter.state]
+        applyQuery(problems, learningRecords, sortState, filterState),
+        [problems, learningRecords, sortState, filterState]
     )
     const ids = useMemo(() => libraryItems.map(p => p.id), [libraryItems])    
     console.log("library list", ids, libraryItems, problems)
@@ -80,13 +82,15 @@ function useLibraryCommands(){
 }
 /////////////////////////////////////////////////
 export function useLibraryViewModel() {
-    const query = useLibraryQueryContext()
+    //const query = useLibraryQueryContext()
+    const query = useQueryStore()
+
     const learningRecords = useLearningRecordStore(s => s.records)
     const [actionMode, setActionMode] = useState<LibraryActionMode>("view")
     const toast = useToast()
 
     const { problems, reload, deleteProblems } = useLibraryCommands()
-    const { libraryItems, ids } = useLibraryListVM(problems, learningRecords, query)
+    const { libraryItems, ids } = useLibraryListVM(problems, learningRecords, query.sort.state, query.filter.state)
     
     const selection = useLibrarySelectionVM(ids)
     const dialogs = useLibraryDialogVM(selection.checkedIds, reload)
