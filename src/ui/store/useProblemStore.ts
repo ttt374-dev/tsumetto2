@@ -2,11 +2,13 @@
 import { create } from "zustand"
 import type { Problem, ProblemId } from "../../domain/problem/entity/Problem"
 import type { ProblemRepository } from "@/domain/problem/repository/ProblemRepository"
-import { debounce } from "lodash"
+//import { debounce } from "lodash"
 
-let repository: ProblemRepository
+//let repository: ProblemRepository
 
 export type ProblemState = {
+    repo?: ProblemRepository
+    setRepository: (repo: ProblemRepository) => void
     byId: Record<ProblemId, Problem>   // SoT
 
     // derived states
@@ -54,6 +56,9 @@ function reduceById(byId: Record<ProblemId, Problem>) {
 
 /////////////
 export const useProblemStore = create<ProblemState>((set, get) => ({
+    repo: undefined,
+    setRepository: (repo) => set({ repo }),
+
     ids: [],
     byId: {},
     activeProblems: [],
@@ -61,13 +66,14 @@ export const useProblemStore = create<ProblemState>((set, get) => ({
    
     
     reload: async () => {       
-        const data = await repository.load()
+        const repo = get().repo
+        if (!repo) throw new Error("Repository not initialized")
+
+        const data = await repo.load()
         const byId: Record<ProblemId, Problem> = {}
-        //const ids: ProblemId[] = []
 
         data.forEach(p => {
             byId[p.id] = p
-            //ids.push(p.id)
         })
         set(reduceById(byId))       
         
@@ -153,6 +159,8 @@ export const useProblemStore = create<ProblemState>((set, get) => ({
 ,
 
 }))
+
+/*
 /////////////////////////////////////////////////////////
 export const initProblemStore = (repo: ProblemRepository) => {
     repository = repo
@@ -174,4 +182,4 @@ export const initProblemStore = (repo: ProblemRepository) => {
     })
     // 初期ロード完了後にフラグを解除
     isInitializing = false
-}
+}*/

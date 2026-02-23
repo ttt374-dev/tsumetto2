@@ -26,6 +26,7 @@ export class DeckRepository {
     }
     private async save(decks: Deck[]) {
         this.decks = decks
+        console.log("deck saved", decks)
         await this.persistence.save(decks)
     }
     /*

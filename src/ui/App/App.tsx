@@ -1,6 +1,6 @@
 import './App.css'
 
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 
 import { MissionScreen } from '../mission/MissionScreen';
@@ -8,44 +8,80 @@ import { LibraryScreen } from '../library/LibraryScreen';
 import { MissionSummaryScreen } from '../summary/MissionSummaryScreen';
 import DecksScreen from '../decks/DecksScreen';
 import { DeckEditScreen } from '../decks/DeckEditScreen';
-import { initProblemStore, useProblemStore } from '@/ui/store/useProblemStore';
+import { useProblemStore } from '@/ui/store/useProblemStore';
 import { DeckRepository, LocalStorageDeckPersistence } from '@/domain/deck/repository/DeckRepository';
-import { initDeckStore, useDeckStore } from '@/ui/store/useDeckStore';
+import { useDeckStore } from '@/ui/store/useDeckStore';
 import { LocalStorageLearningEventPersistence, LearningEventRepository } from '@/domain/learning/repository/LearningEventRepository';
-import { initLearningEventRepository, useLearningEventStore } from '@/ui/store/useLearningEventStore';
+import { useLearningEventStore } from '@/ui/store/useLearningEventStore';
 import { MissionPlayerScreen } from '../mission/MissionPlayerScreen';
 import { ViewerScreen } from '../viewer/ViewerScreen';
-import { RepositoryContext } from './providers/RepositoryProvider';
+import { RepositoryContext, type RepositoryContextValue } from './providers/RepositoryProvider';
 import { ToastProvider } from './providers/ToastProvider';
 import { ListScreen } from '../list/ListScreen';
 import { LocalStrorageProblemPersistence, ProblemRepository } from '@/domain/problem/repository/ProblemRepository';
 import { initializeAppUsecase } from '@/application/usecase/initializeApp/useInitializeAppUsecase';
+import { debounce } from 'lodash';
 
-function App() {
-    // シングルトンレポジトリの生成
-    const repos = {
+function createRepositories() {
+    return {
         problem: new ProblemRepository(new LocalStrorageProblemPersistence()),
         learningEvent: new LearningEventRepository(new LocalStorageLearningEventPersistence()),
         deck: new DeckRepository(new LocalStorageDeckPersistence()),
     }
-    initProblemStore(repos.problem)
-    initLearningEventRepository(repos.learningEvent)
-    initDeckStore(repos.deck)
-
-    useProblemStore.getState().reload()
-    useDeckStore.getState().loadDecks()
-    useLearningEventStore.getState().reload()
-
-    // hydrate
-    const hydrate = useProblemStore(s => s.reload)
-    
+}
+function bootstrapApp(repos: RepositoryContextValue) {
     useEffect(() => {
-        hydrate()      
-        initializeAppUsecase(repos.deck)()
-    }, [])
+        const deckRepo = repos.deck
+        const learningRepo = repos.learningEvent
+        const problemRepo = repos.problem
 
+        // Repository 注入
+        useDeckStore.getState().setRepository(deckRepo)
+        useLearningEventStore.getState().setRepository(learningRepo)
+        useProblemStore.getState().setRepository(problemRepo)
 
-    //const repos = bootstrapApp()
+        // 初期化フラグ
+        let isInitializing = true
+
+        // subscribe 設定
+        const deckUnsub = useDeckStore.subscribe(state => {
+            if (isInitializing) return
+            debounce(async () => await deckRepo.replaceAll(state.decks), 1000)()
+        })
+        const learningUnsub = useLearningEventStore.subscribe(state => {
+            if (isInitializing) return
+            debounce(async () => await learningRepo.replaceAll(state.eventLog), 1000)()
+        })
+        const problemUnsub = useProblemStore.subscribe(state => {
+            if (isInitializing) return
+            debounce(async () => await problemRepo.replaceAll(Object.values(state.byId)), 1000)()
+        })
+
+        // 初期化完了
+        isInitializing = false
+
+        // bootstrap 本体
+        const bootstrap = async () => {
+            await initializeAppUsecase(deckRepo)
+            await useDeckStore.getState().loadDecks()
+            await useProblemStore.getState().reload()
+            await useLearningEventStore.getState().reload()
+        }
+        bootstrap()
+
+        // クリーンアップ
+        return () => {
+            deckUnsub()
+            learningUnsub()
+            problemUnsub()
+        }
+    }, [repos])
+    
+}
+function App() {
+    const repos = useMemo(() => createRepositories(), [])
+    bootstrapApp(repos)   
+
     return (
         <ToastProvider>
 

@@ -2,12 +2,11 @@ import { create } from "zustand"
 
 import type { DeckRepository } from "@/domain/deck/repository/DeckRepository"
 import type { Deck, DeckId } from "@/domain/deck/entity/Deck"
-import { debounce } from "lodash"
 
-let repository: DeckRepository
-
-
+//let repository: DeckRepository
 type DeckStoreState = {
+    repo?: DeckRepository
+    setRepository: (repo: DeckRepository) => void
     decks: Deck[]
     loadDecks: () => Promise<void>
     saveDeck: (deck: Deck) => void
@@ -16,10 +15,14 @@ type DeckStoreState = {
 }
 
 export const useDeckStore = create<DeckStoreState>((set, get) => ({
+    repo: undefined,
+    setRepository: (repo) => set({ repo }),
     decks: [],
-
     loadDecks: async () => {
-        const list = await repository.findAll()
+        const repo = get().repo
+        if (!repo) throw new Error("Repository not initialized")
+
+        const list = await repo.findAll()
         set({ decks: list })
     },
 
@@ -34,9 +37,9 @@ export const useDeckStore = create<DeckStoreState>((set, get) => ({
             }
             return { decks: newDecks }
         })
-        //console.log("save deck", deck)
-        //await repository.update(deck)
-        //await get().loadDecks()
+//console.log("save deck", deck)
+//await repository.update(deck)
+//await get().loadDecks()
     },
 
 
@@ -48,6 +51,8 @@ export const useDeckStore = create<DeckStoreState>((set, get) => ({
         set({ decks })
     },
 }))
+
+/*
 /////////////////////////////////////////////////////////
 export const initDeckStore = (repo: DeckRepository) => {
     repository = repo
@@ -66,3 +71,4 @@ export const initDeckStore = (repo: DeckRepository) => {
     // 初期ロード完了後にフラグを解除
     isInitializing = false
 }
+*/
