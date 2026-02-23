@@ -1,7 +1,7 @@
 import type { ReactNode, } from "react"
 import { createContext, useContext, useState, useRef } from "react"
 import { LocalStrorageProblemPersistence, ProblemRepository } from "@/domain/problem/ProblemRepository"
-import { LocalStorageLearningEventPersistence, LearningEventRepository } from "@/domain/LearningEvent/LearningEventRepository"
+import { LocalStorageLearningEventPersistence, LearningEventRepository } from "@/domain/learning-event/LearningEventRepository"
 import { DeckRepository, LocalStorageDeckPersistence} from "@/domain/deck/DeckRepository"
 
 export type RepositoryContextValue = {

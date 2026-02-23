@@ -1,13 +1,13 @@
 import VisibilityIcon from '@mui/icons-material/Visibility';
 
 import type { Learning } from "@/domain/learning/Learning";
-import type { Problem, ProblemId } from "@/domain/problem/Problem";
+import type { Problem, ProblemId } from "@/domain/problem/entity/Problem";
 import { Box, Checkbox, colors, IconButton, ListItem, ListItemButton, ListItemIcon, ListItemText, Stack, Typography } from "@mui/material";
 import { useLongPress } from "../hooks/useLongPress";
 import { StarToggleButton } from "@/ui/common/components/StarToggleButton/StarToggleButton";
 import React, { useEffect } from "react";
-import { useProblemStore } from "@/application/store/useProblemStore";
-import { useLearningRecordStore } from "@/application/useLearningRecordStore";
+import { useProblemStore } from "@/ui/store/useProblemStore";
+import { useLearningRecordStore } from "@/ui/store/useLearningRecordStore";
 import { useNavigate } from 'react-router-dom';
 import { routes } from '@/ui/App/useAppNavigation';
 import { useStarToggleButton } from '@/ui/common/components/StarToggleButton/useStarToggleButton';

@@ -1,11 +1,11 @@
 
-import { useProblemStore } from "@/application/store/useProblemStore";
+import { useProblemStore } from "@/ui/store/useProblemStore";
 import { useParams } from "react-router-dom"
 import PlayerView from "../player/components/PlayerView";
 import { AppShell } from "../common/layout/AppShell";
 import { IconButton, Stack } from "@mui/material";
 import { useProblemDetailDialog } from '../common/problemDetail/useProblemDetailDialog';
-import type { Problem, ProblemId } from "@/domain/problem/Problem";
+import type { Problem, ProblemId } from "@/domain/problem/entity/Problem";
 import { PlayerRightActions } from "../player/components/PlayerRIghtActions";
 
 export function ViewerScreen() {

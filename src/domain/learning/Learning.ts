@@ -1,4 +1,4 @@
-import type { ProblemId } from "../problem/Problem";
+import type { ProblemId } from "../problem/entity/Problem";
 
 const MAX_INTERVAL_DAYS = 60
 

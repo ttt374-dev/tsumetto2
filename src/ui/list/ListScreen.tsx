@@ -1,4 +1,4 @@
-import type { ProblemId } from "@/domain/problem/Problem";
+import type { ProblemId } from "@/domain/problem/entity/Problem";
 import { AppShell } from "../common/layout/AppShell";
 import { ListView } from "./ListView";
 import { useLocation } from "react-router-dom";

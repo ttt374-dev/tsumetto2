@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react"
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material"
-import type { ProblemId } from "@/domain/problem/Problem"
+import type { ProblemId } from "@/domain/problem/entity/Problem"
 import { ListView } from "./ListView"
 
 export function useListDialog(ids: ProblemId[], onSelectProblem: (id: ProblemId) => void) {

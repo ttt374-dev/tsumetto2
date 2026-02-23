@@ -1,4 +1,4 @@
-import { useQuery } from "@/application/useQuery"
+import { useQuery } from "@/ui/common/hooks/useQuery"
 import type { ReactNode } from "react"
 import { createContext, useContext } from "react"
 

@@ -1,6 +1,6 @@
-import type { FilterState } from "../problem/query/filter"
-import type { SortState } from "../problem/query/sort"
-import type { useQuery } from "@/application/useQuery"
+import type { FilterState } from "../problem/service/query/filter"
+import type { SortState } from "../problem/service/query/sort"
+import type { useQuery } from "@/ui/common/hooks/useQuery"
 
 export type QuerySnapshot = {
   filterState: FilterState

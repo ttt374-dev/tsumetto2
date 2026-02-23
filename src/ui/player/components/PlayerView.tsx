@@ -6,11 +6,11 @@ import { PlyControlPanel } from "./PlyControlPanel"
 import { Learning } from "@/domain/learning/Learning"
 import BoardPanel from "./BoardPanel"
 import { formatLearning } from "@/ui/library/components/LibraryListItem"
-import type { Problem, ProblemId } from "@/domain/problem/Problem"
+import type { Problem, ProblemId } from "@/domain/problem/entity/Problem"
 import { useReplayController } from "../hooks/useReplayController"
 import { useEffect, useState } from "react"
 import type { ProblemNavigation } from "../PlayerScreen"
-import { useLearningRecordStore } from "@/application/useLearningRecordStore"
+import { useLearningRecordStore } from "@/ui/store/useLearningRecordStore"
 import { useTimer } from "../hooks/useTimer"
 
 export function useShowMovesController(plyIndex: number) {

@@ -1,4 +1,4 @@
-import type { ProblemId } from "@/domain/problem/Problem";
+import type { ProblemId } from "@/domain/problem/entity/Problem";
 import { Box, Drawer, List, ListItemButton, ListItemText } from "@mui/material";
 import { useState } from "react";
 

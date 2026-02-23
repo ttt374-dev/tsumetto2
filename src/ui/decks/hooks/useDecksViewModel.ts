@@ -1,20 +1,20 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "../../App/providers/ToastProvider";
-import { useImportController } from "@/application/useImportControler";
+import { useImportController } from "@/ui/common/dialogs/Import/useImportControler";
 import { useBackupRestoreDialog } from "../../common/dialogs/BackupRestoreDialog";
-import { applyQuery } from "@/domain/problem/query/applyQuery";
+import { applyQuery } from "@/domain/problem/service/query/applyQuery";
 import { routes } from "@/ui/App/useAppNavigation";
 
 import type { Deck } from "@/domain/deck/Deck";
 import { arrayMove } from "@dnd-kit/sortable";
 
-import { useDeckStore } from "@/application/store/useDeckStore";
-import { useProblemStore } from "@/application/store/useProblemStore";
-import { useMissionStore } from "@/application/store/useMissionStore";
-import { useLearningRecordStore } from "@/application/useLearningRecordStore";
+import { useDeckStore } from "@/ui/store/useDeckStore";
+import { useProblemStore } from "@/ui/store/useProblemStore";
+import { useMissionStore } from "@/ui/store/useMissionStore";
+import { useLearningRecordStore } from "@/ui/store/useLearningRecordStore";
 import { ProblemStats } from "@/domain/problem/ProblemStats";
-import { applyFilter } from "@/domain/problem/query/applyFilter";
+import { applyFilter } from "@/domain/problem/service/query/applyFilter";
 
 export function useDecksViewModel() {
     const navigate = useNavigate();

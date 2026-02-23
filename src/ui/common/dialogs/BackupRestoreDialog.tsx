@@ -3,8 +3,8 @@ import { Dialog, DialogTitle, DialogContent, DialogActions,
     Button, Box, Typography, Divider } from "@mui/material"
 import { useToast } from "../../App/providers/ToastProvider"
 import { useRepositoryContext } from "../../App/providers/RepositoryProvider"
-import { useBackupRestoreUsecase, type BackupData, type BackupResult, type RestoreResult } from "@/usecase/backupRestoreUsecase"
-import { fileBackupWriter } from "@/infra/fileBackupWriter"
+import { useBackupRestoreUsecase, type BackupData, type BackupResult, type RestoreResult } from "@/application/usecase/backup/backupRestoreUsecase"
+import { fileBackupWriter } from "@/infrastructure/fileBackupWriter"
 
 
 export function useBackupRestoreDialog(onRestoreFinished?: (res: RestoreResult) => void){

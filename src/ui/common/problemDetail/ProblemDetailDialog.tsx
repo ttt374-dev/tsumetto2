@@ -3,15 +3,15 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, Box, Button } from "
 
 import DeleteIcon from '@mui/icons-material/Delete';
 
-import { type ProblemId } from "@/domain/problem/Problem";
+import { type ProblemId } from "@/domain/problem/entity/Problem";
 import { useEffect, useState } from 'react';
-import { useProblemStore } from '@/application/store/useProblemStore';
+import { useProblemStore } from '@/ui/store/useProblemStore';
 import { EditableText } from '../components/EditableText';
 import { ProblemTagEditor } from '../components/ProblemTagEditor';
 import { StarToggleButton } from '../components/StarToggleButton/StarToggleButton';
-import { useLearningRecordStore } from '@/application/useLearningRecordStore';
-import { useLearningEventStore } from '@/application/store/useLearningEventStore';
-import type { NewLearningEvent } from '@/domain/LearningEvent';
+import { useLearningRecordStore } from '@/ui/store/useLearningRecordStore';
+import { useLearningEventStore } from '@/ui/store/useLearningEventStore';
+import type { NewLearningEvent } from '@/domain/learning-event';
 import type { SolvedResult } from '@/domain/learning/Learning';
 
 export function useProblemDetailDialogViewModel(

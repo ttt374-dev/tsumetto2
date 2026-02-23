@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
-import { useMissionStore } from "@/application/store/useMissionStore";
+import { useMissionStore } from "@/ui/store/useMissionStore";
 import { routes } from "../App/useAppNavigation";
 
 export function MissionScreen() {    

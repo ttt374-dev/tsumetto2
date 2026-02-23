@@ -10,7 +10,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import type { useLibraryQueryContext } from "../../App/providers/QueryProvider"
 import LibrarySortControl from "./LibrarySortControl"
 import { LibraryListItem } from "./LibraryListItem"
-import type { Problem, ProblemId } from "@/domain/problem/Problem"
+import type { Problem, ProblemId } from "@/domain/problem/entity/Problem"
 import { LibraryCheckboxControl } from "./LibraryCheckboxControl";
 import type { LibraryActionMode } from "../hooks/useLibraryViewModel";
 import { useEffect, useState } from "react";

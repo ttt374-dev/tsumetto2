@@ -1,19 +1,15 @@
 src
 ├── application
-│   ├── store
-│   │   ├── useLearningEventStore.ts
-│   │   ├── useMissionEventStore.ts
-│   │   └── useProblemStore.ts
-│   └── useQuery.ts
+│   └── usecase
+│       ├── backup
+│       │   └── backupRestoreUsecase.ts
+│       └── problem
+│           └── import
+│               └── importProblemsUsecase.ts
 ├── domain
-│   ├── LearningEvent
-│   │   ├── LearningEvent.ts
-│   │   ├── LearningEventRepository.ts
-│   │   └── index.ts
-│   ├── MissionEvent
-│   │   ├── MissionEvent.ts
-│   │   ├── MissionSummary.ts
-│   │   └── projectionMission.ts
+│   ├── deck
+│   │   ├── Deck.ts
+│   │   └── DeckRepository.ts
 │   ├── kif
 │   │   ├── __test__
 │   │   │   ├── move.test.ts
@@ -21,6 +17,8 @@ src
 │   │   │   └── serialize.test.ts
 │   │   ├── buildUntilPly.ts
 │   │   ├── parser
+│   │   │   ├── ParseContext.ts
+│   │   │   ├── ParseError.ts
 │   │   │   ├── parseHand.ts
 │   │   │   ├── parseInitialPosition.ts
 │   │   │   ├── parseKif.ts
@@ -36,9 +34,16 @@ src
 │   ├── learning
 │   │   ├── Learning.ts
 │   │   └── projectionLearning.ts
+│   ├── learning-event
+│   │   ├── LearningEvent.ts
+│   │   ├── LearningEventRepository.ts
+│   │   └── index.ts
+│   ├── mission
+│   │   └── Mission.ts
 │   └── problem
 │       ├── Problem.ts
 │       ├── ProblemRepository.ts
+│       ├── ProblemStats.ts
 │       ├── PwL.ts
 │       └── query
 │           ├── __test__
@@ -50,65 +55,115 @@ src
 │           ├── mateFilter.ts
 │           └── sort.ts
 ├── index.css
+├── infrastructure
+│   └── fileBackupWriter.ts
 ├── main.tsx
-├── ui
-│   ├── App
-│   │   ├── App.css
-│   │   ├── App.tsx
-│   │   └── providers
-│   │       ├── AllProviders.tsx
-│   │       ├── QueryProvider.tsx
-│   │       ├── RepositoryProvider.tsx
-│   │       └── ToastProvider.tsx
-│   ├── common
-│   │   ├── AppLayout.module.css
-│   │   ├── AppLayout.tsx
-│   │   └── DrawerMenu.tsx
-│   ├── dashboard
-│   │   ├── DashboardFilterControl.tsx
-│   │   ├── DashboardScreen.tsx
-│   │   └── MateLengthCheckbox.tsx
-│   ├── library
-│   │   ├── LibraryScreen.tsx
-│   │   ├── components
-│   │   │   ├── LibraryCheckboxControl.tsx
-│   │   │   ├── LibraryListItem.tsx
-│   │   │   ├── LibrarySortControl.tsx
-│   │   │   └── LibraryView.tsx
-│   │   └── hooks
-│   │       └── useLibraryCheckbox.ts
-│   ├── mission
-│   │   ├── MissionScreen.tsx
-│   │   └── hooks
-│   │       ├── useMissionController.ts
-│   │       └── useMissionPreview.ts
-│   ├── player
-│   │   ├── PlayerScreen.tsx
-│   │   ├── components
-│   │   │   ├── BoardPanel.tsx
-│   │   │   ├── BoardView.module.css
-│   │   │   ├── BoardView.tsx
-│   │   │   ├── MovesPanel.tsx
-│   │   │   ├── MovesView.tsx
-│   │   │   ├── PlayerFooterActions.tsx
-│   │   │   ├── PlayerView.tsx
-│   │   │   ├── PlyControlPanel.tsx
-│   │   │   ├── SwipeWrapper.tsx
-│   │   │   └── numberToKanji.ts
-│   │   └── useReplayController.ts
-│   ├── sharedComponents
-│   │   ├── FileButton.tsx
-│   │   ├── FixedScrollScreen.tsx
-│   │   ├── FrameLayout.tsx
-│   │   ├── GenericListMenu.tsx
-│   │   ├── MultipleFilesButton.tsx
-│   │   └── useFileSelector.tsx
-│   ├── summary
-│   │   ├── SummaryScreen.tsx
-│   │   └── SummaryView.tsx
-│   └── viewer
-│       └── ViewerScreen.tsx
-└── usecase
-    └── importProblemsUseCase.ts
+├── shared
+│   └── result.ts
+└── ui
+    ├── App
+    │   ├── App.css
+    │   ├── App.tsx
+    │   ├── providers
+    │   │   ├── QueryProvider.tsx
+    │   │   ├── RepositoryProvider.tsx
+    │   │   └── ToastProvider.tsx
+    │   └── useAppNavigation.ts
+    ├── common
+    │   ├── components
+    │   │   ├── EditableText.tsx
+    │   │   ├── ProblemTagEditor.tsx
+    │   │   ├── SelectDeckMenu.tsx
+    │   │   └── StarToggleButton
+    │   │       ├── StarToggleButton.tsx
+    │   │       └── useStarToggleButton.ts
+    │   ├── dialogs
+    │   │   ├── BackupRestoreDialog.tsx
+    │   │   ├── Import
+    │   │   │   ├── ImportDialog.tsx
+    │   │   │   ├── useImportControler.tsx
+    │   │   │   └── useImportFilePicker.ts
+    │   │   └── MultipleProblemsTagEditDialog.tsx
+    │   ├── hooks
+    │   │   └── useQuery.ts
+    │   ├── layout
+    │   │   ├── AppLayout.module.css
+    │   │   ├── AppLayout.tsx
+    │   │   ├── AppShell.tsx
+    │   │   └── DrawerMenu.tsx
+    │   └── problemDetail
+    │       ├── ProblemDetailDialog.tsx
+    │       └── useProblemDetailDialog.tsx
+    ├── decks
+    │   ├── DeckEditScreen.tsx
+    │   ├── DecksScreen.tsx
+    │   ├── components
+    │   │   ├── FabMenu.tsx
+    │   │   ├── FilterControl.tsx
+    │   │   ├── MateLengthFilterControl.tsx
+    │   │   └── TagCheckboxFilterControl.tsx
+    │   └── hooks
+    │       ├── useDeckEditScreenViewModel.ts
+    │       └── useDecksViewModel.ts
+    ├── library
+    │   ├── LibraryScreen.tsx
+    │   ├── components
+    │   │   ├── LibraryCheckboxControl.tsx
+    │   │   ├── LibraryListItem.tsx
+    │   │   ├── LibrarySortControl.tsx
+    │   │   └── LibraryView.tsx
+    │   └── hooks
+    │       ├── useLibraryCheckbox.ts
+    │       ├── useLibraryViewModel.ts
+    │       └── useLongPress.ts
+    ├── list
+    │   ├── ListDialog.tsx
+    │   ├── ListScreen.tsx
+    │   └── ListView.tsx
+    ├── mission
+    │   ├── MissionPlayerScreen.tsx
+    │   ├── MissionScreen.tsx
+    │   └── hooks
+    │       └── useMissionPlayerViewModel.ts
+    ├── player
+    │   ├── PlayerScreen.tsx
+    │   ├── components
+    │   │   ├── BoardPanel.tsx
+    │   │   ├── BoardView.module.css
+    │   │   ├── BoardView.tsx
+    │   │   ├── MovesPanel.tsx
+    │   │   ├── MovesView.tsx
+    │   │   ├── PlayerAnswerActions.tsx
+    │   │   ├── PlayerRIghtActions.tsx
+    │   │   ├── PlayerView.tsx
+    │   │   ├── PlyControlPanel.tsx
+    │   │   ├── RightActionsDrawer.tsx
+    │   │   ├── SwipeWrapper.tsx
+    │   │   └── numberToKanji.ts
+    │   └── hooks
+    │       ├── usePlayerPresenter.ts
+    │       ├── useReplayController.ts
+    │       └── useTimer.ts
+    ├── shared
+    │   ├── components
+    │   │   ├── FileButton.tsx
+    │   │   ├── FixedScrollScreen.tsx
+    │   │   ├── FrameLayout.tsx
+    │   │   ├── GenericListMenu.tsx
+    │   │   └── MultipleFilesButton.tsx
+    │   └── hooks
+    │       └── useFileSelector.tsx
+    ├── store
+    │   ├── useDeckEditorStore.ts
+    │   ├── useDeckStore.ts
+    │   ├── useLearningEventStore.ts
+    │   ├── useLearningRecordStore.ts
+    │   ├── useMissionStore.ts
+    │   └── useProblemStore.ts
+    ├── summary
+    │   ├── MissionSummaryScreen.tsx
+    │   └── SummaryView.tsx
+    └── viewer
+        └── ViewerScreen.tsx
 
-30 directories, 82 files
+49 directories, 118 files

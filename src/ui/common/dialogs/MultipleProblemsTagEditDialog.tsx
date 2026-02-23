@@ -1,9 +1,9 @@
-import type { Problem, ProblemId } from "@/domain/problem/Problem";
+import type { Problem, ProblemId } from "@/domain/problem/entity/Problem";
 import { Button, Checkbox, checkboxClasses, Chip, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, InputAdornment, List, ListItem, ListItemIcon, ListItemText, Stack, Tab, Tabs, TextField } from "@mui/material";
 import ClearIcon from "@mui/icons-material/Clear"
 
 import { useEffect, useState } from "react";
-import { useProblemStore } from "@/application/store/useProblemStore";
+import { useProblemStore } from "@/ui/store/useProblemStore";
 
 
 export function useMultipleProblemsTagEditDialog(checkedIds: ProblemId[]) {

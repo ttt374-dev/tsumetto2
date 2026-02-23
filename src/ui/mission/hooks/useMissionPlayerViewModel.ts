@@ -1,9 +1,9 @@
 import type { ReactNode } from 'react';
-import { useDeckStore } from "@/application/store/useDeckStore"
-import { useMissionStore } from "@/application/store/useMissionStore"
-import { useProblemStore } from "@/application/store/useProblemStore"
+import { useDeckStore } from "@/ui/store/useDeckStore"
+import { useMissionStore } from "@/ui/store/useMissionStore"
+import { useProblemStore } from "@/ui/store/useProblemStore"
 import type { SolvedResult } from "@/domain/learning/Learning"
-import type { Problem, ProblemId } from "@/domain/problem/Problem"
+import type { Problem, ProblemId } from "@/domain/problem/entity/Problem"
 import type { ProblemNavigation } from "@/ui/player/PlayerScreen"
 import React, { useCallback, useMemo, type ReactHTMLElement } from "react"
 

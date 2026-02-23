@@ -1,4 +1,4 @@
-import type { Problem, ProblemId } from "@/domain/problem/Problem"
+import type { Problem, ProblemId } from "@/domain/problem/entity/Problem"
 import { Box, List } from "@mui/material"
 import { LibraryListItem } from "../library/components/LibraryListItem"
 

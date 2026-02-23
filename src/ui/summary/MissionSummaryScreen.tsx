@@ -3,7 +3,7 @@ import { SummaryView } from "./SummaryView";
 import { ProblemStats } from "@/domain/problem/ProblemStats";
 import { AppShell } from "../common/layout/AppShell";
 import { Navigate, useNavigate } from "react-router-dom";
-import { useMissionStore } from "@/application/store/useMissionStore";
+import { useMissionStore } from "@/ui/store/useMissionStore";
 
 /////////////////////////////////////////////
 export function MissionSummaryScreen() {

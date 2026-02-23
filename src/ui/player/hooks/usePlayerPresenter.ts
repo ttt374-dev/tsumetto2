@@ -1,4 +1,4 @@
-import type { Problem, ProblemId } from "@/domain/problem/Problem";
+import type { Problem, ProblemId } from "@/domain/problem/entity/Problem";
 import { useProblemDetailDialog } from "../../common/problemDetail/useProblemDetailDialog";
 import { useRightActionsDrawer } from "../components/RightActionsDrawer";
 

@@ -1,4 +1,4 @@
-import type { MateBucket } from "@/domain/problem/query/filter"
+import type { MateBucket } from "@/domain/problem/service/query/filter"
 import { FormControl, FormLabel, FormGroup, FormControlLabel, Checkbox, Paper, } from "@mui/material"
 
 type Props = {

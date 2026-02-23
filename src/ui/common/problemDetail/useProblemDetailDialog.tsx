@@ -1,6 +1,6 @@
-import type { Problem, ProblemId } from "@/domain/problem/Problem";
+import type { Problem, ProblemId } from "@/domain/problem/entity/Problem";
 import { useEffect, useState } from "react";
-import { useProblemStore } from "@/application/store/useProblemStore";
+import { useProblemStore } from "@/ui/store/useProblemStore";
 import { useNavigate } from "react-router-dom";
 import ProblemDetailDialog from "./ProblemDetailDialog";
 
