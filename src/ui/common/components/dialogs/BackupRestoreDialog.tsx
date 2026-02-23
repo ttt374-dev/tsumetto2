@@ -3,7 +3,7 @@ import { Dialog, DialogTitle, DialogContent, DialogActions,
     Button, Box, Typography, Divider } from "@mui/material"
 import { useToast } from "../../App/providers/ToastProvider"
 import { useRepositoryContext } from "../../App/providers/RepositoryProvider"
-import { useBackupRestoreUsecase, type BackupData, type BackupResult, type RestoreResult } from "@/application/usecase/backup/backupRestoreUsecase"
+import { useBackupRestoreUsecase, type BackupData, type BackupResult, type RestoreResult } from "@/application/usecase/backup/BackupRestoreUsecase"
 import { fileBackupWriter } from "@/infrastructure/fileBackupWriter"
 
 

@@ -1,5 +1,5 @@
 import type { Result } from "@/shared/result"
-import { Hand, kanjiToPieceItem, type PieceType } from "../types"
+import { Hand, kanjiToPieceItem, type PieceType } from "../entity"
 import type { ParseError, ParseHandError } from "./ParseError"
 
 export type ParseHandResult = Result<Hand, ParseHandError>

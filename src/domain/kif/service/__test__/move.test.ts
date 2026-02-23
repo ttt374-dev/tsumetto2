@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { Piece, Square } from "../types/Piece";
-import { Move } from "../types/Move";
-import { Board } from "../types/Board";
-import { Position } from "../types/Position";
-import { Hand, Hands } from "../types/Hand";
+import { Piece, Square } from "../../entity/Piece";
+import { Move } from "../../entity/Move";
+import { Board } from "../../entity/Board";
+import { Position } from "../../entity/Position";
+import { Hand, Hands } from "../../entity/Hand";
 
 describe("kif", ()=>{
     const initialPosition = Position.create()

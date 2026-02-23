@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { Piece } from "../types/Piece";
-import { Position } from "../types";
+import { Piece } from "../../entity/Piece";
+import { Position } from "../../entity";
 import { pink } from "@mui/material/colors";
 import { parseKif } from "../parser/parseKif";
 

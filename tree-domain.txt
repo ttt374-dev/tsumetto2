@@ -1,0 +1,59 @@
+src/domain/
+├── deck
+│   ├── entity
+│   │   └── Deck.ts
+│   └── repository
+│       └── DeckRepository.ts
+├── kif
+│   ├── entity
+│   │   ├── Board.ts
+│   │   ├── Hand.ts
+│   │   ├── KifData.ts
+│   │   ├── Move.ts
+│   │   ├── Piece.ts
+│   │   ├── Position.ts
+│   │   └── index.ts
+│   └── service
+│       ├── __test__
+│       │   ├── move.test.ts
+│       │   ├── parser.test.ts
+│       │   └── serialize.test.ts
+│       ├── buildUntilPly.ts
+│       └── parser
+│           ├── ParseContext.ts
+│           ├── ParseError.ts
+│           ├── parseHand.ts
+│           ├── parseInitialPosition.ts
+│           ├── parseKif.ts
+│           └── parseMove.ts
+├── learning
+│   ├── entity
+│   │   ├── Learning.ts
+│   │   └── LearningEvent.ts
+│   ├── repository
+│   │   └── LearningEventRepository.ts
+│   └── service
+│       └── projectionLearning.ts
+├── mission
+│   └── entity
+│       └── Mission.ts
+└── problem
+    ├── entity
+    │   └── Problem.ts
+    ├── repository
+    │   └── ProblemRepository.ts
+    ├── service
+    │   └── query
+    │       ├── __test__
+    │       │   └── filter.test.ts
+    │       ├── applyFilter.ts
+    │       ├── applyQuery.ts
+    │       ├── applySort.ts
+    │       ├── filter.ts
+    │       ├── mateFilter.ts
+    │       └── sort.ts
+    └── valueObject
+        ├── ProblemStats.ts
+        └── PwL.ts
+
+22 directories, 35 files

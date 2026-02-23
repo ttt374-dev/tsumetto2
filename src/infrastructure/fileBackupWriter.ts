@@ -1,7 +1,7 @@
 import { Capacitor } from "@capacitor/core"
 import { Share } from '@capacitor/share';
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem'
-import type { BackupWriter } from "@/application/usecase/backup/backupRestoreUsecase";
+import type { BackupWriter } from "@/application/usecase/backup/BackupRestoreUsecase";
 
 export const fileBackupWriter: BackupWriter = {
     write: async (data: string, filename: string) => {

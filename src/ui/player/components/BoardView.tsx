@@ -1,5 +1,5 @@
 import { Box, Stack } from "@mui/material";
-import { Position, Hand, kanjiToPieceItem, type PieceType, Piece, Board, type Player } from "@/domain/kif/types";
+import { Position, Hand, kanjiToPieceItem, type PieceType, Piece, Board, type Player } from "@/domain/kif/entity";
 import { numberToKanjiTwoDigits } from "./numberToKanji";
 
 import styles from "./BoardView.module.css";

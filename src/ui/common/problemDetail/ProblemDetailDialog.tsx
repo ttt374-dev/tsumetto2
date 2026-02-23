@@ -11,7 +11,7 @@ import { ProblemTagEditor } from '../components/ProblemTagEditor';
 import { StarToggleButton } from '../components/StarToggleButton/StarToggleButton';
 import { useLearningRecordStore } from '@/ui/store/useLearningRecordStore';
 import { useLearningEventStore } from '@/ui/store/useLearningEventStore';
-import type { NewLearningEvent } from '@/domain/learning-event';
+import type { NewLearningEvent } from '@/domain/learning';
 import type { SolvedResult } from '@/domain/learning/Learning';
 
 export function useProblemDetailDialogViewModel(

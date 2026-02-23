@@ -7,7 +7,7 @@ import { usePlayerPresenter } from "./hooks/usePlayerPresenter";
 import { useLearningEventStore } from "@/ui/store/useLearningEventStore";
 import { useTimer } from './hooks/useTimer';
 import { useEffect } from 'react';
-import { PlayerRightActions } from "./components/PlayerRIghtActions";
+import { PlayerRightActions } from "./components/PlayerRightActions";
 
 export type ProblemNavigation = {
     next: () => void,

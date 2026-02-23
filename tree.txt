@@ -2,58 +2,67 @@ src
 ├── application
 │   └── usecase
 │       ├── backup
-│       │   └── backupRestoreUsecase.ts
+│       │   └── BackupRestoreUsecase.ts
 │       └── problem
 │           └── import
-│               └── importProblemsUsecase.ts
+│               └── ImportProblemsUsecase.ts
 ├── domain
 │   ├── deck
-│   │   ├── Deck.ts
-│   │   └── DeckRepository.ts
+│   │   ├── entity
+│   │   │   └── Deck.ts
+│   │   └── repository
+│   │       └── DeckRepository.ts
 │   ├── kif
-│   │   ├── __test__
-│   │   │   ├── move.test.ts
-│   │   │   ├── parser.test.ts
-│   │   │   └── serialize.test.ts
-│   │   ├── buildUntilPly.ts
-│   │   ├── parser
-│   │   │   ├── ParseContext.ts
-│   │   │   ├── ParseError.ts
-│   │   │   ├── parseHand.ts
-│   │   │   ├── parseInitialPosition.ts
-│   │   │   ├── parseKif.ts
-│   │   │   └── parseMove.ts
-│   │   └── types
-│   │       ├── Board.ts
-│   │       ├── Hand.ts
-│   │       ├── KifData.ts
-│   │       ├── Move.ts
-│   │       ├── Piece.ts
-│   │       ├── Position.ts
-│   │       └── index.ts
+│   │   ├── entity
+│   │   │   ├── Board.ts
+│   │   │   ├── Hand.ts
+│   │   │   ├── KifData.ts
+│   │   │   ├── Move.ts
+│   │   │   ├── Piece.ts
+│   │   │   ├── Position.ts
+│   │   │   └── index.ts
+│   │   └── service
+│   │       ├── __test__
+│   │       │   ├── move.test.ts
+│   │       │   ├── parser.test.ts
+│   │       │   └── serialize.test.ts
+│   │       ├── buildUntilPly.ts
+│   │       └── parser
+│   │           ├── ParseContext.ts
+│   │           ├── ParseError.ts
+│   │           ├── parseHand.ts
+│   │           ├── parseInitialPosition.ts
+│   │           ├── parseKif.ts
+│   │           └── parseMove.ts
 │   ├── learning
-│   │   ├── Learning.ts
-│   │   └── projectionLearning.ts
-│   ├── learning-event
-│   │   ├── LearningEvent.ts
-│   │   ├── LearningEventRepository.ts
-│   │   └── index.ts
+│   │   ├── entity
+│   │   │   ├── Learning.ts
+│   │   │   └── LearningEvent.ts
+│   │   ├── repository
+│   │   │   └── LearningEventRepository.ts
+│   │   └── service
+│   │       └── projectionLearning.ts
 │   ├── mission
-│   │   └── Mission.ts
+│   │   └── entity
+│   │       └── Mission.ts
 │   └── problem
-│       ├── Problem.ts
-│       ├── ProblemRepository.ts
-│       ├── ProblemStats.ts
-│       ├── PwL.ts
-│       └── query
-│           ├── __test__
-│           │   └── filter.test.ts
-│           ├── applyFilter.ts
-│           ├── applyQuery.ts
-│           ├── applySort.ts
-│           ├── filter.ts
-│           ├── mateFilter.ts
-│           └── sort.ts
+│       ├── entity
+│       │   └── Problem.ts
+│       ├── repository
+│       │   └── ProblemRepository.ts
+│       ├── service
+│       │   └── query
+│       │       ├── __test__
+│       │       │   └── filter.test.ts
+│       │       ├── applyFilter.ts
+│       │       ├── applyQuery.ts
+│       │       ├── applySort.ts
+│       │       ├── filter.ts
+│       │       ├── mateFilter.ts
+│       │       └── sort.ts
+│       └── valueObject
+│           ├── ProblemStats.ts
+│           └── PwL.ts
 ├── index.css
 ├── infrastructure
 │   └── fileBackupWriter.ts
@@ -74,16 +83,16 @@ src
     │   │   ├── EditableText.tsx
     │   │   ├── ProblemTagEditor.tsx
     │   │   ├── SelectDeckMenu.tsx
-    │   │   └── StarToggleButton
-    │   │       ├── StarToggleButton.tsx
-    │   │       └── useStarToggleButton.ts
-    │   ├── dialogs
-    │   │   ├── BackupRestoreDialog.tsx
-    │   │   ├── Import
-    │   │   │   ├── ImportDialog.tsx
-    │   │   │   ├── useImportControler.tsx
-    │   │   │   └── useImportFilePicker.ts
-    │   │   └── MultipleProblemsTagEditDialog.tsx
+    │   │   ├── StarToggleButton
+    │   │   │   ├── StarToggleButton.tsx
+    │   │   │   └── useStarToggleButton.ts
+    │   │   └── dialogs
+    │   │       ├── BackupRestoreDialog.tsx
+    │   │       ├── Import
+    │   │       │   ├── ImportDialog.tsx
+    │   │       │   ├── useImportController.tsx
+    │   │       │   └── useImportFilePicker.ts
+    │   │       └── MultipleProblemsTagEditDialog.tsx
     │   ├── hooks
     │   │   └── useQuery.ts
     │   ├── layout
@@ -134,7 +143,7 @@ src
     │   │   ├── MovesPanel.tsx
     │   │   ├── MovesView.tsx
     │   │   ├── PlayerAnswerActions.tsx
-    │   │   ├── PlayerRIghtActions.tsx
+    │   │   ├── PlayerRightActions.tsx
     │   │   ├── PlayerView.tsx
     │   │   ├── PlyControlPanel.tsx
     │   │   ├── RightActionsDrawer.tsx
@@ -166,4 +175,4 @@ src
     └── viewer
         └── ViewerScreen.tsx
 
-49 directories, 118 files
+59 directories, 117 files

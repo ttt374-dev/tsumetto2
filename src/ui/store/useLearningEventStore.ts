@@ -1,6 +1,6 @@
 import { create } from "zustand";
-import type { LearningEvent, LearningEventLog, NewLearningEvent } from "@/domain/learning-event";
-import type { LearningEventRepository } from "@/domain/learning-event/LearningEventRepository";
+import type { LearningEvent, LearningEventLog, NewLearningEvent } from "@/domain/learning";
+import type { LearningEventRepository } from "@/domain/learning/repository/LearningEventRepository";
 import type { ProblemId } from "@/domain/problem/entity/Problem";
 import type { SolvedResult } from "@/domain/learning/Learning";
 

@@ -1,4 +1,4 @@
-import type { Position } from "@/domain/kif/types";
+import type { Position } from "@/domain/kif/entity";
 import { Box, Button, Stack } from "@mui/material";
 import BoardView from "./BoardView";
 import { SwipeWrapper } from "./SwipeWrapper";

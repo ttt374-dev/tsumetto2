@@ -1,5 +1,5 @@
 import type { Result } from "@/shared/result"
-import { kanjiToPieceItem, Move, type PieceType, type Square } from "../types"
+import { kanjiToPieceItem, Move, type PieceType, type Square } from "../entity"
 import type { ParseError, ParseErrorWithContext, ParseMoveError } from "./ParseError"
 import { withContext } from "./ParseContext"
 

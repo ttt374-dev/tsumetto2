@@ -6,7 +6,7 @@ import { AppShell } from "../common/layout/AppShell";
 import { IconButton, Stack } from "@mui/material";
 import { useProblemDetailDialog } from '../common/problemDetail/useProblemDetailDialog';
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem";
-import { PlayerRightActions } from "../player/components/PlayerRIghtActions";
+import { PlayerRightActions } from "../player/components/PlayerRightActions";
 
 export function ViewerScreen() {
     const { id } = useParams<{ id: string }>()

@@ -1,5 +1,5 @@
 import type { SolvedResult } from "../learning/Learning"
-import type { ProblemId } from "../problem/entity/Problem"
+import type { ProblemId } from "../../problem/entity/Problem"
 
 export type NewLearningEvent =
     | NewLearningReviewedEvent

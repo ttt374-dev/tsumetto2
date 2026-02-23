@@ -1,9 +1,9 @@
 import { create } from "zustand";
 
-import type { LearningRecord } from "@/domain/learning/Learning";
 import { useLearningEventStore } from "./useLearningEventStore";
-import { projectLearning } from "@/domain/learning/projectionLearning";
-import type { LearningEventLog } from "@/domain/learning-event";
+import { projectLearning } from "@/domain/learning/service/projectionLearning";
+import type { LearningRecord } from "@/domain/learning/entity/Learning";
+import type { LearningEventLog } from "@/domain/learning/entity/LearningEvent";
 
 
 type LearningRecordStoreState = {

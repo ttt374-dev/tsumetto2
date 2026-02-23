@@ -1,5 +1,5 @@
-import type { KifHistory } from "./types";
-import type { Position } from "./types/Position";
+import type { KifHistory, Position } from "../entity";
+
 
 export function buildUntilPly(history: KifHistory, ply: number): Position {
   return history.moves

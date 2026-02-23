@@ -1,14 +1,12 @@
 // backupRestoreUsecase.ts
 
 import type { Result } from "@/shared/result"
-import type { Deck } from "@/domain/deck/Deck"
-import type { DeckRepository } from "@/domain/deck/DeckRepository"
-import type { LearningEventLog } from "@/domain/learning-event"
-import type { LearningEventRepository } from "@/domain/learning-event/LearningEventRepository"
+import type { DeckRepository } from "@/domain/deck/repository/DeckRepository"
+import type { LearningEventRepository } from "@/domain/learning/repository/LearningEventRepository"
 import { Problem, type ProblemDTO } from "@/domain/problem/entity/Problem"
-import type { ProblemRepository } from "@/domain/problem/ProblemRepository"
-
-
+import type { LearningEventLog } from "@/domain/learning/entity/LearningEvent"
+import type { Deck } from "@/domain/deck/entity/Deck"
+import type { ProblemRepository } from "@/domain/problem/repository/ProblemRepository"
 
 export type BackupResult = Result<BackupResultOk, BackupRestoreError>
 

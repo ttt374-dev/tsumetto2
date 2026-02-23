@@ -1,4 +1,4 @@
-import type { KifData } from "@/domain/kif/types"
+import type { KifData } from "@/domain/kif/entity"
 import type { MateBucket } from "./filter"
 
 /*

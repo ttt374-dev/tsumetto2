@@ -1,5 +1,5 @@
 import type { Result } from "@/shared/result";
-import type { Square } from "../types";
+import type { Square } from "../entity";
 import type { ParseError, ParseErrorWithContext } from "./ParseError";
 
 export type ParseWarning =

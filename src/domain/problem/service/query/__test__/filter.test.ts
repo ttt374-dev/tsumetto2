@@ -2,7 +2,7 @@ import { Problem } from "@/domain/problem/entity/Problem";
 import { describe, expect, it } from "vitest";
 import { applyFilter } from "../applyFilter";
 import { DefaultFilterState } from "../filter";
-import { KifData, Move } from "@/domain/kif/types";
+import { KifData, Move } from "@/domain/kif/entity";
 
 
 describe("filter", () => {

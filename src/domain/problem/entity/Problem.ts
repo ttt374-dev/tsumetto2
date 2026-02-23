@@ -1,6 +1,6 @@
 import { v4 } from 'uuid'
-import { KifData, type KifDataDTO } from '../../kif/types'
-import { parseKif } from '../../kif/parser/parseKif'
+import { KifData, type KifDataDTO } from '../../kif/entity'
+import { parseKif } from '@/domain/kif/service/parser/parseKif'
 
 export type Tags = string[]
 

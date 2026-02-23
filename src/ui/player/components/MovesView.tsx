@@ -1,8 +1,8 @@
 import { useMemo, useEffect, useRef } from "react";
 
 import { Box } from "@mui/material";
-import { Move } from "@/domain/kif/types/Move";
-import { Square, type Player } from "@/domain/kif/types/Piece";
+import { Move } from "@/domain/kif/entity/Move";
+import { Square, type Player } from "@/domain/kif/entity/Piece";
 import { numberToKanjiTwoDigits } from "./numberToKanji";
 
 interface Props {

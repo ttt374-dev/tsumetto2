@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { Board, Position, Hand, Hands, Move } from "../types";
+import { Board, Position, Hand, Hands, Move } from "../../entity";
 import { parseKif } from "../parser/parseKif";
 import { parseMoveLine, parseMoves } from "../parser/parseMove";
 import { buildUntilPly } from "../buildUntilPly";
