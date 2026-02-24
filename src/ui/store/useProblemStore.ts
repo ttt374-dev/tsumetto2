@@ -56,7 +56,7 @@ function reduceById(byId: Record<ProblemId, Problem>) {
 
 /////////////
 export const useProblemStore = create<ProblemState>((set, get) => ({
-    repo: undefined,
+      repo: undefined,
     setRepository: (repo) => set({ repo }),
 
     ids: [],

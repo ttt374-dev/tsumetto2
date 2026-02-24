@@ -48,6 +48,7 @@ export default function DecksScreen() {
         const style = {
             transform: CSS.Transform.toString(sortable.transform),
             transition: sortable.transition,
+            touchAction: "none"
         };
 
         const stats = deckStats.get(deck.id);
@@ -149,7 +150,7 @@ export default function DecksScreen() {
 
         >
             <ActionMode/>
-            <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto", touchAction: "pan-y" }}> { /* , touchAction: "pan-y" */ }
+            <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto" }}> { /* , touchAction: "pan-y" */ }
                 <DndContext sensors={sensors} 
                     collisionDetection={closestCenter}
                     onDragStart={()=>console.log("drag start")}

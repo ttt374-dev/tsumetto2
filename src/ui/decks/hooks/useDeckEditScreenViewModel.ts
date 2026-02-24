@@ -8,7 +8,6 @@ import { useToast } from "@/ui/App/providers/ToastProvider"
 import { routes } from "@/ui/App/useAppNavigation"
 import { useCallback, useEffect, useMemo } from "react"
 import { useNavigate, useParams } from "react-router-dom"
-import { DeckEditScreen } from "../DeckEditScreen"
 import { createQuerySnapshot } from "@/domain/deck/entity/Deck"
 import { ProblemStats } from "@/domain/problem/valueObject/ProblemStats"
 
@@ -62,10 +61,11 @@ function useDeckEditorActions(id: string | undefined, query: QueryController) {
         navigate(routes.back)
     }, [draft, deckStore, query])
 
-    const remove = useCallback(async () => {
+    const remove = useCallback( () => {
         if (!draft || id === "new") return
 
-        await deckStore.deleteDeck(draft.id)
+        if (!window.confirm("are  you sure to delete")) return
+        deckStore.deleteDeck(draft.id)
         toast({ message: "削除しました" })
         reset()
         navigate(routes.back)

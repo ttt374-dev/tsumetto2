@@ -17,13 +17,14 @@ serve:
 
 #all: rsync run
 
-
+dev:
+	npm run dev
 #rsync:
 #	rm -rf src
 #	rsync -av --exclude="node_modules/" --exclude=".git/" ${SOURCE_DIR} .
 
-android:
-	npm run build
+cap:
+#	npm run build
 	npx cap copy android
 	npx cap sync android
 	npx cap open android
