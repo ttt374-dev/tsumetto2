@@ -1,9 +1,7 @@
 import { KeyboardArrowDown, KeyboardArrowRight } from "@mui/icons-material"
 import { Box, IconButton, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { ProblemStats } from "@/domain/problem/valueObject/ProblemStats";
-import { filter } from "lodash";
 import { act, useMemo, useState } from "react";
-
 
 function formatPercentage(value: number) {
     return `${(value * 100).toFixed(0)}%`
@@ -35,17 +33,18 @@ function StatsRow(props: {
         </TableRow>
     )
 }
-export type StatsRow = {
+export type StatsRowValues = {
     label: string
     stats: ProblemStats,
 }
 
 type Group = {
     groupName: string
-    rows: StatsRow[]
+    rows: StatsRowValues[]
 }
-export function GroupedTable({ groups }: {
-    groups: Group[]
+export function GroupedTable({ groups, columns }: {
+    groups: Group[]    
+    columns: string[]
 }) {
     const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
         "総合": true,
@@ -67,10 +66,10 @@ export function GroupedTable({ groups }: {
                 <TableHead>
                     <TableRow>
                         <TableCell>分類</TableCell>
-                        <TableCell align="right" sx={{ width: 60 }}>問題数</TableCell>
-                        <TableCell align="right" sx={{ width: 60 }}>正答率</TableCell>
-                        <TableCell align="right" sx={{ width: 60 }}>EF</TableCell>
-                        <TableCell align="right" sx={{ width: 60 }}>間隔</TableCell>
+                        { columns.map(col=>
+                            <TableCell align="right" sx={{ width: 60 }}>{col}</TableCell>    
+                        )}
+                        
                     </TableRow>
                 </TableHead>
 

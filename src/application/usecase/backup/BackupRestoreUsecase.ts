@@ -7,6 +7,8 @@ import { Problem, type ProblemDTO } from "@/domain/problem/entity/Problem"
 import type { LearningEventLog } from "@/domain/learning/entity/LearningEvent"
 import type { Deck } from "@/domain/deck/entity/Deck"
 import type { ProblemRepository } from "@/domain/problem/repository/ProblemRepository"
+import { useDeckStore } from "@/ui/store/useDeckStore"
+import { useProblemStore } from "@/ui/store/useProblemStore"
 
 export type BackupResult = Result<BackupResultOk, BackupRestoreError>
 
@@ -45,6 +47,10 @@ export function useBackupRestoreUsecase(
     deckRepo: DeckRepository,
     writer: BackupWriter,
 ): BackupRestoreUsecase {
+
+ 
+    const reloadProblems = useProblemStore(s=>s.reload)
+    const reloadDecks = useDeckStore(s=>s.loadDecks)
     // TODO: error check
     return {
         async backup(): Promise<BackupResult> {
@@ -117,6 +123,9 @@ export function useBackupRestoreUsecase(
                 return { ok: false, error: { code: "persist-failed" } }
             }
 
+            reloadProblems()
+            reloadDecks()       
+
             return {
                 ok: true,
                 value: {
@@ -134,3 +143,4 @@ export interface BackupWriter {
     write(data: string, fileName: string): Promise<void>
     //revoke?(fileUrl: string): void
 }
+
