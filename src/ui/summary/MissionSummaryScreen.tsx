@@ -13,18 +13,18 @@ export function MissionSummaryScreen() {
     const reset = useMissionStore(s => s.reset)
 //    const phase = useMissionStore(s => s.phase)
     return (
-        <AppShell>
+        <AppShell header={ "Summary"}>
             <Box>
-                Done. Good Job
+                ミッション完了
             </Box>
 
             <SummaryView stats={stats} />
 
-            <Button onClick={() => {
+            <Button variant="outlined" onClick={() => {
                 reset()
                 //console.log("summary: reset", phase())
             }}>
-                Deck
+                デッキに戻る
             </Button>
         </AppShell>
     )

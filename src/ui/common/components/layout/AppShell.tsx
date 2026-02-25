@@ -42,6 +42,7 @@ export function AppShell({ header, footer, rightActions, fab, children }: Props)
                 <DrawerMenu isOpen={drawerOpen} onClose={() => setDrawerOpen(false)}
                     onNavigateToDashboard={() => navigate(routes.home)}
                     onNavigateToLibrary={() => navigate(routes.library)}
+                    onNavigateToStats={()=>navigate(routes.stats)}
                     onImport={importer.openFileDialog}
                     onBackupRestore={backupRestoreDialog.openDialog}
                 />

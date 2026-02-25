@@ -21,6 +21,7 @@ import { ListScreen } from '../list/ListScreen';
 import { LocalStrorageProblemPersistence, ProblemRepository } from '@/domain/problem/repository/ProblemRepository';
 import { initializeAppUsecase } from '@/application/usecase/initializeApp/useInitializeAppUsecase';
 import { debounce } from 'lodash';
+import { StatsScreen } from '../stats/StatsScreen';
 
 function createRepositories() {
     return {
@@ -104,6 +105,8 @@ function App() {
                         <Route path="/library" element={<LibraryScreen />} />
                         <Route path="/view/:id" element={<ViewerScreen />} />
                         <Route path="/list" element={<ListScreen />} />
+
+                        <Route path="/stats" element={<StatsScreen />} />
 
                         <Route path="/" element={<Navigate to="/decks" />} />
                     </Routes>

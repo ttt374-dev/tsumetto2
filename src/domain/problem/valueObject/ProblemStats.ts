@@ -9,11 +9,15 @@ export class ProblemStats {
         readonly problemCount: number,
         readonly solvedCount: number,    
         readonly failedCount: number,        
+        readonly easeFactor: number,
+        readonly intervalDays: number,
     ){}
 
     static create(ids: ProblemId[], learningRecords: LearningRecord) {
         let solved = 0
         let failed = 0
+        let easeFactor = 0
+        let intervalDays = 0
 
         for (const id of ids) {
             const learning = learningRecords[id]
@@ -21,12 +25,17 @@ export class ProblemStats {
 
             solved += learning.solvedCount
             failed += learning.failedCount
+            easeFactor += learning.easeFactor
+            intervalDays += learning.intervalDays
         }
-
+        easeFactor = (ids.length > 0) ? easeFactor/ids.length : 0
+        intervalDays = (ids.length > 0) ? intervalDays/ids.length : 0
         return new ProblemStats(
             ids.length,
             solved,
             failed,
+            easeFactor,
+            intervalDays,
         )
     }
     static createWithFilter(problems: Problem[], learningRecords: LearningRecord, filterState: FilterState){
@@ -34,10 +43,13 @@ export class ProblemStats {
         return this.create(filtered.map(p=>p.id), learningRecords)
     }
     static createFromMissionResultList(missionResultList: MissionResultEntry[]): ProblemStats {
+
         return new ProblemStats(
             missionResultList.length,
             missionResultList.filter(r => r.solvedResult === "solved").length,
-            missionResultList.filter(r => r.solvedResult === "failed").length
+            missionResultList.filter(r => r.solvedResult === "failed").length,
+            0,
+            0,
         )
     }
 

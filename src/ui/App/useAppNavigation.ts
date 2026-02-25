@@ -19,6 +19,9 @@ export const routes = {
 
     // list
     list: "/list",
+
+    // stats
+    stats: "/stats",
     
     // back
     back: -1
