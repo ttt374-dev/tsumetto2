@@ -5,7 +5,7 @@ import { useMissionPlayerViewModel } from "./hooks/useMissionPlayerViewModel"
 export function MissionPlayerScreen() {
 
     const vm = useMissionPlayerViewModel()
-    console.log("missionplayer", vm)
+    //console.log("missionplayer", vm)
 
     switch (vm.status) {
         case "loading": return <>Loading..</>

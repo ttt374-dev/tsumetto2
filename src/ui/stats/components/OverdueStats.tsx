@@ -220,7 +220,7 @@ const histogram = useMemo(
         <Paper>
             遅延
             <OverdueHistogram data={histogram} />
-            <OverdueTable items={overdueItems} />
+            
         </Paper>
     )
 }

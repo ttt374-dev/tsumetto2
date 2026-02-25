@@ -17,7 +17,7 @@ type MissionStore = {
 
     // ===== command =====
     start: (deckId: DeckId, ids: ProblemId[]) => void;
-    answer: (result: SolvedResult) => void;
+    answer: (result: SolvedResult, secToTaken?: number) => void;
     next: () => void;
     prev: () => void;
     moveToIndex: (index: number) => void;
@@ -63,7 +63,7 @@ export const useMissionStore = create<MissionStore>((set, get) => ({
             }
         }),
 
-    answer: (result) =>
+    answer: (result, secToTaken) =>
         set((s) => {
             const { currentIndex, problemIds, answers } = s;
             if (currentIndex < 0) return s;
@@ -75,6 +75,7 @@ export const useMissionStore = create<MissionStore>((set, get) => ({
                     {
                         problemId,
                         solvedResult: result,
+                        secToTaken: secToTaken,
                     },
                 ],
             };

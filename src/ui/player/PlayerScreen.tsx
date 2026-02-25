@@ -27,7 +27,7 @@ export function PlayerScreen({ problem, title, onAnswer, problemNavigation}: {
     const review = useLearningEventStore(s=>s.review)
     const handleAnswer = async (res: SolvedResult) => {
         const sec = timer.seconds
-        await review(problem.id, res, sec)  // 学習データを記録
+        review(problem.id, res, sec)  // 学習データを記録
         onAnswer?.(problem.id, res, sec)  // ミッションを進める
     }
     const handleOpenDetailDialog = () => {

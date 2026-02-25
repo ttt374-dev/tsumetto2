@@ -53,8 +53,8 @@ export function useMissionPlayerViewModel(): MissionPlayerVM {
     const problemNavigation = useMemo(() => ({ next, prev, moveTo }), [next, prev, moveTo])
 
     const handleAnswer = useCallback(
-        (_id: string, res: SolvedResult, _sec?: number) => {
-            answer(res)
+        (_id: string, res: SolvedResult, sec?: number | undefined) => {
+            answer(res, sec)
             next()
         },
         [answer, next]

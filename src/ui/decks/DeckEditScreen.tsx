@@ -1,4 +1,4 @@
-import { Box, Button, IconButton, Stack } from "@mui/material";
+import { Box, Button, IconButton, Stack, TextField } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 
 import { EditableText } from "../common/components/EditableText";
@@ -11,6 +11,7 @@ import { TagCheckboxFilterControl } from "./components/TagCheckboxFilterControl"
 import { useListDialog } from "../list/ListDialog";
 import { useNavigate } from "react-router-dom";
 import { routes } from "../App/useAppNavigation";
+import { useState } from "react";
 
 export function DeckEditScreen() {
     const {
@@ -24,6 +25,7 @@ export function DeckEditScreen() {
         //console.log("nav: ids", problemIds)
         navigate(routes.list, { state: { ids: problemIds, title: `デッキ ${name}：問題リスト`}})
     }
+    const [ filterText, setFilterText] = useState("")
     return (
         <AppShell
             header={"Deck Edit"}
@@ -49,6 +51,15 @@ export function DeckEditScreen() {
 
             <LibrarySortControl sort={query.sort.state} onSetSortKey={query.sort.setKey}
                 onToggleOrder={query.sort.toggleOrder} />
+
+
+                
+                <TextField label="タイトル名" value={filterText} onChange={(e) => {
+                    setFilterText(e.target.value)
+                    query.filter.addFilter({ text: filterText })
+                }}
+
+                />
 
             <Stack direction="row" justifyContent="space-between" >
                 <Box flex={1}>
