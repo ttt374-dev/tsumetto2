@@ -12,7 +12,6 @@ type LearningEventType =
 type LearningEventBase<T extends LearningEventType> = {
     type: T
     id: LearningEventId
-    problemId: ProblemId
     missionId: MissionId
 }
 export type NewLearningEvent =
@@ -22,12 +21,15 @@ export type NewLearningEvent =
 
 type NewLearningReviewedEvent =
     LearningEventBase<"reviewed"> & {
+        problemId: ProblemId
         quality: SolvedResult
         sec?: number
     }
 
 type NewLearningResetEvent =
-    LearningEventBase<"reset">
+    LearningEventBase<"reset"> & {
+        problemId: ProblemId
+    }
 
 type NewLearningCancelEvent =
     LearningEventBase<"cancel"> & {

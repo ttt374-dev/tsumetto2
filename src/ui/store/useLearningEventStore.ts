@@ -2,7 +2,7 @@ import { create } from "zustand";
 
 import type { LearningEventRepository } from "@/domain/learning/repository/LearningEventRepository";
 import type { ProblemId } from "@/domain/problem/entity/Problem";
-import type { LearningEvent, LearningEventId, LearningEventLog, NewLearningEvent } from "@/domain/learning/entity/LearningEvent";
+import type { LearningEventId, LearningEventLog, NewLearningEvent } from "@/domain/learning/entity/LearningEvent";
 import type { SolvedResult } from "@/domain/learning/entity/Learning";
 import type { MissionId } from "@/domain/mission/entity/Mission";
 import { v4 } from "uuid";
@@ -11,12 +11,12 @@ type LearningEventStoreState = {
     repo?: LearningEventRepository
     setRepository: (repo: LearningEventRepository) => void
     eventLog: LearningEventLog;
-    repository?: LearningEventRepository;
+    //repository?: LearningEventRepository;
 
     reload: () => Promise<void>;
     append: (learningEvent: NewLearningEvent) => void
-    appendReview: (problemId: ProblemId, missionId: MissionId, quality: SolvedResult, sec?: number) => void
-    appenCancel: (problemId: ProblemId, missionId: MissionId, targetEventId: LearningEventId) => void
+    recordReview: (problemId: ProblemId, missionId: MissionId, quality: SolvedResult, sec?: number) => void
+    recordCancel: (missionId: MissionId, targetEventId: LearningEventId) => void
 };
 
 //let repository: LearningEventRepository
@@ -39,43 +39,34 @@ export const useLearningEventStore = create<LearningEventStoreState>((set, get) 
             set({ eventLog: [] });
         }
     },
-    append: (event: NewLearningEvent) => {
+    append: async (newevent: NewLearningEvent) => {
+        const event = { ...newevent, at: Date.now() }
+        const repo = get().repo        
+        if (repo) await repo.append(event)
+        
         set(state => ({
-            eventLog: [...state.eventLog, { ...event, at: Date.now() }]
+            eventLog: [...state.eventLog, event]
         }))
+        
     },
-    appendReview: (problemId: ProblemId, missionId: MissionId, quality: SolvedResult, sec?: number) => {
-        const reviewEvent: LearningEvent = {
-            type: "reviewed", problemId, missionId, quality, sec, id: createLearningEventId(), at: Date.now()
+    recordReview: (problemId: ProblemId, missionId: MissionId, quality: SolvedResult, sec?: number) => {
+        const event: NewLearningEvent = {
+            type: "reviewed", problemId, missionId, quality, sec, id: createLearningEventId()
         }
-        get().append(reviewEvent);
+        get().append(event);
     },
-    appenCancel: (problemId: ProblemId, missionId: MissionId, targetEventId: LearningEventId) => {
-        const event: LearningEvent = {
-            type: "cancel", problemId, missionId, targetEventId: targetEventId, id: createLearningEventId(), at: Date.now()
+    recordCancel: (missionId: MissionId, targetEventId: LearningEventId) => {
+        const target = get().eventLog.find(e => e.id === targetEventId)
+
+        if (!target) throw new Error("Target not found")
+        if (target.missionId !== missionId) {
+            throw new Error("Cannot cancel event from different mission")
         }
+
+        const event: NewLearningEvent = {
+            type: "cancel", missionId, targetEventId: targetEventId, id: createLearningEventId()
+        }
+
         get().append(event)
     },}
 ));
-/////////////////////////////////////////////////////////
-
-/*
-// 初期化 + subscribe で debounce 永続化
-export const initLearningEventRepository = (repo: LearningEventRepository) => {
-  repository = repo
-
-  const saveRepo = debounce(async (events: LearningEventLog) => {
-    try {
-      await repository.replaceAll(events)
-    } catch (e) {
-          console.error("Failed to save learning events", e)
-      }
-  }, 1000) // 1秒ごとにまとめて書き出し
-
-    let isInitializing = true
-    useLearningEventStore.subscribe(state => {
-        saveRepo(state.eventLog)
-    })
-    isInitializing = false
-}
-*/

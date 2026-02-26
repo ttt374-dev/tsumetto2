@@ -38,15 +38,10 @@ export function useMissionPlayerViewModel(): MissionPlayerVM {
 
     const currentProblemId = problemIds[index]
     const count = problemIds.length
-
-    // Invalid state チェック
-    console.log("misionplayervm ", index, currentProblemId)
-
-    // problem    
+    
     const problem = useProblemStore(s => s.byId[currentProblemId])
-    const review = useLearningEventStore(s=>s.appendReview)
-    const cancel = useLearningEventStore(s=>s.appenCancel)
-    //if (!problem) return undefined
+    const review = useLearningEventStore(s=>s.recordReview)
+    const cancel = useLearningEventStore(s=>s.recordCancel)    
 
     // deckName
     const deckName = useDeckStore(
@@ -69,7 +64,7 @@ export function useMissionPlayerViewModel(): MissionPlayerVM {
         if (!missionId) return
         const last = [...learningEvents].reverse().find(e=>e.type === "reviewed" && e.missionId === missionId)
         if (!last) return
-        cancel(last.problemId, missionId, last.id)        
+        cancel(missionId, last.id)        
         console.log("undo last", last)
         prev()
     }
