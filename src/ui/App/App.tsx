@@ -1,7 +1,8 @@
 import './App.css'
-
+import { App as CapacitorApp } from '@capacitor/app';
 import { useEffect, useMemo } from 'react';
-import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, Outlet, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigationType } from "react-router-dom";
 
 import { MissionScreen } from '../mission/MissionScreen';
 import { LibraryScreen } from '../library/LibraryScreen';
@@ -79,10 +80,45 @@ function bootstrapApp(repos: RepositoryContextValue) {
     }, [repos])
     
 }
+
+function useAndroidBackButton() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const handler = CapacitorApp.addListener('backButton', (event) => {
+      // 履歴があれば戻る
+      //if (window.history.length > 1) {
+    if (location.pathname !== "/decks") {
+        navigate(-1);
+        //event.
+      } else {
+        // 履歴がなければ終了
+        CapacitorApp.exitApp();
+      }
+    });
+
+   
+  }, [navigate]);
+}
+function DebugHistory() {
+  const location = useLocation();
+  const navType = useNavigationType();
+
+  useEffect(() => {
+    console.log("PATH:", location.pathname);
+    console.log("KEY:", location.key);
+    console.log("NAV TYPE:", navType);
+    console.log("HISTORY LENGTH:", window.history.length);
+    console.log("HISTORY STATE:", window.history.state);
+  }, [location]);
+
+  return null;
+}
 function App() {
     const repos = useMemo(() => createRepositories(), [])
     bootstrapApp(repos)   
-
+    useAndroidBackButton()
+    
     return (
         <ToastProvider>
 
@@ -93,7 +129,9 @@ function App() {
 
             }}>
                 <BrowserRouter>
+                <DebugHistory/>
                     <Routes>
+                        
                         <Route path="/mission" element={<MissionScreen />}>
                             <Route path="play" element={<MissionPlayerScreen />} />
                             <Route path="summary" element={<MissionSummaryScreen />} />

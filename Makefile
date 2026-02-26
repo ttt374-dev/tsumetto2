@@ -1,7 +1,8 @@
 
-PROJECT_DIR=/users/${USER}/androidstudioprojects/tsumetto2
-WIN_PROJECT_DIR=d:/${PROJECT_DIR}
-WIN_MOUNT_DIR=/mnt/d/${PROJECT_DIR}
+PROJECT_DIR=/${USER}/androidstudioprojects/tsumetto2
+#WIN_PROJECT_DIR=d:/${PROJECT_DIR}
+WIN_PROJECT_DIR=z:/home/${USER}/source/tsumetto2
+WIN_MOUNT_DIR=/mnt/d/users/${PROJECT_DIR}
 PORT=9000
 
 SRC := $(shell find src -type f)
@@ -28,7 +29,7 @@ run-android: build
 
 serve-android: build
 	mkdir -p ${WIN_MOUNT_DIR}
-	rsync -av --progress dist ${WIN_MOUNT_DIR}
+#	rsync -av --progress dist ${WIN_MOUNT_DIR}
 	powershell.exe -Command "cd ${WIN_PROJECT_DIR}/dist; python -m http.server $(PORT) --bind 0.0.0.0"
 
 deploy:
