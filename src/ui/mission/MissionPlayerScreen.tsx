@@ -10,7 +10,8 @@ export function MissionPlayerScreen() {
 
     const capabilities = {
         answerable: {
-            answer: vm.handleAnswer,
+            answer: vm.answer,
+            undoLastAnswer: (vm.index > 0) ? vm.undoLastAnswer : undefined,
         },
         navigatable: vm.problemNavigation
     }

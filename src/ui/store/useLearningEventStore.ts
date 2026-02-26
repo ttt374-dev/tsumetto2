@@ -2,8 +2,10 @@ import { create } from "zustand";
 
 import type { LearningEventRepository } from "@/domain/learning/repository/LearningEventRepository";
 import type { ProblemId } from "@/domain/problem/entity/Problem";
-import type { LearningEvent, LearningEventLog, NewLearningEvent } from "@/domain/learning/entity/LearningEvent";
+import type { LearningEvent, LearningEventId, LearningEventLog, NewLearningEvent } from "@/domain/learning/entity/LearningEvent";
 import type { SolvedResult } from "@/domain/learning/entity/Learning";
+import type { MissionId } from "@/domain/mission/entity/Mission";
+import { v4 } from "uuid";
 
 type LearningEventStoreState = {
     repo?: LearningEventRepository
@@ -13,10 +15,13 @@ type LearningEventStoreState = {
 
     reload: () => Promise<void>;
     append: (learningEvent: NewLearningEvent) => void
-    review: (problemId: ProblemId, quality: SolvedResult, sec?: number) => void
+    appendReview: (problemId: ProblemId, missionId: MissionId, quality: SolvedResult, sec?: number) => void
+    appenCancel: (problemId: ProblemId, missionId: MissionId, targetEventId: LearningEventId) => void
 };
 
 //let repository: LearningEventRepository
+
+function createLearningEventId(){ return v4()}
 
 export const useLearningEventStore = create<LearningEventStoreState>((set, get) => ({
     repo: undefined,
@@ -39,13 +44,18 @@ export const useLearningEventStore = create<LearningEventStoreState>((set, get) 
             eventLog: [...state.eventLog, { ...event, at: Date.now() }]
         }))
     },
-    review: (problemId: ProblemId, quality: SolvedResult, sec?: number) => {
+    appendReview: (problemId: ProblemId, missionId: MissionId, quality: SolvedResult, sec?: number) => {
         const reviewEvent: LearningEvent = {
-            type: "reviewed", problemId, quality, sec, at: Date.now()
+            type: "reviewed", problemId, missionId, quality, sec, id: createLearningEventId(), at: Date.now()
         }
         get().append(reviewEvent);
     },
-}
+    appenCancel: (problemId: ProblemId, missionId: MissionId, targetEventId: LearningEventId) => {
+        const event: LearningEvent = {
+            type: "cancel", problemId, missionId, targetEventId: targetEventId, id: createLearningEventId(), at: Date.now()
+        }
+        get().append(event)
+    },}
 ));
 /////////////////////////////////////////////////////////
 

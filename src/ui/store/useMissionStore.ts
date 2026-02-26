@@ -1,12 +1,14 @@
 import type { DeckId } from "@/domain/deck/entity/Deck";
 import type { SolvedResult } from "@/domain/learning/entity/Learning";
-import type { MissionPhase, MissionResultEntry } from "@/domain/mission/entity/Mission";
+import type { MissionId, MissionPhase, MissionResultEntry } from "@/domain/mission/entity/Mission";
 import type { ProblemId } from "@/domain/problem/entity/Problem";
+import { v4 } from "uuid";
 import { create } from "zustand";
 
 
 type MissionStore = {
     // ===== state =====
+    missionId?: MissionId,
     deckId?: DeckId;
     problemIds: ProblemId[];
     currentIndex: number; // ⭐ マスター
@@ -32,6 +34,7 @@ export const useMissionStore = create<MissionStore>((set, get) => ({
     // state
     // ======================
     deckId: undefined,
+    missionId: undefined,
     problemIds: [],
     currentIndex: -1,
     answers: [],
@@ -57,6 +60,7 @@ export const useMissionStore = create<MissionStore>((set, get) => ({
             console.log("start", deckId, ids, ids.length > 0 ? 0 : -1)
             return {
                 deckId,
+                missionId: v4(),
                 problemIds: ids,
                 currentIndex: ids.length > 0 ? 0 : -1,
                 answers: [],
@@ -65,6 +69,7 @@ export const useMissionStore = create<MissionStore>((set, get) => ({
 
     answer: (result, secToTaken) =>
         set((s) => {
+            if (!s.missionId) return s; // ← ガード
             const { currentIndex, problemIds, answers } = s;
             if (currentIndex < 0) return s;
 
@@ -75,6 +80,7 @@ export const useMissionStore = create<MissionStore>((set, get) => ({
                     {
                         problemId,
                         solvedResult: result,
+                        missionId: s.missionId,
                         secToTaken: secToTaken,
                     },
                 ],

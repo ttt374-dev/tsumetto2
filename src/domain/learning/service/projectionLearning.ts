@@ -1,5 +1,5 @@
 import { Learning, type LearningRecord, type SolvedResult } from "../entity/Learning"
-import type { LearningEvent, LearningReviewedEvent } from "../entity/LearningEvent"
+import type { LearningEvent, LearningEventId, LearningReviewedEvent } from "../entity/LearningEvent"
 
 const MAX_INTERVAL_DAYS = 60
 const DAY = 60 * 60 * 24 * 1000
@@ -9,9 +9,19 @@ export function projectLearning(
 
     const record: LearningRecord = {}
 
-    for (const event of events) {
-        switch (event.type) {
+    const canceled = new Set<LearningEventId>()
 
+    // ① cancel対象を集める
+    for (const e of events) {
+        if (e.type === "cancel") {
+            canceled.add(e.targetEventId)
+        }
+    }
+    for (const event of events) {
+        if (event.type === "cancel") continue
+        if (canceled.has(event.id)) continue
+
+        switch (event.type) {
             case "reviewed": {
                 const prev =
                     record[event.problemId] ??
@@ -20,8 +30,7 @@ export function projectLearning(
                 record[event.problemId] =
                     applyReviewedEvent(prev, event)
                 break
-            }
-
+            }           
             case "reset": {
                 // 👇 その problem だけ初期化
                 record[event.problemId] =

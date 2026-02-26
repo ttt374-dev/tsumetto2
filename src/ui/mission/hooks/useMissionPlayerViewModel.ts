@@ -19,16 +19,19 @@ type MissionPlayerVM =
       problemNavigation: ProblemNavigation
       index: number
       count: number
-      handleAnswer: (res: SolvedResult, sec?: number) => void
+      answer: (res: SolvedResult, sec?: number) => void
+      undoLastAnswer: () => void
     }
 
 /////////////////////
 export function useMissionPlayerViewModel(): MissionPlayerVM {
     const problemIds = useMissionStore(s => s.problemIds)
+    const learningEvents = useLearningEventStore(s=>s.eventLog)
     const index = useMissionStore(s => s.currentIndex)
     const deckId = useMissionStore(s => s.deckId)
 
-    const answer = useMissionStore(s => s.answer)
+    const answerMission = useMissionStore(s => s.answer)
+    const missionId = useMissionStore(s=>s.missionId)
     const next = useMissionStore(s => s.next)
     const prev = useMissionStore(s => s.prev)
     const moveTo = useMissionStore(s => s.moveToId)
@@ -41,7 +44,8 @@ export function useMissionPlayerViewModel(): MissionPlayerVM {
 
     // problem    
     const problem = useProblemStore(s => s.byId[currentProblemId])
-    const review = useLearningEventStore(s=>s.review)
+    const review = useLearningEventStore(s=>s.appendReview)
+    const cancel = useLearningEventStore(s=>s.appenCancel)
     //if (!problem) return undefined
 
     // deckName
@@ -52,14 +56,23 @@ export function useMissionPlayerViewModel(): MissionPlayerVM {
     // navigation
     const problemNavigation = useMemo(() => ({ next, prev, moveTo }), [next, prev, moveTo])
 
-    const handleAnswer = useCallback(
+    const answer = useCallback(
         (res: SolvedResult, sec?: number | undefined) => {
-            review(problem.id, res, sec)
-            answer(res, sec)
+            if (!missionId) return
+            review(problem.id, missionId, res, sec)
+            answerMission(res, sec)
             next()
         },
-        [answer, next]
+        [answerMission, next]
     )
+    const undoLastAnswer = () => {
+        if (!missionId) return
+        const last = [...learningEvents].reverse().find(e=>e.type === "reviewed" && e.missionId === missionId)
+        if (!last) return
+        cancel(last.problemId, missionId, last.id)        
+        console.log("undo last", last)
+        prev()
+    }
 
     if (count === 0) {
         return { status: "idle" }
@@ -84,7 +97,8 @@ export function useMissionPlayerViewModel(): MissionPlayerVM {
 
     return { 
         status: "playing",
-        problem, title,  problemNavigation, index, count, handleAnswer
+        problem, title,  problemNavigation, index, count, answer,
+        undoLastAnswer,
      }
 }
 
