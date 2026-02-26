@@ -20,9 +20,9 @@ export function PlayerScreen({ problem, title, onAnswer, problemNavigation}: {
     problem: Problem
     title: React.ReactNode
     onAnswer?: (id: ProblemId, res: SolvedResult, sec?: number) => void
-    problemNavigation: ProblemNavigation
+    problemNavigation?: ProblemNavigation
  }) {     
-    const presenter = usePlayerPresenter(problem, problemNavigation.next)
+    const presenter = usePlayerPresenter(problem, problemNavigation?.next)
     
     const review = useLearningEventStore(s=>s.review)
     const handleAnswer = async (res: SolvedResult) => {

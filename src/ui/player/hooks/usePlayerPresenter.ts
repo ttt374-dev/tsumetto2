@@ -3,7 +3,7 @@ import { useProblemDetailDialog } from "../../common/components/dialogs/problemD
 import { useRightActionsDrawer } from "../components/RightActionsDrawer";
 
 
-export function usePlayerPresenter(p: Problem, onNextProblem: () => void){
+export function usePlayerPresenter(p: Problem, onNextProblem?: () => void){
     const detailDialog = useProblemDetailDialog(onNextProblem)
         
     const rightActionsDrawer = useRightActionsDrawer(

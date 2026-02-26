@@ -23,6 +23,7 @@ import { LocalStrorageProblemPersistence, ProblemRepository } from '@/domain/pro
 import { initializeAppUsecase } from '@/application/usecase/initializeApp/useInitializeAppUsecase';
 import { debounce } from 'lodash';
 import { StatsScreen } from '../stats/StatsScreen';
+import { SinglePlayerScreen } from '../player/SinglePlayerScreen';
 
 function createRepositories() {
     return {
@@ -123,6 +124,7 @@ function App() {
 
                         <Route path="/library" element={<LibraryScreen />} />
                         <Route path="/view/:id" element={<ViewerScreen />} />
+                        <Route path="/play/:id" element={<SinglePlayerScreen />} />
                         <Route path="/list" element={<ListScreen />} />
 
                         <Route path="/stats" element={<StatsScreen />} />

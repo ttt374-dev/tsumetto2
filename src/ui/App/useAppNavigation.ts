@@ -1,3 +1,4 @@
+import type { ProblemId } from "@/domain/problem/entity/Problem"
 import { useNavigate } from "react-router-dom"
 
 export const routes = {
@@ -10,7 +11,8 @@ export const routes = {
 
     // library
     library: "/library",
-    problemView: (id: string) => `/view/${id}`,
+    problemView: (id: ProblemId) => `/view/${id}`,
+    player: (id: ProblemId) => `/play/${id}`,
 
     // mission
     mission: "/mission",
