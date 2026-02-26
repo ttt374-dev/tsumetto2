@@ -7,13 +7,22 @@ import { fileBackupWriter } from "@/infrastructure/fileBackupWriter"
 import { useRepositoryContext } from "@/ui/App/providers/RepositoryProvider"
 import { useToast } from "@/ui/App/providers/ToastProvider"
 import { useProblemStore } from "@/ui/store/useProblemStore"
+import { useLearningEventStore } from "@/ui/store/useLearningEventStore"
+import { useDeckStore } from "@/ui/store/useDeckStore"
 
 export function useBackupRestoreDialog(){
     const [open, setOpen] = useState(false)
     const toast = useToast()
     const openDialog = () => { setOpen(true)}
-    const reload = useProblemStore(s=>s.reload)    
+    const reloadProblems = useProblemStore(s=>s.reload)    
+    const reloadLearningEvents = useLearningEventStore(s=>s.reload)
+    const reloadDecks = useDeckStore(s=>s.loadDecks)
 
+    const reloadStores = () => { 
+        reloadProblems()
+        reloadLearningEvents()
+        reloadDecks()
+    }
     const dialogElement = (
         <BackupRestoreDialog open={open}
             onBackupFinished={(res) => {
@@ -25,7 +34,7 @@ export function useBackupRestoreDialog(){
             onRestoreFinished={(res) => {
                 if (res.ok) {
                     toast({ message: `${res.value.problemCount}件をリストアしました` })
-                    reload()
+                    reloadStores()
                 } else {
                     toast({ message: `リストアに失敗しました：${res.error.code}`, severity: "error" })
                 }

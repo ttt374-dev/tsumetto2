@@ -1,5 +1,5 @@
 import './App.css'
-import { App as CapacitorApp } from '@capacitor/app';
+//import { App as CapacitorApp } from '@capacitor/app';
 import { useEffect, useMemo } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, Outlet, useNavigate } from 'react-router-dom';
 import { useLocation, useNavigationType } from "react-router-dom";
@@ -81,25 +81,7 @@ function bootstrapApp(repos: RepositoryContextValue) {
     
 }
 
-function useAndroidBackButton() {
-  const navigate = useNavigate();
 
-  useEffect(() => {
-    const handler = CapacitorApp.addListener('backButton', (event) => {
-      // 履歴があれば戻る
-      //if (window.history.length > 1) {
-    if (location.pathname !== "/decks") {
-        navigate(-1);
-        //event.
-      } else {
-        // 履歴がなければ終了
-        CapacitorApp.exitApp();
-      }
-    });
-
-   
-  }, [navigate]);
-}
 function DebugHistory() {
   const location = useLocation();
   const navType = useNavigationType();
@@ -116,8 +98,7 @@ function DebugHistory() {
 }
 function App() {
     const repos = useMemo(() => createRepositories(), [])
-    bootstrapApp(repos)   
-    useAndroidBackButton()
+    bootstrapApp(repos)       
     
     return (
         <ToastProvider>

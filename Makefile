@@ -38,9 +38,9 @@ deploy:
 #	cp -r android/ $(WIN_MOUNT_DIR)
 #	cp -r dist/ $(WIN_MOUNT_DIR)
 #	rm -rf $(WIN_MOUNT_DIR)/src/*	
-#	rsync -av --exclude="node_modules/" --exclude=".git/" --exclude="/android" . ${WIN_MOUNT_DIR}	
+	rsync -av --exclude="node_modules/" --exclude=".git/" --exclude="/android" . ${WIN_MOUNT_DIR}	
 #	rsync -av --exclude="node_modules/" --exclude=".git/" . ${WIN_MOUNT_DIR}	
-	rsync -av --progress android dist ${WIN_MOUNT_DIR}
+#	rsync -av --progress android dist src package.json ${WIN_MOUNT_DIR}
 	@echo "Copied to Windows."
 
 #serve:
@@ -61,12 +61,15 @@ deploy:
 # android studio: メモ
 
 # AGP 8.9.1
-# gradle: 8.11
+# gradle: 8.11.1
 # JDK 17
 
 # 開発サーバーメモ
 # ローカルWSL： npm run dev
 # Windowshttpサーバ： make build; make deploy;  make serve
 # 実機インストール：
-#	WSL: make build;make deploy
+#	WSL: 
+#		最初： npx cap add android; AGP, grade のバージョンを治す、JDK17にする
+#	make build; make deploy
+		
 #   Windows: android/ フォルダで android studioで実行

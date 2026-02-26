@@ -45,7 +45,7 @@ export function AppLayout({ header, footer, children, rightActions, fab, drawer,
                 <Box
                     sx={{
                         position: "fixed",
-                        bottom: 16,
+                        bottom:  `calc(16px + env(safe-area-inset-bottom))`,
                         right: 16,
                         zIndex: theme => theme.zIndex.drawer + 1,
 

@@ -31,6 +31,20 @@ export function ProblemTagEditor({
                     {...params}
                     label={label}
                     placeholder="タグを追加"
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                            e.preventDefault()
+                            const input = (e.target as HTMLInputElement).value
+                            if (!input.trim()) return
+                            if (!value.includes(input.trim())) {
+                                onChange([...value, input.trim()])
+                            }
+                        }
+                    }}
+                    inputProps={{
+                        ...params.inputProps,
+                        enterKeyHint: "done",
+                    }}
                 />
             )}
         />
