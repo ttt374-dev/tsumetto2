@@ -6,6 +6,7 @@ import type { Problem, ProblemId } from "@/domain/problem/entity/Problem"
 import type { ProblemNavigation } from "@/ui/player/PlayerScreen"
 import React, { useCallback, useMemo, type ReactHTMLElement } from "react"
 import type { SolvedResult } from '@/domain/learning/entity/Learning';
+import { useLearningEventStore } from '@/ui/store/useLearningEventStore';
 
 type MissionPlayerVM =
   | { status: "idle" }
@@ -19,7 +20,7 @@ type MissionPlayerVM =
       problemNavigation: ProblemNavigation
       index: number
       count: number
-      handleAnswer: (id: ProblemId, res: SolvedResult, sec?: number) => void
+      handleAnswer: (res: SolvedResult, sec?: number) => void
     }
 
 /////////////////////
@@ -39,9 +40,9 @@ export function useMissionPlayerViewModel(): MissionPlayerVM {
     // Invalid state チェック
     console.log("misionplayervm ", index, currentProblemId)
 
-    // problem
-    
+    // problem    
     const problem = useProblemStore(s => s.byId[currentProblemId])
+    const review = useLearningEventStore(s=>s.review)
     //if (!problem) return undefined
 
     // deckName
@@ -53,7 +54,8 @@ export function useMissionPlayerViewModel(): MissionPlayerVM {
     const problemNavigation = useMemo(() => ({ next, prev, moveTo }), [next, prev, moveTo])
 
     const handleAnswer = useCallback(
-        (_id: string, res: SolvedResult, sec?: number | undefined) => {
+        (res: SolvedResult, sec?: number | undefined) => {
+            review(problem.id, res, sec)
             answer(res, sec)
             next()
         },

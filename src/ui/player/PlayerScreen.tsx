@@ -12,28 +12,39 @@ import type { SolvedResult } from "@/domain/learning/entity/Learning";
 export type ProblemNavigation = {
     next: () => void,
     prev: () => void,
-    moveTo: (problemId: ProblemId) => void,
+//    moveTo: (problemId: ProblemId) => void,
 }
 
+type AnswerCapability = {
+  answer: (res: SolvedResult, sec: number) => void
+}
+
+type NavigationCapability = {
+    next: () => void
+    prev: () => void
+}
+
+type PlayerCapabilities = {
+  answer?: AnswerCapability
+  navigation?: NavigationCapability
+
+}
 //////////////////////////////////////////////////////////////
-export function PlayerScreen({ problem, title, onAnswer, problemNavigation}: {
+export function PlayerScreen({ problem, title, capabilities}: {
     problem: Problem
     title: React.ReactNode
-    onAnswer?: (id: ProblemId, res: SolvedResult, sec?: number) => void
-    problemNavigation?: ProblemNavigation
+    capabilities: PlayerCapabilities
  }) {     
-    const presenter = usePlayerPresenter(problem, problemNavigation?.next)
+    const presenter = usePlayerPresenter(problem, capabilities.navigation?.next)
+    const timer = useTimer()
     
-    const review = useLearningEventStore(s=>s.review)
+    //const review = useLearningEventStore(s=>s.review)
     const handleAnswer = async (res: SolvedResult) => {
-        const sec = timer.seconds
-        review(problem.id, res, sec)  // 学習データを記録
-        onAnswer?.(problem.id, res, sec)  // ミッションを進める
+        capabilities.answer?.answer?.(res, timer.seconds)  // ミッションを進める
     }
     const handleOpenDetailDialog = () => {
         presenter.dialogs.detail.openDialog(problem.id)
     }
-    const timer = useTimer()
 
     useEffect(() => {
         timer.reset()
@@ -43,14 +54,14 @@ export function PlayerScreen({ problem, title, onAnswer, problemNavigation}: {
     return (
         <AppShell
             header={title}
-            footer={onAnswer && <PlayerAnswerActions onAnswerClick={handleAnswer} />}
+            footer={capabilities.answer && <PlayerAnswerActions onAnswerClick={handleAnswer} />}
             rightActions={<PlayerRightActions
                     problemId={problem.id} 
                     onOpenDetailDialog={handleOpenDetailDialog}/>}
         >
             <PlayerView
                 problem={problem}                
-                problemNavigation={problemNavigation}
+                problemNavigation={capabilities.navigation}
                 timer={timer}
             />
             {presenter.dialogs.detail.dialogElement}

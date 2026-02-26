@@ -6,7 +6,6 @@ import { useNavigate, useParams } from "react-router-dom"
 import { useProblemStore } from "../store/useProblemStore"
 import { routes } from "../App/useAppNavigation"
 
-
 export function SinglePlayerScreen() {    
     const { id } = useParams<{ id: string }>()
     const problem = useProblemStore(s => id ? s.byId[id] : undefined)
@@ -18,16 +17,19 @@ export function SinglePlayerScreen() {
 function SinglePlayContent(problem: Problem){
     const navigate = useNavigate()
     const review = useLearningEventStore(s => s.review)
-    const handleAnswered = (id: ProblemId, res: SolvedResult, sec?: number) => {        
-        review(id, res, sec)
+    const handleAnswered = (res: SolvedResult, sec?: number) => {        
+        review(problem.id, res, sec)
         navigate(routes.back)
+    }
+    const capabilities = {        
+        answer: { answer: handleAnswered }
     }
 
     return (
         <PlayerScreen
             problem={problem}
             title={problem.title}
-            onAnswer={handleAnswered}            
+            capabilities={capabilities}
         />
     )
 }

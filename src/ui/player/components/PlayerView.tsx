@@ -69,11 +69,9 @@ function PlayerView({problem, problemNavigation, timer}: {
     const replay = useReplayController(problem.kifData.initialPosition, moves)
     const showMovesController = useShowMovesController(replay.plyIndex)
     const learning: Learning | undefined = useLearningRecordStore(s=>s.records)[problem.id]
-    //const timerController = useTimerController(problem.id)
 
     return (
-        <Stack sx={{ minHeight: 0, height: "100%" }} spacing={1} >
-            
+        <Stack sx={{ minHeight: 0, height: "100%" }} spacing={1} >            
             { /* --- 盤面 ---*/}
             <BoardPanel position={replay.position}
                 onAdvancePly={replay.advancePly}
@@ -91,9 +89,7 @@ function PlayerView({problem, problemNavigation, timer}: {
                                 手筋を表示
                             </Button>
                             <Box>手数：{moves.length}手</Box>
-                            { problem.tags.length > 0 && 
-                            <Box>タグ:{problem.tags.join(",")}</Box>
-}
+                            <Box>{problem.tags.join(",")}</Box>
                         </Stack>)
                     }
                 </MovesPanel>
@@ -109,19 +105,18 @@ function PlayerView({problem, problemNavigation, timer}: {
                     {learning && formatLearning(learning)}
 
                     {timer &&
-                        <Box sx={{p: 1}}>
-                        <TimerControl
-                            isTimerRunning={timer.isRunning}
-                            onToggleTimer={timer.toggle}
-                            elaspedSec={timer.seconds}
-                        />
+                        <Box sx={{ p: 1 }}>
+                            <TimerControl
+                                isTimerRunning={timer.isRunning}
+                                onToggleTimer={timer.toggle}
+                                elaspedSec={timer.seconds}
+                            />
                         </Box>
-                        }
-                    
+                    }
                 </Box>
             </Stack>
         </Stack>
-    )    
+    )
 }
 
 export default PlayerView
