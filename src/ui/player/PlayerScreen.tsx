@@ -25,8 +25,8 @@ type NavigationCapability = {
 }
 
 type PlayerCapabilities = {
-  answer?: AnswerCapability
-  navigation?: NavigationCapability
+  answerable?: AnswerCapability
+  navigatable?: NavigationCapability
 
 }
 //////////////////////////////////////////////////////////////
@@ -35,12 +35,12 @@ export function PlayerScreen({ problem, title, capabilities}: {
     title: React.ReactNode
     capabilities: PlayerCapabilities
  }) {     
-    const presenter = usePlayerPresenter(problem, capabilities.navigation?.next)
+    const presenter = usePlayerPresenter(problem, capabilities.navigatable?.next)
     const timer = useTimer()
     
     //const review = useLearningEventStore(s=>s.review)
     const handleAnswer = async (res: SolvedResult) => {
-        capabilities.answer?.answer?.(res, timer.seconds)  // ミッションを進める
+        capabilities.answerable?.answer?.(res, timer.seconds)  // ミッションを進める
     }
     const handleOpenDetailDialog = () => {
         presenter.dialogs.detail.openDialog(problem.id)
@@ -54,14 +54,15 @@ export function PlayerScreen({ problem, title, capabilities}: {
     return (
         <AppShell
             header={title}
-            footer={capabilities.answer && <PlayerAnswerActions onAnswerClick={handleAnswer} />}
+            footer={capabilities.answerable &&
+                <PlayerAnswerActions onAnswerClick={handleAnswer} />}
             rightActions={<PlayerRightActions
                     problemId={problem.id} 
                     onOpenDetailDialog={handleOpenDetailDialog}/>}
         >
             <PlayerView
                 problem={problem}                
-                problemNavigation={capabilities.navigation}
+                problemNavigation={capabilities.navigatable}
                 timer={timer}
             />
             {presenter.dialogs.detail.dialogElement}

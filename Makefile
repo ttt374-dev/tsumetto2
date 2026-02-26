@@ -1,7 +1,7 @@
 
-PROJECT_DIR=/${USER}/androidstudioprojects/tsumetto2
-#WIN_PROJECT_DIR=d:/${PROJECT_DIR}
-WIN_PROJECT_DIR=z:/home/${USER}/source/tsumetto2
+PROJECT_DIR=${USER}/androidstudioprojects/tsumetto2
+WIN_PROJECT_DIR=d:/users/${PROJECT_DIR}
+#WIN_PROJECT_DIR=z:/home/${USER}/source/tsumetto2
 WIN_MOUNT_DIR=/mnt/d/users/${PROJECT_DIR}
 PORT=9000
 
@@ -32,7 +32,7 @@ serve-android: build
 #	rsync -av --progress dist ${WIN_MOUNT_DIR}
 	powershell.exe -Command "cd ${WIN_PROJECT_DIR}/dist; python -m http.server $(PORT) --bind 0.0.0.0"
 
-deploy:
+deploy: build
 #	npx cap sync android
 	mkdir -p $(WIN_MOUNT_DIR)
 #	cp -r android/ $(WIN_MOUNT_DIR)
@@ -42,6 +42,8 @@ deploy:
 #	rsync -av --exclude="node_modules/" --exclude=".git/" . ${WIN_MOUNT_DIR}	
 #	rsync -av --progress android dist src package.json ${WIN_MOUNT_DIR}
 	@echo "Copied to Windows."
+	powershell.exe -Command "cd ${WIN_PROJECT_DIR}; npx cap sync android"
+
 
 #serve:
 #	powershell.exe -Command "cd ${WIN_PROJECT_DIR}/dist; python -m http.server $(PORT) --bind 0.0.0.0"

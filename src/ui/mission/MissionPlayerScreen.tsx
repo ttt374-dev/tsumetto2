@@ -9,10 +9,10 @@ export function MissionPlayerScreen() {
     if (vm.status !== "playing") return <>{vm.status}</>
 
     const capabilities = {
-        answer: {
+        answerable: {
             answer: vm.handleAnswer,
         },
-        navigation: vm.problemNavigation
+        navigatable: vm.problemNavigation
     }
     return (
         <PlayerScreen problem={vm.problem}

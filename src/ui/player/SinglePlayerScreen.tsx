@@ -11,18 +11,19 @@ export function SinglePlayerScreen() {
     const problem = useProblemStore(s => id ? s.byId[id] : undefined)
         if (!problem) return <div>Not found</div>
 
-    return SinglePlayContent(problem)
+    return SinglePlayerContent(problem)
 }
 
-function SinglePlayContent(problem: Problem){
+function SinglePlayerContent(problem: Problem){
     const navigate = useNavigate()
     const review = useLearningEventStore(s => s.review)
-    const handleAnswered = (res: SolvedResult, sec?: number) => {        
-        review(problem.id, res, sec)
-        navigate(routes.back)
-    }
-    const capabilities = {        
-        answer: { answer: handleAnswered }
+    const capabilities = {
+        answerable: {
+            answer: (res: SolvedResult, sec?: number) => {
+                review(problem.id, res, sec)
+                navigate(routes.back)
+            }
+        }
     }
 
     return (
