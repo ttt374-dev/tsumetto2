@@ -74,14 +74,12 @@ export const LibraryListItem = function LibraryListItem({ id, onItemClick,
                     }}
                     secondary={
                         <>
-                            {/* 二行目: タグ・追加日 */}
+                            {/* 二行目: タグ*/}
                             <Stack direction="row" justifyContent={"space-between"}>
                                 <Typography variant="body2">
                                     {problem.tags.join(",")}
                                 </Typography>
-                                <Typography variant="body2">
-                                    {new Date(problem.createdAt).toLocaleString()}
-                                </Typography>
+
                             </Stack>
                             {/* 学習データ */}
                             <Stack direction="row" justifyContent={"flex-end"}>
@@ -107,12 +105,12 @@ export function inDays(date: number, now: number = Date.now()): number {
     return Math.ceil((date - now) / DAY_MS)
 }
 export function formatLearning(learning: Learning): string {
+    const lastAnsweredAt = learning.lastAnsweredAt ? new Date(learning.lastAnsweredAt).toLocaleString() : ""
     const indays = inDays(learning.nextReviewedAt)
     const indaysString = indays >= 0 ? `${indays.toFixed(0)}d` : "due"
     //const indaysString = new Date(learning.nextReviewedAt).toLocaleString()
     const accuracyString = `${(learning.accuracy * 100).toFixed(0)}%`
-
-    return `${accuracyString}(${learning.solvedCount}:${learning.failedCount})`
+    return `${lastAnsweredAt}, ${accuracyString}(${learning.solvedCount}:${learning.failedCount})`
     return `${learning.solvedCount}:${learning.failedCount}=${(learning.accuracy * 100).toFixed(0)}%,
 ef${learning.easeFactor.toFixed(2)},
 ${indaysString}
