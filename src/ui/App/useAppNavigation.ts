@@ -1,5 +1,4 @@
 import type { ProblemId } from "@/domain/problem/entity/Problem"
-import { useNavigate } from "react-router-dom"
 
 export const routes = {
     home: "/",

@@ -65,6 +65,8 @@ deploy: build
 # AGP 8.9.1
 # gradle: 8.11.1
 # JDK 17
+# capacitor@7
+#    v8はバックボタンでアプリ終了してしまう
 
 # 開発サーバーメモ
 # ローカルWSL： npm run dev

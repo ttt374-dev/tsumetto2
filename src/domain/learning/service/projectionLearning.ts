@@ -10,14 +10,14 @@ export function projectLearning(
     const record: LearningRecord = {}
 
     const canceled = new Set<LearningEventId>()
-
+    const sorted = [...events].sort((a, b) => a.at - b.at)
     // ① cancel対象を集める
-    for (const e of events) {
+    for (const e of sorted) {
         if (e.type === "cancel") {
             canceled.add(e.targetEventId)
         }
     }
-    for (const event of events) {
+    for (const event of sorted) {
         if (event.type === "cancel") continue
         if (canceled.has(event.id)) continue
 
@@ -54,7 +54,7 @@ function applyReviewedEvent(
     let intervalDays = base.intervalDays
     let solvedCnt = base.solvedCount
     let failedCnt = base.failedCount
-    const quality = judgeAnswerQuality(event.quality)
+    const quality = judgeAnswerQuality(event.quality, event.sec)
 
     if (event.quality === "failed") {
         failedCnt++
@@ -69,8 +69,8 @@ function applyReviewedEvent(
     }
     easeFactor = Math.max(
         1.3,
-        easeFactor + 0.1 - (3 - quality) * 0.05
-        //easeFactor + (0.1 - (3 - quality) * (0.08 + (3 - quality) * 0.02))
+        //easeFactor + 0.1 - (3 - quality) * 0.05
+        easeFactor + (0.1 - (3 - quality) * (0.08 + (3 - quality) * 0.02))
     )
 
     const nextReviewAt = event.at + intervalDays * DAY

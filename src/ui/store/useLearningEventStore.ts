@@ -2,7 +2,7 @@ import { create } from "zustand";
 
 import type { LearningEventRepository } from "@/domain/learning/repository/LearningEventRepository";
 import type { ProblemId } from "@/domain/problem/entity/Problem";
-import type { LearningEventId, LearningEventLog, NewLearningEvent } from "@/domain/learning/entity/LearningEvent";
+import type { LearningEvent, LearningEventId, LearningEventLog, NewLearningEvent } from "@/domain/learning/entity/LearningEvent";
 import type { SolvedResult } from "@/domain/learning/entity/Learning";
 import type { MissionId } from "@/domain/mission/entity/Mission";
 import { v4 } from "uuid";
@@ -11,16 +11,14 @@ type LearningEventStoreState = {
     repo?: LearningEventRepository
     setRepository: (repo: LearningEventRepository) => void
     eventLog: LearningEventLog;
-    //repository?: LearningEventRepository;
 
     reload: () => Promise<void>;
     append: (learningEvent: NewLearningEvent) => void
-    recordReview: (problemId: ProblemId, missionId: MissionId, quality: SolvedResult, sec?: number) => void
-    recordCancel: (missionId: MissionId, targetEventId: LearningEventId) => void
+    appendReview: (problemId: ProblemId, missionId: MissionId, quality: SolvedResult, sec?: number) => void
+    appendCancel: (missionId: MissionId, targetEventId: LearningEventId) => void
+    appendReset: (problemId: ProblemId) => void
     clearAll: () => void
 };
-
-//let repository: LearningEventRepository
 
 function createLearningEventId(){ return v4()}
 
@@ -36,31 +34,28 @@ export const useLearningEventStore = create<LearningEventStoreState>((set, get) 
 
             const data = await repo.load();
             set({ eventLog: data });
-        } catch {
-            set({ eventLog: [] });
+        } catch(e) {
+            //set({ eventLog: [] });
+            console.error(e)
         }
     },
     append: (newevent: NewLearningEvent) => {
-        const event = { ...newevent, id: createLearningEventId(), at: Date.now() }        
+        const event: LearningEvent = { ...newevent, id: createLearningEventId(), at: Date.now() }        
         set(state => ({
             eventLog: [...state.eventLog, event]
         }))
         
     },
-    recordReview: (problemId: ProblemId, missionId: MissionId, quality: SolvedResult, sec?: number) => {
+    appendReview: (problemId: ProblemId, missionId: MissionId, quality: SolvedResult, sec?: number) => {
         const event: NewLearningEvent = {
             type: "reviewed", problemId, missionId, quality, sec
         }
         get().append(event);
     },
-    recordCancel: (missionId: MissionId, targetEventId: LearningEventId) => {
-        const target = get().eventLog.find(e => e.id === targetEventId)
+    appendCancel: (missionId: MissionId, targetEventId: LearningEventId) => {
+        const target = get().eventLog.find(e => e.id === targetEventId && e.type === "reviewed" && e.missionId === missionId)
 
         if (!target) throw new Error("Target not found")
-        if (target.type !== "reviewed") throw new Error("event type error")
-        if (target.missionId !== missionId) {
-            throw new Error("Cannot cancel event from different mission")
-        }
 
         const event: NewLearningEvent = {
             type: "cancel", missionId, targetEventId: targetEventId
@@ -68,7 +63,7 @@ export const useLearningEventStore = create<LearningEventStoreState>((set, get) 
 
         get().append(event)
     },
-    recordReset: (problemId: ProblemId) => {
+    appendReset: (problemId: ProblemId) => {
         const event: NewLearningEvent = {
             type: 
             "reset", problemId

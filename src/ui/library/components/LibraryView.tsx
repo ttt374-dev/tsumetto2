@@ -1,5 +1,5 @@
-
-import { Box, Button, IconButton, List, Stack, TextField, ToggleButton } from "@mui/material"
+import FilterListIcon from "@mui/icons-material/FilterList";
+import { Box, Button, Drawer, IconButton, List, Stack, TextField, ToggleButton } from "@mui/material"
 import DeleteIcon from '@mui/icons-material/Delete';
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import EditIcon from '@mui/icons-material/Edit';
@@ -14,6 +14,11 @@ import { LibraryCheckboxControl } from "./LibraryCheckboxControl";
 import type { LibraryActionMode } from "../hooks/useLibraryViewModel";
 import { useEffect, useState } from "react";
 import type { QueryController } from "@/ui/common/hooks/useQuery";
+import { FilterControl } from "@/ui/decks/components/FilterControl";
+import type { FilterState } from "@/domain/problem/service/query/filter";
+import { MateLengthFilterControl } from "@/ui/decks/components/MateLengthFilterControl";
+import { TagCheckboxFilterControl } from "@/ui/decks/components/TagCheckboxFilterControl";
+import { useProblemStore } from "@/ui/store/useProblemStore";
 
 export type LibraryItemActions = {
     openTagEditDialog: (ids: ProblemId[]) => void
@@ -44,11 +49,22 @@ export function LibraryView({ ids, query, actionMode, changeActionMode,
 
     const [showFilterText, setShowFilterText] = useState(false)
     const [ filterText, setFilterText] = useState("")
+    const [isOpen, setIsOpen] = useState(false);
+    const [filters, setFilters] = useState({
+        uncleared: false,
+        cleared: false,
+        hard: false,
+        favorite: false,
+    });
+    const allTags = useProblemStore(s=>s.allTags)
     useEffect(()=>{ query.filter.addFilter({text: filterText})}, [filterText])
+    
     const handleToggleShowFilterText = () => { 
         if (showFilterText) setFilterText("")
-        setShowFilterText(prev => !prev) 
-        
+        setShowFilterText(prev => !prev)         
+    }
+    const handleToggleFilter = (key: keyof FilterState) => {
+        query.filter.toggleFilter(key)
     }
 
     return (
@@ -66,8 +82,10 @@ export function LibraryView({ ids, query, actionMode, changeActionMode,
 
                 <Box sx={{ flexGrow: 1 }} />
 
-
                 { /* 検索フィルター */}
+                <IconButton onClick={() => setIsOpen(true)} size="small">
+                    <FilterListIcon/>
+                </IconButton>
                 { showFilterText && 
                 <TextField value={filterText} size="small"
                   onChange={(e) => setFilterText(e.target.value)}/>
@@ -97,6 +115,46 @@ export function LibraryView({ ids, query, actionMode, changeActionMode,
                     ))}
                 </List>
             </Box>
+
+            <Drawer anchor="bottom" open={isOpen} 
+                onClose={() => setIsOpen(false)}
+                slotProps={{
+                    paper: {
+                        sx: {
+                            pb: "calc(env(safe-area-inset-bottom) + 16px)",
+                            borderTopLeftRadius: 24,
+                            borderTopRightRadius: 24,
+                        },
+                    },
+                }}>
+                <div className="bottom-sheet">
+                    <Stack direction="row" justifyContent="space-between" >
+                        <Box flex={1}>
+                            <FilterControl
+                                filter={query.filter.state}
+                                onToggleFilter={query.filter.toggleFilter}
+
+                            />
+                        </Box>
+                        <Box flex={1}>
+                            <MateLengthFilterControl
+                                mateBuckets={query.filter.state.mateBuckets}
+                                onChange={(buckets) => {
+                                    query.filter.addFilter({ mateBuckets: buckets })
+                                }}
+                            />
+                        </Box>
+
+                    </Stack>
+                    <Stack direction="row" justifyContent="space-between" >
+                        <TagCheckboxFilterControl
+                            allTags={allTags} selectedTags={query.filter.state.tags ?? []}
+                            onChange={(tags => { query.filter.addFilter({ tags: tags }) })}
+                        />
+                    </Stack>
+                </div>
+
+            </Drawer>
         </>
     )
 }

@@ -40,8 +40,8 @@ export function useMissionPlayerViewModel(): MissionPlayerVM {
     const count = problemIds.length
     
     const problem = useProblemStore(s => s.byId[currentProblemId])
-    const review = useLearningEventStore(s=>s.recordReview)
-    const cancel = useLearningEventStore(s=>s.recordCancel)    
+    const review = useLearningEventStore(s=>s.appendReview)
+    const cancel = useLearningEventStore(s=>s.appendCancel)    
 
     // deckName
     const deckName = useDeckStore(

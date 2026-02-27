@@ -21,7 +21,7 @@ function SinglePlayerContent(problem: Problem){
     const navigate = useNavigate()
     const startMission = useMissionStore(s=>s.start)
     const missionId = useMissionStore(s=>s.missionId)
-    const review = useLearningEventStore(s=>s.recordReview)
+    const review = useLearningEventStore(s=>s.appendReview)
 
     const capabilities = {
         answerable: {
