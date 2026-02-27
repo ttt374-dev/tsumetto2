@@ -5,7 +5,6 @@ import type { SolvedResult } from "@/domain/learning/entity/Learning"
 import { useNavigate, useParams } from "react-router-dom"
 import { useProblemStore } from "../store/useProblemStore"
 import { routes } from "../App/useAppNavigation"
-import { v4 } from "uuid"
 import { useMissionStore } from "../store/useMissionStore"
 
 export function SinglePlayerScreen() {    
@@ -26,10 +25,10 @@ function SinglePlayerContent(problem: Problem){
 
     const capabilities = {
         answerable: {
-            answer: (res: SolvedResult, sec?: number) => {
+            answer: (problemId: ProblemId, res: SolvedResult, sec?: number) => {
                 if (!missionId) return
-                startMission(SINGLE_DECK_ID, [problem.id])
-                review(problem.id, missionId, res, sec)
+                startMission(SINGLE_DECK_ID, [problemId])
+                review(problemId, missionId, res, sec)
                 navigate(routes.back)
             }
         }

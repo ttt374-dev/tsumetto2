@@ -1,5 +1,5 @@
 import { Learning, type LearningRecord, type SolvedResult } from "../entity/Learning"
-import type { LearningEvent, LearningEventId, LearningReviewedEvent } from "../entity/LearningEvent"
+import type { LearningEvent, LearningEventId, LearningReviewedEvent} from "../entity/LearningEvent"
 
 const MAX_INTERVAL_DAYS = 60
 const DAY = 60 * 60 * 24 * 1000
@@ -47,8 +47,8 @@ export function projectLearning(
 function applyReviewedEvent(
     prev: Learning,
     event: LearningReviewedEvent
-): Learning {
-    const base = prev
+): Learning {    
+    const base = prev    
 
     let easeFactor = base.easeFactor
     let intervalDays = base.intervalDays

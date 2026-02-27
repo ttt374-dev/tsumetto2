@@ -14,7 +14,7 @@ export type ProblemNavigation = {
 }
 
 type AnswerCapability = {
-    answer: (res: SolvedResult, sec: number) => void
+    answer: (problemId: ProblemId, res: SolvedResult, sec: number) => void
     undoLastAnswer?: () => void
 }
 
@@ -38,7 +38,7 @@ export function PlayerScreen({ problem, title, capabilities }: {
 
     //const review = useLearningEventStore(s=>s.review)
     const handleAnswer = async (res: SolvedResult) => {
-        capabilities.answerable?.answer?.(res, timer.seconds)  // ミッションを進める
+        capabilities.answerable?.answer?.(problem.id, res, timer.seconds)  // ミッションを進める
     }
     const handleOpenDetailDialog = () => {
         presenter.dialogs.detail.openDialog(problem.id)
@@ -51,7 +51,7 @@ export function PlayerScreen({ problem, title, capabilities }: {
 
     return (
         <AppShell
-            header={title}
+            header={ "Player"}
             footer={capabilities.answerable &&
                 <PlayerAnswerActions onAnswerClick={handleAnswer} />}
             rightActions={
@@ -63,6 +63,7 @@ export function PlayerScreen({ problem, title, capabilities }: {
         >
             <PlayerView
                 problem={problem}
+                title={title}
                 problemNavigation={capabilities.navigatable}
                 timer={timer}
             />

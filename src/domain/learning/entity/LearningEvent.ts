@@ -4,50 +4,36 @@ import type { SolvedResult } from "./Learning"
 
 export type LearningEventId = string
 
-export type LearningEventType =
-    | "reviewed"
-    | "reset"
-    | "cancel"
-
-type LearningEventBase<T extends LearningEventType> = {
-    type: T
-    missionId: MissionId
-}
 export type NewLearningEvent =
     | NewLearningReviewedEvent
     | NewLearningResetEvent
     | NewLearningCancelEvent
 
 type NewLearningReviewedEvent =
-    LearningEventBase<"reviewed"> & {
+    {
+        type: "reviewed"
         problemId: ProblemId
+        missionId: MissionId
         quality: SolvedResult
         sec?: number
     }
 
 type NewLearningResetEvent =
-    LearningEventBase<"reset"> & {
+    {
+        type: "reset"
         problemId: ProblemId
     }
 
 type NewLearningCancelEvent =
-    LearningEventBase<"cancel"> & {
+    {
+        type: "cancel"
+        missionId: MissionId
         targetEventId: LearningEventId
     }
 
-export type LearningReviewedEvent = NewLearningReviewedEvent & { at: number }
-
 export type LearningEvent =
     NewLearningEvent & { id: LearningEventId, at: number }
-/*
-export type LearningEvent = 
-    | {
-    type: "reviewed"
-    problemId: ProblemId
-    quality: SolvedResult
-    sec?: number
-    at: number
-}
-    */
+
+export type LearningReviewedEvent = Extract<LearningEvent, { type: "reviewed" }>;
 
 export type LearningEventLog = LearningEvent[]

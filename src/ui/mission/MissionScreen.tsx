@@ -17,11 +17,11 @@ export function MissionScreen() {
             //    break
             case "playing":
                 //navigate("/mission/play", { replace: true })
-                navigate(routes.missionPlay, { replace: true })
+                navigate(routes.missionPlay) // , { replace: true })
                 break
             case "finished":
                 //navigate("/mission/summary", { replace: true })
-                navigate(routes.missionSummary, { replace: true })
+                navigate(routes.missionSummary) // , { replace: true })
                 break
         }
     }, [phase])

@@ -1,7 +1,7 @@
 import { useDeckStore } from "@/ui/store/useDeckStore"
 import { useMissionStore } from "@/ui/store/useMissionStore"
 import { useProblemStore } from "@/ui/store/useProblemStore"
-import type { Problem } from "@/domain/problem/entity/Problem"
+import type { Problem, ProblemId } from "@/domain/problem/entity/Problem"
 import type { ProblemNavigation } from "@/ui/player/PlayerScreen"
 import React, { useCallback, useMemo } from "react"
 import type { SolvedResult } from '@/domain/learning/entity/Learning';
@@ -19,7 +19,7 @@ type MissionPlayerVM =
       problemNavigation: ProblemNavigation
       index: number
       count: number
-      answer: (res: SolvedResult, sec?: number) => void
+      answer: (problemId: ProblemId, res: SolvedResult, sec?: number) => void
       undoLastAnswer: () => void
     }
 
@@ -52,9 +52,10 @@ export function useMissionPlayerViewModel(): MissionPlayerVM {
     const problemNavigation = useMemo(() => ({ next, prev, moveTo }), [next, prev, moveTo])
 
     const answer = useCallback(
-        (res: SolvedResult, sec?: number | undefined) => {
+        (problemId: ProblemId, res: SolvedResult, sec?: number | undefined) => {
             if (!missionId) return
-            review(problem.id, missionId, res, sec)
+            //console.log("answer", problemId)
+            review(problemId, missionId, res, sec)
             answerMission(res, sec)
             next()
         },

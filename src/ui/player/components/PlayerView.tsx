@@ -6,7 +6,7 @@ import BoardPanel from "./panels/BoardPanel"
 import { formatLearningPerformance } from "@/ui/library/components/LibraryListItem"
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem"
 import { useReplayController } from "../hooks/useReplayController"
-import { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import type { ProblemNavigation } from "../PlayerScreen"
 import { useLearningRecordStore } from "@/ui/store/useLearningRecordStore"
 import { useTimer } from "../hooks/useTimer"
@@ -60,8 +60,9 @@ export const TimerControl = ({isTimerRunning, elaspedSec, onToggleTimer}: {
 }
 
 ///////////////////////////////////////////////////////////////
-function PlayerView({problem, problemNavigation, timer}: {
+function PlayerView({problem, title, problemNavigation, timer}: {
     problem: Problem
+    title: React.ReactNode,
     problemNavigation?: ProblemNavigation,   
     timer?: ReturnType<typeof useTimer>  // optional
 }){
@@ -72,6 +73,7 @@ function PlayerView({problem, problemNavigation, timer}: {
 
     return (
         <Stack sx={{ minHeight: 0, height: "100%" }} spacing={1} >            
+            <Typography variant="h6">{ title } </Typography>
             { /* --- 盤面 ---*/}
             <BoardPanel position={replay.position}
                 onAdvancePly={replay.advancePly}
@@ -86,9 +88,8 @@ function PlayerView({problem, problemNavigation, timer}: {
                         <MovesView moves={moves} currentPlyIndex={replay.plyIndex} onMoveToPly={replay.moveToPly} />
                         : (<Stack>
                             <Button onClick={() => showMovesController.setShowMoves(true)} >
-                                手筋を表示
-                            </Button>
-                            <Box>手数：{moves.length}手</Box>
+                                手数：{moves.length}手
+                            </Button>                            
                             <Box>{problem.tags.join(",")}</Box>
                         </Stack>)
                     }

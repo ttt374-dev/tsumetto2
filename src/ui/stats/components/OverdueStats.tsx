@@ -3,17 +3,8 @@ import type { ProblemId } from "@/domain/problem/entity/Problem"
 import { useLearningRecordStore } from "@/ui/store/useLearningRecordStore"
 import { useProblemStore } from "@/ui/store/useProblemStore"
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  Paper,
-  Typography,
-  Stack,
-  Box,
-} from "@mui/material"
+import { Table, TableBody, TableCell, TableHead, TableRow,
+  Paper, Typography, Stack, Box} from "@mui/material"
 import { useMemo } from "react"
 
 type OverdueItem = {

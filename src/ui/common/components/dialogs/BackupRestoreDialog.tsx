@@ -87,7 +87,12 @@ export default function BackupRestoreDialog({ open, onClose, onBackupFinished, o
         onClose()
         onRestoreFinished?.(result)
     }
-
+    /* ==== data clear ==== */
+    const clearAllEvents = useLearningEventStore(s=>s.clearAll)
+    const handleClearAllLearningEvents = () => {
+        if (!window.confirm("すべての学習データを消去してよろしいですか？")) return
+        clearAllEvents()
+    }
     return (
         <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
             <DialogTitle>バックアップ / 復元</DialogTitle>
@@ -107,7 +112,7 @@ export default function BackupRestoreDialog({ open, onClose, onBackupFinished, o
                 <Divider />
 
                 {/* restore */}
-                <Box mt={3}>
+                <Box my={3}>
                     <Typography variant="h6">復元</Typography>
                     <Typography variant="body2" color="error" mb={1}>
                         復元すると現在のデータはすべて上書きされます。
@@ -132,6 +137,20 @@ export default function BackupRestoreDialog({ open, onClose, onBackupFinished, o
                             e.currentTarget.value = ""
                         }}
                     />
+                </Box>
+
+                <Divider />
+
+                { /* データクリア */ }
+                <Box my={3}>
+                    <Typography variant="h6">データクリア</Typography>
+                    <Typography variant="body2" color="text.secondary" mb={1}>
+                        すべての学習データログが削除されます。
+                    </Typography>
+                    <Button onClick={handleClearAllLearningEvents} 
+                        color="error" variant="outlined">
+                        全学習データ消去
+                    </Button>
                 </Box>
             </DialogContent>
 

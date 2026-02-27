@@ -70,24 +70,12 @@ export function useProblemDetailDialogViewModel(
 
     // review イベント追加
     const reviewProblem = (quality: SolvedResult, sec?: number) => {
-        const event: NewLearningEvent = { type: "reviewed", problemId, quality, sec }
-        appendLearning(event)
+        //const event: NewLearningEvent = { type: "reviewed", problemId, quality, sec }
+        //appendLearning(event)
     }
 
-    return {
-        problem,
-        learning,
-        title,
-        tags,
-        starred,
-        allTags,
-        setTitle,
-        setTags,
-        setStarred,
-        remove,
-        save,
-        resetLearning,
-        reviewProblem
+    return {problem, learning, title, tags, starred, allTags,
+        setTitle, setTags, setStarred, remove, save, resetLearning,        
     }
 }
 /////////////////////////////////////////////////////////////
@@ -147,15 +135,17 @@ export default function ProblemDetailDialog({ open, problemId, onAfterDeleteProb
                         <EditableText key={problem.id} initialText={title} onUpdateText={
                             title => { setTitle(title) }} />
                     </Paper>
-                    <Divider />
-
-
+                    
+                    
+                            <ProblemTagEditor
+                                value={tags}
+                                onChange={(tags) => {
+                                    setTags(tags)
+                                }}
+                            />
+                    
                     <Paper sx={{ p: 1 }}>
                         <Stack>
-                            <Stack direction="row" justifyContent="space-between">
-                                <Box>UUID</Box>
-                                <Box>{problem.id}</Box>
-                            </Stack>
                             <Stack direction="row" justifyContent="space-between">
                                 <Box>追加日</Box>
                                 <Box>{new Date(problem.createdAt).toLocaleString()}</Box>
@@ -165,14 +155,6 @@ export default function ProblemDetailDialog({ open, problemId, onAfterDeleteProb
                                 <Box>{new Date(problem.updatedAt).toLocaleString()}</Box>
                             </Stack>
                         </Stack>
-                        <Box sx={{ mt: 2 }}>
-                            <ProblemTagEditor
-                                value={tags}
-                                onChange={(tags) => {
-                                    setTags(tags)
-                                }}
-                            />
-                        </Box>
                     </Paper>
                     <Divider />
 

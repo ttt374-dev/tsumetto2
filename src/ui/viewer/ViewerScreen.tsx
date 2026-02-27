@@ -19,7 +19,7 @@ function ViewerContent(problem: Problem) {
     const detailDialog = useProblemDetailDialog()
 
     return (
-        <AppShell header={problem.title}
+        <AppShell header="Viewer"
             rightActions={
                 <PlayerRightActions 
                     problemId={problem.id} 
@@ -27,7 +27,7 @@ function ViewerContent(problem: Problem) {
                 />
             }
         >
-            <PlayerView problem={problem} />
+            <PlayerView problem={problem} title={problem.title} />
             {detailDialog.dialogElement}
         </AppShell>
     )

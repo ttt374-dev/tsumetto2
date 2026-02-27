@@ -17,6 +17,7 @@ type LearningEventStoreState = {
     append: (learningEvent: NewLearningEvent) => void
     recordReview: (problemId: ProblemId, missionId: MissionId, quality: SolvedResult, sec?: number) => void
     recordCancel: (missionId: MissionId, targetEventId: LearningEventId) => void
+    clearAll: () => void
 };
 
 //let repository: LearningEventRepository
@@ -39,9 +40,8 @@ export const useLearningEventStore = create<LearningEventStoreState>((set, get) 
             set({ eventLog: [] });
         }
     },
-    append: async (newevent: NewLearningEvent) => {
-        const event = { ...newevent, id: createLearningEventId(), at: Date.now() }
-        
+    append: (newevent: NewLearningEvent) => {
+        const event = { ...newevent, id: createLearningEventId(), at: Date.now() }        
         set(state => ({
             eventLog: [...state.eventLog, event]
         }))
@@ -57,6 +57,7 @@ export const useLearningEventStore = create<LearningEventStoreState>((set, get) 
         const target = get().eventLog.find(e => e.id === targetEventId)
 
         if (!target) throw new Error("Target not found")
+        if (target.type !== "reviewed") throw new Error("event type error")
         if (target.missionId !== missionId) {
             throw new Error("Cannot cancel event from different mission")
         }
@@ -66,5 +67,17 @@ export const useLearningEventStore = create<LearningEventStoreState>((set, get) 
         }
 
         get().append(event)
-    },}
+    },
+    recordReset: (problemId: ProblemId) => {
+        const event: NewLearningEvent = {
+            type: 
+            "reset", problemId
+        }
+        get().append(event)
+    },
+    clearAll: () => {
+        set({eventLog: []})
+    }
+}
+
 ));
