@@ -40,9 +40,7 @@ export const useLearningEventStore = create<LearningEventStoreState>((set, get) 
         }
     },
     append: async (newevent: NewLearningEvent) => {
-        const event = { ...newevent, at: Date.now() }
-        const repo = get().repo        
-        if (repo) await repo.append(event)
+        const event = { ...newevent, id: createLearningEventId(), at: Date.now() }
         
         set(state => ({
             eventLog: [...state.eventLog, event]
@@ -51,7 +49,7 @@ export const useLearningEventStore = create<LearningEventStoreState>((set, get) 
     },
     recordReview: (problemId: ProblemId, missionId: MissionId, quality: SolvedResult, sec?: number) => {
         const event: NewLearningEvent = {
-            type: "reviewed", problemId, missionId, quality, sec, id: createLearningEventId()
+            type: "reviewed", problemId, missionId, quality, sec
         }
         get().append(event);
     },
@@ -64,7 +62,7 @@ export const useLearningEventStore = create<LearningEventStoreState>((set, get) 
         }
 
         const event: NewLearningEvent = {
-            type: "cancel", missionId, targetEventId: targetEventId, id: createLearningEventId()
+            type: "cancel", missionId, targetEventId: targetEventId
         }
 
         get().append(event)

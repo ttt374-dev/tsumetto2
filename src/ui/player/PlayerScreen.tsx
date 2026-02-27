@@ -11,7 +11,6 @@ import type { SolvedResult } from "@/domain/learning/entity/Learning";
 export type ProblemNavigation = {
     next: () => void,
     prev: () => void,
-    //    moveTo: (problemId: ProblemId) => void,
 }
 
 type AnswerCapability = {

@@ -4,14 +4,13 @@ import type { SolvedResult } from "./Learning"
 
 export type LearningEventId = string
 
-type LearningEventType =
+export type LearningEventType =
     | "reviewed"
     | "reset"
     | "cancel"
 
 type LearningEventBase<T extends LearningEventType> = {
     type: T
-    id: LearningEventId
     missionId: MissionId
 }
 export type NewLearningEvent =
@@ -39,7 +38,7 @@ type NewLearningCancelEvent =
 export type LearningReviewedEvent = NewLearningReviewedEvent & { at: number }
 
 export type LearningEvent =
-    NewLearningEvent & { at: number }
+    NewLearningEvent & { id: LearningEventId, at: number }
 /*
 export type LearningEvent = 
     | {

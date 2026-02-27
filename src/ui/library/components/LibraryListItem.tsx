@@ -8,7 +8,7 @@ import { useLearningRecordStore } from "@/ui/store/useLearningRecordStore";
 import { useNavigate } from 'react-router-dom';
 import { routes } from '@/ui/App/useAppNavigation';
 import { useStarToggleButton } from '@/ui/common/components/StarToggleButton/useStarToggleButton';
-import type { Learning } from "@/domain/learning/entity/Learning";
+import { Learning } from "@/domain/learning/entity/Learning";
 
 export const LibraryListItem = function LibraryListItem({ id, onItemClick,
     showCheckbox, isChecked, onToggleChecked,
@@ -82,13 +82,10 @@ export const LibraryListItem = function LibraryListItem({ id, onItemClick,
 
                             </Stack>
                             {/* 学習データ */}
-                            <Stack direction="row" justifyContent={"flex-end"}>
-                                {learning && <>
-                                    <Typography variant="body2">
-                                        {formatLearning(learning)}
-                                    </Typography>
-                                </>}
-                            </Stack>
+                            {learning && 
+                                <LearningSection learning={learning} />
+                            }
+
                         </>
                     }
 
@@ -104,13 +101,30 @@ export function inDays(date: number, now: number = Date.now()): number {
     //return (date - now) / (60 * 60 * 24 * 1000)
     return Math.ceil((date - now) / DAY_MS)
 }
-export function formatLearning(learning: Learning): string {
-    const lastAnsweredAt = learning.lastAnsweredAt ? new Date(learning.lastAnsweredAt).toLocaleString() : ""
+function LearningSection(props: {
+    learning: Learning
+}) {
+    const lastAnsweredAt = props.learning.lastAnsweredAt ? new Date(props.learning.lastAnsweredAt).toLocaleString() : ""
+    return (
+        <Stack direction="row" justifyContent="flex-end" spacing={2}>
+            <Box>
+                {lastAnsweredAt}
+            </Box>
+
+            <Box>
+                {formatLearningPerformance(props.learning)}
+            </Box>
+        </Stack>
+
+    )
+}
+export function formatLearningPerformance(learning: Learning): string {
+    
     const indays = inDays(learning.nextReviewedAt)
     const indaysString = indays >= 0 ? `${indays.toFixed(0)}d` : "due"
     //const indaysString = new Date(learning.nextReviewedAt).toLocaleString()
     const accuracyString = `${(learning.accuracy * 100).toFixed(0)}%`
-    return `${lastAnsweredAt}, ${accuracyString}(${learning.solvedCount}:${learning.failedCount})`
+    return `${accuracyString}(${learning.solvedCount}:${learning.failedCount})`
     return `${learning.solvedCount}:${learning.failedCount}=${(learning.accuracy * 100).toFixed(0)}%,
 ef${learning.easeFactor.toFixed(2)},
 ${indaysString}

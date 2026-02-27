@@ -3,7 +3,7 @@ import { Box, Button, Grid, Stack, Typography } from "@mui/material"
 import MovesView from "./views/MovesView"
 import { PlyControlPanel } from "./panels/PlyControlPanel"
 import BoardPanel from "./panels/BoardPanel"
-import { formatLearning } from "@/ui/library/components/LibraryListItem"
+import { formatLearningPerformance } from "@/ui/library/components/LibraryListItem"
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem"
 import { useReplayController } from "../hooks/useReplayController"
 import { useEffect, useState } from "react"
@@ -102,7 +102,7 @@ function PlayerView({problem, problemNavigation, timer}: {
                         onPrevPly={replay.retreatPly}
                         onNextPly={replay.advancePly}
                     />
-                    {learning && formatLearning(learning)}
+                    {learning && formatLearningPerformance(learning)}
 
                     {timer &&
                         <Box sx={{ p: 1 }}>
