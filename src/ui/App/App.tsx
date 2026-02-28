@@ -1,10 +1,9 @@
-import { useTheme } from "@mui/material/styles";
 import './App.css'
 import { App as CapacitorApp } from '@capacitor/app';
 import { useEffect, useMemo } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, Outlet, useNavigate } from 'react-router-dom';
 import { useLocation, useNavigationType } from "react-router-dom";
-import { CssBaseline, useMediaQuery } from "@mui/material";
+import { CssBaseline, CssVarsProvider, useMediaQuery } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material";
 
 import { MissionScreen } from '../mission/MissionScreen';
@@ -21,20 +20,37 @@ import { StatsScreen } from '../stats/StatsScreen';
 import { SinglePlayerScreen } from '../player/SinglePlayerScreen';
 import { bootstrapApp, createRepositories } from './bootstrapApp';
 
+export const theme = createTheme({
+    cssVariables: true,   // ← これ必須
+    colorSchemes: {
+        light: {
+            palette: {
+                board: {
+                    bg: "#f8f4e6",
+                    grid: "#aaa",
+                },
+            },
+        },
+        dark: {
+            palette: {
+                board: {
+                    bg: "#5e4b3c",
+                    grid: "#888",
+                },
+            },
+        },
+    },
+});
 function App() {
     const repos = useMemo(() => createRepositories(), [])
     bootstrapApp(repos)
     //useAndroidBack(); // 最上位で呼ぶ
-    const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
-
-    const theme = createTheme({
-        palette: {
-            mode: prefersDarkMode ? "dark" : "light",
-        },
-    });
 
     return (
-        <ThemeProvider theme={theme}>
+        <ThemeProvider
+            theme={theme}
+            defaultMode="system"
+        >
             <CssBaseline />
             <ToastProvider>
                 <RepositoryContext.Provider value={{
