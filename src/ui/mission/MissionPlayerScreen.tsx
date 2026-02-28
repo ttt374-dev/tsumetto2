@@ -8,10 +8,6 @@ export function MissionPlayerScreen() {
     //console.log("missionplayer", vm)
 
     if (vm.status !== "playing") return <>{vm.status}</>
-
-    const events = useLearningEventStore(s=>s.eventLog)
-    
-
     const capabilities = {
         answerable: {
             answer: vm.answer,
