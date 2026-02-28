@@ -1,37 +1,23 @@
 .container {
-  width: 300px;
-  display: inline-block;  
-  
-  border: 1px solid #333;
-  padding: 4px;
-  justify-content: "center";
-}
-
-.row {
-  display: flex;
-}
-
-.rowWithRank {
-  display: flex;
-  
-}
-.emptyCell {
-  width: 28px;
-  height: 28px;
   border: 1px solid #aaa;
-  /*  background: #f8f4e6;*/
-  background: var(--mui-palette-board-bg);
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(11, 30px);
+  grid-template-rows: repeat(10, 30px);
+
 }
 
 .cell {
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
   border: 1px solid #aaa;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 24px;
-    background: var(--mui-palette-board-bg);
+  background: var(--mui-palette-board-bg);
   /* background: #f8f4e6;*/
 }
 
@@ -39,29 +25,27 @@
   transform: rotate(180deg);
 }
 
-.fileLabels {
-  display: flex;
-  margin-bottom: 2px;
-  margin-left: 12px;
-}
-
 .fileLabel {
   width: 30px;
-  height: 12px;
-  display: flex;
-  justify-content: center; /* 横中央 */
-  align-items: flex-end;   /* 下寄せ */
-  font-size: 12px; 
-  padding-bottom: 2px;     /* 少し余白 */
+  display: grid;
+  justify-content: center;
+  /* 横中央 */
+  align-items: end;
+  /* ← 縦を下寄せ */
+  font-size: 12px;
+  padding-bottom: 2px;
+  /* 少し余白 */
 }
 
 .rankLabel {
   width: 12px;
   height: 30px;
   display: flex;
-  justify-content: flex-start; /* 右寄せ */
-  align-items: center;       /* 縦中央 */
+  justify-content: flex-start;
+  /* 右寄せ */
+  align-items: center;
+  /* 縦中央 */
   font-size: 12px;
-  padding-right: 2px;        /* 少し余白 */
+  padding-right: 2px;
+  /* 少し余白 */
 }
-

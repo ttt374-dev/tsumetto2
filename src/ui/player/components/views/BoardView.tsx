@@ -32,14 +32,14 @@ function formatHand(hand: Hand): string {
 function HandView({ hand, owner }: { hand: Hand, owner: Player }) {
     return (
         <div>
-            { formatPlayer(owner)}{formatHand(hand)}
+            {formatPlayer(owner)}{formatHand(hand)}
         </div>
     )
 }
 function SquareView({ piece }: { piece: Piece | null }) {
 
     if (!piece) {
-        return <div className={styles.emptyCell} />;
+        return <div className={styles.cell} />;
     } else {
         return (
             <div
@@ -58,39 +58,39 @@ function BoardView({ position }: { position: Position }) {
 
     return (
         <Stack justifyContent="center">
-            <Box>   { /* センタリングするために必要 */ }
-                <Box className={styles.container}>
-                    {/* 持駒表示 */}
-                    <HandView hand={hands.get("white")} owner="white" />
-                    {/* 上の筋表示 */}
-                    <div className={styles.fileLabels}>
-                        <div className={styles.corner}></div> {/* 左上の空白 */}
-                        {fileLabels.map((f, i) => (
-                            <div key={i} className={styles.fileLabel}>{f}</div>
-                        ))}
-                    </div>
+            <Box className={styles.container}>
+                {/* 持駒表示 */}
+                <HandView hand={hands.get("white")} owner="white" />
 
+                <Box className={styles.board}>
+                    {/* 上の筋表示 */}
+                    <div></div>
+                    {fileLabels.map((f, i) => (
+                        <div key={i} className={styles.fileLabel}>{f}</div>
+                    ))}
+                    <div></div>
                     {/* 盤面 + 左側の段表示 */}
-                    {ranks.map(rank => (
-                        <div key={`rank:${rank}`} className={styles.rowWithRank}>
-                            {/* 左側の段表示（スペース） */}
-                            <div className={styles.rankLabel}></div>
-                            {/* 盤面の行 */}
-                            {files.map(file => {
-                                //const sq = Square.create(file, rank)
-                                const piece = board.get(file, rank)
-                                return (
-                                    <div key={Board.squareKey(file, rank)}>
-                                        <SquareView piece={piece} />
-                                    </div>
-                                )
-                            })}
-                            <div className={styles.rankLabel}>{rankLabels[rank - 1]}</div>
-                        </div>)
+                    {ranks.flatMap(rank => {
+                        const cells = files.map(file => {
+                            const piece = board.get(file, rank)
+                            return (
+                                <SquareView
+                                    key={Board.squareKey(file, rank)}
+                                    piece={piece}
+                                />
+                            )
+                        })
+                        const empty = <div></div>
+                        const rankLabel = <div className={styles.rankLabel}>
+                            {rankLabels[rank - 1]}
+                        </div>
+                        return [empty, ...cells, rankLabel,]
+                    }
+
                     )}
-                    {/* 持駒表示 */}
-                    <HandView hand={hands.get("black")} owner="black" />
                 </Box>
+                {/* 持駒表示 */}
+                <HandView hand={hands.get("black")} owner="black" />
             </Box>
         </Stack >
     )
