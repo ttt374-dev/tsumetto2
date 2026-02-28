@@ -100,6 +100,16 @@ export default function DecksScreen() {
                     <ListItemText
                         primary={deck.name}
                         secondary={`問題数：${stats?.problemCount ?? 0}, 正答率：${((stats?.accuracy ?? 0) * 100).toFixed(0)}%`}
+                        slotProps={{
+                            primary: {
+                                color: "text.primary"
+                            },
+    secondary: {
+      sx: {
+        color: "text.primary",
+      },
+    },
+  }}
                     />
                 </ListItemButton>
 

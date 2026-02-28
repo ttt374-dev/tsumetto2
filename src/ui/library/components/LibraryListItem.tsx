@@ -54,10 +54,10 @@ export const LibraryListItem = function LibraryListItem({ id, onItemClick,
                 <ListItemText
                     primary={
                         <Stack direction="row" justifyContent={"space-between"} alignItems="center">
-                            <Typography variant="subtitle1" fontWeight="bold" flex={4}>
+                            <Typography variant="subtitle1" fontWeight="bold" flex={4}  color="text.primary">
                                 {problem.title}
                             </Typography>
-                            <Typography variant="body2"flex={1}>
+                            <Typography variant="body2" flex={1}>
                                 {problem.kifData.moves.length}手詰め
                             </Typography>
                             <Stack direction="row" flex={1}>
@@ -72,8 +72,8 @@ export const LibraryListItem = function LibraryListItem({ id, onItemClick,
                             component: "div",
                         },
                     }}
-                    secondary={
-                        <>
+                    secondary={<>
+
                             {/* 二行目: タグ*/}
                             <Stack direction="row" justifyContent={"space-between"}>
                                 <Typography variant="body2">
@@ -85,8 +85,8 @@ export const LibraryListItem = function LibraryListItem({ id, onItemClick,
                             {learning && 
                                 <LearningSection learning={learning} />
                             }
+</>
 
-                        </>
                     }
 
                 >

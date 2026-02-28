@@ -73,7 +73,14 @@ function PlayerView({problem, title, problemNavigation, timer}: {
 
     return (
         <Stack sx={{ minHeight: 0, height: "100%" }} spacing={1} >            
-            <Typography variant="h6">{ title } </Typography>
+            <Box sx={{
+                whiteSpace: "nowrap",
+                overflowX: "auto",
+                overflowY: "hidden",
+                WebkitOverflowScrolling: "touch",
+            }}>
+                <Typography variant="h6">{title} </Typography>
+            </Box>
             { /* --- 盤面 ---*/}
             <BoardPanel position={replay.position}
                 onAdvancePly={replay.advancePly}

@@ -1,4 +1,5 @@
 import { PlayerScreen } from "../player/PlayerScreen"
+import { useLearningEventStore } from "../store/useLearningEventStore"
 import { useMissionPlayerViewModel } from "./hooks/useMissionPlayerViewModel"
 
 ////////////////////////////////////////////////
@@ -8,10 +9,13 @@ export function MissionPlayerScreen() {
 
     if (vm.status !== "playing") return <>{vm.status}</>
 
+    const events = useLearningEventStore(s=>s.eventLog)
+    
+
     const capabilities = {
         answerable: {
             answer: vm.answer,
-            undoLastAnswer: (vm.index > 0) ? vm.undoLastAnswer : undefined,
+            undoLastAnswer: (vm.lastAnsweredEvent()) ? vm.undoLastAnswer : undefined,
         },
         navigatable: vm.problemNavigation
     }

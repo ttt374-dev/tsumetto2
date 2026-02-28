@@ -6,6 +6,7 @@ import type { ProblemNavigation } from "@/ui/player/PlayerScreen"
 import React, { useCallback, useMemo } from "react"
 import type { SolvedResult } from '@/domain/learning/entity/Learning';
 import { useLearningEventStore } from '@/ui/store/useLearningEventStore';
+import type { LearningEvent } from "@/domain/learning/entity/LearningEvent"
 
 type MissionPlayerVM =
   | { status: "idle" }
@@ -20,6 +21,7 @@ type MissionPlayerVM =
       index: number
       count: number
       answer: (problemId: ProblemId, res: SolvedResult, sec?: number) => void
+      lastAnsweredEvent: () => LearningEvent | undefined
       undoLastAnswer: () => void
     }
 
@@ -61,10 +63,13 @@ export function useMissionPlayerViewModel(): MissionPlayerVM {
         },
         [answerMission, next]
     )
+    const lastAnsweredEvent = () => {
+        return [...learningEvents].reverse().find(e=>e.type === "reviewed" && e.missionId === missionId)
+    }
     const undoLastAnswer = () => {
-        if (!missionId) return
-        const last = [...learningEvents].reverse().find(e=>e.type === "reviewed" && e.missionId === missionId)
-        if (!last) return
+        const last = lastAnsweredEvent()
+        if (!missionId || !last) return       
+        
         cancel(missionId, last.id)        
         console.log("undo last", last)
         prev()
@@ -92,9 +97,9 @@ export function useMissionPlayerViewModel(): MissionPlayerVM {
 
 
     return { 
-        status: "playing",
-        problem, title,  problemNavigation, index, count, answer,
-        undoLastAnswer,
+        status: "playing", 
+        problem, title,  problemNavigation, index, count, lastAnsweredEvent,
+        answer, undoLastAnswer,
      }
 }
 
