@@ -83,8 +83,8 @@ export default function ProblemDetailDialog({ open, problemId, onAfterDeleteProb
                         label="出典"
                         value={source}
                         options={allSources}
-                        onChange={(v) => { setSource(v ?? ""); console.log("on change: ", v)}}
-                        
+                        onChange = {v => setSource(v??"")}
+                        //onChange={(v) => { setSource(v ?? ""); console.log("on change: ", v)}}                        
                     />
                     <Paper sx={{ p: 1 }}>
                         <Stack>

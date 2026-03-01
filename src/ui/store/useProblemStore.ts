@@ -14,6 +14,7 @@ export type ProblemState = {
     // derived states
     ids: ProblemId[]
     allTags: string[]
+    allSources: string[]
     activeProblems: Problem[]    
     
     reload: () => Promise<void>
@@ -41,10 +42,15 @@ function derive(byId: Record<ProblemId, Problem>) {
     activeProblems.forEach(p =>
         p.tags?.forEach(tag => tagSet.add(tag))
     )
-
+    const SourceSet = new Set(
+        activeProblems
+            .map(p => p.source)
+            .filter((s): s is string => !!s && s.trim() !== "")
+    )
     return {
         activeProblems, ids,
         allTags: Array.from(tagSet),
+        allSources: Array.from(SourceSet)
     }
 }
 function reduceById(byId: Record<ProblemId, Problem>) {
@@ -63,6 +69,7 @@ export const useProblemStore = create<ProblemState>((set, get) => ({
     byId: {},
     activeProblems: [],
     allTags: [],
+    allSources: [],
    
     
     reload: async () => {       

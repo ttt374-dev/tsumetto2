@@ -21,6 +21,7 @@ export function useProblemDetailDialogViewModel(
     const updateProblem = useProblemStore(s => s.updateProblem)
     const deleteProblems = useProblemStore(s => s.deleteProblems)
     const allTags = useProblemStore(s => s.allTags)
+    const allSources = useProblemStore(s=>s.allSources)
     //const allSources = useProbl
 
     // learning store
@@ -35,18 +36,7 @@ export function useProblemDetailDialogViewModel(
     const [source, setSource] = useState("")
     const [type, setType] = useState<ProblemType>("standard")
 
-    // source options
-    const allSources = useMemo(() => {
-        const unique = Array.from(
-            new Set(
-                activeProblems
-                    .map(p => p.source)
-                    .filter((s): s is string => !!s && s.trim() !== "")
-            )
-        )
-
-        return unique
-    }, [activeProblems])
+  
 
     // open 時に初期値セット
     useEffect(() => {
