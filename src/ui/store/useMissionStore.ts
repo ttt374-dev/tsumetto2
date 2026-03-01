@@ -57,8 +57,8 @@ export const useMissionStore = create<MissionStore>((set, get) => ({
     // ======================
     start: (deckId, ids) => {
         const missionId = v4()
-        set((s) => {
-            console.log("start", deckId, ids, ids.length > 0 ? 0 : -1)
+        set((_s) => {
+            //console.log("start", deckId, ids, ids.length > 0 ? 0 : -1)
             return {
                 deckId,
                 missionId: missionId,

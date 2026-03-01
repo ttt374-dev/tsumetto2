@@ -10,7 +10,7 @@ import { useMissionStore } from "../store/useMissionStore"
 export function SinglePlayerScreen() {    
     const { id } = useParams<{ id: string }>()
     const problem = useProblemStore(s => id ? s.byId[id] : undefined)
-        if (!problem) return <div>Not found</div>
+    if (!problem) return <div>Not found</div>
 
     return SinglePlayerContent(problem)
 }

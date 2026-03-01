@@ -15,107 +15,9 @@ import type { NewLearningEvent } from '@/domain/learning/entity/LearningEvent';
 import type { SolvedResult } from '@/domain/learning/entity/Learning';
 import { CancelableTextField } from './CancelableTextfield';
 import { SettingsSystemDaydreamSharp } from '@mui/icons-material';
+import { useProblemDetailDialogViewModel } from './useProblemDetailDialogViewModel';
+import { ProblemTypeSelect } from './ProblemTypeSelect';
 
-export function useProblemDetailDialogViewModel(
-    problemId: ProblemId,
-    open: boolean,
-    onClose: () => void,
-) {
-    // problem store
-    const problem = useProblemStore(s => s.byId[problemId])
-    const updateProblem = useProblemStore(s => s.updateProblem)
-    const deleteProblems = useProblemStore(s => s.deleteProblems)
-    const allTags = useProblemStore(s => s.allTags)
-
-    // learning store
-    const appendLearning = useLearningEventStore(s => s.append)
-    const learningRecords = useLearningRecordStore(s => s.records)
-    const learning = problem ? learningRecords[problem.id] : undefined
-
-    // local state
-    const [title, setTitle] = useState("")
-    const [tags, setTags] = useState<string[]>([])
-    const [starred, setStarred] = useState(false)
-    const [source, setSource] = useState("")
-    const [type, setType] = useState<ProblemType>("standard")
-
-    // open 時に初期値セット
-    useEffect(() => {
-        if (open && problem) {
-            setTitle(problem.title)
-            setTags(problem.tags ?? [])
-            setStarred(problem.starred)
-            setSource(problem.source)
-        }
-    }, [open, problem])
-
-    //////////////////////////////////////////////////////////
-    const remove = (confirmFn: () => boolean) => {
-        if (!problem || !confirmFn()) return
-        deleteProblems([problem.id])
-        onClose()
-    }
-
-    const save = async () => {
-        if (!problem) return
-        updateProblem(problemId, prev =>
-            prev.setTitle(title)
-                .setTags(tags)
-                .setStarred(starred)
-                .setSource(source)
-        )
-        onClose()
-    }
-
-    // 学習データリセット
-    const resetLearning = (confirmFn: () => boolean) => {
-        if (!confirmFn()) return
-        const event: NewLearningEvent = { type: "reset", problemId }
-        appendLearning(event)
-    }
-
-    // review イベント追加
-    const reviewProblem = (quality: SolvedResult, sec?: number) => {
-        //const event: NewLearningEvent = { type: "reviewed", problemId, quality, sec }
-        //appendLearning(event)
-    }
-
-    return {problem, learning, title, tags, starred, allTags, source, type,
-        setTitle, setTags, setStarred, setSource, setType, remove, save, resetLearning,        
-    }
-}
-export const problemTypeOptions = [
-  { value: "standard", label: "正規（駒あまりなし）" },
-  { value: "realistic", label: "実戦型（駒あまり許容）" },
-  { value: "hisshi", label: "必死（受けなし）" },
-] as const;
-export function ProblemTypeSelect({ value, onChange }: {
-  value: ProblemType;
-  onChange: (value: ProblemType) => void;
-}) {
-  return (
-    <FormControl fullWidth size="small">
-      <InputLabel>タイプ</InputLabel>
-      <Select
-        value={value}
-        label="タイプ"
-        onChange={(e) =>
-          onChange(e.target.value as ProblemType)
-        }
-      >
-        <MenuItem value="standard">
-          正規（駒あまりなし）
-        </MenuItem>
-        <MenuItem value="realistic">
-          実戦型（駒あまり許容）
-        </MenuItem>
-        <MenuItem value="hisshi">
-          必死（受けなし）
-        </MenuItem>
-      </Select>
-    </FormControl>
-  );
-}
 /////////////////////////////////////////////////////////////
 type Props = {
     open: boolean
@@ -158,16 +60,16 @@ export default function ProblemDetailDialog({ open, problemId, onAfterDeleteProb
             <DialogTitle>
                 棋譜エントリの詳細
                 <Stack direction="row" justifyContent="flex-end">
-                        <StarToggleButton starred={starred}
-                            onToggle={() => setStarred(prev => !prev)}
-                        />
-                        <IconButton onClick={handleDeleteClick}>
-                            <DeleteIcon />
-                        </IconButton>
-                    </Stack>
+                    <StarToggleButton starred={starred}
+                        onToggle={() => setStarred(prev => !prev)}
+                    />
+                    <IconButton onClick={handleDeleteClick}>
+                        <DeleteIcon />
+                    </IconButton>
+                </Stack>
             </DialogTitle>
             <DialogContent>
-                <Stack spacing={1} pt={2}>                    
+                <Stack spacing={1} pt={2}>
                     {/* タイトル編集 */}
                     <CancelableTextField label="タイトル" value={title} onCommit={
                         title => { setTitle(title) }} />
@@ -182,7 +84,7 @@ export default function ProblemDetailDialog({ open, problemId, onAfterDeleteProb
                             setTags(tags)
                         }}
                     />
-                    
+
                     <CancelableTextField
                         label="出典"
                         value={source}
