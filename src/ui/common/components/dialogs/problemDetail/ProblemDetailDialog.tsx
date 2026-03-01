@@ -15,8 +15,9 @@ import type { NewLearningEvent } from '@/domain/learning/entity/LearningEvent';
 import type { SolvedResult } from '@/domain/learning/entity/Learning';
 import { CancelableTextField } from './CancelableTextfield';
 import { SettingsSystemDaydreamSharp } from '@mui/icons-material';
-import { useProblemDetailDialogViewModel } from './useProblemDetailDialogViewModel';
+import { useProblemDetailDialogViewModel, type SourceOption } from './useProblemDetailDialogViewModel';
 import { ProblemTypeSelect } from './ProblemTypeSelect';
+import { FreeSoloAutocomplete } from '@/ui/shared/components/GenericFreeSoloAutocomplete';
 
 /////////////////////////////////////////////////////////////
 type Props = {
@@ -28,11 +29,11 @@ type Props = {
 }
 export default function ProblemDetailDialog({ open, problemId, onAfterDeleteProblem, onClose }: Props) {
     const {
-        problem, learning, title, tags, starred, source, type,
+        problem, learning, title, tags, starred, sourceOption, sourceOptions, type,
         setTitle,
         setTags,
         setStarred,
-        setSource,
+        setSourceOption,
         setType,
         remove,
         save: handleSave,
@@ -85,10 +86,15 @@ export default function ProblemDetailDialog({ open, problemId, onAfterDeleteProb
                         }}
                     />
 
-                    <CancelableTextField
+                    <FreeSoloAutocomplete<SourceOption>
                         label="出典"
-                        value={source}
-                        onCommit={(v: string) => setSource(v)}
+                        value={sourceOption}
+                        options={sourceOptions}
+                        onChange={(value) => setSourceOption(value)}
+                        onCreate={(label) => ({
+                            id: label,
+                            label,
+                        })}
                     />
                     <Paper sx={{ p: 1 }}>
                         <Stack>
