@@ -21,6 +21,7 @@ export function useProblemDetailDialogViewModel(
     const updateProblem = useProblemStore(s => s.updateProblem)
     const deleteProblems = useProblemStore(s => s.deleteProblems)
     const allTags = useProblemStore(s => s.allTags)
+    //const allSources = useProbl
 
     // learning store
     const appendLearning = useLearningEventStore(s => s.append)
@@ -31,13 +32,11 @@ export function useProblemDetailDialogViewModel(
     const [title, setTitle] = useState("")
     const [tags, setTags] = useState<string[]>([])
     const [starred, setStarred] = useState(false)
-    //const [source, setSource] = useState("")
+    const [source, setSource] = useState("")
     const [type, setType] = useState<ProblemType>("standard")
-    const [sourceOption, setSourceOption] =
-        useState<SourceOption | null>(null)
 
     // source options
-    const sourceOptions = useMemo<SourceOption[]>(() => {
+    const allSources = useMemo(() => {
         const unique = Array.from(
             new Set(
                 activeProblems
@@ -46,10 +45,7 @@ export function useProblemDetailDialogViewModel(
             )
         )
 
-        return unique.map(label => ({
-            id: label,
-            label,
-        }))
+        return unique
     }, [activeProblems])
 
     // open 時に初期値セット
@@ -58,11 +54,8 @@ export function useProblemDetailDialogViewModel(
             setTitle(problem.title)
             setTags(problem.tags ?? [])
             setStarred(problem.starred)
-            setSourceOption(
-                problem.source
-                    ? { id: problem.source, label: problem.source }
-                    : null
-            )
+            setType(problem.type ?? "standard")
+            setSource(problem.source ?? "")
         }
     }, [open, problem])
 
@@ -75,11 +68,13 @@ export function useProblemDetailDialogViewModel(
 
     const save = async () => {
         if (!problem) return
+        //console.log("save problem: sourceoption.label", sourceOption?.label)
+        console.log("save source", source)
         updateProblem(problemId, prev =>
             prev.setTitle(title)
                 .setTags(tags)
                 .setStarred(starred)
-                .setSource(sourceOption?.label ?? "")
+                .setSource(source)
         )
         onClose()
     }
@@ -92,7 +87,7 @@ export function useProblemDetailDialogViewModel(
     }
 
     return {
-        problem, learning, title, tags, starred, allTags, type, sourceOptions, sourceOption,
-        setTitle, setTags, setStarred, setType, remove, save, resetLearning, setSourceOption,
+        problem, learning, title, tags, starred, allTags, type, source, allSources,
+        setTitle, setTags, setStarred, setType, remove, save, resetLearning, setSource,
     }
 }

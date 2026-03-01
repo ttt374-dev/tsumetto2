@@ -60,7 +60,7 @@ function App() {
 
                 }}>
                     <BrowserRouter>
-                        <DebugHistory />
+                        { /* <DebugHistory /> */ }
                         <Routes>
 
                             <Route path="/mission" element={<MissionScreen />}>

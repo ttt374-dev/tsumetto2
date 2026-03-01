@@ -5,19 +5,12 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 import { type ProblemId, type ProblemType } from "@/domain/problem/entity/Problem";
 import { useEffect, useState } from 'react';
-import { useProblemStore } from '@/ui/store/useProblemStore';
-import { EditableText } from '../../EditableText';
 import { ProblemTagEditor } from '../../ProblemTagEditor';
 import { StarToggleButton } from '../../StarToggleButton/StarToggleButton';
-import { useLearningRecordStore } from '@/ui/store/useLearningRecordStore';
-import { useLearningEventStore } from '@/ui/store/useLearningEventStore';
-import type { NewLearningEvent } from '@/domain/learning/entity/LearningEvent';
-import type { SolvedResult } from '@/domain/learning/entity/Learning';
 import { CancelableTextField } from './CancelableTextfield';
-import { SettingsSystemDaydreamSharp } from '@mui/icons-material';
 import { useProblemDetailDialogViewModel, type SourceOption } from './useProblemDetailDialogViewModel';
 import { ProblemTypeSelect } from './ProblemTypeSelect';
-import { FreeSoloAutocomplete } from '@/ui/shared/components/GenericFreeSoloAutocomplete';
+import { FreeSoloAutocomplete } from '@/ui/shared/components/FreeSoloAutocomplete';
 
 /////////////////////////////////////////////////////////////
 type Props = {
@@ -29,12 +22,12 @@ type Props = {
 }
 export default function ProblemDetailDialog({ open, problemId, onAfterDeleteProblem, onClose }: Props) {
     const {
-        problem, learning, title, tags, starred, sourceOption, sourceOptions, type,
+        problem, learning, title, tags, starred, source, type, allSources,
         setTitle,
         setTags,
         setStarred,
-        setSourceOption,
         setType,
+        setSource,
         remove,
         save: handleSave,
         resetLearning
@@ -86,15 +79,12 @@ export default function ProblemDetailDialog({ open, problemId, onAfterDeleteProb
                         }}
                     />
 
-                    <FreeSoloAutocomplete<SourceOption>
+                    <FreeSoloAutocomplete
                         label="出典"
-                        value={sourceOption}
-                        options={sourceOptions}
-                        onChange={(value) => setSourceOption(value)}
-                        onCreate={(label) => ({
-                            id: label,
-                            label,
-                        })}
+                        value={source}
+                        options={allSources}
+                        onChange={(v) => { setSource(v ?? ""); console.log("on change: ", v)}}
+                        
                     />
                     <Paper sx={{ p: 1 }}>
                         <Stack>
