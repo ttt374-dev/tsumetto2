@@ -18,7 +18,7 @@ type MissionStore = {
     phase: () => MissionPhase
 
     // ===== command =====
-    start: (deckId: DeckId, ids: ProblemId[]) => void;
+    start: (deckId: DeckId, ids: ProblemId[]) => MissionId;
     answer: (result: SolvedResult, secToTaken?: number) => void;
     next: () => void;
     prev: () => void;
@@ -55,17 +55,20 @@ export const useMissionStore = create<MissionStore>((set, get) => ({
     // ======================
     // command
     // ======================
-    start: (deckId, ids) =>
+    start: (deckId, ids) => {
+        const missionId = v4()
         set((s) => {
             console.log("start", deckId, ids, ids.length > 0 ? 0 : -1)
             return {
                 deckId,
-                missionId: v4(),
+                missionId: missionId,
                 problemIds: ids,
                 currentIndex: ids.length > 0 ? 0 : -1,
                 answers: [],
             }
-        }),
+        })
+        return missionId
+    },
 
     answer: (result, secToTaken) =>
         set((s) => {

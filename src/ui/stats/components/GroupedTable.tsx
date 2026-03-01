@@ -10,7 +10,7 @@ function StatsRow(props: {
     label: string
     stats: ProblemStats
 }) {
-    const totalCount = props.stats.totalCount
+    const totalCount = props.stats.problemCount
     const accuracy = totalCount > 0 ? formatPercentage(props.stats.accuracy) : "-"
     const easeFactor = totalCount > 0 ? props.stats.easeFactor.toFixed(2) : "-"
     const intervalDays = totalCount > 0 ? props.stats.intervalDays.toFixed(0) : "-"

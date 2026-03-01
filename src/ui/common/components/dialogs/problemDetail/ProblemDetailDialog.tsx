@@ -1,9 +1,9 @@
-import { Divider, IconButton, Paper, Stack, TextField } from '@mui/material';
+import { Divider, FormControl, IconButton, InputLabel, MenuItem, Paper, Select, Stack, TextField } from '@mui/material';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Box, Button } from "@mui/material"
 
 import DeleteIcon from '@mui/icons-material/Delete';
 
-import { type ProblemId } from "@/domain/problem/entity/Problem";
+import { type ProblemId, type ProblemType } from "@/domain/problem/entity/Problem";
 import { useEffect, useState } from 'react';
 import { useProblemStore } from '@/ui/store/useProblemStore';
 import { EditableText } from '../../EditableText';
@@ -14,6 +14,7 @@ import { useLearningEventStore } from '@/ui/store/useLearningEventStore';
 import type { NewLearningEvent } from '@/domain/learning/entity/LearningEvent';
 import type { SolvedResult } from '@/domain/learning/entity/Learning';
 import { CancelableTextField } from './CancelableTextfield';
+import { SettingsSystemDaydreamSharp } from '@mui/icons-material';
 
 export function useProblemDetailDialogViewModel(
     problemId: ProblemId,
@@ -36,6 +37,7 @@ export function useProblemDetailDialogViewModel(
     const [tags, setTags] = useState<string[]>([])
     const [starred, setStarred] = useState(false)
     const [source, setSource] = useState("")
+    const [type, setType] = useState<ProblemType>("standard")
 
     // open 時に初期値セット
     useEffect(() => {
@@ -78,9 +80,41 @@ export function useProblemDetailDialogViewModel(
         //appendLearning(event)
     }
 
-    return {problem, learning, title, tags, starred, allTags, source,
-        setTitle, setTags, setStarred, setSource, remove, save, resetLearning,        
+    return {problem, learning, title, tags, starred, allTags, source, type,
+        setTitle, setTags, setStarred, setSource, setType, remove, save, resetLearning,        
     }
+}
+export const problemTypeOptions = [
+  { value: "standard", label: "正規（駒あまりなし）" },
+  { value: "realistic", label: "実戦型（駒あまり許容）" },
+  { value: "hisshi", label: "必死（受けなし）" },
+] as const;
+export function ProblemTypeSelect({ value, onChange }: {
+  value: ProblemType;
+  onChange: (value: ProblemType) => void;
+}) {
+  return (
+    <FormControl fullWidth size="small">
+      <InputLabel>タイプ</InputLabel>
+      <Select
+        value={value}
+        label="タイプ"
+        onChange={(e) =>
+          onChange(e.target.value as ProblemType)
+        }
+      >
+        <MenuItem value="standard">
+          正規（駒あまりなし）
+        </MenuItem>
+        <MenuItem value="realistic">
+          実戦型（駒あまり許容）
+        </MenuItem>
+        <MenuItem value="hisshi">
+          必死（受けなし）
+        </MenuItem>
+      </Select>
+    </FormControl>
+  );
 }
 /////////////////////////////////////////////////////////////
 type Props = {
@@ -92,11 +126,12 @@ type Props = {
 }
 export default function ProblemDetailDialog({ open, problemId, onAfterDeleteProblem, onClose }: Props) {
     const {
-        problem, learning, title, tags, starred, source,
+        problem, learning, title, tags, starred, source, type,
         setTitle,
         setTags,
         setStarred,
         setSource,
+        setType,
         remove,
         save: handleSave,
         resetLearning
@@ -134,11 +169,13 @@ export default function ProblemDetailDialog({ open, problemId, onAfterDeleteProb
             <DialogContent>
                 <Stack spacing={1} pt={2}>                    
                     {/* タイトル編集 */}
-
-                    
                     <CancelableTextField label="タイトル" value={title} onCommit={
                         title => { setTitle(title) }} />
 
+                    <ProblemTypeSelect
+                        value={type}
+                        onChange={(v) => setType(v)}
+                    />
                     <ProblemTagEditor
                         value={tags}
                         onChange={(tags) => {

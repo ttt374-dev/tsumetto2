@@ -2,6 +2,7 @@ import { v4 } from 'uuid'
 import { KifData, type KifDataDTO } from '../../kif/entity'
 import { parseKif } from '@/domain/kif/service/parser/parseKif'
 
+export type ProblemType = "standard" | "realistic" | "hisshi"
 export type Tags = string[]
 
 export type ProblemData = {
@@ -9,6 +10,7 @@ export type ProblemData = {
     title: string
     kifData: KifDataDTO    
     
+    type: ProblemType
     source: string
     tags: string[]
     comment: string,
@@ -23,6 +25,8 @@ function createDefaultValues(): ProblemData {
         id: v4(),
         title: "untitled",
         kifData: KifData.create().toDTO(),
+
+        type: "standard",
         source: "",
         tags: [],
         comment: "",
@@ -43,6 +47,7 @@ export class Problem {
         readonly title: string,
         readonly kifData: KifData,
 
+        readonly type: ProblemType,
         readonly source: string,
         readonly tags: Tags,
         readonly comment: string,
@@ -65,11 +70,13 @@ export class Problem {
             id: this.id,
             title: this.title,
             kifData: this.kifData.toDTO(),
-            starred: this.starred,
+            
+            type: this.type,
             source: this.source,
             tags: [...this.tags],
             comment: this.comment,
 
+            starred: this.starred,
             createdAt: this.createdAt,
             updatedAt: this.updatedAt,            
             deletedAt: this.deletedAt
@@ -78,10 +85,9 @@ export class Problem {
 
     static fromDTO(dto: ProblemDTO): Problem {
         return new Problem(dto.id, dto.title, KifData.fromDTO(dto.kifData),            
-            dto.source, dto.tags, dto.comment,
+            dto.type, dto.source, dto.tags, dto.comment,
             dto.starred, 
-            dto.createdAt, dto.updatedAt, 
-             dto.deletedAt)
+            dto.createdAt, dto.updatedAt, dto.deletedAt)
     }
     static createFromText(text: string, title: string): Problem | null{
         const r = parseKif(text)

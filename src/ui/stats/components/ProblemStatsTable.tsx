@@ -3,16 +3,22 @@ import { useLearningRecordStore } from "@/ui/store/useLearningRecordStore";
 import { useProblemStore } from "@/ui/store/useProblemStore";
 import { useMemo } from "react";
 import { GroupedTable, type StatsRowValues } from "./GroupedTable";
+import { DefaultFilterState } from "@/domain/problem/service/query/filter";
+import { applyFilter } from "@/domain/problem/service/query/applyFilter";
 
 export function ProblemStatsTable() {
     const activeProblems = useProblemStore(s => s.activeProblems)
     const learningRecords = useLearningRecordStore(s => s.records)
+    const filter = { ...DefaultFilterState, dueForReviewOnly: true}
+    const dueForReviewOnly = applyFilter(activeProblems, learningRecords, filter)
+    console.log("due review", dueForReviewOnly)
 
     // 総合
     const unanswered = activeProblems.filter(p => { learningRecords[p.id]?.totalCount > 0 })
     const statsMapGeneral = {
         "全問題": ProblemStats.create(activeProblems.map(p => p.id), learningRecords),
         "未完了": ProblemStats.create(unanswered.map(p => p.id), learningRecords),
+        "レビュー対象": ProblemStats.create(dueForReviewOnly.map(p => p.id), learningRecords),
     }
     // 手数
     const mate3 = activeProblems.filter(p => p.kifData.moves.length <= 3)
@@ -56,7 +62,7 @@ export function ProblemStatsTable() {
             rows: tagStatsRows,
         }
     ]
-    const columns = ["問題数", "正答数", "E/F", "間隔"]
+    const columns = ["問題数", "正答率", "E/F", "間隔"]
 
     return (
         <GroupedTable groups={groups} columns={columns} />

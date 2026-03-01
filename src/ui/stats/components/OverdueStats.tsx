@@ -20,8 +20,8 @@ function buildOverdueHistogram(
   const now = new Date()
 
   const bins = [
-    { label: "期限内", min: -Infinity, max: 0 },
-    { label: "1-3日遅れ", min: 1, max: 3 },
+    { label: "期限内", min: -Infinity, max: -1 },
+    { label: "-3日遅れ", min: 0, max: 3 },
     { label: "4-7日遅れ", min: 4, max: 7 },
     { label: "8-14日遅れ", min: 8, max: 14 },
     { label: "15-30日遅れ", min: 15, max: 30 },

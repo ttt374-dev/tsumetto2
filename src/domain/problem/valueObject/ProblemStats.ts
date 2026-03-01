@@ -19,6 +19,8 @@ export class ProblemStats {
         let easeFactor = 0
         let intervalDays = 0
 
+        console.log("create stat", ids.length)
+
         for (const id of ids) {
             const learning = learningRecords[id]
             if (!learning) continue

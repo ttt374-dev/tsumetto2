@@ -20,14 +20,13 @@ const SINGLE_DECK_ID="single-deck-id"
 function SinglePlayerContent(problem: Problem){
     const navigate = useNavigate()
     const startMission = useMissionStore(s=>s.start)
-    const missionId = useMissionStore(s=>s.missionId)
+    //const missionId = useMissionStore(s=>s.missionId)
     const review = useLearningEventStore(s=>s.appendReview)
 
     const capabilities = {
         answerable: {
             answer: (problemId: ProblemId, res: SolvedResult, sec?: number) => {
-                if (!missionId) return
-                startMission(SINGLE_DECK_ID, [problemId])
+                const missionId = startMission(SINGLE_DECK_ID, [problemId])
                 review(problemId, missionId, res, sec)
                 navigate(routes.back)
             }

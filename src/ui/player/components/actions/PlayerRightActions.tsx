@@ -22,6 +22,10 @@ export function PlayerRightActions(props: {
                 <UndoIcon/>
             </IconButton>
             
+            <StarToggleButton starred={starController.starred}
+                sx={{ color: "white"}}
+                onToggle={starController.toggleStar}
+            />
             <IconButton
                 sx={{ color: "white" }}
                 onClick={() => props.onOpenDetailDialog(props.problemId)}>
