@@ -13,6 +13,7 @@ import { useLearningRecordStore } from '@/ui/store/useLearningRecordStore';
 import { useLearningEventStore } from '@/ui/store/useLearningEventStore';
 import type { NewLearningEvent } from '@/domain/learning/entity/LearningEvent';
 import type { SolvedResult } from '@/domain/learning/entity/Learning';
+import { CancelableTextField } from './CancelableTextfield';
 
 export function useProblemDetailDialogViewModel(
     problemId: ProblemId,
@@ -34,6 +35,7 @@ export function useProblemDetailDialogViewModel(
     const [title, setTitle] = useState("")
     const [tags, setTags] = useState<string[]>([])
     const [starred, setStarred] = useState(false)
+    const [source, setSource] = useState("")
 
     // open 時に初期値セット
     useEffect(() => {
@@ -41,6 +43,7 @@ export function useProblemDetailDialogViewModel(
             setTitle(problem.title)
             setTags(problem.tags ?? [])
             setStarred(problem.starred)
+            setSource(problem.source)
         }
     }, [open, problem])
 
@@ -53,10 +56,11 @@ export function useProblemDetailDialogViewModel(
 
     const save = async () => {
         if (!problem) return
-        await updateProblem(problemId, prev =>
+        updateProblem(problemId, prev =>
             prev.setTitle(title)
                 .setTags(tags)
                 .setStarred(starred)
+                .setSource(source)
         )
         onClose()
     }
@@ -74,8 +78,8 @@ export function useProblemDetailDialogViewModel(
         //appendLearning(event)
     }
 
-    return {problem, learning, title, tags, starred, allTags,
-        setTitle, setTags, setStarred, remove, save, resetLearning,        
+    return {problem, learning, title, tags, starred, allTags, source,
+        setTitle, setTags, setStarred, setSource, remove, save, resetLearning,        
     }
 }
 /////////////////////////////////////////////////////////////
@@ -88,10 +92,11 @@ type Props = {
 }
 export default function ProblemDetailDialog({ open, problemId, onAfterDeleteProblem, onClose }: Props) {
     const {
-        problem, learning, title, tags, starred,
+        problem, learning, title, tags, starred, source,
         setTitle,
         setTags,
         setStarred,
+        setSource,
         remove,
         save: handleSave,
         resetLearning
@@ -110,7 +115,7 @@ export default function ProblemDetailDialog({ open, problemId, onAfterDeleteProb
 
     ///////////////////////////////////////////////////////
     return (
-        <Dialog open={open} onClose={onClose} fullWidth
+        <Dialog open={open} onClose={onClose} fullScreen
             sx={{
                 paddingTop: 'env(safe-area-inset-top)',
                 paddingBottom: 'env(safe-area-inset-bottom)',
@@ -127,23 +132,25 @@ export default function ProblemDetailDialog({ open, problemId, onAfterDeleteProb
                     </Stack>
             </DialogTitle>
             <DialogContent>
-                <Stack spacing={1}>
-                    
+                <Stack spacing={1} pt={2}>                    
                     {/* タイトル編集 */}
 
-                    <Paper sx={{ p: 1 }}>
-                        <EditableText key={problem.id} initialText={title} onUpdateText={
-                            title => { setTitle(title) }} />
-                    </Paper>
                     
+                    <CancelableTextField label="タイトル" value={title} onCommit={
+                        title => { setTitle(title) }} />
+
+                    <ProblemTagEditor
+                        value={tags}
+                        onChange={(tags) => {
+                            setTags(tags)
+                        }}
+                    />
                     
-                            <ProblemTagEditor
-                                value={tags}
-                                onChange={(tags) => {
-                                    setTags(tags)
-                                }}
-                            />
-                    
+                    <CancelableTextField
+                        label="出典"
+                        value={source}
+                        onCommit={(v: string) => setSource(v)}
+                    />
                     <Paper sx={{ p: 1 }}>
                         <Stack>
                             <Stack direction="row" justifyContent="space-between">

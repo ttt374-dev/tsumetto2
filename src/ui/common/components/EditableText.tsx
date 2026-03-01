@@ -6,13 +6,14 @@ import EditIcon from '@mui/icons-material/Edit';
 
 
 type Props = {
+    label?: string,
     initialText: string,
     onUpdateText: (title: string) => void
 }
 
-export function EditableText({initialText, onUpdateText }: Props) {
+export function EditableText({label="Text", initialText, onUpdateText }: Props) {
     const [text, setText] = useState("")
-    const [editing, setEditing] = useState(false);
+    const [editing, setEditing] = useState(true);
 
     const handleSetText = () => {
         onUpdateText(text.trim())
@@ -42,7 +43,8 @@ export function EditableText({initialText, onUpdateText }: Props) {
         editing ?
             <Stack direction="row">
                 <TextField
-                    label="タイトル"
+                    label={label}
+                    placeholder={label}
                     fullWidth
                     value={text}
                     inputRef={inputRef}

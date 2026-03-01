@@ -7,13 +7,15 @@ export type Tags = string[]
 export type ProblemData = {
     id: string
     title: string
-    kifData: KifDataDTO
-    createdAt: number
-    updatedAt: number
-    starred: boolean
+    kifData: KifDataDTO    
+    
+    source: string
     tags: string[]
     comment: string,
 
+    starred: boolean
+    createdAt: number
+    updatedAt: number
     deletedAt?: number
 }
 function createDefaultValues(): ProblemData {
@@ -21,12 +23,13 @@ function createDefaultValues(): ProblemData {
         id: v4(),
         title: "untitled",
         kifData: KifData.create().toDTO(),
-        createdAt: Date.now(),
-        updatedAt: Date.now(),
-        starred: false,
+        source: "",
         tags: [],
         comment: "",
 
+        starred: false,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
         deletedAt: undefined
     }
 }
@@ -39,11 +42,14 @@ export class Problem {
         readonly id: ProblemId,
         readonly title: string,
         readonly kifData: KifData,
-        readonly createdAt: number,
-        readonly updatedAt: number,
-        readonly starred: boolean,
+
+        readonly source: string,
         readonly tags: Tags,
         readonly comment: string,
+
+        readonly starred: boolean,
+        readonly createdAt: number,
+        readonly updatedAt: number,
         readonly deletedAt?: number,
         
     ) { }
@@ -59,19 +65,23 @@ export class Problem {
             id: this.id,
             title: this.title,
             kifData: this.kifData.toDTO(),
-            createdAt: this.createdAt,
-            updatedAt: this.updatedAt,
             starred: this.starred,
+            source: this.source,
             tags: [...this.tags],
             comment: this.comment,
 
+            createdAt: this.createdAt,
+            updatedAt: this.updatedAt,            
             deletedAt: this.deletedAt
         }
     }
 
     static fromDTO(dto: ProblemDTO): Problem {
-        return new Problem(dto.id, dto.title, KifData.fromDTO(dto.kifData),
-            dto.createdAt, dto.updatedAt, dto.starred, dto.tags, dto.comment, dto.deletedAt)
+        return new Problem(dto.id, dto.title, KifData.fromDTO(dto.kifData),            
+            dto.source, dto.tags, dto.comment,
+            dto.starred, 
+            dto.createdAt, dto.updatedAt, 
+             dto.deletedAt)
     }
     static createFromText(text: string, title: string): Problem | null{
         const r = parseKif(text)
@@ -117,6 +127,12 @@ export class Problem {
             title: title,
         })
 
+    }
+    setSource(source: string): Problem {
+        return Problem.fromDTO({
+            ...this.toDTO(),
+            source: source,
+        })
     }
     setTags(tags: string[]): Problem {
         return Problem.fromDTO({
