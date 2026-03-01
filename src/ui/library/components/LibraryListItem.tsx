@@ -104,11 +104,11 @@ export function inDays(date: number, now: number = Date.now()): number {
 function LearningSection(props: {
     learning: Learning
 }) {
-    const lastAnsweredAt = props.learning.lastAnsweredAt ? new Date(props.learning.lastAnsweredAt).toLocaleString() : ""
+    const nextReviewedAt = new Date(props.learning.nextReviewedAt).toLocaleString()
     return (
         <Stack direction="row" justifyContent="flex-end" spacing={2}>
             <Box>
-                {lastAnsweredAt}
+                {nextReviewedAt}
             </Box>
 
             <Box>

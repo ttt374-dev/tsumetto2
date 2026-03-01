@@ -4,14 +4,12 @@
 
 .board {
   display: grid;
-  grid-template-columns: repeat(11, 30px);
-  grid-template-rows: repeat(10, 30px);
+  grid-template-columns: 20px repeat(9, 30px) 20px;
+  grid-template-rows: 20px repeat(9, 30px);
 
 }
 
 .cell {
-  width: 30px;
-  height: 30px;
   border: 1px solid #aaa;
   display: flex;
   align-items: center;
@@ -26,26 +24,14 @@
 }
 
 .fileLabel {
-  width: 30px;
   display: grid;
-  justify-content: center;
-  /* 横中央 */
-  align-items: end;
-  /* ← 縦を下寄せ */
   font-size: 12px;
-  padding-bottom: 2px;
-  /* 少し余白 */
 }
 
 .rankLabel {
-  width: 12px;
-  height: 30px;
-  display: flex;
-  justify-content: flex-start;
-  /* 右寄せ */
+  display: grid;
   align-items: center;
-  /* 縦中央 */
   font-size: 12px;
-  padding-right: 2px;
+
   /* 少し余白 */
 }

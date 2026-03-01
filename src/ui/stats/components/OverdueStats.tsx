@@ -55,6 +55,7 @@ function buildOverdueHistogram(
     if (binIndex !== -1) {
       counts[binIndex].count++
     }
+    //console.log("hist", )
   })
 
   return [
