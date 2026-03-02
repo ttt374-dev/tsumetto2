@@ -22,7 +22,8 @@ export default function DecksScreen() {
     //const [mode, setMode] = useState<DeckActionMode>("mission")
     //const [reorderable, setReordable] = useState(false)
     //const [editable, setEditable] = useState(false)
-    const { editable, toggleEditable, reorderable, toggleReorderable} = useDecksModeStore()
+    //const { editable, toggleEditable, reorderable, toggleReorderable} = useDecksModeStore()
+    const { editMode, toggleEditMode } = useDecksModeStore()
 
     const handleDeckEdit = (id: DeckId) => {
         navigate(routes.deckEdit(id));
@@ -51,13 +52,12 @@ export default function DecksScreen() {
             touchAction: "none"
         };
 
-        const stats = deckStats.get(deck.id);
-      
+        const stats = deckStats.get(deck.id);      
 
         return (
             <ListItem
                 ref={sortable.setNodeRef}
-                style={ reorderable ? style: undefined}
+                style={ editMode ? style: undefined}
                 disablePadding
                 sx={{
                     borderBottom: '1px solid',
@@ -70,46 +70,53 @@ export default function DecksScreen() {
                 }}
                 secondaryAction={
                     <>
-                        { editable &&
-                        <IconButton edge="end" aria-label="edit" onClick={() => handleDeckEdit(deck.id)}>
-                            <EditIcon />
-                        </IconButton> }
-                        {reorderable && (
+                        { editMode &&
+                        <>
+                        
                         <IconButton
                             {...sortable.attributes}
                             {...sortable.listeners}
                         >
                             <DragIndicatorIcon />
                         </IconButton>
-                        )}
+                        </>
+                        }
                     </>
                 }
             >
 
-
                 {/* 通常動作はモード依存 */}
                 <ListItemButton
                     onClick={() => {
-                        onStartMission(deck)
+                        //onStartMission(deck)
+                        if (!editMode) onStartMission(deck)
+                        else navigate(routes.deckEdit(deck.id))
+                        
                         //if (mode === "mission") onStartMission(deck);
                         //if (mode === "edit") navigate(routes.deckEdit(deck.id));
                     }}
                     disabled={stats?.problemCount === 0}
+                      sx={{
+                        bgcolor: editMode ? "action.hover" : "transparent",
+                            position: "relative",
+
+                          "&::before": editMode
+                              ? {
+                                  content: '""',
+                                  position: "absolute",
+                                  left: 0,
+                                  top: 0,
+                                  bottom: 0,
+                                  width: 4,
+                                  bgcolor: "primary.main",
+                              }
+                              : {}
+                    }}
                     
                 >
                     <ListItemText
                         primary={deck.name}
                         secondary={`問題数：${stats?.problemCount ?? 0}, 正答率：${((stats?.accuracy ?? 0) * 100).toFixed(0)}%`}
-                        slotProps={{
-                            primary: {
-                                color: "text.primary"
-                            },
-    secondary: {
-      sx: {
-        color: "text.primary",
-      },
-    },
-  }}
                     />
                 </ListItemButton>
 
@@ -119,15 +126,11 @@ export default function DecksScreen() {
     function ActionMode(){
         return (
                <Stack direction="row" justifyContent="flex-end">
-                <IconButton color={ editable ? "primary" : "default"}
-                    onClick={toggleEditable}>
+                <ToggleButton value={editMode} selected={editMode} onChange={toggleEditMode}>
                     <EditIcon />
-                </IconButton>
+                </ToggleButton>
 
-                <IconButton color={ reorderable ? "primary" : "default"}
-                    onClick={toggleReorderable}>
-                    <DragIndicatorIcon />
-                </IconButton>
+
 
                 { /* 
                 <ToggleButtonGroup
