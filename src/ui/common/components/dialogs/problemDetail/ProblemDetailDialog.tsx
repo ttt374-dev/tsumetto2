@@ -1,6 +1,6 @@
 import { Divider, FormControl, IconButton, InputLabel, MenuItem, Paper, Select, Stack, TextField } from '@mui/material';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Box, Button } from "@mui/material"
-
+import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import DeleteIcon from '@mui/icons-material/Delete';
 
 import { type ProblemId, type ProblemType } from "@/domain/problem/entity/Problem";
@@ -19,8 +19,10 @@ type Props = {
     onClose: () => void
     onViewProblem?: () => void
     onAfterDeleteProblem?: () => void
+    onStartPlay?: (id: ProblemId) => void
 }
-export default function ProblemDetailDialog({ open, problemId, onAfterDeleteProblem, onClose }: Props) {
+export default function ProblemDetailDialog({ open, problemId, 
+    onAfterDeleteProblem, onStartPlay, onClose }: Props) {
     const {
         problem, learning, title, tags, starred, source, type, allSources,
         setTitle,
@@ -43,6 +45,7 @@ export default function ProblemDetailDialog({ open, problemId, onAfterDeleteProb
     const handleLearningReset = () => {
         resetLearning(() => window.confirm("学習データをクリアしますか？"))
     }
+    
 
     ///////////////////////////////////////////////////////
     return (
@@ -57,6 +60,11 @@ export default function ProblemDetailDialog({ open, problemId, onAfterDeleteProb
                     <StarToggleButton starred={starred}
                         onToggle={() => setStarred(prev => !prev)}
                     />
+                    
+                    { onStartPlay && 
+                    <IconButton onClick={() => onStartPlay(problemId)}>
+                        <PlayArrowIcon />
+                    </IconButton>}
                     <IconButton onClick={handleDeleteClick}>
                         <DeleteIcon />
                     </IconButton>

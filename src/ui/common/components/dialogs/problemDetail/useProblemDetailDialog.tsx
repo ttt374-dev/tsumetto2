@@ -4,7 +4,8 @@ import ProblemDetailDialog from "./ProblemDetailDialog";
 
 
 export function useProblemDetailDialog(
-    onAfterDeleteProblem?: ()=>void
+    onAfterDeleteProblem?: ()=>void,
+    onStartPlay?: (id: ProblemId) => void
 ){
     const [ open, setOpen] = useState(false)
     const [problemId, setProblemId] = useState<ProblemId|undefined>(undefined)    
@@ -26,6 +27,7 @@ export function useProblemDetailDialog(
             problemId={problemId}
             onClose={closeDialog}
             onAfterDeleteProblem={onAfterDeleteProblem}
+            onStartPlay={onStartPlay}
         />
     )
 

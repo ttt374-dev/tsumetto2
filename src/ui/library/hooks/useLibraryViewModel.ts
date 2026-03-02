@@ -26,7 +26,6 @@ function useLibraryListVM(problems: Problem[], learningRecords: LearningRecord, 
         [problems, learningRecords, sortState, filterState]
     )
     const ids = useMemo(() => libraryItems.map(p => p.id), [libraryItems])    
-    console.log("library list", ids, libraryItems, problems)
     return { libraryItems, ids}
 }
 function useLibraryDialogVM(checkedIds: ProblemId[], reload: () => Promise<void>){
@@ -35,7 +34,8 @@ function useLibraryDialogVM(checkedIds: ProblemId[], reload: () => Promise<void>
     // ダイアログ
     // -----------------------------
     const detailDialog = useProblemDetailDialog(
-          () => { navigate(routes.library)}
+          () => { navigate(routes.library)},
+          (id: ProblemId) => { navigate(routes.player(id))}
     )
     //const viewerDialog = useViewerDialog()
     const backupRestoreDialog = useBackupRestoreDialog()

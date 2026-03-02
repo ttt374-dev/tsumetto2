@@ -69,7 +69,7 @@ export function LibraryView({ ids, query, actionMode, changeActionMode,
         query.filter.toggleFilter(key)
     }
     const isFiltered = !isEqual(query.filter.state, DefaultFilterState);
-    console.log("is filtered", isFiltered, query.filter.state, DefaultFilterState)
+    //console.log("is filtered", isFiltered, query.filter.state, DefaultFilterState)
     return (
         <>
             <Stack direction="row">

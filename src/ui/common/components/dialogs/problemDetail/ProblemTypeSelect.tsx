@@ -22,7 +22,7 @@ export function ProblemTypeSelect({ value, onChange }: {
                 }
             >
                 <MenuItem value="standard">
-                    正規（駒あまりなし）
+                    標準（駒あまりなし）
                 </MenuItem>
                 <MenuItem value="realistic">
                     実戦型（駒あまり許容）

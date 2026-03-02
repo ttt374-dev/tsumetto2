@@ -95,22 +95,22 @@ export default function DecksScreen() {
                         //if (mode === "mission") onStartMission(deck);
                         //if (mode === "edit") navigate(routes.deckEdit(deck.id));
                     }}
-                    disabled={stats?.problemCount === 0}
-                      sx={{
+                    disabled={!editMode && (stats?.problemCount === 0)} 
+                    sx={{
                         bgcolor: editMode ? "action.hover" : "transparent",
-                            position: "relative",
+                        position: "relative",
 
-                          "&::before": editMode
-                              ? {
-                                  content: '""',
-                                  position: "absolute",
-                                  left: 0,
-                                  top: 0,
-                                  bottom: 0,
-                                  width: 4,
-                                  bgcolor: "primary.main",
-                              }
-                              : {}
+                        "&::before": editMode
+                            ? {
+                                content: '""',
+                                position: "absolute",
+                                left: 0,
+                                top: 0,
+                                bottom: 0,
+                                width: 4,
+                                bgcolor: "primary.main",
+                            }
+                            : {}
                     }}
                     
                 >
