@@ -156,11 +156,28 @@ export class Problem {
     get isDelete(): boolean {
         return !!this.deletedAt
     }
+    addTags(tagsToAdd: string[]): Problem {
+        let newTags = [...this.tags]
+        let changed = false
+
+        //console.log("tagstoremove", tagsToRemove)
+        for (const tag of tagsToAdd) {
+            if (!newTags.includes(tag)) {
+                newTags.push(tag)
+                changed = true
+            }
+        }        
+        if (!changed) return this
+        return Problem.fromDTO({
+            ...this.toDTO(),
+            tags: newTags,
+        })
+    }
     removeTags(tagsToRemove: string[]): Problem {
         let newTags = [...this.tags]
         let changed = false
 
-        console.log("tagstoremove", tagsToRemove)
+        //console.log("tagstoremove", tagsToRemove)
         for (const tag of tagsToRemove){
             console.log("tag: ", tag, newTags)
             if(newTags.includes(tag)){

@@ -139,8 +139,9 @@ export function useLibraryViewModel() {
                 dialogs.detail.openDialog(p.id)    
                 break*/
             case "view":
+                dialogs.detail.openDialog(p.id)    
                 //navigate(routes.problemView(p.id))
-                navigate(routes.player(p.id))
+                //navigate(routes.player(p.id))
         }
         
     }, [actionMode, selection.toggleChecked, dialogs.detail])

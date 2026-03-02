@@ -1,8 +1,8 @@
 import type { ProblemId, ProblemType } from "@/domain/problem/entity/Problem";
 import { FreeSoloAutocomplete } from "@/ui/shared/components/FreeSoloAutocomplete";
 import { useProblemStore } from "@/ui/store/useProblemStore";
-import { Button, Checkbox, Chip, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, FormGroup, FormLabel, List, ListItem, ListItemIcon, ListItemText, MenuItem, Select, Stack } from "@mui/material";
-import { useEffect, useState } from "react";
+import { Autocomplete, Box, Button, Checkbox, Chip, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, FormGroup, FormLabel, InputLabel, List, ListItem, ListItemIcon, ListItemText, MenuItem, Select, Stack, TextField } from "@mui/material";
+import { useEffect, useMemo, useState } from "react";
 import { ProblemTypeSelect } from "./problemDetail/ProblemTypeSelect";
 
 export function useMultipleProblemsEditoDialog() {
@@ -54,34 +54,65 @@ function SourceSelectControl(props: {
 function TagEditControl(props: {
     checkedIds: ProblemId[]
     onDeleteTag: (tag: string) => void
+     onAddTag: (tag: string) => void
 }) {
     const byId = useProblemStore(s=>s.byId)
-    const tagSet = new Set<string>()
-    props.checkedIds.map(id=>{
-        const p = byId[id]
-        p.tags?.forEach(tag=>tagSet.add(tag))
-    })
-    const initialTags = Array.from(tagSet)
+    const allTags = useProblemStore(s=>s.allTags)
+    // 選択中Problemのタグ集合
+    const initialTags = useMemo(() => {
+        const tagSet = new Set<string>()
+        props.checkedIds.forEach(id => {
+            const p = byId[id]
+            p.tags?.forEach(tag => tagSet.add(tag))
+        })
+        return Array.from(tagSet)
+    }, [props.checkedIds, byId])
 
     const [tags, setTags] = useState<string[]>([])
     useEffect(()=>{
         setTags(initialTags)
-    }, [])
+    }, [initialTags])
+
     return (
-        <>
-        {tags.map(tag=>(
-            <Chip
-                key={tag}
-                label={tag}
-                clickable
-                onDelete={()=>{
-                    setTags(prev=>prev.filter(t=>t!==tag))
-                    props.onDeleteTag(tag)
+        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+            <Autocomplete
+                fullWidth
+                multiple
+                freeSolo
+                options={[]} // ← 候補を入れたいならここ
+                value={tags}
+                onChange={(event, newValue) => {
+                    // 追加されたタグ検出
+                    const added = newValue.filter(t => !tags.includes(t))
+                    const removed = tags.filter(t => !newValue.includes(t))
+
+                    added.forEach(tag => props.onAddTag(tag))
+                    removed.forEach(tag => props.onDeleteTag(tag))
+
+                    setTags(newValue)
                 }}
+                renderTags={(value, getTagProps) =>
+                    value.map((option, index) => (
+                        <Chip
+                            label={option}
+                            {...getTagProps({ index })}
+                        />
+                    ))
+                }
+                renderInput={(params) => (
+                    <TextField
+                        {...params}
+                        variant="standard"
+                        label="タグ編集"
+                        placeholder="タグ追加"
+                        fullWidth
+                    />
+                )}
+                sx={{ minWidth: 200 }}
             />
-        ))}
-        </>
+        </Box>
     )
+    
 }
 ///////////////////////////////////////////////////
 export function MultipleProblemsEditorDialog(props: {
@@ -94,6 +125,7 @@ export function MultipleProblemsEditorDialog(props: {
     const [applyType, setApplyType] = useState(false)
     const [applySource, setApplySource] = useState(false)
     const [tagsToDelete, setTagsToDelete] = useState<string[]>([])
+    const [tagsToAdd, setTagsToAdd] = useState<string[]>([])
 
     const updateProblems = useProblemStore(s => s.updateProblems)
     const handleConfirm = () => {
@@ -101,17 +133,19 @@ export function MultipleProblemsEditorDialog(props: {
             let next = p
             if (applyType) next = next.setType(type)
             if (applySource) next = next.setSource(source)
-            console.log("tagstodelete", tagsToDelete)
-            next = next.removeTags(tagsToDelete)
-            
+            //console.log("tagstodelete", tagsToDelete)
+            next = next.removeTags(tagsToDelete).addTags(tagsToAdd)            
             return next
         })
         props.onClose()
     }
     const handleDeleteTag = (tag: string) => {
-        //alert(tag)
-        tagsToDelete.push(tag)
+        setTagsToDelete(prev=>[...prev, tag])
     }
+    const handleAddTag = (tag: string) => {
+        setTagsToAdd(prev=>[...prev, tag])
+    }
+
     return (
         <Dialog open={props.open} onClose={props.onClose} fullWidth   maxWidth="md" >
             <DialogTitle>まとめて編集</DialogTitle>
@@ -126,10 +160,14 @@ export function MultipleProblemsEditorDialog(props: {
                         <SourceSelectControl source={source} onChange={s => setSource(s)} />
                     </Stack>
                     <Stack direction="row">
-                        <Checkbox checked={applySource} onChange={(e) => setApplySource(e.target.checked)}/>
-                        <TagEditControl checkedIds={props.checkedIds}
-                            onDeleteTag={handleDeleteTag}
-                        />
+                        
+                        <FormControl fullWidth>                            
+                            <TagEditControl checkedIds={props.checkedIds}
+                                onDeleteTag={handleDeleteTag}
+                                onAddTag={handleAddTag}
+                            />
+                        </FormControl>
+                             
                     </Stack>
                 </Stack>
             </DialogContent>
