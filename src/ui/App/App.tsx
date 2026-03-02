@@ -40,6 +40,15 @@ export const theme = createTheme({
             },
         },
     },
+    components: {
+        MuiSnackbar: {
+            styleOverrides: {
+                root: {
+                    bottom: `calc(16px + env(safe-area-inset-bottom))`
+                }
+            }
+        }
+    },
 });
 function App() {
     const repos = useMemo(() => createRepositories(), [])

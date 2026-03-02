@@ -98,6 +98,7 @@ function PlayerView({problem, title, problemNavigation, timer}: {
                                 手数：{moves.length}手
                             </Button>                            
                             <Box>{problem.tags.join(",")}</Box>
+                            <Box>出典：{problem.source}</Box>
                         </Stack>)
                     }
                 </MovesPanel>

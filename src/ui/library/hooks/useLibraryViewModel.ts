@@ -15,6 +15,7 @@ import { useMultipleProblemsTagEditDialog } from "@/ui/common/components/dialogs
 import { useQueryStore } from "@/ui/store/useQueryStore"
 import type { SortState } from "@/domain/problem/service/query/sort"
 import type { FilterState } from "@/domain/problem/service/query/filter"
+import { useMultipleProblemsEditoDialog } from "@/ui/common/components/dialogs/MultipleProblemsEditorDialog"
 
 
 export type LibraryActionMode = "selection" | "view" 
@@ -38,7 +39,8 @@ function useLibraryDialogVM(checkedIds: ProblemId[], reload: () => Promise<void>
     )
     //const viewerDialog = useViewerDialog()
     const backupRestoreDialog = useBackupRestoreDialog()
-    const tagEditDialog = useMultipleProblemsTagEditDialog(checkedIds)
+    //const tagEditDialog = useMultipleProblemsTagEditDialog(checkedIds)
+    const tagEditDialog = useMultipleProblemsEditoDialog()
 
     return {
         //viewer: viewerDialog,
@@ -109,12 +111,18 @@ export function useLibraryViewModel() {
     // -----------------------------
     const itemActions = useMemo(() => ({
         openTagEditDialog: (ids: ProblemId[]) => dialogs.tagEdit.openDialog(ids),
+        deleteChecked: () => {
+            const idsToDelete = selection.checkedIds
+            if (!idsToDelete.length) return
+            return deleteProblems(idsToDelete)
+        }
+        /*
         deleteChecked: async (confirmFn: () => boolean) => {
             const idsToDelete = selection.checkedIds
             if (!idsToDelete.length || !confirmFn()) return            
-            const res = await deleteProblems(idsToDelete)
+            const res = deleteProblems(idsToDelete)
             toast({ message: `Deleted ${res} problems` })
-        }
+        }*/
     }), [selection.checkedIds, deleteProblems, toast, dialogs.tagEdit])
 
     // -----------------------------

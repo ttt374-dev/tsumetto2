@@ -58,7 +58,7 @@ export const LibraryListItem = function LibraryListItem({ id, onItemClick,
                                 {problem.title}
                             </Typography>
                             <Typography variant="body2" flex={1}>
-                                {problem.kifData.moves.length}手詰め
+                                {problem.kifData.moves.length}手
                             </Typography>
                             <Stack direction="row" flex={1}>
                                 <StarToggleButton starred={starController.starred}
@@ -74,12 +74,16 @@ export const LibraryListItem = function LibraryListItem({ id, onItemClick,
                     }}
                     secondary={<>
 
-                            {/* 二行目: タグ*/}
+                            {/* 二行目: 出典*/}
                             <Stack direction="row" justifyContent={"space-between"}>
+                                { problem.source &&
                                 <Typography variant="body2">
+                                    出典：{problem.source}
+                                </Typography>}
+                                { /* <Typography variant="body2">
                                     {problem.tags.join(",")}
                                 </Typography>
-
+                                */ }
                             </Stack>
                             {/* 学習データ */}
                             {learning && 

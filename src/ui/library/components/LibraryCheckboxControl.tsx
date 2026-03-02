@@ -22,7 +22,10 @@ export function LibraryCheckboxControl({ onCheckAll, onUncheckAll,
 }) {
     const confirmFn = () => window.confirm("Are you sure to delete selected?")
     const handleOpenTagEditDialog = () => itemActions.openTagEditDialog(checkedIds)
-    const handleDeleteChecked = () => itemActions.deleteChecked(confirmFn)
+    const handleDeleteChecked = () => {
+        if (!confirmFn()) return
+        itemActions.deleteChecked()
+    }
 
     return (
         <Stack direction="row">

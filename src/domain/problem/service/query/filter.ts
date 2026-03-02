@@ -11,7 +11,7 @@ export type FilterState = {
 };
 
 export const DefaultFilterState: FilterState = {
-    text: undefined,
+    text: "",
     unansweredOnly: false,
     dueForReviewOnly: false,
     starredOnly: false,

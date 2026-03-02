@@ -1,4 +1,5 @@
 import FilterListIcon from "@mui/icons-material/FilterList";
+import FilterListOutlinedIcon from "@mui/icons-material/FilterListOutlined";
 import { Box, Button, Drawer, IconButton, List, Stack, TextField, ToggleButton } from "@mui/material"
 import DeleteIcon from '@mui/icons-material/Delete';
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
@@ -15,14 +16,15 @@ import type { LibraryActionMode } from "../hooks/useLibraryViewModel";
 import { useEffect, useState } from "react";
 import type { QueryController } from "@/ui/common/hooks/useQuery";
 import { FilterControl } from "@/ui/decks/components/FilterControl";
-import type { FilterState } from "@/domain/problem/service/query/filter";
+import { DefaultFilterState, type FilterState } from "@/domain/problem/service/query/filter";
 import { MateLengthFilterControl } from "@/ui/decks/components/MateLengthFilterControl";
 import { TagCheckboxFilterControl } from "@/ui/decks/components/TagCheckboxFilterControl";
 import { useProblemStore } from "@/ui/store/useProblemStore";
+import { isEqual } from "lodash";
 
 export type LibraryItemActions = {
     openTagEditDialog: (ids: ProblemId[]) => void
-    deleteChecked: (confirmFn: () => boolean) => void
+    deleteChecked: () => void
 }
 
 type LibraryViewProps = {
@@ -66,7 +68,8 @@ export function LibraryView({ ids, query, actionMode, changeActionMode,
     const handleToggleFilter = (key: keyof FilterState) => {
         query.filter.toggleFilter(key)
     }
-
+    const isFiltered = !isEqual(query.filter.state, DefaultFilterState);
+    console.log("is filtered", isFiltered, query.filter.state, DefaultFilterState)
     return (
         <>
             <Stack direction="row">
@@ -84,7 +87,9 @@ export function LibraryView({ ids, query, actionMode, changeActionMode,
 
                 { /* 検索フィルター */}
                 <IconButton onClick={() => setIsOpen(true)} size="small">
-                    <FilterListIcon/>
+                    { isFiltered ? <FilterListIcon color="primary"/> : 
+                    
+                    <FilterListOutlinedIcon/>}
                 </IconButton>
                 { showFilterText && 
                 <TextField value={filterText} size="small"

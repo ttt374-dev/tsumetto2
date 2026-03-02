@@ -134,6 +134,12 @@ export class Problem {
         })
 
     }
+    setType(type: ProblemType): Problem {
+        return Problem.fromDTO({
+            ...this.toDTO(),
+            type: type,
+        })
+    }
     setSource(source: string): Problem {
         return Problem.fromDTO({
             ...this.toDTO(),
@@ -146,6 +152,7 @@ export class Problem {
             tags: tags
         })
     }
+    
     get isDelete(): boolean {
         return !!this.deletedAt
     }
