@@ -156,6 +156,25 @@ export class Problem {
     get isDelete(): boolean {
         return !!this.deletedAt
     }
+    removeTags(tagsToRemove: string[]): Problem {
+        let newTags = [...this.tags]
+        let changed = false
+
+        console.log("tagstoremove", tagsToRemove)
+        for (const tag of tagsToRemove){
+            console.log("tag: ", tag, newTags)
+            if(newTags.includes(tag)){
+                newTags = newTags.filter(t=>t!==tag)
+                changed = true
+            }
+        }
+        console.log("remove tags", tagsToRemove, changed, newTags)
+        if (!changed) return this
+        return Problem.fromDTO({
+            ...this.toDTO(),
+            tags: newTags,
+        })
+    }
     softDelete(): Problem {
         return Problem.fromDTO({
             ...this.toDTO(),

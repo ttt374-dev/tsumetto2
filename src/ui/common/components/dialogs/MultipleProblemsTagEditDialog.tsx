@@ -117,12 +117,9 @@ export default function MultipleProblemsTagEditDialog(props: {
                     changed = true
                 }
             }
-
             if (!changed) return p
-
             return p.setTags(newTags)
         })
-
         props.onClose()
     }
     // new tag
