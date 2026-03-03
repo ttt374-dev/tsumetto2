@@ -3,7 +3,7 @@ import { FreeSoloAutocomplete } from "@/ui/shared/components/FreeSoloAutocomplet
 import { useProblemStore } from "@/ui/store/useProblemStore";
 import { Autocomplete, Box, Button, Checkbox, Chip, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, FormGroup, FormLabel, InputLabel, List, ListItem, ListItemIcon, ListItemText, MenuItem, Select, Stack, TextField } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
-import { ProblemTypeSelect } from "./problemDetail/ProblemTypeSelect";
+import { ProblemTypeSelect } from "./problemDetail/components/ProblemTypeSelect";
 
 export function useMultipleProblemsEditoDialog() {
     const [open, setOpen] = useState(false)

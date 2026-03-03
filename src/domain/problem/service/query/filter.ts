@@ -1,6 +1,10 @@
+import type { ProblemType } from "../../entity/Problem";
+
 export type FilterState = {
     text?: string;
     unansweredOnly: boolean;    
+    problemType?: ProblemType;
+    source?: string,
     dueForReviewOnly: boolean,
     starredOnly: boolean,
     tags?: string[],
@@ -13,6 +17,8 @@ export type FilterState = {
 export const DefaultFilterState: FilterState = {
     text: "",
     unansweredOnly: false,
+    problemType: "standard",
+    source: "",
     dueForReviewOnly: false,
     starredOnly: false,
 }

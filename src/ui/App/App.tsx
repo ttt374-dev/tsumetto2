@@ -19,6 +19,7 @@ import { ListScreen } from '../list/ListScreen';
 import { StatsScreen } from '../stats/StatsScreen';
 import { SinglePlayerScreen } from '../player/SinglePlayerScreen';
 import { bootstrapApp, createRepositories } from './bootstrapApp';
+import { routes } from './useAppNavigation';
 
 export const theme = createTheme({
     cssVariables: true,   // ← これ必須
@@ -77,17 +78,17 @@ function App() {
                                 <Route path="summary" element={<MissionSummaryScreen />} />
                             </Route>
 
-                            <Route path="/decks" element={<DecksScreen />} />
+                            <Route path={routes.decks} element={<DecksScreen />} />
                             <Route path="/deck/:id" element={<DeckEditScreen />} />
 
-                            <Route path="/library" element={<LibraryScreen />} />
+                            <Route path={routes.library} element={<LibraryScreen />} />
                             <Route path="/view/:id" element={<ViewerScreen />} />
                             <Route path="/play/:id" element={<SinglePlayerScreen />} />
                             <Route path="/list" element={<ListScreen />} />
 
-                            <Route path="/stats" element={<StatsScreen />} />
+                            <Route path={routes.stats} element={<StatsScreen />} />
 
-                            <Route path="/" element={<Navigate to="/decks" />} />
+                            <Route path="/" element={<Navigate to={routes.decks} />} />
                         </Routes>
                     </BrowserRouter>
                 </RepositoryContext.Provider>

@@ -1,4 +1,4 @@
-import { Box, Button, IconButton, Stack, TextField } from "@mui/material";
+import { Box, Button, FormControlLabel, Grid, IconButton, MenuItem, Select, Stack, TextField } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 
 import { EditableText } from "../common/components/EditableText";
@@ -12,10 +12,14 @@ import { useListDialog } from "../list/ListDialog";
 import { useNavigate } from "react-router-dom";
 import { routes } from "../App/useAppNavigation";
 import { useState } from "react";
+import type { ProblemType } from "@/domain/problem/entity/Problem";
+
+const UNSPECIFIED = "__UNSPECIFIED__";
+type ProblemTypeUi = ProblemType | typeof UNSPECIFIED
 
 export function DeckEditScreen() {
     const {
-        name, allTags, query, stats, ids: problemIds,
+        name, allTags, allSources, query, stats, ids: problemIds,
         setName, handleSaveAndExit, handleDeleteDeck,
     } = useDeckEditViewModel();
 
@@ -29,8 +33,13 @@ export function DeckEditScreen() {
     return (
         <AppShell
             header={"Deck Edit"}
+            rightActions={
+                <IconButton onClick={handleDeleteDeck} sx={{color:"white"}}>
+                    <DeleteIcon />
+                </IconButton>
+            }
             footer={
-                <Stack direction="row" spacing={1}>                    
+                <Stack direction="row" spacing={1}>
                     <Button onClick={() => window.history.back()} sx={{ height: 64 }} variant="outlined" color="info" fullWidth>
                         キャンセル
                     </Button>
@@ -40,57 +49,82 @@ export function DeckEditScreen() {
                 </Stack>
             }
         >
-            <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ width: "100%" }}>
-                <Box sx={{ flexGrow: 1 }}>
-                    <EditableText initialText={name} onUpdateText={setName} />
-                </Box>
-                <IconButton onClick={handleDeleteDeck}>
-                    <DeleteIcon />
-                </IconButton>
-            </Stack>
 
-            <LibrarySortControl sort={query.sort.state} onSetSortKey={query.sort.setKey}
-                onToggleOrder={query.sort.toggleOrder} />
+    <Box sx={{ height: "100vh", display: "flex", flexDirection: "column" }}>
+  
+            <Grid container spacing={2}>
+                <Grid size={12}>
+                    <TextField label="デッキ名" fullWidth value={name} onChange={e => setName(e.target.value)} />
+                </Grid>
+                <Grid size={12}>
+                    <LibrarySortControl sort={query.sort.state} onSetSortKey={query.sort.setKey}
+                        onToggleOrder={query.sort.toggleOrder} />
+                </Grid>
 
+                <Grid size={12}>
+                    <TextField label="タイトル名" value={filterText} onChange={(e) => {
+                        setFilterText(e.target.value)
+                        query.filter.addFilter({ text: filterText })
+                    }} fullWidth/>
+                </Grid>
 
-                
-                <TextField label="タイトル名" value={filterText} onChange={(e) => {
-                    setFilterText(e.target.value)
-                    query.filter.addFilter({ text: filterText })
-                }}
+                <Grid size={6}>
+                    <Select<ProblemTypeUi> value={query.filter.state.problemType ?? UNSPECIFIED} fullWidth
+                        onChange={e=>query.filter.addFilter({
+                            problemType: e.target.value === undefined ? undefined : (e.target.value as ProblemType)
+                        })}
+                    >
+                        <MenuItem value={UNSPECIFIED}>（種類指定なし）</MenuItem>
+                        <MenuItem key="standard" value="standard">標準</MenuItem>
+                        <MenuItem key="realistic" value="realistic">実践</MenuItem>
+                        <MenuItem key="hisshi" value="hisshi">必死</MenuItem>
+                    </Select>
+                </Grid>
 
-                />
+                <Grid size={6}>
+                    <Select value={query.filter.state.source ?? UNSPECIFIED} fullWidth
+                        onChange={e=>query.filter.addFilter({
+                            source: e.target.value === UNSPECIFIED ? undefined : (e.target.value as string),
+                        })}
+                    >
+                        <MenuItem value={UNSPECIFIED}>（出典指定なし）</MenuItem>
+                        { allSources.map(s=>(
+                            <MenuItem value={s}>{s}</MenuItem>
+                        ))}
+                    </Select>
+                </Grid>
 
-            <Stack direction="row" justifyContent="space-between" >
-                <Box flex={1}>
+                <Grid size={6}>
                     <FilterControl
                         filter={query.filter.state}
                         onToggleFilter={query.filter.toggleFilter}
 
                     />
-                </Box>
-                <Box flex={1}>
-                    <MateLengthFilterControl
+                </Grid>
+
+                <Grid size={6}>
+                            <MateLengthFilterControl
                         mateBuckets={query.filter.state.mateBuckets}
                         onChange={(buckets) => {
                             query.filter.addFilter({ mateBuckets: buckets })
                         }}
                     />
-                </Box>
+                </Grid>
+                <Grid size={12}>
+                    <TagCheckboxFilterControl
+                        allTags={allTags} selectedTags={query.filter.state.tags ?? []}
+                        onChange={(tags => { query.filter.addFilter({ tags: tags }) })}
+                    />
+                </Grid>
 
-            </Stack>
-            
-            <Stack direction="row" justifyContent="space-between" >
-                <TagCheckboxFilterControl
-                    allTags={allTags} selectedTags={query.filter.state.tags ?? []}
-                    onChange={(tags => { query.filter.addFilter({ tags: tags }) })}
-                /> 
-            </Stack>
-            
+            </Grid>
+            </Box>
+
+
             <Button onClick={handleNavigateToList} variant="outlined" sx={{m:1}}>
                 全{stats.problemCount}問、正答率 {(stats.accuracy * 100).toFixed(0)}%
             </Button>
-            
+
             {ListDialog.dialogElement}
         </AppShell>
     );

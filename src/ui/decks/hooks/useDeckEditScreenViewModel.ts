@@ -51,7 +51,7 @@ function useDeckEditorActions(id: string | undefined, query: QueryController) {
     const save = useCallback(async () => {
         if (!draft) return
         console.log("save", query, createQuerySnapshot(query))
-        await deckStore.saveDeck({
+        deckStore.saveDeck({
             ...draft,
             snapshot: createQuerySnapshot(query),
         })
@@ -87,6 +87,7 @@ export function useDeckEditViewModel() {
     } = useDeckEditorStore()
 
     const allTags = useProblemStore(s => s.allTags)
+    const allSources = useProblemStore(s=>s.allSources)
 
     // --------------------------
     // 初期化
@@ -120,7 +121,7 @@ export function useDeckEditViewModel() {
         id,
         deck: draft,
         name: draft?.name ?? "",        
-        allTags,
+        allTags, allSources,
         query,
         ids, 
         stats,

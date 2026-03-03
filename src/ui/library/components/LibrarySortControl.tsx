@@ -1,4 +1,4 @@
-import { Box, IconButton, Tooltip, Button } from "@mui/material";
+import { Box, IconButton, Tooltip, Button, Select, MenuItem } from "@mui/material";
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import type { SortKey, SortOrder, SortState } from "@/domain/problem/service/query/sort";
@@ -14,16 +14,16 @@ export default function LibrarySortControl({ sort, onSetSortKey, onToggleOrder }
     }
     return (
         <Box>
-            <select value={sort.key} onChange={handleChangeKey}>
-                <option key="createdAt" value="createdAt">追加順</option>
-                <option key="title" value="title">名前順</option>
-                <option key="accuracy" value="accuracy">正答率</option>
-                <option key="easeFactor" value="easeFactor">習熟度</option>
-                <option key="nextReviewedAt" value="nextReviewedAt">次レビュー日</option>
-                <option key="lastAnsweredAt" value="lastAnsweredAt">最終解答日</option>
-                <option key="random" value="random">ランダム</option>
+            <Select value={sort.key} onChange={handleChangeKey}>
+                <MenuItem key="createdAt" value="createdAt">追加順</MenuItem>
+                <MenuItem key="title" value="title">名前順</MenuItem>
+                <MenuItem key="accuracy" value="accuracy">正答率</MenuItem>
+                <MenuItem key="easeFactor" value="easeFactor">習熟度</MenuItem>
+                <MenuItem key="nextReviewedAt" value="nextReviewedAt">次レビュー日</MenuItem>
+                <MenuItem key="lastAnsweredAt" value="lastAnsweredAt">最終解答日</MenuItem>
+                <MenuItem key="random" value="random">ランダム</MenuItem>
 
-            </select>
+            </Select>
 
             <IconButton onClick={() => {                
                 //onSetSortOrder(sort.order == "asc" ? "desc" : "asc")

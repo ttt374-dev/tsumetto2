@@ -1,6 +1,6 @@
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem";
 import { useEffect, useState } from "react";
-import ProblemDetailDialog from "./ProblemDetailDialog";
+import ProblemDetailDialog from "../ProblemDetailDialog";
 
 
 export function useProblemDetailDialog(

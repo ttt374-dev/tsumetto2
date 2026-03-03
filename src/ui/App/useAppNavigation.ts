@@ -4,7 +4,7 @@ export const routes = {
     home: "/",
 
     // deck
-    decks: "/decks",
+    decks: "/deck",
     deckEdit: (id: string) => `/deck/${id}`,
     deckNew: '/deck/new',
 
@@ -28,4 +28,3 @@ export const routes = {
     back: -1
 
 }
-

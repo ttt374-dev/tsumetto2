@@ -12,8 +12,8 @@ type Props = {
 }
 
 export function EditableText({label="Text", initialText, onUpdateText }: Props) {
-    const [text, setText] = useState("")
-    const [editing, setEditing] = useState(true);
+    const [text, setText] = useState(initialText)
+    const [editing, setEditing] = useState(false);
 
     const handleSetText = () => {
         onUpdateText(text.trim())
@@ -25,9 +25,7 @@ export function EditableText({label="Text", initialText, onUpdateText }: Props) 
     }
     const inputRef = useRef<HTMLInputElement | null>(null)
 
-    useEffect(() => {
-        setText(initialText)
-    }, [initialText])
+   
     useEffect(() => {
         if (editing) {
             inputRef.current?.focus()

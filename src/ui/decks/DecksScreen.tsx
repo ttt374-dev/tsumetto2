@@ -25,9 +25,6 @@ export default function DecksScreen() {
     //const { editable, toggleEditable, reorderable, toggleReorderable} = useDecksModeStore()
     const { editMode, toggleEditMode } = useDecksModeStore()
 
-    const handleDeckEdit = (id: DeckId) => {
-        navigate(routes.deckEdit(id));
-    }
     // dnd-kit センサー
     const sensors = useSensors(
         useSensor(PointerSensor, {
@@ -90,10 +87,7 @@ export default function DecksScreen() {
                     onClick={() => {
                         //onStartMission(deck)
                         if (!editMode) onStartMission(deck)
-                        else navigate(routes.deckEdit(deck.id))
-                        
-                        //if (mode === "mission") onStartMission(deck);
-                        //if (mode === "edit") navigate(routes.deckEdit(deck.id));
+                        else navigate(routes.deckEdit(deck.id))                        
                     }}
                     disabled={!editMode && (stats?.problemCount === 0)} 
                     sx={{
@@ -129,29 +123,6 @@ export default function DecksScreen() {
                 <ToggleButton value={editMode} selected={editMode} onChange={toggleEditMode}>
                     <EditIcon />
                 </ToggleButton>
-
-
-
-                { /* 
-                <ToggleButtonGroup
-                    value={mode}
-                    exclusive
-                    onChange={(_, newMode) => {
-                        if (newMode !== null) setMode(newMode);
-                    }}
-                    size="small"
-                >
-                    
-
-                    <ToggleButton value="edit">
-                        <EditIcon fontSize="small" />
-                    </ToggleButton>
-
-                    <ToggleButton value="reorder">
-                        <DragIndicatorIcon fontSize="small" />
-                    </ToggleButton>
-                </ToggleButtonGroup>
-                */}
             </Stack>
         )
 
@@ -159,10 +130,14 @@ export default function DecksScreen() {
     return (
         <AppShell
             header="Decks"
+            rightActions={
+                <IconButton onClick={toggleEditMode} sx={{color: !editMode ? "white" : "default"}}>
+                    <EditIcon  />
+                </IconButton>
+            }
             fab={<FabMenu onCreateNewDeck={onCreateDeck} onImportFiles={importer.openFileDialog} />}
 
         >
-            <ActionMode/>
             <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto" }}> { /* , touchAction: "pan-y" */ }
                 <DndContext sensors={sensors} 
                     collisionDetection={closestCenter}

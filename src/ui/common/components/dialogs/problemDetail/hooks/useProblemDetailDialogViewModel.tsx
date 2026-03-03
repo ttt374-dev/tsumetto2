@@ -13,11 +13,11 @@ export type SourceOption = {
 export function useProblemDetailDialogViewModel(
     problemId: ProblemId,
     open: boolean,
-    onClose: () => void,
+    //onClose: () => void,
 ) {
     // problem store
     const problem = useProblemStore(s => s.byId[problemId])
-    const activeProblems = useProblemStore(s=>s.activeProblems)
+    //const activeProblems = useProblemStore(s=>s.activeProblems)
     const updateProblem = useProblemStore(s => s.updateProblem)
     const deleteProblems = useProblemStore(s => s.deleteProblems)
     const allTags = useProblemStore(s => s.allTags)
@@ -25,7 +25,7 @@ export function useProblemDetailDialogViewModel(
     //const allSources = useProbl
 
     // learning store
-    const appendLearning = useLearningEventStore(s => s.append)
+    const appendReset = useLearningEventStore(s => s.appendReset)
     const learningRecords = useLearningRecordStore(s => s.records)
     const learning = problem ? learningRecords[problem.id] : undefined
 
@@ -35,8 +35,7 @@ export function useProblemDetailDialogViewModel(
     const [starred, setStarred] = useState(false)
     const [source, setSource] = useState("")
     const [type, setType] = useState<ProblemType>("standard")
-
-  
+    const [comment, setComment] = useState("")  
 
     // open 時に初期値セット
     useEffect(() => {
@@ -50,34 +49,34 @@ export function useProblemDetailDialogViewModel(
     }, [open, problem])
 
     //////////////////////////////////////////////////////////
-    const remove = (confirmFn: () => boolean) => {
-        if (!problem || !confirmFn()) return
+    const remove = () => {
+        if (!problem) return
         deleteProblems([problem.id])
-        onClose()
+        //onClose()
     }
 
     const save = async () => {
         if (!problem) return
         //console.log("save problem: sourceoption.label", sourceOption?.label)
-        console.log("save source", source)
+        //console.log("save source", source)
         updateProblem(problemId, prev =>
             prev.setTitle(title)
                 .setTags(tags)
                 .setStarred(starred)
                 .setSource(source)
         )
-        onClose()
+        //onClose()
     }
-
+    const toggleStar = () => {
+        setStarred(prev=>!prev)
+    }
     // 学習データリセット
-    const resetLearning = (confirmFn: () => boolean) => {
-        if (!confirmFn()) return
-        const event: NewLearningEvent = { type: "reset", problemId }
-        appendLearning(event)
+    const resetLearning = () => {
+        appendReset(problemId)
     }
 
     return {
-        problem, learning, title, tags, starred, allTags, type, source, allSources,
-        setTitle, setTags, setStarred, setType, remove, save, resetLearning, setSource,
+        problem, learning, title, tags, starred, allTags, type, source, allSources, comment,
+        setTitle, setTags, setType, remove, save, resetLearning, setSource, setComment, toggleStar,
     }
 }

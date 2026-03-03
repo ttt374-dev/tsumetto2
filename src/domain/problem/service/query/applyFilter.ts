@@ -18,8 +18,19 @@ export const applyFilter = (
             !filter.unansweredOnly ||
             !(learning && learning.solvedCount + learning.failedCount > 0),
 
-        // ミッション対象
+        // 問題タイプ
+        (problem, _) =>
+            !filter.problemType ||
+            problem.type === filter.problemType,
+
+        // 出典
         (problem, learning) =>
+            !filter.source ||
+            problem.source === undefined || 
+            problem.source === filter.source,
+
+        // ミッション対象
+        (_problem, learning) =>
             !filter.dueForReviewOnly ||
             learning?.nextReviewedAt === undefined ||
             learning.nextReviewedAt <= now,
