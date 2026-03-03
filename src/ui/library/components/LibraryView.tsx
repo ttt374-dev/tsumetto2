@@ -60,6 +60,7 @@ export function LibraryView({ ids, query, actionMode, changeActionMode,
         favorite: false,
     });
     const allTags = useProblemStore(s=>s.allTags)
+    const allSources = useProblemStore(s=>s.allSources)
     useEffect(()=>{ query.filter.addFilter({text: filterText})}, [filterText])
     
     const handleToggleShowFilterText = () => { 
@@ -135,7 +136,9 @@ export function LibraryView({ ids, query, actionMode, changeActionMode,
                     },
                 }}>
                 <div className="bottom-sheet">
-                    <FilterControlPanel filter={query.filter.state} addFilter={query.filter.addFilter} toggleFilter={query.filter.toggleFilter}/>
+                    <FilterControlPanel 
+                        filter={query.filter.state} addFilter={query.filter.addFilter} toggleFilter={query.filter.toggleFilter}
+                        allSources={allSources}/>
                 </div>
 
             </Drawer>

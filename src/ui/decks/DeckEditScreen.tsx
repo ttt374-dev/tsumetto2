@@ -4,7 +4,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { EditableText } from "../common/components/EditableText";
 import { FilterControl } from "../common/query-control/FilterControl";
 import SortControl from "../common/query-control/SortControl";
-import { useDeckEditViewModel } from "./hooks/useDeckEditScreenViewModel";
+import { useDeckEditViewModel } from "./hooks/useDeckEditViewModel";
 import { AppShell } from "../common/components/layout/AppShell";
 import { MateLengthFilterControl } from "../common/query-control/MateLengthFilterControl";
 import { TagCheckboxFilterControl } from "../common/query-control/TagCheckboxFilterControl";

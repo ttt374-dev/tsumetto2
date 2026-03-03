@@ -1,0 +1,65 @@
+import type { ProblemType } from "../../entity/Problem";
+import type { MateBucket } from "./filter";
+import { DefaultProblemsQuery, type BooleanQueryKey, type ProblemsQuery, type QueryAction } from "./ProblemsQuery"
+import type { SortKey } from "./sort";
+
+export function queryReducer(
+    state: ProblemsQuery,
+    action: QueryAction
+): ProblemsQuery {
+    switch (action.type) {
+
+        // ===== SORT =====
+        case "SET_SORT_KEY":
+            return {
+                ...state,
+                sortKey: action.key,
+                sortOrder:
+                    state.sortKey === action.key && state.sortOrder === "asc"
+                        ? "desc"
+                        : "asc"
+            }
+
+        case "TOGGLE_SORT_ORDER":
+            return {
+                ...state,
+                sortOrder: state.sortOrder === "asc" ? "desc" : "asc"
+            }
+
+        // ===== FILTER =====
+        case "SET_TEXT":
+            return { ...state, text: action.text }
+
+        case "SET_PROBLEM_TYPE":
+            return { ...state, problemType: action.value }
+
+        case "SET_SOURCE":
+            return { ...state, source: action.value }
+
+        case "SET_TAGS":
+            return { ...state, tags: action.tags }
+
+        case "SET_MATE_BUCKETS":
+            return { ...state, mateBuckets: action.buckets }
+
+        case "TOGGLE_FLAG": {
+            const key: BooleanQueryKey = action.key
+
+            return {
+                ...state,
+                [key]: !state[key]
+            }
+        }
+        case "SET_PARTIAL":
+            return {
+                ...state,
+                ...action.partial
+            }
+
+        case "RESET":
+            return DefaultProblemsQuery
+
+        default:
+            return state
+    }
+}

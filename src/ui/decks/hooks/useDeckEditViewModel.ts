@@ -10,6 +10,8 @@ import { useCallback, useEffect, useMemo } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { createQuerySnapshot } from "@/domain/deck/entity/Deck"
 import { ProblemStats } from "@/domain/problem/valueObject/ProblemStats"
+import type { SortState } from "@/domain/problem/service/query/sort"
+import type { FilterState } from "@/domain/problem/service/query/filter"
 
 
 function useDeckEditorInitializer(id: string | undefined) {
@@ -29,18 +31,18 @@ function useDeckEditorInitializer(id: string | undefined) {
         return () => reset()
     }, [id, decks])
 }
-function useDeckEditorList(query: QueryController){
+function useDeckEditorList(sortState: SortState, filterState: FilterState){
     const problems = useProblemStore(s => s.activeProblems)
     const learningRecords = useLearningRecordStore(s => s.records)
 
     const activeProblems = useMemo(() =>
-        applyQuery(problems, learningRecords, query.sort.state, query.filter.state),
-        [problems, learningRecords, query])
+        applyQuery(problems, learningRecords, sortState, filterState),
+        [problems, learningRecords, sortState, filterState])
     const ids = activeProblems.map(p => p.id)
     return { ids, activeProblems, learningRecords}
 }
 
-function useDeckEditorActions(id: string | undefined, query: QueryController) {
+function useDeckEditorActions(id: string | undefined, sortState: SortState, filterState: FilterState) {
     const draft = useDeckEditorStore(s => s.draft)
     const reset = useDeckEditorStore(s => s.reset)
     const deckStore = useDeckStore()
@@ -49,17 +51,16 @@ function useDeckEditorActions(id: string | undefined, query: QueryController) {
     //const query = useQuery()
 
     const save = useCallback(async () => {
-        if (!draft) return
-        console.log("save", query, createQuerySnapshot(query))
+        if (!draft) return        
         deckStore.saveDeck({
             ...draft,
-            snapshot: createQuerySnapshot(query),
+            snapshot: createQuerySnapshot(sortState, filterState),
         })
 
         toast({ message: "保存しました" })
         reset()
         navigate(routes.back)
-    }, [draft, deckStore, query])
+    }, [draft, deckStore, sortState, filterState])
 
     const remove = useCallback( () => {
         if (!draft || id === "new") return
@@ -78,7 +79,7 @@ function useDeckEditorActions(id: string | undefined, query: QueryController) {
 /////////////////////////////////////
 export function useDeckEditViewModel() {
     const { id } = useParams<{ id: string }>()
-    const query = useQuery()
+    const query = useQuery()    
 
     const {
         draft,
@@ -108,14 +109,14 @@ export function useDeckEditViewModel() {
     // --------------------------
     // List, Stats
     // --------------------------
-    const { ids, learningRecords} = useDeckEditorList(query)
+    const { ids, learningRecords} = useDeckEditorList(query.sort.state, query.filter.state)
     const stats =  useMemo(()=> ProblemStats.create(ids, learningRecords),
         [ids, learningRecords])
 
     // --------------------------
     // 保存・削除
     // --------------------------
-    const { save, remove } = useDeckEditorActions(id, query)
+    const { save, remove } = useDeckEditorActions(id, query.sort.state, query.filter.state)
 
     return {
         id,

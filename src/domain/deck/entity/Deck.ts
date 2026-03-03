@@ -16,10 +16,10 @@ export type Deck = {
   
   createdAt: number //  Date
 }
-export function createQuerySnapshot(query: ReturnType<typeof useQuery>): QuerySnapshot {
+export function createQuerySnapshot(sortState: SortState, filterState: FilterState): QuerySnapshot {
   return {
-    filterState: structuredClone(query.filter.state),
-    sortState: structuredClone(query.sort.state)
+    filterState: structuredClone(filterState),
+    sortState: structuredClone(sortState)
   }
 }
 
