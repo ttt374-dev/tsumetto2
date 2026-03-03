@@ -8,7 +8,7 @@ import { SortableContext, useSortable, arrayMove, verticalListSortingStrategy } 
 import { CSS } from "@dnd-kit/utilities";
 
 import { AppShell } from "../common/components/layout/AppShell";
-import FabMenu from "./components/FabMenu";
+import DeckFabMenu from "./components/DeckFabMenu";
 import { useDecksViewModel } from "./hooks/useDecksViewModel";
 import { useNavigate } from "react-router-dom";
 import { routes } from "../App/useAppNavigation";
@@ -135,7 +135,7 @@ export default function DecksScreen() {
                     <EditIcon  />
                 </IconButton>
             }
-            fab={<FabMenu onCreateNewDeck={onCreateDeck} onImportFiles={importer.openFileDialog} />}
+            fab={<DeckFabMenu onCreateNewDeck={onCreateDeck} onImportFiles={importer.openFileDialog} />}
 
         >
             <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto" }}> { /* , touchAction: "pan-y" */ }

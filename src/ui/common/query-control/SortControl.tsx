@@ -3,10 +3,9 @@ import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import type { SortKey, SortOrder, SortState } from "@/domain/problem/service/query/sort";
 
-export default function LibrarySortControl({ sort, onSetSortKey, onToggleOrder }: {
+export default function SortControl({ sort, onSetSortKey, onToggleOrder }: {
     sort: SortState,
     onSetSortKey: (key: SortKey) => void,
-    //onSetSortOrder: (order: SortOrder) => void,    
     onToggleOrder: () => void
 }) {
     const handleChangeKey = (e: any) => {
@@ -14,7 +13,7 @@ export default function LibrarySortControl({ sort, onSetSortKey, onToggleOrder }
     }
     return (
         <Box>
-            <Select value={sort.key} onChange={handleChangeKey}>
+            <Select value={sort.key} onChange={handleChangeKey} size="small">
                 <MenuItem key="createdAt" value="createdAt">追加順</MenuItem>
                 <MenuItem key="title" value="title">名前順</MenuItem>
                 <MenuItem key="accuracy" value="accuracy">正答率</MenuItem>
@@ -22,15 +21,9 @@ export default function LibrarySortControl({ sort, onSetSortKey, onToggleOrder }
                 <MenuItem key="nextReviewedAt" value="nextReviewedAt">次レビュー日</MenuItem>
                 <MenuItem key="lastAnsweredAt" value="lastAnsweredAt">最終解答日</MenuItem>
                 <MenuItem key="random" value="random">ランダム</MenuItem>
-
             </Select>
 
-            <IconButton onClick={() => {                
-                //onSetSortOrder(sort.order == "asc" ? "desc" : "asc")
-                onToggleOrder()
-                console.log("toggle sort order", sort.order)                
-            }
-            }>
+            <IconButton onClick={onToggleOrder}>
                 {sort.order === 'asc'
                     ? <ArrowUpwardIcon />
                     : <ArrowDownwardIcon />

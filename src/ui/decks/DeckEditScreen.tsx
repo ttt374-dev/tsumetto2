@@ -2,20 +2,22 @@ import { Box, Button, FormControlLabel, Grid, IconButton, MenuItem, Select, Stac
 import DeleteIcon from '@mui/icons-material/Delete';
 
 import { EditableText } from "../common/components/EditableText";
-import { FilterControl } from "./components/FilterControl";
-import LibrarySortControl from "../library/components/LibrarySortControl";
+import { FilterControl } from "../common/query-control/FilterControl";
+import SortControl from "../common/query-control/SortControl";
 import { useDeckEditViewModel } from "./hooks/useDeckEditScreenViewModel";
 import { AppShell } from "../common/components/layout/AppShell";
-import { MateLengthFilterControl } from "./components/MateLengthFilterControl";
-import { TagCheckboxFilterControl } from "./components/TagCheckboxFilterControl";
+import { MateLengthFilterControl } from "../common/query-control/MateLengthFilterControl";
+import { TagCheckboxFilterControl } from "../common/query-control/TagCheckboxFilterControl";
 import { useListDialog } from "../list/ListDialog";
 import { useNavigate } from "react-router-dom";
 import { routes } from "../App/useAppNavigation";
 import { useState } from "react";
 import type { ProblemType } from "@/domain/problem/entity/Problem";
+import { QueryControl } from "../common/query-control/QueryControl";
 
 const UNSPECIFIED = "__UNSPECIFIED__";
 type ProblemTypeUi = ProblemType | typeof UNSPECIFIED
+type SourceUi = string | typeof UNSPECIFIED
 
 export function DeckEditScreen() {
     const {
@@ -27,20 +29,20 @@ export function DeckEditScreen() {
     const ListDialog = useListDialog(problemIds, (id) => navigate(routes.problemView(id)))
     const handleNavigateToList = () => {
         //console.log("nav: ids", problemIds)
-        navigate(routes.list, { state: { ids: problemIds, title: `デッキ ${name}：問題リスト`}})
+        navigate(routes.list, { state: { ids: problemIds, title: `デッキ ${name}：問題リスト` } })
     }
-    const [ filterText, setFilterText] = useState("")
+    //const [filterText, setFilterText] = useState("")
     return (
         <AppShell
             header={"Deck Edit"}
             rightActions={
-                <IconButton onClick={handleDeleteDeck} sx={{color:"white"}}>
+                <IconButton onClick={handleDeleteDeck} sx={{ color: "white" }}>
                     <DeleteIcon />
                 </IconButton>
             }
             footer={
                 <Stack direction="row" spacing={1}>
-                    <Button onClick={() => window.history.back()} sx={{ height: 64 }} variant="outlined" color="info" fullWidth>
+                    <Button onClick={() => navigate(routes.back)} sx={{ height: 64 }} variant="outlined" color="info" fullWidth>
                         キャンセル
                     </Button>
                     <Button onClick={handleSaveAndExit} sx={{ height: 64 }} variant="contained" fullWidth>
@@ -49,79 +51,29 @@ export function DeckEditScreen() {
                 </Stack>
             }
         >
+            <Box sx={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }}>
+                <Grid container spacing={2} sx={{
+                    flex: 1,
+                    overflowY: "auto",
+                    minHeight: 0,
+                    p: 2
+                }}>
+                    <Grid size={12}>
+                        <TextField label="デッキ名" fullWidth value={name} onChange={e => setName(e.target.value)} />
+                    </Grid>
+                    
+                    <QueryControl query={query} />
+                    <Grid size={12}>
+                        <SortControl sort={query.sort.state} onSetSortKey={query.sort.setKey}
+                            onToggleOrder={query.sort.toggleOrder} />
+                    </Grid>
 
-    <Box sx={{ height: "100vh", display: "flex", flexDirection: "column" }}>
-  
-            <Grid container spacing={2}>
-                <Grid size={12}>
-                    <TextField label="デッキ名" fullWidth value={name} onChange={e => setName(e.target.value)} />
-                </Grid>
-                <Grid size={12}>
-                    <LibrarySortControl sort={query.sort.state} onSetSortKey={query.sort.setKey}
-                        onToggleOrder={query.sort.toggleOrder} />
-                </Grid>
 
-                <Grid size={12}>
-                    <TextField label="タイトル名" value={filterText} onChange={(e) => {
-                        setFilterText(e.target.value)
-                        query.filter.addFilter({ text: filterText })
-                    }} fullWidth/>
                 </Grid>
-
-                <Grid size={6}>
-                    <Select<ProblemTypeUi> value={query.filter.state.problemType ?? UNSPECIFIED} fullWidth
-                        onChange={e=>query.filter.addFilter({
-                            problemType: e.target.value === undefined ? undefined : (e.target.value as ProblemType)
-                        })}
-                    >
-                        <MenuItem value={UNSPECIFIED}>（種類指定なし）</MenuItem>
-                        <MenuItem key="standard" value="standard">標準</MenuItem>
-                        <MenuItem key="realistic" value="realistic">実践</MenuItem>
-                        <MenuItem key="hisshi" value="hisshi">必死</MenuItem>
-                    </Select>
-                </Grid>
-
-                <Grid size={6}>
-                    <Select value={query.filter.state.source ?? UNSPECIFIED} fullWidth
-                        onChange={e=>query.filter.addFilter({
-                            source: e.target.value === UNSPECIFIED ? undefined : (e.target.value as string),
-                        })}
-                    >
-                        <MenuItem value={UNSPECIFIED}>（出典指定なし）</MenuItem>
-                        { allSources.map(s=>(
-                            <MenuItem value={s}>{s}</MenuItem>
-                        ))}
-                    </Select>
-                </Grid>
-
-                <Grid size={6}>
-                    <FilterControl
-                        filter={query.filter.state}
-                        onToggleFilter={query.filter.toggleFilter}
-
-                    />
-                </Grid>
-
-                <Grid size={6}>
-                            <MateLengthFilterControl
-                        mateBuckets={query.filter.state.mateBuckets}
-                        onChange={(buckets) => {
-                            query.filter.addFilter({ mateBuckets: buckets })
-                        }}
-                    />
-                </Grid>
-                <Grid size={12}>
-                    <TagCheckboxFilterControl
-                        allTags={allTags} selectedTags={query.filter.state.tags ?? []}
-                        onChange={(tags => { query.filter.addFilter({ tags: tags }) })}
-                    />
-                </Grid>
-
-            </Grid>
             </Box>
 
 
-            <Button onClick={handleNavigateToList} variant="outlined" sx={{m:1}}>
+            <Button onClick={handleNavigateToList} variant="outlined" sx={{ m: 1 }}>
                 全{stats.problemCount}問、正答率 {(stats.accuracy * 100).toFixed(0)}%
             </Button>
 

@@ -8,19 +8,20 @@ import SelectAllIcon from "@mui/icons-material/SelectAll";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import SearchIcon from "@mui/icons-material/Search";
 
-import LibrarySortControl from "./LibrarySortControl"
+import SortControl from "../../common/query-control/SortControl"
 import { LibraryListItem } from "./LibraryListItem"
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem"
 import { LibraryCheckboxControl } from "./LibraryCheckboxControl";
 import type { LibraryActionMode } from "../hooks/useLibraryViewModel";
 import { useEffect, useState } from "react";
 import type { QueryController } from "@/ui/common/hooks/useQuery";
-import { FilterControl } from "@/ui/decks/components/FilterControl";
+import { FilterControl } from "@/ui/common/query-control/FilterControl";
 import { DefaultFilterState, type FilterState } from "@/domain/problem/service/query/filter";
-import { MateLengthFilterControl } from "@/ui/decks/components/MateLengthFilterControl";
-import { TagCheckboxFilterControl } from "@/ui/decks/components/TagCheckboxFilterControl";
+import { MateLengthFilterControl } from "@/ui/common/query-control/MateLengthFilterControl";
+import { TagCheckboxFilterControl } from "@/ui/common/query-control/TagCheckboxFilterControl";
 import { useProblemStore } from "@/ui/store/useProblemStore";
 import { isEqual } from "lodash";
+import { QueryControl } from "@/ui/common/query-control/QueryControl";
 
 export type LibraryItemActions = {
     openTagEditDialog: (ids: ProblemId[]) => void
@@ -91,15 +92,16 @@ export function LibraryView({ ids, query, actionMode, changeActionMode,
                     
                     <FilterListOutlinedIcon/>}
                 </IconButton>
-                { showFilterText && 
-                <TextField value={filterText} size="small"
-                  onChange={(e) => setFilterText(e.target.value)}/>
+                { /* 
+                {showFilterText &&
+                    <TextField value={filterText} size="small"
+                        onChange={(e) => setFilterText(e.target.value)} />
                 }
                 <IconButton onClick={handleToggleShowFilterText}>
                     <SearchIcon />
-                </IconButton>
+                </IconButton>*/ }
                 {/* ソート */}
-                <LibrarySortControl
+                <SortControl
                     sort={query.sort.state}
                     onSetSortKey={query.sort.setKey}
                     onToggleOrder={query.sort.toggleOrder}
@@ -133,30 +135,7 @@ export function LibraryView({ ids, query, actionMode, changeActionMode,
                     },
                 }}>
                 <div className="bottom-sheet">
-                    <Stack direction="row" justifyContent="space-between" >
-                        <Box flex={1}>
-                            <FilterControl
-                                filter={query.filter.state}
-                                onToggleFilter={query.filter.toggleFilter}
-
-                            />
-                        </Box>
-                        <Box flex={1}>
-                            <MateLengthFilterControl
-                                mateBuckets={query.filter.state.mateBuckets}
-                                onChange={(buckets) => {
-                                    query.filter.addFilter({ mateBuckets: buckets })
-                                }}
-                            />
-                        </Box>
-
-                    </Stack>
-                    <Stack direction="row" justifyContent="space-between" >
-                        <TagCheckboxFilterControl
-                            allTags={allTags} selectedTags={query.filter.state.tags ?? []}
-                            onChange={(tags => { query.filter.addFilter({ tags: tags }) })}
-                        />
-                    </Stack>
+                    <QueryControl query={query}/>
                 </div>
 
             </Drawer>
