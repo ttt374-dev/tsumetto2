@@ -21,7 +21,7 @@ import { MateLengthFilterControl } from "@/ui/common/query-control/MateLengthFil
 import { TagCheckboxFilterControl } from "@/ui/common/query-control/TagCheckboxFilterControl";
 import { useProblemStore } from "@/ui/store/useProblemStore";
 import { isEqual } from "lodash";
-import { QueryControl } from "@/ui/common/query-control/QueryControl";
+import { FilterControlPanel } from "@/ui/common/query-control/FilterControlPanel";
 
 export type LibraryItemActions = {
     openTagEditDialog: (ids: ProblemId[]) => void
@@ -135,7 +135,7 @@ export function LibraryView({ ids, query, actionMode, changeActionMode,
                     },
                 }}>
                 <div className="bottom-sheet">
-                    <QueryControl query={query}/>
+                    <FilterControlPanel filter={query.filter.state} addFilter={query.filter.addFilter} toggleFilter={query.filter.toggleFilter}/>
                 </div>
 
             </Drawer>

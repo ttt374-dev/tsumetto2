@@ -13,11 +13,11 @@ import { useNavigate } from "react-router-dom";
 import { routes } from "../App/useAppNavigation";
 import { useState } from "react";
 import type { ProblemType } from "@/domain/problem/entity/Problem";
-import { QueryControl } from "../common/query-control/QueryControl";
+import { FilterControlPanel } from "../common/query-control/FilterControlPanel";
 
 const UNSPECIFIED = "__UNSPECIFIED__";
-type ProblemTypeUi = ProblemType | typeof UNSPECIFIED
-type SourceUi = string | typeof UNSPECIFIED
+//type ProblemTypeUi = ProblemType | typeof UNSPECIFIED
+//type SourceUi = string | typeof UNSPECIFIED
 
 export function DeckEditScreen() {
     const {
@@ -30,7 +30,8 @@ export function DeckEditScreen() {
     const handleNavigateToList = () => {
         //console.log("nav: ids", problemIds)
         navigate(routes.list, { state: { ids: problemIds, title: `デッキ ${name}：問題リスト` } })
-    }
+    }    
+
     //const [filterText, setFilterText] = useState("")
     return (
         <AppShell
@@ -62,16 +63,15 @@ export function DeckEditScreen() {
                         <TextField label="デッキ名" fullWidth value={name} onChange={e => setName(e.target.value)} />
                     </Grid>
                     
-                    <QueryControl query={query} />
+                    <FilterControlPanel 
+                        filter={query.filter.state} addFilter={query.filter.addFilter} toggleFilter={query.filter.toggleFilter}
+                        allSources={allSources}/>
                     <Grid size={12}>
                         <SortControl sort={query.sort.state} onSetSortKey={query.sort.setKey}
                             onToggleOrder={query.sort.toggleOrder} />
                     </Grid>
-
-
                 </Grid>
             </Box>
-
 
             <Button onClick={handleNavigateToList} variant="outlined" sx={{ m: 1 }}>
                 全{stats.problemCount}問、正答率 {(stats.accuracy * 100).toFixed(0)}%

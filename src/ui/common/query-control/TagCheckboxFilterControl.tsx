@@ -1,14 +1,14 @@
-import { FormGroup, Typography, Paper, Chip, FormLabel} from "@mui/material"
+import { useProblemStore } from "@/ui/store/useProblemStore"
+import { FormGroup, Paper, Chip, FormLabel} from "@mui/material"
 
 export function TagCheckboxFilterControl({
-    allTags,
     selectedTags,
     onChange,
 }: {
-    allTags: string[],
     selectedTags: string[],
     onChange: (tags: string[]) => void,
 }) {
+    const allTags = useProblemStore(s=>s.allTags)    
     const toggle = (tag: string) => {
         if (selectedTags.includes(tag)) {
             onChange(selectedTags.filter(t => t !== tag))
