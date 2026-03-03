@@ -1,10 +1,12 @@
 import type { FilterState } from "@/domain/problem/service/query/filter"
+import type { QueryState } from "@/domain/problem/service/query/ProblemsQuery"
 import type { SortState } from "@/domain/problem/service/query/sort"
 import type { useQuery } from "@/ui/common/hooks/useQuery"
 
 export type QuerySnapshot = {
-  filterState: FilterState
-  sortState: SortState
+  queryState: QueryState,
+  //filterState: FilterState
+  //sortState: SortState
 }
 export type DeckId = string
 
@@ -16,10 +18,11 @@ export type Deck = {
   
   createdAt: number //  Date
 }
-export function createQuerySnapshot(sortState: SortState, filterState: FilterState): QuerySnapshot {
+export function createQuerySnapshot(queryState: QueryState): QuerySnapshot {
   return {
-    filterState: structuredClone(filterState),
-    sortState: structuredClone(sortState)
+    queryState: structuredClone(queryState)
+    //filterState: structuredClone(filterState),
+    //sortState: structuredClone(sortState)
   }
 }
 

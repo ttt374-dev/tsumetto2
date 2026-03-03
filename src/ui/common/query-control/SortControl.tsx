@@ -2,9 +2,10 @@ import { Box, IconButton, Tooltip, Button, Select, MenuItem } from "@mui/materia
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import type { SortKey, SortOrder, SortState } from "@/domain/problem/service/query/sort";
+import type { QueryState } from "@/domain/problem/service/query/ProblemsQuery";
 
-export default function SortControl({ sort, onSetSortKey, onToggleOrder }: {
-    sort: SortState,
+export default function SortControl({ queryState, onSetSortKey, onToggleOrder }: {
+    queryState: QueryState,
     onSetSortKey: (key: SortKey) => void,
     onToggleOrder: () => void
 }) {
@@ -13,7 +14,7 @@ export default function SortControl({ sort, onSetSortKey, onToggleOrder }: {
     }
     return (
         <Box>
-            <Select value={sort.key} onChange={handleChangeKey} size="small">
+            <Select value={queryState.sortKey} onChange={handleChangeKey} size="small">
                 <MenuItem key="createdAt" value="createdAt">追加順</MenuItem>
                 <MenuItem key="title" value="title">名前順</MenuItem>
                 <MenuItem key="accuracy" value="accuracy">正答率</MenuItem>
@@ -24,7 +25,7 @@ export default function SortControl({ sort, onSetSortKey, onToggleOrder }: {
             </Select>
 
             <IconButton onClick={onToggleOrder}>
-                {sort.order === 'asc'
+                {queryState.sortOrder === 'asc'
                     ? <ArrowUpwardIcon />
                     : <ArrowDownwardIcon />
                 }

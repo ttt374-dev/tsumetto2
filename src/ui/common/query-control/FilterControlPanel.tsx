@@ -2,57 +2,59 @@ import { Grid, TextField } from "@mui/material";
 
 import { MateLengthFilterControl } from "./MateLengthFilterControl";
 import { TagCheckboxFilterControl } from "./TagCheckboxFilterControl";
-import { FilterControl } from "./FilterControl";
+import { BooleanFilterControl } from "./BooleanFilterControl";
 import type { FilterState } from "@/domain/problem/service/query/filter";
-import { ProblemTypeFilterControl } from "./ProblemTypeControl";
-import { SourceFilterControl } from "./SourceControl";
+import { ProblemTypeFilterControl } from "./ProblemTypeFilterControl";
+import { SourceFilterControl } from "./SourceFilterControl";
+import type { useProblemsQuery } from "@/domain/problem/service/query/useProblemsQuery";
 
 export const UNSPECIFIED = "__UNSPECIFIED__";
 
 
 type Props = {
-  filter: FilterState
-  addFilter: (partial: Partial<FilterState>) => void
-  toggleFilter: (key: keyof FilterState) => void
+  query: ReturnType<typeof useProblemsQuery>
   allSources: string[]
 }
-export function FilterControlPanel({filter, addFilter, toggleFilter, allSources}: Props){
+export function FilterControlPanel({query, allSources}: Props){
     return (
         <Grid container>
             <Grid size={12}>
-                <TextField label="タイトル名" value={filter.text} onChange={(e) => {
+                <TextField label="タイトル名" value={query.state.text} onChange={(e) => {
                     const value = e.target.value
-                    addFilter({ text: value })
+                    query.setText(value)
                 }} fullWidth />
             </Grid>
 
             <Grid size={6}>
-                <ProblemTypeFilterControl filter={filter} addFilter={addFilter}/>
+                <ProblemTypeFilterControl 
+                    problemType={query.state.problemType} 
+                    onChange={type => query.setProblemType(type)}/>
             </Grid>
 
             <Grid size={6}>
-                <SourceFilterControl filter={filter} addFilter={addFilter} sources={allSources}/>
+                <SourceFilterControl source={query.state.source} onChange={s=>query.setSource(s)} sources={allSources}/>
             </Grid>
 
             <Grid size={6}>
-                <FilterControl
-                    filter={filter}
-                    onToggleFilter={toggleFilter}
+                <BooleanFilterControl
+                    queryState={query.state}
+                    onToggleFilter={k => query.toggleFlag(k)}
                 />
             </Grid>
 
             <Grid size={6}>
                 <MateLengthFilterControl
-                    mateBuckets={filter.mateBuckets}
+                    mateBuckets={query.state.mateBuckets}
                     onChange={(buckets) => {
-                        addFilter({ mateBuckets: buckets })
+                        query.setMateBuckets(buckets)
+                        //addFilter({ mateBuckets: buckets })
                     }}
                 />
             </Grid>
             <Grid size={12}>
                 <TagCheckboxFilterControl
-                    selectedTags={filter.tags ?? []}
-                    onChange={(tags => { addFilter({ tags: tags }) })}
+                    selectedTags={query.state.tags ?? []}
+                    onChange={(tags => query.setTags(tags))}
                 />
             </Grid>
         </Grid>

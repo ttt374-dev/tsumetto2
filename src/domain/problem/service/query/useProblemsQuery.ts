@@ -1,19 +1,19 @@
 import { useReducer } from "react";
 import { queryReducer } from "./queryReducer";
-import { DefaultProblemsQuery,  type BooleanQueryKey,  type ProblemsQuery } from "./ProblemsQuery";
+import { DefaultProblemsQuery,  type BooleanQueryKey,  type QueryState } from "./ProblemsQuery";
 
 import type { SortKey } from "./sort";
 import type { ProblemType } from "../../entity/Problem";
 import type { MateBucket } from "./filter";
 
-export function useProblemsQuery(initial?: Partial<ProblemsQuery>) {
+export function useProblemsQuery(initial?: Partial<QueryState>) {
   const [query, dispatch] = useReducer(
     queryReducer,
     { ...DefaultProblemsQuery, ...initial }
   )
 
   return {
-    query,
+    state: query,
 
     // sort
     setSortKey: (key: SortKey) =>
@@ -41,7 +41,7 @@ export function useProblemsQuery(initial?: Partial<ProblemsQuery>) {
     toggleFlag: (key: BooleanQueryKey) =>
       dispatch({ type: "TOGGLE_FLAG", key }),
 
-    setPartial: (partial: Partial<ProblemsQuery>) =>
+    setPartial: (partial: Partial<QueryState>) =>
       dispatch({ type: "SET_PARTIAL", partial }),
 
     reset: () =>

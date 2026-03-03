@@ -1,24 +1,23 @@
 import { Grid, MenuItem, Select, TextField } from "@mui/material";
 import { MateLengthFilterControl } from "./MateLengthFilterControl";
 import { TagCheckboxFilterControl } from "./TagCheckboxFilterControl";
-import { FilterControl } from "./FilterControl";
+import { BooleanFilterControl } from "./BooleanFilterControl";
 import { type ProblemType } from "@/domain/problem/entity/Problem";
 import type { FilterState } from "@/domain/problem/service/query/filter";
-import { ProblemTypeFilterControl } from "./ProblemTypeControl";
+import { ProblemTypeFilterControl } from "./ProblemTypeFilterControl";
 import { UNSPECIFIED } from "./FilterControlPanel";
 
 
 type SourceUi = string | typeof UNSPECIFIED
-export function SourceFilterControl( {filter, addFilter, sources}: { 
-    filter: FilterState,
-    addFilter: (partial: Partial<FilterState>) => void    
+export function SourceFilterControl( {source, onChange, sources}: { 
+    source: string | undefined,
+    onChange: (source: string | undefined) => void
     sources: string[]
 }){
     return (
-        <Select<SourceUi> value={filter.source ?? UNSPECIFIED} fullWidth
-            onChange={e => addFilter({
-                source: e.target.value === UNSPECIFIED ? undefined : (e.target.value as string),
-            })}
+        <Select<SourceUi> value={source ?? UNSPECIFIED} fullWidth
+            onChange={e => onChange(e.target.value === UNSPECIFIED ? undefined : (e.target.value as string))}
+            
         >
             <MenuItem value={UNSPECIFIED}>（出典指定なし）</MenuItem>
             {sources.map(s => (

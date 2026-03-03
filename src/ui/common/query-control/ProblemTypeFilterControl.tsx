@@ -1,23 +1,25 @@
 import { Grid, MenuItem, Select, TextField } from "@mui/material";
 import { MateLengthFilterControl } from "./MateLengthFilterControl";
 import { TagCheckboxFilterControl } from "./TagCheckboxFilterControl";
-import { FilterControl } from "./FilterControl";
+import { BooleanFilterControl } from "./BooleanFilterControl";
 import { type ProblemType } from "@/domain/problem/entity/Problem";
 import type { FilterState } from "@/domain/problem/service/query/filter";
 import { UNSPECIFIED } from "./FilterControlPanel";
 
 type ProblemTypeUi = ProblemType | typeof UNSPECIFIED
-export function ProblemTypeFilterControl( {filter, addFilter}: { 
-    filter: FilterState,
-    addFilter: (partial: Partial<FilterState>) => void    
+export function ProblemTypeFilterControl( {problemType, onChange}: { 
+    problemType: ProblemType | undefined,
+    onChange: (type: ProblemType | undefined) => void
+    //addFilter: (partial: Partial<FilterState>) => void    
 }){
     return (
-        <Select<ProblemTypeUi> value={filter.problemType ?? UNSPECIFIED} fullWidth
+        <Select<ProblemTypeUi> value={problemType ?? UNSPECIFIED} fullWidth
             onChange={(e) => {
                 const value = e.target.value as ProblemTypeUi
-                addFilter({
-                    problemType: value === UNSPECIFIED ? undefined : value
-                })
+                onChange(value === UNSPECIFIED ? undefined : value)
+                //addFilter({
+                //    problemType: value === UNSPECIFIED ? undefined : value
+                //})
             }}
         >
             <MenuItem value={UNSPECIFIED}>（種類指定なし）</MenuItem>

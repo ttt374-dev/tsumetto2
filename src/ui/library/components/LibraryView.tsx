@@ -15,13 +15,14 @@ import { LibraryCheckboxControl } from "./LibraryCheckboxControl";
 import type { LibraryActionMode } from "../hooks/useLibraryViewModel";
 import { useEffect, useState } from "react";
 import type { QueryController } from "@/ui/common/hooks/useQuery";
-import { FilterControl } from "@/ui/common/query-control/FilterControl";
+import { BooleanFilterControl } from "@/ui/common/query-control/BooleanFilterControl";
 import { DefaultFilterState, type FilterState } from "@/domain/problem/service/query/filter";
 import { MateLengthFilterControl } from "@/ui/common/query-control/MateLengthFilterControl";
 import { TagCheckboxFilterControl } from "@/ui/common/query-control/TagCheckboxFilterControl";
 import { useProblemStore } from "@/ui/store/useProblemStore";
 import { isEqual } from "lodash";
 import { FilterControlPanel } from "@/ui/common/query-control/FilterControlPanel";
+import type { useProblemsQuery } from "@/domain/problem/service/query/useProblemsQuery";
 
 export type LibraryItemActions = {
     openTagEditDialog: (ids: ProblemId[]) => void
@@ -30,7 +31,8 @@ export type LibraryItemActions = {
 
 type LibraryViewProps = {
     ids: ProblemId[]
-    query: QueryController
+    //query: QueryController
+    query: ReturnType<typeof useProblemsQuery>
     actionMode: LibraryActionMode
     changeActionMode: (mode: LibraryActionMode) => void
     itemActions: LibraryItemActions,
@@ -59,18 +61,10 @@ export function LibraryView({ ids, query, actionMode, changeActionMode,
         hard: false,
         favorite: false,
     });
-    const allTags = useProblemStore(s=>s.allTags)
+
     const allSources = useProblemStore(s=>s.allSources)
-    useEffect(()=>{ query.filter.addFilter({text: filterText})}, [filterText])
-    
-    const handleToggleShowFilterText = () => { 
-        if (showFilterText) setFilterText("")
-        setShowFilterText(prev => !prev)         
-    }
-    const handleToggleFilter = (key: keyof FilterState) => {
-        query.filter.toggleFilter(key)
-    }
-    const isFiltered = !isEqual(query.filter.state, DefaultFilterState);
+
+    const isFiltered = false // !isEqual(query.query., DefaultFilterState); .// TODO
     //console.log("is filtered", isFiltered, query.filter.state, DefaultFilterState)
     return (
         <>
@@ -103,9 +97,9 @@ export function LibraryView({ ids, query, actionMode, changeActionMode,
                 </IconButton>*/ }
                 {/* ソート */}
                 <SortControl
-                    sort={query.sort.state}
-                    onSetSortKey={query.sort.setKey}
-                    onToggleOrder={query.sort.toggleOrder}
+                    queryState={query.state}
+                    onSetSortKey={query.setSortKey}
+                    onToggleOrder={query.toggleSortOrder}
                 />
             </Stack>
 
@@ -137,8 +131,7 @@ export function LibraryView({ ids, query, actionMode, changeActionMode,
                 }}>
                 <div className="bottom-sheet">
                     <FilterControlPanel 
-                        filter={query.filter.state} addFilter={query.filter.addFilter} toggleFilter={query.filter.toggleFilter}
-                        allSources={allSources}/>
+                        query={query} allSources={allSources}/>
                 </div>
 
             </Drawer>

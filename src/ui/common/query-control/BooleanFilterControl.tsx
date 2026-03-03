@@ -2,11 +2,13 @@ import { Box, Button, Checkbox, FormControl, FormControlLabel, FormLabel, List, 
 import { type FilterState } from "@/domain/problem/service/query/filter";
 import { MateLengthFilterControl } from "./MateLengthFilterControl";
 import { TagCheckboxFilterControl } from "./TagCheckboxFilterControl";
+import type { BooleanQueryKey, QueryState } from "@/domain/problem/service/query/ProblemsQuery";
 
 
-export function FilterControl({ filter, onToggleFilter}: {
-    filter: FilterState, 
-    onToggleFilter: (key: keyof FilterState) => void        
+export function BooleanFilterControl({ queryState, onToggleFilter}: {
+    //filter: FilterState, 
+    queryState: QueryState
+    onToggleFilter: (key: BooleanQueryKey) => void        
 }) {
     return (
         <Paper sx={{
@@ -19,16 +21,16 @@ export function FilterControl({ filter, onToggleFilter}: {
             <FormControl sx={{ p: 1 }}>
                 <FormLabel component="legend">フィルター</FormLabel>
                 <FormControlLabel control={
-                    <Checkbox checked={filter.unansweredOnly}
+                    <Checkbox checked={queryState.unansweredOnly}
                         onChange={() => { onToggleFilter("unansweredOnly") }} />}
                     label="未回答" />
   
                 <FormControlLabel control={
-                    <Checkbox checked={filter.starredOnly}
+                    <Checkbox checked={queryState.starredOnly}
                         onChange={() => { onToggleFilter("starredOnly") }} />}
                     label="スター" />
                 <FormControlLabel control={
-                    <Checkbox checked={filter.dueForReviewOnly}
+                    <Checkbox checked={queryState.dueForReviewOnly}
                         onChange={() => { onToggleFilter("dueForReviewOnly") }} />}
                     label="レビュー対象" />
             </FormControl>

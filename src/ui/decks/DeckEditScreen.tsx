@@ -2,7 +2,7 @@ import { Box, Button, FormControlLabel, Grid, IconButton, MenuItem, Select, Stac
 import DeleteIcon from '@mui/icons-material/Delete';
 
 import { EditableText } from "../common/components/EditableText";
-import { FilterControl } from "../common/query-control/FilterControl";
+import { BooleanFilterControl } from "../common/query-control/BooleanFilterControl";
 import SortControl from "../common/query-control/SortControl";
 import { useDeckEditViewModel } from "./hooks/useDeckEditViewModel";
 import { AppShell } from "../common/components/layout/AppShell";
@@ -64,11 +64,10 @@ export function DeckEditScreen() {
                     </Grid>
                     
                     <FilterControlPanel 
-                        filter={query.filter.state} addFilter={query.filter.addFilter} toggleFilter={query.filter.toggleFilter}
-                        allSources={allSources}/>
+                        query={query} allSources={allSources}/>
                     <Grid size={12}>
-                        <SortControl sort={query.sort.state} onSetSortKey={query.sort.setKey}
-                            onToggleOrder={query.sort.toggleOrder} />
+                        <SortControl queryState={query.state} onSetSortKey={query.setSortKey}
+                            onToggleOrder={query.toggleSortOrder} />
                     </Grid>
                 </Grid>
             </Box>

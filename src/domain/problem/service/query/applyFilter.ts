@@ -2,13 +2,13 @@ import type { Learning, LearningRecord } from "@/domain/learning/entity/Learning
 import type { FilterState } from "./filter";
 import { matchMateBuckets } from "./mateFilter";
 import type { Problem } from "@/domain/problem/entity/Problem";
-
+import type { QueryState } from "./ProblemsQuery";
 
 //////////////////////////////////
 export const applyFilter = (
     problems: Problem[],
     learningRecords: LearningRecord,
-    filter: FilterState
+    filter: QueryState
 ): Problem[] => {
     const now = Date.now()
     

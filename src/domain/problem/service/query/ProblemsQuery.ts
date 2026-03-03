@@ -2,7 +2,7 @@ import type { ProblemType } from "../../entity/Problem"
 import type { MateBucket } from "./filter"
 import type { SortKey, SortOrder } from "./sort"
 
-export type ProblemsQuery = {
+export type QueryState = {
     // sort
     sortKey: SortKey
     sortOrder: SortOrder
@@ -34,10 +34,10 @@ export type QueryAction =
     | { type: "SET_TAGS"; tags?: string[] }
     | { type: "SET_MATE_BUCKETS"; buckets?: MateBucket[] }
     | { type: "TOGGLE_FLAG"; key: BooleanQueryKey }
-    | { type: "SET_PARTIAL"; partial: Partial<ProblemsQuery> }
+    | { type: "SET_PARTIAL"; partial: Partial<QueryState> }
     | { type: "RESET" }
 
-export const DefaultProblemsQuery: ProblemsQuery = {
+export const DefaultProblemsQuery: QueryState = {
     sortKey: 'title',
     sortOrder: 'asc',
 

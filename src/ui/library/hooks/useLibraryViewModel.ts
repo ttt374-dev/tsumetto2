@@ -16,14 +16,16 @@ import { useQueryStore } from "@/ui/store/useQueryStore"
 import type { SortState } from "@/domain/problem/service/query/sort"
 import type { FilterState } from "@/domain/problem/service/query/filter"
 import { useMultipleProblemsEditoDialog } from "@/ui/common/components/dialogs/MultipleProblemsEditorDialog"
+import type { QueryState } from "@/domain/problem/service/query/ProblemsQuery"
+import { useProblemsQuery } from "@/domain/problem/service/query/useProblemsQuery"
 
 
 export type LibraryActionMode = "selection" | "view" 
 
-function useLibraryListVM(problems: Problem[], learningRecords: LearningRecord, sortState: SortState, filterState: FilterState) {
+function useLibraryListVM(problems: Problem[], learningRecords: LearningRecord, queryState: QueryState) {
     const libraryItems = useMemo(() =>
-        applyQuery(problems, learningRecords, sortState, filterState),
-        [problems, learningRecords, sortState, filterState]
+        applyQuery(problems, learningRecords, queryState),
+        [problems, learningRecords, queryState]
     )
     const ids = useMemo(() => libraryItems.map(p => p.id), [libraryItems])    
     return { libraryItems, ids}
@@ -85,14 +87,14 @@ function useLibraryCommands(){
 /////////////////////////////////////////////////
 export function useLibraryViewModel() {
     //const query = useLibraryQueryContext()
-    const query = useQueryStore()
+    const query = useProblemsQuery() //   useQueryStore()
 
     const learningRecords = useLearningRecordStore(s => s.records)
     const [actionMode, setActionMode] = useState<LibraryActionMode>("view")
     const toast = useToast()
 
     const { problems, reload, deleteProblems } = useLibraryCommands()
-    const { libraryItems, ids } = useLibraryListVM(problems, learningRecords, query.sort.state, query.filter.state)
+    const { libraryItems, ids } = useLibraryListVM(problems, learningRecords, query.state)
     
     const selection = useLibrarySelectionVM(ids)
     const dialogs = useLibraryDialogVM(selection.checkedIds, reload)

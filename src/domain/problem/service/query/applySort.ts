@@ -1,8 +1,8 @@
 // domain/problemRecord/sortProblemRecords.ts
 
 import type { Learning } from "@/domain/learning/entity/Learning";
-import type { SortOrder, SortState } from "./sort"
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem"
+import type { QueryState } from "./ProblemsQuery";
 
 //type SortKey = SortState["key"]
 //type SortValue = string | number
@@ -10,7 +10,7 @@ import type { Problem, ProblemId } from "@/domain/problem/entity/Problem"
 export function applySort(
     problems: Problem[],
     learningRecords: Record<ProblemId, Learning>,
-    sortState: SortState
+    queryState: QueryState
 ): Problem[] {
     return [...problems].sort((a, b) => {
         const la = learningRecords[a.id];
@@ -19,7 +19,7 @@ export function applySort(
         let vA: number | string = 0;
         let vB: number | string = 0;
 
-        switch (sortState.key) {
+        switch (queryState.sortKey) {
             case "createdAt":
                 vA = a.createdAt
                 vB = b.createdAt
@@ -46,8 +46,8 @@ export function applySort(
                 break;
         }
 
-        if (vA < vB) return sortState.order === "asc" ? -1 : 1;
-        if (vA > vB) return sortState.order === "asc" ? 1 : -1;
+        if (vA < vB) return queryState.sortOrder === "asc" ? -1 : 1;
+        if (vA > vB) return queryState.sortOrder === "asc" ? 1 : -1;
         return 0;
     });
 }

@@ -1,12 +1,12 @@
 import type { ProblemType } from "../../entity/Problem";
 import type { MateBucket } from "./filter";
-import { DefaultProblemsQuery, type BooleanQueryKey, type ProblemsQuery, type QueryAction } from "./ProblemsQuery"
+import { DefaultProblemsQuery, type BooleanQueryKey, type QueryState, type QueryAction } from "./ProblemsQuery"
 import type { SortKey } from "./sort";
 
 export function queryReducer(
-    state: ProblemsQuery,
+    state: QueryState,
     action: QueryAction
-): ProblemsQuery {
+): QueryState {
     switch (action.type) {
 
         // ===== SORT =====

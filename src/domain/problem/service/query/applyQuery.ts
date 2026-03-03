@@ -4,11 +4,13 @@ import { applySort } from "./applySort";
 import type { FilterState } from "./filter";
 import type { SortState } from "./sort";
 import type { Problem } from "@/domain/problem/entity/Problem";
+import type { QueryState } from "./ProblemsQuery";
 
 
 export function applyQuery(problems: Problem[], learningRecords: LearningRecord,
-    sortState?: SortState, filterState?: FilterState){    
-    const filtered = filterState ? applyFilter(problems, learningRecords, filterState) : problems
-    const sorted = sortState ? applySort(filtered, learningRecords, sortState) : filtered       
+    queryState: QueryState){    
+    console.log("applyquery", queryState)
+    const filtered = applyFilter(problems, learningRecords, queryState)
+    const sorted = applySort(filtered, learningRecords, queryState)
     return sorted
 }

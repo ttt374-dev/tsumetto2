@@ -5,11 +5,14 @@ import { AppShell } from "../common/components/layout/AppShell";
 import { LibraryView } from "./components/LibraryView";
 import { useLibraryViewModel } from "./hooks/useLibraryViewModel";
 import { useState } from "react";
+import { useProblemsQuery } from "@/domain/problem/service/query/useProblemsQuery";
 
 //////////////////////////////////////////////////
 
 export function LibraryScreen() {
     const vm = useLibraryViewModel()   
+    //const query = useProblemsQuery()
+
 
     return (
         <AppShell
