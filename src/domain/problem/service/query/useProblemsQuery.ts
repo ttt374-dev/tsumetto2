@@ -1,6 +1,6 @@
 import { useReducer } from "react";
 import { queryReducer } from "./queryReducer";
-import { DefaultProblemsQuery,  type BooleanQueryKey,  type QueryState } from "./ProblemsQuery";
+import { DefaultQueryState,  type BooleanQueryKey,  type QueryState } from "./ProblemsQuery";
 
 import type { SortKey } from "./sort";
 import type { ProblemType } from "../../entity/Problem";
@@ -9,11 +9,15 @@ import type { MateBucket } from "./filter";
 export function useProblemsQuery(initial?: Partial<QueryState>) {
   const [query, dispatch] = useReducer(
     queryReducer,
-    { ...DefaultProblemsQuery, ...initial }
+    { ...DefaultQueryState, ...initial }
   )
 
   return {
     state: query,
+
+    // setter
+    setAll: (state: Partial<QueryState>) =>
+        dispatch({ type: "SET_ALL", payload: state }),
 
     // sort
     setSortKey: (key: SortKey) =>

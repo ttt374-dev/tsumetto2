@@ -3,6 +3,8 @@ import type { Problem, ProblemId } from "../entity/Problem"
 import type { FilterState } from "../service/query/filter"
 import { applyFilter } from "../service/query/applyFilter"
 import type { MissionResultEntry } from "@/domain/mission/entity/Mission"
+import { QueryStatsOutlined } from "@mui/icons-material"
+import type { QueryState } from "../service/query/ProblemsQuery"
 
 export class ProblemStats {
     constructor(
@@ -17,9 +19,7 @@ export class ProblemStats {
         let solved = 0
         let failed = 0
         let easeFactor = 0
-        let intervalDays = 0
-
-        console.log("create stat", ids.length)
+        let intervalDays = 0       
 
         for (const id of ids) {
             const learning = learningRecords[id]
@@ -40,8 +40,8 @@ export class ProblemStats {
             intervalDays,
         )
     }
-    static createWithFilter(problems: Problem[], learningRecords: LearningRecord, filterState: FilterState){
-        const filtered = applyFilter(problems, learningRecords, filterState)
+    static createWithFilter(problems: Problem[], learningRecords: LearningRecord, queryState: QueryState){
+        const filtered = applyFilter(problems, learningRecords, queryState)
         return this.create(filtered.map(p=>p.id), learningRecords)
     }
     static createFromMissionResultList(missionResultList: MissionResultEntry[]): ProblemStats {

@@ -5,12 +5,14 @@ import { useMemo } from "react";
 import { GroupedTable, type StatsRowValues } from "./GroupedTable";
 import { DefaultFilterState } from "@/domain/problem/service/query/filter";
 import { applyFilter } from "@/domain/problem/service/query/applyFilter";
+import { DefaultQueryState } from "@/domain/problem/service/query/ProblemsQuery";
 
 export function ProblemStatsTable() {
     const activeProblems = useProblemStore(s => s.activeProblems)
     const learningRecords = useLearningRecordStore(s => s.records)
-    const filter = { ...DefaultFilterState, dueForReviewOnly: true}
-    const dueForReviewOnly = applyFilter(activeProblems, learningRecords, filter)
+    //const filter = { ...DefaultFilterState, dueForReviewOnly: true}
+    const queryState = { ...DefaultQueryState, dueForReviewOnly: true}
+    const dueForReviewOnly = applyFilter(activeProblems, learningRecords, queryState)
     console.log("due review", dueForReviewOnly)
 
     // 総合

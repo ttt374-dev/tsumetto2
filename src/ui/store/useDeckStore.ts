@@ -23,10 +23,12 @@ export const useDeckStore = create<DeckStoreState>((set, get) => ({
         if (!repo) throw new Error("Repository not initialized")
 
         const list = await repo.findAll()
+        console.log("load", list)
         set({ decks: list })
     },
 
     saveDeck: async (deck: Deck) => {
+        console.log("save", deck)
         set(state => {
             const index = state.decks.findIndex(d => d.id === deck.id)
             const newDecks = [...state.decks]

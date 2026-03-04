@@ -1,13 +1,19 @@
 import type { ProblemType } from "../../entity/Problem";
 import type { MateBucket } from "./filter";
-import { DefaultProblemsQuery, type BooleanQueryKey, type QueryState, type QueryAction } from "./ProblemsQuery"
+import { DefaultQueryState, type BooleanQueryKey, type QueryState, type QueryAction } from "./ProblemsQuery"
 import type { SortKey } from "./sort";
 
 export function queryReducer(
-    state: QueryState,
+    state: QueryState = DefaultQueryState,
     action: QueryAction
 ): QueryState {
     switch (action.type) {
+        // SETTER
+        case "SET_ALL":
+            return {
+                ...DefaultQueryState,
+                ...action.payload
+            }
 
         // ===== SORT =====
         case "SET_SORT_KEY":
@@ -57,7 +63,7 @@ export function queryReducer(
             }
 
         case "RESET":
-            return DefaultProblemsQuery
+            return DefaultQueryState
 
         default:
             return state

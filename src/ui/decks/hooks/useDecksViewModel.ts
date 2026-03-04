@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { useToast } from "../../App/providers/ToastProvider";
 import { applyQuery } from "@/domain/problem/service/query/applyQuery";
 import { routes } from "@/ui/App/useAppNavigation";
-
 import { arrayMove } from "@dnd-kit/sortable";
 
 import { useDeckStore } from "@/ui/store/useDeckStore";
@@ -15,6 +14,7 @@ import type { Deck } from "@/domain/deck/entity/Deck";
 import { ProblemStats } from "@/domain/problem/valueObject/ProblemStats";
 import { useImportController } from "@/ui/common/components/dialogs/Import/useImportController";
 import { useBackupRestoreDialog } from "@/ui/common/components/dialogs/BackupRestoreDialog";
+import { DefaultQueryState } from "@/domain/problem/service/query/ProblemsQuery";
 
 export function useDecksViewModel() {
     const navigate = useNavigate();
@@ -61,7 +61,8 @@ export function useDecksViewModel() {
     const deckStats = useMemo(() => {
         const map = new Map<string, ProblemStats>();
         for (const deck of deckArray) {
-            const filtered = applyFilter(problems, learningRecords, deck.snapshot.filterState);
+            console.log("snapshot", deck.snapshot)
+            const filtered = applyFilter(problems, learningRecords, deck.snapshot.queryState ?? DefaultQueryState);
             const stats = ProblemStats.create(filtered.map(p => p.id), learningRecords);
             map.set(deck.id, stats);
         }
@@ -76,8 +77,7 @@ export function useDecksViewModel() {
         const filtered = applyQuery(
             problems,
             learningRecords,
-            deck.snapshot.sortState,
-            deck.snapshot.filterState
+            deck.snapshot.queryState,            
         );
 
         startMission(deck.id, filtered.map(p => p.id));

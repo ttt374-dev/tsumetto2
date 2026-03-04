@@ -2,7 +2,6 @@ import { useDeckEditorStore } from "@/ui/store/useDeckEditorStore"
 import { useDeckStore } from "@/ui/store/useDeckStore"
 import { useProblemStore } from "@/ui/store/useProblemStore"
 import { useLearningRecordStore } from "@/ui/store/useLearningRecordStore"
-import { useQuery, type QueryController } from "@/ui/common/hooks/useQuery"
 import { applyQuery } from "@/domain/problem/service/query/applyQuery"
 import { useToast } from "@/ui/App/providers/ToastProvider"
 import { routes } from "@/ui/App/useAppNavigation"
@@ -10,8 +9,6 @@ import { useCallback, useEffect, useMemo } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { createQuerySnapshot } from "@/domain/deck/entity/Deck"
 import { ProblemStats } from "@/domain/problem/valueObject/ProblemStats"
-import type { SortState } from "@/domain/problem/service/query/sort"
-import type { FilterState } from "@/domain/problem/service/query/filter"
 import { useProblemsQuery } from "@/domain/problem/service/query/useProblemsQuery"
 import type { QueryState } from "@/domain/problem/service/query/ProblemsQuery"
 
@@ -53,7 +50,8 @@ function useDeckEditorActions(id: string | undefined, queryState: QueryState) {
     //const query = useQuery()
 
     const save = useCallback(async () => {
-        if (!draft) return        
+        if (!draft) return     
+        console.log("save draft", draft)   
         deckStore.saveDeck({
             ...draft,
             snapshot: createQuerySnapshot(queryState),
@@ -102,12 +100,10 @@ export function useDeckEditViewModel() {
     // draft → query同期（初回のみ）
     // --------------------------
     useEffect(() => {
-        if (!draft) return
+        if (!draft?.snapshot.queryState) return
 
-        //query.sort.setState(draft.snapshot.sortState)  // TODO
-        //query.filter.setState(draft.snapshot.filterState)
-        
-    }, [draft?.id]) // ← 重要：idで依存
+        query.setAll(draft.snapshot.queryState)
+    }, [draft?.id])
 
     // --------------------------
     // List, Stats

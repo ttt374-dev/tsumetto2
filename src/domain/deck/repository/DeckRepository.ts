@@ -75,7 +75,9 @@ export class LocalStorageDeckPersistence implements DeckPersistence {
         const raw = localStorage.getItem(STORAGE_KEY)
         if (!raw) return []
 
+        
         const data = JSON.parse(raw) as any[]
+        console.log("load raw", raw, data)
         return data
     }
 
