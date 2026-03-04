@@ -10,7 +10,7 @@ import { useNavigate, useParams } from "react-router-dom"
 import { createQuerySnapshot } from "@/domain/deck/entity/Deck"
 import { ProblemStats } from "@/domain/problem/valueObject/ProblemStats"
 import { useProblemsQuery } from "@/domain/problem/service/query/useProblemsQuery"
-import type { QueryState } from "@/domain/problem/service/query/ProblemsQuery"
+import { DefaultQueryState, type QueryState } from "@/domain/problem/service/query/ProblemsQuery"
 
 
 function useDeckEditorInitializer(id: string | undefined) {
@@ -102,7 +102,11 @@ export function useDeckEditViewModel() {
     useEffect(() => {
         if (!draft?.snapshot.queryState) return
 
-        query.setAll(draft.snapshot.queryState)
+        //query.setAll(draft.snapshot.queryState)
+        query.setAll({
+            ...DefaultQueryState,
+            ...draft.snapshot.queryState
+        })
     }, [draft?.id])
 
     // --------------------------

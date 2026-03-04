@@ -6,18 +6,14 @@ import { useCallback, useEffect, useMemo, useState } from "react"
 import { applyQuery } from "@/domain/problem/service/query/applyQuery"
 import { useLibraryCheckbox } from "./useLibraryCheckbox"
 import { useProblemDetailDialog } from "@/ui/common/components/dialogs/problemDetail/hooks/useProblemDetailDialog"
-import type { useQuery } from "@/ui/common/hooks/useQuery"
 import { useNavigate } from "react-router-dom"
 import { routes } from "@/ui/App/useAppNavigation"
 import type { LearningRecord } from "@/domain/learning/entity/Learning"
 import { useBackupRestoreDialog } from "@/ui/common/components/dialogs/BackupRestoreDialog"
-import { useMultipleProblemsTagEditDialog } from "@/ui/common/components/dialogs/MultipleProblemsTagEditDialog"
-import { useQueryStore } from "@/ui/store/useQueryStore"
-import type { SortState } from "@/domain/problem/service/query/sort"
-import type { FilterState } from "@/domain/problem/service/query/filter"
 import { useMultipleProblemsEditoDialog } from "@/ui/common/components/dialogs/MultipleProblemsEditorDialog"
 import type { QueryState } from "@/domain/problem/service/query/ProblemsQuery"
 import { useProblemsQuery } from "@/domain/problem/service/query/useProblemsQuery"
+import { useProblemsQueryStore } from "@/ui/store/useProblemsQueryStore"
 
 
 export type LibraryActionMode = "selection" | "view" 
@@ -87,7 +83,8 @@ function useLibraryCommands(){
 /////////////////////////////////////////////////
 export function useLibraryViewModel() {
     //const query = useLibraryQueryContext()
-    const query = useProblemsQuery() //   useQueryStore()
+    //const query = useProblemsQuery() //   useQueryStore()
+    const query = useProblemsQueryStore()
 
     const learningRecords = useLearningRecordStore(s => s.records)
     const [actionMode, setActionMode] = useState<LibraryActionMode>("view")
