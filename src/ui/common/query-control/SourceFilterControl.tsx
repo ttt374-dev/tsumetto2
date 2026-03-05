@@ -16,6 +16,7 @@ export function SourceFilterControl( {source, onChange, sources}: {
 }){
     return (
         <Select<SourceUi> value={source ?? UNSPECIFIED} fullWidth
+        label="出典 "
             onChange={e => onChange(e.target.value === UNSPECIFIED ? undefined : (e.target.value as string))}
             
         >

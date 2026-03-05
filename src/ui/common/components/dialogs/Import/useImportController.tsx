@@ -1,24 +1,23 @@
 import { useRepositoryContext } from "@/ui/App/providers/RepositoryProvider"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useImportFilePicker } from "./useImportFilePicker"
-import { useImportProblemsUsecase, type ImportFilesResult, type ImportOptions } from "@/application/usecase/problem/import/ImportProblemsUsecase"
+import { DefaultImportOptions, useImportProblemsUsecase, type ImportFilesResult, type ImportOptions } from "@/application/usecase/problem/import/ImportProblemsUsecase"
 import { ImportDialog } from "./ImportDialog"
+import { useProblemStore } from "@/ui/store/useProblemStore"
 
 export function useImportController(
     onAfterImported?: (result: ImportFilesResult) => void
 ) {
     const repos = useRepositoryContext()
-
     const [files, setFiles] = useState<File[] | null>(null)
     const [open, setOpen] = useState(false)
-    const [options, setOptions] = useState<ImportOptions>({
-        tags: [], duplicateTitleStrategy: "rename"
-    })
+    const [options, setOptions] = useState<ImportOptions>({...DefaultImportOptions})
     const [importing, setImporting] = useState(false)
-
+ 
     const onPicked = (files: File[]) => {
         setFiles(files)
         setOpen(true)
+        console.log("onpicked", files)
     }
 
     const picker = useImportFilePicker(onPicked)
@@ -26,7 +25,7 @@ export function useImportController(
     const cancel = () => {
         setOpen(false)
         setFiles(null)
-        setOptions({ tags: [], duplicateTitleStrategy: "rename" })
+        setOptions({...DefaultImportOptions})
     }
 
     const confirm = async (options: ImportOptions) => {
@@ -45,10 +44,12 @@ export function useImportController(
     
     
     const dialogElement = (
+        open && files &&
         <ImportDialog
             open={open}
             onClose={cancel}
             onImport={confirm}
+            filesToImport={files}
         />
     )
 

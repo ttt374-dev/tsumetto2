@@ -1,10 +1,20 @@
-import { Problem, type ProblemId } from "@/domain/problem/entity/Problem";
+import { Problem, type ProblemId, type ProblemType } from "@/domain/problem/entity/Problem";
 import type { ProblemRepository } from "@/domain/problem/repository/ProblemRepository";
+import { deepPurple } from "@mui/material/colors";
+
 
 export type DuplicateTitleStrategy = "skip" | "rename" | "overwrite"
 export type ImportOptions = {
     tags: string[]
+    problemType: ProblemType
+    source: string
     duplicateTitleStrategy: DuplicateTitleStrategy
+}
+export const DefaultImportOptions: ImportOptions = {
+    tags: [],
+    problemType: "standard",
+    source: "",
+    duplicateTitleStrategy: "skip"
 }
 
 export type ImportStatus =
@@ -44,7 +54,7 @@ abstract class ImportError extends Error {
   abstract readonly code: string
 }
 
-async function getExsitingTitle(repo: ProblemRepository): Promise<Set<string>>{
+export async function getExsitingTitle(repo: ProblemRepository): Promise<Set<string>>{
     //const store = useProblemStore(repo)
     const problems = await repo.load()
     return new Set(problems.filter(p=>p.isActive).map(p=>p.title))
@@ -71,7 +81,7 @@ export function useImportProblemsUsecase(problemRepo: ProblemRepository) {
                     case "skip":
                         console.warn(`skipped by duplicated title: ${title}`)
                         return { status: "skipped", reason: "duplicate-title"}
-                        break;
+                        //break;
                     case "overwrite":
                         break   // TODO                        
                 }
