@@ -1,37 +1,34 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from "@mui/material";
-import { useEffect, useState } from "react";
-import { ProblemTagEditor } from "../../ProblemTagEditor";
+import { useEffect, useMemo, useState } from "react";
+import { ProblemTagEditor } from "../common/components/ProblemTagEditor";
 import { DefaultImportOptions, getExsitingTitle, type DuplicateTitleStrategy, type ImportOptions } from "@/application/usecase/problem/import/ImportProblemsUsecase";
 import { ProblemTypeFilterControl } from "@/ui/common/query-control/ProblemTypeFilterControl";
 import { SourceFilterControl } from "@/ui/common/query-control/SourceFilterControl";
 import { useProblemStore } from "@/ui/store/useProblemStore";
 
-export function useImportViewModel() {
-
+export function useImportViewModel(files: File[]) {
     const allSources = useProblemStore(s => s.allSources)
     const activeProblems = useProblemStore(s => s.activeProblems)
-    const existingTitles = new Set(activeProblems.map(p => p.title))
+    const existingTitles = useMemo(
+        () => new Set(activeProblems.map(p => p.title)),
+        [activeProblems]
+    )
 
-    const hasDuplicatedTitle = (files: File[]): boolean => {
-        let flag = false
-        for(const file of files){
-            if (existingTitles.has(file.name)) flag = true
-        }
-        return flag
+    const hasDuplicatedTitle = (): boolean => {
+        return files.some(f => existingTitles.has(f.name))        
     }
 
     return { allSources, hasDuplicatedTitle }
 }
+/////////////////////////////////////////////////////////////////////////
 export function ImportDialog({open, onClose, onImport, filesToImport}: {
     open: boolean
     onClose: () => void
     filesToImport: File[]
     onImport: (options: ImportOptions) => void
 }){
-    const vm = useImportViewModel()
-   
+    const vm = useImportViewModel(filesToImport)   
     const [options, setOptions] = useState<ImportOptions>({...DefaultImportOptions})
-    if (!filesToImport) return
         
     return (
         <Dialog open={open} >
@@ -56,7 +53,7 @@ export function ImportDialog({open, onClose, onImport, filesToImport}: {
                     onChange={(next) => { setOptions({...options, tags: next})}}
                 />
                 {/* オプション*/}
-                {vm.hasDuplicatedTitle(filesToImport) &&
+                {vm.hasDuplicatedTitle() &&
                     <FormControl>
                         <FormLabel>同名タイトルの処理</FormLabel>
                         <RadioGroup

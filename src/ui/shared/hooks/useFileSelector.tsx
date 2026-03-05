@@ -1,12 +1,15 @@
 import { useRef } from "react"
 
-export function useFileSelector(accept?: string, multiple = true) {
+export function useFileSelector(
+  onFilesSelected: (files: File[]) => void,
+  accept?: string,
+  multiple = true
+) {
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const openFileDialog = () => {
+  const openDialog = () => {
     inputRef.current?.click()
-  }
-
+  }  
   const inputElement = (
     <input
       ref={inputRef}
@@ -15,19 +18,13 @@ export function useFileSelector(accept?: string, multiple = true) {
       accept={accept}
       style={{ display: "none" }}
       onChange={(e) => {
-        if (e.target.files && onFilesSelected) {
-          onFilesSelected(e.target.files)
-          e.target.value = "" // 再選択可能に
+        if (e.target.files) {
+            onFilesSelected([...e.target.files])            
+            e.target.value = ""
         }
       }}
     />
   )
 
-  let onFilesSelected: ((files: FileList) => void) | undefined
-
-  const setOnFilesSelected = (fn: (files: FileList) => void) => {
-    onFilesSelected = fn
-  }
-
-  return { openFileDialog, inputElement, setOnFilesSelected }
+  return { openDialog, inputElement }
 }

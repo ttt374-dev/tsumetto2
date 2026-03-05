@@ -6,7 +6,7 @@ import { useToast } from "@/ui/App/providers/ToastProvider";
 import { useProblemStore } from "@/ui/store/useProblemStore";
 import { useBackupRestoreDialog } from "../dialogs/BackupRestoreDialog";
 import { routes } from "@/ui/App/useAppNavigation";
-import { useImportController } from "../dialogs/Import/useImportController";
+import { useImport } from "../../../Import/useImport";
 
 interface Props {
     header?: React.ReactNode;
@@ -22,7 +22,7 @@ export function AppShell({ header, footer, rightActions, fab, children }: Props)
     const toast = useToast()
 
     const reload = useProblemStore(s => s.reload)
-    const importer = useImportController(async (res) => {
+    const importer = useImport(async (res) => {
         await reload()
         toast({
             message: `imported: ${res.summary.imported}, skipped: ${res.summary.skipped}, failed: ${res.summary.failed}`
@@ -43,14 +43,14 @@ export function AppShell({ header, footer, rightActions, fab, children }: Props)
                     onNavigateToDashboard={() => navigate(routes.home)}
                     onNavigateToLibrary={() => navigate(routes.library)}
                     onNavigateToStats={()=>navigate(routes.stats)}
-                    onImport={importer.openFileDialog}
+                    onImport={importer.openDialog}
                     onBackupRestore={backupRestoreDialog.openDialog}
                 />
             }
         >
 
             {children}
-            {importer.pickerElement}
+            {importer.inputElement}
             {importer.dialogElement}
             {backupRestoreDialog.dialogElement}
         </AppLayout>

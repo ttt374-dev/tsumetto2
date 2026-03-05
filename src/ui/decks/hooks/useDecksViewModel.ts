@@ -12,7 +12,7 @@ import { useLearningRecordStore } from "@/ui/store/useLearningRecordStore";
 import { applyFilter } from "@/domain/problem/service/query/applyFilter";
 import type { Deck } from "@/domain/deck/entity/Deck";
 import { ProblemStats } from "@/domain/problem/valueObject/ProblemStats";
-import { useImportController } from "@/ui/common/components/dialogs/Import/useImportController";
+import { useImport } from "@/ui/Import/useImport";
 import { useBackupRestoreDialog } from "@/ui/common/components/dialogs/BackupRestoreDialog";
 import { DefaultQueryState } from "@/domain/problem/service/query/ProblemsQuery";
 
@@ -84,7 +84,7 @@ export function useDecksViewModel() {
         navigate(routes.missionPlay);
     };
 
-    const importer = useImportController(async (res) => {
+    const importer = useImport(async (res) => {
         await reloadProblems();
         toast({
             message: `imported: ${res.summary.imported}, skipped: ${res.summary.skipped}, failed: ${res.summary.failed}`,
