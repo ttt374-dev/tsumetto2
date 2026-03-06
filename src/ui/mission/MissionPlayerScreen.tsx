@@ -10,8 +10,8 @@ export function MissionPlayerScreen() {
     if (vm.status !== "playing") return <>{vm.status}</>
     const capabilities = {
         answerable: {
-            answer: vm.answer,
-            undoLastAnswer: (vm.lastAnsweredEvent()) ? vm.undoLastAnswer : undefined,
+            answer: vm.submitAnswer,
+            undoLastAnswer: vm.undoLastAnswer,
         },
         navigatable: vm.problemNavigation
     }

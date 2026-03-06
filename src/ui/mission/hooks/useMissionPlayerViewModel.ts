@@ -6,7 +6,7 @@ import type { ProblemNavigation } from "@/ui/player/PlayerScreen"
 import React, { useCallback, useMemo } from "react"
 import type { SolvedResult } from '@/domain/learning/entity/Learning';
 import { useLearningEventStore } from '@/ui/store/useLearningEventStore';
-import type { LearningEvent } from "@/domain/learning/entity/LearningEvent"
+import { LteMobiledata } from "@mui/icons-material"
 
 type MissionPlayerVM =
   | { status: "idle" }
@@ -20,7 +20,7 @@ type MissionPlayerVM =
       problemNavigation: ProblemNavigation
       index: number
       count: number
-      answer: (problemId: ProblemId, res: SolvedResult, sec?: number) => void
+      submitAnswer: (problemId: ProblemId, res: SolvedResult, sec: number) => void
       //lastAnsweredEvent: () => LearningEvent | undefined
       undoLastAnswer: () => void
     }
@@ -33,7 +33,7 @@ export function useMissionPlayerViewModel(): MissionPlayerVM {
     const index = useMissionStore(s => s.currentIndex)
     const deckId = useMissionStore(s => s.deckId)
 
-    const answerMission = useMissionStore(s => s.answer)
+    //const answerMission = useMissionStore(s => s.answer)
     const missionId = useMissionStore(s=>s.missionId)
     const next = useMissionStore(s => s.next)
     const prev = useMissionStore(s => s.prev)
@@ -57,16 +57,16 @@ export function useMissionPlayerViewModel(): MissionPlayerVM {
     // navigation
     const problemNavigation = useMemo(() => ({ next, prev, moveTo }), [next, prev, moveTo])
 
-    const answer = useCallback(
-        (problemId: ProblemId, res: SolvedResult, sec?: number | undefined) => {
-            if (!missionId) return
-            //console.log("answer", problemId)
-            review(problemId, missionId, res, sec)
-            answerMission(res, sec)
-            next()
-        },
-        [answerMission, next, missionId, review]
-    )
+    const submitAnswer = (problemId: ProblemId, res: SolvedResult, sec: number) => {
+        console.log("submit answer", problemId, missionId)
+        if (!missionId) return
+        //console.log("answer", problemId)
+        review(problemId, missionId, res, sec)
+        //answerMission(res, sec, event.id)
+        next()
+    }
+
+    
 
     const undoLastAnswer = () => {
         if (!missionId) return
@@ -102,7 +102,7 @@ export function useMissionPlayerViewModel(): MissionPlayerVM {
     return { 
         status: "playing", 
         problem, title,  problemNavigation, index, count, 
-        answer, undoLastAnswer,
+        submitAnswer, undoLastAnswer,
      }
 }
 

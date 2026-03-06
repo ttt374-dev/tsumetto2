@@ -27,7 +27,7 @@ type NewLearningResetEvent =
 type NewLearningCancelEvent =
     {
         type: "cancel"
-        //missionId: MissionId
+        missionId: MissionId
         targetEventId: LearningEventId
     }
 

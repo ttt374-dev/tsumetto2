@@ -1,5 +1,6 @@
 import type { DeckId } from "@/domain/deck/entity/Deck";
 import type { SolvedResult } from "@/domain/learning/entity/Learning";
+import type { LearningEventId } from "@/domain/learning/entity/LearningEvent";
 import type { MissionId, MissionPhase, MissionResultEntry } from "@/domain/mission/entity/Mission";
 import type { ProblemId } from "@/domain/problem/entity/Problem";
 import { v4 } from "uuid";
@@ -12,14 +13,14 @@ type MissionStore = {
     deckId?: DeckId;
     problemIds: ProblemId[];
     currentIndex: number; // ⭐ マスター
-    answers: MissionResultEntry[];
+    //answers: MissionResultEntry[];
 
     // ===== derived (必要最低限だけ) =====
     phase: () => MissionPhase
 
     // ===== command =====
     start: (deckId: DeckId, ids: ProblemId[]) => MissionId;
-    answer: (result: SolvedResult, secToTaken?: number) => void;
+    //answer: (result: SolvedResult, secToTaken: number, learningEventId: LearningEventId) => void;
     next: () => void;
     prev: () => void;
     moveToIndex: (index: number) => void;
@@ -70,26 +71,6 @@ export const useMissionStore = create<MissionStore>((set, get) => ({
         return missionId
     },
 
-    answer: (result, secToTaken) =>
-        set((s) => {
-            if (!s.missionId) return s; // ← ガード
-            const { currentIndex, problemIds, answers } = s;
-            if (currentIndex < 0) return s;
-
-            const problemId = problemIds[currentIndex];
-            return {
-                answers: [
-                    ...answers,
-                    {
-                        problemId,
-                        solvedResult: result,
-                        missionId: s.missionId,
-                        secToTaken: secToTaken,
-                    },
-                ],
-            };
-        }),
-
     next: () =>
         set((s) => {
             const nextIndex = s.currentIndex + 1;
@@ -127,6 +108,6 @@ export const useMissionStore = create<MissionStore>((set, get) => ({
             deckId: undefined,
             problemIds: [],
             currentIndex: -1,
-            answers: [],
+            //answers: [],
         }),
 }));

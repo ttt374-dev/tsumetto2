@@ -6,9 +6,9 @@ export type MissionId = string
 
 export type MissionResultEntry = {
     problemId: ProblemId,
-    missionId: MissionId,
+    //missionId: MissionId,
     solvedResult: SolvedResult,
-    //learningEventId: LearningEventId,
+    learningEventId: LearningEventId,
     secToTaken?: number,
 }
 

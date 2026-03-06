@@ -14,10 +14,10 @@ type LearningEventStoreState = {
     getLastReviewedEvent: (m: MissionId) => LearningEvent | undefined;
 
     reload: () => Promise<void>;
-    append: (learningEvent: NewLearningEvent) => void
-    appendReview: (problemId: ProblemId, missionId: MissionId, quality: SolvedResult, sec?: number) => void
-    appendCancel: (missionId: MissionId, targetEventId: LearningEventId) => void
-    appendReset: (problemId: ProblemId) => void
+    append: (learningEvent: NewLearningEvent) => LearningEvent
+    appendReview: (problemId: ProblemId, missionId: MissionId, quality: SolvedResult, sec?: number) => LearningEvent
+    appendCancel: (missionId: MissionId, targetEventId: LearningEventId) => LearningEvent
+    appendReset: (problemId: ProblemId) => LearningEvent
     clearAll: () => void
 };
 
@@ -59,18 +59,18 @@ export const useLearningEventStore = create<LearningEventStoreState>((set, get) 
             console.error(e)
         }
     },
-    append: (newevent: NewLearningEvent) => {
+    append: (newevent: NewLearningEvent): LearningEvent => {
         const event: LearningEvent = { ...newevent, id: createLearningEventId(), at: Date.now() }        
         set(state => ({
             eventLog: [...state.eventLog, event]
         }))
-        
+        return event
     },
     appendReview: (problemId: ProblemId, missionId: MissionId, quality: SolvedResult, sec?: number) => {
         const event: NewLearningEvent = {
             type: "reviewed", problemId, missionId, quality, sec
         }
-        get().append(event);
+        return get().append(event);
     },
     appendCancel: (missionId: MissionId, targetEventId: LearningEventId) => {
         const target = get().eventLog.find(e => e.id === targetEventId && e.type === "reviewed" && e.missionId === missionId)
@@ -78,17 +78,17 @@ export const useLearningEventStore = create<LearningEventStoreState>((set, get) 
         if (!target) throw new Error("Target not found")
 
         const event: NewLearningEvent = {
-            type: "cancel", targetEventId: targetEventId
+            type: "cancel", missionId: missionId, targetEventId: targetEventId
         }
 
-        get().append(event)
+        return get().append(event)
     },
     appendReset: (problemId: ProblemId) => {
         const event: NewLearningEvent = {
             type: 
             "reset", problemId
         }
-        get().append(event)
+        return get().append(event)
     },
     clearAll: () => {
         set({eventLog: []})
