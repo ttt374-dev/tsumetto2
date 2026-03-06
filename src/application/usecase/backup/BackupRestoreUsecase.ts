@@ -31,7 +31,7 @@ export type BackupRestoreError =
 export type RestoreResult = Result<RestoreResultOk, BackupRestoreError>
 ///////////////////////////
 export interface BackupRestoreUsecase {
-    backup(): Promise<BackupResult> // TODO
+    backup(): Promise<BackupResult>
     restore(data: BackupData): Promise<RestoreResult>
 }
 
@@ -46,9 +46,7 @@ export function useBackupRestoreUsecase(
     learningRepo: LearningEventRepository,
     deckRepo: DeckRepository,
     writer: BackupWriter,
-): BackupRestoreUsecase {
-
- 
+): BackupRestoreUsecase { 
     const reloadProblems = useProblemStore(s=>s.reload)
     const reloadDecks = useDeckStore(s=>s.loadDecks)
     // TODO: error check

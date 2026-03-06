@@ -23,6 +23,7 @@ import { useProblemStore } from "@/ui/store/useProblemStore";
 import { isEqual } from "lodash";
 import { FilterControlPanel } from "@/ui/common/query-control/FilterControlPanel";
 import type { useProblemsQuery } from "@/domain/problem/service/query/useProblemsQuery";
+import { DefaultQueryState } from "@/domain/problem/service/query/ProblemsQuery";
 
 export type LibraryItemActions = {
     openTagEditDialog: (ids: ProblemId[]) => void
@@ -64,7 +65,7 @@ export function LibraryView({ ids, query, actionMode, changeActionMode,
 
     const allSources = useProblemStore(s=>s.allSources)
 
-    const isFiltered = false // !isEqual(query.query., DefaultFilterState); .// TODO
+    const isFiltered = !isEqual(query, DefaultQueryState);
     //console.log("is filtered", isFiltered, query.filter.state, DefaultFilterState)
     return (
         <>

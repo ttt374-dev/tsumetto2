@@ -1,5 +1,6 @@
 import { Problem, type ProblemId, type ProblemType } from "@/domain/problem/entity/Problem";
 import type { ProblemRepository } from "@/domain/problem/repository/ProblemRepository";
+import { useProblemStore } from "@/ui/store/useProblemStore";
 import { deepPurple } from "@mui/material/colors";
 
 
@@ -68,6 +69,10 @@ function resolveTitle(title: string, existing: Set<string>) {
 /////////////////////////////////////////////////
 export function useImportProblemsUsecase(problemRepo: ProblemRepository) {    
     const importFile = async (file: File, options: ImportOptions): Promise<ImportResult> => {
+        
+        const activeProblems = useProblemStore(s=>s.activeProblems)
+        const deleteProblem = useProblemStore(s=>s.deleteProblem)
+
         try {
             const buf = await file.arrayBuffer();
             const text = new TextDecoder("shift_jis").decode(buf);    
@@ -83,7 +88,10 @@ export function useImportProblemsUsecase(problemRepo: ProblemRepository) {
                         return { status: "skipped", reason: "duplicate-title"}
                         //break;
                     case "overwrite":
-                        break   // TODO                        
+                        const existingProblem = await problemRepo.findByTitle(title)
+                    if (existingProblem) {
+                        await problemRepo.remove(existingProblem.id)
+                    }
                 }
             }
             //const title = resolveTitle(file.name, existingTitles)

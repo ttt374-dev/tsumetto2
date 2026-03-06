@@ -9,7 +9,10 @@ export class ProblemRepository {
     async load(){ return await this.persist.load()}
     private async save(problems: Problem[]){ await this.persist.save(problems)}
 
-    
+    async findByTitle(title: string): Promise<Problem | undefined>{
+        const data = await this.load()
+        return data.find(p=>p.title === title)
+    }    
 
     async add(problem: Problem): Promise<void> {
         console.log("add problem", problem)
