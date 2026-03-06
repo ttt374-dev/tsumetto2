@@ -11,13 +11,13 @@ export function useImport(onAfterImported?: (result: ImportFilesResult) => void)
     //const [options, setOptions] = useState<ImportOptions>({...DefaultImportOptions})
     const [importing, setImporting] = useState(false)
  
-    const onPicked = (files: File[]) => {
+    const onFilesSelected = (files: File[]) => {
         setFiles(files)
         setOpen(true)
         //console.log("onpicked", files)
     }
 
-    const picker = useFileSelector(onPicked)
+    const picker = useFileSelector(onFilesSelected)
 
     const cancel = () => {
         setOpen(false)
@@ -50,7 +50,10 @@ export function useImport(onAfterImported?: (result: ImportFilesResult) => void)
 
     return {
         // picker
-        ...picker,
+        //...picker,
+        openFilesSelectDialog: picker.openDialog,
+        filesSelectElement: picker.inputElement,
+
 
         // dialog
         open,

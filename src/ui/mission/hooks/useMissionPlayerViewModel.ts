@@ -21,14 +21,15 @@ type MissionPlayerVM =
       index: number
       count: number
       answer: (problemId: ProblemId, res: SolvedResult, sec?: number) => void
-      lastAnsweredEvent: () => LearningEvent | undefined
+      //lastAnsweredEvent: () => LearningEvent | undefined
       undoLastAnswer: () => void
     }
 
 /////////////////////
 export function useMissionPlayerViewModel(): MissionPlayerVM {
     const problemIds = useMissionStore(s => s.problemIds)
-    const learningEvents = useLearningEventStore(s=>s.eventLog)
+    //const learningEvents = useLearningEventStore(s=>s.eventLog)
+
     const index = useMissionStore(s => s.currentIndex)
     const deckId = useMissionStore(s => s.deckId)
 
@@ -42,6 +43,9 @@ export function useMissionPlayerViewModel(): MissionPlayerVM {
     const count = problemIds.length
     
     const problem = useProblemStore(s => s.byId[currentProblemId])
+
+    // learning event log
+    const getLastEvent = useLearningEventStore(s=>s.getLastReviewedEvent)
     const review = useLearningEventStore(s=>s.appendReview)
     const cancel = useLearningEventStore(s=>s.appendCancel)    
 
@@ -61,14 +65,13 @@ export function useMissionPlayerViewModel(): MissionPlayerVM {
             answerMission(res, sec)
             next()
         },
-        [answerMission, next]
+        [answerMission, next, missionId, review]
     )
-    const lastAnsweredEvent = () => {
-        return [...learningEvents].reverse().find(e=>e.type === "reviewed" && e.missionId === missionId)
-    }
+
     const undoLastAnswer = () => {
-        const last = lastAnsweredEvent()
-        if (!missionId || !last) return       
+        if (!missionId) return
+        const last = getLastEvent(missionId)
+        if ( !last) return       
         
         cancel(missionId, last.id)        
         console.log("undo last", last)
@@ -98,7 +101,7 @@ export function useMissionPlayerViewModel(): MissionPlayerVM {
 
     return { 
         status: "playing", 
-        problem, title,  problemNavigation, index, count, lastAnsweredEvent,
+        problem, title,  problemNavigation, index, count, 
         answer, undoLastAnswer,
      }
 }

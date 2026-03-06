@@ -1,37 +1,16 @@
-import {SpeedDial, SpeedDialAction, SpeedDialIcon} from "@mui/material";
-import FolderIcon from "@mui/icons-material/Folder";
-import UploadFileIcon from "@mui/icons-material/UploadFile";
+import { Fab } from "@mui/material";
+import AddIcon from '@mui/icons-material/Add'
 
-export default function DeckFabMenu({onCreateNewDeck, onImportFiles}: {
+export default function DeckFabMenu({ onCreateNewDeck }: {
     onCreateNewDeck: () => void
-    onImportFiles: () => void
+    //onImportFiles: () => void
 }) {
     return (
-        <SpeedDial
-            ariaLabel="add actions"
-            sx={{ position: "fixed", bottom: 16, right: 16 }}
-            icon={<SpeedDialIcon />}
-        >
-            <SpeedDialAction
-                icon={<FolderIcon />}
-                onClick={onCreateNewDeck}
-                slotProps={{
-                    tooltip: {
-                        title: "デッキを追加",
-                        open: true,
-                    },
-                }}
-            />
-            <SpeedDialAction
-                icon={<UploadFileIcon />}
-                onClick={onImportFiles}
-                slotProps={{
-                    tooltip: {
-                        title: "ファイルをインポート",
-                        open: true,
-                    },
-                }}
-            />
-        </SpeedDial>
+        <Fab onClick={onCreateNewDeck}
+            color="primary"
+            sx={{ position: "fixed", bottom: 16, right: 16 }}>
+            <AddIcon />
+        </Fab>
+
     );
 }

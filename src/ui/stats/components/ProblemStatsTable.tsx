@@ -6,34 +6,54 @@ import { GroupedTable, type StatsRowValues } from "./GroupedTable";
 import { DefaultFilterState } from "@/domain/problem/service/query/filter";
 import { applyFilter } from "@/domain/problem/service/query/applyFilter";
 import { DefaultQueryState } from "@/domain/problem/service/query/ProblemsQuery";
+import type { Problem, ProblemId } from "@/domain/problem/entity/Problem";
 
 export function ProblemStatsTable() {
     const activeProblems = useProblemStore(s => s.activeProblems)
     const learningRecords = useLearningRecordStore(s => s.records)
-    //const filter = { ...DefaultFilterState, dueForReviewOnly: true}
+
     const queryState = { ...DefaultQueryState, dueForReviewOnly: true}
     const dueForReviewOnly = applyFilter(activeProblems, learningRecords, queryState)
     console.log("due review", dueForReviewOnly)
 
     // 総合
     const unanswered = activeProblems.filter(p => { learningRecords[p.id]?.totalCount > 0 })
-    const statsMapGeneral = {
-        "全問題": ProblemStats.create(activeProblems.map(p => p.id), learningRecords),
-        "未完了": ProblemStats.create(unanswered.map(p => p.id), learningRecords),
-        "レビュー対象": ProblemStats.create(dueForReviewOnly.map(p => p.id), learningRecords),
+    const idsMap: Record<string, Record<string, Problem[]>> = {}
+
+    idsMap["general"] =  {
+        "全問題": activeProblems,
+        "未完了": unanswered,
+        "レビュー対象": dueForReviewOnly,
     }
+    
+
+    // 出典
+    const allSources = useProblemStore(s=>s.allSources)
+    const sourcesTatsRows = useMemo(()=>
+        allSources.map(source=>{
+            const filteredIds = activeProblems
+                .filter(p=>p.source===source)
+                .map(p=>p.id)
+            return { 
+                label: source, 
+                stats: ProblemStats.create(filteredIds, learningRecords)
+            }
+        }), [allSources, activeProblems, learningRecords])
+    
+
     // 手数
     const mate3 = activeProblems.filter(p => p.kifData.moves.length <= 3)
     const mate5 = activeProblems.filter(p => p.kifData.moves.length === 5)
     const mate7 = activeProblems.filter(p => p.kifData.moves.length === 7)
     const mate9 = activeProblems.filter(p => p.kifData.moves.length >= 9)
-
-    const statsMapMates = {
-        "3手まで": ProblemStats.create(mate3.map(p => p.id), learningRecords),
-        "5手": ProblemStats.create(mate5.map(p => p.id), learningRecords),
-        "7手": ProblemStats.create(mate7.map(p => p.id), learningRecords),
-        "9手以上": ProblemStats.create(mate9.map(p => p.id), learningRecords),
+    idsMap["mateLength"] = {
+        "3手まで": mate3,
+        "5手": mate5,
+        "7手": mate7,
+        "9手以上": mate9,
     }
+
+    
     // タグ
     const allTags = useProblemStore(s => s.allTags)
     const tagStatsRows = useMemo(
@@ -53,11 +73,15 @@ export function ProblemStatsTable() {
     const groups = [
         {
             groupName: "総合",
-            rows: statsMapToRows(statsMapGeneral),
+            rows: statsMapToRows(idsMap["general"]),
+        },
+        {
+            groupName: "出典",
+            rows: sourcesTatsRows,
         },
         {
             groupName: "指し手数",
-            rows: statsMapToRows(statsMapMates),
+            rows: statsMapToRows(idsMap["mateLength"]),
         },
         {
             groupName: "タグ",
@@ -70,12 +94,13 @@ export function ProblemStatsTable() {
         <GroupedTable groups={groups} columns={columns} />
     )
 
+    ///////////////////////
+    function statsMapToRows(statsMap: Record<string, Problem[]>): StatsRowValues[] {
+        return Object.entries(statsMap).map(([label, problems]) => ({
+            label,
+            stats: ProblemStats.create(problems.map(p=>p.id), learningRecords),
+        }))
+    }
 }
 
-///////////////////////
-function statsMapToRows(statsMap: Record<string, ProblemStats>): StatsRowValues[] {
-    return Object.entries(statsMap).map(([label, stats]) => ({
-        label,
-        stats
-    }))
-}
+

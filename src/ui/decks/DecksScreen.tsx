@@ -135,7 +135,7 @@ export default function DecksScreen() {
                     <EditIcon  />
                 </IconButton>
             }
-            fab={<DeckFabMenu onCreateNewDeck={onCreateDeck} onImportFiles={importer.openFileDialog} />}
+            fab={<DeckFabMenu onCreateNewDeck={onCreateDeck} />}
 
         >
             <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto" }}> { /* , touchAction: "pan-y" */ }
@@ -154,7 +154,7 @@ export default function DecksScreen() {
             </Box>
 
             {/* ダイアログ */}
-            {importer.pickerElement}
+            {importer.filesSelectElement}
             {importer.dialogElement}
             {backupRestoreDialog.dialogElement}
         </AppShell>

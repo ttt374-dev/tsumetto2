@@ -11,6 +11,7 @@ type LearningEventStoreState = {
     repo?: LearningEventRepository
     setRepository: (repo: LearningEventRepository) => void
     eventLog: LearningEventLog;
+    getLastReviewedEvent: (m: MissionId) => LearningEvent | undefined;
 
     reload: () => Promise<void>;
     append: (learningEvent: NewLearningEvent) => void
@@ -26,6 +27,25 @@ export const useLearningEventStore = create<LearningEventStoreState>((set, get) 
     repo: undefined,
     setRepository: (repo) => set({ repo }),
     eventLog: [],
+    getLastReviewedEvent: (missionId: MissionId) => {
+        const canceled = new Set<string>()
+
+        for (let i = get().eventLog.length - 1; i >= 0; i--) {
+            const e = get().eventLog[i]
+
+            if (e.type === "cancel") {
+                canceled.add(e.targetEventId)
+            }
+
+            if (e.type === "reviewed" && e.missionId === missionId) {
+                if (!canceled.has(e.id)) {
+                    return e
+                }
+            }
+        }
+
+        return undefined  
+    },
 
     reload: async () => {
         try {
@@ -58,7 +78,7 @@ export const useLearningEventStore = create<LearningEventStoreState>((set, get) 
         if (!target) throw new Error("Target not found")
 
         const event: NewLearningEvent = {
-            type: "cancel", missionId, targetEventId: targetEventId
+            type: "cancel", targetEventId: targetEventId
         }
 
         get().append(event)

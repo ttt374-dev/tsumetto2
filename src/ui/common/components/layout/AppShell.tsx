@@ -43,14 +43,14 @@ export function AppShell({ header, footer, rightActions, fab, children }: Props)
                     onNavigateToDashboard={() => navigate(routes.home)}
                     onNavigateToLibrary={() => navigate(routes.library)}
                     onNavigateToStats={()=>navigate(routes.stats)}
-                    onImport={importer.openDialog}
+                    onImport={importer.openFilesSelectDialog}
                     onBackupRestore={backupRestoreDialog.openDialog}
                 />
             }
         >
 
             {children}
-            {importer.inputElement}
+            {importer.filesSelectElement}
             {importer.dialogElement}
             {backupRestoreDialog.dialogElement}
         </AppLayout>
