@@ -15,15 +15,14 @@ export function SourceFilterControl( {source, onChange, sources}: {
     sources: string[]
 }){
     return (
-        <Select<SourceUi> value={source ?? UNSPECIFIED} fullWidth
-        label="出典 "
-            onChange={e => onChange(e.target.value === UNSPECIFIED ? undefined : (e.target.value as string))}
-            
+        <TextField select value={source ?? UNSPECIFIED} fullWidth
+            label="出典"
+            onChange={e => onChange(e.target.value === UNSPECIFIED ? undefined : (e.target.value as string))}            
         >
             <MenuItem value={UNSPECIFIED}>（出典指定なし）</MenuItem>
             {sources.map(s => (
                 <MenuItem key={s} value={s}>{s}</MenuItem>
             ))}
-        </Select>
+        </TextField>
     )
 }

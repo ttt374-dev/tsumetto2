@@ -17,7 +17,7 @@ type Props = {
 }
 export function FilterControlPanel({query, allSources}: Props){
     return (
-        <Grid container>
+        <Grid container spacing={2}>
             <Grid size={12}>
                 <TextField label="タイトル名" value={query.state.text} onChange={(e) => {
                     const value = e.target.value

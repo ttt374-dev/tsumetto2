@@ -64,9 +64,7 @@ export function useMissionPlayerViewModel(): MissionPlayerVM {
         review(problemId, missionId, res, sec)
         //answerMission(res, sec, event.id)
         next()
-    }
-
-    
+    }    
 
     const undoLastAnswer = () => {
         if (!missionId) return

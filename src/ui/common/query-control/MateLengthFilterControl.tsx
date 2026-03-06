@@ -21,6 +21,28 @@ export function MateLengthFilterControl({ mateBuckets = [], onChange }: Props) {
             onChange([...mateBuckets, bucket])
         }
     }
+    return (
+        <FormControl fullWidth>
+            <FormLabel>詰み手数</FormLabel>
+            <Paper variant="outlined" sx={{ p: 1.5 }}>
+                <FormGroup row>
+                    {(Object.keys(BUCKET_LABELS) as MateBucket[]).map(bucket => (
+                        <FormControlLabel
+                            key={bucket}
+                            control={
+                                <Checkbox
+                                    checked={mateBuckets.includes(bucket)}
+                                    onChange={() => toggle(bucket)}
+                                />
+                            }
+                            label={BUCKET_LABELS[bucket]}
+                        />
+                    ))}
+                </FormGroup>
+                
+            </Paper>
+        </FormControl>
+    )
 
     return (
         <Paper  sx={{

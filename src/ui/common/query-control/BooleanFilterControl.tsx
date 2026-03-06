@@ -11,6 +11,26 @@ export function BooleanFilterControl({ queryState, onToggleFilter}: {
     onToggleFilter: (key: BooleanQueryKey) => void        
 }) {
     return (
+        <FormControl fullWidth>
+            <FormLabel>フィルター</FormLabel>
+            <Paper variant="outlined" sx={{ p: 1.5 }}>
+                <FormControlLabel control={
+                    <Checkbox checked={queryState.unansweredOnly}
+                        onChange={() => { onToggleFilter("unansweredOnly") }} />}
+                    label="未回答" />
+
+                <FormControlLabel control={
+                    <Checkbox checked={queryState.starredOnly}
+                        onChange={() => { onToggleFilter("starredOnly") }} />}
+                    label="スター" />
+                <FormControlLabel control={
+                    <Checkbox checked={queryState.dueForReviewOnly}
+                        onChange={() => { onToggleFilter("dueForReviewOnly") }} />}
+                    label="レビュー対象" />
+            </Paper>
+        </FormControl>
+    )
+    return (
         <Paper sx={{
             m: 1,
             p: 1,

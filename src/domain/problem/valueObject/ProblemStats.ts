@@ -1,10 +1,5 @@
 import type { LearningRecord } from "@/domain/learning/entity/Learning"
 import type { Problem, ProblemId } from "../entity/Problem"
-import type { FilterState } from "../service/query/filter"
-import { applyFilter } from "../service/query/applyFilter"
-import type { MissionResultEntry } from "@/domain/mission/entity/Mission"
-import { QueryStatsOutlined } from "@mui/icons-material"
-import type { QueryState } from "../service/query/ProblemsQuery"
 
 export class ProblemStats {
     constructor(
@@ -40,10 +35,12 @@ export class ProblemStats {
             intervalDays,
         )
     }
+    /*
     static createWithFilter(problems: Problem[], learningRecords: LearningRecord, queryState: QueryState){
         const filtered = applyFilter(problems, learningRecords, queryState)
         return this.create(filtered.map(p=>p.id), learningRecords)
     }
+    
     static createFromMissionResultList(missionResultList: MissionResultEntry[]): ProblemStats {
 
         return new ProblemStats(
@@ -54,7 +51,7 @@ export class ProblemStats {
             0,
         )
     }
-
+*/
     get totalCount(): number { return this.solvedCount + this.failedCount}
     get accuracy(): number { return this.totalCount === 0 ? 0 : this.solvedCount / this.totalCount }
 }

@@ -38,7 +38,7 @@ export const useMissionStore = create<MissionStore>((set, get) => ({
     missionId: undefined,
     problemIds: [],
     currentIndex: -1,
-    answers: [],
+    //answers: [],
     
     // ======================
     // derived

@@ -1,18 +1,12 @@
-import { Box, Button, FormControlLabel, Grid, IconButton, MenuItem, Select, Stack, TextField } from "@mui/material";
+import { Box, Button, FormControl, FormControlLabel, Grid, IconButton, InputLabel, MenuItem, Select, Stack, TextField, Typography } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 
-import { EditableText } from "../common/components/EditableText";
-import { BooleanFilterControl } from "../common/query-control/BooleanFilterControl";
 import SortControl from "../common/query-control/SortControl";
 import { useDeckEditViewModel } from "./hooks/useDeckEditViewModel";
 import { AppShell } from "../common/components/layout/AppShell";
-import { MateLengthFilterControl } from "../common/query-control/MateLengthFilterControl";
-import { TagCheckboxFilterControl } from "../common/query-control/TagCheckboxFilterControl";
 import { useListDialog } from "../list/ListDialog";
 import { useNavigate } from "react-router-dom";
 import { routes } from "../App/useAppNavigation";
-import { useState } from "react";
-import type { ProblemType } from "@/domain/problem/entity/Problem";
 import { FilterControlPanel } from "../common/query-control/FilterControlPanel";
 
 const UNSPECIFIED = "__UNSPECIFIED__";
@@ -32,7 +26,6 @@ export function DeckEditScreen() {
         navigate(routes.list, { state: { ids: problemIds, title: `デッキ ${name}：問題リスト` } })
     }    
 
-    //const [filterText, setFilterText] = useState("")
     return (
         <AppShell
             header={"Deck Edit"}
@@ -64,10 +57,20 @@ export function DeckEditScreen() {
                     </Grid>
                     
                     <FilterControlPanel 
-                        query={query} allSources={allSources}/>
-                    <Grid size={12}>
+                        query={query} allSources={allSources}
+                    />
+                    
+                        <Grid size={3}>
+                        <Typography>ラベル：</Typography>
+                        </Grid>
+                        <Grid size={9}>
+                         <FormControl fullWidth>
+                              
+
+                            <InputLabel>並び順</InputLabel>
                         <SortControl queryState={query.state} onSetSortKey={query.setSortKey}
                             onToggleOrder={query.toggleSortOrder} />
+                            </FormControl>
                     </Grid>
                 </Grid>
             </Box>

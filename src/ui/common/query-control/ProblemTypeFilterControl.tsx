@@ -1,4 +1,4 @@
-import { Grid, MenuItem, Select, TextField } from "@mui/material";
+import { FormControl, Grid, InputLabel, MenuItem, Select, TextField } from "@mui/material";
 import { MateLengthFilterControl } from "./MateLengthFilterControl";
 import { TagCheckboxFilterControl } from "./TagCheckboxFilterControl";
 import { BooleanFilterControl } from "./BooleanFilterControl";
@@ -13,7 +13,8 @@ export function ProblemTypeFilterControl( {problemType, onChange}: {
     //addFilter: (partial: Partial<FilterState>) => void    
 }){
     return (
-        <Select<ProblemTypeUi> value={problemType ?? UNSPECIFIED} fullWidth
+        <TextField select value={problemType ?? UNSPECIFIED} fullWidth
+            label="問題タイプ"
             onChange={(e) => {
                 const value = e.target.value as ProblemTypeUi
                 onChange(value === UNSPECIFIED ? undefined : value)
@@ -26,6 +27,7 @@ export function ProblemTypeFilterControl( {problemType, onChange}: {
             <MenuItem key="standard" value="standard">標準</MenuItem>
             <MenuItem key="realistic" value="realistic">実践</MenuItem>
             <MenuItem key="hisshi" value="hisshi">必死</MenuItem>
-        </Select>
+        </TextField>
+
     )
 }
