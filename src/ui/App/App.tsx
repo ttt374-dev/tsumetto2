@@ -19,6 +19,7 @@ import { StatsScreen } from '../stats/StatsScreen';
 import { SinglePlayerScreen } from '../player/SinglePlayerScreen';
 import { bootstrapApp, createRepositories } from './bootstrapApp';
 import { routes } from './useAppNavigation';
+import { SessionSummaryScreen } from '../summary/MissionSummaryScreen.tsx';
 
 export const theme = createTheme({
     cssVariables: true,   // ← これ必須
@@ -72,16 +73,16 @@ function App() {
                         { /* <DebugHistory /> */ }
                         <Routes>
 
-                            <Route path="/session" element={<SessionLayout />}>
+                            <Route path={routes.session} element={<SessionLayout />}>
                                 <Route path="play" element={<SessionPlayerScreen />} />
-                                <Route path="summary" element={<SessionPlayerScreen />} />
+                                <Route path="summary" element={<SessionSummaryScreen />} />
                             </Route>
 
                             <Route path={routes.mission} element={<MissionScreen />} />
-                            <Route path="/mission/:id" element={<MissionEditScreen />} />
+                            <Route path={`${routes.mission}/:id`} element={<MissionEditScreen />} />
 
                             <Route path={routes.library} element={<LibraryScreen />} />
-                            <Route path="/view/:id" element={<ViewerScreen />} />
+                            { /* <Route path="/view/:id" element={<ViewerScreen />} /> */ }
                             <Route path="/play/:id" element={<SinglePlayerScreen />} />
                             <Route path="/list" element={<ListScreen />} />
 

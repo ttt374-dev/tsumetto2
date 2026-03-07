@@ -1,11 +1,6 @@
-import BackupIcon from "@mui/icons-material/Backup";
-
-import { IconButton } from "@mui/material";
 import { AppShell } from "../common/components/layout/AppShell";
 import { LibraryView } from "./components/LibraryView";
 import { useLibraryViewModel } from "./hooks/useLibraryViewModel";
-import { useState } from "react";
-import { useProblemsQuery } from "@/domain/problem/service/query/useProblemsQuery";
 
 //////////////////////////////////////////////////
 
@@ -26,11 +21,9 @@ export function LibraryScreen() {
                 itemActions={vm.itemActions}
                 onItemClick={vm.onItemClick}
                 selection={vm.selection}
-            />
-                        
+            />                        
             {vm.dialogs.detail.dialogElement}
-            {vm.dialogs.tagEdit.dialogElement}
-            {vm.dialogs.backupRestore.dialogElement}
+            {vm.dialogs.tagEdit.dialogElement}            
         </AppShell>
     )
 }

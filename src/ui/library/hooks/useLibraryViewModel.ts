@@ -14,6 +14,7 @@ import { useMultipleProblemsEditoDialog } from "@/ui/common/components/dialogs/M
 import type { QueryState } from "@/domain/problem/service/query/ProblemsQuery"
 import { useProblemsQuery } from "@/domain/problem/service/query/useProblemsQuery"
 import { useProblemsQueryStore } from "@/ui/store/useProblemsQueryStore"
+import { useSessionStore } from "@/ui/store/useSessionStore"
 
 
 export type LibraryActionMode = "selection" | "view" 
@@ -26,14 +27,16 @@ function useLibraryListVM(problems: Problem[], learningRecords: LearningRecord, 
     const ids = useMemo(() => libraryItems.map(p => p.id), [libraryItems])    
     return { libraryItems, ids}
 }
-function useLibraryDialogVM(checkedIds: ProblemId[], reload: () => Promise<void>){
+function useLibraryDialogsVM(checkedIds: ProblemId[], reload: () => Promise<void>){
+    //const startSession = useSessionStore(s=>s.start)
     const navigate = useNavigate()
     // -----------------------------
     // ダイアログ
     // -----------------------------
     const detailDialog = useProblemDetailDialog(
           () => { navigate(routes.library)},
-          (id: ProblemId) => { navigate(routes.player(id))}
+          (id: ProblemId) => { navigate(routes.player(id))}          
+        
     )
     //const viewerDialog = useViewerDialog()
     const backupRestoreDialog = useBackupRestoreDialog()
@@ -43,7 +46,7 @@ function useLibraryDialogVM(checkedIds: ProblemId[], reload: () => Promise<void>
     return {
         //viewer: viewerDialog,
         detail: detailDialog,
-        backupRestore: backupRestoreDialog,
+        //backupRestore: backupRestoreDialog,
         tagEdit: tagEditDialog,
     }
 }
@@ -82,8 +85,6 @@ function useLibraryCommands(){
 }
 /////////////////////////////////////////////////
 export function useLibraryViewModel() {
-    //const query = useLibraryQueryContext()
-    //const query = useProblemsQuery() //   useQueryStore()
     const query = useProblemsQueryStore()
 
     const learningRecords = useLearningRecordStore(s => s.records)
@@ -94,7 +95,7 @@ export function useLibraryViewModel() {
     const { libraryItems, ids } = useLibraryListVM(problems, learningRecords, query.state)
     
     const selection = useLibrarySelectionVM(ids)
-    const dialogs = useLibraryDialogVM(selection.checkedIds, reload)
+    const dialogs = useLibraryDialogsVM(selection.checkedIds, reload)
     // アクションモード
     const changeActionMode = (mode: LibraryActionMode) => {
         setActionMode(mode)
@@ -128,8 +129,7 @@ export function useLibraryViewModel() {
     // アイテムクリック
     // -----------------------------
     const navigate = useNavigate()
-    const onItemClick = useCallback((p: Problem) => {
-        
+    const onItemClick = useCallback((p: Problem) => {        
         switch(actionMode){
             case "selection":
                 selection.toggleChecked(p.id)

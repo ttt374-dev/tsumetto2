@@ -31,7 +31,7 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
     //const learningEvents = useLearningEventStore(s=>s.eventLog)
 
     const index = useSessionStore(s => s.currentIndex)
-    const deckId = useSessionStore(s => s.deckId)
+    const deckId = useSessionStore(s => s.missionId)
 
     const sessionId = useSessionStore(s=>s.sessionId)
     const next = useSessionStore(s => s.next)

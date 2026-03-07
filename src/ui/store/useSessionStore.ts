@@ -8,7 +8,7 @@ import { create } from "zustand";
 type SesionStore = {
     // ===== state =====
     sessionId?: SessionId,
-    deckId?: MissionId;
+    missionId?: MissionId;
     problemIds: ProblemId[];
     currentIndex: number; // ⭐ マスター
 
@@ -16,7 +16,7 @@ type SesionStore = {
     phase: () => SessionPhase
 
     // ===== command =====
-    start: (deckId: MissionId, ids: ProblemId[]) => SessionId;
+    start: (deckId: MissionId, ids: ProblemId[], startIndex?: number) => SessionId;
     //answer: (result: SolvedResult, secToTaken: number, learningEventId: LearningEventId) => void;
     next: () => void;
     prev: () => void;
@@ -31,7 +31,7 @@ export const useSessionStore = create<SesionStore>((set, get) => ({
     // ======================
     // state
     // ======================
-    deckId: undefined,
+    missionId: undefined,
     sessionId: undefined,
     problemIds: [],
     currentIndex: -1,
@@ -53,15 +53,15 @@ export const useSessionStore = create<SesionStore>((set, get) => ({
     // ======================
     // command
     // ======================
-    start: (deckId, ids) => {
+    start: (deckId, ids, startIndex=0) => {
         const sessionId = v4()
         set((_s) => {
             //console.log("start", deckId, ids, ids.length > 0 ? 0 : -1)
             return {
-                deckId,
+                missionId: deckId,
                 sessionId: sessionId,
                 problemIds: ids,
-                currentIndex: ids.length > 0 ? 0 : -1,
+                currentIndex: ids.length > startIndex ? 0 : -1,
                 answers: [],
             }
         })
@@ -102,7 +102,7 @@ export const useSessionStore = create<SesionStore>((set, get) => ({
 
     reset: () =>
         set({
-            deckId: undefined,
+            missionId: undefined,
             problemIds: [],
             currentIndex: -1,
             //answers: [],

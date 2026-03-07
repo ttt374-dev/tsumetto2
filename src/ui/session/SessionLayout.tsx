@@ -1,20 +1,29 @@
-import { Navigate, Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { routes } from "../App/useAppNavigation";
 import { useSessionStore } from "../store/useSessionStore";
+import { useEffect } from "react";
 
-export function SessionLayout() {    
+export function SessionLayout() {
     const phase = useSessionStore(s => s.phase())
-    switch (phase) {
-        case "idle":
-            <Navigate to={routes.mission} />
-            break;
-        case "playing":
-            <Navigate to={routes.sessionPlay} />
-            break
-        case "finished":
-            <Navigate to={routes.sessionSummary} />
-            break
-    }
+    //console.log("phase", phase)
+    const navigate = useNavigate()
+    useEffect(() => {
+        switch (phase) {
+            case "idle":
+                navigate(routes.mission)
+                //<Navigate to={routes.mission} />
+                break;
+            case "playing":
+                navigate(routes.sessionPlay)
+                //<Navigate to={routes.sessionPlay} />
+                break
+            case "finished":
+                navigate(routes.sessionSummary)
+                //<Navigate to={routes.sessionSummary} />
+                break
+        }
+
+    }, [phase])
 
     return <Outlet />
 }
