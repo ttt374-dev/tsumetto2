@@ -1,4 +1,4 @@
-import type { MissionId } from "@/domain/mission/entity/Mission"
+import type { SessionId } from "@/domain/session/entity/Session"
 import type { ProblemId } from "../../problem/entity/Problem"
 import type { SolvedResult } from "./Learning"
 
@@ -13,7 +13,7 @@ type NewLearningReviewedEvent =
     {
         type: "reviewed"
         problemId: ProblemId
-        missionId: MissionId
+        sessionId: SessionId
         quality: SolvedResult
         sec?: number
     }
@@ -27,7 +27,7 @@ type NewLearningResetEvent =
 type NewLearningCancelEvent =
     {
         type: "cancel"
-        missionId: MissionId
+        sessionId: SessionId
         targetEventId: LearningEventId
     }
 

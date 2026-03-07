@@ -4,19 +4,19 @@ import type { LearningEventRepository } from "@/domain/learning/repository/Learn
 import type { ProblemId } from "@/domain/problem/entity/Problem";
 import type { LearningEvent, LearningEventId, LearningEventLog, NewLearningEvent } from "@/domain/learning/entity/LearningEvent";
 import type { SolvedResult } from "@/domain/learning/entity/Learning";
-import type { MissionId } from "@/domain/mission/entity/Mission";
+import type { SessionId } from "@/domain/session/entity/Session";
 import { v4 } from "uuid";
 
 type LearningEventStoreState = {
     repo?: LearningEventRepository
     setRepository: (repo: LearningEventRepository) => void
     eventLog: LearningEventLog;
-    getLastReviewedEvent: (m: MissionId) => LearningEvent | undefined;
+    getLastReviewedEvent: (m: SessionId) => LearningEvent | undefined;
 
     reload: () => Promise<void>;
     append: (learningEvent: NewLearningEvent) => LearningEvent
-    appendReview: (problemId: ProblemId, missionId: MissionId, quality: SolvedResult, sec?: number) => LearningEvent
-    appendCancel: (missionId: MissionId, targetEventId: LearningEventId) => LearningEvent
+    appendReview: (problemId: ProblemId, sessionId: SessionId, quality: SolvedResult, sec?: number) => LearningEvent
+    appendCancel: (sessionId: SessionId, targetEventId: LearningEventId) => LearningEvent
     appendReset: (problemId: ProblemId) => LearningEvent
     clearAll: () => void
 };
@@ -27,7 +27,7 @@ export const useLearningEventStore = create<LearningEventStoreState>((set, get) 
     repo: undefined,
     setRepository: (repo) => set({ repo }),
     eventLog: [],
-    getLastReviewedEvent: (missionId: MissionId) => {
+    getLastReviewedEvent: (sessionId: SessionId) => {
         const canceled = new Set<string>()
 
         for (let i = get().eventLog.length - 1; i >= 0; i--) {
@@ -37,7 +37,7 @@ export const useLearningEventStore = create<LearningEventStoreState>((set, get) 
                 canceled.add(e.targetEventId)
             }
 
-            if (e.type === "reviewed" && e.missionId === missionId) {
+            if (e.type === "reviewed" && e.sessionId === sessionId) {
                 if (!canceled.has(e.id)) {
                     return e
                 }
@@ -66,19 +66,19 @@ export const useLearningEventStore = create<LearningEventStoreState>((set, get) 
         }))
         return event
     },
-    appendReview: (problemId: ProblemId, missionId: MissionId, quality: SolvedResult, sec?: number) => {
+    appendReview: (problemId: ProblemId, sessionId: SessionId, quality: SolvedResult, sec?: number) => {
         const event: NewLearningEvent = {
-            type: "reviewed", problemId, missionId, quality, sec
+            type: "reviewed", problemId, sessionId: sessionId, quality, sec
         }
         return get().append(event);
     },
-    appendCancel: (missionId: MissionId, targetEventId: LearningEventId) => {
-        const target = get().eventLog.find(e => e.id === targetEventId && e.type === "reviewed" && e.missionId === missionId)
+    appendCancel: (sessionId: SessionId, targetEventId: LearningEventId) => {
+        const target = get().eventLog.find(e => e.id === targetEventId && e.type === "reviewed" && e.sessionId === sessionId)
 
         if (!target) throw new Error("Target not found")
 
         const event: NewLearningEvent = {
-            type: "cancel", missionId: missionId, targetEventId: targetEventId
+            type: "cancel", sessionId: sessionId, targetEventId: targetEventId
         }
 
         return get().append(event)

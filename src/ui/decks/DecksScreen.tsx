@@ -16,13 +16,9 @@ import type { Deck, DeckId } from "@/domain/deck/entity/Deck";
 import { useDecksModeStore } from "./hooks/useDecksModeStore";
 
 export default function DecksScreen() {
-    const { deckArray, onDragEnd, deckStats, onCreateDeck, onStartMission, presenter: { importer, backupRestoreDialog } } =
+    const { deckArray, onDragEnd, deckStats, onCreateDeck, onStartSession, presenter: { importer, backupRestoreDialog } } =
         useDecksViewModel();
     const navigate = useNavigate();
-    //const [mode, setMode] = useState<DeckActionMode>("mission")
-    //const [reorderable, setReordable] = useState(false)
-    //const [editable, setEditable] = useState(false)
-    //const { editable, toggleEditable, reorderable, toggleReorderable} = useDecksModeStore()
     const { editMode, toggleEditMode } = useDecksModeStore()
 
     // dnd-kit センサー
@@ -85,8 +81,7 @@ export default function DecksScreen() {
                 {/* 通常動作はモード依存 */}
                 <ListItemButton
                     onClick={() => {
-                        //onStartMission(deck)
-                        if (!editMode) onStartMission(deck)
+                        if (!editMode) onStartSession(deck)
                         else navigate(routes.deckEdit(deck.id))                        
                     }}
                     disabled={!editMode && (stats?.problemCount === 0)} 

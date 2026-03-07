@@ -5,7 +5,7 @@ import type { SolvedResult } from "@/domain/learning/entity/Learning"
 import { useNavigate, useParams } from "react-router-dom"
 import { useProblemStore } from "../store/useProblemStore"
 import { routes } from "../App/useAppNavigation"
-import { useMissionStore } from "../store/useMissionStore"
+import { useSessionStore } from "../store/useSessionStore"
 
 export function SinglePlayerScreen() {    
     const { id } = useParams<{ id: string }>()
@@ -19,15 +19,14 @@ const SINGLE_DECK_ID="single-deck-id"
 
 function SinglePlayerContent(problem: Problem){
     const navigate = useNavigate()
-    const startMission = useMissionStore(s=>s.start)
-    //const missionId = useMissionStore(s=>s.missionId)
+    const startSession = useSessionStore(s=>s.start)
     const review = useLearningEventStore(s=>s.appendReview)
 
     const capabilities = {
         answerable: {
             answer: (problemId: ProblemId, res: SolvedResult, sec?: number) => {
-                const missionId = startMission(SINGLE_DECK_ID, [problemId])
-                review(problemId, missionId, res, sec)
+                const sessionId = startSession(SINGLE_DECK_ID, [problemId])
+                review(problemId, sessionId, res, sec)
                 navigate(routes.back)
             }
         }

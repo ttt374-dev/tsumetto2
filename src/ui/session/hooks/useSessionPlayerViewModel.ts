@@ -1,5 +1,5 @@
 import { useDeckStore } from "@/ui/store/useDeckStore"
-import { useMissionStore } from "@/ui/store/useMissionStore"
+import { useSessionStore } from "@/ui/store/useSessionStore"
 import { useProblemStore } from "@/ui/store/useProblemStore"
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem"
 import type { ProblemNavigation } from "@/ui/player/PlayerScreen"
@@ -8,7 +8,7 @@ import type { SolvedResult } from '@/domain/learning/entity/Learning';
 import { useLearningEventStore } from '@/ui/store/useLearningEventStore';
 import { LteMobiledata } from "@mui/icons-material"
 
-type MissionPlayerVM =
+type SessionPlayerVM =
   | { status: "idle" }
   | { status: "finished" }
   | { status: "loading"}
@@ -26,18 +26,17 @@ type MissionPlayerVM =
     }
 
 /////////////////////
-export function useMissionPlayerViewModel(): MissionPlayerVM {
-    const problemIds = useMissionStore(s => s.problemIds)
+export function useSessionPlayerViewModel(): SessionPlayerVM {
+    const problemIds = useSessionStore(s => s.problemIds)
     //const learningEvents = useLearningEventStore(s=>s.eventLog)
 
-    const index = useMissionStore(s => s.currentIndex)
-    const deckId = useMissionStore(s => s.deckId)
+    const index = useSessionStore(s => s.currentIndex)
+    const deckId = useSessionStore(s => s.deckId)
 
-    //const answerMission = useMissionStore(s => s.answer)
-    const missionId = useMissionStore(s=>s.missionId)
-    const next = useMissionStore(s => s.next)
-    const prev = useMissionStore(s => s.prev)
-    const moveTo = useMissionStore(s => s.moveToId)
+    const sessionId = useSessionStore(s=>s.sessionId)
+    const next = useSessionStore(s => s.next)
+    const prev = useSessionStore(s => s.prev)
+    const moveTo = useSessionStore(s => s.moveToId)
 
     const currentProblemId = problemIds[index]
     const count = problemIds.length
@@ -58,20 +57,18 @@ export function useMissionPlayerViewModel(): MissionPlayerVM {
     const problemNavigation = useMemo(() => ({ next, prev, moveTo }), [next, prev, moveTo])
 
     const submitAnswer = (problemId: ProblemId, res: SolvedResult, sec: number) => {
-        console.log("submit answer", problemId, missionId)
-        if (!missionId) return
-        //console.log("answer", problemId)
-        review(problemId, missionId, res, sec)
-        //answerMission(res, sec, event.id)
+        console.log("submit answer", problemId, sessionId)
+        if (!sessionId) return
+        review(problemId, sessionId, res, sec)
         next()
     }    
 
     const undoLastAnswer = () => {
-        if (!missionId) return
-        const last = getLastEvent(missionId)
+        if (!sessionId) return
+        const last = getLastEvent(sessionId)
         if ( !last) return       
         
-        cancel(missionId, last.id)        
+        cancel(sessionId, last.id)        
         console.log("undo last", last)
         prev()
     }

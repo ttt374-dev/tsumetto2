@@ -7,7 +7,7 @@ import { arrayMove } from "@dnd-kit/sortable";
 
 import { useDeckStore } from "@/ui/store/useDeckStore";
 import { useProblemStore } from "@/ui/store/useProblemStore";
-import { useMissionStore } from "@/ui/store/useMissionStore";
+import { useSessionStore } from "@/ui/store/useSessionStore";
 import { useLearningRecordStore } from "@/ui/store/useLearningRecordStore";
 import { applyFilter } from "@/domain/problem/service/query/applyFilter";
 import type { Deck } from "@/domain/deck/entity/Deck";
@@ -27,7 +27,7 @@ export function useDecksViewModel() {
     const problems = useProblemStore(s => s.activeProblems);
     const learningRecords = useLearningRecordStore(s => s.records);
     const reloadProblems = useProblemStore(s => s.reload);
-    const startMission = useMissionStore(s => s.start);
+    const startSession = useSessionStore(s => s.start);
 
     // UI 用配列
     const [deckArray, setDeckArray] = useState<Deck[]>([]);
@@ -73,15 +73,15 @@ export function useDecksViewModel() {
     // 既存の操作
     const onCreateDeck = () => navigate(routes.deckNew);
 
-    const onStartMission = (deck: Deck) => {
+    const onStartSession = (deck: Deck) => {
         const filtered = applyQuery(
             problems,
             learningRecords,
             deck.snapshot.queryState,            
         );
 
-        startMission(deck.id, filtered.map(p => p.id));
-        navigate(routes.missionPlay);
+        startSession(deck.id, filtered.map(p => p.id));
+        navigate(routes.sessionPlay);
     };
 
     const importer = useImport(async (res) => {
@@ -98,7 +98,7 @@ export function useDecksViewModel() {
         deckStats,
         onDragEnd,
         onCreateDeck,
-        onStartMission,
+        onStartSession,
         presenter: { importer, backupRestoreDialog },
     };
 }

@@ -1,22 +1,22 @@
 import { Box, Button, Stack } from "@mui/material";
 import { SummaryView } from "./SummaryView";
 import { AppShell } from "../common/components/layout/AppShell";
-import { useMissionStore } from "@/ui/store/useMissionStore";
+import { useSessionStore } from "@/ui/store/useSessionStore";
 import { ProblemStats } from "@/domain/problem/valueObject/ProblemStats";
 import { projectLearning } from "@/domain/learning/service/projectionLearning";
 import { useLearningEventStore } from "../store/useLearningEventStore";
 
 /////////////////////////////////////////////
-export function MissionSummaryScreen() {
-    const missionId = useMissionStore(s=>s.missionId)
-    const ids = useMissionStore(s=>s.problemIds)
+export function SessionSummaryScreen() {
+    const sessionId = useSessionStore(s=>s.sessionId)
+    const ids = useSessionStore(s=>s.problemIds)
     const learningEventLog = useLearningEventStore(s=>s.eventLog)
-    const missionEventLog = learningEventLog
-        .filter(e => ("missionId" in e && e.missionId === missionId))      
+    const sessionEventLog = learningEventLog
+        .filter(e => ("sessionId" in e && e.sessionId === sessionId))      
 
-    const missionLearningRecords = projectLearning(missionEventLog)
-    const stats = ProblemStats.create(ids, missionLearningRecords)
-    const reset = useMissionStore(s => s.reset)
+    const sessionLearningRecords = projectLearning(sessionEventLog)
+    const stats = ProblemStats.create(ids, sessionLearningRecords)
+    const reset = useSessionStore(s => s.reset)
     return (
         <AppShell header={ "Summary"}>
             <Box>

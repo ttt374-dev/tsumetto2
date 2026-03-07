@@ -1,25 +1,22 @@
 import type { DeckId } from "@/domain/deck/entity/Deck";
-import type { SolvedResult } from "@/domain/learning/entity/Learning";
-import type { LearningEventId } from "@/domain/learning/entity/LearningEvent";
-import type { MissionId, MissionPhase, MissionResultEntry } from "@/domain/mission/entity/Mission";
+import type { SessionId, SessionPhase } from "@/domain/session/entity/Session";
 import type { ProblemId } from "@/domain/problem/entity/Problem";
 import { v4 } from "uuid";
 import { create } from "zustand";
 
 
-type MissionStore = {
+type SesionStore = {
     // ===== state =====
-    missionId?: MissionId,
+    sessionId?: SessionId,
     deckId?: DeckId;
     problemIds: ProblemId[];
     currentIndex: number; // ⭐ マスター
-    //answers: MissionResultEntry[];
 
     // ===== derived (必要最低限だけ) =====
-    phase: () => MissionPhase
+    phase: () => SessionPhase
 
     // ===== command =====
-    start: (deckId: DeckId, ids: ProblemId[]) => MissionId;
+    start: (deckId: DeckId, ids: ProblemId[]) => SessionId;
     //answer: (result: SolvedResult, secToTaken: number, learningEventId: LearningEventId) => void;
     next: () => void;
     prev: () => void;
@@ -30,12 +27,12 @@ type MissionStore = {
 
 /////////////////////////////////////
 
-export const useMissionStore = create<MissionStore>((set, get) => ({
+export const useSessionStore = create<SesionStore>((set, get) => ({
     // ======================
     // state
     // ======================
     deckId: undefined,
-    missionId: undefined,
+    sessionId: undefined,
     problemIds: [],
     currentIndex: -1,
     //answers: [],
@@ -57,18 +54,18 @@ export const useMissionStore = create<MissionStore>((set, get) => ({
     // command
     // ======================
     start: (deckId, ids) => {
-        const missionId = v4()
+        const sessionId = v4()
         set((_s) => {
             //console.log("start", deckId, ids, ids.length > 0 ? 0 : -1)
             return {
                 deckId,
-                missionId: missionId,
+                sessionId: sessionId,
                 problemIds: ids,
                 currentIndex: ids.length > 0 ? 0 : -1,
                 answers: [],
             }
         })
-        return missionId
+        return sessionId
     },
 
     next: () =>

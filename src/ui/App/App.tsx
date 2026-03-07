@@ -6,12 +6,11 @@ import { useLocation, useNavigationType } from "react-router-dom";
 import { CssBaseline, CssVarsProvider, useMediaQuery } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material";
 
-import { MissionScreen } from '../mission/MissionScreen';
+import { SessionScreen } from '../session/SessionScreen';
 import { LibraryScreen } from '../library/LibraryScreen';
-import { MissionSummaryScreen } from '../summary/MissionSummaryScreen';
 import DecksScreen from '../decks/DecksScreen';
 import { DeckEditScreen } from '../decks/DeckEditScreen';
-import { MissionPlayerScreen } from '../mission/MissionPlayerScreen';
+import { SessionPlayerScreen } from '../session/SessionPlayerScreen';
 import { ViewerScreen } from '../viewer/ViewerScreen';
 import { RepositoryContext, type RepositoryContextValue } from './providers/RepositoryProvider';
 import { ToastProvider } from './providers/ToastProvider';
@@ -73,9 +72,9 @@ function App() {
                         { /* <DebugHistory /> */ }
                         <Routes>
 
-                            <Route path="/mission" element={<MissionScreen />}>
-                                <Route path="play" element={<MissionPlayerScreen />} />
-                                <Route path="summary" element={<MissionSummaryScreen />} />
+                            <Route path="/session" element={<SessionScreen />}>
+                                <Route path="play" element={<SessionPlayerScreen />} />
+                                <Route path="summary" element={<SessionPlayerScreen />} />
                             </Route>
 
                             <Route path={routes.decks} element={<DecksScreen />} />

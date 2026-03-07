@@ -13,10 +13,10 @@ export const routes = {
     problemView: (id: ProblemId) => `/view/${id}`,
     player: (id: ProblemId) => `/play/${id}`,
 
-    // mission
-    mission: "/mission",
-    missionPlay: "/mission/play",
-    missionSummary: "/mission/summary",
+    // session
+    session: "/session",
+    sessionPlay: "/session/play",
+    sessionSummary: "/session/summary",
 
     // list
     list: "/list",

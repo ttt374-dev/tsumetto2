@@ -1,11 +1,10 @@
 import { PlayerScreen } from "../player/PlayerScreen"
 import { useLearningEventStore } from "../store/useLearningEventStore"
-import { useMissionPlayerViewModel } from "./hooks/useMissionPlayerViewModel"
+import { useSessionPlayerViewModel } from "./hooks/useSessionPlayerViewModel"
 
 ////////////////////////////////////////////////
-export function MissionPlayerScreen() {
-    const vm = useMissionPlayerViewModel()
-    //console.log("missionplayer", vm)
+export function SessionPlayerScreen() {
+    const vm = useSessionPlayerViewModel()
 
     if (vm.status !== "playing") return <>{vm.status}</>
     const capabilities = {

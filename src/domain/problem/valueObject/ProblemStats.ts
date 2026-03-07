@@ -35,23 +35,7 @@ export class ProblemStats {
             intervalDays,
         )
     }
-    /*
-    static createWithFilter(problems: Problem[], learningRecords: LearningRecord, queryState: QueryState){
-        const filtered = applyFilter(problems, learningRecords, queryState)
-        return this.create(filtered.map(p=>p.id), learningRecords)
-    }
-    
-    static createFromMissionResultList(missionResultList: MissionResultEntry[]): ProblemStats {
 
-        return new ProblemStats(
-            missionResultList.length,
-            missionResultList.filter(r => r.solvedResult === "solved").length,
-            missionResultList.filter(r => r.solvedResult === "failed").length,
-            0,
-            0,
-        )
-    }
-*/
     get totalCount(): number { return this.solvedCount + this.failedCount}
     get accuracy(): number { return this.totalCount === 0 ? 0 : this.solvedCount / this.totalCount }
 }
