@@ -61,8 +61,8 @@ export function useDecksViewModel() {
     const deckStats = useMemo(() => {
         const map = new Map<string, ProblemStats>();
         for (const deck of deckArray) {
-            console.log("snapshot", deck.snapshot)
-            const filtered = applyFilter(problems, learningRecords, deck.snapshot.queryState ?? DefaultQueryState);
+            
+            const filtered = applyFilter(problems, learningRecords, deck.queryState ?? DefaultQueryState);
             const stats = ProblemStats.create(filtered.map(p => p.id), learningRecords);
             map.set(deck.id, stats);
         }
@@ -77,7 +77,7 @@ export function useDecksViewModel() {
         const filtered = applyQuery(
             problems,
             learningRecords,
-            deck.snapshot.queryState,            
+            deck.queryState,            
         );
 
         startSession(deck.id, filtered.map(p => p.id));

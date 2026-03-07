@@ -10,7 +10,9 @@ export type DeckId = string
 export type Deck = {
   id: DeckId
   name: string
-  snapshot: QuerySnapshot
+  
+  //snapshot: QuerySnapshot
+  queryState: QueryState
   order: number
   
   createdAt: number //  Date

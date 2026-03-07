@@ -54,7 +54,8 @@ function useDeckEditorActions(id: string | undefined, queryState: QueryState) {
         console.log("save draft", draft)   
         deckStore.saveDeck({
             ...draft,
-            snapshot: createQuerySnapshot(queryState),
+            //snapshot: createQuerySnapshot(queryState),
+            queryState: {...queryState},
         })
 
         toast({ message: "保存しました" })
@@ -100,12 +101,12 @@ export function useDeckEditViewModel() {
     // draft → query同期（初回のみ）
     // --------------------------
     useEffect(() => {
-        if (!draft?.snapshot.queryState) return
+        if (!draft?.queryState) return
 
         //query.setAll(draft.snapshot.queryState)
         query.setAll({
             ...DefaultQueryState,
-            ...draft.snapshot.queryState
+            ...draft.queryState
         })
     }, [draft?.id])
 
