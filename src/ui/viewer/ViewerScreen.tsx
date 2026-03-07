@@ -3,7 +3,7 @@ import { useProblemStore } from "@/ui/store/useProblemStore";
 import { useParams } from "react-router-dom"
 import PlayerView from "../player/components/PlayerView";
 import { AppShell } from "../common/components/layout/AppShell";
-import { useProblemDetailDialog } from '../common/components/dialogs/problemDetail/hooks/useProblemDetailDialog';
+import { useProblemDetailDialog } from '../detail/hooks/useProblemDetailDialog';
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem";
 import { PlayerRightActions } from "../player/components/actions/PlayerRightActions";
 

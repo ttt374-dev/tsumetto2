@@ -20,6 +20,7 @@ import { SinglePlayerScreen } from '../player/SinglePlayerScreen';
 import { bootstrapApp, createRepositories } from './bootstrapApp';
 import { routes } from './useAppNavigation';
 import { SessionSummaryScreen } from '../summary/MissionSummaryScreen.tsx';
+import { ProblemDetailScreen } from '../detail/ProblemDetailScreen.tsx';
 
 export const theme = createTheme({
     cssVariables: true,   // ← これ必須
@@ -85,6 +86,7 @@ function App() {
                             { /* <Route path="/view/:id" element={<ViewerScreen />} /> */ }
                             <Route path="/play/:id" element={<SinglePlayerScreen />} />
                             <Route path="/list" element={<ListScreen />} />
+                            <Route path="/detail/:id" element={<ProblemDetailScreen/>}/>
 
                             <Route path={routes.stats} element={<StatsScreen />} />
 

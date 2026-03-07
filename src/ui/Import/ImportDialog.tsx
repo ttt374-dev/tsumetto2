@@ -1,4 +1,4 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, Stack } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { ProblemTagEditor } from "../common/components/ProblemTagEditor";
 import { DefaultImportOptions, getExsitingTitle, type DuplicateTitleStrategy, type ImportOptions } from "@/application/usecase/problem/import/ImportProblemsUsecase";
@@ -31,11 +31,12 @@ export function ImportDialog({open, onClose, onImport, filesToImport}: {
     const [options, setOptions] = useState<ImportOptions>({...DefaultImportOptions})
         
     return (
-        <Dialog open={open} >
+        <Dialog open={open} fullWidth >
             <DialogTitle>
                 棋譜ファイルのインポート
             </DialogTitle>
-            <DialogContent>                     
+            <DialogContent>    
+                <Stack spacing={2}>
                 { filesToImport.length} 件のファイルをインポートします。
                 <ProblemTypeFilterControl
                     problemType={options.problemType} onChange={(v)=>
@@ -84,7 +85,7 @@ export function ImportDialog({open, onClose, onImport, filesToImport}: {
                         </RadioGroup>
                     </FormControl>
                 }
-
+</Stack>                 
             </DialogContent>
             <DialogActions>
                 <Button onClick={onClose}>

@@ -5,7 +5,7 @@ import { useToast } from "@/ui/App/providers/ToastProvider"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { applyQuery } from "@/domain/problem/service/query/applyQuery"
 import { useLibraryCheckbox } from "./useLibraryCheckbox"
-import { useProblemDetailDialog } from "@/ui/common/components/dialogs/problemDetail/hooks/useProblemDetailDialog"
+import { useProblemDetailDialog } from "@/ui/detail/hooks/useProblemDetailDialog"
 import { useNavigate } from "react-router-dom"
 import { routes } from "@/ui/App/useAppNavigation"
 import type { LearningRecord } from "@/domain/learning/entity/Learning"
@@ -36,6 +36,7 @@ function useLibraryDialogsVM(checkedIds: ProblemId[], reload: () => Promise<void
     const detailDialog = useProblemDetailDialog(
           () => { navigate(routes.library)},
           (id: ProblemId) => { navigate(routes.player(id))}          
+          //(id: ProblemId) => { navigate(routes.detail(id))}          
         
     )
     //const viewerDialog = useViewerDialog()
@@ -138,8 +139,8 @@ export function useLibraryViewModel() {
                 dialogs.detail.openDialog(p.id)    
                 break*/
             case "view":
-                dialogs.detail.openDialog(p.id)    
-                //navigate(routes.problemView(p.id))
+                //dialogs.detail.openDialog(p.id)    
+                navigate(routes.detail(p.id))
                 //navigate(routes.player(p.id))
         }
         

@@ -18,6 +18,9 @@ export const routes = {
     sessionPlay: "/session/play",
     sessionSummary: "/session/summary",
 
+    // detail
+    detail: (id: ProblemId) => `/detail/${id}`,
+
     // list
     list: "/list",
 

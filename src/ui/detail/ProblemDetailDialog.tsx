@@ -5,9 +5,9 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 import { Problem, type ProblemId, type ProblemType } from "@/domain/problem/entity/Problem";
 import { useEffect, useState } from 'react';
-import { ProblemTagEditor } from '../../ProblemTagEditor';
-import { StarToggleButton } from '../../StarToggleButton/StarToggleButton';
-import { CancelableTextField } from '../../../../shared/components/CancelableTextfield';
+import { ProblemTagEditor } from '../common/components/ProblemTagEditor';
+import { StarToggleButton } from '../common/components/StarToggleButton/StarToggleButton';
+import { CancelableTextField } from '../shared/components/CancelableTextfield';
 import { ProblemTypeSelect } from './components/ProblemTypeSelect';
 import { FreeSoloAutocomplete } from '@/ui/shared/components/FreeSoloAutocomplete';
 import type { Learning } from '@/domain/learning/entity/Learning';
