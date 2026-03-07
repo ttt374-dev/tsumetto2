@@ -8,15 +8,15 @@ import { SortableContext, useSortable, arrayMove, verticalListSortingStrategy } 
 import { CSS } from "@dnd-kit/utilities";
 
 import { AppShell } from "../common/components/layout/AppShell";
-import DeckFabMenu from "./components/DeckFabMenu";
 import { useMissionViewModel } from "./hooks/useMissionViewModel";
 import { useNavigate } from "react-router-dom";
 import { routes } from "../App/useAppNavigation";
 import type { Mission, MissionId } from "@/domain/mission/entity/Mission";
 import { useMissionModeStore } from "./hooks/useMissionModeStore";
+import MissionFabMenu from "./components/MissionFabMenu";
 
 export default function MissionScreen() {
-    const { deckArray, onDragEnd, deckStats, onCreateDeck, onStartSession, presenter: { importer, backupRestoreDialog } } =
+    const { missionArray, onDragEnd, missionStats, onCreateMission, onStartSession, presenter: { importer, backupRestoreDialog } } =
         useMissionViewModel();
     const navigate = useNavigate();
     const { editMode, toggleEditMode } = useMissionModeStore()
@@ -36,8 +36,8 @@ export default function MissionScreen() {
         })
     );
 
-    function SortableDeckItem({ deck }: { deck: Mission }) {
-        const sortable = useSortable({ id: deck.id });
+    function SortableMissionItem({ mission }: { mission: Mission }) {
+        const sortable = useSortable({ id: mission.id });
 
         const style = {
             transform: CSS.Transform.toString(sortable.transform),
@@ -45,7 +45,7 @@ export default function MissionScreen() {
             touchAction: "none"
         };
 
-        const stats = deckStats.get(deck.id);      
+        const stats = missionStats.get(mission.id);      
 
         return (
             <ListItem
@@ -81,8 +81,8 @@ export default function MissionScreen() {
                 {/* 通常動作はモード依存 */}
                 <ListItemButton
                     onClick={() => {
-                        if (!editMode) onStartSession(deck)
-                        else navigate(routes.missionEdit(deck.id))                        
+                        if (!editMode) onStartSession(mission)
+                        else navigate(routes.missionEdit(mission.id))                        
                     }}
                     disabled={!editMode && (stats?.problemCount === 0)} 
                     sx={{
@@ -104,7 +104,7 @@ export default function MissionScreen() {
                     
                 >
                     <ListItemText
-                        primary={deck.name}
+                        primary={mission.name}
                         secondary={`問題数：${stats?.problemCount ?? 0}, 正答率：${((stats?.accuracy ?? 0) * 100).toFixed(0)}%`}
                     />
                 </ListItemButton>
@@ -124,13 +124,13 @@ export default function MissionScreen() {
     }
     return (
         <AppShell
-            header="Decks"
+            header="Missions"
             rightActions={
                 <IconButton onClick={toggleEditMode} sx={{color: !editMode ? "white" : "default"}}>
                     <EditIcon  />
                 </IconButton>
             }
-            fab={<DeckFabMenu onCreateNewDeck={onCreateDeck} />}
+            fab={<MissionFabMenu onCreateNewMission={onCreateMission} />}
 
         >
             <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto" }}> { /* , touchAction: "pan-y" */ }
@@ -138,10 +138,10 @@ export default function MissionScreen() {
                     collisionDetection={closestCenter}
                     onDragStart={()=>console.log("drag start")}
                     onDragEnd={e => onDragEnd(e.active.id, e.over?.id ?? null)}>
-                    <SortableContext items={deckArray.map(d => d.id)} strategy={verticalListSortingStrategy}>
+                    <SortableContext items={missionArray.map(d => d.id)} strategy={verticalListSortingStrategy}>
                         <List>
-                            {deckArray.map(deck => (
-                                <SortableDeckItem key={deck.id} deck={deck} />
+                            {missionArray.map(mission => (
+                                <SortableMissionItem key={mission.id} mission={mission} />
                             ))}
                         </List>
                     </SortableContext>

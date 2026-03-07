@@ -3,7 +3,7 @@ import type { ProblemId } from "@/domain/problem/entity/Problem"
 export const routes = {
     home: "/",
 
-    // deck
+    // mission
     mission: "/missions",
     missionEdit: (id: string) => `/missions/${id}`,
     newMission: '/missions/new',

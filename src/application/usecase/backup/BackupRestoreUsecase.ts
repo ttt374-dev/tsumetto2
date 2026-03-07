@@ -15,7 +15,7 @@ export type BackupResult = Result<BackupResultOk, BackupRestoreError>
 type ResultCount = {
     problemCount: number
     learningCount: number
-    deckCount: number
+    missionCount: number
 }
 export type BackupResultOk = {
     filename: string
@@ -38,17 +38,17 @@ export interface BackupRestoreUsecase {
 export type BackupData = {
     problems: ProblemDTO[]
     learningEvents: LearningEventLog
-    decks: Mission[]
+    missions: Mission[]
 }
 
 export function useBackupRestoreUsecase(
     problemRepo: ProblemRepository,
     learningRepo: LearningEventRepository,
-    deckRepo: MissionRepository,
+    missionRepo: MissionRepository,
     writer: BackupWriter,
 ): BackupRestoreUsecase { 
     const reloadProblems = useProblemStore(s=>s.reload)
-    const reloadDecks = useMissionStore(s=>s.loadMissions)
+    const reloadMissions = useMissionStore(s=>s.loadMissions)
     // TODO: error check
     return {
         async backup(): Promise<BackupResult> {
@@ -56,14 +56,14 @@ export function useBackupRestoreUsecase(
 
             let problems: Problem[]
             let learnings: LearningEventLog
-            let decks: Mission[]
+            let missions: Mission[]
             let backupData: BackupData
             let json: string
 
             try {
                 problems = await problemRepo.load()
                 learnings = await learningRepo.load()
-                decks = await deckRepo.findAll()
+                missions = await missionRepo.findAll()
             } catch (e) {
                 if (e instanceof Error) {
                     console.error(e.message)
@@ -77,7 +77,7 @@ export function useBackupRestoreUsecase(
                 backupData = {
                     problems: problems.map(p => p.toDTO()),
                     learningEvents: learnings,
-                    decks: decks,
+                    missions: missions,
                 }
                 json = JSON.stringify(backupData, null, 2)
             } catch (e) {
@@ -95,13 +95,13 @@ export function useBackupRestoreUsecase(
                     filename: filename,
                     problemCount: problems.length,
                     learningCount: learnings.length,
-                    deckCount: decks.length,
+                    missionCount: missions.length,
                 }
             }
         },
 
         async restore(backupData: BackupData): Promise<RestoreResult> {
-            console.log("restore", backupData.decks)
+            console.log("restore", backupData.missions)
             let problems: Problem[]
             try {
                 problems = backupData.problems.map(dto => Problem.fromDTO(dto))
@@ -116,20 +116,20 @@ export function useBackupRestoreUsecase(
             try {
                 await problemRepo.replaceAll(problems)
                 await learningRepo.replaceAll(backupData.learningEvents)
-                await deckRepo.replaceAll(backupData.decks)
+                await missionRepo.replaceAll(backupData.missions)
             } catch (e) {
                 return { ok: false, error: { code: "persist-failed" } }
             }
 
             reloadProblems()
-            reloadDecks()       
+            reloadMissions()       
 
             return {
                 ok: true,
                 value: {
                     problemCount: backupData.problems.length,
                     learningCount: backupData.learningEvents.length,
-                    deckCount: backupData.decks.length,
+                    missionCount: backupData.missions.length,
                 },
             }
 

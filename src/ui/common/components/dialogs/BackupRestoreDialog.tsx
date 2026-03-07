@@ -16,12 +16,12 @@ export function useBackupRestoreDialog(){
     const openDialog = () => { setOpen(true)}
     const reloadProblems = useProblemStore(s=>s.reload)    
     const reloadLearningEvents = useLearningEventStore(s=>s.reload)
-    const reloadDecks = useMissionStore(s=>s.loadMissions)
+    const reloadMissions = useMissionStore(s=>s.loadMissions)
 
     const reloadStores = () => { 
         reloadProblems()
         reloadLearningEvents()
-        reloadDecks()
+        reloadMissions()
     }
     const dialogElement = (
         <BackupRestoreDialog open={open}

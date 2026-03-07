@@ -15,7 +15,7 @@ export function SinglePlayerScreen() {
     return SinglePlayerContent(problem)
 }
 
-const SINGLE_DECK_ID="single-deck-id"
+const SINGLE_MISSION_ID="single-mission-id"
 
 function SinglePlayerContent(problem: Problem){
     const navigate = useNavigate()
@@ -25,7 +25,7 @@ function SinglePlayerContent(problem: Problem){
     const capabilities = {
         answerable: {
             answer: (problemId: ProblemId, res: SolvedResult, sec?: number) => {
-                const sessionId = startSession(SINGLE_DECK_ID, [problemId])
+                const sessionId = startSession(SINGLE_MISSION_ID, [problemId])
                 review(problemId, sessionId, res, sec)
                 navigate(routes.back)
             }

@@ -16,7 +16,7 @@ const UNSPECIFIED = "__UNSPECIFIED__";
 export function MissionEditScreen() {
     const {
         name, allSources, query, stats, ids: problemIds,
-        setName, handleSaveAndExit, handleDeleteDeck,
+        setName, handleSaveAndExit, handleDeleteMission,
     } = useMissionEditViewModel();
 
     const navigate = useNavigate()
@@ -28,9 +28,9 @@ export function MissionEditScreen() {
 
     return (
         <AppShell
-            header={"Deck Edit"}
+            header={"Mission Edit"}
             rightActions={
-                <IconButton onClick={handleDeleteDeck} sx={{ color: "white" }}>
+                <IconButton onClick={handleDeleteMission} sx={{ color: "white" }}>
                     <DeleteIcon />
                 </IconButton>
             }
@@ -46,11 +46,11 @@ export function MissionEditScreen() {
             }
         >
             <Box sx={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }}>
-                <Grid container spacing={2} sx={{
+                <Grid container spacing={1} sx={{
                     flex: 1,
                     overflowY: "auto",
                     minHeight: 0,
-                    p: 2
+                    pt: 2
                 }}>
                     <Grid size={12}>
                         <TextField label="デッキ名" fullWidth value={name} onChange={e => setName(e.target.value)} />

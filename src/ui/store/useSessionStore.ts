@@ -16,7 +16,7 @@ type SesionStore = {
     phase: () => SessionPhase
 
     // ===== command =====
-    start: (deckId: MissionId, ids: ProblemId[], startIndex?: number) => SessionId;
+    start: (missionId: MissionId, ids: ProblemId[], startIndex?: number) => SessionId;
     //answer: (result: SolvedResult, secToTaken: number, learningEventId: LearningEventId) => void;
     next: () => void;
     prev: () => void;
@@ -53,12 +53,12 @@ export const useSessionStore = create<SesionStore>((set, get) => ({
     // ======================
     // command
     // ======================
-    start: (deckId, ids, startIndex=0) => {
+    start: (missionId, ids, startIndex=0) => {
         const sessionId = v4()
         set((_s) => {
-            //console.log("start", deckId, ids, ids.length > 0 ? 0 : -1)
+            //console.log("start", missionId, ids, ids.length > 0 ? 0 : -1)
             return {
-                missionId: deckId,
+                missionId: missionId,
                 sessionId: sessionId,
                 problemIds: ids,
                 currentIndex: ids.length > startIndex ? 0 : -1,

@@ -31,7 +31,7 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
     //const learningEvents = useLearningEventStore(s=>s.eventLog)
 
     const index = useSessionStore(s => s.currentIndex)
-    const deckId = useSessionStore(s => s.missionId)
+    const missionId = useSessionStore(s => s.missionId)
 
     const sessionId = useSessionStore(s=>s.sessionId)
     const next = useSessionStore(s => s.next)
@@ -48,9 +48,9 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
     const review = useLearningEventStore(s=>s.appendReview)
     const cancel = useLearningEventStore(s=>s.appendCancel)    
 
-    // deckName
-    const deckName = useMissionStore(
-        s => deckId ? s.missions.find(d => d.id === deckId)?.name ?? "" : ""
+    // missionName
+    const missionName = useMissionStore(
+        s => missionId ? s.missions.find(d => d.id === missionId)?.name ?? "" : ""
     )
 
     // navigation
@@ -91,7 +91,7 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
         
     }
 
-    const title = `[${deckName} (${index + 1}/${count})]: ${problem.title}`       
+    const title = `[${missionName} (${index + 1}/${count})]: ${problem.title}`       
 
 
     return { 

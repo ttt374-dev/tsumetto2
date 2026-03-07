@@ -1,7 +1,7 @@
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import DeleteIcon from '@mui/icons-material/Delete';
 
-import { Button, Divider, IconButton, Stack, TextField } from "@mui/material";
+import { Box, Button, Divider, IconButton, Stack, TextField } from "@mui/material";
 import { AppShell } from "../common/components/layout/AppShell";
 import { CancelableTextField } from "../shared/components/CancelableTextfield";
 import { ProblemTypeSelect } from "./components/ProblemTypeSelect";
@@ -87,25 +87,30 @@ export function ProblemDetailContent( { problem }: { problem: Problem}) {
                 </Stack>
             }
         >
-            <Stack spacing={1} pt={2}>
+            <Box sx={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }}>
+            <Stack spacing={1} p={1} sx={{
+                    flex: 1,
+                    overflowY: "auto",
+                    minHeight: 0,
+                    
+                }}>
                 {/* タイトル編集 */}
                 <CancelableTextField label="タイトル" value={title} onCommit={title => setTitle(title)} />
                 <ProblemTypeSelect
                     value={type}
                     onChange={v => setType(v)}
                 />
-                <ProblemTagEditor
-                    value={tags}
-                    onChange={tags => setTags(tags)}
-                />
-
                 <FreeSoloAutocomplete
                     label="出典"
                     value={source}
                     options={allSources}
                     onChange={v => setSource(v ?? "")}
-                //onChange={(v) => { setSource(v ?? ""); console.log("on change: ", v)}}                        
                 />
+                <ProblemTagEditor
+                    value={tags}
+                    onChange={tags => setTags(tags)}
+                />
+
                 <ProblemInfoPanel problem={problem} />
                 <Divider />
 
@@ -121,6 +126,7 @@ export function ProblemDetailContent( { problem }: { problem: Problem}) {
                     onChange={e => setComment(e.target.value)}
                 />
             </Stack>
+            </Box>
         </AppShell>
     )
 }

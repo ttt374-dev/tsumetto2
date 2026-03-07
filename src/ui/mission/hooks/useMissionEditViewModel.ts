@@ -1,4 +1,3 @@
-import { useMissionEditorStore } from "@/ui/store/useDeckEditorStore"
 import { useMissionStore } from "@/ui/store/useMissionStore"
 import { useProblemStore } from "@/ui/store/useProblemStore"
 import { useLearningRecordStore } from "@/ui/store/useLearningRecordStore"
@@ -7,15 +6,15 @@ import { useToast } from "@/ui/App/providers/ToastProvider"
 import { routes } from "@/ui/App/useAppNavigation"
 import { useCallback, useEffect, useMemo } from "react"
 import { useNavigate, useParams } from "react-router-dom"
-import { createQuerySnapshot } from "@/domain/mission/entity/Mission"
 import { ProblemStats } from "@/domain/problem/valueObject/ProblemStats"
 import { useProblemsQuery } from "@/domain/problem/service/query/useProblemsQuery"
 import { DefaultQueryState, type QueryState } from "@/domain/problem/service/query/ProblemsQuery"
+import { useMissionEditorStore } from "@/ui/store/useDeckEditorStore"
 
 
-function useDeckEditorInitializer(id: string | undefined) {
+function useMissionEditorInitializer(id: string | undefined) {
     const { startNew, startEdit, reset } = useMissionEditorStore()
-    const decks = useMissionStore(s => s.missions)
+    const missions = useMissionStore(s => s.missions)
 
     useEffect(() => {
         if (!id) return
@@ -23,12 +22,12 @@ function useDeckEditorInitializer(id: string | undefined) {
         if (id === "new") {
             startNew()
         } else {
-            const existing = decks.find(d => d.id === id)
+            const existing = missions.find(d => d.id === id)
             if (existing) startEdit(existing)
         }
 
         return () => reset()
-    }, [id, decks])
+    }, [id, missions])
 }
 function useMissionEditorList(queryState: QueryState){
     const problems = useProblemStore(s => s.activeProblems)
@@ -44,7 +43,7 @@ function useMissionEditorList(queryState: QueryState){
 function useMissionEditorActions(id: string | undefined, queryState: QueryState) {
     const draft = useMissionEditorStore(s => s.draft)
     const reset = useMissionEditorStore(s => s.reset)
-    const deckStore = useMissionStore()
+    const missionStore = useMissionStore()
     const navigate = useNavigate()
     const toast = useToast()
     //const query = useQuery()
@@ -52,7 +51,7 @@ function useMissionEditorActions(id: string | undefined, queryState: QueryState)
     const save = useCallback(async () => {
         if (!draft) return     
         console.log("save draft", draft)   
-        deckStore.saveMission({
+        missionStore.saveMission({
             ...draft,
             //snapshot: createQuerySnapshot(queryState),
             queryState: {...queryState},
@@ -61,17 +60,17 @@ function useMissionEditorActions(id: string | undefined, queryState: QueryState)
         toast({ message: "保存しました" })
         reset()
         navigate(routes.back)
-    }, [draft, deckStore, queryState])
+    }, [draft, missionStore, queryState])
 
     const remove = useCallback( () => {
         if (!draft || id === "new") return
 
         if (!window.confirm("are  you sure to delete")) return
-        deckStore.deleteMission(draft.id)
+        missionStore.deleteMission(draft.id)
         toast({ message: "削除しました" })
         reset()
         navigate(routes.back)
-    }, [draft, id, deckStore])
+    }, [draft, id, missionStore])
 
     return { save, remove }
 }
@@ -95,7 +94,7 @@ export function useMissionEditViewModel() {
     // --------------------------
     // 初期化
     // --------------------------
-    useDeckEditorInitializer(id)
+    useMissionEditorInitializer(id)
 
     // --------------------------
     // draft → query同期（初回のみ）
@@ -124,7 +123,7 @@ export function useMissionEditViewModel() {
 
     return {
         id,
-        deck: draft,
+        mission: draft,
         name: draft?.name ?? "",        
         allTags, allSources,
         query,
@@ -134,6 +133,6 @@ export function useMissionEditViewModel() {
 
         setName,
         handleSaveAndExit: save,
-        handleDeleteDeck: remove,
+        handleDeleteMission: remove,
     }
 }

@@ -21,7 +21,7 @@ export function useMissionViewModel() {
     const toast = useToast();
 
     // Store
-    const decks = useMissionStore(s => s.missions);
+    const missions = useMissionStore(s => s.missions);
     const replaceAll = useMissionStore(s => s.replaceAll);
 
     const problems = useProblemStore(s => s.activeProblems);
@@ -30,57 +30,57 @@ export function useMissionViewModel() {
     const startSession = useSessionStore(s => s.start);
 
     // UI 用配列
-    const [deckArray, setDeckArray] = useState<Mission[]>([]);
+    const [missionArray, setMissionArray] = useState<Mission[]>([]);
 
-    // decks が更新されたら UI 配列を order 順にセット
+    // missions が更新されたら UI 配列を order 順にセット
     useEffect(() => {
-        const sorted = [...decks].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-        setDeckArray(sorted);
-    }, [decks]);
+        const sorted = [...missions].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+        setMissionArray(sorted);
+    }, [missions]);
 
     // DnD 完了時に配列更新 + 永続化
     const onDragEnd = useCallback(
         async (activeId: string | number, overId: string | number | null) => {
             if (!overId || activeId === overId) return;
 
-            const oldIndex = deckArray.findIndex(d => d.id === activeId);
-            const newIndex = deckArray.findIndex(d => d.id === overId);
+            const oldIndex = missionArray.findIndex(d => d.id === activeId);
+            const newIndex = missionArray.findIndex(d => d.id === overId);
 
             if (oldIndex === -1 || newIndex === -1) return;
 
-            const newArray = arrayMove(deckArray, oldIndex, newIndex);
-            setDeckArray(newArray);
+            const newArray = arrayMove(missionArray, oldIndex, newIndex);
+            setMissionArray(newArray);
 
             const updated = newArray.map((d, i) => ({ ...d, order: i }));
             replaceAll(updated);
         },
-        [deckArray, replaceAll]
+        [missionArray, replaceAll]
     );
 
-    // deckArray に基づく stats
-    const deckStats = useMemo(() => {
+    // missionArray に基づく stats
+    const missionStats = useMemo(() => {
         const map = new Map<string, ProblemStats>();
-        for (const deck of deckArray) {
+        for (const mission of missionArray) {
             
-            const filtered = applyFilter(problems, learningRecords, deck.queryState ?? DefaultQueryState);
+            const filtered = applyFilter(problems, learningRecords, mission.queryState ?? DefaultQueryState);
             const stats = ProblemStats.create(filtered.map(p => p.id), learningRecords);
-            map.set(deck.id, stats);
+            map.set(mission.id, stats);
         }
         return map;
-    }, [deckArray, problems, learningRecords]);
+    }, [missionArray, problems, learningRecords]);
 
 
     // 既存の操作
-    const onCreateDeck = () => navigate(routes.newMission);
+    const onCreateMission = () => navigate(routes.newMission);
 
-    const onStartSession = (deck: Mission) => {
+    const onStartSession = (mission: Mission) => {
         const filtered = applyQuery(
             problems,
             learningRecords,
-            deck.queryState,            
+            mission.queryState,            
         );
 
-        startSession(deck.id, filtered.map(p => p.id));
+        startSession(mission.id, filtered.map(p => p.id));
         navigate(routes.sessionPlay);
     };
 
@@ -94,10 +94,10 @@ export function useMissionViewModel() {
     const backupRestoreDialog = useBackupRestoreDialog();
 
     return {
-        deckArray,
-        deckStats,
+        missionArray,
+        missionStats,
         onDragEnd,
-        onCreateDeck,
+        onCreateMission,
         onStartSession,
         presenter: { importer, backupRestoreDialog },
     };

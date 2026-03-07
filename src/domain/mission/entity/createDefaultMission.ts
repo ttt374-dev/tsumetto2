@@ -4,7 +4,7 @@ import { DefaultQueryState } from "@/domain/problem/service/query/ProblemsQuery"
 
 const DEFAULT_MISSION_NAME = "new-mission"
 
-export function createDefaultDeck(): Mission {
+export function createDefaultMission(): Mission {
     return {
         id: v4(),
         name: DEFAULT_MISSION_NAME,

@@ -1,33 +1,33 @@
 import type { Mission, MissionId } from "../entity/Mission"
 
 export class MissionRepository {
-    private decks: Mission[] | null = null
+    private missions: Mission[] | null = null
 
     constructor(
         private readonly persistence: MissionPersistence
     ) { }
 
     private async ensureLoaded(): Promise<Mission[]> {
-        if (this.decks === null) {
-            this.decks = await this.persistence.load()
+        if (this.missions === null) {
+            this.missions = await this.persistence.load()
         }
-        return this.decks
+        return this.missions
     }
 
     async findAll(): Promise<Mission[]> {
         return await this.load()
     }
-    async replaceAll(decks: Mission[]) {
-        await this.save(decks)
+    async replaceAll(missions: Mission[]) {
+        await this.save(missions)
     }
     private async load(): Promise<Mission[]> {
-        const decks = await this.ensureLoaded()
-        return [...decks]
+        const missions = await this.ensureLoaded()
+        return [...missions]
     }
-    private async save(decks: Mission[]) {
-        this.decks = decks
-        console.log("deck saved", decks)
-        await this.persistence.save(decks)
+    private async save(missions: Mission[]) {
+        this.missions = missions
+        console.log("mission saved", missions)
+        await this.persistence.save(missions)
     }
 
 
@@ -35,7 +35,7 @@ export class MissionRepository {
 
 export interface MissionPersistence {
     load(): Promise<Mission[]>
-    save(decks: Mission[]): Promise<void>
+    save(missions: Mission[]): Promise<void>
 }
 
 const STORAGE_KEY = "study-mission-v1"
@@ -51,10 +51,10 @@ export class LocalStorageMissionPersistence implements MissionPersistence {
         return data
     }
 
-    async save(decks: Mission[]): Promise<void> {
+    async save(missions: Mission[]): Promise<void> {
         localStorage.setItem(
             STORAGE_KEY,
-            JSON.stringify(decks)
+            JSON.stringify(missions)
         )
     }
 }

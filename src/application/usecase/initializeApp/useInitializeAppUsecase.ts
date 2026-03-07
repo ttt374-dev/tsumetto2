@@ -1,14 +1,14 @@
 // usecase/initializeAppUsecase.ts
 
-import { createDefaultDeck } from "@/domain/mission/entity/createDefaultMission"
+import { createDefaultMission } from "@/domain/mission/entity/createDefaultMission"
 import type { MissionRepository } from "@/domain/mission/repository/MissionRepository"
 
 export async function initializeAppUsecase(
-  deckRepository: MissionRepository
+  missionRepository: MissionRepository
 ): Promise<void> {
-  const decks = await deckRepository.findAll()
+  const missions = await missionRepository.findAll()
 
-  if (decks.length === 0) {
-    await deckRepository.replaceAll([createDefaultDeck()])
+  if (missions.length === 0) {
+    await missionRepository.replaceAll([createDefaultMission()])
   }
 }

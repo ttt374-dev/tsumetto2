@@ -1,13 +1,13 @@
 import { create } from "zustand"
 import type { Mission } from "@/domain/mission/entity/Mission"
-import { createDefaultDeck } from "@/domain/mission/entity/createDefaultMission"
+import { createDefaultMission } from "@/domain/mission/entity/createDefaultMission"
 import type { QueryState } from "@/domain/problem/service/query/ProblemsQuery"
 
 type MissionEditorState = {
     draft: Mission | null
 
     startNew: () => void
-    startEdit: (deck: Mission) => void
+    startEdit: (mission: Mission) => void
 
     setName: (name: string) => void
     setQuery: (snapshot: Mission["queryState"]) => void    
@@ -20,12 +20,12 @@ export const useMissionEditorStore = create<MissionEditorState>((set) => ({
 
     startNew: () =>
         set({
-            draft: createDefaultDeck(),
+            draft: createDefaultMission(),
         }),
 
-    startEdit: (deck) =>
+    startEdit: (mission) =>
         set({
-            draft: { ...deck }, // コピー重要
+            draft: { ...mission }, // コピー重要
         }),
 
     setName: (name) =>
