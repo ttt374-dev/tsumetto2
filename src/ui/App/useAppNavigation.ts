@@ -4,9 +4,9 @@ export const routes = {
     home: "/",
 
     // deck
-    decks: "/deck",
-    deckEdit: (id: string) => `/deck/${id}`,
-    deckNew: '/deck/new',
+    mission: "/deck",
+    missionEdit: (id: string) => `/mission/${id}`,
+    newMission: '/mission/new',
 
     // library
     library: "/library",

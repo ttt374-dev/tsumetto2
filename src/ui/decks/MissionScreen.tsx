@@ -9,17 +9,17 @@ import { CSS } from "@dnd-kit/utilities";
 
 import { AppShell } from "../common/components/layout/AppShell";
 import DeckFabMenu from "./components/DeckFabMenu";
-import { useDecksViewModel } from "./hooks/useDecksViewModel";
+import { useMissionViewModel } from "./hooks/useMissionViewModel";
 import { useNavigate } from "react-router-dom";
 import { routes } from "../App/useAppNavigation";
-import type { Deck, DeckId } from "@/domain/deck/entity/Deck";
-import { useDecksModeStore } from "./hooks/useDecksModeStore";
+import type { Mission, MissionId } from "@/domain/mission/entity/Mission";
+import { useMissionModeStore } from "./hooks/useMissionModeStore";
 
-export default function DecksScreen() {
+export default function MissionScreen() {
     const { deckArray, onDragEnd, deckStats, onCreateDeck, onStartSession, presenter: { importer, backupRestoreDialog } } =
-        useDecksViewModel();
+        useMissionViewModel();
     const navigate = useNavigate();
-    const { editMode, toggleEditMode } = useDecksModeStore()
+    const { editMode, toggleEditMode } = useMissionModeStore()
 
     // dnd-kit センサー
     const sensors = useSensors(
@@ -36,7 +36,7 @@ export default function DecksScreen() {
         })
     );
 
-    function SortableDeckItem({ deck }: { deck: Deck }) {
+    function SortableDeckItem({ deck }: { deck: Mission }) {
         const sortable = useSortable({ id: deck.id });
 
         const style = {
@@ -82,7 +82,7 @@ export default function DecksScreen() {
                 <ListItemButton
                     onClick={() => {
                         if (!editMode) onStartSession(deck)
-                        else navigate(routes.deckEdit(deck.id))                        
+                        else navigate(routes.missionEdit(deck.id))                        
                     }}
                     disabled={!editMode && (stats?.problemCount === 0)} 
                     sx={{

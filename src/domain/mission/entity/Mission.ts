@@ -5,13 +5,13 @@ export type QuerySnapshot = {
   //filterState: FilterState
   //sortState: SortState
 }
-export type DeckId = string
+export type MissionId = string
 
-export type Deck = {
-  id: DeckId
+export type Mission = {
+  id: MissionId
   name: string
   
-  //snapshot: QuerySnapshot
+
   queryState: QueryState
   order: number
   

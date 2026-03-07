@@ -8,8 +8,8 @@ import { createTheme, ThemeProvider } from "@mui/material";
 
 import { SessionLayout } from '../session/SessionLayout.tsx';
 import { LibraryScreen } from '../library/LibraryScreen';
-import DecksScreen from '../decks/DecksScreen';
-import { DeckEditScreen } from '../decks/DeckEditScreen';
+import MissionScreen from '../decks/MissionScreen.tsx';
+import { MissionEditScreen } from '../decks/MissionEditScreen.tsx';
 import { SessionPlayerScreen } from '../session/SessionPlayerScreen';
 import { ViewerScreen } from '../viewer/ViewerScreen';
 import { RepositoryContext, type RepositoryContextValue } from './providers/RepositoryProvider';
@@ -65,7 +65,7 @@ function App() {
                 <RepositoryContext.Provider value={{
                     problem: repos.problem,
                     learningEvent: repos.learningEvent,
-                    deck: repos.deck,
+                    mission: repos.mission,
 
                 }}>
                     <BrowserRouter>
@@ -77,8 +77,8 @@ function App() {
                                 <Route path="summary" element={<SessionPlayerScreen />} />
                             </Route>
 
-                            <Route path={routes.decks} element={<DecksScreen />} />
-                            <Route path="/deck/:id" element={<DeckEditScreen />} />
+                            <Route path={routes.mission} element={<MissionScreen />} />
+                            <Route path="/mission/:id" element={<MissionEditScreen />} />
 
                             <Route path={routes.library} element={<LibraryScreen />} />
                             <Route path="/view/:id" element={<ViewerScreen />} />
@@ -87,7 +87,7 @@ function App() {
 
                             <Route path={routes.stats} element={<StatsScreen />} />
 
-                            <Route path="/" element={<Navigate to={routes.decks} />} />
+                            <Route path="/" element={<Navigate to={routes.mission} />} />
                         </Routes>
                     </BrowserRouter>
                 </RepositoryContext.Provider>

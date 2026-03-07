@@ -1,5 +1,5 @@
-import { useDeckEditorStore } from "@/ui/store/useDeckEditorStore"
-import { useDeckStore } from "@/ui/store/useDeckStore"
+import { useMissionEditorStore } from "@/ui/store/useDeckEditorStore"
+import { useMissionStore } from "@/ui/store/useMissionStore"
 import { useProblemStore } from "@/ui/store/useProblemStore"
 import { useLearningRecordStore } from "@/ui/store/useLearningRecordStore"
 import { applyQuery } from "@/domain/problem/service/query/applyQuery"
@@ -7,15 +7,15 @@ import { useToast } from "@/ui/App/providers/ToastProvider"
 import { routes } from "@/ui/App/useAppNavigation"
 import { useCallback, useEffect, useMemo } from "react"
 import { useNavigate, useParams } from "react-router-dom"
-import { createQuerySnapshot } from "@/domain/deck/entity/Deck"
+import { createQuerySnapshot } from "@/domain/mission/entity/Mission"
 import { ProblemStats } from "@/domain/problem/valueObject/ProblemStats"
 import { useProblemsQuery } from "@/domain/problem/service/query/useProblemsQuery"
 import { DefaultQueryState, type QueryState } from "@/domain/problem/service/query/ProblemsQuery"
 
 
 function useDeckEditorInitializer(id: string | undefined) {
-    const { startNew, startEdit, reset } = useDeckEditorStore()
-    const decks = useDeckStore(s => s.decks)
+    const { startNew, startEdit, reset } = useMissionEditorStore()
+    const decks = useMissionStore(s => s.missions)
 
     useEffect(() => {
         if (!id) return
@@ -30,7 +30,7 @@ function useDeckEditorInitializer(id: string | undefined) {
         return () => reset()
     }, [id, decks])
 }
-function useDeckEditorList(queryState: QueryState){
+function useMissionEditorList(queryState: QueryState){
     const problems = useProblemStore(s => s.activeProblems)
     const learningRecords = useLearningRecordStore(s => s.records)
 
@@ -41,10 +41,10 @@ function useDeckEditorList(queryState: QueryState){
     return { ids, activeProblems, learningRecords}
 }
 
-function useDeckEditorActions(id: string | undefined, queryState: QueryState) {
-    const draft = useDeckEditorStore(s => s.draft)
-    const reset = useDeckEditorStore(s => s.reset)
-    const deckStore = useDeckStore()
+function useMissionEditorActions(id: string | undefined, queryState: QueryState) {
+    const draft = useMissionEditorStore(s => s.draft)
+    const reset = useMissionEditorStore(s => s.reset)
+    const deckStore = useMissionStore()
     const navigate = useNavigate()
     const toast = useToast()
     //const query = useQuery()
@@ -52,7 +52,7 @@ function useDeckEditorActions(id: string | undefined, queryState: QueryState) {
     const save = useCallback(async () => {
         if (!draft) return     
         console.log("save draft", draft)   
-        deckStore.saveDeck({
+        deckStore.saveMission({
             ...draft,
             //snapshot: createQuerySnapshot(queryState),
             queryState: {...queryState},
@@ -67,7 +67,7 @@ function useDeckEditorActions(id: string | undefined, queryState: QueryState) {
         if (!draft || id === "new") return
 
         if (!window.confirm("are  you sure to delete")) return
-        deckStore.deleteDeck(draft.id)
+        deckStore.deleteMission(draft.id)
         toast({ message: "削除しました" })
         reset()
         navigate(routes.back)
@@ -78,7 +78,7 @@ function useDeckEditorActions(id: string | undefined, queryState: QueryState) {
 
 
 /////////////////////////////////////
-export function useDeckEditViewModel() {
+export function useMissionEditViewModel() {
     const { id } = useParams<{ id: string }>()
     //const query = useQuery()    
     const query = useProblemsQuery()
@@ -87,7 +87,7 @@ export function useDeckEditViewModel() {
         draft,
         setName,
         reset,
-    } = useDeckEditorStore()
+    } = useMissionEditorStore()
 
     const allTags = useProblemStore(s => s.allTags)
     const allSources = useProblemStore(s=>s.allSources)
@@ -113,14 +113,14 @@ export function useDeckEditViewModel() {
     // --------------------------
     // List, Stats
     // --------------------------
-    const { ids, learningRecords} = useDeckEditorList(query.state)
+    const { ids, learningRecords} = useMissionEditorList(query.state)
     const stats =  useMemo(()=> ProblemStats.create(ids, learningRecords),
         [ids, learningRecords])
 
     // --------------------------
     // 保存・削除
     // --------------------------
-    const { save, remove } = useDeckEditorActions(id, query.state)
+    const { save, remove } = useMissionEditorActions(id, query.state)
 
     return {
         id,

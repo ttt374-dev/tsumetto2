@@ -5,24 +5,24 @@ import { applyQuery } from "@/domain/problem/service/query/applyQuery";
 import { routes } from "@/ui/App/useAppNavigation";
 import { arrayMove } from "@dnd-kit/sortable";
 
-import { useDeckStore } from "@/ui/store/useDeckStore";
+import { useMissionStore } from "@/ui/store/useMissionStore";
 import { useProblemStore } from "@/ui/store/useProblemStore";
 import { useSessionStore } from "@/ui/store/useSessionStore";
 import { useLearningRecordStore } from "@/ui/store/useLearningRecordStore";
 import { applyFilter } from "@/domain/problem/service/query/applyFilter";
-import type { Deck } from "@/domain/deck/entity/Deck";
+import type { Mission } from "@/domain/mission/entity/Mission";
 import { ProblemStats } from "@/domain/problem/valueObject/ProblemStats";
 import { useImport } from "@/ui/Import/useImport";
 import { useBackupRestoreDialog } from "@/ui/common/components/dialogs/BackupRestoreDialog";
 import { DefaultQueryState } from "@/domain/problem/service/query/ProblemsQuery";
 
-export function useDecksViewModel() {
+export function useMissionViewModel() {
     const navigate = useNavigate();
     const toast = useToast();
 
     // Store
-    const decks = useDeckStore(s => s.decks);
-    const replaceAll = useDeckStore(s => s.replaceAll);
+    const decks = useMissionStore(s => s.missions);
+    const replaceAll = useMissionStore(s => s.replaceAll);
 
     const problems = useProblemStore(s => s.activeProblems);
     const learningRecords = useLearningRecordStore(s => s.records);
@@ -30,7 +30,7 @@ export function useDecksViewModel() {
     const startSession = useSessionStore(s => s.start);
 
     // UI 用配列
-    const [deckArray, setDeckArray] = useState<Deck[]>([]);
+    const [deckArray, setDeckArray] = useState<Mission[]>([]);
 
     // decks が更新されたら UI 配列を order 順にセット
     useEffect(() => {
@@ -71,9 +71,9 @@ export function useDecksViewModel() {
 
 
     // 既存の操作
-    const onCreateDeck = () => navigate(routes.deckNew);
+    const onCreateDeck = () => navigate(routes.newMission);
 
-    const onStartSession = (deck: Deck) => {
+    const onStartSession = (deck: Mission) => {
         const filtered = applyQuery(
             problems,
             learningRecords,

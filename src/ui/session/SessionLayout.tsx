@@ -6,7 +6,7 @@ export function SessionLayout() {
     const phase = useSessionStore(s => s.phase())
     switch (phase) {
         case "idle":
-            <Navigate to={routes.decks} />
+            <Navigate to={routes.mission} />
             break;
         case "playing":
             <Navigate to={routes.sessionPlay} />

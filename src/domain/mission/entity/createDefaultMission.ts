@@ -1,13 +1,13 @@
 import { v4 } from "uuid";
-import type { Deck } from "./Deck";
+import type { Mission } from "./Mission";
 import { DefaultQueryState } from "@/domain/problem/service/query/ProblemsQuery";
 
-const DEFAULT_DECK_NAME = "new-deck"
+const DEFAULT_MISSION_NAME = "new-mission"
 
-export function createDefaultDeck(): Deck {
+export function createDefaultDeck(): Mission {
     return {
         id: v4(),
-        name: DEFAULT_DECK_NAME,
+        name: DEFAULT_MISSION_NAME,
         queryState: {...DefaultQueryState},
         createdAt: Date.now(),
         order: 0,

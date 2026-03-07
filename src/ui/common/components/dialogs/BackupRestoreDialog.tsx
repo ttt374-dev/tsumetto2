@@ -8,7 +8,7 @@ import { useRepositoryContext } from "@/ui/App/providers/RepositoryProvider"
 import { useToast } from "@/ui/App/providers/ToastProvider"
 import { useProblemStore } from "@/ui/store/useProblemStore"
 import { useLearningEventStore } from "@/ui/store/useLearningEventStore"
-import { useDeckStore } from "@/ui/store/useDeckStore"
+import { useMissionStore } from "@/ui/store/useMissionStore"
 
 export function useBackupRestoreDialog(){
     const [open, setOpen] = useState(false)
@@ -16,7 +16,7 @@ export function useBackupRestoreDialog(){
     const openDialog = () => { setOpen(true)}
     const reloadProblems = useProblemStore(s=>s.reload)    
     const reloadLearningEvents = useLearningEventStore(s=>s.reload)
-    const reloadDecks = useDeckStore(s=>s.loadDecks)
+    const reloadDecks = useMissionStore(s=>s.loadDecks)
 
     const reloadStores = () => { 
         reloadProblems()
@@ -54,7 +54,7 @@ export default function BackupRestoreDialog({ open, onClose, onBackupFinished, o
     onRestoreFinished?: (res: RestoreResult) => void
 }) {
     const repos = useRepositoryContext()
-    const usecase = useBackupRestoreUsecase(repos.problem, repos.learningEvent, repos.deck, fileBackupWriter)
+    const usecase = useBackupRestoreUsecase(repos.problem, repos.learningEvent, repos.mission, fileBackupWriter)
     const fileInputRef = useRef<HTMLInputElement>(null)
 
     /* ===== backup ===== */   

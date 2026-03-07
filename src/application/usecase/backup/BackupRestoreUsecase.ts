@@ -1,13 +1,13 @@
 // backupRestoreUsecase.ts
 
 import type { Result } from "@/shared/result"
-import type { DeckRepository } from "@/domain/deck/repository/DeckRepository"
+import type { MissionRepository } from "@/domain/mission/repository/MissionRepository"
 import type { LearningEventRepository } from "@/domain/learning/repository/LearningEventRepository"
 import { Problem, type ProblemDTO } from "@/domain/problem/entity/Problem"
 import type { LearningEventLog } from "@/domain/learning/entity/LearningEvent"
-import type { Deck } from "@/domain/deck/entity/Deck"
+import type { Mission } from "@/domain/mission/entity/Mission"
 import type { ProblemRepository } from "@/domain/problem/repository/ProblemRepository"
-import { useDeckStore } from "@/ui/store/useDeckStore"
+import { useMissionStore } from "@/ui/store/useMissionStore"
 import { useProblemStore } from "@/ui/store/useProblemStore"
 
 export type BackupResult = Result<BackupResultOk, BackupRestoreError>
@@ -38,17 +38,17 @@ export interface BackupRestoreUsecase {
 export type BackupData = {
     problems: ProblemDTO[]
     learningEvents: LearningEventLog
-    decks: Deck[]
+    decks: Mission[]
 }
 
 export function useBackupRestoreUsecase(
     problemRepo: ProblemRepository,
     learningRepo: LearningEventRepository,
-    deckRepo: DeckRepository,
+    deckRepo: MissionRepository,
     writer: BackupWriter,
 ): BackupRestoreUsecase { 
     const reloadProblems = useProblemStore(s=>s.reload)
-    const reloadDecks = useDeckStore(s=>s.loadDecks)
+    const reloadDecks = useMissionStore(s=>s.loadDecks)
     // TODO: error check
     return {
         async backup(): Promise<BackupResult> {
@@ -56,7 +56,7 @@ export function useBackupRestoreUsecase(
 
             let problems: Problem[]
             let learnings: LearningEventLog
-            let decks: Deck[]
+            let decks: Mission[]
             let backupData: BackupData
             let json: string
 

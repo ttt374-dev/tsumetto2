@@ -1,4 +1,4 @@
-import type { DeckId } from "@/domain/deck/entity/Deck";
+import type { MissionId } from "@/domain/mission/entity/Mission";
 import type { SessionId, SessionPhase } from "@/domain/session/entity/Session";
 import type { ProblemId } from "@/domain/problem/entity/Problem";
 import { v4 } from "uuid";
@@ -8,7 +8,7 @@ import { create } from "zustand";
 type SesionStore = {
     // ===== state =====
     sessionId?: SessionId,
-    deckId?: DeckId;
+    deckId?: MissionId;
     problemIds: ProblemId[];
     currentIndex: number; // ⭐ マスター
 
@@ -16,7 +16,7 @@ type SesionStore = {
     phase: () => SessionPhase
 
     // ===== command =====
-    start: (deckId: DeckId, ids: ProblemId[]) => SessionId;
+    start: (deckId: MissionId, ids: ProblemId[]) => SessionId;
     //answer: (result: SolvedResult, secToTaken: number, learningEventId: LearningEventId) => void;
     next: () => void;
     prev: () => void;

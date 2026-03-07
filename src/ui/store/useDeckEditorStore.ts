@@ -1,20 +1,21 @@
 import { create } from "zustand"
-import type { Deck } from "@/domain/deck/entity/Deck"
-import { createDefaultDeck } from "@/domain/deck/entity/createDefaultDeck"
+import type { Mission } from "@/domain/mission/entity/Mission"
+import { createDefaultDeck } from "@/domain/mission/entity/createDefaultMission"
+import type { QueryState } from "@/domain/problem/service/query/ProblemsQuery"
 
-type DeckEditorState = {
-    draft: Deck | null
+type MissionEditorState = {
+    draft: Mission | null
 
     startNew: () => void
-    startEdit: (deck: Deck) => void
+    startEdit: (deck: Mission) => void
 
     setName: (name: string) => void
-    setSnapshot: (snapshot: Deck["snapshot"]) => void
+    setQuery: (snapshot: Mission["queryState"]) => void    
 
     reset: () => void
 }
 
-export const useDeckEditorStore = create<DeckEditorState>((set) => ({
+export const useMissionEditorStore = create<MissionEditorState>((set) => ({
     draft: null,
 
     startNew: () =>
@@ -34,10 +35,10 @@ export const useDeckEditorStore = create<DeckEditorState>((set) => ({
                 : state
         ),
 
-    setSnapshot: (snapshot) =>
+    setQuery: (query) =>
         set((state) =>
             state.draft
-                ? { draft: { ...state.draft, snapshot } }
+                ? { draft: { ...state.draft, snapshot: query } }
                 : state
         ),
 

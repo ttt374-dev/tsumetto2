@@ -1,8 +1,8 @@
 
 import { useEffect, useMemo } from 'react';
 import { useProblemStore } from '@/ui/store/useProblemStore';
-import { DeckRepository, LocalStorageDeckPersistence } from '@/domain/deck/repository/DeckRepository';
-import { useDeckStore } from '@/ui/store/useDeckStore';
+import { MissionRepository, LocalStorageMissionPersistence } from '@/domain/mission/repository/MissionRepository';
+import { useMissionStore } from '@/ui/store/useMissionStore';
 import { LocalStorageLearningEventPersistence, LearningEventRepository } from '@/domain/learning/repository/LearningEventRepository';
 import { useLearningEventStore } from '@/ui/store/useLearningEventStore';
 import { RepositoryContext, type RepositoryContextValue } from './providers/RepositoryProvider';
@@ -14,17 +14,17 @@ export function createRepositories() {
     return {
         problem: new ProblemRepository(new LocalStrorageProblemPersistence()),
         learningEvent: new LearningEventRepository(new LocalStorageLearningEventPersistence()),
-        deck: new DeckRepository(new LocalStorageDeckPersistence()),
+        mission: new MissionRepository(new LocalStorageMissionPersistence()),
     }
 }
 export function bootstrapApp(repos: RepositoryContextValue) {
     useEffect(() => {
-        const deckRepo = repos.deck
+        const missionRepo = repos.mission
         const learningRepo = repos.learningEvent
         const problemRepo = repos.problem
 
         // Repository 注入
-        useDeckStore.getState().setRepository(deckRepo)
+        useMissionStore.getState().setRepository(missionRepo)
         useLearningEventStore.getState().setRepository(learningRepo)
         useProblemStore.getState().setRepository(problemRepo)
 
@@ -32,9 +32,9 @@ export function bootstrapApp(repos: RepositoryContextValue) {
         let isInitializing = true
 
         // subscribe 設定
-        const deckUnsub = useDeckStore.subscribe(state => {
+        const missionUnsub = useMissionStore.subscribe(state => {
             if (isInitializing) return
-            debounce(async () => await deckRepo.replaceAll(state.decks), 1000)()
+            debounce(async () => await missionRepo.replaceAll(state.missions), 1000)()
         })
         const learningUnsub = useLearningEventStore.subscribe(state => {
             if (isInitializing) return
@@ -50,8 +50,8 @@ export function bootstrapApp(repos: RepositoryContextValue) {
 
         // bootstrap 本体
         const bootstrap = async () => {
-            await initializeAppUsecase(deckRepo)
-            await useDeckStore.getState().loadDecks()
+            await initializeAppUsecase(missionRepo)
+            await useMissionStore.getState().loadMissions()
             await useProblemStore.getState().reload()
             await useLearningEventStore.getState().reload()
         }
@@ -59,7 +59,7 @@ export function bootstrapApp(repos: RepositoryContextValue) {
 
         // クリーンアップ
         return () => {
-            deckUnsub()
+            missionUnsub()
             learningUnsub()
             problemUnsub()
         }

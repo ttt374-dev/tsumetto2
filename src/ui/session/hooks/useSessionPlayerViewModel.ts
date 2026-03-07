@@ -1,4 +1,4 @@
-import { useDeckStore } from "@/ui/store/useDeckStore"
+import { useMissionStore } from "@/ui/store/useMissionStore"
 import { useSessionStore } from "@/ui/store/useSessionStore"
 import { useProblemStore } from "@/ui/store/useProblemStore"
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem"
@@ -49,8 +49,8 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
     const cancel = useLearningEventStore(s=>s.appendCancel)    
 
     // deckName
-    const deckName = useDeckStore(
-        s => deckId ? s.decks.find(d => d.id === deckId)?.name ?? "" : ""
+    const deckName = useMissionStore(
+        s => deckId ? s.missions.find(d => d.id === deckId)?.name ?? "" : ""
     )
 
     // navigation

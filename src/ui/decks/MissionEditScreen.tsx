@@ -2,7 +2,7 @@ import { Box, Button, FormControl, FormControlLabel, Grid, IconButton, InputLabe
 import DeleteIcon from '@mui/icons-material/Delete';
 
 import SortControl from "../common/query-control/SortControl";
-import { useDeckEditViewModel } from "./hooks/useDeckEditViewModel";
+import { useMissionEditViewModel } from "./hooks/useMissionEditViewModel";
 import { AppShell } from "../common/components/layout/AppShell";
 import { useListDialog } from "../list/ListDialog";
 import { useNavigate } from "react-router-dom";
@@ -13,11 +13,11 @@ const UNSPECIFIED = "__UNSPECIFIED__";
 //type ProblemTypeUi = ProblemType | typeof UNSPECIFIED
 //type SourceUi = string | typeof UNSPECIFIED
 
-export function DeckEditScreen() {
+export function MissionEditScreen() {
     const {
-        name, allTags, allSources, query, stats, ids: problemIds,
+        name, allSources, query, stats, ids: problemIds,
         setName, handleSaveAndExit, handleDeleteDeck,
-    } = useDeckEditViewModel();
+    } = useMissionEditViewModel();
 
     const navigate = useNavigate()
     const ListDialog = useListDialog(problemIds, (id) => navigate(routes.problemView(id)))

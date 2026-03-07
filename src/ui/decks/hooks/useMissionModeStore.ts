@@ -1,7 +1,7 @@
 // store/useModeStore.ts
 import { create } from "zustand";
 
-type DecksModeStore = {
+type MissionModeStore = {
     editMode: boolean
     toggleEditMode: () => void
 
@@ -15,7 +15,7 @@ type DecksModeStore = {
     
 };
 
-export const useDecksModeStore = create<DecksModeStore>((set) => ({
+export const useMissionModeStore = create<MissionModeStore>((set) => ({
     editMode: false,
     toggleEditMode: () => set((state) => ({editMode: !state.editMode})),
 
