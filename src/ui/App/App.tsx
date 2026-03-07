@@ -6,7 +6,7 @@ import { useLocation, useNavigationType } from "react-router-dom";
 import { CssBaseline, CssVarsProvider, useMediaQuery } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material";
 
-import { SessionScreen } from '../session/SessionScreen';
+import { SessionLayout } from '../session/SessionLayout.tsx';
 import { LibraryScreen } from '../library/LibraryScreen';
 import DecksScreen from '../decks/DecksScreen';
 import { DeckEditScreen } from '../decks/DeckEditScreen';
@@ -72,7 +72,7 @@ function App() {
                         { /* <DebugHistory /> */ }
                         <Routes>
 
-                            <Route path="/session" element={<SessionScreen />}>
+                            <Route path="/session" element={<SessionLayout />}>
                                 <Route path="play" element={<SessionPlayerScreen />} />
                                 <Route path="summary" element={<SessionPlayerScreen />} />
                             </Route>
