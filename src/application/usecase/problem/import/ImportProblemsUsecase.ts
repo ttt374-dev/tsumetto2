@@ -70,8 +70,8 @@ function resolveTitle(title: string, existing: Set<string>) {
 export function useImportProblemsUsecase(problemRepo: ProblemRepository) {    
     const importFile = async (file: File, options: ImportOptions): Promise<ImportResult> => {
         
-        const activeProblems = useProblemStore(s=>s.activeProblems)
-        const deleteProblem = useProblemStore(s=>s.deleteProblem)
+        //const activeProblems = useProblemStore(s=>s.activeProblems)
+        //const deleteProblem = useProblemStore(s=>s.deleteProblem)
 
         try {
             const buf = await file.arrayBuffer();

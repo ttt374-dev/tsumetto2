@@ -48,6 +48,7 @@ export function PlayerScreen({ problem, title, capabilities }: {
         navigate(routes.detail(problem.id))
     }
 
+
     useEffect(() => {
         timer.reset()
         timer.start()

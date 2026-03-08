@@ -12,12 +12,14 @@ export function SinglePlayerScreen() {
     const problem = useProblemStore(s => id ? s.byId[id] : undefined)
     if (!problem) return <div>Not found</div>
 
-    return SinglePlayerContent(problem)
+    return (
+        <SinglePlayerContent problem={problem} />)
+
 }
 
 const SINGLE_MISSION_ID="single-mission-id"
 
-function SinglePlayerContent(problem: Problem){
+function SinglePlayerContent({problem} : { problem: Problem}){
     const navigate = useNavigate()
     const startSession = useSessionStore(s=>s.start)
     const review = useLearningEventStore(s=>s.appendReview)

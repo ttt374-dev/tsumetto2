@@ -22,7 +22,10 @@
 .white {
   transform: rotate(180deg);
 }
-
+.selected {
+  color: "red";
+  background-color: "black";
+}
 .fileLabel {
   display: grid;
   font-size: 12px;

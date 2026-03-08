@@ -1,4 +1,4 @@
-import type { Move, Position } from "@/domain/kif/entity"
+import type { Move, Player, Position } from "@/domain/kif/entity"
 import { buildUntilPly } from "@/domain/kif/service/buildUntilPly"
 import { useMemo, useState, useEffect } from "react"
 
@@ -8,10 +8,18 @@ import { useMemo, useState, useEffect } from "react"
 */
 export function useReplayController (initialPosition: Position, moves: Move[]){
     const [plyIndex, setPlyIndex] = useState(0)
+    const [player, setPlayer] = useState<Player>("black")
+    const [finished, setFinished] = useState(false)
+  
 
     useEffect(()=>{
         setPlyIndex(0)
     }, [initialPosition, moves])
+
+    useEffect(()=>{
+        setPlayer(plyIndex % 2 ? "white" : "black")
+        setFinished(plyIndex+1 >= moves.length ? true: false)
+    }, [plyIndex])
 
     const history = useMemo(() => ({
         initial: initialPosition,
@@ -23,14 +31,15 @@ export function useReplayController (initialPosition: Position, moves: Move[]){
     }, [history, plyIndex])    
 
     const advancePly = () => {
-        setPlyIndex(Math.min(plyIndex + 1, moves.length))
+        setPlyIndex(prev=>Math.min(prev + 1, moves.length))
     }
     const retreatPly = () => {
-        setPlyIndex(Math.max(plyIndex - 1, 0))
+        setPlyIndex(prev=>Math.max(prev - 1, 0))
     }
-    
+
     return {
-        position, plyIndex,
+        position, plyIndex, finished,
+        player,
         advancePly, retreatPly,
         moveToPly: setPlyIndex,    
     }
