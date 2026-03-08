@@ -12,7 +12,7 @@ import type { LearningRecord } from "@/domain/learning/entity/Learning"
 import { useBackupRestoreDialog } from "@/ui/common/components/dialogs/BackupRestoreDialog"
 import { useMultipleProblemsEditoDialog } from "@/ui/common/components/dialogs/MultipleProblemsEditorDialog"
 import type { QueryState } from "@/domain/problem/service/query/ProblemsQuery"
-import { useProblemsQuery } from "@/domain/problem/service/query/useProblemsQuery"
+import { useProblemsQuery } from "@/ui/common/hooks/useProblemsQuery"
 import { useProblemsQueryStore } from "@/ui/store/useProblemsQueryStore"
 import { useSessionStore } from "@/ui/store/useSessionStore"
 

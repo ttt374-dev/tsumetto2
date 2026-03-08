@@ -1,0 +1,210 @@
+src
+├── application
+│   └── usecase
+│       ├── backup
+│       │   └── BackupRestoreUsecase.ts
+│       ├── initializeApp
+│       │   └── useInitializeAppUsecase.ts
+│       └── problem
+│           └── import
+│               └── ImportProblemsUsecase.ts
+├── domain
+│   ├── kif
+│   │   ├── entity
+│   │   │   ├── Board.ts
+│   │   │   ├── Hand.ts
+│   │   │   ├── KifData.ts
+│   │   │   ├── Move.ts
+│   │   │   ├── Piece.ts
+│   │   │   ├── Position.ts
+│   │   │   └── index.ts
+│   │   └── service
+│   │       ├── __test__
+│   │       │   ├── move.test.ts
+│   │       │   ├── parser.test.ts
+│   │       │   └── serialize.test.ts
+│   │       ├── buildUntilPly.ts
+│   │       └── parser
+│   │           ├── ParseContext.ts
+│   │           ├── ParseError.ts
+│   │           ├── parseHand.ts
+│   │           ├── parseInitialPosition.ts
+│   │           ├── parseKif.ts
+│   │           └── parseMove.ts
+│   ├── learning
+│   │   ├── entity
+│   │   │   ├── Learning.ts
+│   │   │   └── LearningEvent.ts
+│   │   ├── repository
+│   │   │   └── LearningEventRepository.ts
+│   │   └── service
+│   │       └── projectionLearning.ts
+│   ├── mission
+│   │   ├── entity
+│   │   │   ├── Mission.ts
+│   │   │   └── createDefaultMission.ts
+│   │   └── repository
+│   │       └── MissionRepository.ts
+│   ├── problem
+│   │   ├── entity
+│   │   │   └── Problem.ts
+│   │   ├── repository
+│   │   │   └── ProblemRepository.ts
+│   │   ├── service
+│   │   │   └── query
+│   │   │       ├── ProblemsQuery.ts
+│   │   │       ├── __test__
+│   │   │       │   └── filter.test.ts
+│   │   │       ├── applyFilter.ts
+│   │   │       ├── applyQuery.ts
+│   │   │       ├── applySort.ts
+│   │   │       ├── filter.ts
+│   │   │       ├── mateFilter.ts
+│   │   │       ├── queryReducer.ts
+│   │   │       ├── sort.ts
+│   │   │       └── useProblemsQuery.ts
+│   │   └── valueObject
+│   │       └── ProblemStats.ts
+│   └── session
+│       └── entity
+│           └── Session.ts
+├── index.css
+├── infrastructure
+│   └── fileBackupWriter.ts
+├── main.tsx
+├── mui.d.ts
+├── shared
+│   └── result.ts
+└── ui
+    ├── App
+    │   ├── App.css
+    │   ├── App.tsx
+    │   ├── bootstrapApp.ts
+    │   ├── providers
+    │   │   ├── RepositoryProvider.tsx
+    │   │   └── ToastProvider.tsx
+    │   └── useAppNavigation.ts
+    ├── Import
+    │   ├── ImportDialog.tsx
+    │   └── useImport.tsx
+    ├── common
+    │   ├── components
+    │   │   ├── EditableText.tsx
+    │   │   ├── ProblemTagEditor.tsx
+    │   │   ├── StarToggleButton
+    │   │   │   ├── StarToggleButton.tsx
+    │   │   │   └── useStarToggleButton.ts
+    │   │   ├── dialogs
+    │   │   │   ├── BackupRestoreDialog.tsx
+    │   │   │   ├── MultipleProblemsEditorDialog.tsx
+    │   │   │   └── MultipleProblemsTagEditDialog.tsx
+    │   │   └── layout
+    │   │       ├── AppLayout.module.css
+    │   │       ├── AppLayout.tsx
+    │   │       ├── AppShell.tsx
+    │   │       └── DrawerMenu.tsx
+    │   ├── hooks
+    │   │   └── useQuery.ts
+    │   ├── query-control
+    │   │   ├── BooleanFilterControl.tsx
+    │   │   ├── FilterControlPanel.tsx
+    │   │   ├── MateLengthFilterControl.tsx
+    │   │   ├── ProblemTypeFilterControl.tsx
+    │   │   ├── SortControl.tsx
+    │   │   ├── SourceFilterControl.tsx
+    │   │   └── TagCheckboxFilterControl.tsx
+    │   └── utils
+    │       └── numberToKanji.ts
+    ├── detail
+    │   ├── ProblemDetailDialog.tsx
+    │   ├── ProblemDetailScreen.tsx
+    │   ├── components
+    │   │   └── ProblemTypeSelect.tsx
+    │   └── hooks
+    │       ├── useProblemDetailDialog.tsx
+    │       └── useProblemDetailDialogViewModel.tsx
+    ├── library
+    │   ├── LibraryScreen.tsx
+    │   ├── components
+    │   │   ├── LibraryCheckboxControl.tsx
+    │   │   ├── LibraryListItem.tsx
+    │   │   └── LibraryView.tsx
+    │   └── hooks
+    │       ├── useLibraryCheckbox.ts
+    │       ├── useLibraryViewModel.ts
+    │       └── useLongPress.ts
+    ├── list
+    │   ├── ListDialog.tsx
+    │   ├── ListScreen.tsx
+    │   └── ListView.tsx
+    ├── mission
+    │   ├── MissionEditScreen.tsx
+    │   ├── MissionScreen.tsx
+    │   ├── components
+    │   │   └── MissionFabMenu.tsx
+    │   └── hooks
+    │       ├── useMissionEditViewModel.ts
+    │       ├── useMissionModeStore.ts
+    │       └── useMissionViewModel.ts
+    ├── player
+    │   ├── PlayerScreen.tsx
+    │   ├── SinglePlayerScreen.tsx
+    │   ├── components
+    │   │   ├── PlayerView.tsx
+    │   │   ├── RightActionsDrawer.tsx
+    │   │   ├── SwipeWrapper.tsx
+    │   │   ├── actions
+    │   │   │   ├── PlayerAnswerActions.tsx
+    │   │   │   └── PlayerRightActions.tsx
+    │   │   ├── panels
+    │   │   │   ├── BoardPanel.tsx
+    │   │   │   ├── MovesPanel.tsx
+    │   │   │   └── PlyControlPanel.tsx
+    │   │   └── views
+    │   │       ├── BoardView.module.css
+    │   │       ├── BoardView.tsx
+    │   │       └── MovesView.tsx
+    │   └── hooks
+    │       ├── usePlayerPresenter.ts
+    │       ├── useReplayController.ts
+    │       └── useTimer.ts
+    ├── session
+    │   ├── SessionLayout.tsx
+    │   ├── SessionPlayerScreen.tsx
+    │   └── hooks
+    │       └── useSessionPlayerViewModel.ts
+    ├── shared
+    │   ├── components
+    │   │   ├── CancelableTextfield.tsx
+    │   │   ├── FileButton.tsx
+    │   │   ├── FixedScrollScreen.tsx
+    │   │   ├── FrameLayout.tsx
+    │   │   ├── FreeSoloAutocomplete.tsx
+    │   │   ├── GenericListMenu.tsx
+    │   │   └── MultipleFilesButton.tsx
+    │   └── hooks
+    │       └── useFileSelector.tsx
+    ├── stats
+    │   ├── StatsScreen.tsx
+    │   └── components
+    │       ├── GroupedTable.tsx
+    │       ├── IntervalDaysStats.tsx
+    │       ├── LearningHistory.tsx
+    │       ├── OverdueStats.tsx
+    │       ├── ProblemStatsTable.tsx
+    │       └── StatsRow.tsx
+    ├── store
+    │   ├── useDeckEditorStore.ts
+    │   ├── useLearningEventStore.ts
+    │   ├── useLearningRecordStore.ts
+    │   ├── useMissionStore.ts
+    │   ├── useProblemStore.ts
+    │   ├── useProblemsQueryStore.ts
+    │   └── useSessionStore.ts
+    ├── summary
+    │   ├── MissionSummaryScreen.tsx
+    │   └── SummaryView.tsx
+    └── viewer
+        └── ViewerScreen.tsx
+
+69 directories, 139 files

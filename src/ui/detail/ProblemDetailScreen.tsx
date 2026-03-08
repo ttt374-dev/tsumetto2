@@ -7,13 +7,13 @@ import { CancelableTextField } from "../shared/components/CancelableTextfield";
 import { ProblemTypeSelect } from "./components/ProblemTypeSelect";
 import { ProblemTagEditor } from "../common/components/ProblemTagEditor";
 import { FreeSoloAutocomplete } from "../shared/components/FreeSoloAutocomplete";
-import { LearningDetailPanel, ProblemInfoPanel } from "./ProblemDetailDialog";
 import { useNavigate, useParams } from "react-router-dom";
 import { useProblemStore } from "../store/useProblemStore";
 import { routes } from "../App/useAppNavigation";
 import { useProblemDetailDialogViewModel } from "./hooks/useProblemDetailDialogViewModel";
 import { StarToggleButton } from "../common/components/StarToggleButton/StarToggleButton";
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem";
+import { LearningDetailPanel, ProblemInfoPanel } from "./ProblemDetailDialog";
 
 export function ProblemDetailScreen(){
     const { id } = useParams<{ id: string }>()
@@ -58,13 +58,15 @@ export function ProblemDetailContent( { problem }: { problem: Problem}) {
                 <Stack direction="row" justifyContent="flex-end">
                     <StarToggleButton starred={starred}
                         onToggle={() => toggleStar()}
+                         sx={{color: "white"}}
                     />
 
                     {onStartPlay &&
-                        <IconButton onClick={() => onStartPlay(problem.id)}>
+                        <IconButton onClick={() => onStartPlay(problem.id)}
+                         sx={{color: "white"}}>
                             <PlayArrowIcon />
                         </IconButton>}
-                    <IconButton onClick={handleDeleteClick}>
+                    <IconButton onClick={handleDeleteClick}  sx={{color: "white"}}>
                         <DeleteIcon />
                     </IconButton>
                 </Stack>

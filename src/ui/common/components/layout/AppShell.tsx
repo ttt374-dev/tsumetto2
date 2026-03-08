@@ -40,7 +40,7 @@ export function AppShell({ header, footer, rightActions, fab, children }: Props)
             onMenuClick={() => setDrawerOpen(true)}
             drawer={
                 <DrawerMenu isOpen={drawerOpen} onClose={() => setDrawerOpen(false)}
-                    onNavigateToDashboard={() => navigate(routes.home)}
+                    onNavigateToMission={() => navigate(routes.mission)}
                     onNavigateToLibrary={() => navigate(routes.library)}
                     onNavigateToStats={()=>navigate(routes.stats)}
                     onImport={importer.openFilesSelectDialog}

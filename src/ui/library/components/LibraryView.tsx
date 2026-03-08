@@ -22,7 +22,7 @@ import { TagCheckboxFilterControl } from "@/ui/common/query-control/TagCheckboxF
 import { useProblemStore } from "@/ui/store/useProblemStore";
 import { isEqual } from "lodash";
 import { FilterControlPanel } from "@/ui/common/query-control/FilterControlPanel";
-import type { useProblemsQuery } from "@/domain/problem/service/query/useProblemsQuery";
+import type { useProblemsQuery } from "@/ui/common/hooks/useProblemsQuery";
 import { DefaultQueryState } from "@/domain/problem/service/query/ProblemsQuery";
 
 export type LibraryItemActions = {

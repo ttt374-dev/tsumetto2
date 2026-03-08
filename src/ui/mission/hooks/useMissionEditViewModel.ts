@@ -7,7 +7,7 @@ import { routes } from "@/ui/App/useAppNavigation"
 import { useCallback, useEffect, useMemo } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { ProblemStats } from "@/domain/problem/valueObject/ProblemStats"
-import { useProblemsQuery } from "@/domain/problem/service/query/useProblemsQuery"
+import { useProblemsQuery } from "@/ui/common/hooks/useProblemsQuery"
 import { DefaultQueryState, type QueryState } from "@/domain/problem/service/query/ProblemsQuery"
 import { useMissionEditorStore } from "@/ui/store/useDeckEditorStore"
 

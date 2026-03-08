@@ -2,11 +2,11 @@ import styles from "./AppLayout.module.css";
 import { Box, Divider, Drawer, List, ListItemButton, ListItemText } from "@mui/material";
 
 export function DrawerMenu({ isOpen, onClose,
-    onNavigateToDashboard, onNavigateToLibrary, onNavigateToStats,
+    onNavigateToMission, onNavigateToLibrary, onNavigateToStats,
      onImport, onBackupRestore }: {
         isOpen: boolean,
         onClose: () => void,
-        onNavigateToDashboard: () => void
+        onNavigateToMission: () => void
         onNavigateToLibrary: () => void
         onNavigateToStats: () => void
         onBackupRestore: () => void
@@ -16,8 +16,8 @@ export function DrawerMenu({ isOpen, onClose,
         <Drawer anchor="left" open={isOpen} onClose={onClose} >
             <Box width={250} mt={3} role="presentation" className={styles.header}>
                 <List>
-                    <ListItemButton onClick={() => onNavigateToDashboard()}>
-                        <ListItemText primary="デッキ" />
+                    <ListItemButton onClick={() => onNavigateToMission()}>
+                        <ListItemText primary="ミッション" />
                     </ListItemButton>
                     <ListItemButton onClick={() => onNavigateToLibrary()}>
                         <ListItemText primary="ライブラリ" />
