@@ -5,7 +5,6 @@ import { useToast } from "@/ui/App/providers/ToastProvider"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { applyQuery } from "@/domain/problem/service/query/applyQuery"
 import { useLibraryCheckbox } from "./useLibraryCheckbox"
-import { useProblemDetailDialog } from "@/ui/detail/hooks/useProblemDetailDialog"
 import { useNavigate } from "react-router-dom"
 import { routes } from "@/ui/App/useAppNavigation"
 import type { LearningRecord } from "@/domain/learning/entity/Learning"
@@ -33,12 +32,7 @@ function useLibraryDialogsVM(checkedIds: ProblemId[], reload: () => Promise<void
     // -----------------------------
     // ダイアログ
     // -----------------------------
-    const detailDialog = useProblemDetailDialog(
-          () => { navigate(routes.library)},
-          (id: ProblemId) => { navigate(routes.player(id))}          
-          //(id: ProblemId) => { navigate(routes.detail(id))}          
-        
-    )
+    
     //const viewerDialog = useViewerDialog()
     const backupRestoreDialog = useBackupRestoreDialog()
     //const tagEditDialog = useMultipleProblemsTagEditDialog(checkedIds)
@@ -46,7 +40,7 @@ function useLibraryDialogsVM(checkedIds: ProblemId[], reload: () => Promise<void
 
     return {
         //viewer: viewerDialog,
-        detail: detailDialog,
+        //detail: detailDialog,
         //backupRestore: backupRestoreDialog,
         tagEdit: tagEditDialog,
     }
@@ -144,7 +138,7 @@ export function useLibraryViewModel() {
                 //navigate(routes.player(p.id))
         }
         
-    }, [actionMode, selection.toggleChecked, dialogs.detail])
+    }, [actionMode, selection.toggleChecked])
     
     /////////////////////////////////////////
     return {

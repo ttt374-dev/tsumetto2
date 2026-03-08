@@ -10,10 +10,11 @@ import { FreeSoloAutocomplete } from "../shared/components/FreeSoloAutocomplete"
 import { useNavigate, useParams } from "react-router-dom";
 import { useProblemStore } from "../store/useProblemStore";
 import { routes } from "../App/useAppNavigation";
-import { useProblemDetailDialogViewModel } from "./hooks/useProblemDetailDialogViewModel";
+import { useProblemDetailViewModel } from "./hooks/useProblemDetailViewModel";
 import { StarToggleButton } from "../common/components/StarToggleButton/StarToggleButton";
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem";
-import { LearningDetailPanel, ProblemInfoPanel } from "./ProblemDetailDialog";
+import { ProblemInfoPanel } from "./components/ProblemInfoPanel";
+import { LearningDetailPanel } from "./components/LearningDetailPanel";
 
 export function ProblemDetailScreen(){
     const { id } = useParams<{ id: string }>()
@@ -28,7 +29,7 @@ export function ProblemDetailContent( { problem }: { problem: Problem}) {
             learning, title, tags, starred, source, type, allSources, comment,
             setTitle, setTags, toggleStar, setType, setSource, remove, setComment,
             save, resetLearning
-        } = useProblemDetailDialogViewModel(problem.id, true)
+        } = useProblemDetailViewModel(problem.id, true)
         
 
     const handleLearningReset = () => {

@@ -7,6 +7,8 @@ import { useTimer } from './hooks/useTimer';
 import { useEffect } from 'react';
 import { PlayerRightActions } from "./components/actions/PlayerRightActions";
 import type { SolvedResult } from "@/domain/learning/entity/Learning";
+import { useNavigate } from "react-router-dom";
+import { routes } from "../App/useAppNavigation";
 
 export type ProblemNavigation = {
     next: () => void,
@@ -40,8 +42,10 @@ export function PlayerScreen({ problem, title, capabilities }: {
     const handleAnswer = async (res: SolvedResult) => {
         capabilities.answerable?.answer?.(problem.id, res, timer.seconds)  // ミッションを進める
     }
+    const navigate = useNavigate()
     const handleOpenDetailDialog = () => {
-        presenter.dialogs.detail.openDialog(problem.id)
+        //presenter.dialogs.detail.openDialog(problem.id)
+        navigate(routes.detail(problem.id))
     }
 
     useEffect(() => {
@@ -67,7 +71,6 @@ export function PlayerScreen({ problem, title, capabilities }: {
                 problemNavigation={capabilities.navigatable}
                 timer={timer}
             />
-            {presenter.dialogs.detail.dialogElement}
             {presenter.rightActionsDrawer.drawerElement}
         </AppShell>
     )

@@ -21,8 +21,7 @@ export function LibraryScreen() {
                 itemActions={vm.itemActions}
                 onItemClick={vm.onItemClick}
                 selection={vm.selection}
-            />                        
-            {vm.dialogs.detail.dialogElement}
+            />                                    
             {vm.dialogs.tagEdit.dialogElement}            
         </AppShell>
     )

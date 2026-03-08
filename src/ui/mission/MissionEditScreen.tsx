@@ -1,5 +1,6 @@
-import { Box, Button, FormControl, FormControlLabel, Grid, IconButton, InputLabel, MenuItem, Select, Stack, TextField, Typography } from "@mui/material";
+import { Box, Button, FormControl, FormControlLabel, Grid, IconButton, InputAdornment, InputLabel, MenuItem, Select, Stack, TextField, Typography } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
+import ClearIcon from '@mui/icons-material/Clear';
 
 import SortControl from "../common/query-control/SortControl";
 import { useMissionEditViewModel } from "./hooks/useMissionEditViewModel";
@@ -25,6 +26,9 @@ export function MissionEditScreen() {
         //console.log("nav: ids", problemIds)
         navigate(routes.list, { state: { ids: problemIds, title: `デッキ ${name}：問題リスト` } })
     }    
+    const handleMissionNameClear = () => {
+        setName("")
+    }
 
     return (
         <AppShell
@@ -53,7 +57,17 @@ export function MissionEditScreen() {
                     pt: 2
                 }}>
                     <Grid size={12}>
-                        <TextField label="デッキ名" fullWidth value={name} onChange={e => setName(e.target.value)} />
+                        <TextField label="ミッション名" fullWidth value={name} 
+                            InputProps={{
+                                endAdornment: name && (
+                                    <InputAdornment position="end">
+                                        <IconButton onClick={handleMissionNameClear} edge="end">
+                                            <ClearIcon />
+                                        </IconButton>
+                                    </InputAdornment>
+                                )
+                            }}
+                            onChange={e => setName(e.target.value)} />
                     </Grid>
                     
                     <FilterControlPanel 

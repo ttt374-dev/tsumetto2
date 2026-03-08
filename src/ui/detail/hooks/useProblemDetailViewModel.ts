@@ -10,7 +10,7 @@ export type SourceOption = {
     label: string
 }
 
-export function useProblemDetailDialogViewModel(
+export function useProblemDetailViewModel(
     problemId: ProblemId,
     open: boolean,
     //onClose: () => void,
