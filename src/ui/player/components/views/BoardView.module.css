@@ -23,8 +23,8 @@
   transform: rotate(180deg);
 }
 .selected {
-  color: "red";
-  background-color: "black";
+   
+  background-color:#999;  
 }
 .fileLabel {
   display: grid;

@@ -12,6 +12,9 @@ export class Position {
     static create(): Position {
         return new Position(Board.create(), Hands.empty())
     }
+    static empty(): Position {
+        return new Position(Board.empty(), Hands.empty())
+    }
 
     applyMove(move: Move): Position {
         if (move.isDrop()) {

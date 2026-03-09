@@ -6,6 +6,8 @@ import styles from "./BoardView.module.css";
 import { formatPlayer } from "./MovesView";
 import { useContext, useEffect } from "react";
 import { useReplayStore } from "../../hooks/useReplayStore";
+import { usePlayerPresenter } from "../../hooks/usePlayerPresenter";
+import { WindowSharp } from "@mui/icons-material";
 
 const fileLabels = ["９", "８", "７", "６", "５", "４", "３", "２", "１"];
 const rankLabels = ["一", "二", "三", "四", "五", "六", "七", "八", "九"];
@@ -45,15 +47,50 @@ function SquareView({ piece, file, rank }: {
 }
 ) {
     const selectSquare = useReplayStore(s => s.selectSquare)
-    const currentPlayer = useReplayStore(s => s.currentPlayer)
+    const unselect = useReplayStore(s=>s.unselect)
+    const advancePly = useReplayStore(s=>s.advancePly)
+    //const confirmPromotion = useReplayStore(s=>s.confirmPromotion)
+    //const isFinished = useReplayStore(s=>s.isFinished)
+    //const currentPlayer = useReplayStore(s => s.currentPlayer)
     const tryMoveTo = useReplayStore(s => s.tryMoveTo)
     const selected = useReplayStore(s => s.selected)
     const isSelected = selected?.square.file === file && selected?.square.rank === rank
+    if (isSelected) console.log("selected", file, rank)
 
     const handleSquareClick = () => {
+        
+
         if (selected) {
-            const ok = tryMoveTo({ file, rank })
-            if (!ok) alert("間違った手です")
+            if (file === selected?.square.file && rank === selected?.square.rank) {
+                //unselect()
+                //return
+            }
+            const result = tryMoveTo({file, rank})
+
+        switch (result.type) {
+            case "correct":
+                advancePly()
+                break
+
+            case "finish":
+                alert("正解！")
+                break
+
+            case "incorrect":
+                alert("不正解")
+                break
+
+            case "cancel":
+                break
+
+            case "promotion-choice":
+                //setPromotionDialog(true)
+                window.confirm("成りますか？")
+
+                break;
+
+        }
+  
         } else {
             if (piece) selectSquare(file, rank, piece)
         }
@@ -62,11 +99,11 @@ function SquareView({ piece, file, rank }: {
     return (
         <div
             className={`${styles.cell}  
-            ${selected && styles.selected}
+            ${isSelected && styles.selected}
             ${piece?.owner === 'white' ? styles.white : ''}`}
             onClick={handleSquareClick}
         >
-            {piece ? piece.format() : null} 
+            {piece ? piece.format() : null}
         </div>
     )
 }
