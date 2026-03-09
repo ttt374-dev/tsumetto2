@@ -5,7 +5,7 @@ import { create } from "zustand"
 
 export type SolvePhase = "solving" | "completed" | "revealed"
 
-type SelectedState =
+export type SelectedState =
     | { type: "idle"}
     | { type: "board", square: Square }
     | { type: "hand", pieceType: PieceType, player: Player}    

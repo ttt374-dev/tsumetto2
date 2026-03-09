@@ -7,6 +7,7 @@ import { formatPlayer } from "./MovesView";
 import { useEffect, useRef, useState } from "react";
 import { useToast } from "@/ui/App/providers/ToastProvider";
 import { useReplayStore } from "../../hooks/useReplayStore";
+import { useBoardInput } from "../../hooks/useBoardInput";
 
 const fileLabels = ["９", "８", "７", "６", "５", "４", "３", "２", "１"];
 const rankLabels = ["一", "二", "三", "四", "五", "六", "七", "八", "九"];
@@ -134,9 +135,11 @@ function BoardView({ position }: { position: Position }) {
         toast({message: `不正解: ${mistakes}`})
         unselect()
     }, [mistakes])
-    
+    const { clickSquare } = useBoardInput()
 
     const handleSquareClick = (file: number, rank: number) => {
+        clickSquare(file, rank)
+        /*
         const piece = position.board.get(file, rank)
         if (!selectedState) {
             if (piece?.owner === "black") {
@@ -157,6 +160,7 @@ function BoardView({ position }: { position: Position }) {
         if (!pieceType) throw new Error
         const move = new Move(from, {file, rank}, pieceType)
         tryMove(move)
+        */
     }    
 
     return (
