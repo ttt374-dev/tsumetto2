@@ -1,5 +1,5 @@
 import { create } from "zustand"
-import { type Move, type Square, type Piece, type Player, Position } from "@/domain/kif/entity"
+import { type Move, type Square, type Piece, type Player, Position, type PieceType } from "@/domain/kif/entity"
 import { buildUntilPly } from "@/domain/kif/service/buildUntilPly"
 import { clamp } from "lodash"
 
@@ -11,10 +11,18 @@ type TryMoveResult =
     | { type: "no-selection" }     // 駒未選択
     | { type: "promotion-choice" }
 
-type SelectedState = {
-    square: Square
-    piece: Piece
-} | null
+type SelectedState =
+    | {
+        type: "board"
+        square: Square
+        //piece: Piece
+    }
+    | {
+        type: "hand"
+        pieceType: PieceType
+        player: Player
+    }
+    | null
 
 type ReplayStore = {
     initialPosition: Position
@@ -36,7 +44,8 @@ type ReplayStore = {
     unselect: () => void
 
     // 駒選択・移動
-    selectSquare: (file: number, rank: number, piece?: Piece) => void
+    selectSquare: (file: number, rank: number) => void
+    selectHandPiece: (pieceType: PieceType, player: Player) => void
     tryMoveTo: (to: Square) => TryMoveResult
     confirmPromosion: (flag: boolean) => void
 }
@@ -88,12 +97,18 @@ export const useReplayStore = create<ReplayStore>((set, get) => ({
         get().moveToPly(plyIndex - 1)
     },
 
-    selectSquare: (file, rank, piece) => {
-        if (piece) {
-            set({ selected: { square: { file, rank }, piece } })
-        } else {
-            set({ selected: null })
-        }
+    selectSquare: (file, rank) => {
+        set({ selected: { type: "board", square: { file, rank } } })
+
+    },
+    selectHandPiece: (pieceType: PieceType, player: Player) => {
+        set({
+            selected: {
+                type: "hand",
+                pieceType,
+                player
+            }
+        })
     },
     unselect: () => {
         set({ selected: null })
@@ -108,15 +123,28 @@ export const useReplayStore = create<ReplayStore>((set, get) => ({
 
         const move = moves[plyIndex]
 
-        const sameSquare =
-            selected.square.file === to.file &&
-            selected.square.rank === to.rank
+        // 持ち駒打ち
+        if (selected.type === "hand") {
+            const isCorrect =
+                move.from === null &&
+                move.to.file === to.file &&
+                move.to.rank === to.rank //&&
+            //move.piece === selected.piece.type
 
-        if (sameSquare) {
+            if (!isCorrect) {
+                set({ selected: null })
+                return { type: "incorrect" }
+            }
+
+            const isLast = plyIndex + 1 >= moves.length
+
+            get().advancePly()
             set({ selected: null })
-            return { type: "cancel" }
+
+            return isLast ? { type: "finish" } : { type: "correct" }
         }
 
+        // 盤上の駒移動
         const isCorrect =
             move.from?.file === selected.square.file &&
             move.from?.rank === selected.square.rank &&
@@ -128,13 +156,6 @@ export const useReplayStore = create<ReplayStore>((set, get) => ({
             return { type: "incorrect" }
         }
 
-        // 成り選択が必要
-        if (move.promote === undefined) {
-            set({
-                pendingPromotion: move
-            })
-            return { type: "promotion-choice" }
-        }
         const isLast = plyIndex + 1 >= moves.length
 
         get().advancePly()

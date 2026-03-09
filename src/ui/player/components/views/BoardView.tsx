@@ -1,13 +1,10 @@
 import { Box, Stack } from "@mui/material";
-import { Position, Hand, kanjiToPieceItem, type PieceType, Piece, Board, type Player, Square } from "@/domain/kif/entity";
+import { Position, Hand, KanjiToPieceItem, type PieceType, Piece, Board, type Player, Square } from "@/domain/kif/entity";
 import { numberToKanjiTwoDigits } from "../../../common/utils/numberToKanji";
 
 import styles from "./BoardView.module.css";
 import { formatPlayer } from "./MovesView";
-import { useContext, useEffect } from "react";
 import { useReplayStore } from "../../hooks/useReplayStore";
-import { usePlayerPresenter } from "../../hooks/usePlayerPresenter";
-import { WindowSharp } from "@mui/icons-material";
 
 const fileLabels = ["９", "８", "７", "６", "５", "４", "３", "２", "１"];
 const rankLabels = ["一", "二", "三", "四", "五", "六", "七", "八", "九"];
@@ -15,13 +12,13 @@ const rankLabels = ["一", "二", "三", "四", "五", "六", "七", "八", "九
 function formatHand(hand: Hand): string {
     const parts: string[] = [];
 
-    const kanjikeys = Object.entries(kanjiToPieceItem)
+    const kanjikeys = Object.entries(KanjiToPieceItem)
         .filter(([key, item]) => !item.promoted && key !== "王" && key !== "玉")
         .map(([key]) => key as PieceType)
         .reverse(); // 逆順
 
     kanjikeys.forEach(kanjipieceType => {
-        const item = kanjiToPieceItem[kanjipieceType]
+        const item = KanjiToPieceItem[kanjipieceType]
         const count = hand.count(item.type);
         if (count > 0) {
             const suffix = count > 1 ? (numberToKanjiTwoDigits(count) ?? count.toString()) : ""
@@ -31,68 +28,98 @@ function formatHand(hand: Hand): string {
     //console.log(parts)        
     return parts.length === 0 ? "なし" : parts.join(" ");
 }
+const PieceKeyKanjiMapping: Record<string, string> = {
+    "pawn": "歩",
+    "lance": "香",
+    "knight": "桂",
+    "silver": "銀",
+    "gold": "金",
+    "bishop": "角",
+    "rook": "飛"
+}
+function HandPieceView({ hand, owner, onClick }: { 
+    hand: Hand, owner: Player, onClick?: (type: PieceType) => void }) {
+    const keys: PieceType[] = ["rook", "bishop", "gold", "silver", "knight", "lance", "pawn"]
+    const selected = useReplayStore(s=>s.selected)
+    const selectedPieceType = selected && selected.type === "hand" && selected.pieceType
+
+    return (<>
+        {
+            keys.filter(key => hand.count(key) > 0).map(key => {
+                const countString = hand.count(key) > 1 ? numberToKanjiTwoDigits(hand.count(key)) : ""
+                return <span onClick={() => onClick?.(key)} className={owner === "black" && selectedPieceType === key ? styles.selected : ""}>
+                    {PieceKeyKanjiMapping[key]}{countString}
+                </span>
+            })
+        }
+    </>
+    )
+}
 
 /////////////////////////////
-function HandView({ hand, owner }: { hand: Hand, owner: Player }) {
+function HandView({ hand, owner }: { hand: Hand, owner: Player, onPieceClick?: () => void }) {
+    const selected = useReplayStore(s => s.selected)
+    const selectHandPiece = useReplayStore(s => s.selectHandPiece)
+    const unselect = useReplayStore(s=>s.unselect)
+    const handleClick = (piecetype: PieceType) => {
+        console.log("hand piece click", piecetype, owner, selected)
+        if (owner === "white") return  // 先手のみ選択可
+        if (selected){
+            if(selected.type === "hand" && selected.pieceType === piecetype){
+                console.log("unselected")
+                unselect()
+            }
+        } else {
+            selectHandPiece(piecetype, owner)
+        }
+    }
     return (
         <div>
-            {formatPlayer(owner)}{formatHand(hand)}
+            {formatPlayer(owner)}
+            <HandPieceView hand={hand} owner={owner} onClick={handleClick} />
         </div>
     )
 }
-function SquareView({ piece, file, rank }: { 
+function SquareView({ piece, file, rank }: {
     file: number
     rank: number
     piece: Piece | null
 }
 ) {
     const selectSquare = useReplayStore(s => s.selectSquare)
-    const unselect = useReplayStore(s=>s.unselect)
-    const advancePly = useReplayStore(s=>s.advancePly)
-    //const confirmPromotion = useReplayStore(s=>s.confirmPromotion)
-    //const isFinished = useReplayStore(s=>s.isFinished)
-    //const currentPlayer = useReplayStore(s => s.currentPlayer)
+    const advancePly = useReplayStore(s => s.advancePly)
     const tryMoveTo = useReplayStore(s => s.tryMoveTo)
     const selected = useReplayStore(s => s.selected)
-    const isSelected = selected?.square.file === file && selected?.square.rank === rank
+    const isSelected = selected?.type === "board" && selected?.square.file === file && selected?.square.rank === rank
     if (isSelected) console.log("selected", file, rank)
 
     const handleSquareClick = () => {
-        
-
         if (selected) {
-            if (file === selected?.square.file && rank === selected?.square.rank) {
-                //unselect()
-                //return
+            const result = tryMoveTo({ file, rank })
+
+            switch (result.type) {
+                case "correct":
+                    advancePly()
+                    break
+
+                case "finish":
+                    alert("正解！")
+                    break
+
+                case "incorrect":
+                    alert("不正解")
+                    break
+
+                case "cancel":
+                    break
+
+                case "promotion-choice":
+                    //setPromotionDialog(true)
+                    window.confirm("成りますか？")
+                    break;
             }
-            const result = tryMoveTo({file, rank})
-
-        switch (result.type) {
-            case "correct":
-                advancePly()
-                break
-
-            case "finish":
-                alert("正解！")
-                break
-
-            case "incorrect":
-                alert("不正解")
-                break
-
-            case "cancel":
-                break
-
-            case "promotion-choice":
-                //setPromotionDialog(true)
-                window.confirm("成りますか？")
-
-                break;
-
-        }
-  
         } else {
-            if (piece) selectSquare(file, rank, piece)
+            if (piece) selectSquare(file, rank)
         }
     }
 
@@ -135,7 +162,7 @@ function BoardView({ position }: { position: Position }) {
                                     key={Board.squareKey(file, rank)}
                                     file={file}
                                     rank={rank}
-                                    piece={piece}                                   
+                                    piece={piece}
                                 />
                             )
                         })

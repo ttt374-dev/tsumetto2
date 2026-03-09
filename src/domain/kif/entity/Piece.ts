@@ -16,7 +16,7 @@ export const PromotablePieceType = new Set<PieceType>([
 export type PieceItem = {
     type: PieceType, promoted: boolean
 }
-export const kanjiToPieceItem: Record<string, PieceItem> = {
+export const KanjiToPieceItem: Record<string, PieceItem> = {
     歩: { type: "pawn", promoted: false },
     と: { type: "pawn", promoted: true },       // 成り歩
     香: { type: "lance", promoted: false },

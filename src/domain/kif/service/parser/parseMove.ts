@@ -1,7 +1,7 @@
 import type { Result } from "@/shared/result"
 import type { ParseError, ParseErrorWithContext, ParseMoveError } from "./ParseError"
 import { withContext } from "./ParseContext"
-import { kanjiToPieceItem, Move, type PieceType, type Square } from "../../entity"
+import { KanjiToPieceItem, Move, type PieceType, type Square } from "../../entity"
 
 type SkipReason = "empty-line" | "comment-out" | "resign"
 
@@ -68,7 +68,7 @@ function parseDropMove(text: string): ParseMoveResult {
 
     const resfile = kanjiToFile(m[1])
     const resrank = kanjiToRank(m[2])
-    const pieceItem = kanjiToPieceItem[m[3]]
+    const pieceItem = KanjiToPieceItem[m[3]]
     if (!pieceItem) {
         return { ok: false, error: { code: "unknown-piece-kanji", cause: m[3] } }
     }
@@ -139,7 +139,7 @@ function parsePieceType(text: string): ParsePieceTypeResult {
     while (["打", "右", "左", "引", "直", "寄", "上"].some(s => t.endsWith(s))) {
         t = t.slice(0, -1)
     }
-    const pieceItem = kanjiToPieceItem[t] // misdisambiguish の処理
+    const pieceItem = KanjiToPieceItem[t] // misdisambiguish の処理
     
     if (!pieceItem) {
         return { ok: false, error: { code: "unknown-piece-kanji", cause: text}}

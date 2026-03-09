@@ -1,6 +1,6 @@
 import type { Result } from "@/shared/result"
 import type { ParseError, ParseHandError } from "./ParseError"
-import { Hand, kanjiToPieceItem, type PieceType } from "../../entity"
+import { Hand, KanjiToPieceItem, type PieceType } from "../../entity"
 
 export type ParseHandResult = Result<Hand, ParseHandError>
 
@@ -22,7 +22,7 @@ export function parseHand(handStr: string): ParseHandResult {
         const numStr = match[2]
         consumed += match[0]
 
-        const item = kanjiToPieceItem[kanji]
+        const item = KanjiToPieceItem[kanji]
         //if (!item) throw new Error(`Unknown piece kanji: ${kanji}`)
         if (!item) return { ok: false, error: { code: "unknown-piece-kanji", cause: kanji}}
 
