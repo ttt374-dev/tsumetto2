@@ -13,7 +13,7 @@ import { useTimer } from "../hooks/useTimer"
 import MovesPanel from "./panels/MovesPanel"
 import type { Learning } from "@/domain/learning/entity/Learning"
 import { Move, Piece, type Player, type Square } from "@/domain/kif/entity"
-import { useReplayStore } from "../hooks/useReplayStore"
+import { selectPosition, useReplayStore } from "../hooks/useReplayStore"
 
 export function useShowMovesController(plyIndex: number) {
     const [showMoves, setShowMoves] = useState(false)
@@ -69,15 +69,15 @@ function PlayerView({problem, title, problemNavigation, timer}: {
     timer?: ReturnType<typeof useTimer>
 }){
     const moves = problem.kifData.moves
-    //const replay = useReplayController(problem.kifData.initialPosition, moves)
-    
     const replay = useReplayStore()
-    //replay.reset(problem.kifData.initialPosition, moves)
-    useEffect(() => {
-        replay.load(problem.kifData.initialPosition, moves)
-    }, [problem.kifData.initialPosition])
+    const position = useReplayStore(selectPosition)
     
-    const showMovesController = useShowMovesController(replay.plyIndex)
+    useEffect(() => {
+        replay.load(problem)
+        
+    }, [problem])
+    
+    
     const learning: Learning | undefined = useLearningRecordStore(s=>s.records)[problem.id]
 
     return (
@@ -92,9 +92,8 @@ function PlayerView({problem, title, problemNavigation, timer}: {
             </Box>
             { /* --- 盤面 ---*/}
 
-
             <BoardPanel
-                position={replay.position}
+                position={position}
                 onAdvancePly={replay.advancePly}
                 onRetreatPly={replay.retreatPly}
                 onNextProblem={problemNavigation?.next}
@@ -104,10 +103,10 @@ function PlayerView({problem, title, problemNavigation, timer}: {
                 { /* --- 手筋 ---*/}
 
                 <MovesPanel>
-                    {showMovesController.showMoves ?
+                    {replay.showMoves ?
                         <MovesView moves={moves} currentPlyIndex={replay.plyIndex} onMoveToPly={replay.moveToPly} />
                         : (<Stack>
-                            <Button onClick={() => showMovesController.setShowMoves(true)} >
+                            <Button onClick={() => replay.setShowMoves(true)} >
                                 手数：{moves.length}手
                             </Button>                            
                             <Box>{problem.tags.join(",")}</Box>

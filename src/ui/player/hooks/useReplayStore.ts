@@ -1,19 +1,9 @@
-import { create } from "zustand"
-import { type Move, type Square, type Piece, type Player, Position, type PieceType } from "@/domain/kif/entity"
+import { Position, Square, type Move, type PieceType, type Player } from "@/domain/kif/entity"
 import { buildUntilPly } from "@/domain/kif/service/buildUntilPly"
-import { clamp } from "lodash"
+import type { Problem } from "@/domain/problem/entity/Problem"
+import { create } from "zustand"
 
 export type SolvePhase = "solving" | "completed" | "revealed"
-//export type InputPhase = "idle" | "pieceSelected" | "handpieceSelected" | "promotionConfirm"
-
-export type TryMoveResult =
-    | { type: "correct" }          // 正しい手（途中）
-    | { type: "finish" }           // 最終手
-    | { type: "incorrect" }        // 不正解
-    | { type: "cancel" }           // 同じ場所クリック
-    | { type: "no-selection" }     // 駒未選択
-    | { type: "promotion-choice" }
-
 
 type SelectedState =
     | { type: "idle"}
@@ -24,168 +14,160 @@ type SelectedState =
     | { type: "pendingPromotion"}
 
 type ReplayStore = {
+    // problem
     initialPosition: Position
-    position: Position
-    plyIndex: number
     moves: Move[]
-    selectedState: SelectedState | null
-    pendingPromotion: Move | null
+    load: (problem: Problem) => void
 
-    // 派生値
-    currentPlayer: Player
-    isFinished: boolean
-
-    // 基本操作
-    load: (initial: Position, moves: Move[]) => void
-    moveToPly: (index: number) => void
+    // game
+    solvePhase: SolvePhase
+    //position: Position
+    plyIndex: number
     advancePly: () => void
     retreatPly: () => void
-    reset: () => void
-    unselect: () => void
+    moveToPly: (index: number) => void
+    tryMove: (move: Move) => void
 
-    // 駒選択・移動
-    selectSquare: (file: number, rank: number) => void
-    selectHandPiece: (pieceType: PieceType, player: Player) => void
-    tryMoveTo: (to: Square) => TryMoveResult
-    confirmPromosion: (flag: boolean) => void
+    // session
+    mistakes: number
+    
+
+    // ui
+    selectedState: SelectedState
+    selectSquare: (square: Square) => void    
+    selectHandPiece: (pieceType: PieceType, owner: Player) => void
+    unselect: () => void
+    showMoves: boolean
+    setShowMoves: (flag: boolean) => void
+
 }
 
-/////////////////////////////////////////////////////
+export const selectPosition = (state: ReplayStore) =>
+  buildUntilPly(
+    { initial: state.initialPosition, moves: state.moves },
+    state.plyIndex
+  )
+
 export const useReplayStore = create<ReplayStore>((set, get) => ({
     // problem
     initialPosition: Position.empty(),
     moves: [],
 
-    position: Position.empty(),
+    // game
+    solvePhase: "solving",
+    //position: Position.empty(),
     plyIndex: 0,
-    
-    selectedState: null,
-    pendingPromotion: null,
-
-    // 計算プロパティ
-    get currentPlayer() {
-        // 0: black, 1: white, 2: black...
-        return get().plyIndex % 2 === 0 ? "black" : "white"
-    },
-    get isFinished(): boolean {
-        return get().plyIndex + 1 >= get().moves.length
-    },
-
-    load: (initial, moves) => {
-        set({ initialPosition: initial, moves, selectedState: null})
-        get().moveToPly(0)
-    },
-    reset: () => {        
-        get().moveToPly(0)
-    },
-
-    moveToPly: (index) => {
-        const { moves, initialPosition } = get()
-
-        const newPlyIndex = clamp(index, 0, moves.length)
-
+    moveToPly: (index: number) => {
+        const { moves } = get()
+        const newPlyIndex = Math.min(Math.max(index, 0), moves.length)
+         
         set({
             plyIndex: newPlyIndex,
-            position: buildUntilPly(
-                { initial: initialPosition, moves },
-                newPlyIndex
-            )
+            //position: buildUntilPly(
+            //    { initial: initialPosition, moves },
+            //    newPlyIndex
+            //)
         })
     },
-
     advancePly: () => {
-        const { plyIndex } = get()
-        get().moveToPly(plyIndex + 1)
+        set(state => ({
+            plyIndex: Math.min(state.plyIndex + 1, state.moves.length)
+        }))
     },
-
     retreatPly: () => {
-        const { plyIndex } = get()
-        get().moveToPly(plyIndex - 1)
+        set(state => ({
+            plyIndex: Math.max(state.plyIndex - 1, 0)
+        }))
     },
 
-    selectSquare: (file, rank) => {
-        set({ 
-            selectedState: { type: "board", square: { file, rank } },
-        })
+    // session
+    mistakes: 0,
 
-    },
-    selectHandPiece: (pieceType: PieceType, player: Player) => {
+    load: (problem: Problem) => {
+        console.log("load", problem)
         set({
-            selectedState: {type: "hand",pieceType,player},
+            initialPosition: problem.kifData.initialPosition,
+            moves: problem.kifData.moves,
+            showMoves: false,
+            solvePhase: "solving",
+            mistakes: 0,        
+            selectedState: { type: "idle" }
+        })
+        get().moveToPly(0)
+    },
+    tryMove: (move: Move) => {
+        console.log("tryMove: ", move)
+        const { moves, plyIndex, mistakes } = get()
 
+        const expectedMove = moves[plyIndex]
+
+        // 不正解
+        if (!movesEqual(move, expectedMove)) {
+            set({
+                mistakes: mistakes + 1,
+                selectedState: { type: "idle"},
+            }
+            )
+            return
+        }
+
+        // 正解
+        //const nextPosition = position.applyMove(move)
+        get().advancePly()  // 先手
+        if (get().plyIndex < moves.length) {
+            get().advancePly()  // 後手も自動で進める
+        }
+
+        //const nextPly = plyIndex + 1
+        //const solved = get().plyIndex === moves.length
+
+        const newphase =  (get().plyIndex + 1 >= moves.length) ? "completed" : get().solvePhase
+
+        set({
+            //position: nextPosition,
+            //plyIndex: nextPly,
+            selectedState: { type: "idle"},
+            solvePhase: newphase,            
+        })
+        
+    },
+    // ui
+    selectedState: { type: "idle"},
+    selectSquare: (square: Square) => {
+        set({
+            selectedState: { 
+                type: "board",
+                square: square
+            }
+        })
+    },
+    selectHandPiece: (pieceType: PieceType, owner: Player) => {
+        set({
+            selectedState: {
+                type: "hand",
+                pieceType: pieceType,
+                player: owner,
+            }
         })
     },
     unselect: () => {
-        set({ selectedState: null })
+        set({ selectedState: { type: "idle"}})
     },
-    confirmPromosion: (promote: boolean) => {
-
-    },
-
-    tryMoveTo: (to: Square): TryMoveResult => {
-        const { selectedState: selected, moves, plyIndex } = get()
-        if (!selected) return { type: "cancel" }
-
-        const move = moves[plyIndex]
-
-        // 持ち駒打ち
-        if (selected.type === "hand") {
-            const isCorrect =
-                move.from === null &&
-                move.to.file === to.file &&
-                move.to.rank === to.rank //&&
-            //move.piece === selected.piece.type
-
-            if (!isCorrect) {
-                set({ selectedState: null })
-                return { type: "incorrect" }
-            }
-
-            const isLast = plyIndex + 1 >= moves.length
-
-            get().advancePly()
-            // 白の手を自動
-            get().advancePly() 
-            set({ selectedState: null })
-
-            return isLast ? { type: "finish" } : { type: "correct" }
-        }
-
-        // 盤上の駒移動
-        if (selected.type === "board") {
-            const isCorrect =
-                move.from?.file === selected.square.file &&
-                move.from?.rank === selected.square.rank &&
-                move.to.file === to.file &&
-                move.to.rank === to.rank
-
-            if (!isCorrect) {
-                set({ selectedState: null })
-                return { type: "incorrect" }
-            }
-        }
-
-        const isLast = plyIndex + 1 >= moves.length
-
-        get().advancePly()
-        set({ selectedState: null })
-
-        return isLast ? { type: "finish" } : { type: "correct" }
-    },
-
-    confirmPromotion: (promote: boolean) => {
-        const { pendingPromotion } = get()
-        if (!pendingPromotion) return
-
-        const isLast = get().plyIndex + 1 >= get().moves.length
-
-        get().advancePly()
-
-        set({
-            pendingPromotion: null,
-            selectedState: null
-        })
-
-        return isLast ? "finish" : "correct"
+    showMoves: false,
+    setShowMoves: (flag: boolean) => {
+        set({ showMoves: flag})
     }
 }))
+
+///////////////
+function movesEqual(a: Move, b?: Move) {
+  if (!b) return false
+
+  return (
+    a.from?.file === b.from?.file &&
+    a.from?.rank === b.from?.rank &&
+    a.to.file === b.to.file &&
+    a.to.rank === b.to.rank &&
+    a.pieceType === b.pieceType
+  )
+}

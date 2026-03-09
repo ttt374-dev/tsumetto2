@@ -1,12 +1,12 @@
 import { Box, Stack } from "@mui/material";
-import { Position, Hand, KanjiToPieceItem, type PieceType, Piece, Board, type Player, Square } from "@/domain/kif/entity";
+import { Position, Hand, KanjiToPieceItem, type PieceType, Piece, Board, type Player, Square, Move } from "@/domain/kif/entity";
 import { numberToKanjiTwoDigits } from "../../../common/utils/numberToKanji";
 
 import styles from "./BoardView.module.css";
 import { formatPlayer } from "./MovesView";
-import { useReplayStore, type TryMoveResult } from "../../hooks/useReplayStore";
 import { useEffect, useRef, useState } from "react";
 import { useToast } from "@/ui/App/providers/ToastProvider";
+import { useReplayStore } from "../../hooks/useReplayStore";
 
 const fileLabels = ["９", "８", "７", "６", "５", "４", "３", "２", "１"];
 const rankLabels = ["一", "二", "三", "四", "五", "六", "七", "八", "九"];
@@ -111,35 +111,52 @@ function BoardView({ position }: { position: Position }) {
     const ranks = [...Array(9)].map((_, i) => i + 1)   //   1 → 9
     const files = [...Array(9)].map((_, i) => 9 - i)   // 9 → 1（将棋表記） ???
 
-    const [tryMoveResult, setTryMoveResult] = useState<TryMoveResult | null>(null)
+    //const [tryMoveResult, setTryMoveResult] = useState<TryMoveResult | null>(null)
     //const plyIndex = useReplayStore(s=>s.plyIndex)
+    const solvePhase = useReplayStore(s=>s.solvePhase)
     const selectSquare = useReplayStore(s => s.selectSquare)
-    const tryMoveTo = useReplayStore(s => s.tryMoveTo)
+    const tryMove = useReplayStore(s => s.tryMove)
     const selectedState = useReplayStore(s => s.selectedState)
+    const mistakes = useReplayStore(s=>s.mistakes)
+    const unselect = useReplayStore(s=>s.unselect)
+    //const position = useReplayStore(s=>s.position)
     //const tryMoveResult = useRef<TryMoveResult | null>(null)
     const toast = useToast()
 
     
     useEffect(() => {
-        if (tryMoveResult?.type === "finish") {
+        if (solvePhase === "completed") {
             toast({message: "詰みです！"})
         }
-    }, [tryMoveResult])
+    }, [solvePhase])
+    useEffect(()=>{
+        if (mistakes===0) return
+        toast({message: `不正解: ${mistakes}`})
+        unselect()
+    }, [mistakes])
+    
 
-    const handleSquareClick = (file: number, rank: number, piece: Piece | null) => {
+    const handleSquareClick = (file: number, rank: number) => {
+        const piece = position.board.get(file, rank)
         if (!selectedState) {
             if (piece?.owner === "black") {
-                selectSquare(file, rank)
+                selectSquare({file, rank})
             }
             return
         }
 
         if (piece?.owner === "black") {
-            selectSquare(file, rank)
+            selectSquare({file, rank})
             return
         }
-
-        setTryMoveResult(tryMoveTo({ file, rank }))
+        console.log("squareclick", selectedState)
+        if (selectedState.type !== "board" && selectedState.type !== "hand") return
+        const from = selectedState.type === "board" ? selectedState.square : null
+        const pieceType = selectedState.type === "board" ? position.board.get(selectedState.square.file, selectedState.square.rank)?.type
+            : selectedState.pieceType
+        if (!pieceType) throw new Error
+        const move = new Move(from, {file, rank}, pieceType)
+        tryMove(move)
     }    
 
     return (
@@ -167,7 +184,7 @@ function BoardView({ position }: { position: Position }) {
                                     key={Board.squareKey(file, rank)}
                                     piece={piece}
                                     selected={selected}
-                                    onClick={() => handleSquareClick(file, rank, piece)}
+                                    onClick={() => handleSquareClick(file, rank)}
                                 />
                             )
                         })
