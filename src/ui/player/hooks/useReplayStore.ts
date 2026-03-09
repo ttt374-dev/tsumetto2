@@ -1,5 +1,5 @@
 import { create } from "zustand"
-import type { Position, Move, Square, Piece, Player } from "@/domain/kif/entity"
+import { type Move, type Square, type Piece, type Player, Position } from "@/domain/kif/entity"
 import { buildUntilPly } from "@/domain/kif/service/buildUntilPly"
 
 type SelectedState = {
@@ -27,9 +27,9 @@ type ReplayStore = {
     selectSquare: (file: number, rank: number, piece?: Piece) => void
     tryMoveTo: (to: Square) => boolean
 }
-
+/////////////////////////////////////////////////////
 export const useReplayStore = create<ReplayStore>((set, get) => ({
-    position: {} as Position,
+    position: Position.create(),
     plyIndex: 0,
     moves: [],
     selected: null,

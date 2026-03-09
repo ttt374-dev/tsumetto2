@@ -5,7 +5,7 @@ import { numberToKanjiTwoDigits } from "../../../common/utils/numberToKanji";
 import styles from "./BoardView.module.css";
 import { formatPlayer } from "./MovesView";
 import { useContext, useEffect } from "react";
-import { BoardContext } from "../PlayerView";
+import { useReplayStore } from "../../hooks/useReplayStore";
 
 const fileLabels = ["９", "８", "７", "６", "５", "４", "３", "２", "１"];
 const rankLabels = ["一", "二", "三", "四", "五", "六", "七", "八", "九"];
@@ -38,18 +38,33 @@ function HandView({ hand, owner }: { hand: Hand, owner: Player }) {
         </div>
     )
 }
-function SquareView({ piece, selected, onClick }: { 
-    piece: Piece | null, 
-    selected: boolean,
-    onClick: () => void }) 
-{
+function SquareView({ piece, file, rank }: { 
+    file: number
+    rank: number
+    piece: Piece | null
+}
+) {
+    const selectSquare = useReplayStore(s => s.selectSquare)
+    const currentPlayer = useReplayStore(s => s.currentPlayer)
+    const tryMoveTo = useReplayStore(s => s.tryMoveTo)
+    const selected = useReplayStore(s => s.selected)
+    const isSelected = selected?.square.file === file && selected?.square.rank === rank
+
+    const handleSquareClick = () => {
+        if (selected) {
+            const ok = tryMoveTo({ file, rank })
+            if (!ok) alert("間違った手です")
+        } else {
+            if (piece) selectSquare(file, rank, piece)
+        }
+    }
 
     return (
         <div
             className={`${styles.cell}  
             ${selected && styles.selected}
             ${piece?.owner === 'white' ? styles.white : ''}`}
-            onClick={onClick}
+            onClick={handleSquareClick}
         >
             {piece ? piece.format() : null} 
         </div>
@@ -60,11 +75,7 @@ function BoardView({ position }: { position: Position }) {
     const { board, hands } = position
     const ranks = [...Array(9)].map((_, i) => i + 1)   //   1 → 9
     const files = [...Array(9)].map((_, i) => 9 - i)   // 9 → 1（将棋表記） ???
-    const ctx = useContext(BoardContext)
-    useEffect(()=>{
-        console.log("ctx", ctx)
 
-    }, [ctx])
     return (
         <Stack justifyContent="center">
             <Box className={styles.container}>
@@ -82,21 +93,12 @@ function BoardView({ position }: { position: Position }) {
                     {ranks.flatMap(rank => {
                         const cells = files.map(file => {
                             const piece = board.get(file, rank)
-                            const selected = ctx?.selected?.file === file &&
-                                ctx?.selected?.rank === rank
-                            //console.log("piece", piece, ctx?.selected, selected)
                             return (
                                 <SquareView
                                     key={Board.squareKey(file, rank)}
-                                    piece={piece}
-                                    selected={ctx?.selected?.file === file &&
-                                ctx?.selected?.rank === rank}
-                                    onClick={()=>{ 
-                                        console.log("onclick", piece, file, rank); 
-                                        ctx?.onSquareClick(file, rank)
-                                        //ctx?.setSelected({file, rank})
-                                    }
-                                    }
+                                    file={file}
+                                    rank={rank}
+                                    piece={piece}                                   
                                 />
                             )
                         })
