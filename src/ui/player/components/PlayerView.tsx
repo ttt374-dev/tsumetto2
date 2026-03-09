@@ -74,7 +74,7 @@ function PlayerView({problem, title, problemNavigation, timer}: {
     const replay = useReplayStore()
     //replay.reset(problem.kifData.initialPosition, moves)
     useEffect(() => {
-        replay.reset(problem.kifData.initialPosition, moves)
+        replay.load(problem.kifData.initialPosition, moves)
     }, [problem.kifData.initialPosition])
     
     const showMovesController = useShowMovesController(replay.plyIndex)

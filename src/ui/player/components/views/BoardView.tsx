@@ -4,7 +4,9 @@ import { numberToKanjiTwoDigits } from "../../../common/utils/numberToKanji";
 
 import styles from "./BoardView.module.css";
 import { formatPlayer } from "./MovesView";
-import { useReplayStore } from "../../hooks/useReplayStore";
+import { useReplayStore, type TryMoveResult } from "../../hooks/useReplayStore";
+import { useEffect, useRef, useState } from "react";
+import { useToast } from "@/ui/App/providers/ToastProvider";
 
 const fileLabels = ["９", "８", "７", "６", "５", "４", "３", "２", "１"];
 const rankLabels = ["一", "二", "三", "四", "五", "六", "七", "八", "九"];
@@ -40,14 +42,20 @@ const PieceKeyKanjiMapping: Record<string, string> = {
 function HandPieceView({ hand, owner, onClick }: { 
     hand: Hand, owner: Player, onClick?: (type: PieceType) => void }) {
     const keys: PieceType[] = ["rook", "bishop", "gold", "silver", "knight", "lance", "pawn"]
-    const selected = useReplayStore(s=>s.selected)
-    const selectedPieceType = selected && selected.type === "hand" && selected.pieceType
+    const selected = useReplayStore(s=>s.selectedState)
+    const selectedPieceType =
+        selected?.type === "hand" ? selected.pieceType : null
 
     return (<>
         {
-            keys.filter(key => hand.count(key) > 0).map(key => {
-                const countString = hand.count(key) > 1 ? numberToKanjiTwoDigits(hand.count(key)) : ""
-                return <span onClick={() => onClick?.(key)} className={owner === "black" && selectedPieceType === key ? styles.selected : ""}>
+            keys.map(key => {
+                const count = hand.count(key)
+                if (count === 0) return null
+                const countString = count > 1 ? numberToKanjiTwoDigits(count) : ""
+                return <span style={{marginRight: 5}} key={key} onClick={() => onClick?.(key)} 
+                    className={owner === "black" && selectedPieceType === key ? styles.selected : ""}
+                    
+                >
                     {PieceKeyKanjiMapping[key]}{countString}
                 </span>
             })
@@ -57,8 +65,8 @@ function HandPieceView({ hand, owner, onClick }: {
 }
 
 /////////////////////////////
-function HandView({ hand, owner }: { hand: Hand, owner: Player, onPieceClick?: () => void }) {
-    const selected = useReplayStore(s => s.selected)
+function HandView({ hand, owner }: { hand: Hand, owner: Player }) {
+    const selected = useReplayStore(s => s.selectedState)
     const selectHandPiece = useReplayStore(s => s.selectHandPiece)
     const unselect = useReplayStore(s=>s.unselect)
     const handleClick = (piecetype: PieceType) => {
@@ -80,55 +88,18 @@ function HandView({ hand, owner }: { hand: Hand, owner: Player, onPieceClick?: (
         </div>
     )
 }
-function SquareView({ piece, file, rank }: {
-    file: number
-    rank: number
+function SquareView({ piece, selected, onClick }: {
     piece: Piece | null
+    selected: boolean
+    onClick?: () => void
 }
 ) {
-    const selectSquare = useReplayStore(s => s.selectSquare)
-    const advancePly = useReplayStore(s => s.advancePly)
-    const tryMoveTo = useReplayStore(s => s.tryMoveTo)
-    const selected = useReplayStore(s => s.selected)
-    const isSelected = selected?.type === "board" && selected?.square.file === file && selected?.square.rank === rank
-    if (isSelected) console.log("selected", file, rank)
-
-    const handleSquareClick = () => {
-        if (selected) {
-            const result = tryMoveTo({ file, rank })
-
-            switch (result.type) {
-                case "correct":
-                    advancePly()
-                    break
-
-                case "finish":
-                    alert("正解！")
-                    break
-
-                case "incorrect":
-                    alert("不正解")
-                    break
-
-                case "cancel":
-                    break
-
-                case "promotion-choice":
-                    //setPromotionDialog(true)
-                    window.confirm("成りますか？")
-                    break;
-            }
-        } else {
-            if (piece) selectSquare(file, rank)
-        }
-    }
-
     return (
         <div
             className={`${styles.cell}  
-            ${isSelected && styles.selected}
+            ${selected && styles.selected}
             ${piece?.owner === 'white' ? styles.white : ''}`}
-            onClick={handleSquareClick}
+            onClick={onClick}
         >
             {piece ? piece.format() : null}
         </div>
@@ -139,6 +110,37 @@ function BoardView({ position }: { position: Position }) {
     const { board, hands } = position
     const ranks = [...Array(9)].map((_, i) => i + 1)   //   1 → 9
     const files = [...Array(9)].map((_, i) => 9 - i)   // 9 → 1（将棋表記） ???
+
+    const [tryMoveResult, setTryMoveResult] = useState<TryMoveResult | null>(null)
+    //const plyIndex = useReplayStore(s=>s.plyIndex)
+    const selectSquare = useReplayStore(s => s.selectSquare)
+    const tryMoveTo = useReplayStore(s => s.tryMoveTo)
+    const selectedState = useReplayStore(s => s.selectedState)
+    //const tryMoveResult = useRef<TryMoveResult | null>(null)
+    const toast = useToast()
+
+    
+    useEffect(() => {
+        if (tryMoveResult?.type === "finish") {
+            toast({message: "詰みです！"})
+        }
+    }, [tryMoveResult])
+
+    const handleSquareClick = (file: number, rank: number, piece: Piece | null) => {
+        if (!selectedState) {
+            if (piece?.owner === "black") {
+                selectSquare(file, rank)
+            }
+            return
+        }
+
+        if (piece?.owner === "black") {
+            selectSquare(file, rank)
+            return
+        }
+
+        setTryMoveResult(tryMoveTo({ file, rank }))
+    }    
 
     return (
         <Stack justifyContent="center">
@@ -157,12 +159,15 @@ function BoardView({ position }: { position: Position }) {
                     {ranks.flatMap(rank => {
                         const cells = files.map(file => {
                             const piece = board.get(file, rank)
+                            const selected = selectedState?.type === "board" &&
+                                selectedState.square.file === file &&
+                                selectedState.square.rank === rank
                             return (
                                 <SquareView
                                     key={Board.squareKey(file, rank)}
-                                    file={file}
-                                    rank={rank}
                                     piece={piece}
+                                    selected={selected}
+                                    onClick={() => handleSquareClick(file, rank, piece)}
                                 />
                             )
                         })
