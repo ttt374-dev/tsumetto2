@@ -3,23 +3,22 @@ import { App as CapacitorApp } from '@capacitor/app';
 import { useEffect, useMemo } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, Outlet, useNavigate } from 'react-router-dom';
 import { useLocation, useNavigationType } from "react-router-dom";
-import { CssBaseline, CssVarsProvider, useMediaQuery } from "@mui/material";
+import { CssBaseline } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material";
 
-import { SessionLayout } from '../session/SessionLayout.tsx';
+import SessionLayout from '../session/SessionLayout.tsx';
 import { LibraryScreen } from '../library/LibraryScreen';
 import MissionScreen from '../mission/MissionScreen.tsx';
-import { MissionEditScreen } from '../mission/MissionEditScreen.tsx';
-import { SessionPlayerScreen } from '../session/SessionPlayerScreen';
-import { ViewerScreen } from '../viewer/ViewerScreen';
+import MissionEditScreen from '../mission/MissionEditScreen.tsx';
+import SessionPlayerScreen from '../session/SessionPlayerScreen';
 import { RepositoryContext, type RepositoryContextValue } from './providers/RepositoryProvider';
 import { ToastProvider } from './providers/ToastProvider';
 import { ListScreen } from '../list/ListScreen';
-import { StatsScreen } from '../stats/StatsScreen';
-import { SinglePlayerScreen } from '../player/SinglePlayerScreen';
+import StatsScreen from '../stats/StatsScreen';
+import SinglePlayerScreen from '../player/SinglePlayerScreen';
 import { bootstrapApp, createRepositories } from './bootstrapApp';
 import { routes } from './useAppNavigation';
-import { SessionSummaryScreen } from '../summary/MissionSummaryScreen.tsx';
+import SessionSummaryScreen from '../summary/MissionSummaryScreen.tsx';
 import { ProblemDetailScreen } from '../detail/ProblemDetailScreen.tsx';
 
 export const theme = createTheme({

@@ -9,7 +9,7 @@ type SwipeActions = {
   onDown?: () => void;
 };
 
-export function SwipeWrapper({
+export default function SwipeWrapper({
   children,
   actions,
 }: {

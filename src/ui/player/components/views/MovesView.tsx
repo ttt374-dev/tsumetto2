@@ -21,23 +21,23 @@ export function formatMove(move: Move, index: number): string {
 }
 
 export default function MovesView({ moves: moves, currentPlyIndex, onMoveToPly }: Props) {
-const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
+    const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-  useEffect(() => {
-    const el = itemRefs.current[currentPlyIndex];
-    if (el) {
-      el.scrollIntoView({
-        block: "nearest",   // ← 上下どちらか近い方へ
-        behavior: "smooth", // ← 再生中は外してもOK
-      });
-    }
-  }, [currentPlyIndex]);
+    useEffect(() => {
+        const el = itemRefs.current[currentPlyIndex];
+        if (el) {
+            el.scrollIntoView({
+                block: "nearest",   // ← 上下どちらか近い方へ
+                behavior: "smooth", // ← 再生中は外してもOK
+            });
+        }
+    }, [currentPlyIndex]);
 
 
-    
-    
-    function itemStyles(index: number){
-        const hilightColor =  "#ffd"
+
+
+    function itemStyles(index: number) {
+        const hilightColor = "#ffd"
         const itemBgColor = index === currentPlyIndex ? hilightColor : undefined // ハイライト色
         return {
             padding: "2px 0",

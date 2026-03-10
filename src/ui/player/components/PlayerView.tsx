@@ -1,7 +1,7 @@
 import { Box, Button, Grid, Stack, Typography } from "@mui/material"
 
 import MovesView from "./views/MovesView"
-import { PlyControlPanel } from "./panels/PlyControlPanel"
+import PlyControlPanel from "./panels/PlyControlPanel"
 import BoardPanel from "./panels/BoardPanel"
 import { formatLearningPerformance } from "@/ui/library/components/LibraryListItem"
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem"

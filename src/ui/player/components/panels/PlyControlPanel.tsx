@@ -9,7 +9,7 @@ type PlyControlPanelProps = {
 }
 
 
-export function PlyControlPanel({
+export default function PlyControlPanel({
   currentPlyIndex,
   maxPlyIndex,
   onPrevPly,

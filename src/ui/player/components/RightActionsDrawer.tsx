@@ -19,7 +19,7 @@ export function useRightActionsDrawer(
     )
     return { openDialog, drawerElement}
 }
-export function RightActionsDrawer({ isOpen, onClose, onOpenDetailDialog }: {
+export default function RightActionsDrawer({ isOpen, onClose, onOpenDetailDialog }: {
     isOpen: boolean
     onClose: () => void
     onOpenDetailDialog: () => void

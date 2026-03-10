@@ -1,14 +1,13 @@
 import { Box, Stack } from "@mui/material";
+
 import { Position, Hand, KanjiToPieceItem, type PieceType, Piece, Board, type Player, Square, Move } from "@/domain/kif/entity";
 import { numberToKanjiTwoDigits } from "../../../common/utils/numberToKanji";
-
 import styles from "./BoardView.module.css";
 import { formatPlayer } from "./MovesView";
 import { useEffect, useRef, useState } from "react";
 import { useToast } from "@/ui/App/providers/ToastProvider";
 import { useReplayStore } from "../../hooks/useReplayStore";
 import { useBoardInputStore } from "../../hooks/useBoardInputStore";
-import { fromPairs } from "lodash";
 
 const fileLabels = ["９", "８", "７", "６", "５", "４", "３", "２", "１"];
 const rankLabels = ["一", "二", "三", "四", "五", "六", "七", "八", "九"];
@@ -102,8 +101,6 @@ function BoardView({ position }: { position: Position }) {
     const ranks = [...Array(9)].map((_, i) => i + 1)   //   1 → 9
     const files = [...Array(9)].map((_, i) => 9 - i)   // 9 → 1（将棋表記） ???
 
-    //const [tryMoveResult, setTryMoveResult] = useState<TryMoveResult | null>(null)
-    //const plyIndex = useReplayStore(s=>s.plyIndex)
     const solvePhase = useReplayStore(s=>s.solvePhase)
     const player = useReplayStore(s=>s.player)
     const selectSquare = useBoardInputStore(s => s.selectSquare)
@@ -111,9 +108,6 @@ function BoardView({ position }: { position: Position }) {
     const selectedState = useBoardInputStore(s => s.selectedState)
     const mistakes = useReplayStore(s=>s.mistakes)
     const unselect = useBoardInputStore(s=>s.unselect)
-    //const moveToSquare = useBoardInputStore(s=>s.moveToSquare)
-    //const position = useReplayStore(s=>s.position)
-    //const tryMoveResult = useRef<TryMoveResult | null>(null)
     const toast = useToast()
     
     useEffect(() => {
@@ -126,7 +120,6 @@ function BoardView({ position }: { position: Position }) {
         toast({message: `不正解: ${mistakes}`})
         unselect()
     }, [mistakes])
-    
 
     const handleSquareClick = (file: number, rank: number) => {
         switch(selectedState.type){
@@ -162,31 +155,7 @@ function BoardView({ position }: { position: Position }) {
                 break;
             case "promotionConfirm":  // 成るか成らないのか選択
                 break;
-
         }
-        //moveToSquare({file: file, rank: rank})
-        /*
-        const piece = position.board.get(file, rank)
-        if (!selectedState) {
-            if (piece?.owner === "black") {
-                selectSquare({file, rank})
-            }
-            return
-        }
-
-        if (piece?.owner === "black") {
-            selectSquare({file, rank})
-            return
-        }
-        console.log("squareclick", selectedState)
-        if (selectedState.type !== "board" && selectedState.type !== "hand") return
-        const from = selectedState.type === "board" ? selectedState.square : null
-        const pieceType = selectedState.type === "board" ? position.board.get(selectedState.square.file, selectedState.square.rank)?.type
-            : selectedState.pieceType
-        if (!pieceType) throw new Error
-        const move = new Move(from, {file, rank}, pieceType)
-        tryMove(move)
-        */
     }    
 
     return (
@@ -235,23 +204,4 @@ function BoardView({ position }: { position: Position }) {
     )
 }
 
-function formatHand(hand: Hand): string {
-    const parts: string[] = [];
-
-    const kanjikeys = Object.entries(KanjiToPieceItem)
-        .filter(([key, item]) => !item.promoted && key !== "王" && key !== "玉")
-        .map(([key]) => key as PieceType)
-        .reverse(); // 逆順
-
-    kanjikeys.forEach(kanjipieceType => {
-        const item = KanjiToPieceItem[kanjipieceType]
-        const count = hand.count(item.type);
-        if (count > 0) {
-            const suffix = count > 1 ? (numberToKanjiTwoDigits(count) ?? count.toString()) : ""
-            parts.push(`${kanjipieceType}${suffix}`);
-        }
-    });
-    //console.log(parts)        
-    return parts.length === 0 ? "なし" : parts.join(" ");
-}
 export default BoardView;

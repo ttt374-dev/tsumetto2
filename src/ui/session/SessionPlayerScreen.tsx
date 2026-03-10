@@ -1,9 +1,8 @@
-import { PlayerScreen } from "../player/PlayerScreen"
-import { useLearningEventStore } from "../store/useLearningEventStore"
+import PlayerScreen from "../player/PlayerScreen"
 import { useSessionPlayerViewModel } from "./hooks/useSessionPlayerViewModel"
 
 ////////////////////////////////////////////////
-export function SessionPlayerScreen() {
+export default function SessionPlayerScreen() {
     const vm = useSessionPlayerViewModel()
 
     if (vm.status !== "playing") return <>{vm.status}</>

@@ -14,7 +14,7 @@ const UNSPECIFIED = "__UNSPECIFIED__";
 //type ProblemTypeUi = ProblemType | typeof UNSPECIFIED
 //type SourceUi = string | typeof UNSPECIFIED
 
-export function MissionEditScreen() {
+export default function MissionEditScreen() {
     const {
         name, allSources, query, stats, ids: problemIds,
         setName, handleSaveAndExit, handleDeleteMission,

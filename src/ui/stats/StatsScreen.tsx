@@ -5,7 +5,7 @@ import { OverdueStats } from "./components/OverdueStats";
 import { ProblemStatsTable } from "./components/ProblemStatsTable";
 import { LearningHistory } from "./components/LearningHistory";
 
-export function StatsScreen() {
+export default function StatsScreen() {
     return (
         <AppShell header={"Stats"}>
             <Box sx={{

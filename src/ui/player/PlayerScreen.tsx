@@ -30,7 +30,7 @@ type PlayerCapabilities = {
     navigatable?: NavigationCapability
 }
 //////////////////////////////////////////////////////////////
-export function PlayerScreen({ problem, title, capabilities }: {
+export default function PlayerScreen({ problem, title, capabilities }: {
     problem: Problem
     title: React.ReactNode
     capabilities: PlayerCapabilities

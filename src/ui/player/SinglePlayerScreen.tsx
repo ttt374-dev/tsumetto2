@@ -1,13 +1,13 @@
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem"
 import { useLearningEventStore } from "../store/useLearningEventStore"
-import { PlayerScreen } from "./PlayerScreen"
+import PlayerScreen from "./PlayerScreen"
 import type { SolvedResult } from "@/domain/learning/entity/Learning"
 import { useNavigate, useParams } from "react-router-dom"
 import { useProblemStore } from "../store/useProblemStore"
 import { routes } from "../App/useAppNavigation"
 import { useSessionStore } from "../store/useSessionStore"
 
-export function SinglePlayerScreen() {    
+export default function SinglePlayerScreen() {    
     const { id } = useParams<{ id: string }>()
     const problem = useProblemStore(s => id ? s.byId[id] : undefined)
     if (!problem) return <div>Not found</div>

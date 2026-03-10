@@ -7,7 +7,7 @@ import { projectLearning } from "@/domain/learning/service/projectionLearning";
 import { useLearningEventStore } from "../store/useLearningEventStore";
 
 /////////////////////////////////////////////
-export function SessionSummaryScreen() {
+export default function SessionSummaryScreen() {
     const sessionId = useSessionStore(s=>s.sessionId)
     const ids = useSessionStore(s=>s.problemIds)
     const learningEventLog = useLearningEventStore(s=>s.eventLog)

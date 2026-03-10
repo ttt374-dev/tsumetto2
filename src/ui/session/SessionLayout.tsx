@@ -3,7 +3,7 @@ import { routes } from "../App/useAppNavigation";
 import { useSessionStore } from "../store/useSessionStore";
 import { useEffect } from "react";
 
-export function SessionLayout() {
+export default function SessionLayout() {
     const phase = useSessionStore(s => s.phase())
     //console.log("phase", phase)
     const navigate = useNavigate()
