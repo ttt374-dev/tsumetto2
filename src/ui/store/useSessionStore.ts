@@ -5,7 +5,7 @@ import { v4 } from "uuid";
 import { create } from "zustand";
 
 
-type SesionStore = {
+type SessionStore = {
     // ===== state =====
     sessionId?: SessionId,
     missionId?: MissionId;
@@ -22,12 +22,13 @@ type SesionStore = {
     prev: () => void;
     moveToIndex: (index: number) => void;
     moveToId: (id: ProblemId) => void;
+    summary: () => void;
     reset: () => void;
 };
 
 /////////////////////////////////////
 
-export const useSessionStore = create<SesionStore>((set, get) => ({
+export const useSessionStore = create<SessionStore>((set, get) => ({
     // ======================
     // state
     // ======================
@@ -61,7 +62,7 @@ export const useSessionStore = create<SesionStore>((set, get) => ({
                 missionId: missionId,
                 sessionId: sessionId,
                 problemIds: ids,
-                currentIndex: ids.length > startIndex ? 0 : -1,
+                currentIndex: ids.length > startIndex ? startIndex : -1,
                 answers: [],
             }
         })
@@ -99,6 +100,12 @@ export const useSessionStore = create<SesionStore>((set, get) => ({
             if (index === -1) return s;
             return { currentIndex: index };
         }),
+
+    summary: () => {
+        set((s) => ({
+            currentIndex: s.problemIds.length
+        }))
+    },
 
     reset: () =>
         set({

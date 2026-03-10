@@ -145,6 +145,7 @@ function BoardView({ position }: { position: Position }) {
             case "selected":  // 駒が選択されている状態
                 let from: Square | null = null
                 let pieceType: PieceType | undefined = undefined
+                let currentPromoted = false
 
                 switch(selectedState.source){
                     case "board":
@@ -154,7 +155,9 @@ function BoardView({ position }: { position: Position }) {
                             unselect()
                             return
                         }
-                        pieceType = position.board.get(selectedState.square.file, selectedState.square.rank)?.type                 
+                        const piece = position.board.get(selectedState.square.file, selectedState.square.rank)
+                        pieceType = piece?.type                 
+                        currentPromoted = piece?.promoted ?? false
                         if (!pieceType) throw new Error
                         break;
                     case "hand":
@@ -162,8 +165,8 @@ function BoardView({ position }: { position: Position }) {
                         break;
                 }
                 
-                const move = new Move(from, { file, rank}, pieceType)
-                if (canPromote(move, "black")){
+                const move = new Move(from, { file, rank}, pieceType, currentPromoted)
+                if (!currentPromoted && canPromote(move, "black")){
                     //pendingPromotion(move)
                     const res = window.confirm(`成りますか？: ${PieceKeyKanjiMapping[move.pieceType]}`)
                     const dto: MoveDTO = { ...move.toDTO(), promote: res }
