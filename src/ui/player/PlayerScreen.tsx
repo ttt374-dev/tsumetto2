@@ -51,7 +51,7 @@ export function PlayerScreen({ problem, title, capabilities }: {
 
     useEffect(() => {
         timer.reset()
-        timer.start()
+        timer.start()  // TODO debug
     }, [problem.id])
 
     return (

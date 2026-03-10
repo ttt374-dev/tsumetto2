@@ -7,30 +7,12 @@ import { formatPlayer } from "./MovesView";
 import { useEffect, useRef, useState } from "react";
 import { useToast } from "@/ui/App/providers/ToastProvider";
 import { useReplayStore } from "../../hooks/useReplayStore";
-import { useBoardInput } from "../../hooks/useBoardInput";
+import { useBoardInputStore } from "../../hooks/useBoardInputStore";
+import { fromPairs } from "lodash";
 
 const fileLabels = ["９", "８", "７", "６", "５", "４", "３", "２", "１"];
 const rankLabels = ["一", "二", "三", "四", "五", "六", "七", "八", "九"];
 
-function formatHand(hand: Hand): string {
-    const parts: string[] = [];
-
-    const kanjikeys = Object.entries(KanjiToPieceItem)
-        .filter(([key, item]) => !item.promoted && key !== "王" && key !== "玉")
-        .map(([key]) => key as PieceType)
-        .reverse(); // 逆順
-
-    kanjikeys.forEach(kanjipieceType => {
-        const item = KanjiToPieceItem[kanjipieceType]
-        const count = hand.count(item.type);
-        if (count > 0) {
-            const suffix = count > 1 ? (numberToKanjiTwoDigits(count) ?? count.toString()) : ""
-            parts.push(`${kanjipieceType}${suffix}`);
-        }
-    });
-    //console.log(parts)        
-    return parts.length === 0 ? "なし" : parts.join(" ");
-}
 const PieceKeyKanjiMapping: Record<string, string> = {
     "pawn": "歩",
     "lance": "香",
@@ -40,52 +22,60 @@ const PieceKeyKanjiMapping: Record<string, string> = {
     "bishop": "角",
     "rook": "飛"
 }
-function HandPieceView({ hand, owner, onClick }: { 
-    hand: Hand, owner: Player, onClick?: (type: PieceType) => void }) {
-    const keys: PieceType[] = ["rook", "bishop", "gold", "silver", "knight", "lance", "pawn"]
-    const selected = useReplayStore(s=>s.selectedState)
-    const selectedPieceType =
-        selected?.type === "hand" ? selected.pieceType : null
-
-    return (<>
-        {
-            keys.map(key => {
-                const count = hand.count(key)
-                if (count === 0) return null
-                const countString = count > 1 ? numberToKanjiTwoDigits(count) : ""
-                return <span style={{marginRight: 5}} key={key} onClick={() => onClick?.(key)} 
-                    className={owner === "black" && selectedPieceType === key ? styles.selected : ""}
-                    
-                >
-                    {PieceKeyKanjiMapping[key]}{countString}
-                </span>
-            })
-        }
-    </>
-    )
+function HandPieceView({ pieceType, selected, count, onClick }: { 
+    pieceType: PieceType
+    selected: boolean
+    count: number
+    onClick?: () => void
+}) {
+    const countString = count > 1 ? numberToKanjiTwoDigits(count) : ""
+    return (
+        <span style={{ marginRight: 5 }} onClick={() => onClick?.()}
+            className={selected ? styles.selected : ""}>
+            {PieceKeyKanjiMapping[pieceType]}{countString}
+        </span>)
 }
 
 /////////////////////////////
 function HandView({ hand, owner }: { hand: Hand, owner: Player }) {
-    const selected = useReplayStore(s => s.selectedState)
-    const selectHandPiece = useReplayStore(s => s.selectHandPiece)
-    const unselect = useReplayStore(s=>s.unselect)
-    const handleClick = (piecetype: PieceType) => {
-        console.log("hand piece click", piecetype, owner, selected)
-        if (owner === "white") return  // 先手のみ選択可
-        if (selected){
-            if(selected.type === "hand" && selected.pieceType === piecetype){
-                console.log("unselected")
-                unselect()
-            }
-        } else {
-            selectHandPiece(piecetype, owner)
+    const selectedState = useBoardInputStore(s => s.selectedState)
+    const selectHandPiece = useBoardInputStore(s => s.selectHandPiece)
+    const unselect = useBoardInputStore(s=>s.unselect)
+    const handleHandpieceClick = (piecetype: PieceType) => {
+        if (owner !== "black") return
+        switch(selectedState.type){
+            case "idle":
+                console.log("select hand piece", piecetype, owner)
+                selectHandPiece(piecetype, owner)
+                break;
+            case "selected":
+                if (selectedState.source === "hand" && selectedState.pieceType === piecetype) {
+                    console.log("unselected")
+                    unselect()
+                }
+                break;
         }
+
     }
+    const keys: PieceType[] = ["rook", "bishop", "gold", "silver", "knight", "lance", "pawn"]
     return (
         <div>
             {formatPlayer(owner)}
-            <HandPieceView hand={hand} owner={owner} onClick={handleClick} />
+            {
+            keys.map(key => {
+                const count = hand.count(key)
+                if (count === 0) return null
+                const selected = selectedState.type === "selected" &&
+                    selectedState.source === "hand" &&
+                    selectedState.pieceType === key &&
+                    owner === "black"
+                    
+                return (
+                    <HandPieceView 
+                        pieceType={key} selected={selected} count={count} 
+                        onClick={() => handleHandpieceClick(key)}/>)
+                })
+            }
         </div>
     )
 }
@@ -115,15 +105,16 @@ function BoardView({ position }: { position: Position }) {
     //const [tryMoveResult, setTryMoveResult] = useState<TryMoveResult | null>(null)
     //const plyIndex = useReplayStore(s=>s.plyIndex)
     const solvePhase = useReplayStore(s=>s.solvePhase)
-    const selectSquare = useReplayStore(s => s.selectSquare)
+    const player = useReplayStore(s=>s.player)
+    const selectSquare = useBoardInputStore(s => s.selectSquare)
     const tryMove = useReplayStore(s => s.tryMove)
-    const selectedState = useReplayStore(s => s.selectedState)
+    const selectedState = useBoardInputStore(s => s.selectedState)
     const mistakes = useReplayStore(s=>s.mistakes)
-    const unselect = useReplayStore(s=>s.unselect)
+    const unselect = useBoardInputStore(s=>s.unselect)
+    //const moveToSquare = useBoardInputStore(s=>s.moveToSquare)
     //const position = useReplayStore(s=>s.position)
     //const tryMoveResult = useRef<TryMoveResult | null>(null)
     const toast = useToast()
-
     
     useEffect(() => {
         if (solvePhase === "completed") {
@@ -135,10 +126,45 @@ function BoardView({ position }: { position: Position }) {
         toast({message: `不正解: ${mistakes}`})
         unselect()
     }, [mistakes])
-    const { clickSquare } = useBoardInput()
+    
 
     const handleSquareClick = (file: number, rank: number) => {
-        clickSquare(file, rank)
+        switch(selectedState.type){
+            case "idle":   // 未選択
+                if (player ==="white") return
+                const piece = position.board.get(file, rank)
+                if (!piece || piece.owner !== "black") return // 黒の駒を選択したときのみ
+                selectSquare({file: file, rank: rank})
+                break;
+            case "selected":  // 駒が選択されている状態
+                let from: Square | null = null
+                let pieceType: PieceType | undefined = undefined
+
+                switch(selectedState.source){
+                    case "board":
+                        from = selectedState.square
+                        // 同じセルが選択されたときはキャンセル
+                        if (from.file === file && from.rank === rank) { 
+                            unselect()
+                            return
+                        }
+                        pieceType = position.board.get(selectedState.square.file, selectedState.square.rank)?.type 
+                        if (!pieceType) throw new Error
+                        break;
+                    case "hand":
+                        pieceType = selectedState.pieceType
+                        break;
+                }
+                
+                const move = new Move(from, { file, rank}, pieceType)
+                tryMove(move)
+                unselect()
+                break;
+            case "promotionConfirm":  // 成るか成らないのか選択
+                break;
+
+        }
+        //moveToSquare({file: file, rank: rank})
         /*
         const piece = position.board.get(file, rank)
         if (!selectedState) {
@@ -180,7 +206,8 @@ function BoardView({ position }: { position: Position }) {
                     {ranks.flatMap(rank => {
                         const cells = files.map(file => {
                             const piece = board.get(file, rank)
-                            const selected = selectedState?.type === "board" &&
+                            const selected = selectedState.type === "selected" && 
+                                selectedState.source === "board" &&
                                 selectedState.square.file === file &&
                                 selectedState.square.rank === rank
                             return (
@@ -208,4 +235,23 @@ function BoardView({ position }: { position: Position }) {
     )
 }
 
+function formatHand(hand: Hand): string {
+    const parts: string[] = [];
+
+    const kanjikeys = Object.entries(KanjiToPieceItem)
+        .filter(([key, item]) => !item.promoted && key !== "王" && key !== "玉")
+        .map(([key]) => key as PieceType)
+        .reverse(); // 逆順
+
+    kanjikeys.forEach(kanjipieceType => {
+        const item = KanjiToPieceItem[kanjipieceType]
+        const count = hand.count(item.type);
+        if (count > 0) {
+            const suffix = count > 1 ? (numberToKanjiTwoDigits(count) ?? count.toString()) : ""
+            parts.push(`${kanjipieceType}${suffix}`);
+        }
+    });
+    //console.log(parts)        
+    return parts.length === 0 ? "なし" : parts.join(" ");
+}
 export default BoardView;

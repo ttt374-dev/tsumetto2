@@ -4,6 +4,7 @@ import type { Problem } from "@/domain/problem/entity/Problem"
 import { create } from "zustand"
 
 export type SolvePhase = "solving" | "completed" | "revealed"
+type TryMoveResult = "correct" | "incorrect" | "finish"
 
 export type SelectedState =
     | { type: "idle"}
@@ -21,24 +22,18 @@ type ReplayStore = {
 
     // game
     solvePhase: SolvePhase
-    //position: Position
+    position: Position
     plyIndex: number
     advancePly: () => void
     retreatPly: () => void
     moveToPly: (index: number) => void
-    tryMove: (move: Move) => void
+    tryMove: (move: Move) => TryMoveResult
+    player: Player
 
     // session
     mistakes: number
     
 
-    // ui
-    selectedState: SelectedState
-    selectSquare: (square: Square) => void    
-    selectHandPiece: (pieceType: PieceType, owner: Player) => void
-    unselect: () => void
-    showMoves: boolean
-    setShowMoves: (flag: boolean) => void
 
 }
 
@@ -52,32 +47,31 @@ export const useReplayStore = create<ReplayStore>((set, get) => ({
     // problem
     initialPosition: Position.empty(),
     moves: [],
+    player: "black",
 
     // game
     solvePhase: "solving",
-    //position: Position.empty(),
+    position: Position.empty(),
     plyIndex: 0,
     moveToPly: (index: number) => {
+
         const { moves } = get()
         const newPlyIndex = Math.min(Math.max(index, 0), moves.length)
          
         set({
             plyIndex: newPlyIndex,
-            //position: buildUntilPly(
-            //    { initial: initialPosition, moves },
-            //    newPlyIndex
-            //)
+            player: newPlyIndex % 2 ? "white" : "black",
+            position: buildUntilPly(
+                { initial: get().initialPosition, moves },
+                newPlyIndex
+            )
         })
     },
     advancePly: () => {
-        set(state => ({
-            plyIndex: Math.min(state.plyIndex + 1, state.moves.length)
-        }))
+        get().moveToPly(get().plyIndex+1)
     },
     retreatPly: () => {
-        set(state => ({
-            plyIndex: Math.max(state.plyIndex - 1, 0)
-        }))
+        get().moveToPly(get().plyIndex-1)
     },
 
     // session
@@ -87,11 +81,12 @@ export const useReplayStore = create<ReplayStore>((set, get) => ({
         console.log("load", problem)
         set({
             initialPosition: problem.kifData.initialPosition,
+            position: problem.kifData.initialPosition,
             moves: problem.kifData.moves,
-            showMoves: false,
+            //showMoves: false,
             solvePhase: "solving",
             mistakes: 0,        
-            selectedState: { type: "idle" }
+            //selectedState: { type: "idle" }
         })
         get().moveToPly(0)
     },
@@ -105,10 +100,10 @@ export const useReplayStore = create<ReplayStore>((set, get) => ({
         if (!movesEqual(move, expectedMove)) {
             set({
                 mistakes: mistakes + 1,
-                selectedState: { type: "idle"},
+                //selectedState: { type: "idle"},
             }
             )
-            return
+            return "incorrect"
         }
 
         // 正解
@@ -120,18 +115,22 @@ export const useReplayStore = create<ReplayStore>((set, get) => ({
 
         //const nextPly = plyIndex + 1
         //const solved = get().plyIndex === moves.length
+        const isLast = (get().plyIndex >= moves.length)
+        console.log("islast", isLast, get().plyIndex, moves.length)
 
-        const newphase =  (get().plyIndex + 1 >= moves.length) ? "completed" : get().solvePhase
+        const newphase =  isLast ? "completed" : get().solvePhase
 
         set({
             //position: nextPosition,
             //plyIndex: nextPly,
-            selectedState: { type: "idle"},
+            //selectedState: { type: "idle"},
             solvePhase: newphase,            
         })
+        return isLast ? "finish" : "correct"
         
     },
     // ui
+    /*
     selectedState: { type: "idle"},
     selectSquare: (square: Square) => {
         set({
@@ -156,7 +155,7 @@ export const useReplayStore = create<ReplayStore>((set, get) => ({
     showMoves: false,
     setShowMoves: (flag: boolean) => {
         set({ showMoves: flag})
-    }
+    }*/
 }))
 
 ///////////////

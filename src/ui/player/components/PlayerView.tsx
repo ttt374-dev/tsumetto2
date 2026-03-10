@@ -14,19 +14,8 @@ import MovesPanel from "./panels/MovesPanel"
 import type { Learning } from "@/domain/learning/entity/Learning"
 import { Move, Piece, type Player, type Square } from "@/domain/kif/entity"
 import { selectPosition, useReplayStore } from "../hooks/useReplayStore"
+import { useBoardInputStore } from "../hooks/useBoardInputStore"
 
-export function useShowMovesController(plyIndex: number) {
-    const [showMoves, setShowMoves] = useState(false)
-    useEffect(() => {
-        if (plyIndex > 0) {
-            setShowMoves(true)
-        } else if (plyIndex === 0) {
-            setShowMoves(false)
-        }
-    }, [plyIndex])
-    
-    return { showMoves, setShowMoves }
-}
 
 function formatTime(sec: number) {
     const m = Math.floor(sec / 60)
@@ -69,14 +58,14 @@ function PlayerView({problem, title, problemNavigation, timer}: {
     timer?: ReturnType<typeof useTimer>
 }){
     const moves = problem.kifData.moves
-    const replay = useReplayStore()
-    const position = useReplayStore(selectPosition)
+    const { load, advancePly, retreatPly, plyIndex, moveToPly, position } = useReplayStore()
+    //const position = useReplayStore(selectPosition)
     
     useEffect(() => {
-        replay.load(problem)
+        load(problem)
         
     }, [problem])
-    
+    const [showMoves, setShowMoves ] = useState(false)
     
     const learning: Learning | undefined = useLearningRecordStore(s=>s.records)[problem.id]
 
@@ -94,8 +83,8 @@ function PlayerView({problem, title, problemNavigation, timer}: {
 
             <BoardPanel
                 position={position}
-                onAdvancePly={replay.advancePly}
-                onRetreatPly={replay.retreatPly}
+                onAdvancePly={advancePly}
+                onRetreatPly={retreatPly}
                 onNextProblem={problemNavigation?.next}
                 onPrevProblem={problemNavigation?.prev} />
 
@@ -103,10 +92,10 @@ function PlayerView({problem, title, problemNavigation, timer}: {
                 { /* --- 手筋 ---*/}
 
                 <MovesPanel>
-                    {replay.showMoves ?
-                        <MovesView moves={moves} currentPlyIndex={replay.plyIndex} onMoveToPly={replay.moveToPly} />
+                    {showMoves ?
+                        <MovesView moves={moves} currentPlyIndex={plyIndex} onMoveToPly={moveToPly} />
                         : (<Stack>
-                            <Button onClick={() => replay.setShowMoves(true)} >
+                            <Button onClick={() => setShowMoves(true)} >
                                 手数：{moves.length}手
                             </Button>                            
                             <Box>{problem.tags.join(",")}</Box>
@@ -118,10 +107,10 @@ function PlayerView({problem, title, problemNavigation, timer}: {
                 { /* --- コントロールパネル ---*/}
                 <Box flex={0.75} sx={{ border: 1, borderColor: "divider" }}>
                     <PlyControlPanel
-                        currentPlyIndex={replay.plyIndex}
+                        currentPlyIndex={plyIndex}
                         maxPlyIndex={moves.length}
-                        onPrevPly={replay.retreatPly}
-                        onNextPly={replay.advancePly}
+                        onPrevPly={retreatPly}
+                        onNextPly={advancePly}
                     />
                     {learning && formatLearningPerformance(learning)}
 
@@ -139,5 +128,16 @@ function PlayerView({problem, title, problemNavigation, timer}: {
         </Stack>
     )
 }
-
+export function useShowMovesController(plyIndex: number) {
+    const [showMoves, setShowMoves] = useState(false)
+    useEffect(() => {
+        if (plyIndex > 0) {
+            setShowMoves(true)
+        } else if (plyIndex === 0) {
+            setShowMoves(false)
+        }
+    }, [plyIndex])
+    
+    return { showMoves, setShowMoves }
+}
 export default PlayerView
