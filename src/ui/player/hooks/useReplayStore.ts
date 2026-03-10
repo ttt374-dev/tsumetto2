@@ -142,6 +142,7 @@ function movesEqual(a: Move, b?: Move) {
     a.from?.rank === b.from?.rank &&
     a.to.file === b.to.file &&
     a.to.rank === b.to.rank &&
-    a.pieceType === b.pieceType
+    a.pieceType === b.pieceType &&
+    a.promote === b.promote
   )
 }

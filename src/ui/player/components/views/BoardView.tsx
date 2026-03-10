@@ -1,6 +1,6 @@
 import { Box, Stack } from "@mui/material";
 
-import { Position, Hand, KanjiToPieceItem, type PieceType, Piece, Board, type Player, Square, Move } from "@/domain/kif/entity";
+import { Position, Hand, KanjiToPieceItem, type PieceType, Piece, Board, type Player, Square, Move, type MoveDTO } from "@/domain/kif/entity";
 import { numberToKanjiTwoDigits } from "../../../common/utils/numberToKanji";
 import styles from "./BoardView.module.css";
 import { formatPlayer } from "./MovesView";
@@ -107,10 +107,33 @@ function BoardView({ position }: { position: Position }) {
     const tryMove = useReplayStore(s => s.tryMove)
     const selectedState = useBoardInputStore(s => s.selectedState)    
     const unselect = useBoardInputStore(s=>s.unselect)      
-   
 
+    const promotable = new Set([
+        "pawn",
+        "lance",
+        "knight",
+        "silver",
+        "bishop",
+        "rook"
+    ])
+
+    const canPromote = (move: Move, player: Player) => {
+        if (!move.from) return false
+        if (!promotable.has(move.pieceType)) return false
+
+        const from = move.from.rank
+        const to = move.to.rank
+
+        if (player === "black") {
+            return from <= 3 || to <= 3
+        } else {
+            return from >= 7 || to >= 7
+        }
+    }
     const handleSquareClick = (file: number, rank: number) => {
+        console.log("selected state", selectedState)
         switch(selectedState.type){
+            
             case "idle":   // 未選択
                 if (player ==="white") return
                 const piece = position.board.get(file, rank)
@@ -129,7 +152,7 @@ function BoardView({ position }: { position: Position }) {
                             unselect()
                             return
                         }
-                        pieceType = position.board.get(selectedState.square.file, selectedState.square.rank)?.type 
+                        pieceType = position.board.get(selectedState.square.file, selectedState.square.rank)?.type                 
                         if (!pieceType) throw new Error
                         break;
                     case "hand":
@@ -138,11 +161,19 @@ function BoardView({ position }: { position: Position }) {
                 }
                 
                 const move = new Move(from, { file, rank}, pieceType)
-                tryMove(move)
+                if (canPromote(move, "black")){
+                    //pendingPromotion(move)
+                    const res = window.confirm(`成りますか？: ${PieceKeyKanjiMapping[move.pieceType]}`)
+                    const dto: MoveDTO = { ...move.toDTO(), promote: res }
+                    const newMove = Move.fromDTO(dto)
+                    tryMove(newMove)
+                    //promotionConfirmed(move, res)
+                } else {
+                    tryMove(move)
+                }
                 unselect()
                 break;
-            case "promotionConfirm":  // 成るか成らないのか選択
-                break;
+
         }
     }    
 

@@ -11,7 +11,6 @@ import { useNavigate } from "react-router-dom";
 import { routes } from "../App/useAppNavigation";
 import { useReplayStore } from "./hooks/useReplayStore";
 import { useToast } from "../App/providers/ToastProvider";
-import { useBoardInputStore } from "./hooks/useBoardInputStore";
 
 export type ProblemNavigation = {
     next: () => void,
