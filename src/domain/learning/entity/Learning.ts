@@ -2,11 +2,11 @@ import type { ProblemId } from "@/domain/problem/entity/Problem"
 
 const MAX_INTERVAL_DAYS = 60
 
-export type SolvedResult = "solved" | "failed" | "unanswered"
-export type SolvedResult2 = {
+export type SolvedResultold = "solved" | "failed" | "unanswered"
+export type SolvedResult = {
   outcome: "solved" | "failed"
   mistakes: number
-  usedAnswer: boolean
+  answerShown: boolean
   elapsedSec: number
 }
 

@@ -56,10 +56,10 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
     // navigation
     const problemNavigation = useMemo(() => ({ next, prev, moveTo }), [next, prev, moveTo])
 
-    const submitAnswer = (problemId: ProblemId, res: SolvedResult, sec: number, mistakes: number) => {
+    const submitAnswer = (problemId: ProblemId, res: SolvedResult) => {
         console.log("submit answer", problemId, sessionId)
         if (!sessionId) return
-        review(problemId, sessionId, res, sec)
+        review(problemId, sessionId, res)
         next()
     }    
 

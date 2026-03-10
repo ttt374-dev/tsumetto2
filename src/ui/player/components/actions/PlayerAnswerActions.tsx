@@ -9,8 +9,8 @@ type AnswerAction = {
 }
 
 const ANSWER_ACTIONS: AnswerAction[] = [
-  { label: "Failed", result: "failed", color: "error" },
-  { label: "Solved", result: "solved", color: "success" },
+  //{ label: "Failed", result: "failed", color: "error" },
+  //{ label: "Solved", result: "solved", color: "success" },
   //{ label: "Easy", result: "solved", color: "primary", secToTaken: 5 },
 ]
 

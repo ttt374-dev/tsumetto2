@@ -6,7 +6,7 @@ type SelectedState =
     | { type: "selected"; source: "board"; square: Square }
     | { type: "selected"; source: "hand"; pieceType: PieceType }
 //    | { type: "board"; square: Square }               // 盤上駒選択
-    | { type: "hand"; pieceType: PieceType }  // 持ち駒選択
+    //| { type: "hand"; pieceType: PieceType }  // 持ち駒選択
     | { type: "promotionConfirm"; move: Move }       // 成るか確認中
     //| { type: "pendingPromotion"; move: Move }       // 成るか選択待ち
     | { type: "cancel" }

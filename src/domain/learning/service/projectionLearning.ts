@@ -39,7 +39,6 @@ export function projectLearning(
             }
         }
     }
-
     return record
 }
 
@@ -54,9 +53,9 @@ function applyReviewedEvent(
     let intervalDays = base.intervalDays
     let solvedCnt = base.solvedCount
     let failedCnt = base.failedCount
-    const quality = judgeAnswerQuality(event.quality, event.sec)
+    const quality = judgeAnswerQuality(event.solvedResult, event.sec)
 
-    if (event.quality === "failed") {
+    if (event.solvedResult.outcome === "failed") {
         failedCnt++
         intervalDays = 1
         easeFactor = Math.max(1.3, easeFactor - 0.2)
@@ -79,12 +78,12 @@ function applyReviewedEvent(
 
     return new Learning(
         event.problemId, solvedCnt, failedCnt, intervalDays,
-        nextReviewAt, easeFactor, event.at, event.quality
+        nextReviewAt, easeFactor, event.at, event.solvedResult
     )
 }
 // 正解評価
-function judgeAnswerQuality(answer: SolvedResult, sec: number = 10): number {
-    if (answer === "failed") return 0
+function judgeAnswerQuality(solvedResult: SolvedResult, sec: number = 10): number {
+    if (solvedResult.outcome === "failed") return 0
     if (sec < 10) return 5
     return 2
 }

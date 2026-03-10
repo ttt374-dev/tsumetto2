@@ -105,10 +105,8 @@ function BoardView({ position }: { position: Position }) {
     const player = useReplayStore(s=>s.player)
     const selectSquare = useBoardInputStore(s => s.selectSquare)
     const tryMove = useReplayStore(s => s.tryMove)
-    const selectedState = useBoardInputStore(s => s.selectedState)
-    const mistakes = useReplayStore(s=>s.mistakes)
-    const unselect = useBoardInputStore(s=>s.unselect)
-       
+    const selectedState = useBoardInputStore(s => s.selectedState)    
+    const unselect = useBoardInputStore(s=>s.unselect)      
    
 
     const handleSquareClick = (file: number, rank: number) => {

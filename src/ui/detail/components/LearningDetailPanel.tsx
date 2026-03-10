@@ -19,7 +19,10 @@ export function LearningDetailPanel( { learning, onResetLearning} : {
             {learning.lastAnswerResult &&
                 <Stack direction="row" justifyContent="space-between">
                     <Box>前回結果</Box>
-                    <Box>{learning.lastAnswerResult}</Box>
+                    <Box>
+                        間違い回数：{learning.lastAnswerResult.mistakes} / 
+                        答え照合：{learning.lastAnswerResult.answerShown}
+                    </Box>
                 </Stack>
             }
             {learning.lastAnsweredAt &&

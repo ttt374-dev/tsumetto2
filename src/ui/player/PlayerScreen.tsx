@@ -9,10 +9,8 @@ import { PlayerRightActions } from "./components/actions/PlayerRightActions";
 import type { SolvedResult } from "@/domain/learning/entity/Learning";
 import { useNavigate } from "react-router-dom";
 import { routes } from "../App/useAppNavigation";
-import { useReplayController } from "./hooks/useReplayController";
 import { useReplayStore } from "./hooks/useReplayStore";
 import { useToast } from "../App/providers/ToastProvider";
-import { WindowSharp } from "@mui/icons-material";
 import { useBoardInputStore } from "./hooks/useBoardInputStore";
 
 export type ProblemNavigation = {
@@ -43,9 +41,8 @@ export default function PlayerScreen({ problem, title, capabilities }: {
     const presenter = usePlayerPresenter(problem, capabilities.navigatable?.next)
     const timer = useTimer()
     const mistakes = useReplayStore(s=>s.mistakes)
-    const solvePhase = useReplayStore(s=>s.solvePhase)
+    const replayPhase = useReplayStore(s=>s.replayPhase)
     const plyIndex = useReplayStore(s=>s.plyIndex)
-    const unselect = useBoardInputStore(s=>s.unselect)
     const toast = useToast()
 
     //const review = useLearningEventStore(s=>s.review)
@@ -61,24 +58,22 @@ export default function PlayerScreen({ problem, title, capabilities }: {
 
     useEffect(() => {
         timer.reset()
-        timer.start()  // TODO debug
+        timer.start()
     }, [problem.id])
 
-        useEffect(() => {
-            requestAnimationFrame(() => {
-                if (solvePhase === "completed") {
-                    if (window.confirm(`詰みです: 間違い回数：${mistakes}:次へ`)){
-                        handleAnswer("solved")
-                    }
+    useEffect(() => {
+        if (replayPhase.type === "completed") {
+            setTimeout(() => {
+                if (window.confirm(`詰みです: 間違い回数：${replayPhase.result.mistakes}, ${replayPhase.result.answerShown}:次へ`)) {
+                    handleAnswer({ ...replayPhase.result, elapsedSec: timer.seconds })
                 }
-            })
-        }, [plyIndex])
-        useEffect(()=>{
-            if (mistakes===0) return
-            toast({message: `不正解: ${mistakes}`})
-            unselect()
-        }, [mistakes])
-    
+            }, 100)
+        }
+
+    }, [plyIndex])
+    useEffect(() => {
+        if (mistakes > 0) toast({message: `incorrect: ${mistakes}`})
+    }, [mistakes])    
 
     return (
         <AppShell

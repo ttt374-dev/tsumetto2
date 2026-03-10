@@ -66,9 +66,9 @@ export const useLearningEventStore = create<LearningEventStoreState>((set, get) 
         }))
         return event
     },
-    appendReview: (problemId: ProblemId, sessionId: SessionId, quality: SolvedResult, sec?: number) => {
+    appendReview: (problemId: ProblemId, sessionId: SessionId, solvedResult: SolvedResult) => {
         const event: NewLearningEvent = {
-            type: "reviewed", problemId, sessionId: sessionId, quality, sec
+            type: "reviewed", problemId, sessionId: sessionId, solvedResult: solvedResult
         }
         return get().append(event);
     },
