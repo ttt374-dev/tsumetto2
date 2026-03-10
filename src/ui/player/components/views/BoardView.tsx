@@ -57,9 +57,11 @@ function HandView({ hand, owner }: { hand: Hand, owner: Player }) {
 
     }
     const keys: PieceType[] = ["rook", "bishop", "gold", "silver", "knight", "lance", "pawn"]
+    //console.log("is empty", hand.isEmpty())
     return (
         <div>
             {formatPlayer(owner)}
+            { hand.isEmpty() && "なし"}
             {
             keys.map(key => {
                 const count = hand.count(key)

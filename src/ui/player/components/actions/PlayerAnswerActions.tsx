@@ -1,5 +1,7 @@
 import type { SolvedResult } from "@/domain/learning/entity/Learning"
 import { Button, Stack, type ButtonProps } from "@mui/material"
+import { useReplayStore } from "../../hooks/useReplayStore"
+import { useSessionStore } from "@/ui/store/useSessionStore"
 
 type AnswerAction = {
   label: string
@@ -17,7 +19,25 @@ const ANSWER_ACTIONS: AnswerAction[] = [
 export function PlayerAnswerActions({onAnswerClick}: {
     onAnswerClick: (answerResult: SolvedResult) => void,    
 }){
-  const height = "64px"
+  const next = useSessionStore(s=>s.next)
+
+  const handleNext = () => {
+    next()
+  }
+  const handleSummary = () => {
+    alert("tdb")
+  }
+  return (
+    <Stack direction="row">
+      <Button onClick={handleSummary} fullWidth>
+        サマリーへ
+      </Button>
+      <Button onClick={handleNext} fullWidth variant="outlined">
+        次へ
+      </Button>
+    </Stack>
+  )
+  const height = "32px"
   return (  
     <Stack direction="row" spacing={1}>
       {ANSWER_ACTIONS.map(({ label, result, color }) => (

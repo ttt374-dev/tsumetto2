@@ -2,7 +2,6 @@ import { Position, Square, type Move, type PieceType, type Player } from "@/doma
 import { buildUntilPly } from "@/domain/kif/service/buildUntilPly"
 import type { SolvedResult } from "@/domain/learning/entity/Learning"
 import type { Problem } from "@/domain/problem/entity/Problem"
-import { assignWith } from "lodash"
 import { create } from "zustand"
 
 //export type SolvePhase = "solving" | "completed" | "revealed"
@@ -26,10 +25,11 @@ type ReplayStore = {
     moveToPly: (index: number) => void
     tryMove: (move: Move) => TryMoveResult
     player: Player
+    showAnswer: () => void
 
     // session
     mistakes: number
-    answerShown: boolean
+    revealed: boolean
 }
 
 export const selectPosition = (state: ReplayStore) =>
@@ -49,7 +49,6 @@ export const useReplayStore = create<ReplayStore>((set, get) => ({
     position: Position.empty(),
     plyIndex: 0,
     moveToPly: (index: number) => {
-
         const { moves } = get()
         const newPlyIndex = Math.min(Math.max(index, 0), moves.length)
          
@@ -63,18 +62,18 @@ export const useReplayStore = create<ReplayStore>((set, get) => ({
         })
     },
     advancePly: () => {
-        //if (get().mistakes ===0) set({ mistakes: get().mistakes+1}) // TODO
-        //set({answerShown: true})
-        //console.log("advance ply")
         get().moveToPly(get().plyIndex+1)
     },
     retreatPly: () => {
         get().moveToPly(get().plyIndex-1)
     },
+    showAnswer: () => {
+        set({revealed: true})
+    },
 
     // session
     mistakes: 0,
-    answerShown: false,
+    revealed: false,
 
     load: (problem: Problem) => {
         console.log("load", problem)
@@ -84,13 +83,13 @@ export const useReplayStore = create<ReplayStore>((set, get) => ({
             moves: problem.kifData.moves,
             replayPhase: { type: "playing"},
             mistakes: 0,        
-            answerShown: false,
+            revealed: false,
         })
         get().moveToPly(0)
     },
     tryMove: (move: Move): TryMoveResult => {
         console.log("tryMove: ", move)
-        const { moves, plyIndex, mistakes, answerShown } = get()
+        const { moves, plyIndex, mistakes, revealed } = get()
 
         const expectedMove = moves[plyIndex]
 
@@ -115,10 +114,10 @@ export const useReplayStore = create<ReplayStore>((set, get) => ({
         const isLast = (get().plyIndex >= moves.length)
         console.log("islast", isLast, get().plyIndex, moves.length)
         const solvedResult: SolvedResult = {
-            outcome: mistakes == 0 && answerShown === false ? "solved" : "failed",
+            outcome: isLast && !revealed ? "solved" : "failed",
             mistakes: mistakes,
             elapsedSec: 10, // TODO
-            answerShown: answerShown,
+            revealed: revealed,
         }
         console.log("try move correct: ", solvedResult  )
         const newphase: ReplayPhase =  isLast ? { type: "completed", result: solvedResult} : get().replayPhase

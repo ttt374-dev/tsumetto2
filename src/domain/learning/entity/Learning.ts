@@ -6,7 +6,7 @@ export type SolvedResultold = "solved" | "failed" | "unanswered"
 export type SolvedResult = {
   outcome: "solved" | "failed"
   mistakes: number
-  answerShown: boolean
+  revealed: boolean
   elapsedSec: number
 }
 

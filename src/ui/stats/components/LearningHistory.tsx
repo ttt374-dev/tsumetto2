@@ -13,7 +13,7 @@ function EventItemRow(props: {
     switch (props.event.type) {
         case "reviewed": 
             const resText = props.event.solvedResult.outcome === "solved" ? "正解" : "誤答"
-            const mistakesString = props.event.solvedResult.outcome === "failed" ? `(${props.event.solvedResult.mistakes}:${props.event.solvedResult.answerShown})` : ""
+            const mistakesString = props.event.solvedResult.outcome === "failed" ? `(${props.event.solvedResult.mistakes}:${props.event.solvedResult.revealed})` : ""
             content = `${resText}： ${byId[props.event.problemId].title}${mistakesString} (${props.event.solvedResult.elapsedSec}s)`; 
             break
         case "cancel":  content = `キャンセル： #${props.event.targetEventId.slice(0, 4)}`; break

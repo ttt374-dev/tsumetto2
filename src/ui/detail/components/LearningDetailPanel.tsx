@@ -21,7 +21,7 @@ export function LearningDetailPanel( { learning, onResetLearning} : {
                     <Box>前回結果</Box>
                     <Box>
                         間違い回数：{learning.lastAnswerResult.mistakes} / 
-                        答え照合：{learning.lastAnswerResult.answerShown}
+                        答え照合：{learning.lastAnswerResult.revealed}
                     </Box>
                 </Stack>
             }

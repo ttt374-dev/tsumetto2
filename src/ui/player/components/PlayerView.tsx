@@ -56,7 +56,7 @@ function PlayerView({problem, title, problemNavigation, timer}: {
     timer?: ReturnType<typeof useTimer>
 }){
     const moves = problem.kifData.moves
-    const { load, advancePly, retreatPly, plyIndex, moveToPly, position } = useReplayStore()
+    const { load, advancePly, retreatPly, plyIndex, moveToPly, position } = useReplayStore()    
 
     
     useEffect(() => {
@@ -64,6 +64,11 @@ function PlayerView({problem, title, problemNavigation, timer}: {
         setShowMoves(false)
     }, [problem])
     const [showMoves, setShowMoves ] = useState(false)
+    const showAnswer = useReplayStore(s=>s.showAnswer)
+    const handleShowMoves = () => {
+        setShowMoves(true)
+        showAnswer()
+    }
     
     const learning: Learning | undefined = useLearningRecordStore(s=>s.records)[problem.id]
 
@@ -93,7 +98,7 @@ function PlayerView({problem, title, problemNavigation, timer}: {
                     {showMoves ?
                         <MovesView moves={moves} currentPlyIndex={plyIndex} onMoveToPly={moveToPly} />
                         : (<Stack>
-                            <Button onClick={() => setShowMoves(true)} >
+                            <Button onClick={() => handleShowMoves()} >
                                 手数：{moves.length}手
                             </Button>                            
                             <Box>{problem.tags.join(",")}</Box>
@@ -108,7 +113,7 @@ function PlayerView({problem, title, problemNavigation, timer}: {
                         currentPlyIndex={plyIndex}
                         maxPlyIndex={moves.length}
                         onPrevPly={retreatPly}
-                        onNextPly={advancePly}
+                        onNextPly={ () => { handleShowMoves(); advancePly()}}
                     />
                     {learning && formatLearningPerformance(learning)}
 

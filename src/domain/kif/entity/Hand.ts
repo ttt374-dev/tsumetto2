@@ -19,6 +19,10 @@ export class Hand {
     static empty(): Hand {
         return new Hand()
     }
+    ///
+    isEmpty(): boolean {
+        return Object.values(this.counts).every(v => v === 0)
+    }
     // 指定した駒の枚数を返す
     count(pieceType: PieceType): number {
         return this.counts[pieceType]

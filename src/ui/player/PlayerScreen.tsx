@@ -63,7 +63,7 @@ export default function PlayerScreen({ problem, title, capabilities }: {
     useEffect(() => {
         if (replayPhase.type === "completed") {
             setTimeout(() => {
-                if (window.confirm(`詰みです: 間違い回数：${replayPhase.result.mistakes}, ${replayPhase.result.answerShown}:次へ`)) {
+                if (window.confirm(`詰みです: 間違い回数：${replayPhase.result.mistakes}, ${replayPhase.result.revealed}:次へ`)) {
                     handleAnswer({ ...replayPhase.result, elapsedSec: timer.seconds })
                 }
             }, 100)
