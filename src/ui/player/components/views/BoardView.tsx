@@ -29,8 +29,8 @@ function HandPieceView({ pieceType, selected, count, onClick }: {
 }) {
     const countString = count > 1 ? numberToKanjiTwoDigits(count) : ""
     return (
-        <span style={{ marginRight: 5 }} onClick={() => onClick?.()}
-            className={selected ? styles.selected : ""}>
+        <span style={{ marginRight: 5 }} onClick={() => onClick?.()}            
+            className={`${styles.handpiece}  ${selected ? styles.selected : ""}`}>
             {PieceKeyKanjiMapping[pieceType]}{countString}
         </span>)
 }
@@ -101,25 +101,15 @@ function BoardView({ position }: { position: Position }) {
     const ranks = [...Array(9)].map((_, i) => i + 1)   //   1 → 9
     const files = [...Array(9)].map((_, i) => 9 - i)   // 9 → 1（将棋表記） ???
 
-    const solvePhase = useReplayStore(s=>s.solvePhase)
+    
     const player = useReplayStore(s=>s.player)
     const selectSquare = useBoardInputStore(s => s.selectSquare)
     const tryMove = useReplayStore(s => s.tryMove)
     const selectedState = useBoardInputStore(s => s.selectedState)
     const mistakes = useReplayStore(s=>s.mistakes)
     const unselect = useBoardInputStore(s=>s.unselect)
-    const toast = useToast()
-    
-    useEffect(() => {
-        if (solvePhase === "completed") {
-            toast({message: "詰みです！"})
-        }
-    }, [solvePhase])
-    useEffect(()=>{
-        if (mistakes===0) return
-        toast({message: `不正解: ${mistakes}`})
-        unselect()
-    }, [mistakes])
+       
+   
 
     const handleSquareClick = (file: number, rank: number) => {
         switch(selectedState.type){

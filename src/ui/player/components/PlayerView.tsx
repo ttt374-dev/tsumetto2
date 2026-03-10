@@ -14,7 +14,6 @@ import MovesPanel from "./panels/MovesPanel"
 import type { Learning } from "@/domain/learning/entity/Learning"
 import { Move, Piece, type Player, type Square } from "@/domain/kif/entity"
 import { selectPosition, useReplayStore } from "../hooks/useReplayStore"
-import { useBoardInputStore } from "../hooks/useBoardInputStore"
 
 
 function formatTime(sec: number) {
@@ -59,11 +58,11 @@ function PlayerView({problem, title, problemNavigation, timer}: {
 }){
     const moves = problem.kifData.moves
     const { load, advancePly, retreatPly, plyIndex, moveToPly, position } = useReplayStore()
-    //const position = useReplayStore(selectPosition)
+
     
     useEffect(() => {
         load(problem)
-        
+        setShowMoves(false)
     }, [problem])
     const [showMoves, setShowMoves ] = useState(false)
     

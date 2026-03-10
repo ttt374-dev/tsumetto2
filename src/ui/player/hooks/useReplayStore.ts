@@ -6,14 +6,6 @@ import { create } from "zustand"
 export type SolvePhase = "solving" | "completed" | "revealed"
 type TryMoveResult = "correct" | "incorrect" | "finish"
 
-export type SelectedState =
-    | { type: "idle"}
-    | { type: "board", square: Square }
-    | { type: "hand", pieceType: PieceType, player: Player}    
-    | { type: "cancel"}
-    | { type: "promotionConfirm"}
-    | { type: "pendingPromotion"}
-
 type ReplayStore = {
     // problem
     initialPosition: Position
@@ -32,9 +24,7 @@ type ReplayStore = {
 
     // session
     mistakes: number
-    
-
-
+    showAnswer: boolean
 }
 
 export const selectPosition = (state: ReplayStore) =>
@@ -68,6 +58,7 @@ export const useReplayStore = create<ReplayStore>((set, get) => ({
         })
     },
     advancePly: () => {
+        if (get().mistakes ===0) set({ mistakes: get().mistakes+1}) // TODO
         get().moveToPly(get().plyIndex+1)
     },
     retreatPly: () => {
@@ -76,6 +67,7 @@ export const useReplayStore = create<ReplayStore>((set, get) => ({
 
     // session
     mistakes: 0,
+    showAnswer: false,
 
     load: (problem: Problem) => {
         console.log("load", problem)
@@ -86,6 +78,7 @@ export const useReplayStore = create<ReplayStore>((set, get) => ({
             //showMoves: false,
             solvePhase: "solving",
             mistakes: 0,        
+            showAnswer: false,
             //selectedState: { type: "idle" }
         })
         get().moveToPly(0)
@@ -110,7 +103,10 @@ export const useReplayStore = create<ReplayStore>((set, get) => ({
         //const nextPosition = position.applyMove(move)
         get().advancePly()  // 先手
         if (get().plyIndex < moves.length) {
-            get().advancePly()  // 後手も自動で進める
+            setTimeout(()=>{
+                get().advancePly()  // 後手も自動で進める
+            }, 500)
+            
         }
 
         //const nextPly = plyIndex + 1
@@ -129,33 +125,7 @@ export const useReplayStore = create<ReplayStore>((set, get) => ({
         return isLast ? "finish" : "correct"
         
     },
-    // ui
-    /*
-    selectedState: { type: "idle"},
-    selectSquare: (square: Square) => {
-        set({
-            selectedState: { 
-                type: "board",
-                square: square
-            }
-        })
-    },
-    selectHandPiece: (pieceType: PieceType, owner: Player) => {
-        set({
-            selectedState: {
-                type: "hand",
-                pieceType: pieceType,
-                player: owner,
-            }
-        })
-    },
-    unselect: () => {
-        set({ selectedState: { type: "idle"}})
-    },
-    showMoves: false,
-    setShowMoves: (flag: boolean) => {
-        set({ showMoves: flag})
-    }*/
+
 }))
 
 ///////////////
