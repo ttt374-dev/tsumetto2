@@ -1,17 +1,16 @@
 import { Box, Button, Grid, Stack, Typography } from "@mui/material"
 
 import MovesView from "./views/MovesView"
-import PlyControlPanel from "./panels/PlyControlPanel"
-import BoardPanel from "./panels/BoardPanel"
 import { formatLearningPerformance } from "@/ui/library/components/LibraryListItem"
-import type { Problem, ProblemId } from "@/domain/problem/entity/Problem"
+import type { Problem } from "@/domain/problem/entity/Problem"
 import React, {  useEffect, useState } from "react"
 import type { ProblemNavigation } from "../PlayerScreen"
 import { useLearningRecordStore } from "@/ui/store/useLearningRecordStore"
 import { useTimer } from "../hooks/useTimer"
 import MovesPanel from "./panels/MovesPanel"
 import type { Learning } from "@/domain/learning/entity/Learning"
-import { useReplayStore } from "../hooks/useReplayStore"
+import { useGameStore } from "@/ui/game/useGameStore"
+import BoardView from "@/ui/game/BoardView"
 
 
 function formatTime(sec: number) {
@@ -56,7 +55,8 @@ export default function PlayerView({problem, title, problemNavigation, timer}: {
 }){
     const moves = problem.kifData.moves
     const [showMoves, setShowMoves ] = useState(false)    
-    const { advancePly, retreatPly, plyIndex, moveToPly, position, reveal } = useReplayStore()
+    //const { advancePly, retreatPly, plyIndex, moveToPly, position, reveal } = useReplayStore()
+    const { advancePly, retreatPly, ply, moveTo, position, revealAnswer: reveal } = useGameStore()
     
     useEffect(() => {
         setShowMoves(false)
@@ -64,7 +64,7 @@ export default function PlayerView({problem, title, problemNavigation, timer}: {
     
     const handleShowMoves = () => {
         setShowMoves(true)
-        reveal()
+        reveal() // TODO
     }
     
     const learning: Learning | undefined = useLearningRecordStore(s=>s.records)[problem.id]
@@ -80,20 +80,17 @@ export default function PlayerView({problem, title, problemNavigation, timer}: {
                 <Typography variant="body1">{title} </Typography>
             </Box>
             { /* --- 盤面 ---*/}
-
-            <BoardPanel
-                position={position}
-                onAdvancePly={advancePly}
-                onRetreatPly={retreatPly}
-                onNextProblem={problemNavigation?.next}
-                onPrevProblem={problemNavigation?.prev} />
+            <Stack justifyContent="center" direction="row" alignContent="center">
+                <Box>   { /* センタリングするために必要 */}
+                    <BoardView position={position} />
+                </Box>
+            </Stack>            
 
             <Stack direction="row" sx={{ minHeight: 0, flexGrow: 1, p: 1 }} spacing={1}>
                 { /* --- 手筋 ---*/}
-
                 <MovesPanel>
                     {showMoves ?
-                        <MovesView moves={moves} currentPlyIndex={plyIndex} onMoveToPly={moveToPly} />
+                        <MovesView moves={moves} currentPlyIndex={ply} onMoveToPly={moveTo} />
                         : (<Stack>
                             <Button onClick={() => handleShowMoves()} variant="outlined">
                                 手筋を表示

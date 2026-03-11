@@ -1,6 +1,6 @@
 import type { Position } from "@/domain/kif/entity";
 import { Box, Button, Stack } from "@mui/material";
-import BoardView from "../views/BoardView";
+import BoardView from "../../../game/BoardView";
 import SwipeWrapper from "../SwipeWrapper";
 
 function BoardPanel({ position, onAdvancePly, onRetreatPly, onNextProblem, onPrevProblem }: { 
@@ -13,8 +13,7 @@ function BoardPanel({ position, onAdvancePly, onRetreatPly, onNextProblem, onPre
         const swipeActions = {
         onRight: onPrevProblem,
         onLeft: onNextProblem,
-        onDown: () => {
-            
+        onDown: () => {            
             onAdvancePly()
         },
         onUp: () => {            
@@ -26,9 +25,9 @@ function BoardPanel({ position, onAdvancePly, onRetreatPly, onNextProblem, onPre
             {onPrevProblem &&
                 <Button onClick={onPrevProblem}>&lt;</Button>}
             <Box>   { /* センタリングするために必要 */}
-                <SwipeWrapper actions={swipeActions}>
+                
                     <BoardView position={position} />
-                </SwipeWrapper>
+                
             </Box>
             {onNextProblem &&
                 <Button onClick={onNextProblem}>&gt;</Button>}

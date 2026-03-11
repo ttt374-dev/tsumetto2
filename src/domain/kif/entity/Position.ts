@@ -7,7 +7,7 @@ export class Position {
     constructor(
         readonly board: Board,
         readonly hands: Hands,
-        readonly turn: Player = "black"
+        readonly sideToMove: Player = "black"
     ) { }
     static create(): Position {
         return new Position(Board.create(), Hands.empty())
@@ -35,7 +35,7 @@ export class Position {
         const target = this.board.get(to.file, to.rank)
         let hands = this.hands
         if (target) {
-            hands = hands.add(this.turn, target.type)
+            hands = hands.add(this.sideToMove, target.type)
         }
 
         // promote
@@ -52,14 +52,16 @@ export class Position {
         return new Position(
             nextBoard,
             hands,
-            flip(this.turn)
+            flip(this.sideToMove)
         )
     }
     private applyDrop(move: Move): Position {
-        const piece = new Piece(move.pieceType, this.turn)
+        console.log("apply drop", move, this.sideToMove, this.hands.toDTO())
+        const piece = new Piece(move.pieceType, this.sideToMove)
+        
 
         const nextBoard = this.board.set(move.to.file, move.to.rank, piece)
-        const nextHands = this.hands.remove(this.turn, move.pieceType)
+        const nextHands = this.hands.remove(this.sideToMove, move.pieceType)
         //const nextHands = {
         //    ...this.hands,
         //    [this.turn]: this.hands[this.turn].remove(move.pieceType)
@@ -68,7 +70,7 @@ export class Position {
         return new Position(
             nextBoard,
             nextHands,
-            flip(this.turn)
+            flip(this.sideToMove)
         )
     }
     //////////////////////////
@@ -77,7 +79,7 @@ export class Position {
         return {
             board: this.board.toDTO(),
             hands: this.hands.toDTO(),
-            turn: this.turn,
+            turn: this.sideToMove,
         }
     }
 

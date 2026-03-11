@@ -16,12 +16,16 @@ export class Hand {
             ...counts
         }
     }
+
     static empty(): Hand {
         return new Hand()
     }
     ///
     isEmpty(): boolean {
         return Object.values(this.counts).every(v => v === 0)
+    }
+    dump() {
+        this.counts
     }
     // 指定した駒の枚数を返す
     count(pieceType: PieceType): number {
@@ -38,6 +42,7 @@ export class Hand {
 
     // 駒を減らして新しい Hand を返す（Immutable）
     remove(pieceType: PieceType, n: number = 1): Hand {
+        console.log("remove hands", pieceType, this.count(pieceType))
         const current = this.count(pieceType)
         if (current < n) throw new Error(`Not enough pieces: ${pieceType}`)
         return new Hand({

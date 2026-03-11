@@ -9,8 +9,8 @@ import { PlayerRightActions } from "./components/actions/PlayerRightActions";
 import type { SolvedResult } from "@/domain/learning/entity/Learning";
 import { useNavigate } from "react-router-dom";
 import { routes } from "../App/useAppNavigation";
-import { selectIsLast, useReplayStore } from "./hooks/useReplayStore";
 import { useToast } from "../App/providers/ToastProvider";
+import { selectIsLast, useGameStore } from "../game/useGameStore";
 
 export type ProblemNavigation = {
     next: () => void,
@@ -40,14 +40,16 @@ export default function PlayerScreen({ problem, title, capabilities }: {
     const presenter = usePlayerPresenter(problem, capabilities.navigatable?.next)
     const timer = useTimer()
     //const mistakes = useReplayStore(s=>s.mistakes)
-    const solvedResult = useReplayStore(s=>s.solvedResult)
-    const isLast = useReplayStore(selectIsLast)
-    const plyIndex = useReplayStore(s=>s.plyIndex)
-    const load = useReplayStore(s=>s.load)
+    //const solvedResult = useReplayStore(s=>s.solvedResult)
+    const isLast = useGameStore(selectIsLast)
+    //const plyIndex = useReplayStore(s=>s.plyIndex)
+    //const load = useReplayStore(s=>s.load)
+    const initialize = useGameStore(s=>s.initialize)
+    const { ply, mistakes, revealed, reset } = useGameStore()
     const toast = useToast()
 
     const handleAnswer = async (res: SolvedResult) => {
-        capabilities.answerable?.answer?.(problem.id, res, timer.seconds, solvedResult.mistakes)  // ミッションを進める
+        capabilities.answerable?.answer?.(problem.id, res, timer.seconds, mistakes)  // ミッションを進める
     }
     const navigate = useNavigate()
     
@@ -59,23 +61,29 @@ export default function PlayerScreen({ problem, title, capabilities }: {
     useEffect(() => {
         timer.reset()
         timer.start()
-        load(problem)
+        //load(problem)
+        initialize(problem.kifData.initialPosition, problem.kifData.moves)
     }, [problem.id])
 
     useEffect(() => {
         if (isLast) {
             setTimeout(() => {
-                if (window.confirm(`詰みました: 間違い回数：${solvedResult.mistakes}, ${solvedResult.revealed && "[答え参照]"}:次へ`)) {
-                    handleAnswer({ ...solvedResult, elapsedSec: timer.seconds })
+                const solvedResult: SolvedResult = {
+                    outcome: revealed ? "failed" : "solved",
+                    mistakes, revealed, elapsedSec: timer.seconds,
                 }
+                if (window.confirm(`詰みました: 間違い回数：${mistakes}, ${revealed ? "[答え参照]" : ""}:次へ`)) {
+                    handleAnswer(solvedResult)
+                }
+                reset()
             }, 100)
         }
 
-    }, [plyIndex])
+    }, [ply])
 
     useEffect(() => {
-        if (solvedResult.mistakes > 0) toast({message: `incorrect: ${solvedResult.mistakes}`})
-    }, [solvedResult.mistakes])    
+        if (mistakes > 0) toast({message: `incorrect: ${mistakes}`})
+    }, [mistakes])    
 
     return (
         <AppShell

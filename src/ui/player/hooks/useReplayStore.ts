@@ -12,6 +12,9 @@ type ReplayStore = {
     position: Position
     plyIndex: number
     firstPlayer: Player
+
+    mistakes: number
+    revealed: false
     
     // actions
     load: (problem: Problem) => void
@@ -20,6 +23,8 @@ type ReplayStore = {
     moveToPly: (index: number) => void
     tryMove: (move: Move) => void    
     reveal: () => void   
+
+    
     
 }
 
@@ -34,7 +39,7 @@ export const selectIsLast = (s: ReplayStore) => {
     return s.plyIndex === s.moves.length && (s.moves.length > 0)
 }
 export const selectPlayer = (s: ReplayStore): Player =>
-    s.position.turn
+    s.position.sideToMove
     //s.plyIndex % 2 ? "white" : "black"
 
 //export const selectIsUserTurn = (s: ReplayStore) =>
@@ -46,6 +51,9 @@ export const useReplayStore = create<ReplayStore>((set, get) => ({
     moves: [],
     solvedResult: createDefaultSolvedResult(),    
     firstPlayer: "black",
+
+    mistakes: 0,
+    revealed: false,
 
     // game
     position: Position.empty(),
@@ -59,7 +67,9 @@ export const useReplayStore = create<ReplayStore>((set, get) => ({
             position: buildUntilPly(
                 { initial: get().initialPosition, moves },
                 newPlyIndex
-            )
+            ),
+            mistakes: 0,
+            revealed: false,
         })
     },
     advancePly: () => {
