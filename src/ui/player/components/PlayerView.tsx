@@ -56,7 +56,7 @@ export default function PlayerView({problem, title, problemNavigation, timer}: {
     const moves = problem.kifData.moves
     const [showMoves, setShowMoves ] = useState(false)    
     //const { advancePly, retreatPly, plyIndex, moveToPly, position, reveal } = useReplayStore()
-    const { advancePly, retreatPly, ply, moveTo, position, revealAnswer: reveal } = useGameStore()
+    const {  ply, moveTo, position, revealAnswer: reveal } = useGameStore()
     
     useEffect(() => {
         setShowMoves(false)

@@ -43,7 +43,7 @@ function resolveBoardMove(
     //if (!canMove(piece, from, to, position.board)) return null
 
     //const promote = shouldPromote(piece, from, to)
-    let promote = false
+    let promote = piece.promoted
     if (canPromote(to, piece)){
         promote = (window.confirm("成りますか？"))
     }

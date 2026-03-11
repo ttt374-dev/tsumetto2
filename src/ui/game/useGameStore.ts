@@ -39,10 +39,11 @@ export const useGameStore = create<GameStore>((set, get) => ({
         console.log("initialize", pos)
         set({initialPosition: pos, position: pos, 
             moves: moves, ply: 0, mistakes: 0, revealed: false})
-        get().moveTo(0)
+        //get().moveTo(0)
     },   
 
     moveTo: (ply) => {
+        console.log("moveto")
         const { initialPosition, moves } = get()        
         set({
             position: buildUntilPly({initial: initialPosition, moves}, ply)        ,
@@ -50,6 +51,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
         })
     },
     advancePly: () => {
+        console.log("adv ply")
         const { moveTo, ply} = get()
         moveTo(ply+1)        
         /*

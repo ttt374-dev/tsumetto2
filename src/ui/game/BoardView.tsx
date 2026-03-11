@@ -30,6 +30,7 @@ function SquareView({ piece, selected, onClick }: {
 }
 ///////////////////////////////
 function sameMove(a: Move, b: Move): boolean {
+    console.log("samemove" ,a, b )
     return a.from?.file === b.from?.file &&
         a.from?.rank === b.from?.rank &&
         a.to.file === b.to.file &&
@@ -57,7 +58,7 @@ export default function BoardView({ position }: { position: Position }) {
             if (sameMove(correctMoves[ply], move)){
                 advancePly()   // player
                 setTimeout(()=> {
-                    advancePly()     
+                    if (ply < correctMoves.length - 1) advancePly()     
                 }, 500)
                 
             } else {
