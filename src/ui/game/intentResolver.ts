@@ -1,4 +1,5 @@
 import { Move, type PieceType, type Position, type Square } from "@/domain/kif/entity";
+import { canPromote } from "@/domain/kif/rules";
 
 export type Intent =
     | { type: "move"; from: Square; to: Square }
@@ -42,7 +43,11 @@ function resolveBoardMove(
     //if (!canMove(piece, from, to, position.board)) return null
 
     //const promote = shouldPromote(piece, from, to)
-    const promote = true // TODO
+    let promote = false
+    if (canPromote(to, piece)){
+        promote = (window.confirm("成りますか？"))
+    }
+    //const promote = true // TODO
     return new Move(from, to, piece.type, promote)    
 }
 

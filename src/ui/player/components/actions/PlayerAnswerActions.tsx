@@ -1,6 +1,5 @@
 import type { SolvedResult } from "@/domain/learning/entity/Learning"
 import { Button, Stack, type ButtonProps } from "@mui/material"
-import { useReplayStore } from "../../hooks/useReplayStore"
 import { useSessionStore } from "@/ui/store/useSessionStore"
 
 type AnswerAction = {

@@ -1,7 +1,6 @@
 import type { Hand, PieceType, Player } from "@/domain/kif/entity"
 import { numberToKanjiTwoDigits } from "../common/utils/numberToKanji"
 import { useBoardInputStore } from "./useBoardInputStore"
-import { selectPlayer, useReplayStore } from "../player/hooks/useReplayStore"
 import { formatPlayer } from "../player/components/views/MovesView"
 import styles from "./BoardView.module.css";
 
