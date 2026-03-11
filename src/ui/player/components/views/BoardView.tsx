@@ -7,6 +7,7 @@ import { formatPlayer } from "./MovesView";
 import { selectPlayer, useReplayStore } from "../../hooks/useReplayStore";
 import { useBoardInputStore } from "../../hooks/useBoardInputStore";
 import { canPromote } from "@/domain/kif/rules";
+import { createMoveIntent } from "./moveIntent";
 
 const fileLabels = ["９", "８", "７", "６", "５", "４", "３", "２", "１"];
 const rankLabels = ["一", "二", "三", "四", "五", "六", "七", "八", "九"];
@@ -38,7 +39,7 @@ function HandPieceView({ pieceType, selected, count, onClick }: {
 function HandView({ hand, owner }: { hand: Hand, owner: Player }) {
     const selectedState = useBoardInputStore(s => s.selectedState)
     const selectHandPiece = useBoardInputStore(s => s.selectHandPiece)
-    const unselect = useBoardInputStore(s=>s.unselect)
+    const unselect = useBoardInputStore(s=>s.clearSelection)
     const player = useReplayStore(selectPlayer)
 
     const handleHandpieceClick = (piecetype: PieceType) => {
@@ -105,64 +106,51 @@ export default function BoardView({ position }: { position: Position }) {
     const ranks = [...Array(9)].map((_, i) => i + 1)   //   1 → 9
     const files = [...Array(9)].map((_, i) => 9 - i)   // 9 → 1（将棋表記） ???
 
-    
-    //const player = useReplayStore(selectPlayer)
     const player = position.turn
     const selectSquare = useBoardInputStore(s => s.selectSquare)
     const tryMove = useReplayStore(s => s.tryMove)
     const selectedState = useBoardInputStore(s => s.selectedState)    
-    const unselect = useBoardInputStore(s=>s.unselect)      
-    //const player = useReplayStore(selectPlayer)
+    const clearSelection = useBoardInputStore(s => s.clearSelection)
 
     const handleSquareClick = (file: number, rank: number) => {
-        if (player !== "black") return
-        //console.log("selected state", selectedState)
-        switch(selectedState.type){            
-            case "idle":   // 未選択
-                //if (player ==="white") return
-                const piece = position.board.get(file, rank)
-                if (!piece || piece.owner !== "black") return // 黒の駒を選択したときのみ
-                selectSquare({file: file, rank: rank})
-                break;
-            case "selected":  // 駒が選択されている状態
-                let from: Square | null = null
-                let pieceType: PieceType | undefined = undefined
-                let currentPromoted = false
 
-                switch(selectedState.source){
-                    case "board":
-                        from = selectedState.square
-                        // 同じセルが選択されたときはキャンセル
-                        if (from.file === file && from.rank === rank) { 
-                            unselect()
-                            return
-                        }
-                        const piece = position.board.get(selectedState.square.file, selectedState.square.rank)
-                        pieceType = piece?.type                 
-                        currentPromoted = piece?.promoted ?? false
-                        if (!pieceType) throw new Error
-                        break;
-                    case "hand":
-                        pieceType = selectedState.pieceType
-                        break;
-                }
-                
-                const move = new Move(from, { file, rank}, pieceType, currentPromoted)
-                if (!currentPromoted && canPromote(move, "black")){
-                    //pendingPromotion(move)
-                    const res = window.confirm(`成りますか？: ${PieceKeyKanjiMapping[move.pieceType]}`)
-                    const dto: MoveDTO = { ...move.toDTO(), promote: res }
-                    const newMove = Move.fromDTO(dto)
-                    tryMove(newMove)
-                    //promotionConfirmed(move, res)
+        const intent = createMoveIntent(
+            position,
+            selectedState,
+            file,
+            rank
+        )
+
+        switch (intent.type) {
+            case "select":
+                selectSquare(intent.square)
+                return
+
+            case "cancel":
+                clearSelection()
+                return
+
+            case "move":
+                if (intent.promotable) {
+
+                    const promote = window.confirm(
+                        `成りますか？: ${PieceKeyKanjiMapping[intent.move.pieceType]}`
+                    )
+
+                    const dto: MoveDTO = {
+                        ...intent.move.toDTO(),
+                        promote
+                    }
+
+                    tryMove(Move.fromDTO(dto))
+
                 } else {
-                    tryMove(move)
+                    tryMove(intent.move)
                 }
-                unselect()
-                break;
-
+                clearSelection()
+                return
         }
-    }    
+    }
 
     return (
         <Stack justifyContent="center">
