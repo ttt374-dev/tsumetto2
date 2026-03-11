@@ -1,12 +1,6 @@
 import FilterListIcon from "@mui/icons-material/FilterList";
 import FilterListOutlinedIcon from "@mui/icons-material/FilterListOutlined";
 import { Box, Button, Drawer, IconButton, List, Stack, TextField, ToggleButton } from "@mui/material"
-import DeleteIcon from '@mui/icons-material/Delete';
-import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
-import EditIcon from '@mui/icons-material/Edit';
-import SelectAllIcon from "@mui/icons-material/SelectAll";
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import SearchIcon from "@mui/icons-material/Search";
 
 import SortControl from "../../common/query-control/SortControl"
 import { LibraryListItem } from "./LibraryListItem"
@@ -14,11 +8,6 @@ import type { Problem, ProblemId } from "@/domain/problem/entity/Problem"
 import { LibraryCheckboxControl } from "./LibraryCheckboxControl";
 import type { LibraryActionMode } from "../hooks/useLibraryViewModel";
 import { useEffect, useState } from "react";
-import type { QueryController } from "@/ui/common/hooks/useQuery";
-import { BooleanFilterControl } from "@/ui/common/query-control/BooleanFilterControl";
-import { DefaultFilterState, type FilterState } from "@/domain/problem/service/query/filter";
-import { MateLengthFilterControl } from "@/ui/common/query-control/MateLengthFilterControl";
-import { TagCheckboxFilterControl } from "@/ui/common/query-control/TagCheckboxFilterControl";
 import { useProblemStore } from "@/ui/store/useProblemStore";
 import { isEqual } from "lodash";
 import { FilterControlPanel } from "@/ui/common/query-control/FilterControlPanel";
@@ -53,20 +42,10 @@ type LibraryViewProps = {
 export function LibraryView({ ids, query, actionMode, changeActionMode,
     itemActions, onItemClick, selection }: LibraryViewProps) {
 
-    const [showFilterText, setShowFilterText] = useState(false)
-    const [ filterText, setFilterText] = useState("")
     const [isOpen, setIsOpen] = useState(false);
-    const [filters, setFilters] = useState({
-        uncleared: false,
-        cleared: false,
-        hard: false,
-        favorite: false,
-    });
-
     const allSources = useProblemStore(s=>s.allSources)
-
     const isFiltered = !isEqual(query, DefaultQueryState);
-    //console.log("is filtered", isFiltered, query.filter.state, DefaultFilterState)
+
     return (
         <>
             <Stack direction="row">
@@ -88,14 +67,7 @@ export function LibraryView({ ids, query, actionMode, changeActionMode,
                     
                     <FilterListOutlinedIcon/>}
                 </IconButton>
-                { /* 
-                {showFilterText &&
-                    <TextField value={filterText} size="small"
-                        onChange={(e) => setFilterText(e.target.value)} />
-                }
-                <IconButton onClick={handleToggleShowFilterText}>
-                    <SearchIcon />
-                </IconButton>*/ }
+                
                 {/* ソート */}
                 <SortControl
                     queryState={query.state}

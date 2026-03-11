@@ -4,10 +4,9 @@ import { Position, Hand, KanjiToPieceItem, type PieceType, Piece, Board, type Pl
 import { numberToKanjiTwoDigits } from "../../../common/utils/numberToKanji";
 import styles from "./BoardView.module.css";
 import { formatPlayer } from "./MovesView";
-import { useEffect, useRef, useState } from "react";
-import { useToast } from "@/ui/App/providers/ToastProvider";
-import { useReplayStore } from "../../hooks/useReplayStore";
+import { selectPlayer, useReplayStore } from "../../hooks/useReplayStore";
 import { useBoardInputStore } from "../../hooks/useBoardInputStore";
+import { canPromote } from "@/domain/kif/rules";
 
 const fileLabels = ["９", "８", "７", "６", "５", "４", "３", "２", "１"];
 const rankLabels = ["一", "二", "三", "四", "五", "六", "七", "八", "九"];
@@ -40,8 +39,11 @@ function HandView({ hand, owner }: { hand: Hand, owner: Player }) {
     const selectedState = useBoardInputStore(s => s.selectedState)
     const selectHandPiece = useBoardInputStore(s => s.selectHandPiece)
     const unselect = useBoardInputStore(s=>s.unselect)
+    const player = useReplayStore(selectPlayer)
+
     const handleHandpieceClick = (piecetype: PieceType) => {
-        if (owner !== "black") return
+        if (player !== "black") return
+
         switch(selectedState.type){
             case "idle":
                 console.log("select hand piece", piecetype, owner)
@@ -98,46 +100,26 @@ function SquareView({ piece, selected, onClick }: {
     )
 }
 ///////////////////////////////
-function BoardView({ position }: { position: Position }) {
+export default function BoardView({ position }: { position: Position }) {
     const { board, hands } = position
     const ranks = [...Array(9)].map((_, i) => i + 1)   //   1 → 9
     const files = [...Array(9)].map((_, i) => 9 - i)   // 9 → 1（将棋表記） ???
 
     
-    const player = useReplayStore(s=>s.player)
+    //const player = useReplayStore(selectPlayer)
+    const player = position.turn
     const selectSquare = useBoardInputStore(s => s.selectSquare)
     const tryMove = useReplayStore(s => s.tryMove)
     const selectedState = useBoardInputStore(s => s.selectedState)    
     const unselect = useBoardInputStore(s=>s.unselect)      
+    //const player = useReplayStore(selectPlayer)
 
-    const promotable = new Set([
-        "pawn",
-        "lance",
-        "knight",
-        "silver",
-        "bishop",
-        "rook"
-    ])
-
-    const canPromote = (move: Move, player: Player) => {
-        if (!move.from) return false
-        if (!promotable.has(move.pieceType)) return false
-
-        const from = move.from.rank
-        const to = move.to.rank
-
-        if (player === "black") {
-            return from <= 3 || to <= 3
-        } else {
-            return from >= 7 || to >= 7
-        }
-    }
     const handleSquareClick = (file: number, rank: number) => {
-        console.log("selected state", selectedState)
-        switch(selectedState.type){
-            
+        if (player !== "black") return
+        //console.log("selected state", selectedState)
+        switch(selectedState.type){            
             case "idle":   // 未選択
-                if (player ==="white") return
+                //if (player ==="white") return
                 const piece = position.board.get(file, rank)
                 if (!piece || piece.owner !== "black") return // 黒の駒を選択したときのみ
                 selectSquare({file: file, rank: rank})
@@ -228,4 +210,4 @@ function BoardView({ position }: { position: Position }) {
     )
 }
 
-export default BoardView;
+

@@ -2,14 +2,21 @@ import type { ProblemId } from "@/domain/problem/entity/Problem"
 
 const MAX_INTERVAL_DAYS = 60
 
-export type SolvedResultold = "solved" | "failed" | "unanswered"
+export type SolvedOutcome = "solved" | "failed" | "unanswered"
 export type SolvedResult = {
-  outcome: "solved" | "failed"
+  outcome: SolvedOutcome
   mistakes: number
   revealed: boolean
   elapsedSec: number
 }
-
+export function createDefaultSolvedResult(): SolvedResult{
+    return {
+        outcome: "unanswered",
+        mistakes: 0,
+        revealed: false,
+        elapsedSec: 10,
+    }    
+}
 export type LearningData = {
     problemId: ProblemId
     solvedCount: number

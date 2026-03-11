@@ -14,8 +14,7 @@ type NewLearningReviewedEvent =
         type: "reviewed"
         problemId: ProblemId
         sessionId: SessionId
-        solvedResult: SolvedResult
-        sec?: number
+        solvedResult: SolvedResult     
     }
 
 type NewLearningResetEvent =

@@ -5,14 +5,13 @@ import PlyControlPanel from "./panels/PlyControlPanel"
 import BoardPanel from "./panels/BoardPanel"
 import { formatLearningPerformance } from "@/ui/library/components/LibraryListItem"
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem"
-import React, { createContext, useEffect, useState } from "react"
+import React, {  useEffect, useState } from "react"
 import type { ProblemNavigation } from "../PlayerScreen"
 import { useLearningRecordStore } from "@/ui/store/useLearningRecordStore"
 import { useTimer } from "../hooks/useTimer"
 import MovesPanel from "./panels/MovesPanel"
 import type { Learning } from "@/domain/learning/entity/Learning"
-import { Move, Piece, type Player, type Square } from "@/domain/kif/entity"
-import { selectPosition, useReplayStore } from "../hooks/useReplayStore"
+import { useReplayStore } from "../hooks/useReplayStore"
 
 
 function formatTime(sec: number) {
@@ -49,25 +48,23 @@ export const TimerControl = ({isTimerRunning, elaspedSec, onToggleTimer}: {
 }
 
 ///////////////////////////////////////////////////////////////
-function PlayerView({problem, title, problemNavigation, timer}: {
+export default function PlayerView({problem, title, problemNavigation, timer}: {
     problem: Problem
     title: React.ReactNode,
     problemNavigation?: ProblemNavigation,
     timer?: ReturnType<typeof useTimer>
 }){
     const moves = problem.kifData.moves
-    const { load, advancePly, retreatPly, plyIndex, moveToPly, position } = useReplayStore()    
-
+    const [showMoves, setShowMoves ] = useState(false)    
+    const { advancePly, retreatPly, plyIndex, moveToPly, position, reveal } = useReplayStore()
     
     useEffect(() => {
-        load(problem)
         setShowMoves(false)
     }, [problem])
-    const [showMoves, setShowMoves ] = useState(false)
-    const showAnswer = useReplayStore(s=>s.showAnswer)
+    
     const handleShowMoves = () => {
         setShowMoves(true)
-        showAnswer()
+        reveal()
     }
     
     const learning: Learning | undefined = useLearningRecordStore(s=>s.records)[problem.id]
@@ -80,7 +77,7 @@ function PlayerView({problem, title, problemNavigation, timer}: {
                 overflowY: "hidden",
                 WebkitOverflowScrolling: "touch",
             }}>
-                <Typography variant="h6">{title} </Typography>
+                <Typography variant="body1">{title} </Typography>
             </Box>
             { /* --- 盤面 ---*/}
 
@@ -98,25 +95,16 @@ function PlayerView({problem, title, problemNavigation, timer}: {
                     {showMoves ?
                         <MovesView moves={moves} currentPlyIndex={plyIndex} onMoveToPly={moveToPly} />
                         : (<Stack>
-                            <Button onClick={() => handleShowMoves()} >
-                                手数：{moves.length}手
+                            <Button onClick={() => handleShowMoves()} variant="outlined">
+                                手筋を表示
                             </Button>                            
-                            <Box>{problem.tags.join(",")}</Box>
-                            <Box>出典：{problem.source}</Box>
+                            
                         </Stack>)
                     }
                 </MovesPanel>
 
                 { /* --- コントロールパネル ---*/}
-                <Box flex={0.75} sx={{ border: 1, borderColor: "divider" }}>
-                    <PlyControlPanel
-                        currentPlyIndex={plyIndex}
-                        maxPlyIndex={moves.length}
-                        onPrevPly={retreatPly}
-                        onNextPly={ () => { handleShowMoves(); advancePly()}}
-                    />
-                    {learning && formatLearningPerformance(learning)}
-
+                <Box flex={1} sx={{ border: 1, borderColor: "divider" }}>
                     {timer &&
                         <Box sx={{ p: 1 }}>
                             <TimerControl
@@ -126,21 +114,25 @@ function PlayerView({problem, title, problemNavigation, timer}: {
                             />
                         </Box>
                     }
+                    { /* 
+                    <PlyControlPanel
+                        currentPlyIndex={plyIndex}
+                        maxPlyIndex={moves.length}
+                        onPrevPly={retreatPly}
+                        onNextPly={ () => { handleShowMoves(); advancePly()}}
+                    />*/ }
+                    
+                    <Box>タイプ：{problem.type}</Box>
+                    <Box>手数：{moves.length}手</Box>
+                    { problem.source && <Box>出典：{problem.source}</Box> }
+                    { problem.tags && <Box>{problem.tags.join(",")}</Box> }
+
+                    {learning && formatLearningPerformance(learning)}
+
+
                 </Box>
             </Stack>
         </Stack>
     )
 }
-export function useShowMovesController(plyIndex: number) {
-    const [showMoves, setShowMoves] = useState(false)
-    useEffect(() => {
-        if (plyIndex > 0) {
-            setShowMoves(true)
-        } else if (plyIndex === 0) {
-            setShowMoves(false)
-        }
-    }, [plyIndex])
-    
-    return { showMoves, setShowMoves }
-}
-export default PlayerView
+

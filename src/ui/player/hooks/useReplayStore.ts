@@ -1,51 +1,53 @@
-import { Position, Square, type Move, type PieceType, type Player } from "@/domain/kif/entity"
+import { Position, type Move, type PieceType, type Player } from "@/domain/kif/entity"
 import { buildUntilPly } from "@/domain/kif/service/buildUntilPly"
-import type { SolvedResult } from "@/domain/learning/entity/Learning"
+import { createDefaultSolvedResult, type SolvedResult } from "@/domain/learning/entity/Learning"
 import type { Problem } from "@/domain/problem/entity/Problem"
 import { create } from "zustand"
 
-//export type SolvePhase = "solving" | "completed" | "revealed"
-export type ReplayPhase =
-  | { type: "playing" }
-  | { type: "completed", result: SolvedResult }
-type TryMoveResult = "correct" | "incorrect" | "finish"
-
 type ReplayStore = {
-    // problem
+    //state
     initialPosition: Position
-    moves: Move[]
-    load: (problem: Problem) => void
-
-    // game
-    replayPhase: ReplayPhase
+    moves: Move[]    
+    solvedResult: SolvedResult      
     position: Position
     plyIndex: number
+    firstPlayer: Player
+    
+    // actions
+    load: (problem: Problem) => void
     advancePly: () => void
     retreatPly: () => void
     moveToPly: (index: number) => void
-    tryMove: (move: Move) => TryMoveResult
-    player: Player
-    showAnswer: () => void
-
-    // session
-    mistakes: number
-    revealed: boolean
+    tryMove: (move: Move) => void    
+    reveal: () => void   
+    
 }
 
+// selectors
 export const selectPosition = (state: ReplayStore) =>
-  buildUntilPly(
-    { initial: state.initialPosition, moves: state.moves },
-    state.plyIndex
-  )
+    buildUntilPly(
+        { initial: state.initialPosition, moves: state.moves },
+        state.plyIndex
+    )
 
+export const selectIsLast = (s: ReplayStore) => {
+    return s.plyIndex === s.moves.length && (s.moves.length > 0)
+}
+export const selectPlayer = (s: ReplayStore): Player =>
+    s.position.turn
+    //s.plyIndex % 2 ? "white" : "black"
+
+//export const selectIsUserTurn = (s: ReplayStore) =>
+//    s.plyIndex % 2 === 0
+///////////////////////////////////////
 export const useReplayStore = create<ReplayStore>((set, get) => ({
     // problem
     initialPosition: Position.empty(),
     moves: [],
-    player: "black",
+    solvedResult: createDefaultSolvedResult(),    
+    firstPlayer: "black",
 
     // game
-    replayPhase: { type: "playing" },
     position: Position.empty(),
     plyIndex: 0,
     moveToPly: (index: number) => {
@@ -54,7 +56,6 @@ export const useReplayStore = create<ReplayStore>((set, get) => ({
          
         set({
             plyIndex: newPlyIndex,
-            player: newPlyIndex % 2 ? "white" : "black",
             position: buildUntilPly(
                 { initial: get().initialPosition, moves },
                 newPlyIndex
@@ -62,71 +63,75 @@ export const useReplayStore = create<ReplayStore>((set, get) => ({
         })
     },
     advancePly: () => {
-        get().moveToPly(get().plyIndex+1)
+        const { position, moves, plyIndex } = get()
+        const move = moves[plyIndex]
+        if (!move) return
+        const next = position.applyMove(move)
+
+        set({
+            position: next,
+            plyIndex: plyIndex + 1
+        })
     },
     retreatPly: () => {
         get().moveToPly(get().plyIndex-1)
     },
-    showAnswer: () => {
-        set({revealed: true})
+    reveal: () => {
+        set(s => ({
+            solvedResult: {
+                ...s.solvedResult,
+                //outcome: "failed",
+                revealed: true
+            }
+        }))              
     },
 
-    // session
-    mistakes: 0,
-    revealed: false,
-
     load: (problem: Problem) => {
-        console.log("load", problem)
         set({
             initialPosition: problem.kifData.initialPosition,
             position: problem.kifData.initialPosition,
             moves: problem.kifData.moves,
-            replayPhase: { type: "playing"},
-            mistakes: 0,        
-            revealed: false,
+            solvedResult: createDefaultSolvedResult(),
         })
         get().moveToPly(0)
     },
-    tryMove: (move: Move): TryMoveResult => {
-        console.log("tryMove: ", move)
-        const { moves, plyIndex, mistakes, revealed } = get()
-
+    tryMove: (move: Move) => {
+        const { moves, plyIndex} = get()
         const expectedMove = moves[plyIndex]
 
         // 不正解
         if (!movesEqual(move, expectedMove)) {
-            set({
-                mistakes: mistakes + 1,
-            })
-            console.log("try move incorrect", move, expectedMove, get().mistakes)
-            return "incorrect"
+            set(s => ({
+                solvedResult: {
+                    ...s.solvedResult,
+                    mistakes: s.solvedResult.mistakes + 1
+                }
+            }))
+            return
         }
 
         // 正解
         get().advancePly()  // 先手
-        if (get().plyIndex < moves.length) {
-            setTimeout(()=>{
-                get().advancePly()  // 後手も自動で進める
-            }, 500)
-            
+        if (get().plyIndex === moves.length) {
+            set(s => ({
+                solvedResult: {
+                    ...s.solvedResult,
+                    outcome: s.solvedResult.revealed ? "failed" : "solved"
+                }
+            }))
+            return
         }
 
-        const isLast = (get().plyIndex >= moves.length)
-        console.log("islast", isLast, get().plyIndex, moves.length)
-        const solvedResult: SolvedResult = {
-            outcome: isLast && !revealed ? "solved" : "failed",
-            mistakes: mistakes,
-            elapsedSec: 10, // TODO
-            revealed: revealed,
-        }
-        console.log("try move correct: ", solvedResult  )
-        const newphase: ReplayPhase =  isLast ? { type: "completed", result: solvedResult} : get().replayPhase
+        const nextPly = get().plyIndex
 
-        set({
+        setTimeout(() => {
+            const { plyIndex } = get()
 
-            replayPhase: newphase,            
-        })
-        return isLast ? "finish" : "correct"
+            if (plyIndex === nextPly) {
+                get().advancePly()
+            }
+        }, 500)
+
         
     },
 
@@ -141,7 +146,7 @@ function movesEqual(a: Move, b?: Move) {
     a.from?.rank === b.from?.rank &&
     a.to.file === b.to.file &&
     a.to.rank === b.to.rank &&
-    a.pieceType === b.pieceType &&
+    //a.pieceType === b.pieceType &&
     a.promote === b.promote
   )
 }

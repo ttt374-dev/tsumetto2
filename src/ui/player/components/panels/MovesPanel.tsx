@@ -14,7 +14,7 @@ export default function MovesPanel
                     display: "flex",
                     justifyContent: "center",
                     overflowY: "auto",
-                    flexGrow: 1,
+                    //flexGrow: 1,
                     gap: 2,
                     p: 1,
                 }                

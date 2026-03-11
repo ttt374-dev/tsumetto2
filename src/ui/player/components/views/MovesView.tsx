@@ -2,7 +2,7 @@ import { useMemo, useEffect, useRef } from "react";
 
 import { Box } from "@mui/material";
 import { Move } from "@/domain/kif/entity/Move";
-import { Square, type Player } from "@/domain/kif/entity/Piece";
+import { type Player } from "@/domain/kif/entity/Piece";
 
 interface Props {
     moves: Move[];
@@ -13,15 +13,15 @@ interface Props {
 export function formatPlayer(player: Player): string {
     return player === 'black' ? '▲' : '△'
 }
-export function formatMove(move: Move, index: number): string {
-    //console.log("format move", move)
-    const player = index % 2 === 1 ? "black" : "white"
+export function formatMove(move: Move, index: number, player: Player): string {
     return `${index}: ` + formatPlayer(player) + move.rawtext
 
 }
+const getPlayerFromPly = (plyIndex: number) => plyIndex % 2 ? "black" : "white"
 
 export default function MovesView({ moves: moves, currentPlyIndex, onMoveToPly }: Props) {
     const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
+
 
     useEffect(() => {
         const el = itemRefs.current[currentPlyIndex];
@@ -32,9 +32,6 @@ export default function MovesView({ moves: moves, currentPlyIndex, onMoveToPly }
             });
         }
     }, [currentPlyIndex]);
-
-
-
 
     function itemStyles(index: number) {
         const hilightColor = "#ffd"
@@ -52,17 +49,19 @@ export default function MovesView({ moves: moves, currentPlyIndex, onMoveToPly }
                 {"=== 開始局面 ==="}
             </div>
             {
-                moves.map((m, i) => (
-                    <div
-                        key={i + 1}
-                        ref={(el: HTMLDivElement | null) => {
-                            itemRefs.current[i + 1] = el;
-                        }}
-                        onClick={() => onMoveToPly(i + 1)}
-                        style={itemStyles(i + 1)}>
-                        {formatMove(m, i + 1)}
-                    </div>
-                ))
+                moves.map((m, i) => {
+                    const ply = i + 1
+                    return (
+                        <div
+                            key={ply}
+                            ref={(el: HTMLDivElement | null) => {
+                                itemRefs.current[ply] = el;
+                            }}
+                            onClick={() => onMoveToPly(ply)}
+                            style={itemStyles(ply)}>
+                            {formatMove(m, ply, getPlayerFromPly(ply))}
+                        </div>)
+                })
             }
         </Box>
     )

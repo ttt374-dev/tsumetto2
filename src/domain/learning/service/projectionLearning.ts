@@ -53,7 +53,7 @@ function applyReviewedEvent(
     let intervalDays = base.intervalDays
     let solvedCnt = base.solvedCount
     let failedCnt = base.failedCount
-    const quality = judgeAnswerQuality(event.solvedResult, event.sec)
+    const quality = judgeAnswerQuality(event.solvedResult)
 
     if (event.solvedResult.outcome === "failed") {
         failedCnt++
@@ -82,8 +82,9 @@ function applyReviewedEvent(
     )
 }
 // 正解評価
-function judgeAnswerQuality(solvedResult: SolvedResult, sec: number = 10): number {
-    if (solvedResult.outcome === "failed") return 0
-    if (sec < 10) return 5
-    return 2
+function judgeAnswerQuality(solvedResult: SolvedResult): number {
+    if (solvedResult.outcome === "failed") return 0    
+    if (solvedResult.mistakes > 1) return 2
+    if (solvedResult.elapsedSec > 10 ) return 4
+    return 5
 }

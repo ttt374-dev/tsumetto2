@@ -9,7 +9,7 @@ import { PlayerRightActions } from "./components/actions/PlayerRightActions";
 import type { SolvedResult } from "@/domain/learning/entity/Learning";
 import { useNavigate } from "react-router-dom";
 import { routes } from "../App/useAppNavigation";
-import { useReplayStore } from "./hooks/useReplayStore";
+import { selectIsLast, useReplayStore } from "./hooks/useReplayStore";
 import { useToast } from "../App/providers/ToastProvider";
 
 export type ProblemNavigation = {
@@ -39,14 +39,15 @@ export default function PlayerScreen({ problem, title, capabilities }: {
 }) {
     const presenter = usePlayerPresenter(problem, capabilities.navigatable?.next)
     const timer = useTimer()
-    const mistakes = useReplayStore(s=>s.mistakes)
-    const replayPhase = useReplayStore(s=>s.replayPhase)
+    //const mistakes = useReplayStore(s=>s.mistakes)
+    const solvedResult = useReplayStore(s=>s.solvedResult)
+    const isLast = useReplayStore(selectIsLast)
     const plyIndex = useReplayStore(s=>s.plyIndex)
+    const load = useReplayStore(s=>s.load)
     const toast = useToast()
 
-    //const review = useLearningEventStore(s=>s.review)
     const handleAnswer = async (res: SolvedResult) => {
-        capabilities.answerable?.answer?.(problem.id, res, timer.seconds, mistakes)  // ミッションを進める
+        capabilities.answerable?.answer?.(problem.id, res, timer.seconds, solvedResult.mistakes)  // ミッションを進める
     }
     const navigate = useNavigate()
     
@@ -58,21 +59,23 @@ export default function PlayerScreen({ problem, title, capabilities }: {
     useEffect(() => {
         timer.reset()
         timer.start()
+        load(problem)
     }, [problem.id])
 
     useEffect(() => {
-        if (replayPhase.type === "completed") {
+        if (isLast) {
             setTimeout(() => {
-                if (window.confirm(`詰みです: 間違い回数：${replayPhase.result.mistakes}, ${replayPhase.result.revealed}:次へ`)) {
-                    handleAnswer({ ...replayPhase.result, elapsedSec: timer.seconds })
+                if (window.confirm(`詰みました: 間違い回数：${solvedResult.mistakes}, ${solvedResult.revealed && "[答え参照]"}:次へ`)) {
+                    handleAnswer({ ...solvedResult, elapsedSec: timer.seconds })
                 }
             }, 100)
         }
 
     }, [plyIndex])
+
     useEffect(() => {
-        if (mistakes > 0) toast({message: `incorrect: ${mistakes}`})
-    }, [mistakes])    
+        if (solvedResult.mistakes > 0) toast({message: `incorrect: ${solvedResult.mistakes}`})
+    }, [solvedResult.mistakes])    
 
     return (
         <AppShell
