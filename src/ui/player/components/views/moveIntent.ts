@@ -15,7 +15,6 @@ export function createMoveIntent(
 ): MoveIntent {
 
     switch (selectedState.type) {
-
         case "idle": {
             const piece = position.board.get(file, rank)
             if (!piece || piece.owner !== position.turn) {
@@ -25,7 +24,6 @@ export function createMoveIntent(
         }
 
         case "selected": {
-
             let from: Square | null = null
             let pieceType: PieceType
             let promoted = false

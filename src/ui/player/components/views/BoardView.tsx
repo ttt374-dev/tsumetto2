@@ -8,6 +8,7 @@ import { selectPlayer, useReplayStore } from "../../hooks/useReplayStore";
 import { useBoardInputStore } from "../../hooks/useBoardInputStore";
 import { canPromote } from "@/domain/kif/rules";
 import { createMoveIntent } from "./moveIntent";
+import { createHandIntent } from "./handIntent";
 
 const fileLabels = ["９", "８", "７", "６", "５", "４", "３", "２", "１"];
 const rankLabels = ["一", "二", "三", "四", "五", "六", "七", "八", "九"];
@@ -39,25 +40,25 @@ function HandPieceView({ pieceType, selected, count, onClick }: {
 function HandView({ hand, owner }: { hand: Hand, owner: Player }) {
     const selectedState = useBoardInputStore(s => s.selectedState)
     const selectHandPiece = useBoardInputStore(s => s.selectHandPiece)
-    const unselect = useBoardInputStore(s=>s.clearSelection)
+    const clearSelection = useBoardInputStore(s=>s.clearSelection)
     const player = useReplayStore(selectPlayer)
 
-    const handleHandpieceClick = (piecetype: PieceType) => {
-        if (player !== "black") return
+    const handleHandpieceClick = (pieceType: PieceType) => {
+        const intent = createHandIntent(selectedState, pieceType,
+            owner, player)
 
-        switch(selectedState.type){
-            case "idle":
-                console.log("select hand piece", piecetype, owner)
-                selectHandPiece(piecetype, owner)
-                break;
-            case "selected":
-                if (selectedState.source === "hand" && selectedState.pieceType === piecetype) {
-                    console.log("unselected")
-                    unselect()
-                }
-                break;
+        switch (intent.type) {
+            case "select":
+                selectHandPiece(pieceType, owner)
+                return
+
+            case "cancel":
+                clearSelection()
+                return
+
+            case "none":
+                return
         }
-
     }
     const keys: PieceType[] = ["rook", "bishop", "gold", "silver", "knight", "lance", "pawn"]
     //console.log("is empty", hand.isEmpty())
@@ -132,18 +133,14 @@ export default function BoardView({ position }: { position: Position }) {
 
             case "move":
                 if (intent.promotable) {
-
                     const promote = window.confirm(
                         `成りますか？: ${PieceKeyKanjiMapping[intent.move.pieceType]}`
                     )
-
                     const dto: MoveDTO = {
                         ...intent.move.toDTO(),
                         promote
                     }
-
                     tryMove(Move.fromDTO(dto))
-
                 } else {
                     tryMove(intent.move)
                 }
@@ -169,7 +166,7 @@ export default function BoardView({ position }: { position: Position }) {
                     {ranks.flatMap(rank => {
                         const cells = files.map(file => {
                             const piece = board.get(file, rank)
-                            const selected = selectedState.type === "selected" && 
+                            const selected = selectedState.type === "selected" &&
                                 selectedState.source === "board" &&
                                 selectedState.square.file === file &&
                                 selectedState.square.rank === rank
@@ -187,9 +184,7 @@ export default function BoardView({ position }: { position: Position }) {
                             {rankLabels[rank - 1]}
                         </div>
                         return [empty, ...cells, rankLabel,]
-                    }
-
-                    )}
+                    })}
                 </Box>
                 {/* 持駒表示 */}
                 <HandView hand={hands.get("black")} owner="black" />
