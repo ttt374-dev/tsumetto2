@@ -1,15 +1,12 @@
 import { Box, Button, Stack } from "@mui/material";
 import MovesView from "../views/MovesView";
 import type { Move } from "@/domain/kif/entity";
+import { useGameStore } from "@/ui/game/useGameStore";
 
 
-export default function MovesPanel(props: {
-    revealed: boolean
-    onMoveToPly: (ply: number) => void
-    moves: Move[]
-    ply: number
-    onRevealAnswer: () => void
-}) {
+export default function MovesPanel({moves}: { moves: Move[]}) {
+    const { ply, moveTo, revealAnswer, revealed } = useGameStore()
+    
     return (
         <Box
             flex={1}
@@ -26,10 +23,10 @@ export default function MovesPanel(props: {
                 }
             }
         >
-            {props.revealed ?
-                <MovesView moves={props.moves} currentPlyIndex={props.ply} onMoveToPly={props.onMoveToPly} />
+            {revealed ?
+                <MovesView moves={moves} currentPlyIndex={ply} onMoveToPly={moveTo} />
                 : (<Stack>
-                    <Button onClick={props.onRevealAnswer} variant="outlined">
+                    <Button onClick={revealAnswer} variant="outlined">
                         手筋を表示
                     </Button>
 

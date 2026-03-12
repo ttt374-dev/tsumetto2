@@ -15,8 +15,7 @@ function SquareView({ piece, selected, onClick }: {
     piece: Piece | null
     selected: boolean
     onClick?: () => void
-}
-) {
+}){
     return (
         <div
             className={`${styles.cell}  
@@ -38,18 +37,19 @@ function sameMove(a: Move, b: Move): boolean {
         a.promote === b.promote &&
         a.pieceType === b.pieceType
 }
-export default function BoardView({ position }: { position: Position }) {
+export default function BoardView() {
+    const { moves: correctMoves, ply, advancePly, makeMistake, makeResolve, position} = useGameStore()
     const { board, hands } = position
     const ranks = [...Array(9)].map((_, i) => i + 1)   //   1 → 9
     const files = [...Array(9)].map((_, i) => 9 - i)   // 9 → 1（将棋表記） ???
     
     const selection = useBoardInputStore(s => s.selection)
     const clickSquare = useBoardInputStore(s => s.clickSquare)
-    const { moves: correctMoves, ply, advancePly, makeMistake, makeResolve} = useGameStore()
+    
     const toast = useToast()
 
     const handleSquareClick = (file: number, rank: number) => {
-        const intent = clickSquare({file, rank}, position.board)
+        const intent = clickSquare({file, rank}, board)
 
         if (!intent) return
 

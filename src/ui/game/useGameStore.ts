@@ -22,6 +22,8 @@ type GameStore = {
     revealAnswer: () => void
     reset: () => void
     //resetResolved: () => void
+    // timer
+    
 }
 export const selectIsLast = (s: GameStore) => {
 //    console.log("islast", s.ply, s.moves)    

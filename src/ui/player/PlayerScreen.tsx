@@ -11,22 +11,19 @@ import { useNavigate } from "react-router-dom";
 import { routes } from "../App/useAppNavigation";
 import { useToast } from "../App/providers/ToastProvider";
 import { selectIsLast, useGameStore } from "../game/useGameStore";
+import { useTimerStore } from "../game/useTimerStore";
 
-export type ProblemNavigation = {
-    next: () => void,
-    prev: () => void,
-}
 
 //////////////////////////////////////////////////////////////
 export default function PlayerScreen({ problem, title, submitAnswer, undoLastAnswer }: {
     problem: Problem
     title: React.ReactNode
-    //capabilities: PlayerCapabilities
     submitAnswer?: (id: ProblemId, res: SolvedResult) => void
     undoLastAnswer?: () => void
 }) {
     const presenter = usePlayerPresenter(problem)
-    const timer = useTimer()
+    //const timer = useTimer()
+    const timer = useTimerStore()
     //const isLast = useGameStore(selectIsLast)
     const initialize = useGameStore(s=>s.initialize)
     const { mistakes, revealed, resolved } = useGameStore()
@@ -34,15 +31,13 @@ export default function PlayerScreen({ problem, title, submitAnswer, undoLastAns
     const [answerSubmitted, setAnswerSubmitted] = useState(false)
 
     const handleAnswer = async () => {
-        const solvedResult = createSolvedResult(mistakes, revealed, timer.seconds)
+        const solvedResult = createSolvedResult(mistakes, revealed, timer.elapsedSec)
         submitAnswer?.(problem.id, solvedResult)
         setAnswerSubmitted(true)
-        console.log("answersubmited", answerSubmitted)
     }
     const navigate = useNavigate()
     
     const handleOpenDetailDialog = () => {
-        //presenter.dialogs.detail.openDialog(problem.id)
         navigate(routes.detail(problem.id))
     }
 
@@ -81,7 +76,7 @@ export default function PlayerScreen({ problem, title, submitAnswer, undoLastAns
             <PlayerView
                 problem={problem}
                 title={title}
-                timer={timer}
+                
             />
             {presenter.rightActionsDrawer.drawerElement}
         </AppShell>

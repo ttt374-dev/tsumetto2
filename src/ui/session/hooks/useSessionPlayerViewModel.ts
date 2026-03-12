@@ -2,7 +2,6 @@ import { useMissionStore } from "@/ui/store/useMissionStore"
 import { useSessionStore } from "@/ui/store/useSessionStore"
 import { useProblemStore } from "@/ui/store/useProblemStore"
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem"
-import type { ProblemNavigation } from "@/ui/player/PlayerScreen"
 import React, { useCallback, useMemo } from "react"
 import type { SolvedResult } from '@/domain/learning/entity/Learning';
 import { useLearningEventStore } from '@/ui/store/useLearningEventStore';
@@ -16,8 +15,7 @@ type SessionPlayerVM =
   | {
       status: "playing"
       problem: Problem
-      title: string
-      problemNavigation: ProblemNavigation
+      title: string      
       index: number
       count: number
       submitAnswer: (problemId: ProblemId, res: SolvedResult) => void
@@ -96,7 +94,7 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
 
     return { 
         status: "playing", 
-        problem, title,  problemNavigation, index, count, 
+        problem, title, index, count, 
         submitAnswer, undoLastAnswer,
      }
 }
