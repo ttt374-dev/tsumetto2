@@ -3,6 +3,7 @@ import { numberToKanjiTwoDigits } from "../common/utils/numberToKanji"
 import { useBoardInputStore } from "./useBoardInputStore"
 import { formatPlayer } from "../player/components/views/MovesView"
 import styles from "./BoardView.module.css";
+import { Box } from "@mui/material";
 
 const PieceKeyKanjiMapping: Record<string, string> = {
     "pawn": "歩",
@@ -42,7 +43,7 @@ export function HandView({ hand, owner }: { hand: Hand, owner: Player }) {
     const keys: PieceType[] = ["rook", "bishop", "gold", "silver", "knight", "lance", "pawn"]
     //console.log("is empty", hand.isEmpty())
     return (
-        <div>
+        <Box className={owner === "black" ? styles.handpieceBlack : ""}>
             {formatPlayer(owner)}
             { hand.isEmpty() && "なし"}
             {
@@ -60,6 +61,6 @@ export function HandView({ hand, owner }: { hand: Hand, owner: Player }) {
                         onClick={() => handleHandpieceClick(key)}/>)
                 })
             }
-        </div>
+        </Box>
     )
 }

@@ -74,7 +74,7 @@ export default function BoardView({ position }: { position: Position }) {
     }
 
     return (
-        <Stack justifyContent="center">
+        <Stack justifyContent="center" alignContent={"center"}  direction="row" >
             <Box className={styles.container}>
                 {/* 持駒表示 */}
                 <HandView hand={hands.get("white")} owner="white" />
