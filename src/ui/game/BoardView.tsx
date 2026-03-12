@@ -7,6 +7,7 @@ import { useGameStore } from "./useGameStore";
 import { resolveIntent } from "./intentResolver";
 import { HandView } from "./HandView";
 import { useToast } from "../App/providers/ToastProvider";
+import { useTimerStore } from "./useTimerStore";
 
 const fileLabels = ["９", "８", "７", "６", "５", "４", "３", "２", "１"];
 const rankLabels = ["一", "二", "三", "四", "五", "六", "七", "八", "九"];
@@ -45,6 +46,7 @@ export default function BoardView() {
     
     const selection = useBoardInputStore(s => s.selection)
     const clickSquare = useBoardInputStore(s => s.clickSquare)
+    const timer = useTimerStore()
     
     const toast = useToast()
 

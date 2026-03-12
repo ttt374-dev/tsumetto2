@@ -45,6 +45,7 @@ export default function PlayerScreen({ problem, title, submitAnswer, undoLastAns
         timer.reset()
         timer.start()
         initialize(problem.kifData.initialPosition, problem.kifData.moves)
+        setAnswerSubmitted(false)
     }, [problem.id])
 
     useEffect(() => {
