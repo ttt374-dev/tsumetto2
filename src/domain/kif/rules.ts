@@ -2,14 +2,14 @@ import type { Piece, Square } from "./entity"
 
 const promotableTypes = new Set([
     "pawn", "lance", "knight", "silver", "bishop", "rook"])
-export const canPromote = (to: Square, piece: Piece) => {
+export const canPromote = (from: Square, to: Square, piece: Piece) => {
     if (!promotableTypes.has(piece.type)) return false
     if (piece.promoted) return false
     
     if (piece.owner === "black") {
-        return to.rank <= 3
+        return from.rank <=3 || to.rank <= 3
     } else {
-        return to.rank >= 7
+        return from.rank >= 7 || to.rank >= 7
     }
 
 }

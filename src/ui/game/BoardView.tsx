@@ -45,7 +45,7 @@ export default function BoardView({ position }: { position: Position }) {
     
     const selection = useBoardInputStore(s => s.selection)
     const clickSquare = useBoardInputStore(s => s.clickSquare)
-    const { moves: correctMoves, ply, advancePly, madeMistake} = useGameStore()
+    const { moves: correctMoves, ply, advancePly, makeMistake, makeResolve} = useGameStore()
     const toast = useToast()
 
     const handleSquareClick = (file: number, rank: number) => {
@@ -54,15 +54,20 @@ export default function BoardView({ position }: { position: Position }) {
         if (!intent) return
 
         const move = resolveIntent(position, intent)
-        if (move) {                        
-            if (sameMove(correctMoves[ply], move)){
+        if (move) {
+            if (sameMove(correctMoves[ply], move)) {
                 advancePly()   // player
-                setTimeout(()=> {
-                    if (ply < correctMoves.length - 1) advancePly()     
-                }, 500)
-                
+                console.log("make resovl", ply, correctMoves.length - 1)
+                if (ply >= correctMoves.length - 1) {
+                    makeResolve()
+                } else {
+                    setTimeout(() => {
+                        advancePly()
+                    }, 500)
+                    
+                }            
             } else {
-                madeMistake()
+                makeMistake()
                 toast({message: "incorrect"})
             }
         }

@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { routes } from "@/ui/App/useAppNavigation";
 
 
-export function usePlayerPresenter(p: Problem, onNextProblem?: () => void){
+export function usePlayerPresenter(p: Problem){
     const navigate = useNavigate()
         
     const rightActionsDrawer = useRightActionsDrawer(

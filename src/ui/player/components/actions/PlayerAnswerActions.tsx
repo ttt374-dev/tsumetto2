@@ -15,8 +15,8 @@ const ANSWER_ACTIONS: AnswerAction[] = [
     //{ label: "Easy", result: "solved", color: "primary", secToTaken: 5 },
 ]
 
-export function PlayerAnswerActions({ onAnswerClick }: {
-    onAnswerClick: (answerResult: SolvedResult) => void,
+export function PlayerAnswerActions({  }: {
+    //onAnswerClick: (answerResult: SolvedResult) => void,
 }) {
     const next = useSessionStore(s => s.next)    
     const summary = useSessionStore(s=>s.summary)
@@ -39,21 +39,5 @@ export function PlayerAnswerActions({ onAnswerClick }: {
             </Button>
         </Stack>
     )
-    const height = "32px"
-    return (
-        <Stack direction="row" spacing={1}>
-            {ANSWER_ACTIONS.map(({ label, result, color }) => (
-                <Button
-                    key={label}
-                    fullWidth
-                    color={color}
-                    variant="contained"
-                    sx={{ height: height }}
-                    onClick={() => { onAnswerClick(result) }}
-                >
-                    {label}
-                </Button>
-            ))}
-        </Stack>
-    )
+
 }

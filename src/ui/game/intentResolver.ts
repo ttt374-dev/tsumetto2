@@ -5,7 +5,6 @@ export type Intent =
     | { type: "move"; from: Square; to: Square }
     | { type: "drop"; pieceType: PieceType; to: Square }
 
-
 export function resolveIntent(
     position: Position,
     intent: Intent
@@ -42,9 +41,8 @@ function resolveBoardMove(
     // 駒の移動ルール
     //if (!canMove(piece, from, to, position.board)) return null
 
-    //const promote = shouldPromote(piece, from, to)
     let promote = piece.promoted
-    if (canPromote(to, piece)){
+    if (canPromote(from, to, piece)){
         promote = (window.confirm("成りますか？"))
     }
     //const promote = true // TODO

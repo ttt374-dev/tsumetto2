@@ -1,6 +1,5 @@
 import { Position, type Move } from "@/domain/kif/entity"
 import { buildUntilPly } from "@/domain/kif/service/buildUntilPly"
-import { set } from "lodash"
 import { create } from "zustand"
 
 type GameStore = {
@@ -11,15 +10,18 @@ type GameStore = {
 
     mistakes: number
     revealed: boolean
+    resolved: boolean
 
     initialize: (pos: Position, moves: Move[]) => void
     advancePly: () => void
     retreatPly: () => void    
     moveTo: (ply: number) => void
-    madeMistake: () => void
+
+    makeResolve: () => void
+    makeMistake: () => void
     revealAnswer: () => void
     reset: () => void
-
+    //resetResolved: () => void
 }
 export const selectIsLast = (s: GameStore) => {
 //    console.log("islast", s.ply, s.moves)    
@@ -34,12 +36,12 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
     mistakes: 0,
     revealed: false,
+    resolved: false,
 
     initialize: (pos, moves) => {
-        console.log("initialize", pos)
+        //console.log("initialize", pos)
         set({initialPosition: pos, position: pos, 
-            moves: moves, ply: 0, mistakes: 0, revealed: false})
-        //get().moveTo(0)
+            moves: moves, ply: 0, mistakes: 0, revealed: false, resolved: false})
     },   
 
     moveTo: (ply) => {
@@ -51,30 +53,21 @@ export const useGameStore = create<GameStore>((set, get) => ({
         })
     },
     advancePly: () => {
-        console.log("adv ply")
+        //console.log("adv ply")
         const { moveTo, ply} = get()
-        moveTo(ply+1)        
-        /*
-        const { position, moves, ply } = get()
-        const move = moves[ply]
-        if (!move) return
-        const next = position.applyMove(move)
-
-        set({
-            position: next,
-            ply: ply + 1
-        })*/
+        moveTo(ply+1)                
     },
     retreatPly: () => {
         const { moveTo, ply} = get()
         moveTo(ply-1)        
     },
-
-    madeMistake: () => { set(s=>({mistakes: s.mistakes+1}))},
+    makeResolve: () => { set({resolved: true})},
+    makeMistake: () => { set(s=>({mistakes: s.mistakes+1}))},
     revealAnswer: () => { set({revealed: true})},
     reset: () => {
         set({ ply: 0, position: get().initialPosition,
-            mistakes: 0, revealed: false,
+            mistakes: 0, revealed: false, resolved: false,
          })
-    }
+    },
+    //resetResolved: () => { set({resolved: false})}
 }))

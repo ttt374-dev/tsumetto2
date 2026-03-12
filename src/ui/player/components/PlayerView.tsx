@@ -47,7 +47,7 @@ export const TimerControl = ({isTimerRunning, elaspedSec, onToggleTimer}: {
 }
 
 ///////////////////////////////////////////////////////////////
-export default function PlayerView({problem, title, problemNavigation, timer}: {
+export default function PlayerView({problem, title, timer}: {
     problem: Problem
     title: React.ReactNode,
     problemNavigation?: ProblemNavigation,

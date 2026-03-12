@@ -20,7 +20,7 @@ type SessionPlayerVM =
       problemNavigation: ProblemNavigation
       index: number
       count: number
-      submitAnswer: (problemId: ProblemId, res: SolvedResult, sec: number, mistakes: number) => void
+      submitAnswer: (problemId: ProblemId, res: SolvedResult) => void
       //lastAnsweredEvent: () => LearningEvent | undefined
       undoLastAnswer: () => void
     }

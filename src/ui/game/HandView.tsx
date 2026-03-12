@@ -13,16 +13,19 @@ const PieceKeyKanjiMapping: Record<string, string> = {
     "bishop": "角",
     "rook": "飛"
 }
-function HandPieceView({ pieceType, selected, count, onClick }: { 
+function HandPieceView({ pieceType, selected, count, owner, onClick }: { 
     pieceType: PieceType
     selected: boolean
+    owner: Player
     count: number
     onClick?: () => void
 }) {
     const countString = count > 1 ? numberToKanjiTwoDigits(count) : ""
     return (
         <span style={{ marginRight: 5 }} onClick={() => onClick?.()}            
-            className={`${styles.handpiece}  ${selected ? styles.selected : ""}`}>
+            className={`${styles.handpiece}
+            ${ owner === "black" ? styles.handpieceBlack : ""}
+            ${selected ? styles.selected : ""}`}>
             {PieceKeyKanjiMapping[pieceType]}{countString}
         </span>)
 }
@@ -53,7 +56,7 @@ export function HandView({ hand, owner }: { hand: Hand, owner: Player }) {
                     
                 return (
                     <HandPieceView 
-                        pieceType={key} selected={selected} count={count} 
+                        pieceType={key} selected={selected} count={count} owner={owner}
                         onClick={() => handleHandpieceClick(key)}/>)
                 })
             }

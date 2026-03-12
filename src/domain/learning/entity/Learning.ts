@@ -9,6 +9,13 @@ export type SolvedResult = {
   revealed: boolean
   elapsedSec: number
 }
+export function createSolvedResult(mistakes: number, revealed: boolean, elapsedSec: number): SolvedResult {
+    return {
+        outcome: revealed ? "failed" : "solved",
+        mistakes, revealed, elapsedSec,
+    }
+}
+
 export function createDefaultSolvedResult(): SolvedResult{
     return {
         outcome: "unanswered",

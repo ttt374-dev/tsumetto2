@@ -33,12 +33,18 @@ function SinglePlayerContent({problem} : { problem: Problem}){
             }
         }
     }
-
+    const submitAnswer = (problemId: ProblemId, res: SolvedResult) => {
+        const sessionId = startSession(SINGLE_MISSION_ID, [problemId])
+        if (!sessionId) return
+        review(problemId, sessionId, res)
+        navigate(routes.back)
+        //next()
+    }    
     return (
         <PlayerScreen
             problem={problem}
             title={problem.title}
-            capabilities={capabilities}
+            submitAnswer={submitAnswer}
         />
     )
 }
