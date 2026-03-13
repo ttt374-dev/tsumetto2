@@ -1,10 +1,9 @@
 import { useState } from "react"
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Stack } from "@mui/material"
 
 import PlayerScreen from "../player/PlayerScreen"
 import { useSessionPlayerViewModel } from "./hooks/useSessionPlayerViewModel"
 import type { SolvedResult } from "@/domain/learning/entity/Learning"
-import { ResolvedDialog } from "../game/ResolvedDialog"
+import { ResolvedDialog } from "../player/dialogs/ResolvedDialog"
 
 ////////////////////////////////////////////////
 export default function SessionPlayerScreen() {

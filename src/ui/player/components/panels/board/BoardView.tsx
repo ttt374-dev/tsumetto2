@@ -1,9 +1,9 @@
 import { Box } from "@mui/material"
 import styles from "./BoardView.module.css";
-import { useCurrentPosition, useGameStore } from "./hooks/useGameStore";
-import { useBoardInputStore } from "./hooks/useBoardInputStore";
+import { useCurrentPosition, useGameStore } from "../../../hooks/useGameStore";
+import { useBoardInputStore } from "../../../hooks/useBoardInputStore";
 import { Board, Piece } from "@/domain/kif/entity";
-import { resolveIntent } from "./hooks/intentResolver";
+import { resolveIntent } from "../../../hooks/intentResolver";
 
 const fileLabels = ["９", "８", "７", "６", "５", "４", "３", "２", "１"];
 const rankLabels = ["一", "二", "三", "四", "五", "六", "七", "八", "九"];

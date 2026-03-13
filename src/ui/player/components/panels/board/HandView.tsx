@@ -1,7 +1,7 @@
 import type { Hand, PieceType, Player } from "@/domain/kif/entity"
-import { numberToKanjiTwoDigits } from "../common/utils/numberToKanji"
-import { useBoardInputStore } from "./hooks/useBoardInputStore"
-import { formatPlayer } from "../player/components/views/MovesView"
+import { numberToKanjiTwoDigits } from "../../../../common/utils/numberToKanji"
+import { useBoardInputStore } from "../../../hooks/useBoardInputStore"
+import { formatPlayer } from "../../views/MovesView"
 import styles from "./BoardView.module.css";
 import { Box } from "@mui/material";
 

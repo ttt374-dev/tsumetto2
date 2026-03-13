@@ -10,11 +10,11 @@ import { PlayerRightPanel } from "./components/panels/PlayerRightPanel";
 import { createSolvedResult, type SolvedResult } from "@/domain/learning/entity/Learning";
 import { routes } from "../App/useAppNavigation";
 import { useToast } from "../App/providers/ToastProvider";
-import { useGameStore } from "../game/hooks/useGameStore";
-import { useTimerStore } from "../game/hooks/useTimerStore";
+import { useGameStore } from "./hooks/useGameStore";
+import { useTimerStore } from "./hooks/useTimerStore";
 import TitlePanel from "./components/panels/TitlePanel";
 import MovesPanel from "./components/panels/MovesPanel";
-import BoardPanel from "@/ui/game/BoardPanel"
+import BoardPanel from "@/ui/player/components/panels/board/BoardPanel"
 import TimerControlPanel from "./components/panels/TImerControlPanel";
 import ProblemLearningInfoPanel from "./components/panels/ProblemLearningInfoPanel";
 
