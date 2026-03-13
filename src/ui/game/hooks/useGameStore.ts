@@ -80,13 +80,11 @@ export const useGameStore = create<GameStore>((set, get) => ({
             setTimeout(advancePly, 500)  //　応手
         }
         return true
-    },
-    //makeResolve: () => { set({resolved: true})},
-    //makeMistake: () => { set(s=>({mistakes: s.mistakes+1}))},
+    },    
     revealAnswer: () => { set({revealed: true})},
     reset: () => {
         set({ ply: 0, mistakes: 0, revealed: false, resolved: false,
          })
     },
-    //resetResolved: () => { set({resolved: false})}
+    
 }))

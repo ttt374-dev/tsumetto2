@@ -1,6 +1,6 @@
 import type { Hand, PieceType, Player } from "@/domain/kif/entity"
 import { numberToKanjiTwoDigits } from "../common/utils/numberToKanji"
-import { useBoardInputStore } from "./useBoardInputStore"
+import { useBoardInputStore } from "./hooks/useBoardInputStore"
 import { formatPlayer } from "../player/components/views/MovesView"
 import styles from "./BoardView.module.css";
 import { Box } from "@mui/material";
@@ -32,16 +32,15 @@ function HandPieceView({ pieceType, selected, count, owner, onClick }: {
 }
 
 /////////////////////////////
-export function HandView({ hand, owner }: { hand: Hand, owner: Player }) {
+export default function HandView({ hand, owner }: { hand: Hand, owner: Player }) {
     const clickHandPiece = useBoardInputStore(s => s.clickHandPiece)
     const selection = useBoardInputStore(s=>s.selection)   
-
-    //console.log("handview", hand.toDTO())
+    
     const handleHandpieceClick = (pieceType: PieceType) => {
         clickHandPiece(pieceType, "black")
     }
     const keys: PieceType[] = ["rook", "bishop", "gold", "silver", "knight", "lance", "pawn"]
-    //console.log("is empty", hand.isEmpty())
+    
     return (
         <Box className={owner === "black" ? styles.handpieceBlack : ""}>
             {formatPlayer(owner)}

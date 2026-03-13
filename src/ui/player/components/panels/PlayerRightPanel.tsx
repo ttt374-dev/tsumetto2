@@ -6,7 +6,7 @@ import { StarToggleButton } from "@/ui/common/components/StarToggleButton/StarTo
 import { IconButton, Stack } from "@mui/material"
 import { useStarToggleButton } from '@/ui/common/components/StarToggleButton/useStarToggleButton';
 
-export function PlayerRightActions(props: {
+export function PlayerRightPanel(props: {
     problemId: ProblemId
     onOpenDetailDialog: (id: ProblemId) => void
     onUndoLastAnswer?: () => void

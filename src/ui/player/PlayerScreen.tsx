@@ -1,69 +1,47 @@
 import React from "react"
-import { Box, Button, Dialog, DialogActions, DialogContent, Stack } from "@mui/material"
+import { Box, Stack } from "@mui/material"
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from 'react';
 
-import { PlayerAnswerActions } from "./components/actions/PlayerAnswerActions"
+import { PlayerFooterPanel } from "./components/panels/PlayerFooterPanel"
 import { Problem, type ProblemId } from "@/domain/problem/entity/Problem"
 import { AppShell } from "../common/components/layout/AppShell";
-import { usePlayerPresenter } from "./hooks/usePlayerPresenter";
-import { PlayerRightActions } from "./components/actions/PlayerRightActions";
+import { PlayerRightPanel } from "./components/panels/PlayerRightPanel";
 import { createSolvedResult, type SolvedResult } from "@/domain/learning/entity/Learning";
 import { routes } from "../App/useAppNavigation";
 import { useToast } from "../App/providers/ToastProvider";
-import { useGameStore } from "../game/useGameStore";
-import { useTimerStore } from "../game/useTimerStore";
+import { useGameStore } from "../game/hooks/useGameStore";
+import { useTimerStore } from "../game/hooks/useTimerStore";
 import TitlePanel from "./components/panels/TitlePanel";
 import MovesPanel from "./components/panels/MovesPanel";
-import BoardView from "@/ui/game/BoardView"
+import BoardPanel from "@/ui/game/BoardPanel"
 import TimerControlPanel from "./components/panels/TImerControlPanel";
 import ProblemLearningInfoPanel from "./components/panels/ProblemLearningInfoPanel";
 
 function usePlayerViewModel(problem: Problem, onResolved?: (res: SolvedResult) => void) {
     const timer = useTimerStore()
     const { initialize, mistakes, revealed, resolved } = useGameStore()
-    const [resolvedCalled, setResolvedCalled] = useState(false)
+    const [onResolvedCalled, setOnResolvedCalled] = useState(false)
 
     useEffect(() => {
         timer.reset()
         timer.start()
         initialize(problem.kifData.initialPosition, problem.kifData.moves)
-        setResolvedCalled(false)
+        setOnResolvedCalled(false)
     }, [problem.id, initialize])
 
     useEffect(() => {
-        if (resolved && !resolvedCalled) {
+        if (resolved && !onResolvedCalled) {
             const solvedResult = createSolvedResult(mistakes, revealed, timer.elapsedSec)
             onResolved?.(solvedResult)
-            setResolvedCalled(true)
+            setOnResolvedCalled(true)
         }
-    }, [resolved, resolvedCalled])
+    }, [resolved, onResolvedCalled])
     return {
         mistakes, resolved, revealed,
-        presenter: usePlayerPresenter(problem),
     }
 }
-function RevolvedDialog({open, onClose, onNext}: {
-    open: boolean
-    onClose: () => void
-    onNext: () => void
-}){
-    return (
-        <Dialog open={open} onClose={onClose}> 
-            <DialogContent>
-                詰みました
-            </DialogContent>
-            <DialogActions>
-                <Button onClick={()=> { onClose()}}>
-                    閉じる
-                </Button>
-                <Button onClick={()=> { onNext(); onClose() }}>
-                    次へ
-                </Button>
-            </DialogActions>
-        </Dialog>
-    )
-}
+
 //////////////////////////////////////////////////////////////
 export default function PlayerScreen({ problem, title, onResolved, onUndoLastAnswer }: {
     problem: Problem
@@ -71,15 +49,9 @@ export default function PlayerScreen({ problem, title, onResolved, onUndoLastAns
     onResolved?: (res: SolvedResult) => void
     onUndoLastAnswer?: () => void
 }) {
-    const [openResolved, setOpenResolved] = useState(false)
-    const toast = useToast()
-    const { mistakes, resolved, revealed, presenter } = usePlayerViewModel(problem, onResolved)
 
-    useEffect(() => {
-        console.log("resolved", resolved, openResolved)
-        if (resolved) setOpenResolved(true)
-            //toast({ message: `詰みました: 間違い回数：${mistakes}, ${revealed ? "[答え参照]" : ""}:次へ` })
-    }, [resolved])
+    const toast = useToast()
+    const { mistakes } = usePlayerViewModel(problem, onResolved)
 
     useEffect(() => {
         if (mistakes > 0) toast({ message: `incorrect: ${mistakes}` })
@@ -89,14 +61,13 @@ export default function PlayerScreen({ problem, title, onResolved, onUndoLastAns
     const handleOpenDetailDialog = () => {
         navigate(routes.detail(problem.id))
     }
-    console.log("open dialog", openResolved, resolved)
 
     return (
         <AppShell
             header={"Player"}
-            footer={<PlayerAnswerActions />}
+            footer={<PlayerFooterPanel />}
             rightActions={
-                <PlayerRightActions
+                <PlayerRightPanel
                     problemId={problem.id}
                     onOpenDetailDialog={handleOpenDetailDialog}
                     onUndoLastAnswer={onUndoLastAnswer}
@@ -105,25 +76,21 @@ export default function PlayerScreen({ problem, title, onResolved, onUndoLastAns
             <Stack sx={{ minHeight: 0, height: "100%" }} spacing={1} >
                 <TitlePanel title={title} />
                 { /* --- 盤面 ---*/}
-                <BoardView />
+                <BoardPanel />
 
                 <Stack direction="row" sx={{ minHeight: 0, flexGrow: 1, p: 1 }} spacing={1}>
-                    { /* --- 手筋 ---*/}
                     <MovesPanel moves={problem.kifData.moves} />
-
-                    { /* --- コントロールパネル ---*/}
-                    <Box sx={{ flex: 1, border: 1, borderColor: "divider" }}>
-                        <TimerControlPanel />
-                        <ProblemLearningInfoPanel problem={problem} />
-                    </Box>
+                    <PlayerControlPanel problem={problem} />
                 </Stack>
             </Stack>
-            {presenter.rightActionsDrawer.drawerElement}
-
-            <RevolvedDialog open={openResolved}
-                onClose={()=>setOpenResolved(false)}
-                onNext = {alert}
-            />
         </AppShell>
+    )
+}
+export function PlayerControlPanel({ problem }: { problem: Problem }) {
+    return (
+        <Box sx={{ flex: 1, border: 1, borderColor: "divider" }}>
+            <TimerControlPanel />
+            <ProblemLearningInfoPanel problem={problem} />
+        </Box>
     )
 }

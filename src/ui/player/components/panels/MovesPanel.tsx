@@ -1,7 +1,7 @@
 import { Box, Button, Stack } from "@mui/material";
 import MovesView from "../views/MovesView";
 import type { Move } from "@/domain/kif/entity";
-import { useGameStore } from "@/ui/game/useGameStore";
+import { useGameStore } from "@/ui/game/hooks/useGameStore";
 
 
 export default function MovesPanel({moves}: { moves: Move[]}) {

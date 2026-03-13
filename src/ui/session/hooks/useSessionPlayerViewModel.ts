@@ -18,6 +18,7 @@ type SessionPlayerVM =
       title: string      
       index: number
       count: number
+      nextProblem: () => void
       submitAnswer: (res: SolvedResult) => void
       undoLastAnswer: () => void
     }
@@ -42,7 +43,7 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
 
     // learning event log
     const getLastEvent = useLearningEventStore(s=>s.getLastReviewedEvent)
-    const review = useLearningEventStore(s=>s.appendReview)
+    const appendReview = useLearningEventStore(s=>s.appendReview)
     const cancel = useLearningEventStore(s=>s.appendCancel)    
 
     // missionName
@@ -56,14 +57,15 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
     const submitAnswer = (res: SolvedResult) => {
         //console.log("submit answer", problemId, sessionId)
         if (!sessionId) return
-        review(currentProblemId, sessionId, res)
+        appendReview(currentProblemId, sessionId, res)
         //next()
+        
     }    
 
     const undoLastAnswer = () => {
         if (!sessionId) return
         const last = getLastEvent(sessionId)
-        if ( !last) return       
+        if (!last) return       
         
         cancel(sessionId, last.id)        
         console.log("undo last", last)
@@ -90,10 +92,9 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
 
     const title = `[${missionName} (${index + 1}/${count})]: ${problem.title}`       
 
-
     return { 
         status: "playing", 
-        problem, title, index, count, 
+        problem, title, index, count, nextProblem: next,
         submitAnswer, undoLastAnswer,
      }
 }
