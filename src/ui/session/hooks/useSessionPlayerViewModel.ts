@@ -52,7 +52,7 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
     )
 
     // navigation
-    const problemNavigation = useMemo(() => ({ next, prev, moveTo }), [next, prev, moveTo])
+    //const problemNavigation = useMemo(() => ({ next, prev, moveTo }), [next, prev, moveTo])
 
     const submitAnswer = (problemId: ProblemId, res: SolvedResult) => {
         console.log("submit answer", problemId, sessionId)

@@ -22,21 +22,12 @@ const SINGLE_MISSION_ID="single-mission-id"
 function SinglePlayerContent({problem} : { problem: Problem}){
     const navigate = useNavigate()
     const startSession = useSessionStore(s=>s.start)
-    const review = useLearningEventStore(s=>s.appendReview)
-
-    const capabilities = {
-        answerable: {
-            answer: (problemId: ProblemId, res: SolvedResult, sec?: number) => {
-                const sessionId = startSession(SINGLE_MISSION_ID, [problemId])
-                review(problemId, sessionId, res, sec)
-                navigate(routes.back)
-            }
-        }
-    }
+    const appendreview = useLearningEventStore(s=>s.appendReview)
+    
     const submitAnswer = (problemId: ProblemId, res: SolvedResult) => {
         const sessionId = startSession(SINGLE_MISSION_ID, [problemId])
         if (!sessionId) return
-        review(problemId, sessionId, res)
+        appendreview(problemId, sessionId, res)
         navigate(routes.back)
         //next()
     }    

@@ -1,13 +1,13 @@
 import { Box, Stack } from "@mui/material";
 
-import { Position, Piece, Board, Move } from "@/domain/kif/entity";
+import { Piece, Board, Move } from "@/domain/kif/entity";
 import styles from "./BoardView.module.css";
 import { useBoardInputStore } from "./useBoardInputStore";
-import { useGameStore } from "./useGameStore";
+import { useCurrentPosition, useGameStore } from "./useGameStore";
 import { resolveIntent } from "./intentResolver";
 import { HandView } from "./HandView";
 import { useToast } from "../App/providers/ToastProvider";
-import { useTimerStore } from "./useTimerStore";
+
 
 const fileLabels = ["９", "８", "７", "６", "５", "４", "３", "２", "１"];
 const rankLabels = ["一", "二", "三", "四", "五", "六", "七", "八", "九"];
@@ -29,50 +29,23 @@ function SquareView({ piece, selected, onClick }: {
     )
 }
 ///////////////////////////////
-function sameMove(a: Move, b: Move): boolean {
-    console.log("samemove" ,a, b )
-    return a.from?.file === b.from?.file &&
-        a.from?.rank === b.from?.rank &&
-        a.to.file === b.to.file &&
-        a.to.rank === b.to.rank &&
-        a.promote === b.promote &&
-        a.pieceType === b.pieceType
-}
+
 export default function BoardView() {
-    const { moves: correctMoves, ply, advancePly, makeMistake, makeResolve, position} = useGameStore()
-    const { board, hands } = position
+    //const { moves: correctMoves, ply, advancePly, makeMistake, makeResolve} = useGameStore()
+    const { board, hands } = useCurrentPosition()
     const ranks = [...Array(9)].map((_, i) => i + 1)   //   1 → 9
     const files = [...Array(9)].map((_, i) => 9 - i)   // 9 → 1（将棋表記） ???
     
+    const position = useCurrentPosition()
     const selection = useBoardInputStore(s => s.selection)
+    const tryMove = useGameStore(s=>s.tryMove)
     const clickSquare = useBoardInputStore(s => s.clickSquare)
-    const timer = useTimerStore()
-    
-    const toast = useToast()
 
     const handleSquareClick = (file: number, rank: number) => {
         const intent = clickSquare({file, rank}, board)
-
-        if (!intent) return
-
+        if (!intent) return        
         const move = resolveIntent(position, intent)
-        if (move) {
-            if (sameMove(correctMoves[ply], move)) {
-                advancePly()   // player
-                console.log("make resovl", ply, correctMoves.length - 1)
-                if (ply >= correctMoves.length - 1) {
-                    makeResolve()
-                } else {
-                    setTimeout(() => {
-                        advancePly()
-                    }, 500)
-                    
-                }            
-            } else {
-                makeMistake()
-                toast({message: "incorrect"})
-            }
-        }
+        move && tryMove(move) 
     }
 
     return (

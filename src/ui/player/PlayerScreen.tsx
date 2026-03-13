@@ -21,16 +21,13 @@ export default function PlayerScreen({ problem, title, submitAnswer, undoLastAns
     submitAnswer?: (id: ProblemId, res: SolvedResult) => void
     undoLastAnswer?: () => void
 }) {
-    const presenter = usePlayerPresenter(problem)
-    //const timer = useTimer()
-    const timer = useTimerStore()
-    //const isLast = useGameStore(selectIsLast)
-    const initialize = useGameStore(s=>s.initialize)
-    const { mistakes, revealed, resolved } = useGameStore()
+    const presenter = usePlayerPresenter(problem)    
+    const timer = useTimerStore()        
+    const { initialize, mistakes, revealed, resolved } = useGameStore()
     const toast = useToast()
     const [answerSubmitted, setAnswerSubmitted] = useState(false)
 
-    const handleAnswer = async () => {
+    const handleSolvedResult = async () => {
         const solvedResult = createSolvedResult(mistakes, revealed, timer.elapsedSec)
         submitAnswer?.(problem.id, solvedResult)
         setAnswerSubmitted(true)
@@ -51,9 +48,8 @@ export default function PlayerScreen({ problem, title, submitAnswer, undoLastAns
     useEffect(() => {
         if (resolved && !answerSubmitted) {
             setTimeout(() => {
-                if (window.confirm(`詰みました: 間違い回数：${mistakes}, ${revealed ? "[答え参照]" : ""}:次へ`)) {
-                    handleAnswer()
-                }
+                handleSolvedResult()
+                alert(`詰みました: 間違い回数：${mistakes}, ${revealed ? "[答え参照]" : ""}:次へ`)
             }, 100)
         }
 
