@@ -73,6 +73,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
         }
         advancePly()  // 自手
         if (ply >= moves.length - 1) { // is last
+            console.log("try move: resolved")
             set({ resolved: true })
         } else {
             

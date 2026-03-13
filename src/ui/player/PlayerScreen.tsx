@@ -1,5 +1,5 @@
 import React from "react"
-import { Box, Stack } from "@mui/material"
+import { Box, Button, Dialog, DialogActions, DialogContent, Stack } from "@mui/material"
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from 'react';
 
@@ -43,7 +43,27 @@ function usePlayerViewModel(problem: Problem, onResolved?: (res: SolvedResult) =
         presenter: usePlayerPresenter(problem),
     }
 }
-
+function RevolvedDialog({open, onClose, onNext}: {
+    open: boolean
+    onClose: () => void
+    onNext: () => void
+}){
+    return (
+        <Dialog open={open} onClose={onClose}> 
+            <DialogContent>
+                詰みました
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={()=> { onClose()}}>
+                    閉じる
+                </Button>
+                <Button onClick={()=> { onNext(); onClose() }}>
+                    次へ
+                </Button>
+            </DialogActions>
+        </Dialog>
+    )
+}
 //////////////////////////////////////////////////////////////
 export default function PlayerScreen({ problem, title, onResolved, onUndoLastAnswer }: {
     problem: Problem
@@ -51,12 +71,14 @@ export default function PlayerScreen({ problem, title, onResolved, onUndoLastAns
     onResolved?: (res: SolvedResult) => void
     onUndoLastAnswer?: () => void
 }) {
+    const [openResolved, setOpenResolved] = useState(false)
     const toast = useToast()
     const { mistakes, resolved, revealed, presenter } = usePlayerViewModel(problem, onResolved)
-    //const presenter = vm.presenter //  usePlayerPresenter(problem)    
 
     useEffect(() => {
-        toast({ message: `詰みました: 間違い回数：${mistakes}, ${revealed ? "[答え参照]" : ""}:次へ` })
+        console.log("resolved", resolved, openResolved)
+        if (resolved) setOpenResolved(true)
+            //toast({ message: `詰みました: 間違い回数：${mistakes}, ${revealed ? "[答え参照]" : ""}:次へ` })
     }, [resolved])
 
     useEffect(() => {
@@ -67,6 +89,7 @@ export default function PlayerScreen({ problem, title, onResolved, onUndoLastAns
     const handleOpenDetailDialog = () => {
         navigate(routes.detail(problem.id))
     }
+    console.log("open dialog", openResolved, resolved)
 
     return (
         <AppShell
@@ -96,6 +119,11 @@ export default function PlayerScreen({ problem, title, onResolved, onUndoLastAns
                 </Stack>
             </Stack>
             {presenter.rightActionsDrawer.drawerElement}
+
+            <RevolvedDialog open={openResolved}
+                onClose={()=>setOpenResolved(false)}
+                onNext = {alert}
+            />
         </AppShell>
     )
 }
