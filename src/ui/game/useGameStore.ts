@@ -20,11 +20,8 @@ type GameStore = {
     moveTo: (ply: number) => void
     tryMove: (move: Move) => boolean
 
-    //makeResolve: () => void
-    //makeMistake: () => void
     revealAnswer: () => void
-    reset: () => void    
-    
+    reset: () => void        
 }
 
 export function useCurrentPosition() {
@@ -43,7 +40,6 @@ export const selectIsLast = (s: GameStore) => {
 ////////////////////////////////////
 export const useGameStore = create<GameStore>((set, get) => ({
     initialPosition: Position.empty(),
-    //position: Position.empty(),
     moves: [],
     ply: 0,
 
@@ -57,7 +53,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     },   
 
     moveTo: (ply) => {        
-        if (ply >= get().moves.length) return
+        if (ply > get().moves.length) return
         set({ply})
     },
     advancePly: () => {
@@ -75,11 +71,11 @@ export const useGameStore = create<GameStore>((set, get) => ({
             set(s=>({mistakes: s.mistakes+1}))
             return false
         }
-
+        advancePly()  // 自手
         if (ply >= moves.length - 1) { // is last
             set({ resolved: true })
         } else {
-            advancePly()  // 自手
+            
             setTimeout(advancePly, 500)  //　応手
         }
         return true

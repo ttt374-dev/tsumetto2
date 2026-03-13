@@ -24,18 +24,18 @@ function SinglePlayerContent({problem} : { problem: Problem}){
     const startSession = useSessionStore(s=>s.start)
     const appendreview = useLearningEventStore(s=>s.appendReview)
     
-    const submitAnswer = (problemId: ProblemId, res: SolvedResult) => {
-        const sessionId = startSession(SINGLE_MISSION_ID, [problemId])
+    const submitAnswer = (res: SolvedResult) => {
+        const sessionId = startSession(SINGLE_MISSION_ID, [problem.id])
         if (!sessionId) return
-        appendreview(problemId, sessionId, res)
-        navigate(routes.back)
+        appendreview(problem.id, sessionId, res)
+        //navigate(routes.back)
         //next()
     }    
     return (
         <PlayerScreen
             problem={problem}
             title={problem.title}
-            submitAnswer={submitAnswer}
+            onResolved={submitAnswer}
         />
     )
 }

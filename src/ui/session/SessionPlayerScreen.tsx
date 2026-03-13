@@ -10,9 +10,8 @@ export default function SessionPlayerScreen() {
     return (
         <PlayerScreen problem={vm.problem}
             title={vm.title}
-            submitAnswer={vm.submitAnswer}
-            undoLastAnswer={vm.undoLastAnswer}
-            //capabilities={capabilities}
+            onResolved={vm.submitAnswer}
+            onUndoLastAnswer={vm.undoLastAnswer}
         />
     )
 }

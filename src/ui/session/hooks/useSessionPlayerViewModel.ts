@@ -18,8 +18,7 @@ type SessionPlayerVM =
       title: string      
       index: number
       count: number
-      submitAnswer: (problemId: ProblemId, res: SolvedResult) => void
-      //lastAnsweredEvent: () => LearningEvent | undefined
+      submitAnswer: (res: SolvedResult) => void
       undoLastAnswer: () => void
     }
 
@@ -54,11 +53,11 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
     // navigation
     //const problemNavigation = useMemo(() => ({ next, prev, moveTo }), [next, prev, moveTo])
 
-    const submitAnswer = (problemId: ProblemId, res: SolvedResult) => {
-        console.log("submit answer", problemId, sessionId)
+    const submitAnswer = (res: SolvedResult) => {
+        //console.log("submit answer", problemId, sessionId)
         if (!sessionId) return
-        review(problemId, sessionId, res)
-        next()
+        review(currentProblemId, sessionId, res)
+        //next()
     }    
 
     const undoLastAnswer = () => {
