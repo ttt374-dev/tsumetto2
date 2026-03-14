@@ -14,7 +14,6 @@ export default function ProblemLearningInfoPanel(props: {
     ]
     return (<>
         <Box>タイプ：{problem.type}</Box>
-        <Box>手数：{problem.kifData.moves.length}手</Box>
         {problem.source && <Box>出典：{problem.source}</Box>}
         {problem.tags && <Box>{problem.tags.join(",")}</Box>}
 

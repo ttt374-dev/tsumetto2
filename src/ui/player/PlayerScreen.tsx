@@ -20,10 +20,11 @@ import ProblemLearningInfoPanel from "./components/panels/ProblemLearningInfoPan
 
 function usePlayerViewModel(problem: Problem, onResolved?: (res: SolvedResult) => void) {
     const timer = useTimerStore()
-    const { initialize, mistakes, revealed, resolved } = useGameStore()
+    const { initialize, mistakes, revealed, resolved, reset } = useGameStore()
     const [onResolvedCalled, setOnResolvedCalled] = useState(false)
 
     useEffect(() => {
+        reset()
         timer.reset()
         timer.start()
         initialize(problem.kifData.initialPosition, problem.kifData.moves)
@@ -49,7 +50,6 @@ export default function PlayerScreen({ problem, title, onResolved, onUndoLastAns
     onResolved?: (res: SolvedResult) => void
     onUndoLastAnswer?: () => void
 }) {
-
     const toast = useToast()
     const { mistakes } = usePlayerViewModel(problem, onResolved)
 

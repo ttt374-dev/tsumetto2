@@ -29,6 +29,7 @@ export default function MovesPanel({moves}: { moves: Move[]}) {
                     <Button onClick={revealAnswer} variant="outlined">
                         手筋を表示
                     </Button>
+                    <Box>手数：{moves.length}手</Box>
 
                 </Stack>)
             }

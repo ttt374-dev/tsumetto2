@@ -39,8 +39,9 @@ export default function BoardView() {
     const handleSquareClick = (file: number, rank: number) => {
         const intent = clickSquare({ file, rank }, board)
         if (!intent) return
-        const move = resolveIntent(position, intent)
-        move && tryMove(move)
+        //const move = resolveIntent(position, intent)
+        //move && tryMove(move)
+        tryMove(intent)
     }
 
     return (

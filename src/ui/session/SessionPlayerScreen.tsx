@@ -18,7 +18,9 @@ export default function SessionPlayerScreen() {
         setOpenResolved(true)
         setSolvedResult(res)
     }
-
+    const handleCloseDialog = () => {
+        
+    }
     return (
         <>
             <PlayerScreen problem={vm.problem}

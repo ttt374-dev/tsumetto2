@@ -6,9 +6,6 @@ import { useLibraryViewModel } from "./hooks/useLibraryViewModel";
 
 export function LibraryScreen() {
     const vm = useLibraryViewModel()   
-    //const query = useProblemsQuery()
-
-
     return (
         <AppShell
             header="Library"

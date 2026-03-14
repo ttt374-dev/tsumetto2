@@ -24,7 +24,7 @@ export const canPromote = (from: Square, to: Square, piece: Piece) => {
 }
 
 export function isSameMove(a: Move, b: Move): boolean {
-    console.log("samemove" ,a, b )
+    //console.log("samemove" ,a, b )
     return a.from?.file === b.from?.file &&
         a.from?.rank === b.from?.rank &&
         a.to.file === b.to.file &&

@@ -4,8 +4,6 @@ import { routes } from "../App/useAppNavigation"
 import { useSessionStore } from "../store/useSessionStore"
 import { v4 } from "uuid"
 
-
-
 export default function SinglePlayerScreen() {    
     const { id } = useParams<{ id: string }>()
     const problem = useProblemStore(s => id ? s.byId[id] : undefined)    
