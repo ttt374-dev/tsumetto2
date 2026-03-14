@@ -1,7 +1,7 @@
 import type { SolvedResult } from "@/domain/learning/entity/Learning"
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material"
 
-export function ResolvedDialog({ open, onClose, onConfirm, solvedResult, confirmLabel="次へ" }: {
+export function SolvedDialog({ open, onClose, onConfirm, solvedResult, confirmLabel="次へ" }: {
     open: boolean
     onClose: () => void
     onConfirm: () => void

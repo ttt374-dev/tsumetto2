@@ -1,24 +1,6 @@
-import { Move, type PieceType, type Position, type Square } from "@/domain/kif/entity";
+import { Move, Piece, type PieceType, type Position, type Square } from "@/domain/kif/entity";
 import { canPromote, isSameMove } from "@/domain/kif/rules";
-
-export type MoveResult =
-  | { type: "incorrect" }
-  | { type: "playerMove" }
-  | { type: "solved" }
-  | { type: "playerAndOpponent" }
-
-export function resolveMove(moves: Move[], ply: number, move: Move): MoveResult {
-    if (!isSameMove(moves[ply], move)) {
-        return { type: "incorrect" }
-    }
-    const nextPly = ply + 1
-
-    if (nextPly >= moves.length) {
-        return { type: "solved" }
-    }
-
-    return { type: "playerAndOpponent" }
-}
+import type { PendingPromotion } from "@/ui/player/hooks/useGameStore";
 
 //////////
 export type Intent =    // ユーザのアクション
@@ -28,22 +10,19 @@ export type Intent =    // ユーザのアクション
 
 export type IntentResult =   // ゲームエンジンの状態
     | { type: "move", move: Move}
-    | { type: "promotionPending", move: Move}
+    | { type: "promotionPending", pendingPromotion: PendingPromotion}
 
-export function resolveIntent(
-    position: Position,
-    intent: Intent
-): IntentResult | null {
+export function resolveIntent(position: Position, intent: Intent): IntentResult | null {
     if (intent.type === "move") {
-        return resolveBoardMove(position, intent.from, intent.to)
+        return resolveBoardMoveIntent(position, intent.from, intent.to)
     }
 
     if (intent.type === "drop") {
-        return resolveDrop(position, intent.pieceType, intent.to)
+        return resolveDropIntent(position, intent.pieceType, intent.to)
     }
     return null}
 
-function resolveBoardMove(
+function resolveBoardMoveIntent(
     position: Position,
     from: Square,
     to: Square
@@ -61,19 +40,16 @@ function resolveBoardMove(
     // 駒の移動ルール
     //if (!canMove(piece, from, to, position.board)) return null
 
-    let promote = piece.promoted
-    const move = new Move(from, to, piece.type, promote)    
-    console.log("resolve board mvoe", move, promote)
+    //let promote = piece.promoted       
     if (canPromote(from, to, piece)){
-        //promote = (window.confirm("成りますか？"))
-        console.log("promote pending", move)
-        return { type: "promotionPending", move}
+        return { type: "promotionPending", pendingPromotion: { from, to, pieceType: piece.type}}
     }
     //const promote = true // TODO
+    const move = new Move(from, to, piece.type, piece.promoted)    
     return { type: "move", move: move}
 }
 
-function resolveDrop(
+function resolveDropIntent(
     position: Position,
     pieceType: PieceType,
     to: Square

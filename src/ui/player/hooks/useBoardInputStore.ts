@@ -1,6 +1,6 @@
 import { create } from "zustand"
 import { type Square, type PieceType, type Player, Move, Board } from "@/domain/kif/entity"
-import type { Intent } from "./intentResolver";
+import type { Intent } from "../../../domain/game/intentResolver";
 
 export type Selection =
     | { type: "none" }
@@ -21,7 +21,7 @@ export const useBoardInputStore = create<BoardInputStore>((set, get) => ({
     clickSquare: (sq, board) => {
         const sel = get().selection
         const piece = board.get(sq.file, sq.rank)
-        console.log("Piece", piece)
+        //console.log("Piece", piece)
 
         // ===== 盤 → 盤 =====
         if (sel.type === "board") {
@@ -31,6 +31,7 @@ export const useBoardInputStore = create<BoardInputStore>((set, get) => ({
                 to: sq
             }
             set({ selection: { type: "none" } })
+            console.log("board intent", intent)
             return intent
         }
 

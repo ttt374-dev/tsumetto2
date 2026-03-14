@@ -3,7 +3,7 @@ import styles from "./BoardView.module.css";
 import { useCurrentPosition, useGameStore } from "../../../hooks/useGameStore";
 import { useBoardInputStore } from "../../../hooks/useBoardInputStore";
 import { Board, Piece } from "@/domain/kif/entity";
-import { resolveIntent } from "../../../hooks/intentResolver";
+import { resolveIntent } from "../../../../../domain/game/intentResolver";
 
 const fileLabels = ["９", "８", "７", "６", "５", "４", "３", "２", "１"];
 const rankLabels = ["一", "二", "三", "四", "五", "六", "七", "八", "九"];
@@ -33,15 +33,15 @@ export default function BoardView() {
 
     const position = useCurrentPosition()
 
-    const tryMove = useGameStore(s => s.applyMove)
-    const tryIntent = useGameStore(s=>s.applyIntent)
+    //const tryMove = useGameStore(s => s.applyMove)
+    const applyIntent = useGameStore(s=>s.applyIntent)
     const clickSquare = useBoardInputStore(s => s.clickSquare)
 
     const handleSquareClick = (file: number, rank: number) => {
         const intent = clickSquare({ file, rank }, board)
         if (!intent) return
         //const result = resolveIntent(position, intent)
-        tryIntent(intent)
+        applyIntent(intent)
         //if (move == "promotionRequired") 
         //move && tryMove(move)
         //tryMove(intent)

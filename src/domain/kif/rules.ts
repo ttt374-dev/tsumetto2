@@ -20,7 +20,6 @@ export const canPromote = (from: Square, to: Square, piece: Piece) => {
     } else {
         return from.rank >= 7 || to.rank >= 7
     }
-
 }
 
 export function isSameMove(a: Move, b: Move): boolean {

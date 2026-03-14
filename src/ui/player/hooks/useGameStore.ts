@@ -2,18 +2,22 @@ import { useShallow } from "zustand/react/shallow"
 import { useMemo } from "react"
 import { create } from "zustand"
 
-import { Move, Position } from "@/domain/kif/entity"
+import { Move, Position, Square, type PieceType } from "@/domain/kif/entity"
 import { buildUntilPly } from "@/domain/kif/service/buildUntilPly"
-import { resolveIntent, resolveMove, type Intent } from "./intentResolver"
-import { ResetTv } from "@mui/icons-material"
+import { resolveIntent, type Intent } from "../../../domain/game/intentResolver"
+import { resolveMove } from "@/domain/game/moveResolver"
 
+export type PendingPromotion = {
+    from: Square
+    to: Square
+    pieceType: PieceType
+}
 
 type GameStore = {
     initialPosition: Position
-    //position: Position
     moves: Move[]
     ply: number
-    promotionMove: Move | null
+    pendingPromotion: PendingPromotion | null
 
     mistakes: number
     revealed: boolean
@@ -53,7 +57,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     initialPosition: Position.empty(),
     moves: [],
     ply: 0,
-    promotionMove: null,
+    pendingPromotion: null,
 
     mistakes: 0,
     revealed: false,
@@ -81,10 +85,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
     applyIntent(intent: Intent){
         console.log("apply intent", intent)
         //if (!intent) return
-        const { initialPosition, moves, ply, applyMove, promotionMove} = get()
+        const { initialPosition, moves, ply, applyMove, pendingPromotion} = get()
         
         if (intent.type === "choosePromotion") {
-            const move = promotionMove
+            const move = pendingPromotion
             if (!move) return
 
             const finalMove = new Move(
@@ -93,23 +97,22 @@ export const useGameStore = create<GameStore>((set, get) => ({
                 move.pieceType,
                 intent.promote
             )
-            //playMove(finalMove)
-            //advancePly()
             applyMove(finalMove)
 
-            set({ promotionMove: null })
+            set({ pendingPromotion: null })
             return
         }
 
         const position = buildUntilPly(initialPosition, moves, ply)
+        
         const result = resolveIntent(position, intent)
         console.log("resovleintent", result)
         if (!result) return
         if (result.type === "promotionPending"){ 
-            set({promotionMove: result.move})
+            set({pendingPromotion: result.pendingPromotion})
             return
         }
-        return applyMove(result.move)
+        applyMove(result.move)
 
     },
     applyMove: (move: Move) => {
@@ -126,10 +129,12 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
             case "playerAndOpponent":
                 advancePly()
+                const nextPly = ply + 1
+
                 setTimeout(() => {
-                    const { ply, moves } = get()
-                    if (ply < moves.length) {
-                        advancePly()
+                    const state = get()
+                    if (state.ply === nextPly) {
+                        state.advancePly()
                     }
                 }, 500)
                 return true
@@ -140,6 +145,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     revealAnswer: () => { set({revealed: true})},
     reset: () => {
         set({ ply: 0, mistakes: 0, revealed: false, resolved: false,
+            pendingPromotion: null,
          })
-    },    
+    },  
 }))

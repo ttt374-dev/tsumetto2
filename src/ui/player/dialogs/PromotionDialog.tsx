@@ -1,7 +1,7 @@
 import { Button, Dialog, DialogActions, DialogTitle } from "@mui/material";
 
 
-export function PromoteDialog({ open, onClose, onConfirm}:{
+export function PromotionDialog({ open, onClose, onConfirm}:{
     open: boolean
     onClose: () => void
     onConfirm: (promote: boolean) => void

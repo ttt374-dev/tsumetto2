@@ -17,12 +17,12 @@ import MovesPanel from "./components/panels/MovesPanel";
 import BoardPanel from "@/ui/player/components/panels/board/BoardPanel"
 import TimerControlPanel from "./components/panels/TImerControlPanel";
 import ProblemLearningInfoPanel from "./components/panels/ProblemLearningInfoPanel";
-import { PromoteDialog } from "./dialogs/PromoteDialog";
-import type { Intent } from "./hooks/intentResolver";
+import { PromotionDialog } from "./dialogs/PromotionDialog";
+import type { Intent } from "../../domain/game/intentResolver";
 
 function usePlayerViewModel(problem: Problem, onResolved?: (res: SolvedResult) => void) {
     const timer = useTimerStore()
-    const { initialize, mistakes, revealed, resolved, reset, promotionMove, applyIntent } = useGameStore()
+    const { initialize, mistakes, revealed, resolved, reset, pendingPromotion: promotionMove, applyIntent } = useGameStore()
     const [onResolvedCalled, setOnResolvedCalled] = useState(false)
 
     useEffect(() => {
@@ -55,7 +55,7 @@ export default function PlayerScreen({ problem, title, onResolved, onUndoLastAns
     const toast = useToast()    
     usePlayerViewModel(problem, onResolved)
     
-    const { mistakes, promotionMove, applyIntent } = useGameStore()
+    const { mistakes, pendingPromotion: promotionMove, applyIntent } = useGameStore()
 
     useEffect(() => {
         if (mistakes > 0) toast({ message: `incorrect: ${mistakes}` })
@@ -91,13 +91,12 @@ export default function PlayerScreen({ problem, title, onResolved, onUndoLastAns
                 </Stack>
             </Stack>
 
-            <PromoteDialog 
+            <PromotionDialog 
                 open={promotionMove !== null}
                 onConfirm={handleConfirm}
                 onClose={() => {}}
                 >
-
-            </PromoteDialog>
+            </PromotionDialog>
         </AppShell>
     )
 }

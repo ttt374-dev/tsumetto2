@@ -3,7 +3,7 @@ import { useState } from "react"
 import PlayerScreen from "../player/PlayerScreen"
 import { useSessionPlayerViewModel } from "./hooks/useSessionPlayerViewModel"
 import type { SolvedResult } from "@/domain/learning/entity/Learning"
-import { ResolvedDialog } from "../player/dialogs/ResolvedDialog"
+import { SolvedDialog } from "../player/dialogs/SolvedDialog"
 
 ////////////////////////////////////////////////
 export default function SessionPlayerScreen() {
@@ -19,7 +19,7 @@ export default function SessionPlayerScreen() {
         setSolvedResult(res)
     }
     const handleCloseDialog = () => {
-        
+
     }
     return (
         <>
@@ -29,7 +29,7 @@ export default function SessionPlayerScreen() {
                 onUndoLastAnswer={vm.undoLastAnswer}
             />
 
-            <ResolvedDialog open={openResolved}
+            <SolvedDialog open={openResolved}
                 onClose={() => setOpenResolved(false)}
                 onConfirm={vm.nextProblem}
                 solvedResult={solvedResult}
