@@ -33,7 +33,6 @@ export default function BoardView() {
 
     const position = useCurrentPosition()
 
-    //const tryMove = useGameStore(s => s.applyMove)
     const applyIntent = useGameStore(s=>s.applyIntent)
     const clickSquare = useBoardInputStore(s => s.clickSquare)
 
