@@ -2,9 +2,9 @@ import { useShallow } from "zustand/react/shallow"
 import { useMemo } from "react"
 import { create } from "zustand"
 
-import { Position, type Move } from "@/domain/kif/entity"
+import { Move, Position } from "@/domain/kif/entity"
 import { buildUntilPly } from "@/domain/kif/service/buildUntilPly"
-import { resolveMove } from "./intentResolver"
+import { resolveIntent, resolveMove, type Intent } from "./intentResolver"
 import { ResetTv } from "@mui/icons-material"
 
 
@@ -13,6 +13,7 @@ type GameStore = {
     //position: Position
     moves: Move[]
     ply: number
+    promotionMove: Move | null
 
     mistakes: number
     revealed: boolean
@@ -22,7 +23,8 @@ type GameStore = {
     advancePly: () => void
     retreatPly: () => void    
     moveTo: (ply: number) => void
-    tryMove: (move: Move) => boolean
+    applyIntent: (intent: Intent) => void
+    applyMove: (move: Move) => boolean
 
     revealAnswer: () => void
     reset: () => void        
@@ -51,6 +53,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     initialPosition: Position.empty(),
     moves: [],
     ply: 0,
+    promotionMove: null,
 
     mistakes: 0,
     revealed: false,
@@ -75,7 +78,41 @@ export const useGameStore = create<GameStore>((set, get) => ({
         const { moveTo, ply} = get()
         if (ply > 0) moveTo(ply - 1)
     },
-    tryMove: (move: Move) => {
+    applyIntent(intent: Intent){
+        console.log("apply intent", intent)
+        //if (!intent) return
+        const { initialPosition, moves, ply, applyMove, promotionMove} = get()
+        
+        if (intent.type === "choosePromotion") {
+            const move = promotionMove
+            if (!move) return
+
+            const finalMove = new Move(
+                move.from,
+                move.to,
+                move.pieceType,
+                intent.promote
+            )
+            //playMove(finalMove)
+            //advancePly()
+            applyMove(finalMove)
+
+            set({ promotionMove: null })
+            return
+        }
+
+        const position = buildUntilPly(initialPosition, moves, ply)
+        const result = resolveIntent(position, intent)
+        console.log("resovleintent", result)
+        if (!result) return
+        if (result.type === "promotionPending"){ 
+            set({promotionMove: result.move})
+            return
+        }
+        return applyMove(result.move)
+
+    },
+    applyMove: (move: Move) => {
         const { moves, ply, advancePly} = get()
         const result = resolveMove(moves, ply, move)
         switch (result.type) {

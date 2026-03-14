@@ -17,10 +17,12 @@ import MovesPanel from "./components/panels/MovesPanel";
 import BoardPanel from "@/ui/player/components/panels/board/BoardPanel"
 import TimerControlPanel from "./components/panels/TImerControlPanel";
 import ProblemLearningInfoPanel from "./components/panels/ProblemLearningInfoPanel";
+import { PromoteDialog } from "./dialogs/PromoteDialog";
+import type { Intent } from "./hooks/intentResolver";
 
 function usePlayerViewModel(problem: Problem, onResolved?: (res: SolvedResult) => void) {
     const timer = useTimerStore()
-    const { initialize, mistakes, revealed, resolved, reset } = useGameStore()
+    const { initialize, mistakes, revealed, resolved, reset, promotionMove, applyIntent } = useGameStore()
     const [onResolvedCalled, setOnResolvedCalled] = useState(false)
 
     useEffect(() => {
@@ -39,7 +41,7 @@ function usePlayerViewModel(problem: Problem, onResolved?: (res: SolvedResult) =
         }
     }, [resolved, onResolvedCalled])
     return {
-        mistakes, resolved, revealed,
+        mistakes, resolved, revealed, promotionMove, applyIntent
     }
 }
 
@@ -50,8 +52,10 @@ export default function PlayerScreen({ problem, title, onResolved, onUndoLastAns
     onResolved?: (res: SolvedResult) => void
     onUndoLastAnswer?: () => void
 }) {
-    const toast = useToast()
-    const { mistakes } = usePlayerViewModel(problem, onResolved)
+    const toast = useToast()    
+    usePlayerViewModel(problem, onResolved)
+    
+    const { mistakes, promotionMove, applyIntent } = useGameStore()
 
     useEffect(() => {
         if (mistakes > 0) toast({ message: `incorrect: ${mistakes}` })
@@ -61,7 +65,10 @@ export default function PlayerScreen({ problem, title, onResolved, onUndoLastAns
     const handleOpenDetailDialog = () => {
         navigate(routes.detail(problem.id))
     }
-
+    const handleConfirm = (promote: boolean) => {
+        const intent: Intent = { type: "choosePromotion", promote }
+        applyIntent(intent)
+    }
     return (
         <AppShell
             header={"Player"}
@@ -83,6 +90,14 @@ export default function PlayerScreen({ problem, title, onResolved, onUndoLastAns
                     <PlayerControlPanel problem={problem} />
                 </Stack>
             </Stack>
+
+            <PromoteDialog 
+                open={promotionMove !== null}
+                onConfirm={handleConfirm}
+                onClose={() => {}}
+                >
+
+            </PromoteDialog>
         </AppShell>
     )
 }

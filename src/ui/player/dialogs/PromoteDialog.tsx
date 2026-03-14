@@ -14,7 +14,7 @@ export function PromoteDialog({ open, onClose, onConfirm}:{
                 <Button variant="contained" onClick={()=>onConfirm(true)}>
                     成る
                 </Button>
-                <Button variant="contained" onClick={()=>onConfirm(false)}>
+                <Button variant="outlined" onClick={()=>onConfirm(false)}>
                     不成
                 </Button>                
             </DialogActions>

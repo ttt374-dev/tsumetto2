@@ -20,16 +20,20 @@ export function resolveMove(moves: Move[], ply: number, move: Move): MoveResult 
     return { type: "playerAndOpponent" }
 }
 
-
-export type Intent =
+//////////
+export type Intent =    // ユーザのアクション
     | { type: "move"; from: Square; to: Square }
     | { type: "drop"; pieceType: PieceType; to: Square }
+    | { type: "choosePromotion"; promote: boolean}
+
+export type IntentResult =   // ゲームエンジンの状態
+    | { type: "move", move: Move}
+    | { type: "promotionPending", move: Move}
 
 export function resolveIntent(
     position: Position,
     intent: Intent
-): Move | null {
-
+): IntentResult | null {
     if (intent.type === "move") {
         return resolveBoardMove(position, intent.from, intent.to)
     }
@@ -37,18 +41,14 @@ export function resolveIntent(
     if (intent.type === "drop") {
         return resolveDrop(position, intent.pieceType, intent.to)
     }
-
-    return null
-}
+    return null}
 
 function resolveBoardMove(
     position: Position,
     from: Square,
     to: Square
-): Move | null {
-
+): IntentResult | null {
     const piece = position.board.get(from.file, from.rank)
-
     if (!piece) return null
 
     // 手番チェック
@@ -62,18 +62,22 @@ function resolveBoardMove(
     //if (!canMove(piece, from, to, position.board)) return null
 
     let promote = piece.promoted
+    const move = new Move(from, to, piece.type, promote)    
+    console.log("resolve board mvoe", move, promote)
     if (canPromote(from, to, piece)){
-        promote = (window.confirm("成りますか？"))
+        //promote = (window.confirm("成りますか？"))
+        console.log("promote pending", move)
+        return { type: "promotionPending", move}
     }
     //const promote = true // TODO
-    return new Move(from, to, piece.type, promote)    
+    return { type: "move", move: move}
 }
 
 function resolveDrop(
     position: Position,
     pieceType: PieceType,
     to: Square
-): Move | null {
+): IntentResult | null {
 
     // 空きマスチェック
     if (position.board.get(to.file, to.rank)) return null
@@ -90,5 +94,6 @@ function resolveDrop(
     //    }
     //}
 
-    return new Move(null, to, pieceType)    
+    const move = new Move(null, to, pieceType)    
+    return { type: "move", move: move}
 }
