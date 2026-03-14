@@ -1,5 +1,5 @@
 import { Move, type PieceType, type Position, type Square } from "@/domain/kif/entity";
-import { canPromote, sameMove } from "@/domain/kif/rules";
+import { canPromote, isSameMove } from "@/domain/kif/rules";
 
 export type MoveResult =
   | { type: "incorrect" }
@@ -8,7 +8,7 @@ export type MoveResult =
   | { type: "playerAndOpponent" }
 
 export function resolveMove(moves: Move[], ply: number, move: Move): MoveResult {
-    if (!sameMove(moves[ply], move)) {
+    if (!isSameMove(moves[ply], move)) {
         return { type: "incorrect" }
     }
     const nextPly = ply + 1

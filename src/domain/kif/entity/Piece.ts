@@ -1,17 +1,8 @@
-import { Board } from "./Board"
+import { isSquareNumber } from "../rules"
+
 
 export type Player = "black" | "white"
 export type PieceType = "pawn" | "lance" | "knight" | "silver" | "gold" | "bishop" | "rook" | "king"
-export type PromotablePieceType = "pawn" | "lance" | "knight" | "silver" | "bishop" | "rook" 
-
-export const PromotablePieceType = new Set<PieceType>([
-  "pawn",
-  "lance",
-  "knight",
-  "silver",
-  "bishop",
-  "rook"
-])
 
 export type PieceItem = {
     type: PieceType, promoted: boolean
@@ -43,11 +34,6 @@ export type Square = {
 }
     */
 //export type SquareNumber = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
-
-function isSquareNumber(n: number): boolean {
-    return n >= 1 && n <= 9
-}
-
 
 export class Square {
     constructor(
@@ -102,14 +88,15 @@ export class Piece {
         }
 
     }
+
     ////////////////////
     // static
     static fromDTO(dto: PieceDTO): Piece {
         return new Piece(dto.type, dto.owner, dto.promoted)
     }
-    static isPromotablePiece(type: PieceType): type is PromotablePieceType {
-        return PromotablePieceType.has(type)
-    }
+    //static isPromotablePiece(type: PieceType): type is PromotablePieceType {
+    //    return PromotablePieceType.has(type)
+    //}
 }
 
 export type PieceDTO = {

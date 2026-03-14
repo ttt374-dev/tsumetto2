@@ -1,10 +1,18 @@
-import type { Move, Piece, Square } from "./entity"
+import { type Move, type Piece, type PieceType, type Square } from "./entity"
 
-const promotableTypes = new Set([
-    "pawn", "lance", "knight", "silver", "bishop", "rook"])
+export const PromotablePieceType = ["pawn","lance","knight","silver","bishop","rook"] as const
+
+export function isPromotable(pieceType: PieceType): boolean {
+    const set = new Set<PieceType>(PromotablePieceType)
+    return set.has(pieceType)
+}
+
+export function isSquareNumber(n: number): boolean {
+    return n >= 1 && n <= 9
+}
 
 export const canPromote = (from: Square, to: Square, piece: Piece) => {
-    if (!promotableTypes.has(piece.type)) return false
+    if (!isPromotable) return false
     if (piece.promoted) return false
     
     if (piece.owner === "black") {
@@ -15,7 +23,7 @@ export const canPromote = (from: Square, to: Square, piece: Piece) => {
 
 }
 
-export function sameMove(a: Move, b: Move): boolean {
+export function isSameMove(a: Move, b: Move): boolean {
     console.log("samemove" ,a, b )
     return a.from?.file === b.from?.file &&
         a.from?.rank === b.from?.rank &&
