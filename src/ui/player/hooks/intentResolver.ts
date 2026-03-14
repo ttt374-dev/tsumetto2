@@ -1,5 +1,25 @@
 import { Move, type PieceType, type Position, type Square } from "@/domain/kif/entity";
-import { canPromote } from "@/domain/kif/rules";
+import { canPromote, sameMove } from "@/domain/kif/rules";
+
+export type MoveResult =
+  | { type: "incorrect" }
+  | { type: "playerMove" }
+  | { type: "solved" }
+  | { type: "playerAndOpponent" }
+
+export function resolveMove(moves: Move[], ply: number, move: Move): MoveResult {
+    if (!sameMove(moves[ply], move)) {
+        return { type: "incorrect" }
+    }
+    const nextPly = ply + 1
+
+    if (nextPly >= moves.length) {
+        return { type: "solved" }
+    }
+
+    return { type: "playerAndOpponent" }
+}
+
 
 export type Intent =
     | { type: "move"; from: Square; to: Square }

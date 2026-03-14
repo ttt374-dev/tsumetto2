@@ -1,11 +1,9 @@
 import { useMissionStore } from "@/ui/store/useMissionStore"
 import { useSessionStore } from "@/ui/store/useSessionStore"
 import { useProblemStore } from "@/ui/store/useProblemStore"
-import type { Problem, ProblemId } from "@/domain/problem/entity/Problem"
-import React, { useCallback, useMemo } from "react"
+import type { Problem } from "@/domain/problem/entity/Problem"
 import type { SolvedResult } from '@/domain/learning/entity/Learning';
 import { useLearningEventStore } from '@/ui/store/useLearningEventStore';
-import { LteMobiledata } from "@mui/icons-material"
 
 type SessionPlayerVM =
   | { status: "idle" }
@@ -34,7 +32,7 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
     const sessionId = useSessionStore(s=>s.sessionId)
     const next = useSessionStore(s => s.next)
     const prev = useSessionStore(s => s.prev)
-    const moveTo = useSessionStore(s => s.moveToId)
+    //const moveTo = useSessionStore(s => s.moveToId)
 
     const currentProblemId = problemIds[index]
     const count = problemIds.length
@@ -68,7 +66,7 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
         if (!last) return       
         
         cancel(sessionId, last.id)        
-        console.log("undo last", last)
+        //console.log("undo last", last)
         prev()
     }
 
