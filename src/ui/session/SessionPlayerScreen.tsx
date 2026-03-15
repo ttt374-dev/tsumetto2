@@ -8,19 +8,16 @@ import { SolvedDialog } from "../player/dialogs/SolvedDialog"
 ////////////////////////////////////////////////
 export default function SessionPlayerScreen() {
     const vm = useSessionPlayerViewModel()
-    const [openResolved, setOpenResolved] = useState(false)
     const [solvedResult, setSolvedResult] = useState<SolvedResult | undefined>(undefined)
 
     if (vm.status !== "playing") return <>{vm.status}</>
 
     const handleResolved = (res: SolvedResult) => {
         vm.submitAnswer(res)
-        setOpenResolved(true)
+        //setOpenResolved(true)
         setSolvedResult(res)
     }
-    const handleCloseDialog = () => {
-
-    }
+    
     return (
         <>
             <PlayerScreen problem={vm.problem}
@@ -29,11 +26,12 @@ export default function SessionPlayerScreen() {
                 onUndoLastAnswer={vm.undoLastAnswer}
             />
 
-            <SolvedDialog open={openResolved}
-                onClose={() => setOpenResolved(false)}
+            { solvedResult &&
+            <SolvedDialog open={solvedResult !== undefined}
+                onClose={() => setSolvedResult(undefined)}
                 onConfirm={vm.nextProblem}
                 solvedResult={solvedResult}
-            />
+            />}
         </>
     )
 }

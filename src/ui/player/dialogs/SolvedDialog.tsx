@@ -5,11 +5,10 @@ export function SolvedDialog({ open, onClose, onConfirm, solvedResult, confirmLa
     open: boolean
     onClose: () => void
     onConfirm: () => void
-    solvedResult: SolvedResult | undefined
+    solvedResult: SolvedResult
     confirmLabel?: string
 }) {
     return (
-        solvedResult &&
         <Dialog open={open} onClose={onClose} maxWidth="xl">
             <DialogTitle>
                 詰みました
