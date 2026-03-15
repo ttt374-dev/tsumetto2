@@ -67,6 +67,12 @@ export const useGameStore = create<GameStore>((set, get) => ({
         set({initialPosition: pos, moves})
         get().reset()
     },   
+    reset: () => {
+        set({
+            ply: 0, mistakes: 0, revealed: false, resolved: false,
+            pendingPromotion: null,
+        })
+    }, 
 
     moveTo: (ply) => {        
         const max = get().moves.length
@@ -115,7 +121,6 @@ export const useGameStore = create<GameStore>((set, get) => ({
                         tryMove(result.move)
                     break;
                 }           
-
         }       
 
     },
@@ -131,7 +136,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
                 break
             case "playerAndOpponent":
                 advancePly()
-                const nextPly = get().ply + 1
+                //const nextPly = get().ply + 1
 
                 setTimeout(() => {
                     const state = get()
@@ -145,9 +150,5 @@ export const useGameStore = create<GameStore>((set, get) => ({
     },    
     
     revealAnswer: () => { set({revealed: true})},
-    reset: () => {
-        set({ ply: 0, mistakes: 0, revealed: false, resolved: false,
-            pendingPromotion: null,
-         })
-    },  
+ 
 }))
