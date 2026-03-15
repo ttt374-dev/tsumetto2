@@ -197,8 +197,8 @@ describe("実録parse", () => {
             expect(moves.length).toEqual(11)
             const initial = Position.create()
             //initial.board.dump()
-            const history = { initial: Position.create(), moves: moves }
-            const state = buildUntilPly(history, 11)
+            //const history = { initial: Position.create(), moves: moves }
+            const state = buildUntilPly(Position.create(), moves, 11)
             expect(state.board.get(4, 8)?.type).toEqual("king")
         }
     })

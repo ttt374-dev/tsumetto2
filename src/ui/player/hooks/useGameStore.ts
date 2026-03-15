@@ -108,6 +108,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
                 if (!result) return
                 switch(result.type){
                     case "promotionPending":
+                        console.log("pendngpromotion", result)
                         set({ pendingPromotion: result.pendingPromotion })
                         break;
                     case "move":
@@ -134,9 +135,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
                 setTimeout(() => {
                     const state = get()
-                    if (state.ply === nextPly) {
+                    //if (state.ply === nextPly) {
                         state.advancePly()
-                    }
+                    //}
                 }, 500)
                 break
         }

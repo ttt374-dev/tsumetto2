@@ -55,7 +55,7 @@ export default function PlayerScreen({ problem, title, onResolved, onUndoLastAns
     const toast = useToast()    
     usePlayerViewModel(problem, onResolved)
     
-    const { mistakes, pendingPromotion: promotionMove, applyIntent } = useGameStore()
+    const { mistakes, pendingPromotion, applyIntent } = useGameStore()
 
     useEffect(() => {
         if (mistakes > 0) toast({ message: `incorrect: ${mistakes}` })
@@ -69,6 +69,7 @@ export default function PlayerScreen({ problem, title, onResolved, onUndoLastAns
         const intent: Intent = { type: "choosePromotion", promote }
         applyIntent(intent)
     }
+    
     return (
         <AppShell
             header={"Player"}
@@ -91,12 +92,14 @@ export default function PlayerScreen({ problem, title, onResolved, onUndoLastAns
                 </Stack>
             </Stack>
 
+            { pendingPromotion && 
             <PromotionDialog 
-                open={promotionMove !== null}
+                open={pendingPromotion !== null}
+                pieceType={pendingPromotion.pieceType}
                 onConfirm={handleConfirm}
                 onClose={() => {}}
                 >
-            </PromotionDialog>
+            </PromotionDialog>}
         </AppShell>
     )
 }

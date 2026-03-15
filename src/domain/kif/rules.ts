@@ -12,7 +12,7 @@ export function isSquareNumber(n: number): boolean {
 }
 
 export const canPromote = (from: Square, to: Square, piece: Piece) => {
-    if (!isPromotable) return false
+    if (!isPromotable(piece.type)) return false
     if (piece.promoted) return false
     
     if (piece.owner === "black") {
