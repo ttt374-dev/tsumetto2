@@ -10,10 +10,14 @@ export class Move {
         readonly rawtext: string = "",
     ) { }
 
+    isMove(): boolean {
+        return this.from !== null
+    }
     isDrop(): boolean {
         return this.from === null
     }
 
+    
     apply(state: Position): Position {
         return state.applyMove(this)
     }

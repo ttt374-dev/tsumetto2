@@ -1,5 +1,7 @@
-import { isSquareNumber } from "../rules"
 
+export function isSquareNumber(n: number): boolean {
+    return n >= 1 && n <= 9
+}
 
 export type Player = "black" | "white"
 export type PieceType = "pawn" | "lance" | "knight" | "silver" | "gold" | "bishop" | "rook" | "king"

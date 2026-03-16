@@ -28,7 +28,7 @@ type GameStore = {
     retreatPly: () => void    
     moveTo: (ply: number) => void
     applyIntent: (intent: Intent) => void
-    tryMove: (move: Move) => void
+    tryMove: (move: Move) => void    
 
     revealAnswer: () => void
     reset: () => void        
@@ -118,6 +118,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
                         set({ pendingPromotion: result.pendingPromotion })
                         break;
                     case "move":
+                        //if (!isValidMove(result.move)) return
                         tryMove(result.move)
                     break;
                 }           

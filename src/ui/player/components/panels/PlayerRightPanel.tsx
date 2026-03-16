@@ -8,7 +8,7 @@ import { useStarToggleButton } from '@/ui/common/components/StarToggleButton/use
 
 export function PlayerRightPanel(props: {
     problemId: ProblemId
-    onOpenDetailDialog: (id: ProblemId) => void
+    onNavigateToDetail: (id: ProblemId) => void
     onUndoLastAnswer?: () => void
 }){
     const starController = useStarToggleButton(props.problemId)
@@ -28,7 +28,7 @@ export function PlayerRightPanel(props: {
             />
             <IconButton
                 sx={{ color: "white" }}
-                onClick={() => props.onOpenDetailDialog(props.problemId)}>
+                onClick={() => props.onNavigateToDetail(props.problemId)}>
                 <EditIcon />
             </IconButton>
         </Stack>

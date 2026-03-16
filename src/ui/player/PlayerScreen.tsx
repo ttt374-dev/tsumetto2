@@ -62,7 +62,7 @@ export default function PlayerScreen({ problem, title, onResolved, onUndoLastAns
     }, [mistakes])
 
     const navigate = useNavigate()
-    const handleOpenDetailDialog = () => {
+    const handleNavigateToDetail = () => {
         navigate(routes.detail(problem.id))
     }
     const handleConfirm = (promote: boolean) => {
@@ -77,7 +77,7 @@ export default function PlayerScreen({ problem, title, onResolved, onUndoLastAns
             rightActions={
                 <PlayerRightPanel
                     problemId={problem.id}
-                    onOpenDetailDialog={handleOpenDetailDialog}
+                    onNavigateToDetail={handleNavigateToDetail}
                     onUndoLastAnswer={onUndoLastAnswer}
                 />}
         >
