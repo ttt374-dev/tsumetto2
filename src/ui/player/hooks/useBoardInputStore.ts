@@ -20,7 +20,7 @@ export const useBoardInputStore = create<BoardInputStore>((set, get) => ({
 
     clickSquare: (sq, board) => {
         const sel = get().selection
-        const piece = board.get(sq.file, sq.rank)
+        const piece = board.get(sq)
         //console.log("Piece", piece)
 
         // ===== 盤 → 盤 =====

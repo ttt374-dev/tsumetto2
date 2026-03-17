@@ -1,6 +1,6 @@
 export type Handicap = "平手" | "二枚落ち" | "四枚落ち"
 
-import { Piece, type PieceDTO, type Player } from "./Piece"
+import { Piece, Square, type PieceDTO, type Player } from "./Piece"
 
 type SquareGrid = Map<string, Piece | null>
 
@@ -23,22 +23,22 @@ export class Board {
     }
 
     ////
-    get(file: number, rank: number): Piece | null {
-        return this.squares.get(Board.squareKey(file, rank)) ?? null
+    get(sq: Square): Piece | null {
+        return this.squares.get(Board.squareKey(sq)) ?? null
     }
 
-    set(file: number, rank: number, piece: Piece | null): Board {
+    set(sq: Square, piece: Piece | null): Board {
         const next = new Map(this.squares)
-        next.set(Board.squareKey(file, rank), piece)
+        next.set(Board.squareKey(sq), piece)
         return new Board(next)
     }
     //
     dump() {
-        for (let r = 1; r <= 9; r++) {
-            for (let f = 1; f <= 9; f++) {
-                const piece = this.get(f, r)
+        for (let rank = 1; rank <= 9; rank++) {
+            for (let file = 1; file <= 9; file++) {
+                const piece = this.get(new Square(file, rank))
                 if (!piece) continue
-                console.log(`${f},${r}: ${piece?.type} (${piece?.owner})`)
+                console.log(`${file},${rank}: ${piece?.type} (${piece?.owner})`)
             }
         }
     }
@@ -86,8 +86,8 @@ export class Board {
         squares.set(`8,${b}`, new Piece("knight", player))
         squares.set(`9,${b}`, new Piece("lance", player))
     }
-    static squareKey(file: number, rank: number): string {
-        return `${file},${rank}`
+    static squareKey(sq: Square): string {
+        return `${sq.file},${sq.rank}`
     }
     ////////////////////////////
     // serialize

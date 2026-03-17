@@ -28,7 +28,7 @@ function resolveBoardMoveIntent(
     from: Square,
     to: Square
 ): IntentResult | null {
-    const piece = position.board.get(from.file, from.rank)
+    const piece = position.board.get(from)
     if (!piece) return null
     const move = new Move(from, to, piece.type, piece.promoted)    
     if (!isValidMove(position, move)) return null

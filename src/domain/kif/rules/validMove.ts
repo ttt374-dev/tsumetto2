@@ -1,21 +1,21 @@
-import type { Move, Piece, Player, Position, Square } from "../entity"
+import { Square, type Move, type Piece, type Player, type Position } from "../entity"
 
 export function isValidMove(position: Position, move: Move): boolean {
     if (!move.from) return isValidDrop(position, move)
 
-    const piece = position.board.get(move.from.file, move.from.rank)
+    const piece = position.board.get(move.to)
     if (!piece) return false
     if (piece.owner !== position.sideToMove) return false
         
 
     // 行き先に自分の駒
-    const target = position.board.get(move.to.file, move.to.rank)
+    const target = position.board.get(move.to)
     if (target && target.owner === piece.owner) return false
 
     return isValidPieceMovement(position, piece, move.from, move.to)
 }
 export function isValidDrop(position: Position, move: Move): boolean {
-    if (position.board.get(move.to.file, move.to.rank)) return false
+    if (position.board.get(move.to)) return false
     
     return true
 }
@@ -94,7 +94,7 @@ function isPathClear(position: Position, from: Square, to: Square): boolean {
 
     while (x !== to.file || y !== to.rank) {
 
-        if (position.board.get(x, y))
+        if (position.board.get(new Square(x, y)))
             return false
 
         x += stepX

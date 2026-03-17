@@ -2,7 +2,7 @@ import { Box } from "@mui/material"
 import styles from "./BoardView.module.css";
 import { useCurrentPosition, useGameStore } from "../../../hooks/useGameStore";
 import { useBoardInputStore } from "../../../hooks/useBoardInputStore";
-import { Board, Piece } from "@/domain/kif/entity";
+import { Board, Piece, Square } from "@/domain/kif/entity";
 import { resolveIntent } from "../../../../../domain/game/intentResolver";
 
 const fileLabels = ["９", "８", "７", "６", "５", "４", "３", "２", "１"];
@@ -57,14 +57,14 @@ export default function BoardView() {
             {/* 盤面 + 左側の段表示 */}
             {ranks.flatMap(rank => {
                 const cells = files.map(file => {
-                    const piece = board.get(file, rank)
+                    const piece = board.get(new Square(file, rank))
                     const selected =
                         selection.type === "board" &&
                         selection.square.file === file &&
                         selection.square.rank === rank
                     return (
                         <SquareView
-                            key={Board.squareKey(file, rank)}
+                            key={Board.squareKey(new Square(file, rank))}
                             piece={piece}
                             selected={selected}
                             onClick={() => handleSquareClick(file, rank)}

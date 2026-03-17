@@ -1,5 +1,5 @@
 import type { Result } from "@/shared/result";
-import { Board, KanjiToPieceItem, Piece, type PieceType } from "../../entity";
+import { Board, KanjiToPieceItem, Piece, Square, type PieceType } from "../../entity";
 import type { ParseInitialBoardError } from "./ParseError";
 
 type InitialBoardOutcome =
@@ -74,7 +74,7 @@ export function createBoardStateFromKif(boardLines: string[]): Result<Board, Par
       const { type, promoted } = pieceItem
       
       const piece = new Piece(type as PieceType, isWhite ? 'white' : 'black', promoted)
-      board = board.set(file, rank, piece)
+      board = board.set(new Square(file, rank), piece)
       //console.log("parse board", file, rank, piece.type, piece.promoted, piece.owner)
 
     }

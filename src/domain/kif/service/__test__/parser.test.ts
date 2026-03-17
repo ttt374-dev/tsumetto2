@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { Board, Position, Hand, Hands, Move } from "../../entity";
+import { Board, Position, Hand, Hands, Move, Square } from "../../entity";
 import { parseKif } from "../parser/parseKif";
 import { parseMoveLine, parseMoves } from "../parser/parseMove";
 import { buildUntilPly } from "../buildUntilPly";
@@ -71,8 +71,9 @@ describe("parse moves", () => {
 
         expect(res.value.move.pieceType).toEqual("knight")
         state = res.value.move.apply(state)
-        expect(state.board.get(5, 5)?.promoted).toBeTruthy
-        expect(state.board.get(5, 5)?.type).toEqual("knight")
+        const sq = new Square(5, 5)
+        expect(state.board.get(sq)?.promoted).toBeTruthy
+        expect(state.board.get(sq)?.type).toEqual("knight")
 
     })
     it("右", () => {
@@ -160,7 +161,7 @@ describe("parse board", () => {
         expect(r.ok).toBeTruthy
         if (r.ok) {
             const board = r.value.initialPosition.board
-            expect(board.get(1, 3)?.type).toEqual('pawn')
+            expect(board.get(new Square(1, 3))?.type).toEqual('pawn')
         }
     })
     it("持ち駒", () => {
@@ -199,7 +200,7 @@ describe("実録parse", () => {
             //initial.board.dump()
             //const history = { initial: Position.create(), moves: moves }
             const state = buildUntilPly(Position.create(), moves, 11)
-            expect(state.board.get(4, 8)?.type).toEqual("king")
+            expect(state.board.get(new Square(4, 8))?.type).toEqual("king")
         }
     })
 
