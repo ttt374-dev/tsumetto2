@@ -34,30 +34,32 @@ function HandPieceView({ pieceType, selected, count, owner, onClick }: {
 /////////////////////////////
 export default function HandView({ hand, owner }: { hand: Hand, owner: Player }) {
     const clickHandPiece = useBoardInputStore(s => s.clickHandPiece)
-    const selection = useBoardInputStore(s=>s.selection)   
+    const inputState = useBoardInputStore(s=>s.state)   
     
     const handleHandpieceClick = (pieceType: PieceType) => {
         clickHandPiece(pieceType, "black")
     }
-    const keys: PieceType[] = ["rook", "bishop", "gold", "silver", "knight", "lance", "pawn"]
+    const isSelected = (pieceType: PieceType, owner: Player) => {
+        return inputState.type === "selected" &&
+            inputState.selection.type === "hand" &&
+            inputState.selection.pieceType === pieceType &&
+                    owner === "black"
+
+    }
+    const pieceTypes: PieceType[] = ["rook", "bishop", "gold", "silver", "knight", "lance", "pawn"]
     
     return (
         <Box className={owner === "black" ? styles.handpieceBlack : ""}>
             {formatPlayer(owner)}
             { hand.isEmpty() && "なし"}
             {
-            keys.map(key => {
-                const count = hand.count(key)
-                if (count === 0) return null
-                const selected = 
-                    selection.type === "hand" &&
-                    selection.pieceType === key &&
-                    owner === "black"
-                    
+            pieceTypes.map(pieceType => {
+                const count = hand.count(pieceType)
+                if (count === 0) return null                    
                 return (
                     <HandPieceView 
-                        pieceType={key} selected={selected} count={count} owner={owner}
-                        onClick={() => handleHandpieceClick(key)}/>)
+                        pieceType={pieceType} selected={isSelected(pieceType, owner)} count={count} owner={owner}
+                        onClick={() => handleHandpieceClick(pieceType)}/>)
                 })
             }
         </Box>

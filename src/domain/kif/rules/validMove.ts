@@ -68,9 +68,13 @@ function isValidPieceMovement(position: Position, piece: Piece, from: Square, to
 
         case "king":
             //return kingMove(dx, dy)
+            return true
 
         case "horse":
-        case "rook":
+            return horseMove(position, from, to)
+
+        case "dragon":
+            return dragonMove(position, from, to)
 
         default:
             return false

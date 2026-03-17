@@ -31,7 +31,7 @@ function resolveBoardMoveIntent(
     const piece = position.board.get(from)
     if (!piece) return null
     const move = new Move(from, to, piece.type, piece.promoted)    
-    if (!isValidMove(position, move)) return null
+    //if (!isValidMove(position, move)) return null
 
     // 手番チェック
     //if (piece.owner !== position.sideToMove) return null

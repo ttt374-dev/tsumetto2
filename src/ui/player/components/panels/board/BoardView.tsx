@@ -27,9 +27,10 @@ function SquareView({ piece, selected, onClick }: {
 
 export default function BoardView() {
     const { board } = useCurrentPosition()
-    const selection = useBoardInputStore(s => s.selection)
+    //const selection = useBoardInputStore(s => s.selection)
+    const inputState = useBoardInputStore(s=>s.state)
     const ranks = [...Array(9)].map((_, i) => i + 1)   //   1 → 9
-    const files = [...Array(9)].map((_, i) => 9 - i)   // 9 → 1（将棋表記） ???
+    const files = [...Array(9)].map((_, i) => 9 - i)   // 9 → 1（将棋表記o9i） ???
 
     const position = useCurrentPosition()
 
@@ -45,6 +46,12 @@ export default function BoardView() {
         //move && tryMove(move)
         //tryMove(intent)
     }
+    const isSelected = (sq: Square): boolean => {
+        return inputState.type === "selected" &&
+            inputState.selection.type === "board" &&
+            inputState.selection.square.file === sq.file &&
+            inputState.selection.square.rank === sq.rank
+    }
 
     return (
         <Box className={styles.board}>
@@ -57,16 +64,13 @@ export default function BoardView() {
             {/* 盤面 + 左側の段表示 */}
             {ranks.flatMap(rank => {
                 const cells = files.map(file => {
-                    const piece = board.get(new Square(file, rank))
-                    const selected =
-                        selection.type === "board" &&
-                        selection.square.file === file &&
-                        selection.square.rank === rank
+                    const sq = new Square(file, rank)
+                    const piece = board.get(sq)                    
                     return (
                         <SquareView
                             key={Board.squareKey(new Square(file, rank))}
                             piece={piece}
-                            selected={selected}
+                            selected={isSelected(sq)}
                             onClick={() => handleSquareClick(file, rank)}
                         />
                     )
