@@ -1,15 +1,18 @@
 import { create } from "zustand"
-import { type Square, type PieceType, type Player, Move, Board } from "@/domain/kif/entity"
+import { type Square, type PieceType, type Player, Move, Board, Piece } from "@/domain/kif/entity"
 import type { Intent } from "@/domain/game/intentResolver";
+import { canPromote } from "@/domain/kif/rules";
+import type { PendingPromotion } from "./useGameStore";
+import { Satellite } from "@mui/icons-material";
 
 type InputState = 
     | { type: "idle"}
     | { type: "selected", selection: Selection}
-    | { type: "pendingPromotion", intent: Intent}
+    | { type: "pendingPromotion", pendingPromotion: PendingPromotion}
 
 export type Selection =
     | { type: "none" }
-    | { type: "board"; square: Square }
+    | { type: "board"; square: Square, piece: Piece }
     | { type: "hand"; pieceType: PieceType; owner: Player }
 
 type BoardInputStore = {
@@ -18,6 +21,7 @@ type BoardInputStore = {
 
     clickSquare: (sq: Square, board: Board) => Intent | null
     clickHandPiece: (piece: PieceType, owner: Player) => void
+    choosePromotion: (promote: boolean) => Intent
     clear: () => void
 }
 
@@ -29,20 +33,32 @@ export const useBoardInputStore = create<BoardInputStore>((set, get) => ({
         const state = get().state
         //const sel = get().selection
         const piece = board.get(sq)
+        //if (!piece) return null
+        console.log("piece", piece)
 
         switch(state.type){
             case "idle":
                 if (!piece) return null
                 if (piece.owner !== "black") return null
                 set({state: {type: "selected", selection: {
-                    type: "board", square: sq
+                    type: "board", square: sq, piece,
                 }}})
                 return null
             case "selected":
                 switch(state.selection.type){
                     case "board": // 盤面→盤面
                         set({state: { type: "idle"}})
-                        return { type: "move", from: state.selection.square, to: sq}
+                        console.log("can promote", canPromote(state.selection.square, sq, state.selection.piece))
+                        if (canPromote(state.selection.square, sq, state.selection.piece)){
+                            set({state: {
+                                type: "pendingPromotion",
+                                pendingPromotion: { from: state.selection.square, to: sq, pieceType: state.selection.piece.type}
+                            }})
+                            console.log("pendingPromotion")
+                            return null
+                        }
+                        console.log("board to board", state, sq)
+                        return { type: "move", from: state.selection.square, to: sq, promote: false}
                     case "hand":  // 持ち駒→盤面
                         set({state: { type: "idle"}})
                         return { type: "drop", pieceType: state.selection.pieceType, to: sq}
@@ -53,40 +69,6 @@ export const useBoardInputStore = create<BoardInputStore>((set, get) => ({
             default:
                 return null
         }
-        /*
-        // ===== 盤 → 盤 =====
-        if (sel.type === "board") {
-            const intent: Intent = { type: "move", from: sel.square, to: sq}
-            set({ selection: { type: "none" } })
-
-            console.log("board intent", intent)
-            return intent
-        }
-
-        // ===== 持駒 → 盤 =====
-        if (sel.type === "hand") {
-            const intent: Intent = { type: "drop", pieceType: sel.pieceType, to: sq}
-            set({ selection: { type: "none" } })
-            return intent
-        }
-
-        // ===== 新しい選択 =====
-        // ===== 空マスなら選択不可 =====
-        if (!piece) {
-            set({ selection: { type: "none" } })
-            return null
-        }
-        // ===== 相手の駒なら選択不可 =====
-        const currentPlayer = "black" // 手番 : TODO
-        if (piece.owner !== currentPlayer) {
-            set({ selection: { type: "none" } })
-            return null
-        }
-        set({
-            selection: { type: "board", square: sq }
-        })
-        return null
-        */
     },
 
     clickHandPiece: (pieceType, owner) => {
@@ -96,26 +78,22 @@ export const useBoardInputStore = create<BoardInputStore>((set, get) => ({
             set({state: { type: "idle"}})
             return null
         }
-        set({state: { type: "selected", selection: { type: "hand", pieceType: pieceType, owner: "black"}}})
+        set({state: { type: "selected", selection: { type: "hand", pieceType: pieceType, owner: "black"}}})        
 
-        /*
-        // ===== 持駒 → 自持駒：キャンセル =====
-        if (sel.type === "hand"){
-            set({ selection: { type: "none"}})
-            return null
+    },
+    choosePromotion: (promote: boolean) => {
+        const state = get().state
+        if (state.type !== "pendingPromotion") throw new Error()
+        set({state: { type: "idle" }})
+        return {
+            type: "move",
+            from: state.pendingPromotion.from,
+            to: state.pendingPromotion.to,
+            promote
         }
-        set({
-            selection: {
-                type: "hand",
-                pieceType: pieceType,
-                owner
-            }
-        })*/
-
     },
     clear: () => {
         set({state: { type: "idle"}})
-        //set({ selection: { type: "none" } })
     }
 
 }))

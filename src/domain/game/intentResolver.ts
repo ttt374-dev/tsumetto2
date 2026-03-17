@@ -5,7 +5,7 @@ import { canPromote } from "../kif/rules/promotion";
 
 //////////
 export type Intent =    // ユーザのアクション
-    | { type: "move"; from: Square; to: Square }
+    | { type: "move"; from: Square; to: Square, promote: boolean }
     | { type: "drop"; pieceType: PieceType; to: Square }
     | { type: "choosePromotion"; promote: boolean}
 
@@ -44,9 +44,10 @@ function resolveBoardMoveIntent(
     //if (!canMove(piece, from, to, position.board)) return null
 
     //let promote = piece.promoted       
+    /*
     if (canPromote(from, to, piece)){
         return { type: "promotionPending", pendingPromotion: { from, to, pieceType: piece.type}}
-    }
+    }*/
     //const promote = true // TODO
     
     

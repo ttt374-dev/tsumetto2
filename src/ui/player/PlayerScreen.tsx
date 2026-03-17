@@ -19,6 +19,7 @@ import TimerControlPanel from "./components/panels/TImerControlPanel";
 import ProblemLearningInfoPanel from "./components/panels/ProblemLearningInfoPanel";
 import { PromotionDialog } from "./dialogs/PromotionDialog";
 import type { Intent } from "../../domain/game/intentResolver";
+import { useBoardInputStore } from "./hooks/useBoardInputStore";
 
 function usePlayerViewModel(problem: Problem, onResolved?: (res: SolvedResult) => void) {
     const timer = useTimerStore()
@@ -55,7 +56,11 @@ export default function PlayerScreen({ problem, title, onResolved, onUndoLastAns
     const toast = useToast()    
     usePlayerViewModel(problem, onResolved)
     
-    const { mistakes, pendingPromotion, applyIntent } = useGameStore()
+    const { mistakes, applyIntent } = useGameStore()
+    const inputState = useBoardInputStore(s=>s.state)
+    const choosePromotion = useBoardInputStore(s=>s.choosePromotion)
+    const pendingPromotion = inputState.type === "pendingPromotion" &&
+        inputState.pendingPromotion
 
     useEffect(() => {
         if (mistakes > 0) toast({ message: `incorrect: ${mistakes}` })
@@ -66,7 +71,9 @@ export default function PlayerScreen({ problem, title, onResolved, onUndoLastAns
         navigate(routes.detail(problem.id))
     }
     const handleConfirm = (promote: boolean) => {
-        const intent: Intent = { type: "choosePromotion", promote }
+        //const intent: Intent = { type: "choosePromotion", promote }
+        const intent = choosePromotion(promote)
+        console.log("choose promotion intent", intent)
         applyIntent(intent)
     }
     
