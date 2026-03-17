@@ -1,4 +1,4 @@
-import { Square, type Move, type Piece, type Player, type Position } from "../entity"
+import { Square, type Move, type Piece, type PieceType, type Player, type Position } from "../entity"
 
 export function isValidMove(position: Position, move: Move): boolean {
     if (!move.from) return isValidDrop(position, move)
@@ -19,12 +19,32 @@ export function isValidDrop(position: Position, move: Move): boolean {
     
     return true
 }
+type ValidPieceType = PieceType | "horse" | "dragon"
+
 function isValidPieceMovement(position: Position, piece: Piece, from: Square, to: Square): boolean {
     const dx = to.file - from.file
     const dy = to.rank - from.rank
 
-    switch (piece.type) {
+    let validType: ValidPieceType = piece.type
 
+    if (piece.promoted){
+        switch (piece.type){
+            case "pawn":
+            case "lance":
+            case "knight":
+            case "silver":
+                validType = "gold"
+                break
+            case "bishop":
+                validType = "horse"
+                break
+            case "rook":
+                validType = "dragon"
+                break
+        }
+    }
+
+    switch (validType) {
         case "pawn":
             return pawnMove(dx, dy, piece.owner)
 
@@ -48,6 +68,9 @@ function isValidPieceMovement(position: Position, piece: Piece, from: Square, to
 
         case "king":
             //return kingMove(dx, dy)
+
+        case "horse":
+        case "rook":
 
         default:
             return false
@@ -83,6 +106,21 @@ function rookMove(state: Position, from: Square, to: Square) {
         return false
 
     return isPathClear(state, from, to)
+}
+function horseMove(state: Position, from: Square, to: Square){
+    if (bishopMove(state, from, to)) return true
+
+    const dx = to.file - from.file
+    const dy = to.rank - from.rank
+    return (Math.abs(dx) === 1 && dy === 0) ||
+        (dx === 0 && Math.abs(dy) === 1)     
+}
+function dragonMove(state: Position, from: Square, to: Square){
+    if (rookMove(state, from, to)) return true
+
+    const dx = to.file - from.file
+    const dy = to.rank - from.rank
+    return (Math.abs(dx) === 1 && Math.abs(dy) === 1)
 }
 function isPathClear(position: Position, from: Square, to: Square): boolean {
 
