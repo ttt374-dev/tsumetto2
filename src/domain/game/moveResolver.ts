@@ -8,6 +8,7 @@ export type MoveResult =
   | { type: "playerAndOpponent" }
 
 export function resolveMove(moves: Move[], ply: number, move: Move): MoveResult {
+    console.log("resolve move", moves[ply], move)
     if (!isSameMove(moves[ply], move)) {
         return { type: "incorrect" }
     }

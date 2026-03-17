@@ -84,6 +84,7 @@ export const useBoardInputStore = create<BoardInputStore>((set, get) => ({
     choosePromotion: (promote: boolean) => {
         const state = get().state
         if (state.type !== "pendingPromotion") throw new Error()
+        
         set({state: { type: "idle" }})
         return {
             type: "move",

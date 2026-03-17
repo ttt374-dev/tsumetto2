@@ -6,6 +6,6 @@ export function isSameMove(a: Move, b: Move): boolean {
         a.from?.rank === b.from?.rank &&
         a.to.file === b.to.file &&
         a.to.rank === b.to.rank &&
-        a.promote === b.promote &&
         a.pieceType === b.pieceType
+
 }

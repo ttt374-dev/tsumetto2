@@ -93,19 +93,6 @@ export const useGameStore = create<GameStore>((set, get) => ({
         //if (!intent) return
         const { initialPosition, moves, ply, tryMove, pendingPromotion} = get()
         switch (intent.type) {
-            case "choosePromotion":
-                if (!pendingPromotion) return
-                
-                const finalMove = new Move(
-                    pendingPromotion.from,
-                    pendingPromotion.to,
-                    pendingPromotion.pieceType,
-                    intent.promote
-                )
-                tryMove(finalMove)
-
-                set({ pendingPromotion: null })
-                break;
             case "drop":
             case "move":
                 const position = buildUntilPly(initialPosition, moves, ply)
@@ -113,10 +100,6 @@ export const useGameStore = create<GameStore>((set, get) => ({
                 //console.log("resovleintent", result)
                 if (!result) return
                 switch(result.type){
-                    case "promotionPending":
-                        console.log("pendngpromotion", result)
-                        set({ pendingPromotion: result.pendingPromotion })
-                        break;
                     case "move":
                         //if (!isValidMove(result.move)) return
                         tryMove(result.move)
@@ -127,6 +110,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     },
     tryMove: (move: Move) => {
         const { moves, ply, advancePly} = get()
+        console.log("trymove", move)
         const result = resolveMove(moves, ply, move)
         switch (result.type) {
             case "incorrect":

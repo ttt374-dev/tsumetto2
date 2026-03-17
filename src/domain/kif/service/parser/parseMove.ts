@@ -148,7 +148,7 @@ function parsePieceType(text: string): ParsePieceTypeResult {
     
     return { ok: true, value: {
         pieceType: type,
-        promote: promoteIntent || promoted
+        promote: promoteIntent  // || promoted
     }}
 }
 function parseFrom(text: string): ParseSquareResult {

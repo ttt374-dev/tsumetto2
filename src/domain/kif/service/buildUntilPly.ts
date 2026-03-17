@@ -2,7 +2,7 @@ import type { KifHistory, Move, Position } from "../entity";
 
 
 export function buildUntilPly(initialPosition: Position, moves: Move[], ply: number): Position {
-    console.log("build ply", ply, history)
+    //console.log("build ply", ply, history)
     return moves
         .slice(0, ply)
         .reduce((state, move) => move.apply(state), initialPosition)

@@ -85,6 +85,14 @@ describe("parse moves", () => {
         expect(res.value.move.pieceType).toEqual("gold")
 
     })
+    it("龍", () => {
+        const text = "  1 １二龍(29)"
+        const res = parseMoveLine(text)
+        
+        if (!res.ok || res.value.kind === "skip") throw new Error()
+        expect(res.value.move.promote).toBeFalsy
+        
+    })
 })
 
 describe("parse hand", () => {
@@ -196,7 +204,7 @@ describe("実録parse", () => {
         if (r.ok) {
             const moves = r.value.moves
             expect(moves.length).toEqual(11)
-            const initial = Position.create()
+            //const initial = Position.create()
             //initial.board.dump()
             //const history = { initial: Position.create(), moves: moves }
             const state = buildUntilPly(Position.create(), moves, 11)
