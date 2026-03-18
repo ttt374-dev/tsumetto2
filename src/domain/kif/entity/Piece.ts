@@ -48,9 +48,10 @@ export class Square {
         }
         return new Square(file, rank)
     }
+    /*
     equals(sq: Square): boolean {
         return this.file === sq.file && this.rank === sq.rank
-    }
+    }*/
 /*
     get key(): string {
         //return `${this.file},${this.rank}`

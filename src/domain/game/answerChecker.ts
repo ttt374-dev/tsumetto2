@@ -1,5 +1,4 @@
 import type { Move } from "../kif/entity"
-import { isSameMove } from "../kif/rules"
 
 export type MoveResult =
   | { type: "incorrect" }

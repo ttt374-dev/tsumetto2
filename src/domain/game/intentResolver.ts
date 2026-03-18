@@ -2,6 +2,7 @@ import { Move, Piece, type PieceType, type Position, type Square } from "@/domai
 import type { PendingPromotion } from "@/ui/player/hooks/useGameStore";
 import { isValidMove } from "../kif/rules/validMove";
 import { canPromote } from "../kif/rules/promotion";
+import { generateMovesFrom } from "../kif/rules/moveGenerator";
 
 //////////
 export type Intent =    // ユーザのアクション
@@ -42,6 +43,12 @@ function resolveBoardMoveIntent(
     //if (target && target.owner === piece.owner) return null
 
     // 駒の移動ルール
+    const validMoves = generateMovesFrom(position, from)
+    const isValid = validMoves.some(m => m.to.file == to.file && m.to.rank === to.rank && m.promote === promote);
+    if (!isValid) {
+        console.log("invalid move", from, to, piece)
+        return null
+    }
     //if (!canMove(piece, from, to, position.board)) return null
 
     //let promote = piece.promoted       

@@ -27,9 +27,9 @@ type GameStore = {
     advancePly: () => void
     retreatPly: () => void    
     moveTo: (ply: number) => void
-    applyIntent: (intent: Intent) => void
+    applyIntent: (intent: Intent) => boolean
     choosePromotion: (promote: boolean) => void,
-    tryMove: (move: Move) => void    
+    tryMove: (move: Move) => boolean
 
     revealAnswer: () => void
     reset: () => void        
@@ -93,15 +93,16 @@ export const useGameStore = create<GameStore>((set, get) => ({
         const { initialPosition, moves, ply, tryMove} = get()        
         const position = buildUntilPly(initialPosition, moves, ply)        
         const result = resolveIntent(position, intent)
-        if (!result) return
+        if (!result) return false
         switch (result.type) {
             case "move":
-                tryMove(result.move)
+                tryMove(result.move)                
                 break;
             case "promotionPending":
                 set({ pendingPromotion: result.pendingPromotion })
                 break;
         }
+        return true
     },      
     choosePromotion: (promote: boolean) => {        
         const pendingPromotion = get().pendingPromotion        
@@ -124,6 +125,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
                 break
             case "solved":
                 set(s => ({ ply: s.ply + 1, resolved: true }))
+                return true
                 break
             case "playerAndOpponent":
                 advancePly()
@@ -137,6 +139,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
                 }, 500)
                 break
         }
+        return false
 
     },
     revealAnswer: () => { set({revealed: true})},

@@ -31,16 +31,16 @@ export const useBoardInputStore = create<BoardInputStore>((set, get) => ({
                 set({ selection: {type: "board", square: sq}})
                 return null            
                 
-            case "board": // 盤面→盤面
-                set({ selection: { type: "none" } })
-                if (sq.equals(selection.square)) return null // 同じマスならキャンセル
-                if (piece?.owner === userplayer) return null
+            case "board": // 盤面→盤面                
+                if (sq.file === selection.square.file && sq.rank === selection.square.rank) {  // 同じマスならキャンセル
+                    set({ selection: { type: "none" } })    
+                    return null 
+                }
+                //if (piece?.owner === userplayer) return null
                 return { type: "move", from: selection.square, to: sq, promote: false }
             case "hand":  // 持ち駒→盤面
                 set({ selection: { type: "none" } })
-                return { type: "drop", pieceType: selection.pieceType, to: sq }
-            case "none":
-                return null                
+                return { type: "drop", pieceType: selection.pieceType, to: sq }                       
         }
     },
 

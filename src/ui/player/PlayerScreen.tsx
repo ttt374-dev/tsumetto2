@@ -18,6 +18,7 @@ import BoardPanel from "@/ui/player/components/panels/board/BoardPanel"
 import TimerControlPanel from "./components/panels/TImerControlPanel";
 import ProblemLearningInfoPanel from "./components/panels/ProblemLearningInfoPanel";
 import { PromotionDialog } from "./dialogs/PromotionDialog";
+import { useBoardInputStore } from "./hooks/useBoardInputStore";
 
 
 function usePlayerViewModel(problem: Problem, onResolved?: (res: SolvedResult) => void) {
@@ -56,6 +57,7 @@ export default function PlayerScreen({ problem, title, onResolved, onUndoLastAns
     usePlayerViewModel(problem, onResolved)
     
     const { mistakes, applyIntent } = useGameStore()
+    const clearSelection = useBoardInputStore(s=>s.clear)
     //const selection = useBoardInputStore(s=>s.selection)
     const choosePromotion = useGameStore(s=>s.choosePromotion)
     const pendingPromotion = useGameStore(s=>s.pendingPromotion)
@@ -73,6 +75,7 @@ export default function PlayerScreen({ problem, title, onResolved, onUndoLastAns
     const handleConfirm = (promote: boolean) => {
         //const intent: Intent = { type: "choosePromotion", promote }
         choosePromotion(promote)
+        clearSelection()
         //console.log("choose promotion intent", intent)
         //applyIntent(intent)
     }

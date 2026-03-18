@@ -36,12 +36,14 @@ export default function BoardView() {
 
     const applyIntent = useGameStore(s=>s.applyIntent)
     const clickSquare = useBoardInputStore(s => s.clickSquare)
+    const clear = useBoardInputStore(s=>s.clear)
 
     const handleSquareClick = (file: number, rank: number) => {
         const intent = clickSquare(new Square(file, rank), board)
         if (!intent) return
         //const result = resolveIntent(position, intent)
-        applyIntent(intent)
+        const res = applyIntent(intent)
+        if (res) clear()
         //if (move == "promotionRequired") 
         //move && tryMove(move)
         //tryMove(intent)
