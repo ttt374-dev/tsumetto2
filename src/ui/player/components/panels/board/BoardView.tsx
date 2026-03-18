@@ -28,7 +28,7 @@ function SquareView({ piece, selected, onClick }: {
 export default function BoardView() {
     const { board } = useCurrentPosition()
     //const selection = useBoardInputStore(s => s.selection)
-    const inputState = useBoardInputStore(s=>s.state)
+    const selection = useBoardInputStore(s=>s.selection)
     const ranks = [...Array(9)].map((_, i) => i + 1)   //   1 → 9
     const files = [...Array(9)].map((_, i) => 9 - i)   // 9 → 1（将棋表記o9i） ???
 
@@ -47,10 +47,9 @@ export default function BoardView() {
         //tryMove(intent)
     }
     const isSelected = (sq: Square): boolean => {
-        return inputState.type === "selected" &&
-            inputState.selection.type === "board" &&
-            inputState.selection.square.file === sq.file &&
-            inputState.selection.square.rank === sq.rank
+        return selection.type === "board" &&
+            selection.square.file === sq.file &&
+            selection.square.rank === sq.rank
     }
 
     return (

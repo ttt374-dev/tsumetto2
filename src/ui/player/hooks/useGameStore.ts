@@ -4,7 +4,7 @@ import { create } from "zustand"
 
 import { Move, Position, Square, type PieceType } from "@/domain/kif/entity"
 import { buildUntilPly } from "@/domain/kif/service/buildUntilPly"
-import { resolveIntent, type Intent } from "../../../domain/game/intentResolver"
+import { resolveIntent, type Intent, type IntentResult } from "@/domain/game/intentResolver"
 import { resolveMove } from "@/domain/game/moveResolver"
 
 export type PendingPromotion = {
@@ -28,6 +28,7 @@ type GameStore = {
     retreatPly: () => void    
     moveTo: (ply: number) => void
     applyIntent: (intent: Intent) => void
+    choosePromotion: (promote: boolean) => void,
     tryMove: (move: Move) => void    
 
     revealAnswer: () => void
@@ -89,23 +90,27 @@ export const useGameStore = create<GameStore>((set, get) => ({
         if (ply > 0) moveTo(ply - 1)
     },
     applyIntent(intent: Intent){
-        console.log("apply intent", intent)
-        //if (!intent) return
-        const { initialPosition, moves, ply, tryMove, pendingPromotion} = get()
-        switch (intent.type) {
-            case "drop":
+        const { initialPosition, moves, ply, tryMove} = get()        
+        const position = buildUntilPly(initialPosition, moves, ply)        
+        const result = resolveIntent(position, intent)
+        if (!result) return
+        switch (result.type) {
             case "move":
-                const position = buildUntilPly(initialPosition, moves, ply)
-                const result = resolveIntent(position, intent)
-                //console.log("resovleintent", result)
-                if (!result) return
-                switch(result.type){
-                    case "move":
-                        //if (!isValidMove(result.move)) return
-                        tryMove(result.move)
-                    break;
-                }           
-        }       
+                tryMove(result.move)
+                break;
+            case "promotionPending":
+                set({ pendingPromotion: result.pendingPromotion })
+                break;
+        }
+    },      
+    choosePromotion: (promote: boolean) => {        
+        const pendingPromotion = get().pendingPromotion        
+        if (!pendingPromotion) return
+        const move = new Move(pendingPromotion.from, 
+            pendingPromotion.to,
+            pendingPromotion.pieceType,
+            promote)
+        get().tryMove(move)
 
     },
     tryMove: (move: Move) => {
@@ -132,8 +137,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
                 break
         }
 
-    },    
-    
+    },
     revealAnswer: () => { set({revealed: true})},
  
 }))

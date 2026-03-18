@@ -10,7 +10,7 @@ import { PlayerRightPanel } from "./components/panels/PlayerRightPanel";
 import { createSolvedResult, type SolvedResult } from "@/domain/learning/entity/Learning";
 import { routes } from "../App/useAppNavigation";
 import { useToast } from "../App/providers/ToastProvider";
-import { useGameStore } from "./hooks/useGameStore";
+import { selectGameState, useCurrentPosition, useGameStore } from "./hooks/useGameStore";
 import { useTimerStore } from "./hooks/useTimerStore";
 import TitlePanel from "./components/panels/TitlePanel";
 import MovesPanel from "./components/panels/MovesPanel";
@@ -20,6 +20,7 @@ import ProblemLearningInfoPanel from "./components/panels/ProblemLearningInfoPan
 import { PromotionDialog } from "./dialogs/PromotionDialog";
 import type { Intent } from "../../domain/game/intentResolver";
 import { useBoardInputStore } from "./hooks/useBoardInputStore";
+import { Square } from "@/domain/kif/entity";
 
 function usePlayerViewModel(problem: Problem, onResolved?: (res: SolvedResult) => void) {
     const timer = useTimerStore()
@@ -57,10 +58,11 @@ export default function PlayerScreen({ problem, title, onResolved, onUndoLastAns
     usePlayerViewModel(problem, onResolved)
     
     const { mistakes, applyIntent } = useGameStore()
-    const inputState = useBoardInputStore(s=>s.state)
-    const choosePromotion = useBoardInputStore(s=>s.choosePromotion)
-    const pendingPromotion = inputState.type === "pendingPromotion" &&
-        inputState.pendingPromotion
+    //const selection = useBoardInputStore(s=>s.selection)
+    const choosePromotion = useGameStore(s=>s.choosePromotion)
+    const pendingPromotion = useGameStore(s=>s.pendingPromotion)
+    //const position = useCurrentPosition()    
+    
 
     useEffect(() => {
         if (mistakes > 0) toast({ message: `incorrect: ${mistakes}` })
@@ -72,9 +74,9 @@ export default function PlayerScreen({ problem, title, onResolved, onUndoLastAns
     }
     const handleConfirm = (promote: boolean) => {
         //const intent: Intent = { type: "choosePromotion", promote }
-        const intent = choosePromotion(promote)
-        console.log("choose promotion intent", intent)
-        applyIntent(intent)
+        choosePromotion(promote)
+        //console.log("choose promotion intent", intent)
+        //applyIntent(intent)
     }
     
     return (
@@ -101,7 +103,7 @@ export default function PlayerScreen({ problem, title, onResolved, onUndoLastAns
 
             { pendingPromotion && 
             <PromotionDialog 
-                open={pendingPromotion !== null}
+                open={pendingPromotion !== undefined}
                 pieceType={pendingPromotion.pieceType}
                 onConfirm={handleConfirm}
                 onClose={() => {}}

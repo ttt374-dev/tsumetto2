@@ -7,11 +7,11 @@ import { canPromote } from "../kif/rules/promotion";
 export type Intent =    // ユーザのアクション
     | { type: "move"; from: Square; to: Square, promote: boolean }
     | { type: "drop"; pieceType: PieceType; to: Square }
-//    | { type: "choosePromotion"; promote: boolean}
+    //| { type: "choosePromotion"; promote: boolean}
 
 export type IntentResult =   // ゲームエンジンの状態
     | { type: "move", move: Move}
-//    | { type: "promotionPending", pendingPromotion: PendingPromotion}
+    | { type: "promotionPending", pendingPromotion: PendingPromotion}
 
 export function resolveIntent(position: Position, intent: Intent): IntentResult | null {
     if (intent.type === "move") {
@@ -33,7 +33,6 @@ function resolveBoardMoveIntent(
     if (!piece) return null
     const move = new Move(from, to, piece.type, piece.promoted)
     console.log("resolve move intent", promote, move) 
-    //if (!isValidMove(position, move)) return null
 
     // 手番チェック
     //if (piece.owner !== position.sideToMove) return null
@@ -46,10 +45,10 @@ function resolveBoardMoveIntent(
     //if (!canMove(piece, from, to, position.board)) return null
 
     //let promote = piece.promoted       
-    /*
+    
     if (canPromote(from, to, piece)){
         return { type: "promotionPending", pendingPromotion: { from, to, pieceType: piece.type}}
-    }*/
+    }
     //const promote = true // TODO
     
     
@@ -78,6 +77,6 @@ function resolveDropIntent(
     //}
 
     const move = new Move(null, to, pieceType)    
-    if (!isValidMove(position, move)) return null
+    //if (!isValidMove(position, move)) return null
     return { type: "move", move: move}
 }

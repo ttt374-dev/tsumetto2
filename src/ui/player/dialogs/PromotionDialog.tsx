@@ -22,7 +22,7 @@ export function PromotionDialog({ open, pieceType, onClose, onConfirm}:{
         king: ["", "", ],
 
     }
-    console.log("promotion", pieceType, promotionKanji)
+    //console.log("promotion", pieceType, promotionKanji)
     return (
         <Dialog open={open} onClose={onClose}>
             <DialogTitle>成りますか</DialogTitle>

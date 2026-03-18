@@ -34,16 +34,15 @@ function HandPieceView({ pieceType, selected, count, owner, onClick }: {
 /////////////////////////////
 export default function HandView({ hand, owner }: { hand: Hand, owner: Player }) {
     const clickHandPiece = useBoardInputStore(s => s.clickHandPiece)
-    const inputState = useBoardInputStore(s=>s.state)   
+    const selection = useBoardInputStore(s=>s.selection)   
     
     const handleHandpieceClick = (pieceType: PieceType) => {
         clickHandPiece(pieceType, "black")
     }
     const isSelected = (pieceType: PieceType, owner: Player) => {
-        return inputState.type === "selected" &&
-            inputState.selection.type === "hand" &&
-            inputState.selection.pieceType === pieceType &&
-                    owner === "black"
+        return selection.type === "hand" &&
+            selection.pieceType === pieceType &&
+            owner === "black"
 
     }
     const pieceTypes: PieceType[] = ["rook", "bishop", "gold", "silver", "knight", "lance", "pawn"]
