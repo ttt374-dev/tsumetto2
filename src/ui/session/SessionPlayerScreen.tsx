@@ -9,13 +9,14 @@ import type { Problem } from "@/domain/problem/entity/Problem"
 ////////////////////////////////////////////////
 export default function SessionPlayerScreen() {
     const vm = useSessionPlayerViewModel()   
-
+    
     if (vm.status !== "playing") return <>{vm.status}</>
+    const onUndoLastAnswer = vm.hasLastAnswer() ? vm.undoLastAnswer : undefined
     return (<SessionPlayerContent 
         problem={vm.problem}
         title={vm.title}
         onSubmitAnswer={vm.submitAnswer}
-        onUndoLastAnswer={vm.undoLastAnswer}
+        onUndoLastAnswer={onUndoLastAnswer}
         onNextProblem={vm.nextProblem}        
     />)
 }
@@ -24,7 +25,7 @@ function SessionPlayerContent(props: {
     problem: Problem
     title: string
     onSubmitAnswer: (res: SolvedResult) => void
-    onUndoLastAnswer: () => void
+    onUndoLastAnswer?: () => void
     onNextProblem: () => void
 }) {
     const [solvedResult, setSolvedResult] = useState<SolvedResult | undefined>(undefined)
@@ -37,7 +38,7 @@ function SessionPlayerContent(props: {
         props.onSubmitAnswer(res)
         setSolvedResult(res)
     }
-    
+   
     return (
         <>
             <PlayerScreen problem={props.problem}

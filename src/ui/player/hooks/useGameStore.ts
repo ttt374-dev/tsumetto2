@@ -4,8 +4,7 @@ import { create } from "zustand"
 
 import { Move, Position, Square, type PieceType } from "@/domain/kif/entity"
 import { buildUntilPly } from "@/domain/kif/service/buildUntilPly"
-import { resolveIntent, type Intent, type IntentResult } from "@/domain/game/intentResolver"
-import { checkAnswer } from "@/domain/game/answerChecker"
+import { resolveIntent, type Intent } from "@/domain/game/intentResolver"
 
 export type PendingPromotion = {
     from: Square
@@ -115,31 +114,29 @@ export const useGameStore = create<GameStore>((set, get) => ({
         get().tryMove(move)
 
     },
-    tryMove: (move: Move) => {
+    tryMove: (move: Move) => {  // 正解なら true、間違いなら falseを返す
         const { moves, ply, advancePly} = get()
         console.log("trymove", move)
-        const result = checkAnswer(moves, ply, move)
-        switch (result.type) {
-            case "incorrect":
-                set(s => ({ mistakes: s.mistakes + 1 }))
-                break
-            case "solved":
-                set(s => ({ ply: s.ply + 1, resolved: true }))
-                return true
-                break
-            case "playerAndOpponent":
-                advancePly()
-                //const nextPly = get().ply + 1
-
-                setTimeout(() => {
-                    const state = get()
-                    //if (state.ply === nextPly) {
-                        state.advancePly()
-                    //}
-                }, 500)
-                break
+        if (!move.equals(moves[ply])){   // 不正解
+            set(s => ({ mistakes: s.mistakes + 1 }))
+            return false
         }
-        return false
+        // 正解
+        if (ply + 1 >= moves.length) { // 詰めあがり
+            set(s => ({ ply: s.ply + 1, resolved: true }))
+        } else {   // 自手と応手を進める
+            advancePly()
+            //const nextPly = get().ply + 1
+            setTimeout(() => {
+                const state = get()
+                //if (state.ply === nextPly) {
+                state.advancePly()
+                //}
+            }, 500)
+
+        }
+        return true
+
 
     },
     revealAnswer: () => { set({revealed: true})},

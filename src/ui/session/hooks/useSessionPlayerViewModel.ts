@@ -19,6 +19,7 @@ type SessionPlayerVM =
       nextProblem: () => void
       submitAnswer: (res: SolvedResult) => void
       undoLastAnswer: () => void
+      hasLastAnswer: () => boolean
     }
 
 /////////////////////
@@ -69,6 +70,9 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
         //console.log("undo last", last)
         prev()
     }
+    const hasLastAnswer = (): boolean => {
+        return sessionId && getLastEvent(sessionId) ? true : false
+    }
 
     if (count === 0) {
         return { status: "idle" }
@@ -93,7 +97,7 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
     return { 
         status: "playing", 
         problem, title, index, count, nextProblem: next,
-        submitAnswer, undoLastAnswer,
+        submitAnswer, undoLastAnswer, hasLastAnswer,
      }
 }
 

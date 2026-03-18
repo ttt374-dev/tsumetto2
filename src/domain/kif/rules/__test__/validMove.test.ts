@@ -8,8 +8,6 @@ import { generateValidMovesFrom } from "../validMoveGenerator";
 
 describe("valid-mode", ()=>{
     it("pawn", ()=>{
-        //const position = Position.create()
-
         const sq = new Square(5, 7)
         const piece = new Piece("pawn", "black")
         const board = Board.empty().set(sq, piece)
@@ -21,8 +19,6 @@ describe("valid-mode", ()=>{
         
     })
     it("と金", ()=>{
-        //const position = Position.create()
-
         const sq = new Square(5, 7)
         const piece = new Piece("pawn", "black", true)
         const board = Board.empty().set(sq, piece)
@@ -35,8 +31,6 @@ describe("valid-mode", ()=>{
     })
 
     it("桂馬", ()=>{
-        //const position = Position.create()
-
         const sq = new Square(5, 7)
         const piece = new Piece("knight", "black")
         const board = Board.empty().set(sq, piece)
@@ -48,8 +42,17 @@ describe("valid-mode", ()=>{
     })
     
     it("成桂", ()=>{
-        //const position = Position.create()
+        const sq = new Square(5, 7)
+        const piece = new Piece("knight", "black", true)
+        const board = Board.empty().set(sq, piece)
+        const position = new Position(board, Hands.empty(), "black")        
 
+        const moves = generateValidMovesFrom(position, sq)
+        const expectedMove = new Move(new Square(5, 7), new Square(4, 7), "knight", false)
+        expect(moves).toContainEqual(expectedMove)        
+    })
+
+    it("飛車", ()=>{
         const sq = new Square(5, 7)
         const piece = new Piece("knight", "black", true)
         const board = Board.empty().set(sq, piece)

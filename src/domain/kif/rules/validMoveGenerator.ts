@@ -1,13 +1,11 @@
 import { Move, Piece, Position, Square, type PieceType } from "../entity";
 import { canPromote } from "./promotion";
 
-
 export function generateValidMovesFrom(
     position: Position,
     from: Square
 ): Move[] {
     const piece = position.board.get(from);
-    //console.log("generate moves", piece)
 
     if (!piece) return [];
     if (piece.owner !== position.sideToMove) return [];
@@ -15,10 +13,7 @@ export function generateValidMovesFrom(
     return generatePieceMoves(piece, from, position);
 }
 
-type ValidType = PieceType | "horse" | "dragon"
-
-function generatePieceMoves(piece: Piece, from: Square, position: Position): Move[] {
-    
+function generatePieceMoves(piece: Piece, from: Square, position: Position): Move[] {    
     switch (piece.type) {
         case "pawn":
             return generatePawnMoves(piece, from, position);
@@ -77,11 +72,8 @@ function generateSlidingMoves(
             const target = position.board.get(to);
 
             if (target && target.owner === piece.owner) break;
-
             moves.push(...createMovesWithPromotion(piece, from, to, position));
-
             if (target) break; // 相手駒で止まる
-
             x += dir.x;
             y += dir.y;
         }
