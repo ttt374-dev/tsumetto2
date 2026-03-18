@@ -1,3 +1,3 @@
 export * from './promotion'
-export * from './validMove'
-export * from './moveGenerator'
+export * from './___validMove'
+export * from './validMoveGenerator'

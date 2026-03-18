@@ -1,12 +1,13 @@
-import { Move, Piece, Position, Square } from "../entity";
+import { Move, Piece, Position, Square, type PieceType } from "../entity";
 import { canPromote } from "./promotion";
 
 
-export function generateMovesFrom(
+export function generateValidMovesFrom(
     position: Position,
     from: Square
 ): Move[] {
     const piece = position.board.get(from);
+    //console.log("generate moves", piece)
 
     if (!piece) return [];
     if (piece.owner !== position.sideToMove) return [];
@@ -14,7 +15,10 @@ export function generateMovesFrom(
     return generatePieceMoves(piece, from, position);
 }
 
+type ValidType = PieceType | "horse" | "dragon"
+
 function generatePieceMoves(piece: Piece, from: Square, position: Position): Move[] {
+    
     switch (piece.type) {
         case "pawn":
             return generatePawnMoves(piece, from, position);
@@ -31,7 +35,7 @@ function generatePieceMoves(piece: Piece, from: Square, position: Position): Mov
         case "rook":
             return generateRookMoves(piece, from, position);
         case "king":
-            return generateKingMoves(piece, from, position);
+            return generateKingMoves(piece, from, position);        
     }
 }
 function generateStepMoves(
@@ -86,12 +90,14 @@ function generateSlidingMoves(
     return moves;
 }
 function generatePawnMoves(piece: Piece, from: Square, position: Position): Move[] {
+    if (piece.promoted) return generateGoldMoves(piece, from, position)
     const dir = piece.owner === "black" ? -1 : 1;
     return generateStepMoves(piece, from, [{ x: 0, y: dir }], position);
+    
 }
 function generateKnightMoves(piece: Piece, from: Square, position: Position): Move[] {
+    if (piece.promoted) return generateGoldMoves(piece, from, position)
     const dir = piece.owner === "black" ? -1 : 1;
-
     return generateStepMoves(
         piece, from,
         [
@@ -102,6 +108,7 @@ function generateKnightMoves(piece: Piece, from: Square, position: Position): Mo
     );
 }
 function generateSilverMoves(piece: Piece, from: Square, position: Position): Move[] {
+    if (piece.promoted) return generateGoldMoves(piece, from, position)
     const dir = piece.owner === "black" ? -1 : 1;
 
     return generateStepMoves(
@@ -133,6 +140,7 @@ function generateGoldMoves(piece: Piece, from: Square, position: Position): Move
     );
 }
 function generateLanceMoves(piece: Piece, from: Square, position: Position): Move[] {
+    if (piece.promoted) return generateGoldMoves(piece, from, position)
     const dir = piece.owner === "black" ? -1 : 1;
 
     return generateSlidingMoves(
@@ -199,6 +207,7 @@ function generateRookMoves(piece: Piece, from: Square, position: Position): Move
 
     return moves;
 }
+
 function generateKingMoves(piece: Piece, from: Square, position: Position): Move[] {
     return generateStepMoves(
         piece, from,
