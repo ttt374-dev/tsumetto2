@@ -62,7 +62,7 @@ function resolveDropIntent(
 ): IntentResult | null {
     
     // 空きマスチェック
-    //if (position.board.get(to.file, to.rank)) return null
+    if (position.board.get(to)) return null
 
     // 持ち駒チェック
     //if (!hasHand(position.hands, position.sideToMove, piece)) {

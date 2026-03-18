@@ -17,7 +17,15 @@ export class Move {
         return this.from === null
     }
 
-    
+    equals(move: Move): boolean {
+        const a = this
+        const b = move
+
+        return a.from?.rank === b.from?.rank &&
+            a.to.file === b.to.file &&
+            a.to.rank === b.to.rank &&
+            a.pieceType === b.pieceType
+    }
     apply(state: Position): Position {
         return state.applyMove(this)
     }

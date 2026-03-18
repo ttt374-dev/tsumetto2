@@ -7,9 +7,10 @@ export type MoveResult =
   | { type: "solved" }
   | { type: "playerAndOpponent" }
 
-export function resolveMove(moves: Move[], ply: number, move: Move): MoveResult {
+export function checkAnswer(moves: Move[], ply: number, move: Move): MoveResult {
     console.log("resolve move", moves[ply], move)
-    if (!isSameMove(moves[ply], move)) {
+    //if (!isSameMove(moves[ply], move)) {
+    if (!move.equals(moves[ply])){
         return { type: "incorrect" }
     }
     const nextPly = ply + 1

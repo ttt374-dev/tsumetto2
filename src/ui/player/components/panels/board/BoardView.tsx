@@ -38,7 +38,7 @@ export default function BoardView() {
     const clickSquare = useBoardInputStore(s => s.clickSquare)
 
     const handleSquareClick = (file: number, rank: number) => {
-        const intent = clickSquare({ file, rank }, board)
+        const intent = clickSquare(new Square(file, rank), board)
         if (!intent) return
         //const result = resolveIntent(position, intent)
         applyIntent(intent)

@@ -18,9 +18,7 @@ import BoardPanel from "@/ui/player/components/panels/board/BoardPanel"
 import TimerControlPanel from "./components/panels/TImerControlPanel";
 import ProblemLearningInfoPanel from "./components/panels/ProblemLearningInfoPanel";
 import { PromotionDialog } from "./dialogs/PromotionDialog";
-import type { Intent } from "../../domain/game/intentResolver";
-import { useBoardInputStore } from "./hooks/useBoardInputStore";
-import { Square } from "@/domain/kif/entity";
+
 
 function usePlayerViewModel(problem: Problem, onResolved?: (res: SolvedResult) => void) {
     const timer = useTimerStore()

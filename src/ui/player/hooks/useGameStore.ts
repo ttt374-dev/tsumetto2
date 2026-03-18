@@ -5,7 +5,7 @@ import { create } from "zustand"
 import { Move, Position, Square, type PieceType } from "@/domain/kif/entity"
 import { buildUntilPly } from "@/domain/kif/service/buildUntilPly"
 import { resolveIntent, type Intent, type IntentResult } from "@/domain/game/intentResolver"
-import { resolveMove } from "@/domain/game/moveResolver"
+import { checkAnswer } from "@/domain/game/answerChecker"
 
 export type PendingPromotion = {
     from: Square
@@ -110,13 +110,14 @@ export const useGameStore = create<GameStore>((set, get) => ({
             pendingPromotion.to,
             pendingPromotion.pieceType,
             promote)
+        set({pendingPromotion: null})
         get().tryMove(move)
 
     },
     tryMove: (move: Move) => {
         const { moves, ply, advancePly} = get()
         console.log("trymove", move)
-        const result = resolveMove(moves, ply, move)
+        const result = checkAnswer(moves, ply, move)
         switch (result.type) {
             case "incorrect":
                 set(s => ({ mistakes: s.mistakes + 1 }))
