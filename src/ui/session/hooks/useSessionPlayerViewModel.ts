@@ -1,5 +1,5 @@
-import { useMissionStore } from "@/ui/store/useMissionStore"
-import { useSessionStore } from "@/ui/store/useSessionStore"
+import { useMissionStore } from "@/ui/mission/hooks/useMissionStore"
+import { useSessionStore } from "@/ui/session/hooks/useSessionStore"
 import { useProblemStore } from "@/ui/store/useProblemStore"
 import type { Problem } from "@/domain/problem/entity/Problem"
 import type { SolvedResult } from '@/domain/learning/entity/Learning';
@@ -25,15 +25,11 @@ type SessionPlayerVM =
 /////////////////////
 export function useSessionPlayerViewModel(): SessionPlayerVM {
     const problemIds = useSessionStore(s => s.problemIds)
-    //const learningEvents = useLearningEventStore(s=>s.eventLog)
-
     const index = useSessionStore(s => s.currentIndex)
     const missionId = useSessionStore(s => s.missionId)
-
     const sessionId = useSessionStore(s=>s.sessionId)
     const next = useSessionStore(s => s.next)
     const prev = useSessionStore(s => s.prev)
-    //const moveTo = useSessionStore(s => s.moveToId)
 
     const currentProblemId = problemIds[index]
     const count = problemIds.length

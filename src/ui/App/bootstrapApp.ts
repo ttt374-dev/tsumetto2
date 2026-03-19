@@ -2,7 +2,7 @@
 import { useEffect, useMemo } from 'react';
 import { useProblemStore } from '@/ui/store/useProblemStore';
 import { MissionRepository, LocalStorageMissionPersistence } from '@/domain/mission/repository/MissionRepository';
-import { useMissionStore } from '@/ui/store/useMissionStore';
+import { useMissionStore } from '@/ui/mission/hooks/useMissionStore';
 import { LocalStorageLearningEventPersistence, LearningEventRepository } from '@/domain/learning/repository/LearningEventRepository';
 import { useLearningEventStore } from '@/ui/store/useLearningEventStore';
 import { RepositoryContext, type RepositoryContextValue } from './providers/RepositoryProvider';

@@ -5,9 +5,9 @@ import { applyQuery } from "@/domain/problem/service/query/applyQuery";
 import { routes } from "@/ui/App/useAppNavigation";
 import { arrayMove } from "@dnd-kit/sortable";
 
-import { useMissionStore } from "@/ui/store/useMissionStore";
+import { useMissionStore } from "@/ui/mission/hooks/useMissionStore";
 import { useProblemStore } from "@/ui/store/useProblemStore";
-import { useSessionStore } from "@/ui/store/useSessionStore";
+import { useSessionStore } from "@/ui/session/hooks/useSessionStore";
 import { useLearningRecordStore } from "@/ui/store/useLearningRecordStore";
 import { applyFilter } from "@/domain/problem/service/query/applyFilter";
 import type { Mission } from "@/domain/mission/entity/Mission";

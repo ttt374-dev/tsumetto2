@@ -1,6 +1,6 @@
 import { Navigate, useParams } from "react-router-dom"
 import { routes } from "../App/useAppNavigation"
-import { useSessionStore } from "../store/useSessionStore"
+import { useSessionStore } from "../session/hooks/useSessionStore"
 import { v4 } from "uuid"
 
 export default function SinglePlayerScreen() {    

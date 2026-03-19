@@ -9,7 +9,7 @@ import { createTheme, ThemeProvider } from "@mui/material";
 import SessionLayout from '../session/SessionLayout.tsx';
 import { LibraryScreen } from '../library/LibraryScreen';
 import MissionScreen from '../mission/MissionScreen.tsx';
-import MissionEditScreen from '../mission/MissionEditScreen.tsx';
+import MissionEditScreen from '../mission/edit/MissionEditScreen.tsx';
 import SessionPlayerScreen from '../session/SessionPlayerScreen';
 import { RepositoryContext, type RepositoryContextValue } from './providers/RepositoryProvider';
 import { ToastProvider } from './providers/ToastProvider';

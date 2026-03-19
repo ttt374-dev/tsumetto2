@@ -1,6 +1,6 @@
 import type { SolvedResult } from "@/domain/learning/entity/Learning"
 import { Button, Stack, type ButtonProps } from "@mui/material"
-import { useSessionStore } from "@/ui/store/useSessionStore"
+import { useSessionStore } from "@/ui/session/hooks/useSessionStore"
 
 type AnswerAction = {
     label: string

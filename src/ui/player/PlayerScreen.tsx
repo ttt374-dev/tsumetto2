@@ -4,13 +4,13 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from 'react';
 
 import { PlayerFooterPanel } from "./components/panels/PlayerFooterPanel"
-import { Problem, type ProblemId } from "@/domain/problem/entity/Problem"
+import { Problem } from "@/domain/problem/entity/Problem"
 import { AppShell } from "../common/components/layout/AppShell";
 import { PlayerRightPanel } from "./components/panels/PlayerRightPanel";
 import { createSolvedResult, type SolvedResult } from "@/domain/learning/entity/Learning";
 import { routes } from "../App/useAppNavigation";
 import { useToast } from "../App/providers/ToastProvider";
-import { selectGameState, useCurrentPosition, useGameStore } from "./hooks/useGameStore";
+import { useGameStore } from "./hooks/useGameStore";
 import { useTimerStore } from "./hooks/useTimerStore";
 import TitlePanel from "./components/panels/TitlePanel";
 import MovesPanel from "./components/panels/MovesPanel";
@@ -19,8 +19,6 @@ import TimerControlPanel from "./components/panels/TImerControlPanel";
 import ProblemLearningInfoPanel from "./components/panels/ProblemLearningInfoPanel";
 import { PromotionDialog } from "./dialogs/PromotionDialog";
 import { useBoardInputStore } from "./hooks/useBoardInputStore";
-import { get } from "lodash";
-
 
 //////////////////////////////////////////////////////////////
 export default function PlayerScreen({ problem, title, onSolved, onUndoLastAnswer }: {
@@ -58,8 +56,12 @@ export default function PlayerScreen({ problem, title, onSolved, onUndoLastAnswe
 
             case "AUTO_ADVANCE_REQUESTED":
                 setTimeout(() => {
-                    if (ply === event.expectedPly) advancePly()
+                    const state = useGameStore.getState()
+                    if (state.ply === event.expectedPly) {
+                        state.advancePly()
+                    }
                 }, event.delayMs)
+                break
         }    
 
         clearEvent()
@@ -99,7 +101,7 @@ export default function PlayerScreen({ problem, title, onSolved, onUndoLastAnswe
 
             { pendingPromotion && 
             <PromotionDialog 
-                open={pendingPromotion !== undefined}
+                open={pendingPromotion !== null}
                 pieceType={pendingPromotion.pieceType}
                 onConfirm={handlePromotionConfirm}
                 onClose={() => {}}

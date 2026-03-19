@@ -13,7 +13,7 @@ import { useMultipleProblemsEditoDialog } from "@/ui/common/components/dialogs/M
 import type { QueryState } from "@/domain/problem/service/query/ProblemsQuery"
 import { useProblemsQuery } from "@/ui/common/hooks/useProblemsQuery"
 import { useProblemsQueryStore } from "@/ui/store/useProblemsQueryStore"
-import { useSessionStore } from "@/ui/store/useSessionStore"
+import { useSessionStore } from "@/ui/session/hooks/useSessionStore"
 
 
 export type LibraryActionMode = "selection" | "view" 

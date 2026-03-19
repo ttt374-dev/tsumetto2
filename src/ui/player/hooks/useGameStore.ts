@@ -96,7 +96,6 @@ export const useGameStore = create<GameStore>((set, get) => ({
         set({ply: clampPly(ply, max)})
     },
     advancePly: () => {        
-        //console.log("adv ply")
         const { moveTo, ply} = get()
         moveTo(ply+1)                
     },

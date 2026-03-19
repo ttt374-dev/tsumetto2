@@ -1,7 +1,6 @@
 import { create } from "zustand"
 import type { Mission } from "@/domain/mission/entity/Mission"
 import { createDefaultMission } from "@/domain/mission/entity/createDefaultMission"
-import type { QueryState } from "@/domain/problem/service/query/ProblemsQuery"
 
 type MissionEditorState = {
     draft: Mission | null

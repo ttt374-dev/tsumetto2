@@ -1,4 +1,4 @@
-import { useMissionStore } from "@/ui/store/useMissionStore"
+import { useMissionStore } from "@/ui/mission/hooks/useMissionStore"
 import { useProblemStore } from "@/ui/store/useProblemStore"
 import { useLearningRecordStore } from "@/ui/store/useLearningRecordStore"
 import { applyQuery } from "@/domain/problem/service/query/applyQuery"
@@ -9,8 +9,9 @@ import { useNavigate, useParams } from "react-router-dom"
 import { ProblemStats } from "@/domain/problem/valueObject/ProblemStats"
 import { useProblemsQuery } from "@/ui/common/hooks/useProblemsQuery"
 import { DefaultQueryState, type QueryState } from "@/domain/problem/service/query/ProblemsQuery"
-import { useMissionEditorStore } from "@/ui/store/useDeckEditorStore"
+import { useMissionEditorStore } from "@/ui/mission/edit/useMissionEditorStore"
 
+const ID_NEW = "new"
 
 function useMissionEditorInitializer(id: string | undefined) {
     const { startNew, startEdit, reset } = useMissionEditorStore()
@@ -19,7 +20,7 @@ function useMissionEditorInitializer(id: string | undefined) {
     useEffect(() => {
         if (!id) return
 
-        if (id === "new") {
+        if (id === ID_NEW) {
             startNew()
         } else {
             const existing = missions.find(d => d.id === id)
@@ -40,37 +41,30 @@ function useMissionEditorList(queryState: QueryState){
     return { ids, activeProblems, learningRecords}
 }
 
-function useMissionEditorActions(id: string | undefined, queryState: QueryState) {
+function useMissionEditorActions(id: string | undefined, queryState: QueryState) {    
     const draft = useMissionEditorStore(s => s.draft)
     const reset = useMissionEditorStore(s => s.reset)
-    const missionStore = useMissionStore()
-    const navigate = useNavigate()
-    const toast = useToast()
-    //const query = useQuery()
+    //const missionStore = useMissionStore()
+    const { saveMission, deleteMission } = useMissionStore()
+    //const navigate = useNavigate()    
 
     const save = useCallback(async () => {
         if (!draft) return     
-        console.log("save draft", draft)   
-        missionStore.saveMission({
+        saveMission({
             ...draft,
-            //snapshot: createQuerySnapshot(queryState),
             queryState: {...queryState},
         })
 
-        toast({ message: "保存しました" })
-        reset()
-        navigate(routes.back)
-    }, [draft, missionStore, queryState])
+        reset()        
+    }, [draft, queryState])
 
     const remove = useCallback( () => {
-        if (!draft || id === "new") return
-
-        if (!window.confirm("are  you sure to delete")) return
-        missionStore.deleteMission(draft.id)
-        toast({ message: "削除しました" })
+        if (!draft || id === ID_NEW) return
+        deleteMission(draft.id)
+        //toast({ message: "削除しました" })
         reset()
-        navigate(routes.back)
-    }, [draft, id, missionStore])
+
+    }, [draft, id])
 
     return { save, remove }
 }
@@ -129,10 +123,10 @@ export function useMissionEditViewModel() {
         query,
         ids, 
         stats,
-        isNew: id === "new",
+        isNew: id === ID_NEW,
 
         setName,
-        handleSaveAndExit: save,
-        handleDeleteMission: remove,
+        save,
+        remove,
     }
 }

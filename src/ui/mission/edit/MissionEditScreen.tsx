@@ -2,26 +2,28 @@ import { Box, Button, FormControl, FormControlLabel, Grid, IconButton, InputAdor
 import DeleteIcon from '@mui/icons-material/Delete';
 import ClearIcon from '@mui/icons-material/Clear';
 
-import SortControl from "../common/query-control/SortControl";
-import { useMissionEditViewModel } from "./hooks/useMissionEditViewModel";
-import { AppShell } from "../common/components/layout/AppShell";
-import { useListDialog } from "../list/ListDialog";
+import SortControl from "../../common/query-control/SortControl";
+import { useMissionEditViewModel } from "./useMissionEditViewModel";
+import { AppShell } from "../../common/components/layout/AppShell";
+import { useListDialog } from "../../list/ListDialog";
 import { useNavigate } from "react-router-dom";
-import { routes } from "../App/useAppNavigation";
-import { FilterControlPanel } from "../common/query-control/FilterControlPanel";
+import { routes } from "../../App/useAppNavigation";
+import { FilterControlPanel } from "../../common/query-control/FilterControlPanel";
+import { useToast } from "@/ui/App/providers/ToastProvider";
 
-const UNSPECIFIED = "__UNSPECIFIED__";
+//const UNSPECIFIED = "__UNSPECIFIED__";
 //type ProblemTypeUi = ProblemType | typeof UNSPECIFIED
 //type SourceUi = string | typeof UNSPECIFIED
 
 export default function MissionEditScreen() {
+    const toast = useToast()
     const {
         name, allSources, query, stats, ids: problemIds,
-        setName, handleSaveAndExit, handleDeleteMission,
+        setName, save, remove,
     } = useMissionEditViewModel();
 
     const navigate = useNavigate()
-    const ListDialog = useListDialog(problemIds, (id) => navigate(routes.problemView(id)))
+    const listDialog = useListDialog(problemIds, (id) => navigate(routes.problemView(id)))
     const handleNavigateToList = () => {
         //console.log("nav: ids", problemIds)
         navigate(routes.list, { state: { ids: problemIds, title: `デッキ ${name}：問題リスト` } })
@@ -29,7 +31,17 @@ export default function MissionEditScreen() {
     const handleMissionNameClear = () => {
         setName("")
     }
-
+    const handleSaveAndExit = () => {
+        save()
+        toast({ message: "保存しました" })
+        navigate(routes.back)
+    }
+    const handleDeleteMission = () => {        
+        if (!window.confirm("are you sure to delete")) return
+        remove()
+        toast({ message: "削除しました" })
+        navigate(routes.back)
+    }
     return (
         <AppShell
             header={"Mission Edit"}
@@ -93,7 +105,7 @@ export default function MissionEditScreen() {
                 全{stats.problemCount}問、正答率 {(stats.accuracy * 100).toFixed(0)}%
             </Button>
 
-            {ListDialog.dialogElement}
+            {listDialog.dialogElement}
         </AppShell>
     );
 }
