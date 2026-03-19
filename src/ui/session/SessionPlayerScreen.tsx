@@ -43,7 +43,7 @@ function SessionPlayerContent(props: {
         <>
             <PlayerScreen problem={props.problem}
                 title={props.title}
-                onResolved={handleResolved}
+                onSolved={handleResolved}
                 onUndoLastAnswer={props.onUndoLastAnswer}
             />
 

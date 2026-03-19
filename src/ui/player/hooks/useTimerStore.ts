@@ -1,3 +1,4 @@
+import { ResetTv } from "@mui/icons-material";
 import { create } from "zustand";
 
 type TimerStore = {
@@ -7,6 +8,7 @@ type TimerStore = {
     start: () => void
     stop: () => void
     reset: () => void
+    restart: () => void
     toggle: () => void
 }
 
@@ -40,7 +42,10 @@ export const useTimerStore = create<TimerStore>((set, get) => ({
         stop()
         set({ elapsedSec: 0 })
     },
-
+    restart: () => {
+        const { reset, start } = get()
+        reset(); start();
+    },
     toggle: () => {
         const { isRunning, start, stop } = get()
         isRunning ? stop() : start()

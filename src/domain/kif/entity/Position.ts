@@ -56,7 +56,7 @@ export class Position {
         )
     }
     private applyDrop(move: Move): Position {
-        console.log("apply drop", move, this.sideToMove, this.hands.toDTO())
+        //console.log("apply drop", move, this.sideToMove, this.hands.toDTO())
         const piece = new Piece(move.pieceType, this.sideToMove)
         
 

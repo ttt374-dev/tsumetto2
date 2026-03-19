@@ -2,7 +2,7 @@ import { useRef, useState } from "react"
 import { Dialog, DialogTitle, DialogContent, DialogActions,
     Button, Box, Typography, Divider } from "@mui/material"
 
-import { useBackupRestoreUsecase, type BackupData, type BackupResult, type RestoreResult } from "@/application/usecase/backup/BackupRestoreUsecase"
+import { useBackupRestoreUsecase, type BackupData, type BackupResult, type RestoreResult } from "@/application/usecase/problem/backup/BackupRestoreUsecase"
 import { fileBackupWriter } from "@/infrastructure/fileBackupWriter"
 import { useRepositoryContext } from "@/ui/App/providers/RepositoryProvider"
 import { useToast } from "@/ui/App/providers/ToastProvider"

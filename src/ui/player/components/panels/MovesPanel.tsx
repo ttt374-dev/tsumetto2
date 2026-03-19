@@ -5,7 +5,7 @@ import { useGameStore } from "@/ui/player/hooks/useGameStore";
 
 
 export default function MovesPanel({moves}: { moves: Move[]}) {
-    const { ply, moveTo, revealAnswer, revealed } = useGameStore()
+    const { ply, moveTo, revealAnswer, isRevealed: revealed } = useGameStore()
     
     return (
         <Box

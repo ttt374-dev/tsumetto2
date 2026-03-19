@@ -6,6 +6,9 @@ import { Move, Position, Square, type PieceType } from "@/domain/kif/entity"
 import { buildUntilPly } from "@/domain/kif/service/buildUntilPly"
 import { resolveIntent, type Intent } from "@/domain/game/intentResolver"
 
+export type GameEvent =
+  | { type: "SOLVED" }
+
 export type PendingPromotion = {
     from: Square
     to: Square
@@ -19,8 +22,9 @@ type GameStore = {
     pendingPromotion: PendingPromotion | null
 
     mistakes: number
-    revealed: boolean
-    resolved: boolean
+    isRevealed: boolean
+    isSolved: boolean
+    hasFiredOnSolved: boolean
 
     initialize: (pos: Position, moves: Move[]) => void
     advancePly: () => void
@@ -29,9 +33,15 @@ type GameStore = {
     applyIntent: (intent: Intent) => boolean
     choosePromotion: (promote: boolean) => void,
     tryMove: (move: Move) => boolean
+    //fireOnSolved: () => void,
 
     revealAnswer: () => void
-    reset: () => void        
+    reset: () => void     
+    
+    // イベント操作
+      events: GameEvent[]
+    pushEvent: (e: GameEvent) => void
+    clearEvents: () => void
 }
 
 //// selector
@@ -60,8 +70,11 @@ export const useGameStore = create<GameStore>((set, get) => ({
     pendingPromotion: null,
 
     mistakes: 0,
-    revealed: false,
-    resolved: false,
+    isRevealed: false,
+    isSolved: false,
+    hasFiredOnSolved: false,
+
+    events: [],
 
     initialize: (pos, moves) => {
         set({initialPosition: pos, moves})
@@ -69,8 +82,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
     },   
     reset: () => {
         set({
-            ply: 0, mistakes: 0, revealed: false, resolved: false,
-            pendingPromotion: null,
+            ply: 0, mistakes: 0, isRevealed: false, isSolved: false,
+            pendingPromotion: null, hasFiredOnSolved: false,
         })
     }, 
 
@@ -115,7 +128,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
     },
     tryMove: (move: Move) => {  // 正解なら true、間違いなら falseを返す
-        const { moves, ply, advancePly} = get()
+        const { moves, ply, advancePly, hasFiredOnSolved} = get()
         console.log("trymove", move)
         if (!move.equals(moves[ply])){   // 不正解
             set(s => ({ mistakes: s.mistakes + 1 }))
@@ -123,7 +136,15 @@ export const useGameStore = create<GameStore>((set, get) => ({
         }
         // 正解
         if (ply + 1 >= moves.length) { // 詰めあがり
-            set(s => ({ ply: s.ply + 1, resolved: true }))
+            set(s => {
+                const alreadyFired = s.hasFiredOnSolved                
+                return ({ 
+                    ply: s.ply + 1, 
+                    isSolved: true,
+                    hasFiredOnSolved: true,
+                    events: alreadyFired ? s.events : [...s.events, { type: "SOLVED" }] })
+                }
+            )            
         } else {   // 自手と応手を進める
             advancePly()
             //const nextPly = get().ply + 1
@@ -136,9 +157,16 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
         }
         return true
-
-
     },
-    revealAnswer: () => { set({revealed: true})},
- 
+    revealAnswer: () => { set({ isRevealed: true }) },
+    
+
+    pushEvent: (e) => {
+        set(s => ({ events: [...s.events, e] }))
+    },
+
+    clearEvents: () => {
+        set({ events: [] })
+    },
+
 }))

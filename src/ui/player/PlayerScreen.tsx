@@ -21,63 +21,54 @@ import { PromotionDialog } from "./dialogs/PromotionDialog";
 import { useBoardInputStore } from "./hooks/useBoardInputStore";
 
 
-function usePlayerViewModel(problem: Problem, onResolved?: (res: SolvedResult) => void) {
-    const timer = useTimerStore()
-    const { initialize, mistakes, revealed, resolved, reset, pendingPromotion: promotionMove, applyIntent } = useGameStore()
-    const [onResolvedCalled, setOnResolvedCalled] = useState(false)
-
-    useEffect(() => {
-        reset()
-        timer.reset()
-        timer.start()
-        initialize(problem.kifData.initialPosition, problem.kifData.moves)
-        setOnResolvedCalled(false)
-    }, [problem.id, initialize])
-
-    useEffect(() => {
-        if (resolved && !onResolvedCalled) {
-            const solvedResult = createSolvedResult(mistakes, revealed, timer.elapsedSec)
-            onResolved?.(solvedResult)
-            setOnResolvedCalled(true)
-        }
-    }, [resolved, onResolvedCalled])
-    return {
-        mistakes, resolved, revealed, promotionMove, applyIntent
-    }
-}
-
 //////////////////////////////////////////////////////////////
-export default function PlayerScreen({ problem, title, onResolved, onUndoLastAnswer }: {
+export default function PlayerScreen({ problem, title, onSolved, onUndoLastAnswer }: {
     problem: Problem
     title: React.ReactNode
-    onResolved?: (res: SolvedResult) => void
+    onSolved?: (res: SolvedResult) => void
     onUndoLastAnswer?: () => void
 }) {
+    const timer = useTimerStore()
     const toast = useToast()    
-    usePlayerViewModel(problem, onResolved)
+    const navigate = useNavigate()
+
     
-    const { mistakes, applyIntent } = useGameStore()
+    const { pendingPromotion, mistakes, isSolved, isRevealed, hasFiredOnSolved,
+        events, clearEvents,
+        initialize,  choosePromotion, } = useGameStore()
     const clearSelection = useBoardInputStore(s=>s.clear)
-    //const selection = useBoardInputStore(s=>s.selection)
-    const choosePromotion = useGameStore(s=>s.choosePromotion)
-    const pendingPromotion = useGameStore(s=>s.pendingPromotion)
-    //const position = useCurrentPosition()    
     
+
+    useEffect(()=>{
+        timer.restart()
+        initialize(problem.kifData.initialPosition, problem.kifData.moves)
+    }, [problem.id])
+
+
+    useEffect(() => {
+        events.forEach(e => {
+            if (e.type === "SOLVED" && onSolved) {
+                const solvedResult = createSolvedResult(mistakes, isRevealed, timer.elapsedSec)
+                onSolved(solvedResult)
+            }
+        })
+
+        if (events.length > 0) {
+            clearEvents()
+        }
+    }, [events])
+
 
     useEffect(() => {
         if (mistakes > 0) toast({ message: `incorrect: ${mistakes}` })
     }, [mistakes])
-
-    const navigate = useNavigate()
+    
     const handleNavigateToDetail = () => {
         navigate(routes.detail(problem.id))
     }
-    const handleConfirm = (promote: boolean) => {
-        //const intent: Intent = { type: "choosePromotion", promote }
+    const handlePromotionConfirm = (promote: boolean) => {
         choosePromotion(promote)
         clearSelection()
-        //console.log("choose promotion intent", intent)
-        //applyIntent(intent)
     }
     
     return (
@@ -106,7 +97,7 @@ export default function PlayerScreen({ problem, title, onResolved, onUndoLastAns
             <PromotionDialog 
                 open={pendingPromotion !== undefined}
                 pieceType={pendingPromotion.pieceType}
-                onConfirm={handleConfirm}
+                onConfirm={handlePromotionConfirm}
                 onClose={() => {}}
                 >
             </PromotionDialog>}
