@@ -34,8 +34,8 @@ export default function PlayerScreen({ problem, title, onSolved, onUndoLastAnswe
     const navigate = useNavigate()
 
     
-    const { pendingPromotion, events, ply,
-        clearEvents, advancePly,
+    const { pendingPromotion, event, ply,
+        clearEvent, advancePly,
         initialize,  choosePromotion, } = useGameStore()
     const clearSelection = useBoardInputStore(s=>s.clear)
     
@@ -46,25 +46,24 @@ export default function PlayerScreen({ problem, title, onSolved, onUndoLastAnswe
     }, [problem.id])
 
     useEffect(() => {
-        events.forEach(e => {
-            switch (e.type) {
-                case "SOLVED":
-                    const solvedResult = createSolvedResult(e.mistakes, e.isRevealed, timer.elapsedSec)
-                    onSolved?.(solvedResult)
-                    break
-                case "MISTAKE":
-                    toast({ message: `incorrect: ${e.mistakes}` })
-                    break
-                
-                case "AUTO_ADVANCE_REQUESTED":
-                    setTimeout(() => {
-                        if (ply === e.expectedPly)  advancePly()
-                    }, e.delayMs)
-            }
-        })
+        if (!event) return        
+        switch (event.type) {
+            case "SOLVED":
+                const solvedResult = createSolvedResult(event.mistakes, event.isRevealed, timer.elapsedSec)
+                onSolved?.(solvedResult)
+                break
+            case "MISTAKE":
+                toast({ message: `incorrect: ${event.mistakes}` })
+                break
 
-        if (events.length > 0) clearEvents()
-    }, [events])
+            case "AUTO_ADVANCE_REQUESTED":
+                setTimeout(() => {
+                    if (ply === event.expectedPly) advancePly()
+                }, event.delayMs)
+        }    
+
+        clearEvent()
+    }, [event])
 
     
     

@@ -28,7 +28,7 @@ type GameStore = {
     isRevealed: boolean
     isSolved: boolean
     hasFiredOnSolved: boolean
-    events: GameEvent[]
+    event: GameEvent | null
 
     initialize: (pos: Position, moves: Move[]) => void
     advancePly: () => void
@@ -37,13 +37,12 @@ type GameStore = {
     applyIntent: (intent: Intent) => boolean
     choosePromotion: (promote: boolean) => void,
     tryMove: (move: Move) => boolean
-    //fireOnSolved: () => void,
 
     revealAnswer: () => void
     reset: () => void     
     
     // イベント操作
-    clearEvents: () => void
+    clearEvent: () => void
 }
 
 //// selector
@@ -63,7 +62,6 @@ export function useCurrentPosition() {
     [initialPosition, moves, ply]
   )
 }
-const push = (s: GameStore, e: GameEvent) => [...s.events, e]
 
 ////////////////////////////////////
 export const useGameStore = create<GameStore>((set, get) => ({
@@ -77,7 +75,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
     isSolved: false,
     hasFiredOnSolved: false,
 
-    events: [],
+    //events: [],
+    event: null,
 
     initialize: (pos, moves) => {
         set({initialPosition: pos, moves})
@@ -87,7 +86,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
         set({
             ply: 0, mistakes: 0, isRevealed: false, isSolved: false,
             pendingPromotion: null, hasFiredOnSolved: false,
-            events: []
+            event: null
         })
     }, 
 
@@ -139,7 +138,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
             set(s => ({
                 mistakes: s.mistakes + 1,
                 // events: [...s.events, { type: "MISTAKE", mistakes: s.mistakes + 1}]
-                events: push(s, { type: "MISTAKE", mistakes: s.mistakes + 1})
+                //events: push(s, { type: "MISTAKE", mistakes: s.mistakes + 1})
+                event: { type: "MISTAKE", mistakes: s.mistakes + 1}
             }))
             return false
         }
@@ -157,13 +157,13 @@ export const useGameStore = create<GameStore>((set, get) => ({
                     isSolved: true,
                     hasFiredOnSolved: true,
                     //events: alreadyFired ? s.events : [...s.events, event] })
-                    events: alreadyFired 
-                        ? s.events 
-                        : push(s, {
+                    event: alreadyFired 
+                        ? null 
+                        : {
                             type: "SOLVED",
                             mistakes: s.mistakes,
                             isRevealed: s.isRevealed,
-                        })
+                        }
                 }
             )})
         } else {   // 自手と応手を進める
@@ -171,13 +171,14 @@ export const useGameStore = create<GameStore>((set, get) => ({
                 const nextPly = clampPly(s.ply + 1, s.moves.length)
 
                 return {
-                ply: nextPly,
-                events: push(s, {
-                    type: "AUTO_ADVANCE_REQUESTED",
-                    delayMs: 500,
-                    expectedPly: nextPly
-                })
-            }})        
+                    ply: nextPly,
+                    event: {
+                        type: "AUTO_ADVANCE_REQUESTED",
+                        delayMs: 500,
+                        expectedPly: nextPly
+                    }
+                }
+            })        
 
         }
         return true
@@ -186,13 +187,13 @@ export const useGameStore = create<GameStore>((set, get) => ({
     revealAnswer: () => {
         set(s => ({
             isRevealed: true,
-            events: push(s, { type: "REVEALED" })
+            event: { type: "REVEALED" }
         }))
     },
     
 
-    clearEvents: () => {
-        set({ events: [] })
+    clearEvent: () => {
+        set({ event: null })
     },
 
 }))
