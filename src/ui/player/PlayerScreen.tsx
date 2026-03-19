@@ -34,7 +34,7 @@ export default function PlayerScreen({ problem, title, onSolved, onUndoLastAnswe
     const navigate = useNavigate()
 
     
-    const { pendingPromotion, mistakes, isRevealed, events, 
+    const { pendingPromotion, events, ply,
         clearEvents, advancePly,
         initialize,  choosePromotion, } = useGameStore()
     const clearSelection = useBoardInputStore(s=>s.clear)
@@ -49,18 +49,16 @@ export default function PlayerScreen({ problem, title, onSolved, onUndoLastAnswe
         events.forEach(e => {
             switch (e.type) {
                 case "SOLVED":
-                    const solvedResult = createSolvedResult(mistakes, isRevealed, timer.elapsedSec)
+                    const solvedResult = createSolvedResult(e.mistakes, e.isRevealed, timer.elapsedSec)
                     onSolved?.(solvedResult)
                     break
                 case "MISTAKE":
                     toast({ message: `incorrect: ${e.mistakes}` })
                     break
-                case "REVEALED":
-                    
-                    break
+                
                 case "AUTO_ADVANCE_REQUESTED":
                     setTimeout(() => {
-                        advancePly()
+                        if (ply === e.expectedPly)  advancePly()
                     }, e.delayMs)
             }
         })

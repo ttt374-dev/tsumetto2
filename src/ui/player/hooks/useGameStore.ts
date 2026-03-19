@@ -7,10 +7,10 @@ import { buildUntilPly } from "@/domain/kif/service/buildUntilPly"
 import { resolveIntent, type Intent } from "@/domain/game/intentResolver"
 
 export type GameEvent =
-  | { type: "SOLVED" }
+  | { type: "SOLVED", mistakes: number, isRevealed: boolean }
   | { type: "MISTAKE", mistakes: number}
   | { type: "REVEALED"}
-  | { type: "AUTO_ADVANCE_REQUESTED"; delayMs: number }
+  | { type: "AUTO_ADVANCE_REQUESTED"; delayMs: number, expectedPly: number }
 
 export type PendingPromotion = {
     from: Square
@@ -43,7 +43,6 @@ type GameStore = {
     reset: () => void     
     
     // イベント操作
-    pushEvent: (e: GameEvent) => void
     clearEvents: () => void
 }
 
@@ -64,6 +63,7 @@ export function useCurrentPosition() {
     [initialPosition, moves, ply]
   )
 }
+const push = (s: GameStore, e: GameEvent) => [...s.events, e]
 
 ////////////////////////////////////
 export const useGameStore = create<GameStore>((set, get) => ({
@@ -87,15 +87,16 @@ export const useGameStore = create<GameStore>((set, get) => ({
         set({
             ply: 0, mistakes: 0, isRevealed: false, isSolved: false,
             pendingPromotion: null, hasFiredOnSolved: false,
+            events: []
         })
     }, 
 
-    moveTo: (ply) => {        
+    moveTo: (ply: number) => {       // 範囲外でもclampして強制的に収める仕様     
         const max = get().moves.length
-        if (ply < 0 || ply > max) return
-        set({ply})
+        //if (ply < 0 || ply > max) return
+        set({ply: clampPly(ply, max)})
     },
-    advancePly: () => {
+    advancePly: () => {        
         //console.log("adv ply")
         const { moveTo, ply} = get()
         moveTo(ply+1)                
@@ -131,13 +132,14 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
     },
     tryMove: (move: Move) => {  // 正解なら true、間違いなら falseを返す
-        const { moves, ply, advancePly} = get()
+        const { moves, ply} = get()
         console.log("trymove", move)
         if (!move.equals(moves[ply])){   // 不正解
             //set(s => ({ mistakes: s.mistakes + 1 }))
             set(s => ({
                 mistakes: s.mistakes + 1,
-                events: [...s.events, { type: "MISTAKE", mistakes: s.mistakes + 1}]
+                // events: [...s.events, { type: "MISTAKE", mistakes: s.mistakes + 1}]
+                events: push(s, { type: "MISTAKE", mistakes: s.mistakes + 1})
             }))
             return false
         }
@@ -145,31 +147,37 @@ export const useGameStore = create<GameStore>((set, get) => ({
         if (ply + 1 >= moves.length) { // 詰めあがり
             set(s => {
                 const alreadyFired = s.hasFiredOnSolved                
+                const event: GameEvent = {
+                    type: "SOLVED",
+                    mistakes: s.mistakes,
+                    isRevealed: s.isRevealed,
+                }
                 return ({ 
                     ply: s.ply + 1, 
                     isSolved: true,
                     hasFiredOnSolved: true,
-                    events: alreadyFired ? s.events : [...s.events, { type: "SOLVED" }] })
+                    //events: alreadyFired ? s.events : [...s.events, event] })
+                    events: alreadyFired 
+                        ? s.events 
+                        : push(s, {
+                            type: "SOLVED",
+                            mistakes: s.mistakes,
+                            isRevealed: s.isRevealed,
+                        })
                 }
-            )            
+            )})
         } else {   // 自手と応手を進める
-            advancePly()
-            //const nextPly = get().ply + 1
+            set(s => { 
+                const nextPly = clampPly(s.ply + 1, s.moves.length)
 
-            // 応手は「依頼だけ」
-            set(s => ({
-                events: [...s.events, {
+                return {
+                ply: nextPly,
+                events: push(s, {
                     type: "AUTO_ADVANCE_REQUESTED",
-                    delayMs: 500
-                }]
-            }))
-            /*
-            setTimeout(() => {
-                const state = get()
-                //if (state.ply === nextPly) {
-                state.advancePly()
-                //}
-            }, 500) */
+                    delayMs: 500,
+                    expectedPly: nextPly
+                })
+            }})        
 
         }
         return true
@@ -178,17 +186,18 @@ export const useGameStore = create<GameStore>((set, get) => ({
     revealAnswer: () => {
         set(s => ({
             isRevealed: true,
-            events: [...s.events, { type: "REVEALED" }]
+            events: push(s, { type: "REVEALED" })
         }))
     },
     
-
-    pushEvent: (e) => {
-        set(s => ({ events: [...s.events, e] }))
-    },
 
     clearEvents: () => {
         set({ events: [] })
     },
 
 }))
+
+//////////////
+function clampPly(ply: number, max: number) {
+  return Math.max(0, Math.min(ply, max))
+}
