@@ -8,6 +8,9 @@ import { resolveIntent, type Intent } from "@/domain/game/intentResolver"
 
 export type GameEvent =
   | { type: "SOLVED" }
+  | { type: "MISTAKE", mistakes: number}
+  | { type: "REVEALED"}
+  | { type: "AUTO_ADVANCE_REQUESTED"; delayMs: number }
 
 export type PendingPromotion = {
     from: Square
@@ -25,6 +28,7 @@ type GameStore = {
     isRevealed: boolean
     isSolved: boolean
     hasFiredOnSolved: boolean
+    events: GameEvent[]
 
     initialize: (pos: Position, moves: Move[]) => void
     advancePly: () => void
@@ -39,7 +43,6 @@ type GameStore = {
     reset: () => void     
     
     // イベント操作
-      events: GameEvent[]
     pushEvent: (e: GameEvent) => void
     clearEvents: () => void
 }
@@ -128,10 +131,14 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
     },
     tryMove: (move: Move) => {  // 正解なら true、間違いなら falseを返す
-        const { moves, ply, advancePly, hasFiredOnSolved} = get()
+        const { moves, ply, advancePly} = get()
         console.log("trymove", move)
         if (!move.equals(moves[ply])){   // 不正解
-            set(s => ({ mistakes: s.mistakes + 1 }))
+            //set(s => ({ mistakes: s.mistakes + 1 }))
+            set(s => ({
+                mistakes: s.mistakes + 1,
+                events: [...s.events, { type: "MISTAKE", mistakes: s.mistakes + 1}]
+            }))
             return false
         }
         // 正解
@@ -148,17 +155,32 @@ export const useGameStore = create<GameStore>((set, get) => ({
         } else {   // 自手と応手を進める
             advancePly()
             //const nextPly = get().ply + 1
+
+            // 応手は「依頼だけ」
+            set(s => ({
+                events: [...s.events, {
+                    type: "AUTO_ADVANCE_REQUESTED",
+                    delayMs: 500
+                }]
+            }))
+            /*
             setTimeout(() => {
                 const state = get()
                 //if (state.ply === nextPly) {
                 state.advancePly()
                 //}
-            }, 500)
+            }, 500) */
 
         }
         return true
     },
-    revealAnswer: () => { set({ isRevealed: true }) },
+    //revealAnswer: () => { set({ isRevealed: true }) },
+    revealAnswer: () => {
+        set(s => ({
+            isRevealed: true,
+            events: [...s.events, { type: "REVEALED" }]
+        }))
+    },
     
 
     pushEvent: (e) => {

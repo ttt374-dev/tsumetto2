@@ -19,6 +19,7 @@ import TimerControlPanel from "./components/panels/TImerControlPanel";
 import ProblemLearningInfoPanel from "./components/panels/ProblemLearningInfoPanel";
 import { PromotionDialog } from "./dialogs/PromotionDialog";
 import { useBoardInputStore } from "./hooks/useBoardInputStore";
+import { get } from "lodash";
 
 
 //////////////////////////////////////////////////////////////
@@ -33,8 +34,8 @@ export default function PlayerScreen({ problem, title, onSolved, onUndoLastAnswe
     const navigate = useNavigate()
 
     
-    const { pendingPromotion, mistakes, isSolved, isRevealed, hasFiredOnSolved,
-        events, clearEvents,
+    const { pendingPromotion, mistakes, isRevealed, events, 
+        clearEvents, advancePly,
         initialize,  choosePromotion, } = useGameStore()
     const clearSelection = useBoardInputStore(s=>s.clear)
     
@@ -44,24 +45,30 @@ export default function PlayerScreen({ problem, title, onSolved, onUndoLastAnswe
         initialize(problem.kifData.initialPosition, problem.kifData.moves)
     }, [problem.id])
 
-
     useEffect(() => {
         events.forEach(e => {
-            if (e.type === "SOLVED" && onSolved) {
-                const solvedResult = createSolvedResult(mistakes, isRevealed, timer.elapsedSec)
-                onSolved(solvedResult)
+            switch (e.type) {
+                case "SOLVED":
+                    const solvedResult = createSolvedResult(mistakes, isRevealed, timer.elapsedSec)
+                    onSolved?.(solvedResult)
+                    break
+                case "MISTAKE":
+                    toast({ message: `incorrect: ${e.mistakes}` })
+                    break
+                case "REVEALED":
+                    
+                    break
+                case "AUTO_ADVANCE_REQUESTED":
+                    setTimeout(() => {
+                        advancePly()
+                    }, e.delayMs)
             }
         })
 
-        if (events.length > 0) {
-            clearEvents()
-        }
+        if (events.length > 0) clearEvents()
     }, [events])
 
-
-    useEffect(() => {
-        if (mistakes > 0) toast({ message: `incorrect: ${mistakes}` })
-    }, [mistakes])
+    
     
     const handleNavigateToDetail = () => {
         navigate(routes.detail(problem.id))
