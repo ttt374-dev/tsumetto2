@@ -1,5 +1,6 @@
 import type { Position } from "./Position"
-import type { PieceType, Player, Square } from "./Piece"
+import type { PieceType } from "./Piece"
+import type { Square } from "@/domain/kif/entity/Square"
 
 export class Move {
     constructor(

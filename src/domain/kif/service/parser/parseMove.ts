@@ -1,7 +1,7 @@
 import type { Result } from "@/shared/result"
 import type { ParseError, ParseErrorWithContext, ParseMoveError } from "./ParseError"
 import { withContext } from "./ParseContext"
-import { KanjiToPieceItem, Move, type PieceType, type Square } from "../../entity"
+import { KanjiToPieceItem, Move, Square, type PieceType } from "../../entity"
 
 type SkipReason = "empty-line" | "comment-out" | "resign"
 
@@ -76,7 +76,7 @@ function parseDropMove(text: string): ParseMoveResult {
 
     if (!resfile.ok) return { ok: false, error: resfile.error}
     if (!resrank.ok) return { ok: false, error: resrank.error}
-    const to = { file: resfile.value, rank: resrank.value }
+    const to = Square.create(resfile.value,  resrank.value)
     return { ok: true, value: { kind: "move", move: new Move(null, to, type, false, text)}}
 }
 
@@ -120,7 +120,7 @@ function parseTo(text: string, prevSquare?: Square): ParseSquareResult {
     if (!resfile.ok) return { ok: false, error: resfile.error}
     if (!resrank.ok) return { ok: false, error: resrank.error}
     return {
-        ok: true, value: {file: resfile.value, rank: resrank.value }
+        ok: true, value: Square.create(resfile.value, resrank.value)
     }
 
 }
@@ -155,10 +155,7 @@ function parseFrom(text: string): ParseSquareResult {
     const m = text.match(/(\d)(\d)/)
     if (!m) return { ok: false, error: { code: "invalid-square", cause: text}}
     const [ _, fileText, rankText ] = m
-    return { ok: true, value: {
-        file: Number(fileText),
-        rank: Number(rankText),
-    }}
+    return { ok: true, value: Square.create(Number(fileText), Number(rankText))}
 }
 function kanjiToFile(k: string): Result<number, ParseMoveError> {
     //return "１２３４５６７８９".indexOf(k) + 1

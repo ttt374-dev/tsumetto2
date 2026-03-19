@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { Piece, Square } from "../../entity/Piece";
+import { Piece, Square } from "../../entity/";
 import { Move } from "../../entity/Move";
 import { Board } from "../../entity/Board";
 import { Position } from "../../entity/Position";

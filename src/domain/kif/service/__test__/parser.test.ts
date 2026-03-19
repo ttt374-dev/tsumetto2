@@ -62,7 +62,7 @@ describe("parse moves", () => {
         //let state = BoardState.create()
         const hands = Hands.empty()
         let state = new Position(Board.create(), hands.add('black', 'knight'))
-        const drop = new Move(null, { file: 2, rank: 9 }, "knight")
+        const drop = new Move(null, Square.create(2, 9), "knight")
         state = drop.apply(state)
         const res = parseMoveLine(text)
         if (!res.ok || res.value.kind === "skip") {
