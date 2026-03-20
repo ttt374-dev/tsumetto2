@@ -1,11 +1,17 @@
+import { Drawer } from "@mui/material";
 import { AppShell } from "../common/components/layout/AppShell";
 import { LibraryView } from "./components/LibraryView";
 import { useLibraryViewModel } from "./hooks/useLibraryViewModel";
+import { FilterControlPanel } from "@/ui/common/query-control/FilterControlPanel";
+import { useState } from "react";
+import { useProblemStore } from "@/ui/store/useProblemStore";
 
 //////////////////////////////////////////////////
 
 export function LibraryScreen() {
     const vm = useLibraryViewModel()   
+    const [isOpen, setIsOpen] = useState(false);
+    const allSources = useProblemStore(s=>s.allSources)
     return (
         <AppShell
             header="Library"
@@ -18,8 +24,26 @@ export function LibraryScreen() {
                 itemActions={vm.itemActions}
                 onItemClick={vm.onItemClick}
                 selection={vm.selection}
+                onFilterControlOpen={()=>setIsOpen(true)}
             />                                    
-            {vm.dialogs.tagEdit.dialogElement}            
+            {vm.dialogs.tagEdit.dialogElement}    
+
+            <Drawer anchor="bottom" open={isOpen} 
+                onClose={() => setIsOpen(false)}
+                slotProps={{
+                    paper: {
+                        sx: {
+                            pb: "calc(env(safe-area-inset-bottom) + 16px)",
+                            borderTopLeftRadius: 24,
+                            borderTopRightRadius: 24,
+                        },
+                    },
+                }}>
+                <div className="bottom-sheet">
+                    <FilterControlPanel 
+                        query={vm.query} allSources={allSources}/>
+                </div>
+            </Drawer>        
         </AppShell>
     )
 }

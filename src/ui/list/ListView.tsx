@@ -21,6 +21,7 @@ export function ListView({ ids, onSelectProblem, selectedProblemId }: {
                     onToggleChecked={alert}
                     onItemClick={()=> onSelectProblem?.(id)}
                     selected={selectedProblemId === id}
+                    onChangeActionMode={alert}
                 />
             ))}
         </List>

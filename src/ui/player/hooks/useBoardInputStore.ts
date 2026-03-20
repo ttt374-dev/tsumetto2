@@ -1,5 +1,6 @@
 import { create } from "zustand"
-import { type Square, type PieceType, type Player, Move, Board, Piece } from "@/domain/kif/entity"
+
+import { type Square, type PieceType, type Player, Board} from "@/domain/kif/entity"
 import type { Intent } from "@/domain/game/intentResolver";
 
 export type Selection =
@@ -33,7 +34,6 @@ export const useBoardInputStore = create<BoardInputStore>((set, get) => ({
                 
             case "board": // 盤面→盤面                
                 if (sq.equals(selection.square)){
-                //if (sq.file === selection.square.file && sq.rank === selection.square.rank) {  // 同じマスならキャンセル
                     set({ selection: { type: "none" } })    
                     return null 
                 }
@@ -47,8 +47,14 @@ export const useBoardInputStore = create<BoardInputStore>((set, get) => ({
 
     clickHandPiece: (pieceType, owner) => {
         const selection = get().selection
+        /*
         if (selection.type === "hand"){
             set({selection: { type: "none"}})
+            return
+        }*/
+        if (selection.type === "hand" && selection.pieceType === pieceType){
+            set({selection: { type: "none"}})
+            return
         }
         set({ selection: { type: "hand", pieceType: pieceType, owner: owner}})        
 

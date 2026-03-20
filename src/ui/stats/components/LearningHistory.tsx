@@ -9,18 +9,19 @@ function EventItemRow(props: {
 }){
     const byId = useProblemStore(s=>s.byId)
     let content: string
-
+    
     switch (props.event.type) {
         case "reviewed": 
-            const resText = props.event.solvedResult.outcome === "solved" ? "詰め" : "失敗"
-            const mistakesString = props.event.solvedResult.mistakes > 0 ? `(${props.event.solvedResult.mistakes})` : ""
-            const revealedString = props.event.solvedResult.revealed ? `[解答参照]` : ""
+            const res = props.event.solvedResult
+            const resText = res.outcome === "solved" ? "詰み" : "失敗"
+            const mistakesString = res.mistakes > 0 ? `(${res.mistakes}miss)` : ""
+            const revealedString = res.revealed ? `[解答参照]` : ""
             content = `${resText}： ${byId[props.event.problemId].title}${mistakesString}${revealedString} (${props.event.solvedResult.elapsedSec}s)`; 
             break
         case "cancel": content = `キャンセル： #${props.event.targetEventId.slice(0, 4)}`; break
         case "reset": content = `リセット：${byId[props.event.problemId].title}` ; break
     }
-    console.log("event", props.event)    
+    //console.log("event", props.event)    
     return (
         <TableRow>
             <TableCell>{new Date(props.event.at).toLocaleString()}</TableCell>

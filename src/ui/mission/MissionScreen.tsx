@@ -14,12 +14,19 @@ import { routes } from "../App/useAppNavigation";
 import type { Mission, MissionId } from "@/domain/mission/entity/Mission";
 import { useMissionModeStore } from "./hooks/useMissionModeStore";
 import MissionFabMenu from "./components/MissionFabMenu";
+import { useLongPress } from "@/ui/library/hooks/useLongPress";
 
 export default function MissionScreen() {
     const { missionArray, onDragEnd, missionStats, onCreateMission, onStartSession, presenter: { importer, backupRestoreDialog } } =
         useMissionViewModel();
     const navigate = useNavigate();
     const { editMode, toggleEditMode } = useMissionModeStore()
+    const { bind, isLongPressedRef } = useLongPress({
+        onLongPress: () => {
+            toggleEditMode()
+        },
+
+    })
 
     // dnd-kit センサー
     const sensors = useSensors(
@@ -62,28 +69,24 @@ export default function MissionScreen() {
                     //backgroundColor: isReorder ? "action.hover" : "inherit",
                 }}
                 secondaryAction={
-                    <>
-                        { editMode &&
-                        <>
-                        
+                    editMode &&                        
                         <IconButton
                             {...sortable.attributes}
                             {...sortable.listeners}
                         >
                             <DragIndicatorIcon />
-                        </IconButton>
-                        </>
-                        }
-                    </>
+                        </IconButton>                                            
                 }
             >
 
                 {/* 通常動作はモード依存 */}
                 <ListItemButton
                     onClick={() => {
+                        if (isLongPressedRef.current) return
                         if (!editMode) onStartSession(mission)
                         else navigate(routes.missionEdit(mission.id))                        
                     }}
+                    {...bind}
                     disabled={!editMode && (stats?.problemCount === 0)} 
                     sx={{
                         bgcolor: editMode ? "action.hover" : "transparent",

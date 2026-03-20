@@ -1,6 +1,6 @@
 import FilterListIcon from "@mui/icons-material/FilterList";
 import FilterListOutlinedIcon from "@mui/icons-material/FilterListOutlined";
-import { Box, Button, Drawer, IconButton, List, Stack, TextField, ToggleButton } from "@mui/material"
+import { Box, Drawer, IconButton, List, Stack } from "@mui/material"
 
 import SortControl from "../../common/query-control/SortControl"
 import { LibraryListItem } from "./LibraryListItem"
@@ -36,14 +36,14 @@ type LibraryViewProps = {
         toggleChecked: (id: ProblemId) => void
     }
     onItemClick: (p: Problem) => void
+    onFilterControlOpen: () => void
+    
 }
 
 /////////////////////////////////////////
 export function LibraryView({ ids, query, actionMode, changeActionMode,
-    itemActions, onItemClick, selection }: LibraryViewProps) {
-
-    const [isOpen, setIsOpen] = useState(false);
-    const allSources = useProblemStore(s=>s.allSources)
+    itemActions, onItemClick, selection, onFilterControlOpen }: LibraryViewProps) {
+    
     const isFiltered = !isEqual(query, DefaultQueryState);
 
     return (
@@ -62,7 +62,7 @@ export function LibraryView({ ids, query, actionMode, changeActionMode,
                 <Box sx={{ flexGrow: 1 }} />
 
                 { /* 検索フィルター */}
-                <IconButton onClick={() => setIsOpen(true)} size="small">
+                <IconButton onClick={onFilterControlOpen} size="small">
                     { isFiltered ? <FilterListIcon color="primary"/> : 
                     
                     <FilterListOutlinedIcon/>}
@@ -86,28 +86,13 @@ export function LibraryView({ ids, query, actionMode, changeActionMode,
                             onItemClick={onItemClick}
                             isChecked={selection.isChecked(id)}                            
                             onToggleChecked={selection.toggleChecked}
+                            onChangeActionMode={changeActionMode}
                         />
                     ))}
                 </List>
             </Box>
 
-            <Drawer anchor="bottom" open={isOpen} 
-                onClose={() => setIsOpen(false)}
-                slotProps={{
-                    paper: {
-                        sx: {
-                            pb: "calc(env(safe-area-inset-bottom) + 16px)",
-                            borderTopLeftRadius: 24,
-                            borderTopRightRadius: 24,
-                        },
-                    },
-                }}>
-                <div className="bottom-sheet">
-                    <FilterControlPanel 
-                        query={query} allSources={allSources}/>
-                </div>
-
-            </Drawer>
+            
         </>
     )
 }

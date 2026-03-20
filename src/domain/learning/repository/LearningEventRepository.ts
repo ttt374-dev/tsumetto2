@@ -3,27 +3,17 @@ import type { LearningEvent, LearningEventLog } from "../entity/LearningEvent";
 
 export class LearningEventRepository {
     constructor(
-        //private readonly loadLog: () => Promise<LearningEventLog>,
-        //private readonly saveLog: (log: LearningEventLog) => Promise<void>,
         private readonly store: LearningEventPersistence
-    ) { }
+    ) {}
     static create(store: LearningEventPersistence){
         return new LearningEventRepository(store)
     }
     async load(){ return this.store.load()}
-    //async save(data: LearningEventLog){ this.store.save(data)}
-
     async append(event: LearningEvent) {
         const log = await this.store.load()
         const nextLog = [...log, event]
-
-        //console.log("learning event repo append", newEvent)
         await this.store.save(nextLog)
     }
-    /*
-    async removeAll(){
-        await this.store.save([])
-    }*/
     async replaceAll(events: LearningEventLog) {
         await this.store.save(events)
     }    
@@ -68,7 +58,6 @@ export class LocalStorageLearningEventPersistence implements LearningEventPersis
                 directory: Directory.Data,
                 encoding: Encoding.UTF8,
             });
-            //console.log("learning events store saved", events)
         } catch (e){
             console.error("learning event store write error", e)
             throw e

@@ -7,7 +7,7 @@ import { CssBaseline } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material";
 
 import SessionLayout from '../session/SessionLayout.tsx';
-import { LibraryScreen } from '../library/LibraryScreen';
+import { LibraryScreen } from '../library/LibraryScreen.tsx';
 import MissionScreen from '../mission/MissionScreen.tsx';
 import MissionEditScreen from '../mission/edit/MissionEditScreen.tsx';
 import SessionPlayerScreen from '../session/SessionPlayerScreen';
@@ -55,12 +55,14 @@ function App() {
     const repos = useMemo(() => createRepositories(), [])
     bootstrapApp(repos)
     //useAndroidBack(); // 最上位で呼ぶ
+    
 
     return (
         <ThemeProvider
             theme={theme}
             defaultMode="system"
         >
+            
             <CssBaseline />
             <ToastProvider>
                 <RepositoryContext.Provider value={{
@@ -71,7 +73,9 @@ function App() {
                 }}>
                     <BrowserRouter>
                         { /* <DebugHistory /> */ }
+                        <DebugHistory/>
                         <Routes>
+                            
 
                             <Route path={routes.session} element={<SessionLayout />}>
                                 <Route path="play" element={<SessionPlayerScreen />} />

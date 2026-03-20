@@ -2,16 +2,14 @@ import type { Problem, ProblemId } from "@/domain/problem/entity/Problem";
 import { Box, Checkbox, colors, IconButton, ListItem, ListItemButton, ListItemIcon, ListItemText, Stack, Typography } from "@mui/material";
 import { useLongPress } from "../hooks/useLongPress";
 import { StarToggleButton } from "@/ui/common/components/StarToggleButton/StarToggleButton";
-import React, { useEffect } from "react";
 import { useProblemStore } from "@/ui/store/useProblemStore";
 import { useLearningRecordStore } from "@/ui/store/useLearningRecordStore";
-import { useNavigate } from 'react-router-dom';
-import { routes } from '@/ui/App/useAppNavigation';
 import { useStarToggleButton } from '@/ui/common/components/StarToggleButton/useStarToggleButton';
 import { Learning } from "@/domain/learning/entity/Learning";
+import type { LibraryActionMode } from "@/ui/library/hooks/useLibraryViewModel";
 
 export const LibraryListItem = function LibraryListItem({ id, onItemClick,
-    showCheckbox, isChecked, onToggleChecked,
+    showCheckbox, isChecked, onToggleChecked, onChangeActionMode,
     selected }: {
         id: ProblemId,
         showCheckbox: boolean,
@@ -19,13 +17,15 @@ export const LibraryListItem = function LibraryListItem({ id, onItemClick,
         isChecked: boolean,
         onToggleChecked: (id: ProblemId) => void,
         selected?: boolean,
+        onChangeActionMode: (mode: LibraryActionMode) => void
 
     }) {
     const problem = useProblemStore(s => s.byId[id])
     const learning = useLearningRecordStore(s => s.records[id])
 
     const { bind, isLongPressedRef } = useLongPress({
-        onLongPress: () => {            
+        onLongPress: () => {          
+            onChangeActionMode("selection")  
             onToggleChecked(id)
         },
 
