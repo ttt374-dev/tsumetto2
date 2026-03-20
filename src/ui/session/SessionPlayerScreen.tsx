@@ -56,9 +56,7 @@ function SessionPlayerContent(props: {
     const handleShowList = () => {
         setIsBottomSheetOpen(true)
     }
-    const footerPanel: React.ReactNode = (<PlayerFooterPanel onShowList={handleShowList}/>)
-
-    
+    const footerPanel: React.ReactNode = (<PlayerFooterPanel onShowList={handleShowList}/>)    
     return (
         <>
             <PlayerScreen problem={props.problem}
@@ -75,8 +73,31 @@ function SessionPlayerContent(props: {
                 solvedResult={solvedResult}
             />}
 
-            <Drawer anchor="bottom" open={isBottomSheetOpen}
+            <SessionListBottomSheet 
+                isOpen={isBottomSheetOpen}
                 onClose={() => setIsBottomSheetOpen(false)}
+                problem={props.problem}
+                sessionId={props.sessionId}
+                sessionProblemIds={props.sessionProblemIds}
+                onMoveToProblemId={props.onMoveToProblemId}                
+            />
+        </>
+    )
+}
+
+
+export function SessionListBottomSheet(props: {
+    isOpen: boolean
+    onClose: () => void
+    problem: Problem
+    sessionId: SessionId
+    onMoveToProblemId: (id: ProblemId) => void
+    sessionProblemIds: ProblemId[]
+}){
+    
+    return (
+        <Drawer anchor="bottom" open={props.isOpen}
+                onClose={props.onClose}
             >
                 <Stack spacing={2} p={1}
                     sx={{
@@ -88,7 +109,7 @@ function SessionPlayerContent(props: {
                     <SessionListView ids={props.sessionProblemIds}
                         onSelect={(id)=>{
                             props.onMoveToProblemId(id)
-                            setIsBottomSheetOpen(false)
+                            props.onClose()
                         }}
                         selectedId={props.problem.id}
                         sessionId={props.sessionId}
@@ -96,7 +117,5 @@ function SessionPlayerContent(props: {
                 </Stack>
                 
             </Drawer>
-        </>
     )
 }
-

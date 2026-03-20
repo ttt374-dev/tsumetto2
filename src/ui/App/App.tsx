@@ -74,11 +74,12 @@ function App() {
                     <BrowserRouter>
                         { /* <DebugHistory /> */ }
                         <DebugHistory/>
-                        <Routes>
-                            
+                        <Routes>                           
 
                             <Route path={routes.session} element={<SessionLayout />}>
-                                <Route path="play" element={<SessionPlayerScreen />} />
+                                <Route path="play" element={<SessionPlayerScreen />} >
+                                    { /* <Route path="list" element={}/>*/ }
+                                </Route>
                                 <Route path="summary" element={<SessionSummaryScreen />} />
                             </Route>
 
