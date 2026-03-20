@@ -1,9 +1,10 @@
 import { useMissionStore } from "@/ui/mission/hooks/useMissionStore"
 import { useSessionStore } from "@/ui/session/hooks/useSessionStore"
 import { useProblemStore } from "@/ui/store/useProblemStore"
-import type { Problem } from "@/domain/problem/entity/Problem"
+import type { Problem, ProblemId } from "@/domain/problem/entity/Problem"
 import type { SolvedResult } from '@/domain/learning/entity/Learning';
 import { useLearningEventStore } from '@/ui/store/useLearningEventStore';
+import type { SessionId } from "@/domain/session/entity/Session";
 
 type SessionPlayerVM =
   | { status: "idle" }
@@ -16,7 +17,10 @@ type SessionPlayerVM =
       title: string      
       index: number
       count: number
+      problemIds: ProblemId[]
+      sessionId: SessionId | undefined
       nextProblem: () => void
+      moveToProblemId: (id: ProblemId) => void
       submitAnswer: (res: SolvedResult) => void
       undoLastAnswer: () => void
       hasLastAnswer: () => boolean
@@ -30,6 +34,7 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
     const sessionId = useSessionStore(s=>s.sessionId)
     const next = useSessionStore(s => s.next)
     const prev = useSessionStore(s => s.prev)
+    const moveToProblemId = useSessionStore(s=>s.moveToId)
 
     const currentProblemId = problemIds[index]
     const count = problemIds.length
@@ -84,15 +89,14 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
     
     if (!problem) {
         //if (loading) return { status: "loading" }
-        return { status: "loading"} // TODO
-        
+        return { status: "loading"} // TODO        
     }
 
     const title = `[${missionName} (${index + 1}/${count})]: ${problem.title}`       
 
     return { 
-        status: "playing", 
-        problem, title, index, count, nextProblem: next,
+        status: "playing", problemIds, sessionId,
+        problem, title, index, count, nextProblem: next, moveToProblemId,
         submitAnswer, undoLastAnswer, hasLastAnswer,
      }
 }

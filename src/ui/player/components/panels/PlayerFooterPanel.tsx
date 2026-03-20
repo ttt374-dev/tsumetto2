@@ -15,8 +15,9 @@ const ANSWER_ACTIONS: AnswerAction[] = [
     //{ label: "Easy", result: "solved", color: "primary", secToTaken: 5 },
 ]
 
-export function PlayerFooterPanel({  }: {
+export function PlayerFooterPanel(props: {
     //onAnswerClick: (answerResult: SolvedResult) => void,
+    onShowList: () => void
 }) {
     const next = useSessionStore(s => s.next)    
     const summary = useSessionStore(s=>s.summary)
@@ -24,15 +25,14 @@ export function PlayerFooterPanel({  }: {
     const handleNext = () => {
         next()
     }
-    const handleSummary = () => {       
-        
+    const handleShowList = () => {               
         summary()
         //alert("tdb")
     }
     return (
         <Stack direction="row">
-            <Button onClick={handleSummary} fullWidth variant="outlined">
-                サマリーへ
+            <Button onClick={props.onShowList} fullWidth variant="outlined">
+                リスト
             </Button>
             <Button onClick={handleNext} fullWidth variant="contained">
                 次へ

@@ -3,7 +3,15 @@ import { Paper } from "@mui/material";
 import type { LearningEvent } from "@/domain/learning/entity/LearningEvent";
 import { useProblemStore } from "@/ui/store/useProblemStore";
 import { useLearningEventStore } from "@/ui/store/useLearningEventStore";
+import type { SolvedResult } from "@/domain/learning/entity/Learning";
 
+export function formatSolvedResult(res: SolvedResult){
+    const outcome = res.outcome === "solved" ? "詰み" : "失敗"
+    const mistakesString = res.mistakes > 0 ? `(${res.mistakes}miss)` : ""
+    const revealedString = res.revealed ? `[解答参照]` : ""
+    return `${outcome} ${mistakesString}${revealedString} (${res.elapsedSec}s)`
+
+}
 function EventItemRow(props: {
     event: LearningEvent
 }){
@@ -14,9 +22,9 @@ function EventItemRow(props: {
         case "reviewed": 
             const res = props.event.solvedResult
             const resText = res.outcome === "solved" ? "詰み" : "失敗"
-            const mistakesString = res.mistakes > 0 ? `(${res.mistakes}miss)` : ""
-            const revealedString = res.revealed ? `[解答参照]` : ""
-            content = `${resText}： ${byId[props.event.problemId].title}${mistakesString}${revealedString} (${props.event.solvedResult.elapsedSec}s)`; 
+            //const mistakesString = res.mistakes > 0 ? `(${res.mistakes}miss)` : ""
+            //const revealedString = res.revealed ? `[解答参照]` : ""
+            content = `${byId[props.event.problemId].title}${formatSolvedResult(res)}`; 
             break
         case "cancel": content = `キャンセル： #${props.event.targetEventId.slice(0, 4)}`; break
         case "reset": content = `リセット：${byId[props.event.problemId].title}` ; break

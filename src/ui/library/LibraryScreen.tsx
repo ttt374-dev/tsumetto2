@@ -39,10 +39,10 @@ export function LibraryScreen() {
                         },
                     },
                 }}>
-                <div className="bottom-sheet">
-                    <FilterControlPanel 
-                        query={vm.query} allSources={allSources}/>
-                </div>
+                
+                <FilterControlPanel
+                    query={vm.query} allSources={allSources} />
+
             </Drawer>        
         </AppShell>
     )

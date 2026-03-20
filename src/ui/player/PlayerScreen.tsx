@@ -1,5 +1,5 @@
 import React from "react"
-import { Box, Stack } from "@mui/material"
+import { Box, Drawer, Stack } from "@mui/material"
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from 'react';
 
@@ -19,23 +19,25 @@ import TimerControlPanel from "./components/panels/TImerControlPanel";
 import ProblemLearningInfoPanel from "./components/panels/ProblemLearningInfoPanel";
 import { PromotionDialog } from "./dialogs/PromotionDialog";
 import { useBoardInputStore } from "./hooks/useBoardInputStore";
+import { ListView } from "@/ui/list/ListView";
 
 //////////////////////////////////////////////////////////////
-export default function PlayerScreen({ problem, title, onSolved, onUndoLastAnswer }: {
+export default function PlayerScreen({ problem, title, onSolved, onUndoLastAnswer, footerPanel }: {
     problem: Problem
     title: React.ReactNode
     onSolved?: (res: SolvedResult) => void
     onUndoLastAnswer?: () => void
-}) {
+    footerPanel?: React.ReactNode
+    }) {
     const timer = useTimerStore()
     const toast = useToast()    
     const navigate = useNavigate()
 
     
     const { pendingPromotion, event, ply,
-        clearEvent, advancePly,
+        clearEvent, 
         initialize,  choosePromotion, } = useGameStore()
-    const clearSelection = useBoardInputStore(s=>s.clear)
+    const clearSelection = useBoardInputStore(s=>s.clear)       
     
 
     useEffect(()=>{
@@ -65,9 +67,7 @@ export default function PlayerScreen({ problem, title, onSolved, onUndoLastAnswe
         }    
 
         clearEvent()
-    }, [event])
-
-    
+    }, [event])    
     
     const handleNavigateToDetail = () => {
         navigate(routes.detail(problem.id))
@@ -76,11 +76,11 @@ export default function PlayerScreen({ problem, title, onSolved, onUndoLastAnswe
         choosePromotion(promote)
         clearSelection()
     }
-    
+
     return (
         <AppShell
             header={"Player"}
-            footer={<PlayerFooterPanel />}
+            footer={footerPanel}
             rightActions={
                 <PlayerRightPanel
                     problemId={problem.id}
@@ -107,6 +107,7 @@ export default function PlayerScreen({ problem, title, onSolved, onUndoLastAnswe
                 onClose={() => {}}
                 >
             </PromotionDialog>}
+
         </AppShell>
     )
 }

@@ -105,7 +105,7 @@ export function inDays(date: number, now: number = Date.now()): number {
     //return (date - now) / (60 * 60 * 24 * 1000)
     return Math.ceil((date - now) / DAY_MS)
 }
-function LearningSection(props: {
+export function LearningSection(props: {
     learning: Learning
 }) {
     const nextReviewedAt = new Date(props.learning.nextReviewedAt).toLocaleString()
