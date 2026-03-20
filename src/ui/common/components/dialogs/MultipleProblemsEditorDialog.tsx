@@ -5,7 +5,7 @@ import { Autocomplete, Box, Button, Checkbox, Chip, Dialog, DialogActions, Dialo
 import { useEffect, useMemo, useState } from "react";
 import { ProblemTypeSelect } from "../../../detail/components/ProblemTypeSelect";
 
-export function useMultipleProblemsEditoDialog() {
+export function useMultipleProblemsEditDialog() {
     const [open, setOpen] = useState(false)
     const [checkedIds, setCheckedIds] = useState<ProblemId[]>([])
 
@@ -153,11 +153,17 @@ export function MultipleProblemsEditorDialog(props: {
                 <Stack spacing={2} pt={2}>                    
                     <Stack direction="row">
                         <Checkbox checked={applyType} onChange={(e) => setApplyType(e.target.checked)}/>
-                        <ProblemTypeSelectControl type={type} onChange={type => setType(type)} />
+                        <ProblemTypeSelectControl type={type} onChange={type => {
+                            setType(type)
+                            setApplyType(true)
+                        }} />
                     </Stack>
                     <Stack direction="row">
                         <Checkbox checked={applySource} onChange={(e) => setApplySource(e.target.checked)}/>
-                        <SourceSelectControl source={source} onChange={s => setSource(s)} />
+                        <SourceSelectControl source={source} onChange={s => {
+                            setSource(s)
+                            setApplySource(true)
+                        }} />
                     </Stack>
                     <Stack direction="row">
                         

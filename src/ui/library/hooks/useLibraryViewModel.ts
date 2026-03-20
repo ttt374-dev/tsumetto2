@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom"
 import { routes } from "@/ui/App/useAppNavigation"
 import type { LearningRecord } from "@/domain/learning/entity/Learning"
 import { useBackupRestoreDialog } from "@/ui/common/components/dialogs/BackupRestoreDialog"
-import { useMultipleProblemsEditoDialog } from "@/ui/common/components/dialogs/MultipleProblemsEditorDialog"
+import { useMultipleProblemsEditDialog } from "@/ui/common/components/dialogs/MultipleProblemsEditorDialog"
 import type { QueryState } from "@/domain/problem/service/query/ProblemsQuery"
 import { useProblemsQuery } from "@/ui/common/hooks/useProblemsQuery"
 import { useProblemsQueryStore } from "@/ui/store/useProblemsQueryStore"
@@ -36,7 +36,7 @@ function useLibraryDialogsVM(checkedIds: ProblemId[], reload: () => Promise<void
     //const viewerDialog = useViewerDialog()
     const backupRestoreDialog = useBackupRestoreDialog()
     //const tagEditDialog = useMultipleProblemsTagEditDialog(checkedIds)
-    const tagEditDialog = useMultipleProblemsEditoDialog()
+    const tagEditDialog = useMultipleProblemsEditDialog()
 
     return {
         //viewer: viewerDialog,
