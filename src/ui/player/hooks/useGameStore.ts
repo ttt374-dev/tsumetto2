@@ -27,7 +27,7 @@ type GameStore = {
     mistakes: number
     isRevealed: boolean
     isSolved: boolean
-    hasFiredOnSolved: boolean
+    //hasFiredOnSolved: boolean
     event: GameEvent | null
 
     initialize: (pos: Position, moves: Move[]) => void
@@ -73,7 +73,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     mistakes: 0,
     isRevealed: false,
     isSolved: false,
-    hasFiredOnSolved: false,
+    //hasFiredOnSolved: false,
 
     //events: [],
     event: null,
@@ -85,7 +85,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     reset: () => {
         set({
             ply: 0, mistakes: 0, isRevealed: false, isSolved: false,
-            pendingPromotion: null, hasFiredOnSolved: false,
+            pendingPromotion: null,// hasFiredOnSolved: false,
             event: null
         })
     }, 
@@ -136,8 +136,6 @@ export const useGameStore = create<GameStore>((set, get) => ({
             //set(s => ({ mistakes: s.mistakes + 1 }))
             set(s => ({
                 mistakes: s.mistakes + 1,
-                // events: [...s.events, { type: "MISTAKE", mistakes: s.mistakes + 1}]
-                //events: push(s, { type: "MISTAKE", mistakes: s.mistakes + 1})
                 event: { type: "MISTAKE", mistakes: s.mistakes + 1}
             }))
             return false
@@ -145,7 +143,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
         // 正解
         if (ply + 1 >= moves.length) { // 詰めあがり
             set(s => {
-                const alreadyFired = s.hasFiredOnSolved                
+                //const alreadyFired = s.hasFiredOnSolved                
                 const event: GameEvent = {
                     type: "SOLVED",
                     mistakes: s.mistakes,
@@ -154,11 +152,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
                 return ({ 
                     ply: s.ply + 1, 
                     isSolved: true,
-                    hasFiredOnSolved: true,
+                    //hasFiredOnSolved: true,
                     //events: alreadyFired ? s.events : [...s.events, event] })
-                    event: alreadyFired 
-                        ? null 
-                        : {
+                    event: {
                             type: "SOLVED",
                             mistakes: s.mistakes,
                             isRevealed: s.isRevealed,

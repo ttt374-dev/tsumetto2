@@ -6,22 +6,22 @@ import type { SolvedResult } from "@/domain/learning/entity/Learning"
 import { SolvedDialog } from "../player/dialogs/SolvedDialog"
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem"
 import { PlayerFooterPanel } from "@/ui/player/components/panels/PlayerFooterPanel"
-import type { SessionId } from "@/domain/session/entity/Session"
-import { SessionListBottomSheet } from "@/ui/session/SessionListBottomSheet"
 import { useNavigate } from "react-router-dom"
 import { routes } from "@/ui/App/useAppNavigation"
+import { useToast } from "@/ui/App/providers/ToastProvider"
 
 ////////////////////////////////////////////////
 export default function SessionPlayerScreen() {
-    const vm = useSessionPlayerViewModel()   
-    
+    const vm = useSessionPlayerViewModel()
+
     if (vm.status !== "playing") return <>{vm.status}</>
     if (!vm.sessionId) return <>NO SESSION ID</>
 
     const onUndoLastAnswer = vm.hasLastAnswer() ? vm.undoLastAnswer : undefined
-    return (<SessionPlayerContent 
+
+    return (<SessionPlayerContent
         problem={vm.problem}
-        title={vm.title}        
+        title={vm.title}
         onSubmitAnswer={vm.submitAnswer}
         onUndoLastAnswer={onUndoLastAnswer}
         onNextProblem={vm.nextProblem}
@@ -31,30 +31,33 @@ export default function SessionPlayerScreen() {
 function SessionPlayerContent(props: {
     problem: Problem
     title: string
-    //sessionProblemIds: ProblemId[]
-    onSubmitAnswer: (res: SolvedResult) => void
+    onSubmitAnswer: (res: SolvedResult) => boolean
     onUndoLastAnswer?: () => void
-    onNextProblem: () => void    
+    onNextProblem: () => void
 }) {
     const [solvedResult, setSolvedResult] = useState<SolvedResult | undefined>(undefined)
     const navigate = useNavigate()
+    const toast = useToast()
 
-    useEffect(()=>{
+    useEffect(() => {
         setSolvedResult(undefined)
     }, [props.problem.id])
 
     const handleResolved = (res: SolvedResult) => {
-        props.onSubmitAnswer(res)
-        setSolvedResult(res)
+        if (props.onSubmitAnswer(res)) {
+            setSolvedResult(res)
+        } else {
+            toast({ message: "solved but already submitted" })
+        }
     }
     const handleShowList = () => {
         navigate(routes.sessionList)
 
     }
-    const footerPanel: React.ReactNode = (<PlayerFooterPanel onShowList={handleShowList}/>)    
+    const footerPanel: React.ReactNode = (<PlayerFooterPanel onShowList={handleShowList} />)
     return (
         <>
-            <PlayerScreen 
+            <PlayerScreen
                 problem={props.problem}
                 title={props.title}
                 onSolved={handleResolved}
@@ -62,13 +65,12 @@ function SessionPlayerContent(props: {
                 footerPanel={footerPanel}
             />
 
-            { solvedResult &&
-            <SolvedDialog open={solvedResult !== undefined}
-                onClose={() => setSolvedResult(undefined)}
-                onConfirm={props.onNextProblem}
-                solvedResult={solvedResult}
-            />}
-
+            {solvedResult &&
+                <SolvedDialog open={solvedResult !== undefined}
+                    onClose={() => setSolvedResult(undefined)}
+                    onConfirm={props.onNextProblem}
+                    solvedResult={solvedResult}
+                />}
         </>
     )
 }

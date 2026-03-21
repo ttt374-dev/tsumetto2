@@ -30,6 +30,7 @@ export default function MovesPanel({moves}: { moves: Move[]}) {
                         手筋を表示
                     </Button>
                     <Box>手数：{moves.length}手</Box>
+                    
 
                 </Stack>)
             }

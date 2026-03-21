@@ -3,7 +3,7 @@ import type { SessionId, SessionPhase } from "@/domain/session/entity/Session";
 import type { ProblemId } from "@/domain/problem/entity/Problem";
 import { v4 } from "uuid";
 import { create } from "zustand";
-
+import type { SolvedResult } from "@/domain/learning/entity/Learning";
 
 type SessionStore = {
     // ===== state =====
@@ -11,37 +11,33 @@ type SessionStore = {
     missionId?: MissionId;
     problemIds: ProblemId[];
     currentIndex: number; // ⭐ マスター
+    results: Record<ProblemId, SolvedResult>
 
     // ===== derived (必要最低限だけ) =====
     phase: () => SessionPhase
 
     // ===== command =====
     start: (missionId: MissionId, ids: ProblemId[], startIndex?: number) => SessionId;
-    //answer: (result: SolvedResult, secToTaken: number, learningEventId: LearningEventId) => void;
     next: () => void;
     prev: () => void;
     moveToIndex: (index: number) => void;
     moveToId: (id: ProblemId) => void;
     summary: () => void;
+    submitResult: (id: ProblemId, res: SolvedResult | undefined) => void
     reset: () => void;
 };
 
 /////////////////////////////////////
 
 export const useSessionStore = create<SessionStore>((set, get) => ({
-    // ======================
     // state
-    // ======================
     missionId: undefined,
     sessionId: undefined,
     problemIds: [],
     currentIndex: -1,
-    //answers: [],
-    
-    // ======================
-    // derived
-    // ======================
+    results: {},
 
+    // derived
     phase: () => {
         const { problemIds, currentIndex } = get();
 
@@ -106,12 +102,27 @@ export const useSessionStore = create<SessionStore>((set, get) => ({
             currentIndex: s.problemIds.length
         }))
     },
+    submitResult: (id: ProblemId, res: SolvedResult | undefined) => {
+        set(s => {
+            if (res === undefined) {
+                const { [id]: _, ...rest } = s.results
+                return { results: rest }
+            }
 
+            return {
+                results: {
+                    ...s.results,
+                    [id]: res
+                }
+            }
+        })
+    },
     reset: () =>
         set({
             missionId: undefined,
             problemIds: [],
             currentIndex: -1,
+            results: {},
             //answers: [],
         }),
 }));

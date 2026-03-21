@@ -32,7 +32,6 @@ export default function PlayerScreen({ problem, title, onSolved, onUndoLastAnswe
     const timer = useTimerStore()
     const toast = useToast()    
     const navigate = useNavigate()
-
     
     const { pendingPromotion, event, ply,
         clearEvent, 
@@ -107,7 +106,6 @@ export default function PlayerScreen({ problem, title, onSolved, onUndoLastAnswe
                 onClose={() => {}}
                 >
             </PromotionDialog>}
-
         </AppShell>
     )
 }

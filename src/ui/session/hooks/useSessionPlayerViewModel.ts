@@ -21,7 +21,7 @@ type SessionPlayerVM =
       sessionId: SessionId | undefined
       nextProblem: () => void
       moveToProblemId: (id: ProblemId) => void
-      submitAnswer: (res: SolvedResult) => void
+      submitAnswer: (res: SolvedResult) => boolean
       undoLastAnswer: () => void
       hasLastAnswer: () => boolean
     }
@@ -35,6 +35,8 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
     const next = useSessionStore(s => s.next)
     const prev = useSessionStore(s => s.prev)
     const moveToProblemId = useSessionStore(s=>s.moveToId)
+    const results = useSessionStore(s=>s.results)
+    const submitResult = useSessionStore(s=>s.submitResult)
 
     const currentProblemId = problemIds[index]
     const count = problemIds.length
@@ -52,13 +54,17 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
     )
 
     // navigation
-    //const problemNavigation = useMemo(() => ({ next, prev, moveTo }), [next, prev, moveTo])
-
-    const submitAnswer = (res: SolvedResult) => {
+    const submitAnswer = (res: SolvedResult) => { // submit したら true を返す        
         //console.log("submit answer", problemId, sessionId)
-        if (!sessionId) return
+        if (!sessionId) return　false
+        console.log("submit answer", results)
+        if (results[currentProblemId]) {
+            console.log("alread submitted", currentProblemId, res)
+            return false// allready submitted
+        }
+        submitResult(currentProblemId, res)
         appendReview(currentProblemId, sessionId, res)
-        //next()
+        return true
         
     }    
 
@@ -67,6 +73,7 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
         const last = getLastEvent(sessionId)
         if (!last) return       
         
+        submitResult(currentProblemId, undefined)
         cancel(sessionId, last.id)        
         //console.log("undo last", last)
         prev()

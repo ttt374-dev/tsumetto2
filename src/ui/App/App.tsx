@@ -75,7 +75,7 @@ function App() {
                 }}>
                     <BrowserRouter>
                         { /* <DebugHistory /> */ }
-                        <DebugHistory/>
+                        
                         <Routes>                           
 
                             <Route path={routes.session} element={<SessionLayout />}>
