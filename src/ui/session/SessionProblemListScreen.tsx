@@ -17,6 +17,7 @@ export default function SessionProblemListScreen() {
         vm.moveToProblemId(id)
     }
 
+    //console.log("result", vm.results)
     return (
         <AppShell 
             header={"セッション問題リスト"}
@@ -25,6 +26,7 @@ export default function SessionProblemListScreen() {
                 onSelect={handleOnSelect}
                 selectedId={vm.problem.id}
                 sessionId={vm.sessionId}
+                results={vm.results}
             />
         </AppShell>
     )

@@ -1,3 +1,4 @@
+import type { SolvedResult } from "@/domain/learning/entity/Learning"
 import type { ProblemId } from "@/domain/problem/entity/Problem"
 import type { SessionId } from "@/domain/session/entity/Session"
 import { useSessionStore } from "@/ui/session/hooks/useSessionStore"
@@ -10,16 +11,18 @@ export function SessionListView(props: {
     onSelect: (id: ProblemId) => void
     selectedId: ProblemId
     sessionId: SessionId
+    results: Record<ProblemId, SolvedResult>
 }) {
     const byId = useProblemStore(s => s.byId)
-    const results = useSessionStore(s=>s.results)
+    //const results = useSessionStore(s=>s.results)
 
     return (
         <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto" }}>
             <List>
                 {props.ids.map((id, i) => {
                     const problem = byId[id]
-                    const solvedResult = results[id]
+                    const solvedResult: SolvedResult | undefined = props.results[id]
+                    const resultString = solvedResult ? formatSolvedResult(solvedResult) : ""
 
                     return (
                         <ListItem
@@ -31,21 +34,11 @@ export function SessionListView(props: {
                                     {i + 1}.
                                 </ListItemIcon>
                                 <ListItemText
-                                    primary={
-                                        <Stack direction="row" justifyContent="space-between">
-                                            {problem.title}
-                                        </Stack>
-                                    }
-                                    secondary={
-                                        solvedResult && <Stack direction={"row"}>
-                                            {formatSolvedResult(solvedResult)}
-                                        </Stack>
-                                    }
-
+                                    primary={problem.title}
+                                    secondary={resultString}
                                 />
                             </ListItemButton>
                         </ListItem>
-
                     )
                 })}                
             </List>

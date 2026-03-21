@@ -26,8 +26,10 @@ type NewLearningResetEvent =
 type NewLearningCancelEvent =
     {
         type: "cancel"
-        sessionId: SessionId
         targetEventId: LearningEventId
+        problemId: ProblemId
+        sessionId: SessionId
+        
     }
 
 export type LearningEvent =

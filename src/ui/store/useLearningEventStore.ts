@@ -16,7 +16,7 @@ type LearningEventStoreState = {
     reload: () => Promise<void>;
     append: (learningEvent: NewLearningEvent) => LearningEvent
     appendReview: (problemId: ProblemId, sessionId: SessionId, quality: SolvedResult, sec?: number) => LearningEvent
-    appendCancel: (sessionId: SessionId, targetEventId: LearningEventId) => LearningEvent
+    appendCancel: (targetEventId: LearningEventId, sessionId: SessionId) => LearningEvent
     appendReset: (problemId: ProblemId) => LearningEvent
     clearAll: () => void
 };
@@ -64,21 +64,23 @@ export const useLearningEventStore = create<LearningEventStoreState>((set, get) 
         set(state => ({
             eventLog: [...state.eventLog, event]
         }))
+        console.log("append event", event)
         return event
     },
     appendReview: (problemId: ProblemId, sessionId: SessionId, solvedResult: SolvedResult) => {
         const event: NewLearningEvent = {
             type: "reviewed", problemId, sessionId: sessionId, solvedResult: solvedResult
         }
+        
         return get().append(event);
     },
-    appendCancel: (sessionId: SessionId, targetEventId: LearningEventId) => {
-        const target = get().eventLog.find(e => e.id === targetEventId && e.type === "reviewed" && e.sessionId === sessionId)
-
-        if (!target) throw new Error("Target not found")
-
+    appendCancel: (targetEventId: LearningEventId, sessionId: SessionId, ) => {
+        //const target = get().eventLog.find(e => e.id === targetEventId && e.type === "reviewed" && e.sessionId === sessionId)
+        const target = get().eventLog.find(e=>e.id===targetEventId)
+        console.log("target", target, targetEventId)
+        if (!target) throw new Error(`Target not found: ${targetEventId}`)
         const event: NewLearningEvent = {
-            type: "cancel", sessionId: sessionId, targetEventId: targetEventId
+            type: "cancel", sessionId: sessionId, targetEventId: targetEventId, problemId: target.problemId
         }
 
         return get().append(event)

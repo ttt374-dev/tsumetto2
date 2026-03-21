@@ -59,7 +59,8 @@ export const useSessionStore = create<SessionStore>((set, get) => ({
                 sessionId: sessionId,
                 problemIds: ids,
                 currentIndex: ids.length > startIndex ? startIndex : -1,
-                answers: [],
+                results: {},
+                //answers: [],
             }
         })
         return sessionId
@@ -103,6 +104,7 @@ export const useSessionStore = create<SessionStore>((set, get) => ({
         }))
     },
     submitResult: (id: ProblemId, res: SolvedResult | undefined) => {
+        console.log("submit res", res)
         set(s => {
             if (res === undefined) {
                 const { [id]: _, ...rest } = s.results

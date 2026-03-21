@@ -19,6 +19,7 @@ type SessionPlayerVM =
       count: number
       problemIds: ProblemId[]
       sessionId: SessionId | undefined
+      results: Record<ProblemId, SolvedResult>
       nextProblem: () => void
       moveToProblemId: (id: ProblemId) => void
       submitAnswer: (res: SolvedResult) => boolean
@@ -55,7 +56,6 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
 
     // navigation
     const submitAnswer = (res: SolvedResult) => { // submit したら true を返す        
-        //console.log("submit answer", problemId, sessionId)
         if (!sessionId) return　false
         console.log("submit answer", results)
         if (results[currentProblemId]) {
@@ -74,8 +74,8 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
         if (!last) return       
         
         submitResult(currentProblemId, undefined)
-        cancel(sessionId, last.id)        
-        //console.log("undo last", last)
+        cancel(last.id, sessionId) 
+        console.log("cancel", last.id, results)       
         prev()
     }
     const hasLastAnswer = (): boolean => {
@@ -102,7 +102,7 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
     const title = `[${missionName} (${index + 1}/${count})]: ${problem.title}`       
 
     return { 
-        status: "playing", problemIds, sessionId,
+        status: "playing", problemIds, sessionId, results,
         problem, title, index, count, nextProblem: next, moveToProblemId,
         submitAnswer, undoLastAnswer, hasLastAnswer,
      }

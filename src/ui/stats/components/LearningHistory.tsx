@@ -1,6 +1,6 @@
 import { Table, TableBody, TableCell, TableHead, TableRow} from "@mui/material"
 import { Paper } from "@mui/material";
-import type { LearningEvent } from "@/domain/learning/entity/LearningEvent";
+import type { LearningEvent, LearningEventId } from "@/domain/learning/entity/LearningEvent";
 import { useProblemStore } from "@/ui/store/useProblemStore";
 import { useLearningEventStore } from "@/ui/store/useLearningEventStore";
 import type { SolvedResult } from "@/domain/learning/entity/Learning";
@@ -16,6 +16,8 @@ function EventItemRow(props: {
     event: LearningEvent
 }){
     const byId = useProblemStore(s=>s.byId)
+    const eventLog = useLearningEventStore(s=>s.eventLog)
+
     let content: string
     
     switch (props.event.type) {
@@ -26,7 +28,13 @@ function EventItemRow(props: {
             //const revealedString = res.revealed ? `[解答参照]` : ""
             content = `${byId[props.event.problemId].title}${formatSolvedResult(res)}`; 
             break
-        case "cancel": content = `キャンセル： #${props.event.targetEventId.slice(0, 4)}`; break
+        case "cancel": 
+            const eventId = props.event.targetEventId            
+            const problemId = eventLog.find(e=>e.id === eventId)?.problemId
+            const title = problemId && byId[problemId]?.title
+            content = `キャンセル：${title} (#${props.event.targetEventId.slice(0, 4)})`; 
+            break
+
         case "reset": content = `リセット：${byId[props.event.problemId].title}` ; break
     }
     //console.log("event", props.event)    
