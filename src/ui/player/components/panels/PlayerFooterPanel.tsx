@@ -25,15 +25,19 @@ export function PlayerFooterPanel(props: {
     const handleNext = () => {
         next()
     }
-    const handleShowList = () => {               
+    const handleSummary = () => {               
         summary()
-        //alert("tdb")
+        
     }
     return (
         <Stack direction="row">
             <Button onClick={props.onShowList} fullWidth variant="outlined">
                 リスト
             </Button>
+            <Button onClick={handleSummary} fullWidth variant="outlined">
+                サマリーへ
+            </Button>
+            
             <Button onClick={handleNext} fullWidth variant="contained">
                 次へ
             </Button>

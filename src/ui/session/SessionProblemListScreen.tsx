@@ -13,7 +13,8 @@ export default function SessionProblemListScreen() {
     const navigate = useNavigate()
 
     const handleOnSelect = (id: ProblemId) => {
-        //navigate(routes.sessionList)
+        navigate(routes.back)        
+        vm.moveToProblemId(id)
     }
 
     return (
@@ -21,10 +22,7 @@ export default function SessionProblemListScreen() {
             header={"セッション問題リスト"}
             navigateBack={true}>
             <SessionListView ids={vm.problemIds}
-                onSelect={(id) => {
-                    handleOnSelect(id)
-
-                }}
+                onSelect={handleOnSelect}
                 selectedId={vm.problem.id}
                 sessionId={vm.sessionId}
             />
