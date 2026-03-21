@@ -104,21 +104,19 @@ export const useSessionStore = create<SessionStore>((set, get) => ({
         }))
     },
     submitResult: (id: ProblemId, res: SolvedResult | undefined) => {
-        console.log("submit res", res)
         set(s => {
-            if (res === undefined) {
-                const { [id]: _, ...rest } = s.results
-                return { results: rest }
-            }
+            const newResults = { ...s.results }
 
-            return {
-                results: {
-                    ...s.results,
-                    [id]: res
-                }
+            if (res === undefined) {
+                console.log("result deleted", id)
+                delete newResults[id]
+            } else {
+                newResults[id] = res
             }
+            return { results: newResults }
         })
     },
+
     reset: () =>
         set({
             missionId: undefined,

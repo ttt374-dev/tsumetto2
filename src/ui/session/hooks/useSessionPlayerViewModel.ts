@@ -73,7 +73,7 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
         const last = getLastEvent(sessionId)
         if (!last) return       
         
-        submitResult(currentProblemId, undefined)
+        submitResult(last.problemId, undefined)
         cancel(last.id, sessionId) 
         console.log("cancel", last.id, results)       
         prev()
@@ -99,7 +99,9 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
         return { status: "loading"} // TODO        
     }
 
-    const title = `[${missionName} (${index + 1}/${count})]: ${problem.title}`       
+    const title = `[${missionName} (${index + 1}/${count})]: ${problem.title}` 
+    
+    console.log("results in session vm", results)
 
     return { 
         status: "playing", problemIds, sessionId, results,
