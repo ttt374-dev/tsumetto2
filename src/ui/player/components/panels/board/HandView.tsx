@@ -27,7 +27,7 @@ function HandPieceView({ pieceType, selected, count, owner, onClick }: {
             className={`${styles.handpiece}
             ${ owner === "black" ? styles.handpieceBlack : ""}
             ${selected ? styles.selected : ""}`}>
-            {PieceKeyKanjiMapping[pieceType]}{countString}
+            {PieceKeyKanjiMapping[pieceType]}<span style={{fontSize: 12}}>{count}</span>
         </span>)
 }
 

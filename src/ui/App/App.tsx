@@ -20,6 +20,7 @@ import { bootstrapApp, createRepositories } from './bootstrapApp';
 import { routes } from './useAppNavigation';
 import SessionSummaryScreen from '../summary/MissionSummaryScreen.tsx';
 import { ProblemDetailScreen } from '../detail/ProblemDetailScreen.tsx';
+import SessionProblemListScreen from '@/ui/session/SessionProblemListScreen.tsx';
 
 export const theme = createTheme({
     cssVariables: true,   // ← これ必須
@@ -81,6 +82,7 @@ function App() {
                                     { /* <Route path="list" element={}/>*/ }
                                 </Route>
                                 <Route path="summary" element={<SessionSummaryScreen />} />
+                                <Route path="list" element={<SessionProblemListScreen/>}/>
                             </Route>
 
                             <Route path={routes.mission} element={<MissionScreen />} />

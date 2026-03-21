@@ -1,7 +1,11 @@
 import React, { useState } from "react";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack"
+
 import styles from "./AppLayout.module.css";
 import { AppBar, Box, Drawer, IconButton, List, ListItemButton, ListItemText, Menu, MenuItem, Toolbar, Typography } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
+import { useNavigate } from "react-router-dom";
+import { routes } from "@/ui/App/useAppNavigation";
 
 interface Props {
     header?: React.ReactNode;
@@ -15,18 +19,21 @@ interface Props {
 }
 
 export function AppLayout({ header, footer, children, rightActions, fab, drawer, onMenuClick }: Props) {    
+    const navigate = useNavigate()
     return (
         <div className={styles.container}>
             <AppBar position="static" className={styles.header}>
                 <Toolbar >
-                    {/* ハンバーガー */}
-                    <IconButton
-                        edge="start"
-                        color="inherit"
-                        onClick={()=>onMenuClick?.()}
-                    >
-                        <MenuIcon />
-                    </IconButton>
+                    {drawer ?
+                        <IconButton
+                            edge="start"
+                            color="inherit"
+                            onClick={() => onMenuClick?.()}
+                        >
+                            <MenuIcon />
+                        </IconButton> 
+                        : <ArrowBackIcon onClick={()=>navigate(routes.back)}/>
+                    }
 
                     <Typography>
                         {header}

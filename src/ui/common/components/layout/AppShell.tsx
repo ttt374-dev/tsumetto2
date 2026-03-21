@@ -14,9 +14,10 @@ interface Props {
     children: React.ReactNode;
     rightActions?: React.ReactNode;
     fab?: React.ReactNode;
+    navigateBack?: boolean
 }
 
-export function AppShell({ header, footer, rightActions, fab, children }: Props) {
+export function AppShell({ header, footer, rightActions, fab, children, navigateBack = false }: Props) {
     const [drawerOpen, setDrawerOpen] = useState(false)
     const navigate = useNavigate()
     const toast = useToast()
@@ -29,16 +30,8 @@ export function AppShell({ header, footer, rightActions, fab, children }: Props)
         });
     });
     const backupRestoreDialog = useBackupRestoreDialog();
-
-    return (
-
-        <AppLayout
-            header={header}
-            footer={footer}
-            rightActions={rightActions}
-            fab={fab}
-            onMenuClick={() => setDrawerOpen(true)}
-            drawer={
+    //const drawer = undefined
+    const drawer = !navigateBack ? (
                 <DrawerMenu isOpen={drawerOpen} onClose={() => setDrawerOpen(false)}
                     onNavigateToMission={() => navigate(routes.mission)}
                     onNavigateToLibrary={() => navigate(routes.library)}
@@ -46,7 +39,16 @@ export function AppShell({ header, footer, rightActions, fab, children }: Props)
                     onImport={importer.openFilesSelectDialog}
                     onBackupRestore={backupRestoreDialog.openDialog}
                 />
-            }
+            ) : undefined
+
+    return (
+        <AppLayout
+            header={header}
+            footer={footer}
+            rightActions={rightActions}
+            fab={fab}
+            onMenuClick={() => setDrawerOpen(true)}
+            drawer={drawer}
         >
 
             {children}

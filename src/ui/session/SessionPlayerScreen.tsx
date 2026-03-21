@@ -8,6 +8,8 @@ import type { Problem, ProblemId } from "@/domain/problem/entity/Problem"
 import { PlayerFooterPanel } from "@/ui/player/components/panels/PlayerFooterPanel"
 import type { SessionId } from "@/domain/session/entity/Session"
 import { SessionListBottomSheet } from "@/ui/session/SessionListBottomSheet"
+import { useNavigate } from "react-router-dom"
+import { routes } from "@/ui/App/useAppNavigation"
 
 ////////////////////////////////////////////////
 export default function SessionPlayerScreen() {
@@ -19,28 +21,23 @@ export default function SessionPlayerScreen() {
     const onUndoLastAnswer = vm.hasLastAnswer() ? vm.undoLastAnswer : undefined
     return (<SessionPlayerContent 
         problem={vm.problem}
-        title={vm.title}
-        sessionProblemIds={vm.problemIds}
+        title={vm.title}        
         onSubmitAnswer={vm.submitAnswer}
         onUndoLastAnswer={onUndoLastAnswer}
-        onNextProblem={vm.nextProblem}    
-        onMoveToProblemId={vm.moveToProblemId}    
-        sessionId={vm.sessionId}
+        onNextProblem={vm.nextProblem}
     />)
 }
 
 function SessionPlayerContent(props: {
     problem: Problem
     title: string
-    sessionProblemIds: ProblemId[]
+    //sessionProblemIds: ProblemId[]
     onSubmitAnswer: (res: SolvedResult) => void
     onUndoLastAnswer?: () => void
-    onNextProblem: () => void
-    onMoveToProblemId: (id: ProblemId) => void
-    sessionId: SessionId
+    onNextProblem: () => void    
 }) {
-    const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
     const [solvedResult, setSolvedResult] = useState<SolvedResult | undefined>(undefined)
+    const navigate = useNavigate()
 
     useEffect(()=>{
         setSolvedResult(undefined)
@@ -51,12 +48,14 @@ function SessionPlayerContent(props: {
         setSolvedResult(res)
     }
     const handleShowList = () => {
-        setIsBottomSheetOpen(true)
+        navigate(routes.sessionList)
+
     }
     const footerPanel: React.ReactNode = (<PlayerFooterPanel onShowList={handleShowList}/>)    
     return (
         <>
-            <PlayerScreen problem={props.problem}
+            <PlayerScreen 
+                problem={props.problem}
                 title={props.title}
                 onSolved={handleResolved}
                 onUndoLastAnswer={props.onUndoLastAnswer}
@@ -70,14 +69,6 @@ function SessionPlayerContent(props: {
                 solvedResult={solvedResult}
             />}
 
-            <SessionListBottomSheet
-                isOpen={isBottomSheetOpen}
-                onClose={() => setIsBottomSheetOpen(false)}
-                problem={props.problem}
-                sessionId={props.sessionId}
-                sessionProblemIds={props.sessionProblemIds}
-                onMoveToProblemId={props.onMoveToProblemId}                
-            />
         </>
     )
 }
