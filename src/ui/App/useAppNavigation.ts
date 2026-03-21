@@ -27,6 +27,9 @@ export const routes = {
 
     // stats
     stats: "/stats",
+
+    // history,
+    history: "/history",
     
     // back
     back: -1

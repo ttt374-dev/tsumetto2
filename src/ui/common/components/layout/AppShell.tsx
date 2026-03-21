@@ -36,6 +36,7 @@ export function AppShell({ header, footer, rightActions, fab, children, navigate
                     onNavigateToMission={() => navigate(routes.mission)}
                     onNavigateToLibrary={() => navigate(routes.library)}
                     onNavigateToStats={()=>navigate(routes.stats)}
+                    onNavigateToHistory={()=>navigate(routes.history)}
                     onImport={importer.openFilesSelectDialog}
                     onBackupRestore={backupRestoreDialog.openDialog}
                 />

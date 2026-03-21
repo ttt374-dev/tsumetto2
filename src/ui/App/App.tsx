@@ -21,6 +21,7 @@ import { routes } from './useAppNavigation';
 import SessionSummaryScreen from '../summary/MissionSummaryScreen.tsx';
 import { ProblemDetailScreen } from '../detail/ProblemDetailScreen.tsx';
 import SessionProblemListScreen from '@/ui/session/SessionProblemListScreen.tsx';
+import HistoryScreen from '@/ui/history/HistoryScreen.tsx';
 
 export const theme = createTheme({
     cssVariables: true,   // ← これ必須
@@ -95,6 +96,7 @@ function App() {
                             <Route path="/detail/:id" element={<ProblemDetailScreen/>}/>
 
                             <Route path={routes.stats} element={<StatsScreen />} />
+                            <Route path={routes.history} element={<HistoryScreen />} />
 
                             <Route path="/" element={<Navigate to={routes.mission} />} />
                         </Routes>

@@ -17,7 +17,7 @@ export default function StatsScreen() {
                     <ProblemStatsTable />
                     <IntervalDaysStats />
                     <OverdueStats />
-                    <LearningHistory/>
+                    
                 </Box>
             </Box>
         </AppShell>

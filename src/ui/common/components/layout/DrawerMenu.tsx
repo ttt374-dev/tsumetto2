@@ -2,13 +2,14 @@ import styles from "./AppLayout.module.css";
 import { Box, Divider, Drawer, List, ListItemButton, ListItemText } from "@mui/material";
 
 export function DrawerMenu({ isOpen, onClose,
-    onNavigateToMission, onNavigateToLibrary, onNavigateToStats,
+    onNavigateToMission, onNavigateToLibrary, onNavigateToStats, onNavigateToHistory,
      onImport, onBackupRestore }: {
         isOpen: boolean,
         onClose: () => void,
         onNavigateToMission: () => void
         onNavigateToLibrary: () => void
         onNavigateToStats: () => void
+        onNavigateToHistory: () => void
         onBackupRestore: () => void
         onImport: () => void
     }) {
@@ -24,6 +25,9 @@ export function DrawerMenu({ isOpen, onClose,
                     </ListItemButton>
                     <ListItemButton onClick={() => onNavigateToStats()}>
                         <ListItemText primary="統計" />
+                    </ListItemButton>
+                    <ListItemButton onClick={() => onNavigateToHistory()}>
+                        <ListItemText primary="履歴" />
                     </ListItemButton>
                     
 
