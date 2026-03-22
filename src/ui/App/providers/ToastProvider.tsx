@@ -10,7 +10,6 @@ const ToastContext = createContext<(toast: Toast) => void>(() => { });
 
 export function ToastProvider({ children }: { children: React.ReactNode }) {
     const [toast, setToast] = useState<Toast | null>(null);
-
     
     return (
         <ToastContext.Provider value={setToast}>

@@ -30,6 +30,9 @@ export function ProblemTypeSelect({ value, onChange }: {
                 <MenuItem value="hisshi">
                     必死（受けなし）
                 </MenuItem>
+                <MenuItem value="tesuji">
+                    手筋（王手に限定せず）
+                </MenuItem>
             </Select>
         </FormControl>
     );

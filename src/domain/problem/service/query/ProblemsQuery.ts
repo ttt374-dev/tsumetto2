@@ -40,10 +40,11 @@ export type QueryAction =
     | { type: "RESET" }
 
 export const DefaultQueryState: QueryState = {
-    sortKey: 'title',
-    sortOrder: 'asc',
+    sortKey: 'createdAt',
+    sortOrder: 'desc',
 
     unansweredOnly: false,
     dueForReviewOnly: false,
     starredOnly: false,
 }
+

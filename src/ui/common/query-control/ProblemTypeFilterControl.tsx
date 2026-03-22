@@ -1,9 +1,5 @@
 import { FormControl, Grid, InputLabel, MenuItem, Select, TextField } from "@mui/material";
-import { MateLengthFilterControl } from "./MateLengthFilterControl";
-import { TagCheckboxFilterControl } from "./TagCheckboxFilterControl";
-import { BooleanFilterControl } from "./BooleanFilterControl";
 import { type ProblemType } from "@/domain/problem/entity/Problem";
-import type { FilterState } from "@/domain/problem/service/query/filter";
 import { UNSPECIFIED } from "./FilterControlPanel";
 
 type ProblemTypeUi = ProblemType | typeof UNSPECIFIED
@@ -27,6 +23,7 @@ export function ProblemTypeFilterControl( {problemType, onChange}: {
             <MenuItem key="standard" value="standard">標準</MenuItem>
             <MenuItem key="realistic" value="realistic">実践</MenuItem>
             <MenuItem key="hisshi" value="hisshi">必死</MenuItem>
+            <MenuItem key="tesuji" value="tesuji">手筋</MenuItem>
         </TextField>
 
     )

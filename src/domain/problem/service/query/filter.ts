@@ -13,7 +13,7 @@ export type FilterState = {
     mateBuckets?: MateBucket[]
 
 };
-
+/*
 export const DefaultFilterState: FilterState = {
     text: "",
     unansweredOnly: false,
@@ -22,7 +22,7 @@ export const DefaultFilterState: FilterState = {
     dueForReviewOnly: false,
     starredOnly: false,
 }
-
+*/
 /*
 
 export type MateLengthFilter = {

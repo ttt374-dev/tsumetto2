@@ -3,7 +3,6 @@ import { Box, Drawer, Stack } from "@mui/material"
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from 'react';
 
-import { PlayerFooterPanel } from "./components/panels/PlayerFooterPanel"
 import { Problem } from "@/domain/problem/entity/Problem"
 import { AppShell } from "../common/components/layout/AppShell";
 import { PlayerRightPanel } from "./components/panels/PlayerRightPanel";
@@ -19,7 +18,7 @@ import TimerControlPanel from "./components/panels/TImerControlPanel";
 import ProblemLearningInfoPanel from "./components/panels/ProblemLearningInfoPanel";
 import { PromotionDialog } from "./dialogs/PromotionDialog";
 import { useBoardInputStore } from "./hooks/useBoardInputStore";
-import { ListView } from "@/ui/list/ListView";
+import { useShallow } from "zustand/react/shallow";
 
 //////////////////////////////////////////////////////////////
 export default function PlayerScreen({ problem, title, onSolved, onUndoLastAnswer, footerPanel }: {
@@ -32,12 +31,16 @@ export default function PlayerScreen({ problem, title, onSolved, onUndoLastAnswe
     const timer = useTimerStore()
     const toast = useToast()    
     const navigate = useNavigate()
-    
-    const { pendingPromotion, event, ply,
-        clearEvent, 
-        initialize,  choosePromotion, } = useGameStore()
-    const clearSelection = useBoardInputStore(s=>s.clear)       
-    
+
+    const { pendingPromotion, event, clearEvent, initialize, choosePromotion, } =
+        useGameStore(useShallow(s => ({
+            pendingPromotion: s.pendingPromotion,
+            event: s.event,
+            clearEvent: s.clearEvent,
+            initialize: s.initialize,
+            choosePromotion: s.choosePromotion
+        })))
+    const clearSelection = useBoardInputStore(s=>s.clear)
 
     useEffect(()=>{
         timer.restart()
@@ -63,8 +66,7 @@ export default function PlayerScreen({ problem, title, onSolved, onUndoLastAnswe
                     }
                 }, event.delayMs)
                 break
-        }    
-
+        }   
         clearEvent()
     }, [event])    
     
