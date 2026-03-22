@@ -101,12 +101,10 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
 
     const title = `[${missionName} (${index + 1}/${count})]: ${problem.title}` 
     
-    console.log("results in session vm", results)
-
     return { 
-        status: "playing", problemIds, sessionId, results,
-        problem, title, index, count, nextProblem: next, moveToProblemId,
-        submitAnswer, undoLastAnswer, hasLastAnswer,
+        status: "playing", 
+        problemIds, sessionId, results, problem, title, index, count, 
+        nextProblem: next, moveToProblemId, submitAnswer, undoLastAnswer, hasLastAnswer,
      }
 }
 

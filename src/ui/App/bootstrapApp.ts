@@ -9,6 +9,9 @@ import { RepositoryContext, type RepositoryContextValue } from './providers/Repo
 import { LocalStrorageProblemPersistence, ProblemRepository } from '@/domain/problem/repository/ProblemRepository';
 import { initializeAppUsecase } from '@/application/usecase/initializeApp/useInitializeAppUsecase';
 import { debounce } from 'lodash';
+import type { Mission } from '@/domain/mission/entity/Mission';
+import type { LearningEventLog } from '@/domain/learning/entity/LearningEvent';
+import type { Problem, ProblemId } from '@/domain/problem/entity/Problem';
 
 export function createRepositories() {
     return {
@@ -31,37 +34,52 @@ export function bootstrapApp(repos: RepositoryContextValue) {
         // 初期化フラグ
         let isInitializing = true
 
+        
         // subscribe 設定
+        const saveMissionRepo = debounce(async (missions: Mission[]) => 
+            missionRepo.replaceAll(missions), 1000)        
+        const saveLearningRepo = debounce(async (eventLog: LearningEventLog) => {
+            //console.log("debouncce save")
+            learningRepo.replaceAll(eventLog), 1000})
+        
+        const saveProblemRepo = debounce(async (byId: Record<ProblemId, Problem>) => 
+            problemRepo.replaceAll(Object.values(byId)), 1000)       
+
+
         const missionUnsub = useMissionStore.subscribe(state => {
-            if (isInitializing) return
-            debounce(async () => await missionRepo.replaceAll(state.missions), 1000)()
+            if (isInitializing) return           
+            saveMissionRepo(state.missions)      
         })
         const learningUnsub = useLearningEventStore.subscribe(state => {
             if (isInitializing) return
-            debounce(async () => await learningRepo.replaceAll(state.eventLog), 1000)()
+            saveLearningRepo(state.eventLog)
         })
-        const problemUnsub = useProblemStore.subscribe(state => {
-            if (isInitializing) return
-            debounce(async () => await problemRepo.replaceAll(Object.values(state.byId)), 1000)()
+        const problemUnSub = useProblemStore.subscribe(state => {
+            if (isInitializing) return 
+            saveProblemRepo(state.byId)
         })
-
-        // 初期化完了
-        isInitializing = false
-
+        
         // bootstrap 本体
         const bootstrap = async () => {
             await initializeAppUsecase(missionRepo)
-            await useMissionStore.getState().loadMissions()
+            await useMissionStore.getState().reload()
             await useProblemStore.getState().reload()
             await useLearningEventStore.getState().reload()
+
+            // 初期化完了
+            isInitializing = false
         }
         bootstrap()
 
+        
         // クリーンアップ
         return () => {
             missionUnsub()
+            saveMissionRepo.flush?.()
             learningUnsub()
-            problemUnsub()
+            saveLearningRepo.flush?.()
+            problemUnSub()
+            saveProblemRepo.flush?.()
         }
     }, [repos])
     

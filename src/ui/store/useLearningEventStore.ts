@@ -64,7 +64,6 @@ export const useLearningEventStore = create<LearningEventStoreState>((set, get) 
         set(state => ({
             eventLog: [...state.eventLog, event]
         }))
-        console.log("append event", event)
         return event
     },
     appendReview: (problemId: ProblemId, sessionId: SessionId, solvedResult: SolvedResult) => {

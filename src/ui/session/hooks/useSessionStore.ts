@@ -108,7 +108,6 @@ export const useSessionStore = create<SessionStore>((set, get) => ({
             const newResults = { ...s.results }
 
             if (res === undefined) {
-                console.log("result deleted", id)
                 delete newResults[id]
             } else {
                 newResults[id] = res

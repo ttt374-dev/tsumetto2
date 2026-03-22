@@ -48,7 +48,7 @@ export function useBackupRestoreUsecase(
     writer: BackupWriter,
 ): BackupRestoreUsecase { 
     const reloadProblems = useProblemStore(s=>s.reload)
-    const reloadMissions = useMissionStore(s=>s.loadMissions)
+    const reloadMissions = useMissionStore(s=>s.reload)
     // TODO: error check
     return {
         async backup(): Promise<BackupResult> {

@@ -8,7 +8,6 @@ import type { QueryState } from "./ProblemsQuery";
 export function applyQuery(problems: Problem[], learningRecords: LearningRecord,
     queryState: QueryState){    
     
-    console.log("applyquery", queryState)
     const filtered = applyFilter(problems, learningRecords, queryState)
     const sorted = applySort(filtered, learningRecords, queryState)
     return sorted

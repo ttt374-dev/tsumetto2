@@ -16,7 +16,6 @@ export default function StatsScreen() {
                 <Box sx={{ flex: 1, overflowY: "auto" }}>
                     <ProblemStatsTable />
                     <IntervalDaysStats />
-                    <OverdueStats />
                     
                 </Box>
             </Box>

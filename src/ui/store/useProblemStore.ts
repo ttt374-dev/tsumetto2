@@ -1,11 +1,13 @@
-// application/store/problemStore.ts
 import { create } from "zustand"
 import type { Problem, ProblemId } from "../../domain/problem/entity/Problem"
 import type { ProblemRepository } from "@/domain/problem/repository/ProblemRepository"
-//import { debounce } from "lodash"
 
-//let repository: ProblemRepository
+///////////////////
+// selector
+export const selectActiveProblems = (s: ProblemState) =>
+  Object.values(s.byId).filter(p => !p.deletedAt)
 
+/////////////////////////
 export type ProblemState = {
     repo?: ProblemRepository
     setRepository: (repo: ProblemRepository) => void
@@ -42,7 +44,7 @@ function derive(byId: Record<ProblemId, Problem>) {
     activeProblems.forEach(p =>
         p.tags?.forEach(tag => tagSet.add(tag))
     )
-    const SourceSet = new Set(
+    const sourceSet = new Set(
         activeProblems
             .map(p => p.source)
             .filter((s): s is string => !!s && s.trim() !== "")
@@ -50,7 +52,7 @@ function derive(byId: Record<ProblemId, Problem>) {
     return {
         activeProblems, ids,
         allTags: Array.from(tagSet),
-        allSources: Array.from(SourceSet)
+        allSources: Array.from(sourceSet)
     }
 }
 function reduceById(byId: Record<ProblemId, Problem>) {
@@ -62,15 +64,14 @@ function reduceById(byId: Record<ProblemId, Problem>) {
 
 /////////////
 export const useProblemStore = create<ProblemState>((set, get) => ({
-      repo: undefined,
+    repo: undefined,
     setRepository: (repo) => set({ repo }),
 
     ids: [],
     byId: {},
     activeProblems: [],
     allTags: [],
-    allSources: [],
-   
+    allSources: [],   
     
     reload: async () => {       
         const repo = get().repo
@@ -85,28 +86,31 @@ export const useProblemStore = create<ProblemState>((set, get) => ({
         set(reduceById(byId))       
         
     },
-
     updateProblem: (id, updater) => {
         get().updateProblems([id], updater)
     },
     updateProblems: (ids, updater) => {
         const state = get()
 
-        const updated: Problem[] = []
+        //const updated: Problem[] = []
+        let changed = false
         const newById = { ...state.byId }
 
         for (const id of ids) {
             const current = newById[id]
             if (!current) continue
 
-            const next = current.withUpdated(updater)
+            //const next = current.withUpdated(updater)
+            const next = updater(current)
             if (next !== current) {                
                 newById[id] = next
-                updated.push(next)
+                changed = true
+                //updated.push(next)
             }
         }
 
-        if (updated.length === 0) return
+        //if (updated.length === 0) return
+        if (changed) return
 
         // ① all を再構築
         //const newAll = state.all.map(p =>
@@ -114,7 +118,7 @@ export const useProblemStore = create<ProblemState>((set, get) => ({
         //)
 
         // ② 楽観的更新
-        const prevState = state.byId
+        //const prevState = state.byId
         set(reduceById(newById))
     },
 
@@ -162,7 +166,6 @@ export const useProblemStore = create<ProblemState>((set, get) => ({
 
         set(reduceById(newById))        
     }
-
 ,
 
 }))
