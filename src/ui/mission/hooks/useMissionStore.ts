@@ -3,7 +3,6 @@ import { create } from "zustand"
 import type { MissionRepository } from "@/domain/mission/repository/MissionRepository"
 import type { Mission, MissionId } from "@/domain/mission/entity/Mission"
 
-//let repository: MissionRepository
 type MissionStoreState = {
     repo?: MissionRepository
     setRepository: (repo: MissionRepository) => void
@@ -26,7 +25,6 @@ export const useMissionStore = create<MissionStoreState>((set, get) => ({
         console.log("load", list)
         set({ missions: list })
     },
-
     save: async (mission: Mission) => {
         console.log("save", mission)
         set(state => {
@@ -41,8 +39,6 @@ export const useMissionStore = create<MissionStoreState>((set, get) => ({
         })
 
     },
-
-
     deleteMission: (id: MissionId) => {
         set(state => ({ missions: state.missions.filter(d => d.id !== id) }))
     },

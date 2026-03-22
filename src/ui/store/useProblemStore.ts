@@ -1,11 +1,33 @@
 import { create } from "zustand"
-import type { Problem, ProblemId } from "../../domain/problem/entity/Problem"
+import { createSelector } from "reselect"
+
+import type { Problem, ProblemId } from "@/domain/problem/entity/Problem"
 import type { ProblemRepository } from "@/domain/problem/repository/ProblemRepository"
 
 ///////////////////
 // selector
-export const selectActiveProblems = (s: ProblemState) =>
-  Object.values(s.byId).filter(p => !p.deletedAt)
+export const selectActiveProblems = createSelector(
+  (s: ProblemState) => s.byId,
+  (byId) => Object.values(byId).filter(p => !p.deletedAt)
+)
+export const selectAllTags = (s: ProblemState): string[] => {
+  const set = new Set<string>()
+  Object.values(s.byId).forEach(p => {
+    if (p.deletedAt) return
+    p.tags?.forEach(tag => set.add(tag))
+  })
+  return Array.from(set)
+}
+
+export const selectAllSources = (s: ProblemState): string[] => {
+  const set = new Set<string>()
+  Object.values(s.byId).forEach(p => {
+    if (p.deletedAt) return
+    const src = p.source
+    if (src && src.trim() !== "") set.add(src)
+  })
+  return Array.from(set)
+}
 
 /////////////////////////
 export type ProblemState = {
@@ -67,6 +89,7 @@ export const useProblemStore = create<ProblemState>((set, get) => ({
     repo: undefined,
     setRepository: (repo) => set({ repo }),
 
+    // derived values
     ids: [],
     byId: {},
     activeProblems: [],

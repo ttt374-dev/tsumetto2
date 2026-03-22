@@ -1,12 +1,12 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "../../App/providers/ToastProvider";
-import { applyQuery } from "@/domain/problem/service/query/applyQuery";
 import { routes } from "@/ui/App/useAppNavigation";
 import { arrayMove } from "@dnd-kit/sortable";
 
+import { applyQuery } from "@/domain/problem/service/query/applyQuery";
 import { useMissionStore } from "@/ui/mission/hooks/useMissionStore";
-import { useProblemStore } from "@/ui/store/useProblemStore";
+import { selectActiveProblems, useProblemStore } from "@/ui/store/useProblemStore";
 import { useSessionStore } from "@/ui/session/hooks/useSessionStore";
 import { useLearningRecordStore } from "@/ui/store/useLearningRecordStore";
 import { applyFilter } from "@/domain/problem/service/query/applyFilter";
@@ -24,7 +24,8 @@ export function useMissionViewModel() {
     const missions = useMissionStore(s => s.missions);
     const replaceAll = useMissionStore(s => s.replaceAll);
 
-    const problems = useProblemStore(s => s.activeProblems);
+    //const problems = useProblemStore(s => s.activeProblems);
+    const problems = useProblemStore(selectActiveProblems);
     const learningRecords = useLearningRecordStore(s => s.records);
     const reloadProblems = useProblemStore(s => s.reload);
     const startSession = useSessionStore(s => s.start);

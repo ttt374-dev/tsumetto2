@@ -1,20 +1,18 @@
-import { useProblemStore } from "@/ui/store/useProblemStore"
-import { useLearningRecordStore } from "@/ui/store/useLearningRecordStore"
-import type { Problem, ProblemId } from "@/domain/problem/entity/Problem"
 import { useToast } from "@/ui/App/providers/ToastProvider"
 import { useCallback, useEffect, useMemo, useState } from "react"
-import { applyQuery } from "@/domain/problem/service/query/applyQuery"
-import { useLibraryCheckbox } from "./useLibraryCheckbox"
 import { useNavigate } from "react-router-dom"
 import { routes } from "@/ui/App/useAppNavigation"
+
+import { selectActiveProblems, useProblemStore } from "@/ui/store/useProblemStore"
+import { useLearningRecordStore } from "@/ui/store/useLearningRecordStore"
+import type { Problem, ProblemId } from "@/domain/problem/entity/Problem"
+import { applyQuery } from "@/domain/problem/service/query/applyQuery"
+import { useLibraryCheckbox } from "./useLibraryCheckbox"
 import type { LearningRecord } from "@/domain/learning/entity/Learning"
 import { useBackupRestoreDialog } from "@/ui/common/components/dialogs/BackupRestoreDialog"
 import { useMultipleProblemsEditDialog } from "@/ui/common/components/dialogs/MultipleProblemsEditorDialog"
 import type { QueryState } from "@/domain/problem/service/query/ProblemsQuery"
-import { useProblemsQuery } from "@/ui/common/hooks/useProblemsQuery"
 import { useProblemsQueryStore } from "@/ui/store/useProblemsQueryStore"
-import { useSessionStore } from "@/ui/session/hooks/useSessionStore"
-
 
 export type LibraryActionMode = "selection" | "view" 
 
@@ -35,7 +33,6 @@ function useLibraryDialogsVM(checkedIds: ProblemId[], reload: () => Promise<void
     
     //const viewerDialog = useViewerDialog()
     const backupRestoreDialog = useBackupRestoreDialog()
-    //const tagEditDialog = useMultipleProblemsTagEditDialog(checkedIds)
     const tagEditDialog = useMultipleProblemsEditDialog()
 
     return {
@@ -72,7 +69,8 @@ function useLibrarySelectionVM(ids: ProblemId[]){
     return  {...selection, ...actions}
 }
 function useLibraryCommands(){
-    const problems = useProblemStore(s => s.activeProblems)
+    //const problems = useProblemStore(s => s.activeProblems)
+    const problems = useProblemStore(selectActiveProblems)
     const reload = useProblemStore(s => s.reload)
     const deleteProblems = useProblemStore(s => s.deleteProblems)
 
