@@ -45,6 +45,7 @@ export default function MissionEditScreen() {
     return (
         <AppShell
             header={"Mission Edit"}
+            navigateBack={true}
             rightActions={
                 <IconButton onClick={handleDeleteMission} sx={{ color: "white" }}>
                     <DeleteIcon />

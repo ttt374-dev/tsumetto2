@@ -2,13 +2,17 @@ import { v4 } from "uuid";
 import type { Mission } from "./Mission";
 import { DefaultQueryState } from "@/domain/problem/service/query/ProblemsQuery";
 
-const DEFAULT_MISSION_NAME = "new-mission"
+const DEFAULT_MISSION_NAME = "for review"
 
 export function createDefaultMission(): Mission {
     return {
         id: v4(),
         name: DEFAULT_MISSION_NAME,
-        queryState: {...DefaultQueryState},
+        queryState: {...DefaultQueryState, 
+            sortKey: "nextReviewedAt",
+            sortOrder: "asc",
+            dueForReviewOnly: true,
+        },
         createdAt: Date.now(),
         order: 0,
     }

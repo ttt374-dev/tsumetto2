@@ -1,5 +1,6 @@
-import type { MateBucket } from "@/domain/problem/service/query/filter"
 import { FormControl, FormLabel, FormGroup, FormControlLabel, Checkbox, Paper, } from "@mui/material"
+
+import type { MateBucket } from "@/domain/problem/service/query/ProblemsQuery"
 
 type Props = {
     mateBuckets: MateBucket[] | undefined
@@ -42,33 +43,5 @@ export function MateLengthFilterControl({ mateBuckets = [], onChange }: Props) {
                 
             </Paper>
         </FormControl>
-    )
-
-    return (
-        <Paper  sx={{
-                m: 1,
-                p: 1,
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "flex-start",
-            }}>
-            <FormControl component="fieldset">
-                <FormLabel component="legend">詰み手数</FormLabel>
-                <FormGroup row>
-                    {(Object.keys(BUCKET_LABELS) as MateBucket[]).map(bucket => (
-                        <FormControlLabel
-                            key={bucket}
-                            control={
-                                <Checkbox
-                                    checked={mateBuckets.includes(bucket)}
-                                    onChange={() => toggle(bucket)}
-                                />
-                            }
-                            label={BUCKET_LABELS[bucket]}
-                        />
-                    ))}
-                </FormGroup>
-            </FormControl>
-        </Paper>
-    )
+    )   
 }

@@ -104,8 +104,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
         if (ply > 0) moveTo(ply - 1)
     },
     applyIntent(intent: Intent){
-        const { initialPosition, moves, ply, tryMove} = get()        
+        const { initialPosition, moves, ply, tryMove} = get()     
+        
         const position = buildUntilPly(initialPosition, moves, ply)        
+        
         const result = resolveIntent(position, intent)
         if (!result) return false
         switch (result.type) {
