@@ -8,6 +8,7 @@ import { projectLearning } from "@/domain/learning/service/projectionLearning";
 import { useLearningEventStore } from "../store/useLearningEventStore";
 import { useNavigate } from "react-router-dom";
 import { routes } from "../App/useAppNavigation";
+import { v4 } from "uuid";
 
 /////////////////////////////////////////////
 export default function SessionSummaryScreen() {
@@ -27,9 +28,15 @@ export default function SessionSummaryScreen() {
     const stats = ProblemStats.create(ids, sessionLearningRecords)
 
     const navigate = useNavigate()
+    const createOnetimeSessionId = () => 
+        `REVIEW-ONETIME-SESSION-${v4()}`
     const handleReview = () => {
         const failedIds = Object.keys(sessionLearningRecords).filter(k => sessionLearningRecords[k].failedCount > 0)
-        startSession("REVIEW-ONETIME-SESSION", failedIds)
+        startSession(createOnetimeSessionId(), failedIds)
+        navigate(routes.sessionPlay)
+    }
+    const handleRetry = () => {        
+        startSession(createOnetimeSessionId(), ids)
         navigate(routes.sessionPlay)
     }
 
@@ -42,6 +49,10 @@ export default function SessionSummaryScreen() {
             <SummaryView stats={stats} />
 
             <Stack direction="row" spacing={1}>
+                <Button variant="outlined" onClick={handleRetry} fullWidth>
+                    再挑戦
+                </Button>
+                
                 <Button variant="outlined" onClick={handleReview} fullWidth
                     disabled={stats.failedCount === 0}
                 >
