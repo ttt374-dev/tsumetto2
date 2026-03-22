@@ -3,7 +3,6 @@ import { useLearningRecordStore } from "@/ui/store/useLearningRecordStore";
 import { useProblemStore } from "@/ui/store/useProblemStore";
 import { useMemo } from "react";
 import { GroupedTable, type StatsRowValues } from "./GroupedTable";
-import { DefaultFilterState } from "@/domain/problem/service/query/filter";
 import { applyFilter } from "@/domain/problem/service/query/applyFilter";
 import { DefaultQueryState } from "@/domain/problem/service/query/ProblemsQuery";
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem";

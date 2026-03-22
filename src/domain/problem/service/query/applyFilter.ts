@@ -1,5 +1,4 @@
 import type { Learning, LearningRecord } from "@/domain/learning/entity/Learning";
-import type { FilterState } from "./filter";
 import { matchMateBuckets } from "./mateFilter";
 import type { Problem } from "@/domain/problem/entity/Problem";
 import type { QueryState } from "./ProblemsQuery";

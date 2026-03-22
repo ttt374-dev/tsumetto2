@@ -1,10 +1,6 @@
 import { Problem } from "@/domain/problem/entity/Problem";
 import { describe, expect, it } from "vitest";
 import { applyFilter } from "../applyFilter";
-import { DefaultFilterState } from "../filter";
-import { KifData, Move } from "@/domain/kif/entity";
-import { useProblemsQuery } from "../../../../../ui/common/hooks/useProblemsQuery";
-import { QueryStatsOutlined } from "@mui/icons-material";
 import { DefaultQueryState } from "../ProblemsQuery";
 
 

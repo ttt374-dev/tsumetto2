@@ -3,7 +3,6 @@ import { Grid, TextField } from "@mui/material";
 import { MateLengthFilterControl } from "./MateLengthFilterControl";
 import { TagCheckboxFilterControl } from "./TagCheckboxFilterControl";
 import { BooleanFilterControl } from "./BooleanFilterControl";
-import type { FilterState } from "@/domain/problem/service/query/filter";
 import { ProblemTypeFilterControl } from "./ProblemTypeFilterControl";
 import { SourceFilterControl } from "./SourceFilterControl";
 import type { useProblemsQuery } from "@/ui/common/hooks/useProblemsQuery";

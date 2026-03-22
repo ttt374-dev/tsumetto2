@@ -1,8 +1,22 @@
-import type { ProblemType } from "../../entity/Problem"
-import type { MateBucket } from "./filter"
-import type { SortKey, SortOrder } from "./sort"
+import type { ProblemType } from "@/domain/problem/entity/Problem";
+
+// sort
+export type SortKey =
+  'createdAt' | 'title' | 'moveCount' |
+  'accuracy' | 'easeFactor' | 'nextReviewedAt' | 'lastAnsweredAt' |
+  'random'
+export type SortOrder = 'asc' | 'desc';
 
 
+// ====================
+// filter
+export type MateBucket =
+    | "lte3"
+    | "eq5"
+    | "eq7"
+    | "gte9"
+// ====================
+// query
 export type QueryState = {
     // sort
     sortKey: SortKey
@@ -15,7 +29,6 @@ export type QueryState = {
     starredOnly: boolean
     problemType?: ProblemType
     source?: string
-
 
     tags?: string[]
     mateBuckets?: MateBucket[]

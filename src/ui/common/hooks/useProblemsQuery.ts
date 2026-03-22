@@ -1,10 +1,8 @@
 import { useReducer } from "react";
-import { queryReducer } from "../../../domain/problem/service/query/queryReducer";
-import { DefaultQueryState,  type BooleanQueryKey,  type QueryState } from "../../../domain/problem/service/query/ProblemsQuery";
 
-import type { SortKey } from "../../../domain/problem/service/query/sort";
-import type { ProblemType } from "../../../domain/problem/entity/Problem";
-import type { MateBucket } from "../../../domain/problem/service/query/filter";
+import type { ProblemType } from "@/domain/problem/entity/Problem";
+import { DefaultQueryState, type BooleanQueryKey, type MateBucket, type QueryState, type SortKey } from "@/domain/problem/service/query/ProblemsQuery";
+import { queryReducer } from "@/domain/problem/service/query/queryReducer";
 
 export function useProblemsQuery(initial?: Partial<QueryState>) {
   const [query, dispatch] = useReducer(

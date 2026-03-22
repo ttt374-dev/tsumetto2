@@ -1,10 +1,4 @@
 import { Grid, MenuItem, Select, TextField } from "@mui/material";
-import { MateLengthFilterControl } from "./MateLengthFilterControl";
-import { TagCheckboxFilterControl } from "./TagCheckboxFilterControl";
-import { BooleanFilterControl } from "./BooleanFilterControl";
-import { type ProblemType } from "@/domain/problem/entity/Problem";
-import type { FilterState } from "@/domain/problem/service/query/filter";
-import { ProblemTypeFilterControl } from "./ProblemTypeFilterControl";
 import { UNSPECIFIED } from "./FilterControlPanel";
 
 

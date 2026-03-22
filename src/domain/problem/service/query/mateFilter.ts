@@ -1,5 +1,5 @@
 import type { KifData } from "@/domain/kif/entity"
-import type { MateBucket } from "./filter"
+import type { MateBucket } from "@/domain/problem/service/query/ProblemsQuery"
 
 /*
 export const matchMateLength = (kif: KifData, mateFilter?: MateLengthFilter) => {

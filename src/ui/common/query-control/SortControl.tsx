@@ -1,8 +1,7 @@
 import { Box, IconButton, Tooltip, Button, Select, MenuItem, Stack } from "@mui/material";
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import type { SortKey, SortOrder, SortState } from "@/domain/problem/service/query/sort";
-import type { QueryState } from "@/domain/problem/service/query/ProblemsQuery";
+import type { QueryState, SortKey } from "@/domain/problem/service/query/ProblemsQuery";
 
 export function SortKeyControl(props: {
     queryState: QueryState,
