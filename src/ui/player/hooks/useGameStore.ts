@@ -6,7 +6,7 @@ import { Move, Position, Square, type PieceType } from "@/domain/kif/entity"
 import { buildUntilPly } from "@/domain/kif/service/buildUntilPly"
 import { resolveIntent, type Intent } from "@/domain/game/intentResolver"
 
-type GamePhase = "playing" | "finished" | "waiting"
+type GamePhase = "playing" | "finished" 
 type GameState =  { mistakes: number, isRevealed: boolean, isSolved: boolean }    
 
 /*
@@ -78,14 +78,6 @@ export const useGameStore = create<GameStore>((set, get) => ({
     moves: [],
     ply: 0,
     pendingPromotion: null,
-
-    //mistakes: 0,
-    //isRevealed: false,
-    //isSolved: false,
-    //hasFiredOnSolved: false,
-
-    //events: [],
-    //event: null,
 
     initialize: (pos, moves) => {
         set({initialPosition: pos, moves})
@@ -166,26 +158,22 @@ export const useGameStore = create<GameStore>((set, get) => ({
                 }
             )})
         } else {   // 自手と応手を進める
-            set(s => { 
-                const nextPly = clampPly(s.ply + 1, s.moves.length)
-                return {
-                    ply: nextPly,
-                    phase: "waiting",                    
-                }
-            })        
-
+            get().advancePly()    
+            get().applyOpponentMove()
         }
         return true
     },
     applyOpponentMove: () => {
         // TOOD
-        set(s=>{
-            const nextPly = clampPly(s.ply + 1, s.moves.length)
-            return {
-                ply: nextPly,
-                phase: "playing",
-            }
-        })       
+        setTimeout(() => {
+            set(s => {
+                const nextPly = clampPly(s.ply + 1, s.moves.length)
+                return {
+                    ply: nextPly,
+
+                }
+            })
+        }, 500)
 
     },
     revealAnswer: () => {

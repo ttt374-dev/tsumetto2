@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useRef } from "react"
 import { Box, Drawer, Stack } from "@mui/material"
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from 'react';
@@ -19,7 +19,6 @@ import ProblemLearningInfoPanel from "./components/panels/ProblemLearningInfoPan
 import { PromotionDialog } from "./dialogs/PromotionDialog";
 import { useBoardInputStore } from "./hooks/useBoardInputStore";
 import { useShallow } from "zustand/react/shallow";
-import StatsScreen from "@/ui/stats/StatsScreen";
 
 //////////////////////////////////////////////////////////////
 export default function PlayerScreen({ problem, title, onSolved, onUndoLastAnswer, footerPanel }: {
@@ -33,18 +32,14 @@ export default function PlayerScreen({ problem, title, onSolved, onUndoLastAnswe
     const toast = useToast()    
     const navigate = useNavigate()
 
-    const { pendingPromotion, initialize, choosePromotion, state, phase, ply } =
+    const { pendingPromotion, initialize, choosePromotion, state, phase, applyOpponentMove } =
         useGameStore(useShallow(s => ({
             pendingPromotion: s.pendingPromotion,
             state: s.state,
             phase: s.phase,
-            //event: s.event,
-            //clearEvent: s.clearEvent,
             initialize: s.initialize,
             choosePromotion: s.choosePromotion,
-            ply: s.ply,
-            //isRevealed: s.isRevealed,
-            //mistakes: s.mistakes
+            applyOpponentMove: s.applyOpponentMove
         })))
     const clearSelection = useBoardInputStore(s=>s.clear)
 
@@ -56,18 +51,19 @@ export default function PlayerScreen({ problem, title, onSolved, onUndoLastAnswe
     useEffect(()=>{
         if (state.mistakes > 0) toast({ message: `incorrect: ${state.mistakes}` })
     }, [state.mistakes])
-    useEffect(()=>{
-        switch(phase){
-            case "finished":
-                const solvedResult = deriveSolvedResult(state.mistakes, state.isRevealed, timer.elapsedSec)
-                onSolved?.(solvedResult)
-                break;
-            case "waiting":
-                setTimeout(()=>{
-                    useGameStore.getState().applyOpponentMove()
-                }, 500)
-                break;
-        }
+
+    const handledRef = useRef(false)
+    useEffect(() => {
+        if (phase !== "finished" || handledRef.current) return
+
+        handledRef.current = true
+
+        const solvedResult = deriveSolvedResult(
+            state.mistakes,
+            state.isRevealed,
+            timer.elapsedSec
+        )
+        onSolved?.(solvedResult)
     }, [phase])
 
 
