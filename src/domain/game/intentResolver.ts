@@ -32,8 +32,7 @@ function resolveBoardMoveIntent(
 ): IntentResult | null {
     const piece = position.board.get(from)
     if (!piece) return null
-    const move = new Move(from, to, piece.type, piece.promoted)
-    console.log("resolve move intent", promote, move) 
+    
 
     // 手番チェック
     if (piece.owner !== position.sideToMove) return null
@@ -56,7 +55,8 @@ function resolveBoardMoveIntent(
         return { type: "promotionPending", pendingPromotion: { from, to, pieceType: piece.type}}
     }
     //const promote = true // TODO
-    
+    const move = new Move(from, to, piece.type, false)
+    console.log("resolve move intent", promote, move)     
     
     return { type: "move", move: move}
 }

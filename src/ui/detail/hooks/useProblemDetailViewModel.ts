@@ -57,7 +57,7 @@ export function useProblemDetailViewModel(
 
     const save = async () => {
         if (!problem) return
-        //console.log("save problem: sourceoption.label", sourceOption?.label)
+        console.log("save problem", problem, starred)
         //console.log("save source", source)
         updateProblem(problemId, prev =>
             prev.setTitle(title)

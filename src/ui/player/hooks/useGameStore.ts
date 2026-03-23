@@ -109,7 +109,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
         const position = buildUntilPly(initialPosition, moves, ply)        
         
         const result = resolveIntent(position, intent)
+        
         if (!result) return false
+        
         switch (result.type) {
             case "move":
                 tryMove(result.move)                

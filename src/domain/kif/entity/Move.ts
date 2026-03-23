@@ -21,11 +21,13 @@ export class Move {
     equals(move: Move): boolean {
         const a = this
         const b = move
+        console.log("eq move", a, b)
 
         return a.from?.rank === b.from?.rank &&
             a.to.file === b.to.file &&
             a.to.rank === b.to.rank &&
-            a.pieceType === b.pieceType
+            a.pieceType === b.pieceType &&
+            a.promote === b.promote
     }
     apply(state: Position): Position {
         return state.applyMove(this)

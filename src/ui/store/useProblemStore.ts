@@ -133,7 +133,7 @@ export const useProblemStore = create<ProblemState>((set, get) => ({
         }
 
         //if (updated.length === 0) return
-        if (changed) return
+        if (!changed) return
 
         // ① all を再構築
         //const newAll = state.all.map(p =>
