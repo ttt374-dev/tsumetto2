@@ -10,7 +10,7 @@ import { LocalStrorageProblemPersistence, ProblemRepository } from '@/domain/pro
 import { initializeAppUsecase } from '@/application/usecase/initializeApp/useInitializeAppUsecase';
 import { debounce } from 'lodash';
 import type { Mission } from '@/domain/mission/entity/Mission';
-import type { ReviewEventLog } from '@/domain/learning/entity/ReviewEvent';
+import type { ReviewEventLog } from '@/domain/review/ReviewEvent';
 import type { Problem, ProblemId } from '@/domain/problem/entity/Problem';
 
 export function createRepositories() {

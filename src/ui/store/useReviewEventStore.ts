@@ -2,7 +2,7 @@ import { create } from "zustand";
 
 import type { ReviewEventRepository } from "@/domain/learning/repository/ReviewEventRepository";
 import type { ProblemId } from "@/domain/problem/entity/Problem";
-import type { ReviewEvent, ReviewEventId, ReviewEventLog, NewReviewEvent } from "@/domain/learning/entity/ReviewEvent";
+import type { ReviewEvent, ReviewEventId, ReviewEventLog, NewReviewEvent } from "@/domain/review/ReviewEvent";
 import type { SolvedResult } from "@/domain/learning/entity/Learning";
 import type { SessionId } from "@/domain/session/entity/Session";
 import { v4 } from "uuid";

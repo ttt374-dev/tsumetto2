@@ -3,7 +3,7 @@ import { create } from "zustand";
 import { useReviewEventStore } from "./useReviewEventStore";
 import { projectLearning } from "@/domain/learning/service/projectionLearning";
 import type { LearningRecord } from "@/domain/learning/entity/Learning";
-import type { ReviewEventLog } from "@/domain/learning/entity/ReviewEvent";
+import type { ReviewEventLog } from "@/domain/review/ReviewEvent";
 
 
 type LearningRecordStoreState = {

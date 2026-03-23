@@ -3,8 +3,9 @@ import { useSessionStore } from "@/ui/session/hooks/useSessionStore"
 import { useProblemStore } from "@/ui/store/useProblemStore"
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem"
 import type { SolvedResult } from '@/domain/learning/entity/Learning';
-import { useLearningEventStore } from '@/ui/store/useLearningEventStore';
+import { useReviewEventStore } from '@/ui/store/useReviewEventStore';
 import type { SessionId } from "@/domain/session/entity/Session";
+import { useEffect } from "react";
 
 type SessionPlayerVM =
   | { status: "idle" }
@@ -45,18 +46,19 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
     const problem = useProblemStore(s => s.byId[currentProblemId])
 
     // learning event log
-    const getLastEvent = useLearningEventStore(s=>s.getLastReviewedEvent)
-    const appendReview = useLearningEventStore(s=>s.appendReview)
-    const cancel = useLearningEventStore(s=>s.appendCancel)    
+    const getLastEvent = useReviewEventStore(s=>s.getLastReviewedEvent)
+    const appendReview = useReviewEventStore(s=>s.appendReview)
+    const cancel = useReviewEventStore(s=>s.appendCancel)    
 
     // missionName
     const missionName = useMissionStore(
         s => missionId ? s.missions.find(d => d.id === missionId)?.name ?? "" : ""
     )
 
+
     // navigation
     const submitAnswer = (res: SolvedResult) => { // submit したら true を返す        
-        if (!sessionId) return　false
+        if (!sessionId) return false
         console.log("submit answer", results)
         if (results[currentProblemId]) {
             console.log("alread submitted", currentProblemId, res)

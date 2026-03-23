@@ -1,6 +1,6 @@
 import { Table, TableBody, TableCell, TableHead, TableRow} from "@mui/material"
 import { Paper } from "@mui/material";
-import type { ReviewEvent, ReviewEventId } from "@/domain/learning/entity/ReviewEvent";
+import type { ReviewEvent, ReviewEventId } from "@/domain/review/ReviewEvent";
 import { useProblemStore } from "@/ui/store/useProblemStore";
 import { useReviewEventStore } from "@/ui/store/useReviewEventStore";
 import type { SolvedResult } from "@/domain/learning/entity/Learning";

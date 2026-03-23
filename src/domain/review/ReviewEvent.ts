@@ -1,6 +1,6 @@
 import type { SessionId } from "@/domain/session/entity/Session"
-import type { ProblemId } from "../../problem/entity/Problem"
-import type { SolvedResult } from "./Learning"
+import type { ProblemId } from "@/domain/problem/entity/Problem"
+import type { SolvedResult } from "@/domain/learning/entity/Learning"
 
 export type ReviewEventId = string
 

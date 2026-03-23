@@ -6,12 +6,16 @@ import { Move, Position, Square, type PieceType } from "@/domain/kif/entity"
 import { buildUntilPly } from "@/domain/kif/service/buildUntilPly"
 import { resolveIntent, type Intent } from "@/domain/game/intentResolver"
 
+type GamePhase = "playing" | "finished" | "waiting"
+type GameState =  { mistakes: number, isRevealed: boolean, isSolved: boolean }    
+
+/*
 export type GameEvent =
-  | { type: "SOLVED", mistakes: number, isRevealed: boolean }
-  | { type: "MISTAKE", mistakes: number}
+  | { type: "SOLVED"  }
+  | { type: "MISTAKE"}
   | { type: "REVEALED"}
   | { type: "AUTO_ADVANCE_REQUESTED"; delayMs: number, expectedPly: number }
-
+*/
 export type PendingPromotion = {
     from: Square
     to: Square
@@ -19,16 +23,18 @@ export type PendingPromotion = {
 }
 
 type GameStore = {
+    phase: GamePhase,
+    state: GameState,
     initialPosition: Position
     moves: Move[]
     ply: number
     pendingPromotion: PendingPromotion | null
 
-    mistakes: number
-    isRevealed: boolean
-    isSolved: boolean
+    //mistakes: number
+    //isRevealed: boolean
+    //isSolved: boolean
     //hasFiredOnSolved: boolean
-    event: GameEvent | null
+    //event: GameEvent | null
 
     initialize: (pos: Position, moves: Move[]) => void
     advancePly: () => void
@@ -39,10 +45,10 @@ type GameStore = {
     tryMove: (move: Move) => boolean
 
     revealAnswer: () => void
+    applyOpponentMove: () => void
     reset: () => void     
+    finalize: () => void
     
-    // イベント操作
-    clearEvent: () => void
 }
 
 //// selector
@@ -63,20 +69,23 @@ export function useCurrentPosition() {
   )
 }
 
+const DefaultGameState = { mistakes: 0, isRevealed: false, isSolved: false}
 ////////////////////////////////////
 export const useGameStore = create<GameStore>((set, get) => ({
+    phase: "playing",
+    state: {...DefaultGameState},
     initialPosition: Position.empty(),
     moves: [],
     ply: 0,
     pendingPromotion: null,
 
-    mistakes: 0,
-    isRevealed: false,
-    isSolved: false,
+    //mistakes: 0,
+    //isRevealed: false,
+    //isSolved: false,
     //hasFiredOnSolved: false,
 
     //events: [],
-    event: null,
+    //event: null,
 
     initialize: (pos, moves) => {
         set({initialPosition: pos, moves})
@@ -84,9 +93,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
     },   
     reset: () => {
         set({
-            ply: 0, mistakes: 0, isRevealed: false, isSolved: false,
+            ply: 0, 
             pendingPromotion: null,// hasFiredOnSolved: false,
-            event: null
+            //event: null,
+            ...DefaultGameState,
         })
     }, 
 
@@ -106,12 +116,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
     applyIntent(intent: Intent){
         const { initialPosition, moves, ply, tryMove} = get()     
         
-        const position = buildUntilPly(initialPosition, moves, ply)        
-        
+        const position = buildUntilPly(initialPosition, moves, ply)                
         const result = resolveIntent(position, intent)
         
-        if (!result) return false
-        
+        if (!result) return false        
         switch (result.type) {
             case "move":
                 tryMove(result.move)                
@@ -136,11 +144,13 @@ export const useGameStore = create<GameStore>((set, get) => ({
     tryMove: (move: Move) => {  // 正解なら true、間違いなら falseを返す
         const { moves, ply} = get()
         console.log("trymove", move)
-        if (!move.equals(moves[ply])){   // 不正解
+        if (!move.equals(moves[ply])) {   // 不正解
             //set(s => ({ mistakes: s.mistakes + 1 }))
             set(s => ({
-                mistakes: s.mistakes + 1,
-                event: { type: "MISTAKE", mistakes: s.mistakes + 1}
+                state: {
+                    ...s.state,
+                    mistakes: s.state.mistakes + 1,
+                },
             }))
             return false
         }
@@ -148,51 +158,47 @@ export const useGameStore = create<GameStore>((set, get) => ({
         if (ply + 1 >= moves.length) { // 詰めあがり
             set(s => {
                 //const alreadyFired = s.hasFiredOnSolved                
-                const event: GameEvent = {
-                    type: "SOLVED",
-                    mistakes: s.mistakes,
-                    isRevealed: s.isRevealed,
-                }
+                set({phase: "finished"})
                 return ({ 
                     ply: s.ply + 1, 
                     isSolved: true,
-                    //hasFiredOnSolved: true,
-                    //events: alreadyFired ? s.events : [...s.events, event] })
-                    event: {
-                            type: "SOLVED",
-                            mistakes: s.mistakes,
-                            isRevealed: s.isRevealed,
-                        }
+                    //event
                 }
             )})
         } else {   // 自手と応手を進める
             set(s => { 
                 const nextPly = clampPly(s.ply + 1, s.moves.length)
-
                 return {
                     ply: nextPly,
-                    event: {
-                        type: "AUTO_ADVANCE_REQUESTED",
-                        delayMs: 500,
-                        expectedPly: nextPly
-                    }
+                    phase: "waiting",                    
                 }
             })        
 
         }
         return true
     },
-    //revealAnswer: () => { set({ isRevealed: true }) },
+    applyOpponentMove: () => {
+        // TOOD
+        set(s=>{
+            const nextPly = clampPly(s.ply + 1, s.moves.length)
+            return {
+                ply: nextPly,
+                phase: "playing",
+            }
+        })       
+
+    },
     revealAnswer: () => {
         set(s => ({
-            isRevealed: true,
-            event: { type: "REVEALED" }
+            state: {
+                ...s.state,
+                isRevealed: true,
+            },
+
         }))
     },
-    
-
-    clearEvent: () => {
-        set({ event: null })
+    finalize: () => {
+        set({phase: "finished"})
     },
 
 }))

@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { Problem } from "@/domain/problem/entity/Problem"
 import { AppShell } from "../common/components/layout/AppShell";
 import { PlayerRightPanel } from "./components/panels/PlayerRightPanel";
-import { createSolvedResult, type SolvedResult } from "@/domain/learning/entity/Learning";
+import { deriveSolvedResult, type SolvedResult } from "@/domain/learning/entity/Learning";
 import { routes } from "../App/useAppNavigation";
 import { useToast } from "../App/providers/ToastProvider";
 import { useGameStore } from "./hooks/useGameStore";
@@ -19,6 +19,7 @@ import ProblemLearningInfoPanel from "./components/panels/ProblemLearningInfoPan
 import { PromotionDialog } from "./dialogs/PromotionDialog";
 import { useBoardInputStore } from "./hooks/useBoardInputStore";
 import { useShallow } from "zustand/react/shallow";
+import StatsScreen from "@/ui/stats/StatsScreen";
 
 //////////////////////////////////////////////////////////////
 export default function PlayerScreen({ problem, title, onSolved, onUndoLastAnswer, footerPanel }: {
@@ -32,13 +33,18 @@ export default function PlayerScreen({ problem, title, onSolved, onUndoLastAnswe
     const toast = useToast()    
     const navigate = useNavigate()
 
-    const { pendingPromotion, event, clearEvent, initialize, choosePromotion, } =
+    const { pendingPromotion, initialize, choosePromotion, state, phase, ply } =
         useGameStore(useShallow(s => ({
             pendingPromotion: s.pendingPromotion,
-            event: s.event,
-            clearEvent: s.clearEvent,
+            state: s.state,
+            phase: s.phase,
+            //event: s.event,
+            //clearEvent: s.clearEvent,
             initialize: s.initialize,
-            choosePromotion: s.choosePromotion
+            choosePromotion: s.choosePromotion,
+            ply: s.ply,
+            //isRevealed: s.isRevealed,
+            //mistakes: s.mistakes
         })))
     const clearSelection = useBoardInputStore(s=>s.clear)
 
@@ -47,11 +53,30 @@ export default function PlayerScreen({ problem, title, onSolved, onUndoLastAnswe
         initialize(problem.kifData.initialPosition, problem.kifData.moves)
     }, [problem.id])
 
+    useEffect(()=>{
+        if (state.mistakes > 0) toast({ message: `incorrect: ${state.mistakes}` })
+    }, [state.mistakes])
+    useEffect(()=>{
+        switch(phase){
+            case "finished":
+                const solvedResult = deriveSolvedResult(state.mistakes, state.isRevealed, timer.elapsedSec)
+                onSolved?.(solvedResult)
+                break;
+            case "waiting":
+                setTimeout(()=>{
+                    useGameStore.getState().applyOpponentMove()
+                }, 500)
+                break;
+        }
+    }, [phase])
+
+
+    /*
     useEffect(() => {
         if (!event) return        
         switch (event.type) {
             case "SOLVED":
-                const solvedResult = createSolvedResult(event.mistakes, event.isRevealed, timer.elapsedSec)
+                const solvedResult = deriveSolvedResult(event.mistakes, event.isRevealed, timer.elapsedSec)
                 onSolved?.(solvedResult)
                 break
             case "MISTAKE":
@@ -69,6 +94,7 @@ export default function PlayerScreen({ problem, title, onSolved, onUndoLastAnswe
         }   
         clearEvent()
     }, [event])    
+    */
     
     const handleNavigateToDetail = () => {
         navigate(routes.detail(problem.id))

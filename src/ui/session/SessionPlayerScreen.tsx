@@ -50,10 +50,12 @@ function SessionPlayerContent(props: {
             toast({ message: "solved but already submitted" })
         }
     }
+
     const handleShowList = () => {
         navigate(routes.sessionList)
 
     }
+
     const footerPanel: React.ReactNode = (<PlayerFooterPanel onShowList={handleShowList} />)
     return (
         <>
