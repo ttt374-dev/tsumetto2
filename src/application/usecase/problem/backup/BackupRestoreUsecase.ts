@@ -2,9 +2,9 @@
 
 import type { Result } from "@/shared/result"
 import type { MissionRepository } from "@/domain/mission/repository/MissionRepository"
-import type { LearningEventRepository } from "@/domain/learning/repository/LearningEventRepository"
+import type { ReviewEventRepository } from "@/domain/learning/repository/ReviewEventRepository"
 import { Problem, type ProblemDTO } from "@/domain/problem/entity/Problem"
-import type { LearningEventLog } from "@/domain/learning/entity/LearningEvent"
+import type { ReviewEventLog } from "@/domain/learning/entity/ReviewEvent"
 import type { Mission } from "@/domain/mission/entity/Mission"
 import type { ProblemRepository } from "@/domain/problem/repository/ProblemRepository"
 import { useMissionStore } from "@/ui/mission/hooks/useMissionStore"
@@ -37,13 +37,13 @@ export interface BackupRestoreUsecase {
 
 export type BackupData = {
     problems: ProblemDTO[]
-    learningEvents: LearningEventLog
+    reviewEvents: ReviewEventLog
     missions: Mission[]
 }
 
 export function useBackupRestoreUsecase(
     problemRepo: ProblemRepository,
-    learningRepo: LearningEventRepository,
+    reviewRepo: ReviewEventRepository,
     missionRepo: MissionRepository,
     writer: BackupWriter,
 ): BackupRestoreUsecase { 
@@ -55,14 +55,14 @@ export function useBackupRestoreUsecase(
             const filename = `kif-backup-${Date.now()}.json`
 
             let problems: Problem[]
-            let learnings: LearningEventLog
+            let learnings: ReviewEventLog
             let missions: Mission[]
             let backupData: BackupData
             let json: string
 
             try {
                 problems = await problemRepo.load()
-                learnings = await learningRepo.load()
+                learnings = await reviewRepo.load()
                 missions = await missionRepo.findAll()
             } catch (e) {
                 if (e instanceof Error) {
@@ -76,7 +76,7 @@ export function useBackupRestoreUsecase(
             try {
                 backupData = {
                     problems: problems.map(p => p.toDTO()),
-                    learningEvents: learnings,
+                    reviewEvents: learnings,
                     missions: missions,
                 }
                 json = JSON.stringify(backupData, null, 2)
@@ -115,7 +115,7 @@ export function useBackupRestoreUsecase(
             }
             try {
                 await problemRepo.replaceAll(problems)
-                await learningRepo.replaceAll(backupData.learningEvents)
+                await reviewRepo.replaceAll(backupData.reviewEvents)
                 await missionRepo.replaceAll(backupData.missions)
             } catch (e) {
                 return { ok: false, error: { code: "persist-failed" } }
@@ -128,7 +128,7 @@ export function useBackupRestoreUsecase(
                 ok: true,
                 value: {
                     problemCount: backupData.problems.length,
-                    learningCount: backupData.learningEvents.length,
+                    learningCount: backupData.reviewEvents.length,
                     missionCount: backupData.missions.length,
                 },
             }

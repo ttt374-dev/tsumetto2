@@ -1,8 +1,8 @@
 import { Table, TableBody, TableCell, TableHead, TableRow} from "@mui/material"
 import { Paper } from "@mui/material";
-import type { LearningEvent, LearningEventId } from "@/domain/learning/entity/LearningEvent";
+import type { ReviewEvent, ReviewEventId } from "@/domain/learning/entity/ReviewEvent";
 import { useProblemStore } from "@/ui/store/useProblemStore";
-import { useLearningEventStore } from "@/ui/store/useLearningEventStore";
+import { useReviewEventStore } from "@/ui/store/useReviewEventStore";
 import type { SolvedResult } from "@/domain/learning/entity/Learning";
 
 export function formatSolvedResult(res: SolvedResult){
@@ -13,10 +13,10 @@ export function formatSolvedResult(res: SolvedResult){
 
 }
 function EventItemRow(props: {
-    event: LearningEvent
+    event: ReviewEvent
 }){
     const byId = useProblemStore(s=>s.byId)
-    const eventLog = useLearningEventStore(s=>s.eventLog)
+    const eventLog = useReviewEventStore(s=>s.eventLog)
 
     let content: string
     
@@ -46,7 +46,7 @@ function EventItemRow(props: {
     )
 }
 export function LearningHistory(){
-    const allevents = useLearningEventStore(s=>s.eventLog)
+    const allevents = useReviewEventStore(s=>s.eventLog)
     const num = 10
     const events = allevents
         .slice() // 元配列を破壊しない

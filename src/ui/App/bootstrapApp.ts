@@ -3,32 +3,32 @@ import { useEffect, useMemo } from 'react';
 import { useProblemStore } from '@/ui/store/useProblemStore';
 import { MissionRepository, LocalStorageMissionPersistence } from '@/domain/mission/repository/MissionRepository';
 import { useMissionStore } from '@/ui/mission/hooks/useMissionStore';
-import { LocalStorageLearningEventPersistence, LearningEventRepository } from '@/domain/learning/repository/LearningEventRepository';
-import { useLearningEventStore } from '@/ui/store/useLearningEventStore';
+import { LocalStorageReviewEventPersistence, ReviewEventRepository } from '@/domain/learning/repository/ReviewEventRepository';
+import { useReviewEventStore } from '@/ui/store/useReviewEventStore';
 import { RepositoryContext, type RepositoryContextValue } from './providers/RepositoryProvider';
 import { LocalStrorageProblemPersistence, ProblemRepository } from '@/domain/problem/repository/ProblemRepository';
 import { initializeAppUsecase } from '@/application/usecase/initializeApp/useInitializeAppUsecase';
 import { debounce } from 'lodash';
 import type { Mission } from '@/domain/mission/entity/Mission';
-import type { LearningEventLog } from '@/domain/learning/entity/LearningEvent';
+import type { ReviewEventLog } from '@/domain/learning/entity/ReviewEvent';
 import type { Problem, ProblemId } from '@/domain/problem/entity/Problem';
 
 export function createRepositories() {
     return {
         problem: new ProblemRepository(new LocalStrorageProblemPersistence()),
-        learningEvent: new LearningEventRepository(new LocalStorageLearningEventPersistence()),
+        reviewEvent: new ReviewEventRepository(new LocalStorageReviewEventPersistence()),
         mission: new MissionRepository(new LocalStorageMissionPersistence()),
     }
 }
 export function bootstrapApp(repos: RepositoryContextValue) {
     useEffect(() => {
         const missionRepo = repos.mission
-        const learningRepo = repos.learningEvent
+        const learningRepo = repos.reviewEvent
         const problemRepo = repos.problem
 
         // Repository 注入
         useMissionStore.getState().setRepository(missionRepo)
-        useLearningEventStore.getState().setRepository(learningRepo)
+        useReviewEventStore.getState().setRepository(learningRepo)
         useProblemStore.getState().setRepository(problemRepo)
 
         // 初期化フラグ
@@ -38,7 +38,7 @@ export function bootstrapApp(repos: RepositoryContextValue) {
         // subscribe 設定
         const saveMissionRepo = debounce(async (missions: Mission[]) => 
             missionRepo.replaceAll(missions), 1000)        
-        const saveLearningRepo = debounce(async (eventLog: LearningEventLog) => {
+        const saveLearningRepo = debounce(async (eventLog: ReviewEventLog) => {
             //console.log("debouncce save")
             learningRepo.replaceAll(eventLog), 1000})
         
@@ -50,7 +50,7 @@ export function bootstrapApp(repos: RepositoryContextValue) {
             if (isInitializing) return           
             saveMissionRepo(state.missions)      
         })
-        const learningUnsub = useLearningEventStore.subscribe(state => {
+        const learningUnsub = useReviewEventStore.subscribe(state => {
             if (isInitializing) return
             saveLearningRepo(state.eventLog)
         })
@@ -64,7 +64,7 @@ export function bootstrapApp(repos: RepositoryContextValue) {
             await initializeAppUsecase(missionRepo)
             await useMissionStore.getState().reload()
             await useProblemStore.getState().reload()
-            await useLearningEventStore.getState().reload()
+            await useReviewEventStore.getState().reload()
 
             // 初期化完了
             isInitializing = false

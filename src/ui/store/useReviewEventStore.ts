@@ -1,29 +1,29 @@
 import { create } from "zustand";
 
-import type { LearningEventRepository } from "@/domain/learning/repository/LearningEventRepository";
+import type { ReviewEventRepository } from "@/domain/learning/repository/ReviewEventRepository";
 import type { ProblemId } from "@/domain/problem/entity/Problem";
-import type { LearningEvent, LearningEventId, LearningEventLog, NewLearningEvent } from "@/domain/learning/entity/LearningEvent";
+import type { ReviewEvent, ReviewEventId, ReviewEventLog, NewReviewEvent } from "@/domain/learning/entity/ReviewEvent";
 import type { SolvedResult } from "@/domain/learning/entity/Learning";
 import type { SessionId } from "@/domain/session/entity/Session";
 import { v4 } from "uuid";
 
-type LearningEventStoreState = {
-    repo?: LearningEventRepository
-    setRepository: (repo: LearningEventRepository) => void
-    eventLog: LearningEventLog;
-    getLastReviewedEvent: (m: SessionId) => LearningEvent | undefined;
+type ReviewEventStoreState = {
+    repo?: ReviewEventRepository
+    setRepository: (repo: ReviewEventRepository) => void
+    eventLog: ReviewEventLog;
+    getLastReviewedEvent: (m: SessionId) => ReviewEvent | undefined;
 
     reload: () => Promise<void>;
-    append: (learningEvent: NewLearningEvent) => LearningEvent
-    appendReview: (problemId: ProblemId, sessionId: SessionId, quality: SolvedResult, sec?: number) => LearningEvent
-    appendCancel: (targetEventId: LearningEventId, sessionId: SessionId) => LearningEvent
-    appendReset: (problemId: ProblemId) => LearningEvent
+    append: (reviewEvent: NewReviewEvent) => ReviewEvent
+    appendReview: (problemId: ProblemId, sessionId: SessionId, quality: SolvedResult, sec?: number) => ReviewEvent
+    appendCancel: (targetEventId: ReviewEventId, sessionId: SessionId) => ReviewEvent
+    appendReset: (problemId: ProblemId) => ReviewEvent
     clearAll: () => void
 };
 
-function createLearningEventId(){ return v4()}
+function createReviewEventId(){ return v4()}
 
-export const useLearningEventStore = create<LearningEventStoreState>((set, get) => ({
+export const useReviewEventStore = create<ReviewEventStoreState>((set, get) => ({
     repo: undefined,
     setRepository: (repo) => set({ repo }),
     eventLog: [],
@@ -59,33 +59,33 @@ export const useLearningEventStore = create<LearningEventStoreState>((set, get) 
             console.error(e)
         }
     },
-    append: (newevent: NewLearningEvent): LearningEvent => {
-        const event: LearningEvent = { ...newevent, id: createLearningEventId(), at: Date.now() }        
+    append: (newevent: NewReviewEvent): ReviewEvent => {
+        const event: ReviewEvent = { ...newevent, id: createReviewEventId(), at: Date.now() }        
         set(state => ({
             eventLog: [...state.eventLog, event]
         }))
         return event
     },
     appendReview: (problemId: ProblemId, sessionId: SessionId, solvedResult: SolvedResult) => {
-        const event: NewLearningEvent = {
+        const event: NewReviewEvent = {
             type: "reviewed", problemId, sessionId: sessionId, solvedResult: solvedResult
         }
         
         return get().append(event);
     },
-    appendCancel: (targetEventId: LearningEventId, sessionId: SessionId, ) => {
+    appendCancel: (targetEventId: ReviewEventId, sessionId: SessionId, ) => {
         //const target = get().eventLog.find(e => e.id === targetEventId && e.type === "reviewed" && e.sessionId === sessionId)
         const target = get().eventLog.find(e=>e.id===targetEventId)
         console.log("target", target, targetEventId)
         if (!target) throw new Error(`Target not found: ${targetEventId}`)
-        const event: NewLearningEvent = {
+        const event: NewReviewEvent = {
             type: "cancel", sessionId: sessionId, targetEventId: targetEventId, problemId: target.problemId
         }
 
         return get().append(event)
     },
     appendReset: (problemId: ProblemId) => {
-        const event: NewLearningEvent = {
+        const event: NewReviewEvent = {
             type: 
             "reset", problemId
         }

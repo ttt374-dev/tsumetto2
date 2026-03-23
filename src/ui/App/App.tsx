@@ -69,7 +69,7 @@ function App() {
             <ToastProvider>
                 <RepositoryContext.Provider value={{
                     problem: repos.problem,
-                    learningEvent: repos.learningEvent,
+                    reviewEvent: repos.reviewEvent,
                     mission: repos.mission,
 
                 }}>

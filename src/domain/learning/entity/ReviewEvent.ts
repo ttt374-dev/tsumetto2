@@ -1,0 +1,40 @@
+import type { SessionId } from "@/domain/session/entity/Session"
+import type { ProblemId } from "../../problem/entity/Problem"
+import type { SolvedResult } from "./Learning"
+
+export type ReviewEventId = string
+
+export type NewReviewEvent =
+    | NewReviewReviewedEvent
+    | NewReviewResetEvent
+    | NewReviewCancelEvent
+
+type NewReviewReviewedEvent =
+    {
+        type: "reviewed"
+        problemId: ProblemId
+        sessionId: SessionId
+        solvedResult: SolvedResult     
+    }
+
+type NewReviewResetEvent =
+    {
+        type: "reset"
+        problemId: ProblemId
+    }
+
+type NewReviewCancelEvent =
+    {
+        type: "cancel"
+        targetEventId: ReviewEventId
+        problemId: ProblemId
+        sessionId: SessionId
+        
+    }
+
+export type ReviewEvent =
+    NewReviewEvent & { id: ReviewEventId, at: number }
+
+export type ReviewReviewedEvent = Extract<ReviewEvent, { type: "reviewed" }>;
+
+export type ReviewEventLog = ReviewEvent[]

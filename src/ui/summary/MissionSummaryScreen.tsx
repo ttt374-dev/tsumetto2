@@ -5,7 +5,7 @@ import { AppShell } from "../common/components/layout/AppShell";
 import { useSessionStore } from "@/ui/session/hooks/useSessionStore";
 import { ProblemStats } from "@/domain/problem/valueObject/ProblemStats";
 import { projectLearning } from "@/domain/learning/service/projectionLearning";
-import { useLearningEventStore } from "../store/useLearningEventStore";
+import { useReviewEventStore } from "../store/useReviewEventStore";
 import { useNavigate } from "react-router-dom";
 import { routes } from "../App/useAppNavigation";
 import { v4 } from "uuid";
@@ -20,8 +20,8 @@ export default function SessionSummaryScreen() {
             startSession: s.start
         })))
 
-    const learningEventLog = useLearningEventStore(s => s.eventLog)
-    const sessionEventLog = learningEventLog
+    const reviewEventLog = useReviewEventStore(s => s.eventLog)
+    const sessionEventLog = reviewEventLog
         .filter(e => ("sessionId" in e && e.sessionId === sessionId))
 
     const sessionLearningRecords = projectLearning(sessionEventLog)

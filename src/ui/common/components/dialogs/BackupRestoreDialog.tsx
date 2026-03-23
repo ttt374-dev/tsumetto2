@@ -7,7 +7,7 @@ import { fileBackupWriter } from "@/infrastructure/fileBackupWriter"
 import { useRepositoryContext } from "@/ui/App/providers/RepositoryProvider"
 import { useToast } from "@/ui/App/providers/ToastProvider"
 import { useProblemStore } from "@/ui/store/useProblemStore"
-import { useLearningEventStore } from "@/ui/store/useLearningEventStore"
+import { useReviewEventStore } from "@/ui/store/useReviewEventStore"
 import { useMissionStore } from "@/ui/mission/hooks/useMissionStore"
 
 export function useBackupRestoreDialog(){
@@ -15,12 +15,12 @@ export function useBackupRestoreDialog(){
     const toast = useToast()
     const openDialog = () => { setOpen(true)}
     const reloadProblems = useProblemStore(s=>s.reload)    
-    const reloadLearningEvents = useLearningEventStore(s=>s.reload)
+    const reloadReviewEvents = useReviewEventStore(s=>s.reload)
     const reloadMissions = useMissionStore(s=>s.reload)
 
     const reloadStores = () => { 
         reloadProblems()
-        reloadLearningEvents()
+        reloadReviewEvents()
         reloadMissions()
     }
     const dialogElement = (
@@ -54,7 +54,7 @@ export default function BackupRestoreDialog({ open, onClose, onBackupFinished, o
     onRestoreFinished?: (res: RestoreResult) => void
 }) {
     const repos = useRepositoryContext()
-    const usecase = useBackupRestoreUsecase(repos.problem, repos.learningEvent, repos.mission, fileBackupWriter)
+    const usecase = useBackupRestoreUsecase(repos.problem, repos.reviewEvent, repos.mission, fileBackupWriter)
     const fileInputRef = useRef<HTMLInputElement>(null)
 
     /* ===== backup ===== */   
@@ -88,8 +88,8 @@ export default function BackupRestoreDialog({ open, onClose, onBackupFinished, o
         onRestoreFinished?.(result)
     }
     /* ==== data clear ==== */
-    const clearAllEvents = useLearningEventStore(s=>s.clearAll)
-    const handleClearAllLearningEvents = () => {
+    const clearAllEvents = useReviewEventStore(s=>s.clearAll)
+    const handleClearAllReviewEvents = () => {
         if (!window.confirm("すべての学習データを消去してよろしいですか？")) return
         clearAllEvents()
     }
@@ -147,7 +147,7 @@ export default function BackupRestoreDialog({ open, onClose, onBackupFinished, o
                     <Typography variant="body2" color="text.secondary" mb={1}>
                         すべての学習データログが削除されます。
                     </Typography>
-                    <Button onClick={handleClearAllLearningEvents} 
+                    <Button onClick={handleClearAllReviewEvents} 
                         color="error" variant="outlined">
                         全学習データ消去
                     </Button>

@@ -1,34 +1,33 @@
 import { Filesystem, Directory, Encoding } from "@capacitor/filesystem";
-import type { LearningEvent, LearningEventLog } from "../entity/LearningEvent";
+import type { ReviewEvent, ReviewEventLog } from "../entity/ReviewEvent";
 
-export class LearningEventRepository {
+export class ReviewEventRepository {
     constructor(
-        private readonly store: LearningEventPersistence
+        private readonly store: ReviewEventPersistence
     ) {}
-    static create(store: LearningEventPersistence){
-        return new LearningEventRepository(store)
+    static create(store: ReviewEventPersistence){
+        return new ReviewEventRepository(store)
     }
     async load(){ return this.store.load()}
-    async append(event: LearningEvent) {
+    async append(event: ReviewEvent) {
         const log = await this.store.load()
         const nextLog = [...log, event]
         await this.store.save(nextLog)
     }
-    async replaceAll(events: LearningEventLog) {
+    async replaceAll(events: ReviewEventLog) {
         await this.store.save(events)
-    }    
-
+    }
 }
 ////////////////////////////////////
 const LEARNING_EVENT_LOG_FILE = "learning_event_log.json";
 
-export interface LearningEventPersistence {
-    load(): Promise<LearningEvent[]>
-    save(events: LearningEvent[]): Promise<void>
+export interface ReviewEventPersistence {
+    load(): Promise<ReviewEvent[]>
+    save(events: ReviewEvent[]): Promise<void>
 }
 
-export class LocalStorageLearningEventPersistence implements LearningEventPersistence {
-    async load(): Promise<LearningEvent[]> {
+export class LocalStorageReviewEventPersistence implements ReviewEventPersistence {
+    async load(): Promise<ReviewEvent[]> {
         try {
             const result = await Filesystem.readFile({
                 path: LEARNING_EVENT_LOG_FILE,
@@ -39,7 +38,7 @@ export class LocalStorageLearningEventPersistence implements LearningEventPersis
                 typeof result.data === "string"
                     ? result.data
                     : await result.data.text()
-            const data: LearningEvent[] = JSON.parse(dataStr)
+            const data: ReviewEvent[] = JSON.parse(dataStr)
             
             return data
 
@@ -50,7 +49,7 @@ export class LocalStorageLearningEventPersistence implements LearningEventPersis
         }
     }
 
-    async save(events: LearningEvent[]): Promise<void> {
+    async save(events: ReviewEvent[]): Promise<void> {
         try {
             await Filesystem.writeFile({
                 path: LEARNING_EVENT_LOG_FILE,

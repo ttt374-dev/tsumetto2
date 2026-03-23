@@ -1,15 +1,15 @@
 import { Learning, type LearningRecord, type SolvedResult } from "../entity/Learning"
-import type { LearningEvent, LearningEventId, LearningReviewedEvent} from "../entity/LearningEvent"
+import type { ReviewEvent, ReviewEventId, ReviewReviewedEvent} from "../entity/ReviewEvent"
 
 const MAX_INTERVAL_DAYS = 60
 const DAY = 60 * 60 * 24 * 1000
 export function projectLearning(
-    events: readonly LearningEvent[]
+    events: readonly ReviewEvent[]
 ): LearningRecord {
 
     const record: LearningRecord = {}
 
-    const canceled = new Set<LearningEventId>()
+    const canceled = new Set<ReviewEventId>()
     const sorted = [...events].sort((a, b) => a.at - b.at)
     // ① cancel対象を集める
     for (const e of sorted) {
@@ -45,7 +45,7 @@ export function projectLearning(
 
 function applyReviewedEvent(
     prev: Learning,
-    event: LearningReviewedEvent
+    event: ReviewReviewedEvent
 ): Learning {    
     const base = prev    
 

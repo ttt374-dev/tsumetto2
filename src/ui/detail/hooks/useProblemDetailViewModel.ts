@@ -2,8 +2,8 @@ import { type ProblemId, type ProblemType } from "@/domain/problem/entity/Proble
 import { useEffect, useMemo, useState } from 'react';
 import { useProblemStore } from '@/ui/store/useProblemStore';
 import { useLearningRecordStore } from '@/ui/store/useLearningRecordStore';
-import { useLearningEventStore } from '@/ui/store/useLearningEventStore';
-import type { NewLearningEvent } from '@/domain/learning/entity/LearningEvent';
+import { useReviewEventStore } from '@/ui/store/useReviewEventStore';
+import type { NewReviewEvent } from '@/domain/learning/entity/ReviewEvent';
 
 export type SourceOption = {
     id: string
@@ -25,7 +25,7 @@ export function useProblemDetailViewModel(
     //const allSources = useProbl
 
     // learning store
-    const appendReset = useLearningEventStore(s => s.appendReset)
+    const appendReset = useReviewEventStore(s => s.appendReset)
     const learningRecords = useLearningRecordStore(s => s.records)
     const learning = problem ? learningRecords[problem.id] : undefined
 
