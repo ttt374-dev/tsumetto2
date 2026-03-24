@@ -7,15 +7,13 @@ import { buildUntilPly } from "@/domain/kif/service/buildUntilPly"
 import { resolveIntent, type Intent } from "@/domain/game/intentResolver"
 
 type GamePhase = "playing" | "finished" 
-type GameState =  { mistakes: number, isRevealed: boolean, isSolved: boolean }    
+export type GameState =  { mistakes: number, isRevealed: boolean, isSolved: boolean }    
 
-/*
 export type GameEvent =
-  | { type: "SOLVED"  }
-  | { type: "MISTAKE"}
-  | { type: "REVEALED"}
-  | { type: "AUTO_ADVANCE_REQUESTED"; delayMs: number, expectedPly: number }
-*/
+  | { type: "SOLV"  }
+  | { type: "MISTAKE", mistakes: number}
+  | { type: "REVEAL"}
+  
 export type PendingPromotion = {
     from: Square
     to: Square
@@ -29,12 +27,8 @@ type GameStore = {
     moves: Move[]
     ply: number
     pendingPromotion: PendingPromotion | null
-
-    //mistakes: number
-    //isRevealed: boolean
-    //isSolved: boolean
-    //hasFiredOnSolved: boolean
-    //event: GameEvent | null
+    hasSubmitted: boolean    
+    event: GameEvent | null
 
     initialize: (pos: Position, moves: Move[]) => void
     advancePly: () => void
@@ -47,7 +41,9 @@ type GameStore = {
     revealAnswer: () => void
     applyOpponentMove: () => void
     reset: () => void     
-    finalize: () => void
+    finalize: () => GameState | null
+    clearEvent: () => void
+    markSubmit: () => void
     
 }
 
@@ -78,18 +74,23 @@ export const useGameStore = create<GameStore>((set, get) => ({
     moves: [],
     ply: 0,
     pendingPromotion: null,
-
+    event: null,
+    hasSubmitted: false,
+    //result: null,
     initialize: (pos, moves) => {
         set({initialPosition: pos, moves})
         get().reset()
     },   
-    reset: () => {
+    reset: () => {        
         set({
-            ply: 0, 
-            pendingPromotion: null,// hasFiredOnSolved: false,
-            //event: null,
-            ...DefaultGameState,
+            ply: 0, hasSubmitted: false,
+            phase: "playing",
+            pendingPromotion: null,
+            event: null,
+            state: { ...DefaultGameState},
+            //result: null,
         })
+        console.log("reset", get().hasSubmitted)
     }, 
 
     moveTo: (ply: number) => {       // 範囲外でもclampして強制的に収める仕様     
@@ -139,6 +140,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
         if (!move.equals(moves[ply])) {   // 不正解
             //set(s => ({ mistakes: s.mistakes + 1 }))
             set(s => ({
+                event: { type: "MISTAKE", mistakes: s.state.mistakes + 1}, 
                 state: {
                     ...s.state,
                     mistakes: s.state.mistakes + 1,
@@ -150,11 +152,16 @@ export const useGameStore = create<GameStore>((set, get) => ({
         if (ply + 1 >= moves.length) { // 詰めあがり
             set(s => {
                 //const alreadyFired = s.hasFiredOnSolved                
-                set({phase: "finished"})
+                //set({phase: "finished"})
                 return ({ 
                     ply: s.ply + 1, 
-                    isSolved: true,
-                    //event
+                    //isSolved: true,
+                    state: {
+                        ...s.state,
+                        isSolved: true,
+                    },
+                    event: { type: "SOLV"},
+                    result: "solved",
                 }
             )})
         } else {   // 自手と応手を進める
@@ -182,12 +189,22 @@ export const useGameStore = create<GameStore>((set, get) => ({
                 ...s.state,
                 isRevealed: true,
             },
-
+            event: { type: "REVEAL"},
         }))
     },
-    finalize: () => {
-        set({phase: "finished"})
+    finalize: (): GameState | null => {
+        const s = get()
+        if (s.phase === "finished") return null
+
+        set({ phase: "finished" })
+        return s.state
     },
+    clearEvent: () => {
+        set({ event: null})
+    },
+    markSubmit: ()=>{
+        set({hasSubmitted: true})
+    }
 
 }))
 

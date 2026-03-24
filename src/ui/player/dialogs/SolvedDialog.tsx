@@ -16,7 +16,7 @@ export function SolvedDialog({ open, onClose, onConfirm, solvedResult, confirmLa
             <DialogContent>
                 <Box>結果：{solvedResult.outcome}</Box>
                 <Box>間違い回数：{solvedResult.mistakes}</Box>
-                <Box>解答参照：{solvedResult.revealed ? "参照" : "なし"}</Box>
+                <Box>解答参照：{solvedResult.isRevealed ? "参照" : "なし"}</Box>
                 <Box>秒数: {solvedResult.elapsedSec}</Box>
             </DialogContent>
             <DialogActions>

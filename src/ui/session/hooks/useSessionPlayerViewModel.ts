@@ -5,7 +5,6 @@ import type { Problem, ProblemId } from "@/domain/problem/entity/Problem"
 import type { SolvedResult } from '@/domain/learning/entity/Learning';
 import { useReviewEventStore } from '@/ui/store/useReviewEventStore';
 import type { SessionId } from "@/domain/session/entity/Session";
-import { useEffect } from "react";
 
 type SessionPlayerVM =
   | { status: "idle" }
@@ -55,7 +54,6 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
         s => missionId ? s.missions.find(d => d.id === missionId)?.name ?? "" : ""
     )
 
-
     // navigation
     const submitAnswer = (res: SolvedResult) => { // submit したら true を返す        
         if (!sessionId) return false
@@ -66,8 +64,7 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
         }
         submitResult(currentProblemId, res)
         appendReview(currentProblemId, sessionId, res)
-        return true
-        
+        return true        
     }    
 
     const undoLastAnswer = () => {
@@ -88,16 +85,11 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
         return { status: "idle" }
     }
 
-    if (index < 0 || index >= count) {
-        return { status: "finished" }
-    }
-
-    if (!currentProblemId) {
+    if (index >= count || !currentProblemId) {
         return { status: "finished" }
     }
     
     if (!problem) {
-        //if (loading) return { status: "loading" }
         return { status: "loading"} // TODO        
     }
 

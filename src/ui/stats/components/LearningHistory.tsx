@@ -6,10 +6,10 @@ import { useReviewEventStore } from "@/ui/store/useReviewEventStore";
 import type { SolvedResult } from "@/domain/learning/entity/Learning";
 
 export function formatSolvedResult(res: SolvedResult){
-    const outcome = res.outcome === "solved" ? "詰み" : "失敗"
+    const outcome = res.outcome === "solved" ? "詰み" : res.outcome === "failed" ? "失敗" : "未回答"
     const mistakesString = res.mistakes > 0 ? `(${res.mistakes}miss)` : ""
-    const revealedString = res.revealed ? `[解答参照]` : ""
-    return `${outcome} ${mistakesString}${revealedString} (${res.elapsedSec}s)`
+    const revealedString = res.isRevealed ? `[解答参照]` : ""
+    return `: ${outcome} ${mistakesString}${revealedString} (${res.elapsedSec}s)`
 
 }
 function EventItemRow(props: {

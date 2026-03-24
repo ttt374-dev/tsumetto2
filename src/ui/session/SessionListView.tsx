@@ -1,7 +1,6 @@
 import type { SolvedResult } from "@/domain/learning/entity/Learning"
 import type { ProblemId } from "@/domain/problem/entity/Problem"
 import type { SessionId } from "@/domain/session/entity/Session"
-import { useSessionStore } from "@/ui/session/hooks/useSessionStore"
 import { formatSolvedResult } from "@/ui/stats/components/LearningHistory"
 import { useProblemStore } from "@/ui/store/useProblemStore"
 import { Box, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Stack } from "@mui/material"
@@ -13,9 +12,7 @@ export function SessionListView(props: {
     sessionId: SessionId
     results: Record<ProblemId, SolvedResult>
 }) {
-    const byId = useProblemStore(s => s.byId)
-    //const results = useSessionStore(s=>s.results)
-
+    const byId = useProblemStore(s => s.byId)    
     return (
         <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto" }}>
             <List>

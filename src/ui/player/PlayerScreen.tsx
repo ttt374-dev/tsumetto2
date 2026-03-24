@@ -32,14 +32,18 @@ export default function PlayerScreen({ problem, title, onSolved, onUndoLastAnswe
     const toast = useToast()    
     const navigate = useNavigate()
 
-    const { pendingPromotion, initialize, choosePromotion, state, phase, applyOpponentMove } =
+    const { pendingPromotion, event, initialize, choosePromotion, clearEvent, } =
         useGameStore(useShallow(s => ({
             pendingPromotion: s.pendingPromotion,
             state: s.state,
             phase: s.phase,
+            event: s.event,
+            markSubmit: s.markSubmit,
             initialize: s.initialize,
             choosePromotion: s.choosePromotion,
-            applyOpponentMove: s.applyOpponentMove
+            clearEvent: s.clearEvent,
+            finalize: s.finalize,
+            hasSubmitted: s.hasSubmitted,
         })))
     const clearSelection = useBoardInputStore(s=>s.clear)
 
@@ -48,49 +52,31 @@ export default function PlayerScreen({ problem, title, onSolved, onUndoLastAnswe
         initialize(problem.kifData.initialPosition, problem.kifData.moves)
     }, [problem.id])
 
+    /*
     useEffect(()=>{
         if (state.mistakes > 0) toast({ message: `incorrect: ${state.mistakes}` })
     }, [state.mistakes])
 
     const handledRef = useRef(false)
-    useEffect(() => {
-        if (phase !== "finished" || handledRef.current) return
-
-        handledRef.current = true
-
-        const solvedResult = deriveSolvedResult(
-            state.mistakes,
-            state.isRevealed,
-            timer.elapsedSec
-        )
-        onSolved?.(solvedResult)
-    }, [phase])
 
 
-    /*
+    
+*/
+    
     useEffect(() => {
         if (!event) return        
         switch (event.type) {
-            case "SOLVED":
-                const solvedResult = deriveSolvedResult(event.mistakes, event.isRevealed, timer.elapsedSec)
-                onSolved?.(solvedResult)
+            case "SOLV":
+                toast({message: "solved"})
                 break
             case "MISTAKE":
                 toast({ message: `incorrect: ${event.mistakes}` })
                 break
-
-            case "AUTO_ADVANCE_REQUESTED":
-                setTimeout(() => {
-                    const state = useGameStore.getState()
-                    if (state.ply === event.expectedPly) {
-                        state.advancePly()
-                    }
-                }, event.delayMs)
-                break
+            
         }   
         clearEvent()
-    }, [event])    
-    */
+    }, [event])        
+    
     
     const handleNavigateToDetail = () => {
         navigate(routes.detail(problem.id))

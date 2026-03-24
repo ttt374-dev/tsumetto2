@@ -1,6 +1,7 @@
 import type { SolvedResult } from "@/domain/learning/entity/Learning"
 import { Button, Stack, type ButtonProps } from "@mui/material"
 import { useSessionStore } from "@/ui/session/hooks/useSessionStore"
+import { useGameStore } from "@/ui/player/hooks/useGameStore"
 
 type AnswerAction = {
     label: string
@@ -17,14 +18,11 @@ const ANSWER_ACTIONS: AnswerAction[] = [
 
 export function PlayerFooterPanel(props: {
     //onAnswerClick: (answerResult: SolvedResult) => void,
+    onNext: () => void
     onShowList: () => void
 }) {
-    const next = useSessionStore(s => s.next)    
     const summary = useSessionStore(s=>s.summary)
 
-    const handleNext = () => {
-        next()
-    }
     const handleSummary = () => {               
         summary()
         
@@ -38,7 +36,7 @@ export function PlayerFooterPanel(props: {
                 サマリーへ
             </Button>
             
-            <Button onClick={handleNext} fullWidth variant="contained">
+            <Button onClick={props.onNext} fullWidth variant="contained">
                 次へ
             </Button>
         </Stack>
