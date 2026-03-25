@@ -8,7 +8,7 @@ import { useReviewEventStore } from '@/ui/store/useReviewEventStore';
 import { RepositoryContext, type RepositoryContextValue } from './providers/RepositoryProvider';
 import { LocalStrorageProblemPersistence, ProblemRepository } from '@/domain/problem/repository/ProblemRepository';
 import { initializeAppUsecase } from '@/application/usecase/initializeApp/useInitializeAppUsecase';
-import { debounce } from 'lodash';
+import { bindKey, debounce } from 'lodash';
 import type { Mission } from '@/domain/mission/entity/Mission';
 import type { ReviewEventLog } from '@/domain/review/ReviewEvent';
 import type { Problem, ProblemId } from '@/domain/problem/entity/Problem';
@@ -34,30 +34,47 @@ export function bootstrapApp(repos: RepositoryContextValue) {
         // 初期化フラグ
         let isInitializing = true
 
-        
+        const _saveMissionRepo = debounce(async (missions: Mission[]) => {
+            missionRepo.replaceAll(missions)}, 1000)     
         // subscribe 設定
-        const saveMissionRepo = debounce(async (missions: Mission[]) => 
-            missionRepo.replaceAll(missions), 1000)        
-        const saveLearningRepo = debounce(async (eventLog: ReviewEventLog) => {
-            //console.log("debouncce save")
-            learningRepo.replaceAll(eventLog), 1000})
-        
+        /*
+        const saveMissionRepo = debounce(async (missions: Mission[]) => {
+            missionRepo.replaceAll(missions)}, 1000)     
+        const saveLearningRepo = debounce(
+            async (eventLog: ReviewEventLog) => {
+                await learningRepo.replaceAll(eventLog)
+            },
+            1000
+        )           
         const saveProblemRepo = debounce(async (byId: Record<ProblemId, Problem>) => 
-            problemRepo.replaceAll(Object.values(byId)), 1000)       
-
-
+            {problemRepo.replaceAll(Object.values(byId))}, 1000)       
+        */
+        const saveMissionRepo = async (missions: Mission[]) => {
+            missionRepo.replaceAll(missions)
+        }
+        const saveLearningRepo = async (eventLog: ReviewEventLog) => {
+            learningRepo.replaceAll(eventLog)
+        }
+        const saveProblemRepo = async (byId: Record<ProblemId, Problem>) => {
+            problemRepo.replaceAll(Object.values(byId))
+        }
+        
         const missionUnsub = useMissionStore.subscribe(state => {
             if (isInitializing) return           
             saveMissionRepo(state.missions)      
+            
         })
         const learningUnsub = useReviewEventStore.subscribe(state => {
             if (isInitializing) return
             saveLearningRepo(state.eventLog)
+            //learningRepo.replaceAll(state.eventLog)
         })
         const problemUnSub = useProblemStore.subscribe(state => {
             if (isInitializing) return 
             saveProblemRepo(state.byId)
+            //problemRepo.replaceAll(Object.values(state.byId))
         })
+            
         
         // bootstrap 本体
         const bootstrap = async () => {
@@ -71,8 +88,8 @@ export function bootstrapApp(repos: RepositoryContextValue) {
         }
         bootstrap()
 
-        
         // クリーンアップ
+        /*
         return () => {
             missionUnsub()
             saveMissionRepo.flush?.()
@@ -80,7 +97,7 @@ export function bootstrapApp(repos: RepositoryContextValue) {
             saveLearningRepo.flush?.()
             problemUnSub()
             saveProblemRepo.flush?.()
-        }
+        }*/
     }, [repos])
     
 }

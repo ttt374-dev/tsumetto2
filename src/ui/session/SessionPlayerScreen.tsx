@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 
 import PlayerScreen from "../player/PlayerScreen"
 import { useSessionPlayerViewModel } from "./hooks/useSessionPlayerViewModel"
@@ -6,11 +6,12 @@ import { deriveSolvedResult, type SolvedResult } from "@/domain/learning/entity/
 import { SolvedDialog } from "../player/dialogs/SolvedDialog"
 import type { Problem } from "@/domain/problem/entity/Problem"
 import { PlayerFooterPanel } from "@/ui/player/components/panels/PlayerFooterPanel"
-import { useNavigate } from "react-router-dom"
+import { useLocation, useNavigate } from "react-router-dom"
 import { routes } from "@/ui/App/useAppNavigation"
 import { useToast } from "@/ui/App/providers/ToastProvider"
 import { useGameStore } from "@/ui/player/hooks/useGameStore"
 import { useTimerStore } from "@/ui/player/hooks/useTimerStore"
+import { useSessionStore } from "@/ui/session/hooks/useSessionStore"
 
 ////////////////////////////////////////////////
 export default function SessionPlayerScreen() {
@@ -37,56 +38,72 @@ function SessionPlayerContent(props: {
     onUndoLastAnswer?: () => void
     onNextProblem: () => void
 }) {
-    const [solvedResult, setSolvedResult] = useState<SolvedResult | undefined>(undefined)
+    const [isOpen, setIsOpen ] = useState(false)
+    //const [solvedResult, setSolvedResult] = useState<SolvedResult | undefined>(undefined)
     const navigate = useNavigate()
     const toast = useToast()    
-
+    const summary = useSessionStore(s=>s.summary)
+    
+    const timer = useTimerStore()
+    const { state, hasSubmitted, markSubmit, event, clearEvent, finalize} = useGameStore()
+    const solvedResult = isOpen
+        ? deriveSolvedResult(state, timer.elapsedSec)
+        : null
+        
+    // 初期化
     useEffect(() => {
-        setSolvedResult(undefined)
+        setIsOpen(false)
     }, [props.problem.id])
 
-    const handleSolved = (res: SolvedResult) => {
-        if (props.onSubmitAnswer(res)) {
-            setSolvedResult(res)
-        } else {
-            toast({ message: "solved but already submitted" })
-        }
-    }
-
-    const handleShowList = () => {
-        navigate(routes.sessionList)
-    }
-
-    // 終了時サブミット
-    const timer = useTimerStore()
-    const { phase, state, hasSubmitted, markSubmit, event, clearEvent, finalize} = useGameStore()
-    
-    const submitSolvedResult = () => {
-        if (!hasSubmitted){
-            const res = deriveSolvedResult(state, timer.elapsedSec)
-            props.onSubmitAnswer(res)
-            console.log("submit result", res)
-            markSubmit()
-        }        
-    }
-    const handleNext = () => {    
-        const s = finalize()
-        if (!s) return
-
-        submitSolvedResult()
-        props.onNextProblem()
-    }
-    // SOLV イベントでダイアログを表示し
+    // SOLV イベントでダイアログを表示
     useEffect(()=>{
         if (!event) return 
         if (event.type === "SOLV"){
-            const res = deriveSolvedResult(state, timer.elapsedSec)
-            setSolvedResult(res)
+            setIsOpen(true)
         }
         clearEvent()
     })
+    // on leave    
+    // ハンドラー
+    const handleShowList = () => {
+        navigate(routes.sessionList)
+    }
+    const onLeave = () => {
+        const s = finalize()
+        console.log("finalized on lieave", s)
+        if (!s) return
+        submitSolvedResult()
+        //("submit result")
+        
+    }
+    const handleNext = () => {    
+        onLeave()
+        props.onNextProblem()
+    }
+    const handleSummary = () => {
+        onLeave()
+        summary()
+    }
+    const handleSolved = (res: SolvedResult) => {
+        //submitSolvedResult()
+    }
+    // サブミット    
+    const submitSolvedResult = () => {
+        console.log("submtsovelresult", hasSubmitted)
+        if (!hasSubmitted){
+            //const res = solvedResult || deriveSolvedResult(state, timer.elapsedSec)
+            const res = deriveSolvedResult(state, timer.elapsedSec)
+            props.onSubmitAnswer(res)            
+            toast({message: "submit solved result"})
+            markSubmit()
+        }        
+    }
 
-    const footerPanel: React.ReactNode = (<PlayerFooterPanel onNext={handleNext} onShowList={handleShowList} />)
+    const footerPanel: React.ReactNode = (
+        <PlayerFooterPanel 
+            onNext={handleNext}
+            onSummary={handleSummary}
+            onShowList={handleShowList} />)
     return (
         <>
             <PlayerScreen
@@ -98,8 +115,8 @@ function SessionPlayerContent(props: {
             />
 
             {solvedResult &&
-                <SolvedDialog open={solvedResult !== undefined}
-                    onClose={() => setSolvedResult(undefined)}
+                <SolvedDialog open={isOpen}
+                    onClose={() => setIsOpen(false)}
                     onConfirm={handleNext}
                     solvedResult={solvedResult}
                 />}

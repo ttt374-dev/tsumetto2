@@ -20,6 +20,7 @@ export function PlayerFooterPanel(props: {
     //onAnswerClick: (answerResult: SolvedResult) => void,
     onNext: () => void
     onShowList: () => void
+    onSummary: () => void
 }) {
     const summary = useSessionStore(s=>s.summary)
 
@@ -32,7 +33,7 @@ export function PlayerFooterPanel(props: {
             <Button onClick={props.onShowList} fullWidth variant="outlined">
                 リスト
             </Button>
-            <Button onClick={handleSummary} fullWidth variant="outlined">
+            <Button onClick={props.onSummary} fullWidth variant="outlined">
                 サマリーへ
             </Button>
             

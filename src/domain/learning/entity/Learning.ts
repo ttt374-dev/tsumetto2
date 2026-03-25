@@ -18,8 +18,7 @@ export function deriveSolvedResult(gameState: GameState, elapsedSec: number): So
         outcome = gameState.isRevealed ? "failed" : "solved"               
     } else {
         outcome = !gameState.isRevealed && gameState.mistakes === 0 ? "unanswered" : "failed"
-    }
-    console.log("derive solv result", gameState, outcome)
+    }    
     return {
         outcome,
         mistakes: gameState.mistakes,

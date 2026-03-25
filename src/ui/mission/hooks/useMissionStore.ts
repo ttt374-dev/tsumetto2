@@ -8,7 +8,8 @@ type MissionStoreState = {
     setRepository: (repo: MissionRepository) => void
     missions: Mission[]
     reload: () => Promise<void>
-    save: (mission: Mission) => void
+    saveRepo: () => Promise<void>
+    save: (mission: Mission) => void    
     deleteMission: (id: MissionId) => void
     replaceAll: (missions: Mission[]) => void
 }
@@ -39,11 +40,17 @@ export const useMissionStore = create<MissionStoreState>((set, get) => ({
         })
 
     },
+    saveRepo: async () => {
+        const repo = get().repo
+        if (!repo) throw new Error("Repository not initialized")
+        repo.replaceAll(get().missions)
+    },
     deleteMission: (id: MissionId) => {
         set(state => ({ missions: state.missions.filter(d => d.id !== id) }))
     },
 
     replaceAll: (missions: Mission[]) => {
         set({ missions })
+        
     },
 }))

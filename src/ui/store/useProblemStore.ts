@@ -3,6 +3,7 @@ import { createSelector } from "reselect"
 
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem"
 import type { ProblemRepository } from "@/domain/problem/repository/ProblemRepository"
+import { Save } from "@mui/icons-material"
 
 ///////////////////
 // selector
@@ -42,6 +43,7 @@ export type ProblemState = {
     activeProblems: Problem[]    
     
     reload: () => Promise<void>
+    save: () => Promise<void>
     updateProblem: (id: ProblemId, updater: (p: Problem) => Problem) => void
     updateProblems: (ids: string[], updater: (p: Problem) => Problem) => void
     deleteProblem: (id: ProblemId) => void
@@ -109,6 +111,11 @@ export const useProblemStore = create<ProblemState>((set, get) => ({
         set(reduceById(byId))       
         
     },
+    save: async () => {
+        const { repo, byId } = get()
+        if (!repo) throw new Error("Repository not initialized")
+        await repo.replaceAll(Object.values(byId))
+    },
     updateProblem: (id, updater) => {
         get().updateProblems([id], updater)
     },
@@ -143,6 +150,7 @@ export const useProblemStore = create<ProblemState>((set, get) => ({
         // ② 楽観的更新
         //const prevState = state.byId
         set(reduceById(newById))
+        state.save()
     },
 
     toggleStar: (id: ProblemId) => {
@@ -169,6 +177,7 @@ export const useProblemStore = create<ProblemState>((set, get) => ({
 
         if (updated.length === 0) return
         set(reduceById(newById))
+        state.save()
     },
 
     deleteAll: () => {
@@ -188,6 +197,7 @@ export const useProblemStore = create<ProblemState>((set, get) => ({
         if (updated.length === 0) return
 
         set(reduceById(newById))        
+        state.save()
     }
 ,
 

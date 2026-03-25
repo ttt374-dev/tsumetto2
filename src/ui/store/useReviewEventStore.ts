@@ -14,6 +14,7 @@ type ReviewEventStoreState = {
     getLastReviewedEvent: (m: SessionId) => ReviewEvent | undefined;
 
     reload: () => Promise<void>;
+    save: () => Promise<void>
     append: (reviewEvent: NewReviewEvent) => ReviewEvent
     appendReview: (problemId: ProblemId, sessionId: SessionId, quality: SolvedResult, sec?: number) => ReviewEvent
     appendCancel: (targetEventId: ReviewEventId, sessionId: SessionId) => ReviewEvent
@@ -59,11 +60,17 @@ export const useReviewEventStore = create<ReviewEventStoreState>((set, get) => (
             console.error(e)
         }
     },
+    save: async () => {
+        const repo = get().repo
+        if (!repo) throw new Error("Repository not initialized")
+        repo.replaceAll(get().eventLog)
+    },
     append: (newevent: NewReviewEvent): ReviewEvent => {
         const event: ReviewEvent = { ...newevent, id: createReviewEventId(), at: Date.now() }        
         set(state => ({
             eventLog: [...state.eventLog, event]
         }))
+        get().save()
         return event
     },
     appendReview: (problemId: ProblemId, sessionId: SessionId, solvedResult: SolvedResult) => {
@@ -93,6 +100,7 @@ export const useReviewEventStore = create<ReviewEventStoreState>((set, get) => (
     },
     clearAll: () => {
         set({eventLog: []})
+        get().save()
     }
 }
 

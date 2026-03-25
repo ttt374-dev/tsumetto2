@@ -11,11 +11,11 @@ type LearningRecordStoreState = {
   updateFromEventLog: (eventLog: ReviewEventLog) => void;
 };
 
-export const useLearningRecordStore = create<LearningRecordStoreState>((set) => ({
+export const useLearningRecordStore = create<LearningRecordStoreState>((set, get) => ({
   records: {},
 
   updateFromEventLog: (eventLog) => {
-    set({ records: projectLearning(eventLog) });
+    set({ records: projectLearning(eventLog) });    
   },
 }));
 
