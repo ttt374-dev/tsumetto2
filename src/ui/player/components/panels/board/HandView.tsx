@@ -21,7 +21,7 @@ function HandPieceView({ pieceType, selected, count, owner, onClick }: {
     count: number
     onClick?: () => void
 }) {
-    const countString = count > 1 ? numberToKanjiTwoDigits(count) : ""
+    //const countString = count > 1 ? numberToKanjiTwoDigits(count) : ""
     return (
         <span style={{ marginRight: 5 }} onClick={() => onClick?.()}            
             className={`${styles.handpiece}
@@ -57,6 +57,7 @@ export default function HandView({ hand, owner }: { hand: Hand, owner: Player })
                 if (count === 0) return null                    
                 return (
                     <HandPieceView 
+                        key={`handpiece-${owner}-${pieceType}`}
                         pieceType={pieceType} selected={isSelected(pieceType, owner)} count={count} owner={owner}
                         onClick={() => handleHandpieceClick(pieceType)}/>)
                 })
