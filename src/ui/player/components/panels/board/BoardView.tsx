@@ -4,6 +4,8 @@ import { useCurrentPosition, useGameStore } from "../../../hooks/useGameStore";
 import { useBoardInputStore } from "../../../hooks/useBoardInputStore";
 import { Board, Piece, Square } from "@/domain/kif/entity";
 import { resolveIntent } from "../../../../../domain/game/intentResolver";
+import { Timer } from "@mui/icons-material";
+import { useTimerStore } from "@/ui/player/hooks/useTimerStore";
 
 const fileLabels = ["９", "８", "７", "６", "５", "４", "３", "２", "１"];
 const rankLabels = ["一", "二", "三", "四", "五", "六", "七", "八", "九"];
@@ -32,18 +34,18 @@ export default function BoardView() {
     const ranks = [...Array(9)].map((_, i) => i + 1)   //   1 → 9
     const files = [...Array(9)].map((_, i) => 9 - i)   // 9 → 1（将棋表記o9i） ???
 
-    const position = useCurrentPosition()
+    //const position = useCurrentPosition()
+    const timer = useTimerStore()
 
-    const applyIntent = useGameStore(s=>s.handleIntent)
+    const handleIntent = useGameStore(s=>s.handleIntent)
     const clickSquare = useBoardInputStore(s => s.clickSquare)
     const clear = useBoardInputStore(s=>s.clear)
 
-    const handleSquareClick = (file: number, rank: number) => {
-        
+    const handleSquareClick = (file: number, rank: number) => {        
         const intent = clickSquare(new Square(file, rank), board)
         if (!intent) return
         //const result = resolveIntent(position, intent)
-        const res = applyIntent(intent)
+        const res = handleIntent(intent, timer.elapsedSec)
         if (res) clear()
         //if (move == "promotionRequired") 
         //move && tryMove(move)

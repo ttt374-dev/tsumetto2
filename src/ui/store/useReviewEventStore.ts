@@ -78,6 +78,7 @@ export const useReviewEventStore = create<ReviewEventStoreState>((set, get) => (
             type: "reviewed", problemId, sessionId: sessionId, solvedResult: solvedResult,
             actions: actions
         }
+        console.log("append review", event)
         
         return get().append(event);
     },

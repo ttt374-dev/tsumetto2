@@ -78,7 +78,8 @@ export default function PlayerScreen({ problem, title, onSolved, onUndoLastAnswe
             promote
         }
         //choosePromotion(promote)
-        applyIntent(intent)
+        console.log("elasped sec on handle promotion confirm", timer.elapsedSec)
+        applyIntent(intent, timer.elapsedSec)
         clearSelection()
     }
     const handleDelete = (id: ProblemId) => {

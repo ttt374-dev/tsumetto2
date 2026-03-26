@@ -19,7 +19,7 @@ function toReviewActions(events: GameEvent[]): ReviewAction[] {
   return events.flatMap((e): ReviewAction[] => {
     switch (e.type) {
       case "MISTAKE":
-        return [{ type: "mistake", ply: e.ply }]
+        return [{ type: "mistake", ply: e.ply, elapsedSec: e.elapsedSec }]
       case "REVEAL":
         return [{ type: "reveal", ply: e.ply }]
       default:

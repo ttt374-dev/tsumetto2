@@ -11,7 +11,7 @@ export type GameState =  { mistakes: number, isRevealed: boolean, isSolved: bool
 
 export type GameEvent =
   | { type: "SOLVE" }
-  | { type: "MISTAKE", ply: number}
+  | { type: "MISTAKE", ply: number, elapsedSec: number}
   | { type: "REVEAL", ply: number}
   //| { type: "ABANDON", ply: number}
   
@@ -36,9 +36,9 @@ type GameStore = {
     advancePly: () => void
     retreatPly: () => void    
     moveTo: (ply: number) => void
-    handleIntent: (intent: Intent) => boolean
+    handleIntent: (intent: Intent, elaspedSec: number) => boolean
     //choosePromotion: (promote: boolean) => void,
-    tryMove: (move: Move) => boolean
+    tryMove: (move: Move, elaspedSec: number) => boolean
 
     revealAnswer: () => void
     applyOpponentMove: () => void
@@ -110,7 +110,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
         const { moveTo, ply} = get()
         if (ply > 0) moveTo(ply - 1)
     },
-    handleIntent(intent: Intent){
+    handleIntent(intent: Intent, elapsedSec: number){
+        console.log("handle intent", intent, elapsedSec)
         const { initialPosition, moves, ply, tryMove} = get()     
         
         switch(intent.type){
@@ -122,7 +123,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
                 if (!result) return false
                 switch (result.type) {
                     case "move":
-                        tryMove(result.move)
+                        tryMove(result.move, elapsedSec)
                         break;
                     case "promotionPending":
                         set({ pendingPromotion: result.pendingPromotion })
@@ -141,18 +142,18 @@ export const useGameStore = create<GameStore>((set, get) => ({
                 )
 
                 set({ pendingPromotion: null })
-                tryMove(move)
+                tryMove(move, elapsedSec)
                 return true
         }
 
     },
-    tryMove: (move: Move) => {  // 正解なら true、間違いなら falseを返す
+    tryMove: (move: Move, elapsedSec: number) => {  // 正解なら true、間違いなら falseを返す
         const { moves, ply} = get()
         console.log("trymove", move)
         if (!move.equals(moves[ply])) {   // 不正解
             //set(s => ({ mistakes: s.mistakes + 1 }))
             const event: GameEvent = {
-                type: "MISTAKE", ply: ply
+                type: "MISTAKE", ply: ply, elapsedSec: elapsedSec
             }
             set(s => ({
                 event: event, 

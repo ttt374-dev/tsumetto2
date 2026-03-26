@@ -3,7 +3,7 @@ import type { ProblemId } from "@/domain/problem/entity/Problem"
 import type { SolvedResult } from "@/domain/learning/entity/Learning"
 
 export type ReviewAction = 
-    | { type: "mistake", ply: number}
+    | { type: "mistake", ply: number, elapsedSec: number}
     | { type: "reveal", ply: number }
     | { type: "skip", ply: number}
 
