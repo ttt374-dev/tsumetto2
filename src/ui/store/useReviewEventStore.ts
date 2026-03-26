@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-import type { ReviewEventRepository } from "@/domain/learning/repository/ReviewEventRepository";
+import type { ReviewEventRepository } from "@/domain/review/repository/ReviewEventRepository";
 import type { ProblemId } from "@/domain/problem/entity/Problem";
 import type { ReviewEvent, ReviewEventId, ReviewEventLog, NewReviewEvent, ReviewAction } from "@/domain/review/ReviewEvent";
 import type { SolvedResult } from "@/domain/learning/entity/Learning";

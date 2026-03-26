@@ -1,4 +1,4 @@
-import type { SolvedResult } from "@/domain/learning/entity/Learning"
+import type { SolvedResult } from "@/domain/review/solvedResult"
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material"
 
 export function SolvedDialog({ open, onClose, onConfirm, solvedResult, confirmLabel="次へ" }: {

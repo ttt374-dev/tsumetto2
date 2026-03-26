@@ -1,6 +1,6 @@
 import type { SessionId } from "@/domain/session/entity/Session"
 import type { ProblemId } from "@/domain/problem/entity/Problem"
-import type { SolvedResult } from "@/domain/learning/entity/Learning"
+import type { SolvedResult } from "@/domain/review/solvedResult"
 
 export type ReviewAction = 
     | { type: "mistake", ply: number, elapsedSec: number}
@@ -19,7 +19,7 @@ type NewReviewReviewedEvent =
         type: "reviewed"
         problemId: ProblemId
         sessionId: SessionId
-        solvedResult: SolvedResult     
+        solvedResult: SolvedResult
         actions: ReviewAction[]
     }
 

@@ -2,7 +2,7 @@
 
 import type { Result } from "@/shared/result"
 import type { MissionRepository } from "@/domain/mission/repository/MissionRepository"
-import type { ReviewEventRepository } from "@/domain/learning/repository/ReviewEventRepository"
+import type { ReviewEventRepository } from "@/domain/review/repository/ReviewEventRepository"
 import { Problem, type ProblemDTO } from "@/domain/problem/entity/Problem"
 import type { ReviewEventLog } from "@/domain/review/ReviewEvent"
 import type { Mission } from "@/domain/mission/entity/Mission"

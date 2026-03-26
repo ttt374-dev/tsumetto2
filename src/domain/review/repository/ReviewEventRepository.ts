@@ -1,5 +1,5 @@
 import { Filesystem, Directory, Encoding } from "@capacitor/filesystem";
-import type { ReviewEvent, ReviewEventLog } from "../../review/ReviewEvent";
+import type { ReviewEvent, ReviewEventLog } from "../ReviewEvent";
 
 export class ReviewEventRepository {
     constructor(

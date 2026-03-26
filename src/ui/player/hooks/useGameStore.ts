@@ -10,7 +10,7 @@ type GamePhase = "playing" | "finished"
 export type GameState =  { mistakes: number, isRevealed: boolean, isSolved: boolean }    
 
 export type GameEvent =
-  | { type: "SOLVE" }
+  | { type: "SOLVE", elapsedSec: number }
   | { type: "MISTAKE", ply: number, elapsedSec: number}
   | { type: "REVEAL", ply: number, elapsedSec: number}
   | { type: "ABANDON", ply: number, elapsedSec: number }
@@ -172,7 +172,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
                 //const alreadyFired = s.hasFiredOnSolved                
                 //set({phase: "finished"})
                 const event: GameEvent = {
-                    type: "SOLVE"
+                    type: "SOLVE", elapsedSec: elapsedSec
                 }
                 return ({ 
                     ply: s.ply + 1, 

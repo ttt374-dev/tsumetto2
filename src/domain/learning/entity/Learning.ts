@@ -1,42 +1,8 @@
 import type { ProblemId } from "@/domain/problem/entity/Problem"
-import type { GameState } from "@/ui/player/hooks/useGameStore"
+import type { SolvedResult } from "@/domain/review/solvedResult"
 
 const MAX_INTERVAL_DAYS = 60
 
-export type SolvedOutcome = "solved" | "failed" | "unanswered"
-export type SolvedResult = {
-  outcome: SolvedOutcome
-  mistakes: number
-  isRevealed: boolean
-  isSolved: boolean
-  elapsedSec: number
-}
-export function deriveSolvedResult(gameState: GameState, elapsedSec: number): SolvedResult {
-    let outcome: SolvedOutcome
-
-    if (gameState.isSolved){
-        outcome = gameState.isRevealed ? "failed" : "solved"               
-    } else {
-        outcome = !gameState.isRevealed && gameState.mistakes === 0 ? "unanswered" : "failed"
-    }    
-    return {
-        outcome,
-        mistakes: gameState.mistakes,
-        isRevealed: gameState.isRevealed, 
-        isSolved: gameState.isSolved,
-         elapsedSec,
-    }
-}
-
-export function createDefaultSolvedResult(): SolvedResult{
-    return {
-        outcome: "unanswered",
-        mistakes: 0,
-        isRevealed: false,
-        isSolved: false,
-        elapsedSec: 10,
-    }    
-}
 export type LearningData = {
     problemId: ProblemId
     solvedCount: number

@@ -1,6 +1,6 @@
 import type { ReactNode, } from "react"
 import { createContext, useContext, useState, useRef } from "react"
-import { LocalStorageReviewEventPersistence, ReviewEventRepository } from "@/domain/learning/repository/ReviewEventRepository"
+import { LocalStorageReviewEventPersistence, ReviewEventRepository } from "@/domain/review/repository/ReviewEventRepository"
 import { MissionRepository, LocalStorageMissionPersistence} from "@/domain/mission/repository/MissionRepository"
 import type { ProblemRepository } from "@/domain/problem/repository/ProblemRepository"
 
