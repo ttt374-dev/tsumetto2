@@ -1,7 +1,7 @@
 import type { SolvedResult } from "@/domain/learning/entity/Learning"
 import type { ProblemId } from "@/domain/problem/entity/Problem"
 import type { SessionId } from "@/domain/session/entity/Session"
-import { formatSolvedResult } from "@/ui/history/LearningHistory"
+import { formatSolvedResult } from "@/ui/history/ReviewEventHistory"
 import { useProblemStore } from "@/ui/store/useProblemStore"
 import { Box, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Stack } from "@mui/material"
 

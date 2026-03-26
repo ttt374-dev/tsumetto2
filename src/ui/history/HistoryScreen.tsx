@@ -1,10 +1,10 @@
 
 import { AppShell } from "@/ui/common/components/layout/AppShell";
-import { LearningHistory } from "@/ui/history/LearningHistory";
+import { ReviewEventHistory } from "@/ui/history/ReviewEventHistory";
 
 export default function HistoryScreen(){
     return (<AppShell        
         header={"履歴"}    >
-        <LearningHistory/>
+        <ReviewEventHistory/>
     </AppShell>)
 }
