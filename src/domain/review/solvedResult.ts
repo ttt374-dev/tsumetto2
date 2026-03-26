@@ -1,6 +1,3 @@
-import { projectGameState } from "@/ui/player/hooks/gameStateReducer"
-import type { GameEvent, GameState } from "@/ui/player/hooks/useGameStore"
-
 export type SolvedOutcome = "solved" | "failed" | "unanswered"
 
 export type SolvedResult = {

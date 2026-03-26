@@ -5,7 +5,7 @@ import { useSessionPlayerViewModel } from "./hooks/useSessionPlayerViewModel"
 import { SolvedDialog } from "../player/dialogs/SolvedDialog"
 import type { Problem } from "@/domain/problem/entity/Problem"
 import { PlayerFooterPanel } from "@/ui/player/components/panels/PlayerFooterPanel"
-import { useLocation, useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import { routes } from "@/ui/App/useAppNavigation"
 import { useToast } from "@/ui/App/providers/ToastProvider"
 import { useGameStore, type GameEvent } from "@/ui/player/hooks/useGameStore"
@@ -13,7 +13,7 @@ import { useTimerStore } from "@/ui/player/hooks/useTimerStore"
 import { useSessionStore } from "@/ui/session/hooks/useSessionStore"
 import type { ReviewAction } from "@/domain/review/ReviewEvent"
 import type { SolvedResult } from "@/domain/review/solvedResult"
-import { deriveSolvedResult, deriveSolvedResultFromEvents } from "@/domain/review/service/solvedResultDeriver"
+import { deriveSolvedResultFromEvents } from "@/domain/review/service/solvedResultDeriver"
 
 ///
 function toReviewActions(events: GameEvent[]): ReviewAction[] {
@@ -58,14 +58,11 @@ function SessionPlayerContent(props: {
     const [isOpen, setIsOpen ] = useState(false)
     const [solvedResult, setSolvedResult] = useState<SolvedResult | undefined>(undefined)
     const navigate = useNavigate()
-    const toast = useToast()    
     const summary = useSessionStore(s=>s.summary)
-    const next = useSessionStore(s=>s.next)
-    
+    const next = useSessionStore(s=>s.next)    
     const timer = useTimerStore()
-    const { state, hasSubmitted, events, 
+    const { hasSubmitted, events, 
         markSubmit, markAbandon } = useGameStore()
-    //const solvedResult = deriveSolvedResult(state, timer.elapsedSec)
         
     // 初期化
     useEffect(() => {
@@ -87,7 +84,7 @@ function SessionPlayerContent(props: {
 
         prevLenRef.current = events.length
     }, [events])
-    // on leave    
+
     // ハンドラー
     const handleShowList = () => {
         navigate(routes.sessionList)
@@ -112,7 +109,7 @@ function SessionPlayerContent(props: {
         if (hasSubmitted) return
         
         //const res = solvedResult || deriveSolvedResult(state, timer.elapsedSec)
-        const res = deriveSolvedResult(state, timer.elapsedSec)
+        const res = deriveSolvedResultFromEvents(events) //deriveSolvedResult(state, timer.elapsedSec)
         const actions = toReviewActions(events)
         console.log("submit solveresult", res, actions)
         props.onSubmitAnswer(res, actions)

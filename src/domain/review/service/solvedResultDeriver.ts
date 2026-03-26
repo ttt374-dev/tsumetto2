@@ -19,14 +19,15 @@ export function deriveSolvedResult(gameState: GameState, elapsedSec: number): So
     }
 }
 
+function findFinalEvent(events: GameEvent[]) {
+    return [...events].reverse().find(e =>
+        e.type === "SOLVE" || e.type === "ABANDON"
+    )
+}
 
 export function deriveSolvedResultFromEvents(events: GameEvent[]): SolvedResult {
     const state = projectGameState(events)
-
-    const finished = [...events].reverse().find(e =>
-        e.type === "SOLVE" || e.type === "ABANDON"
-    )
-
+    const finished = findFinalEvent(events)
     const elapsedSec = finished?.elapsedSec ?? 0
 
     return deriveSolvedResult(state, elapsedSec)

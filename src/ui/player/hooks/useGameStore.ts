@@ -5,6 +5,7 @@ import { create } from "zustand"
 import { Move, Position, Square, type PieceType } from "@/domain/kif/entity"
 import { buildUntilPly } from "@/domain/kif/service/buildUntilPly"
 import { resolveIntent, type Intent } from "@/domain/game/intentResolver"
+import { reduceGameState } from "@/ui/player/hooks/gameStateReducer"
 
 type GamePhase = "playing" | "finished" 
 export type GameState =  { mistakes: number, isRevealed: boolean, isSolved: boolean }    
@@ -44,7 +45,8 @@ type GameStore = {
     revealAnswer: (elapsedSec: number) => void
     applyOpponentMove: () => void
     reset: () => void     
-    finalize: () => GameState | null
+    //finalize: () => GameState | null
+    dispatch: (e: GameEvent) => void
     //clearEvent: () => void
     markSubmit: () => void
     markAbandon: (elapsedSec: number) => void
@@ -77,7 +79,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     moves: [],
     ply: 0,
     pendingPromotion: null,
-    event: null,
+    //event: null,
     events: [],
     hasSubmitted: false,
     //result: null,
@@ -197,10 +199,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
         setTimeout(() => {
             set(s => {
                 const nextPly = clampPly(s.ply + 1, s.moves.length)
-                return {
-                    ply: nextPly,
-
-                }
+                return { ply: nextPly}
             })
         }, 500)
 
@@ -218,16 +217,23 @@ export const useGameStore = create<GameStore>((set, get) => ({
             events: [...s.events, event]
         }))
     },
+    /*
     finalize: (): GameState | null => {
         const s = get()
         if (s.phase === "finished") return null
 
         set({ phase: "finished" })
         return s.state
-    },/*
+    }
     clearEvent: () => {
         set({ event: null})
     },*/
+    dispatch: (e) => {
+        set(s => ({
+            events: [...s.events, e],
+            state: reduceGameState(s.state, e),
+        }))
+    },
     markSubmit: ()=>{
         set({hasSubmitted: true})
     },

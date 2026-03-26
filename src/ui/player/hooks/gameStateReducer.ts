@@ -1,6 +1,6 @@
 import type { GameEvent, GameState } from "@/ui/player/hooks/useGameStore"
 
-function reduceGameState(state: GameState, e: GameEvent): GameState {
+export function reduceGameState(state: GameState, e: GameEvent): GameState {
     switch (e.type) {
         case "MISTAKE":
             return {
