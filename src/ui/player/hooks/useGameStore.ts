@@ -10,9 +10,10 @@ type GamePhase = "playing" | "finished"
 export type GameState =  { mistakes: number, isRevealed: boolean, isSolved: boolean }    
 
 export type GameEvent =
-  | { type: "SOLV"  }
-  | { type: "MISTAKE", mistakes: number}
-  | { type: "REVEAL"}
+  | { type: "SOLVE", at: number  }
+  | { type: "MISTAKE", ply: number, at: number}
+  | { type: "REVEAL", ply: number, at: number}
+  | { type: "ABANDON", ply: number, at: number}
   
 export type PendingPromotion = {
     from: Square
@@ -29,13 +30,14 @@ type GameStore = {
     pendingPromotion: PendingPromotion | null
     hasSubmitted: boolean    
     event: GameEvent | null
+    events: GameEvent[]
 
     initialize: (pos: Position, moves: Move[]) => void
     advancePly: () => void
     retreatPly: () => void    
     moveTo: (ply: number) => void
     applyIntent: (intent: Intent) => boolean
-    choosePromotion: (promote: boolean) => void,
+    //choosePromotion: (promote: boolean) => void,
     tryMove: (move: Move) => boolean
 
     revealAnswer: () => void
@@ -64,8 +66,8 @@ export function useCurrentPosition() {
     [initialPosition, moves, ply]
   )
 }
-
 const DefaultGameState = { mistakes: 0, isRevealed: false, isSolved: false}
+
 ////////////////////////////////////
 export const useGameStore = create<GameStore>((set, get) => ({
     phase: "playing",
@@ -75,6 +77,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     ply: 0,
     pendingPromotion: null,
     event: null,
+    events: [],
     hasSubmitted: false,
     //result: null,
     initialize: (pos, moves) => {
@@ -87,6 +90,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
             phase: "playing",
             pendingPromotion: null,
             event: null,
+            events: [],
             state: { ...DefaultGameState},
             //result: null,
         })
@@ -109,20 +113,39 @@ export const useGameStore = create<GameStore>((set, get) => ({
     applyIntent(intent: Intent){
         const { initialPosition, moves, ply, tryMove} = get()     
         
-        const position = buildUntilPly(initialPosition, moves, ply)                
-        const result = resolveIntent(position, intent)
-        
-        if (!result) return false        
-        switch (result.type) {
+        switch(intent.type){
             case "move":
-                tryMove(result.move)                
-                break;
-            case "promotionPending":
-                set({ pendingPromotion: result.pendingPromotion })
-                break;
+            case "drop":
+                const position = buildUntilPly(initialPosition, moves, ply)
+                const result = resolveIntent(position, intent)
+
+                if (!result) return false
+                switch (result.type) {
+                    case "move":
+                        tryMove(result.move)
+                        break;
+                    case "promotionPending":
+                        set({ pendingPromotion: result.pendingPromotion })
+                        break;
+                }
+                return true
+            case "choosePromotion":
+                const pendingPromotion = get().pendingPromotion
+                if (!pendingPromotion) return false
+
+                const move = new Move(
+                    pendingPromotion.from,
+                    pendingPromotion.to,
+                    pendingPromotion.pieceType,
+                    intent.promote
+                )
+
+                set({ pendingPromotion: null })
+                tryMove(move)
+                return true
         }
-        return true
-    },      
+
+    },  /*    
     choosePromotion: (promote: boolean) => {        
         const pendingPromotion = get().pendingPromotion        
         if (!pendingPromotion) return
@@ -133,14 +156,18 @@ export const useGameStore = create<GameStore>((set, get) => ({
         set({pendingPromotion: null})
         get().tryMove(move)
 
-    },
+    },*/
     tryMove: (move: Move) => {  // 正解なら true、間違いなら falseを返す
         const { moves, ply} = get()
         console.log("trymove", move)
         if (!move.equals(moves[ply])) {   // 不正解
             //set(s => ({ mistakes: s.mistakes + 1 }))
+            const event: GameEvent = {
+                type: "MISTAKE", ply: ply, at: Date.now(),
+            }
             set(s => ({
-                event: { type: "MISTAKE", mistakes: s.state.mistakes + 1}, 
+                event: event, 
+                events: [...s.events, event],
                 state: {
                     ...s.state,
                     mistakes: s.state.mistakes + 1,
@@ -153,14 +180,18 @@ export const useGameStore = create<GameStore>((set, get) => ({
             set(s => {
                 //const alreadyFired = s.hasFiredOnSolved                
                 //set({phase: "finished"})
+                const event: GameEvent = {
+                    type: "SOLVE", at: Date.now(),
+                }
                 return ({ 
                     ply: s.ply + 1, 
-                    //isSolved: true,
+
                     state: {
                         ...s.state,
                         isSolved: true,
                     },
-                    event: { type: "SOLV"},
+                    event: event,
+                    events: [...s.events, event],
                     result: "solved",
                 }
             )})
@@ -184,12 +215,16 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
     },
     revealAnswer: () => {
+        const event: GameEvent = {
+            type: "REVEAL", ply: get().ply, at: Date.now(),
+        }
         set(s => ({
             state: {
                 ...s.state,
                 isRevealed: true,
             },
-            event: { type: "REVEAL"},
+            event: event,
+            events: [...s.events, event]
         }))
     },
     finalize: (): GameState | null => {

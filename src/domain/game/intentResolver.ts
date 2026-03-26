@@ -7,7 +7,7 @@ import { generateValidMovesFrom } from "../kif/rules/validMoveGenerator";
 export type Intent =    // ユーザのアクション
     | { type: "move"; from: Square; to: Square, promote: boolean }
     | { type: "drop"; pieceType: PieceType; to: Square }
-    //| { type: "choosePromotion"; promote: boolean}
+    | { type: "choosePromotion"; promote: boolean}
 
 export type IntentResult =   // ゲームエンジンの状態
     | { type: "move", move: Move}

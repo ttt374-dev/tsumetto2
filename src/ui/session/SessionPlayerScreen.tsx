@@ -46,7 +46,7 @@ function SessionPlayerContent(props: {
     const next = useSessionStore(s=>s.next)
     
     const timer = useTimerStore()
-    const { state, hasSubmitted, markSubmit, event, clearEvent, finalize} = useGameStore()
+    const { state, hasSubmitted, markSubmit, event, events, clearEvent, finalize} = useGameStore()
     const solvedResult = isOpen
         ? deriveSolvedResult(state, timer.elapsedSec)
         : null
@@ -59,7 +59,7 @@ function SessionPlayerContent(props: {
     // SOLV イベントでダイアログを表示
     useEffect(()=>{
         if (!event) return 
-        if (event.type === "SOLV"){
+        if (event.type === "SOLVE"){
             setIsOpen(true)
         }
         clearEvent()
