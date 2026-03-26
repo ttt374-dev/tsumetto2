@@ -46,6 +46,11 @@ export function LibraryCheckboxControl({ onCheckAll, onUncheckAll,
                         <CheckBoxIcon />
                     </IconButton>
                     <IconButton
+                        onClick={onUncheckAll}
+                        color="primary">
+                        <CheckBoxOutlineBlankIcon />
+                    </IconButton>
+                    <IconButton
                         onClick={() => onChangeActionMode("view")}
                         color="primary">
                         <CloseIcon />

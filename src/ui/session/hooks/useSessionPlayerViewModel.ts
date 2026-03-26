@@ -6,25 +6,28 @@ import type { SolvedResult } from '@/domain/learning/entity/Learning';
 import { useReviewEventStore } from '@/ui/store/useReviewEventStore';
 import type { SessionId } from "@/domain/session/entity/Session";
 
-type SessionPlayerVM =
+export type SessionPlayerVM =
   | { status: "idle" }
   | { status: "finished" }
   | { status: "loading"}
   | { status: "missing"}
-  | {
+  | SessionPlayerPlayingVM
+  
+export type SessionPlayerPlayingVM = {
       status: "playing"
       problem: Problem
       title: string      
       index: number
       count: number
       problemIds: ProblemId[]
-      sessionId: SessionId | undefined
+      sessionId: SessionId
       results: Record<ProblemId, SolvedResult>
       nextProblem: () => void
       moveToProblemId: (id: ProblemId) => void
       submitAnswer: (res: SolvedResult) => boolean
       undoLastAnswer: () => void
       hasLastAnswer: () => boolean
+      navigateToSummary: () => void
     }
 
 /////////////////////
@@ -38,6 +41,7 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
     const moveToProblemId = useSessionStore(s=>s.moveToId)
     const results = useSessionStore(s=>s.results)
     const submitResult = useSessionStore(s=>s.submitResult)
+    const summary = useSessionStore(s=>s.summary)
 
     const currentProblemId = problemIds[index]
     const count = problemIds.length
@@ -77,10 +81,11 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
         console.log("cancel", last.id, results)       
         prev()
     }
+    ///////////////////////////////////////////////
     const hasLastAnswer = (): boolean => {
         return sessionId && getLastEvent(sessionId) ? true : false
     }
-
+    
     if (count === 0) {
         return { status: "idle" }
     }
@@ -92,13 +97,18 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
     if (!problem) {
         return { status: "loading"} // TODO        
     }
-
+    if (!sessionId) {
+        return { status: "idle"} // TODO: idle ?? or errro
+    }   
+    
+    
     const title = `[${missionName} (${index + 1}/${count})]: ${problem.title}` 
     
     return { 
         status: "playing", 
         problemIds, sessionId, results, problem, title, index, count, 
         nextProblem: next, moveToProblemId, submitAnswer, undoLastAnswer, hasLastAnswer,
+        navigateToSummary: summary
      }
 }
 

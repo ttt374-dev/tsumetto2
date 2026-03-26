@@ -17,7 +17,7 @@ const ANSWER_ACTIONS: AnswerAction[] = [
 ]
 
 export function PlayerFooterPanel(props: {
-    //onAnswerClick: (answerResult: SolvedResult) => void,
+    //onAnswerClick: (answerResult: SolvedResult) => void,    
     onNext: () => void
     onShowList: () => void
     onSummary: () => void
@@ -31,11 +31,9 @@ export function PlayerFooterPanel(props: {
     return (
         <Stack direction="row">
             <Button onClick={props.onShowList} fullWidth variant="outlined">
-                リスト
+                問題リスト
             </Button>
-            <Button onClick={props.onSummary} fullWidth variant="outlined">
-                サマリーへ
-            </Button>
+            
             
             <Button onClick={props.onNext} fullWidth variant="contained">
                 次へ

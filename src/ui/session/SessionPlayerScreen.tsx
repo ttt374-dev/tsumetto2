@@ -76,6 +76,7 @@ function SessionPlayerContent(props: {
         //("submit result")
         
     }
+    
     const handleNext = () => {    
         onLeave()
         props.onNextProblem()
