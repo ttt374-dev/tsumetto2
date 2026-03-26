@@ -5,7 +5,7 @@ import type { SolvedResult } from "@/domain/learning/entity/Learning"
 export type ReviewAction = 
     | { type: "mistake", ply: number, elapsedSec: number}
     | { type: "reveal", ply: number, elapsedSec: number }
-    | { type: "skip", ply: number}
+    | { type: "abandon", ply: number, elapsedSec: number}
 
 export type ReviewEventId = string
 

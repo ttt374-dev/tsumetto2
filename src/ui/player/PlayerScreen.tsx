@@ -17,7 +17,6 @@ import TimerControlPanel from "./components/panels/TImerControlPanel";
 import ProblemLearningInfoPanel from "./components/panels/ProblemLearningInfoPanel";
 import { PromotionDialog } from "./dialogs/PromotionDialog";
 import { useBoardInputStore } from "./hooks/useBoardInputStore";
-import { useShallow } from "zustand/react/shallow";
 import { useProblemStore } from "@/ui/store/useProblemStore";
 import type { Intent } from "@/domain/game/intentResolver";
 
@@ -34,8 +33,8 @@ export default function PlayerScreen({ problem, title, onSolved, onUndoLastAnswe
     const toast = useToast()    
     const navigate = useNavigate()
 
-    const { pendingPromotion, state, event, 
-        initialize, handleIntent: applyIntent, clearEvent } =useGameStore()
+    const { pendingPromotion, state, events, 
+        initialize, handleIntent } = useGameStore()
     const clearSelection = useBoardInputStore(s=>s.clear)
     const deleteProblem = useProblemStore(s=>s.deleteProblem)
     //const next = useSessionStore(s=>s.next)
@@ -53,6 +52,23 @@ export default function PlayerScreen({ problem, title, onSolved, onUndoLastAnswe
     const handledRef = useRef(false)    
 */    
     useEffect(() => {
+        const last = events.at(-1)
+        if (!last) return
+
+        switch (last.type) {
+            case "SOLVE":
+                timer.stop()
+                toast({message: "solved"})
+                onSolved?.()
+                break
+            case "MISTAKE":
+                toast({ message: `incorrect: [${state.mistakes}]` })
+                break
+        }
+
+    }, [events])
+    /*
+    useEffect(() => {
         if (!event) return        
         switch (event.type) {
             case "SOLVE":
@@ -62,11 +78,10 @@ export default function PlayerScreen({ problem, title, onSolved, onUndoLastAnswe
                 break
             case "MISTAKE":
                 toast({ message: `incorrect: [${state.mistakes}]` })
-                break
-            
+                break            
         }   
         clearEvent()
-    }, [event])        
+    }, [event])     */   
     
     // handlers
     const handleNavigateToDetail = () => {
@@ -79,7 +94,7 @@ export default function PlayerScreen({ problem, title, onSolved, onUndoLastAnswe
         }
         //choosePromotion(promote)
         console.log("elasped sec on handle promotion confirm", timer.elapsedSec)
-        applyIntent(intent, timer.elapsedSec)
+        handleIntent(intent, timer.elapsedSec)
         clearSelection()
     }
     const handleDelete = (id: ProblemId) => {

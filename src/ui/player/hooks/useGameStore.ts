@@ -13,6 +13,7 @@ export type GameEvent =
   | { type: "SOLVE" }
   | { type: "MISTAKE", ply: number, elapsedSec: number}
   | { type: "REVEAL", ply: number, elapsedSec: number}
+  | { type: "ABANDON", ply: number, elapsedSec: number }
   //| { type: "ABANDON", ply: number}
   
 export type PendingPromotion = {
@@ -29,14 +30,14 @@ type GameStore = {
     ply: number
     pendingPromotion: PendingPromotion | null
     hasSubmitted: boolean    
-    event: GameEvent | null
+    //event: GameEvent | null
     events: GameEvent[]
 
     initialize: (pos: Position, moves: Move[]) => void
     advancePly: () => void
     retreatPly: () => void    
     moveTo: (ply: number) => void
-    handleIntent: (intent: Intent, elaspedSec: number) => boolean
+    handleIntent: (intent: Intent, elapsedSec: number) => boolean
     //choosePromotion: (promote: boolean) => void,
     tryMove: (move: Move, elaspedSec: number) => boolean
 
@@ -44,9 +45,9 @@ type GameStore = {
     applyOpponentMove: () => void
     reset: () => void     
     finalize: () => GameState | null
-    clearEvent: () => void
+    //clearEvent: () => void
     markSubmit: () => void
-    
+    markAbandon: (elapsedSec: number) => void
 }
 
 //// selector
@@ -89,7 +90,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
             ply: 0, hasSubmitted: false,
             phase: "playing",
             pendingPromotion: null,
-            event: null,
+            //event: null,
             events: [],
             state: { ...DefaultGameState},
             //result: null,
@@ -156,7 +157,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
                 type: "MISTAKE", ply: ply, elapsedSec: elapsedSec
             }
             set(s => ({
-                event: event, 
+                //event: event, 
                 events: [...s.events, event],
                 state: {
                     ...s.state,
@@ -180,7 +181,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
                         ...s.state,
                         isSolved: true,
                     },
-                    event: event,
+                    //event: event,
                     events: [...s.events, event],
                     result: "solved",
                 }
@@ -213,7 +214,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
                 ...s.state,
                 isRevealed: true,
             },
-            event: event,
+            //event: event,
             events: [...s.events, event]
         }))
     },
@@ -223,12 +224,23 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
         set({ phase: "finished" })
         return s.state
-    },
+    },/*
     clearEvent: () => {
         set({ event: null})
-    },
+    },*/
     markSubmit: ()=>{
         set({hasSubmitted: true})
+    },
+    markAbandon: (elapsedSec: number)=>{
+        const event: GameEvent = {
+            type: "ABANDON", ply: get().ply, elapsedSec
+        }
+        set(s=>({
+            ...s.state,
+            //event: event,
+            events: [...s.events, event]
+        }))
+        //set({: true})
     }
 
 }))

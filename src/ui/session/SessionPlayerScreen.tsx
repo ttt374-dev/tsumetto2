@@ -16,16 +16,18 @@ import type { ReviewAction } from "@/domain/review/ReviewEvent"
 
 ///
 function toReviewActions(events: GameEvent[]): ReviewAction[] {
-  return events.flatMap((e): ReviewAction[] => {
-    switch (e.type) {
-      case "MISTAKE":
-        return [{ type: "mistake", ply: e.ply, elapsedSec: e.elapsedSec }]
-      case "REVEAL":
-        return [{ type: "reveal", ply: e.ply, elapsedSec: e.elapsedSec  }]
-      default:
-        return []
-    }
-  })
+    return events.flatMap((e): ReviewAction[] => {
+        switch (e.type) {
+            case "MISTAKE":
+                return [{ type: "mistake", ply: e.ply, elapsedSec: e.elapsedSec }]
+            case "REVEAL":
+                return [{ type: "reveal", ply: e.ply, elapsedSec: e.elapsedSec }]
+            case "ABANDON":
+                return [{ type: "abandon", ply: e.ply, elapsedSec: e.elapsedSec }]
+            default:
+                return []
+        }
+    })
 }
 ////////////////////////////////////////////////
 export default function SessionPlayerScreen() {
@@ -60,7 +62,8 @@ function SessionPlayerContent(props: {
     const next = useSessionStore(s=>s.next)
     
     const timer = useTimerStore()
-    const { state, hasSubmitted, markSubmit, event, events, clearEvent, finalize} = useGameStore()
+    const { state, hasSubmitted, events, 
+        markSubmit, markAbandon, finalize} = useGameStore()
     const solvedResult = isOpen
         ? deriveSolvedResult(state, timer.elapsedSec)
         : null
@@ -72,11 +75,12 @@ function SessionPlayerContent(props: {
 
     // SOLV イベントでダイアログを表示
     useEffect(()=>{
-        if (!event) return 
-        if (event.type === "SOLVE"){
+        const last = events.at(-1)
+        if (!last) return 
+        if (last.type === "SOLVE"){
             setIsOpen(true)
         }
-        clearEvent()
+        //clearEvent()
     })
     // on leave    
     // ハンドラー
@@ -87,6 +91,7 @@ function SessionPlayerContent(props: {
         const s = finalize()
         console.log("finalized on lieave", s)
         if (!s) return
+        markAbandon(timer.elapsedSec)
         submitSolvedResult()
         //("submit result")
         
