@@ -10,10 +10,10 @@ type GamePhase = "playing" | "finished"
 export type GameState =  { mistakes: number, isRevealed: boolean, isSolved: boolean }    
 
 export type GameEvent =
-  | { type: "SOLVE", at: number  }
-  | { type: "MISTAKE", ply: number, at: number}
-  | { type: "REVEAL", ply: number, at: number}
-  | { type: "ABANDON", ply: number, at: number}
+  | { type: "SOLVE" }
+  | { type: "MISTAKE", ply: number}
+  | { type: "REVEAL", ply: number}
+  | { type: "ABANDON", ply: number}
   
 export type PendingPromotion = {
     from: Square
@@ -36,7 +36,7 @@ type GameStore = {
     advancePly: () => void
     retreatPly: () => void    
     moveTo: (ply: number) => void
-    applyIntent: (intent: Intent) => boolean
+    handleIntent: (intent: Intent) => boolean
     //choosePromotion: (promote: boolean) => void,
     tryMove: (move: Move) => boolean
 
@@ -110,7 +110,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
         const { moveTo, ply} = get()
         if (ply > 0) moveTo(ply - 1)
     },
-    applyIntent(intent: Intent){
+    handleIntent(intent: Intent){
         const { initialPosition, moves, ply, tryMove} = get()     
         
         switch(intent.type){
@@ -163,7 +163,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
         if (!move.equals(moves[ply])) {   // 不正解
             //set(s => ({ mistakes: s.mistakes + 1 }))
             const event: GameEvent = {
-                type: "MISTAKE", ply: ply, at: Date.now(),
+                type: "MISTAKE", ply: ply
             }
             set(s => ({
                 event: event, 
@@ -181,7 +181,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
                 //const alreadyFired = s.hasFiredOnSolved                
                 //set({phase: "finished"})
                 const event: GameEvent = {
-                    type: "SOLVE", at: Date.now(),
+                    type: "SOLVE"
                 }
                 return ({ 
                     ply: s.ply + 1, 
@@ -216,7 +216,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     },
     revealAnswer: () => {
         const event: GameEvent = {
-            type: "REVEAL", ply: get().ply, at: Date.now(),
+            type: "REVEAL", ply: get().ply
         }
         set(s => ({
             state: {

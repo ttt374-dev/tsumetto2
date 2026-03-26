@@ -35,7 +35,7 @@ export default function PlayerScreen({ problem, title, onSolved, onUndoLastAnswe
     const navigate = useNavigate()
 
     const { pendingPromotion, state, event, 
-        initialize, applyIntent, clearEvent } =useGameStore()
+        initialize, handleIntent: applyIntent, clearEvent } =useGameStore()
     const clearSelection = useBoardInputStore(s=>s.clear)
     const deleteProblem = useProblemStore(s=>s.deleteProblem)
     //const next = useSessionStore(s=>s.next)
