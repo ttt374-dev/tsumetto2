@@ -5,6 +5,7 @@ import type { Problem, ProblemId } from "@/domain/problem/entity/Problem"
 import type { SolvedResult } from '@/domain/learning/entity/Learning';
 import { useReviewEventStore } from '@/ui/store/useReviewEventStore';
 import type { SessionId } from "@/domain/session/entity/Session";
+import type { ReviewAction } from "@/domain/review/ReviewEvent";
 
 export type SessionPlayerVM =
   | { status: "idle" }
@@ -24,7 +25,7 @@ export type SessionPlayerPlayingVM = {
       results: Record<ProblemId, SolvedResult>
       nextProblem: () => void
       moveToProblemId: (id: ProblemId) => void
-      submitAnswer: (res: SolvedResult) => boolean
+      submitAnswer: (res: SolvedResult, actions: ReviewAction[]) => boolean
       //undoLastAnswer: () => void
       //hasLastAnswer: () => boolean
       navigateToSummary: () => void
@@ -59,15 +60,15 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
     )
 
     // navigation
-    const submitAnswer = (res: SolvedResult) => { // submit したら true を返す        
+    const submitAnswer = (res: SolvedResult, actions: ReviewAction[]) => { // submit したら true を返す        
         if (!sessionId) return false
         console.log("submit answer", results)
         if (results[currentProblemId]) {
-            console.log("alread submitted", currentProblemId, res)
+            console.log("alread submitted", currentProblemId, res, actions)
             return false// allready submitted
         }
         submitResult(currentProblemId, res)
-        appendReview(currentProblemId, sessionId, res)
+        appendReview(currentProblemId, sessionId, res, actions)
         return true        
     }    
 

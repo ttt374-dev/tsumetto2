@@ -1,7 +1,8 @@
 import type { SessionId } from "@/domain/session/entity/Session"
 import type { ProblemId } from "@/domain/problem/entity/Problem"
 import type { SolvedResult } from "@/domain/learning/entity/Learning"
-type ReviewAction = 
+
+export type ReviewAction = 
     | { type: "mistake", ply: number}
     | { type: "reveal", ply: number }
     | { type: "skip", ply: number}

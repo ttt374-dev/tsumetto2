@@ -9,10 +9,24 @@ import { PlayerFooterPanel } from "@/ui/player/components/panels/PlayerFooterPan
 import { useLocation, useNavigate } from "react-router-dom"
 import { routes } from "@/ui/App/useAppNavigation"
 import { useToast } from "@/ui/App/providers/ToastProvider"
-import { useGameStore } from "@/ui/player/hooks/useGameStore"
+import { useGameStore, type GameEvent } from "@/ui/player/hooks/useGameStore"
 import { useTimerStore } from "@/ui/player/hooks/useTimerStore"
 import { useSessionStore } from "@/ui/session/hooks/useSessionStore"
+import type { ReviewAction } from "@/domain/review/ReviewEvent"
 
+///
+function toReviewActions(events: GameEvent[]): ReviewAction[] {
+  return events.flatMap((e): ReviewAction[] => {
+    switch (e.type) {
+      case "MISTAKE":
+        return [{ type: "mistake", ply: e.ply }]
+      case "REVEAL":
+        return [{ type: "reveal", ply: e.ply }]
+      default:
+        return []
+    }
+  })
+}
 ////////////////////////////////////////////////
 export default function SessionPlayerScreen() {
     const vm = useSessionPlayerViewModel()
@@ -34,7 +48,7 @@ export default function SessionPlayerScreen() {
 function SessionPlayerContent(props: {
     problem: Problem
     title: string
-    onSubmitAnswer: (res: SolvedResult) => boolean
+    onSubmitAnswer: (res: SolvedResult, actions: ReviewAction[]) => boolean
     onUndoLastAnswer?: () => void
     onNextProblem: () => void
 }) {
@@ -95,7 +109,9 @@ function SessionPlayerContent(props: {
         
         //const res = solvedResult || deriveSolvedResult(state, timer.elapsedSec)
         const res = deriveSolvedResult(state, timer.elapsedSec)
-        props.onSubmitAnswer(res)
+        const actions = toReviewActions(events)
+        console.log("submit solveresult", actions)
+        props.onSubmitAnswer(res, actions)
         toast({ message: `submit solved result: ${res.outcome}` })
         markSubmit()
 

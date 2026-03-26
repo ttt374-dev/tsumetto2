@@ -2,7 +2,7 @@ import { create } from "zustand";
 
 import type { ReviewEventRepository } from "@/domain/learning/repository/ReviewEventRepository";
 import type { ProblemId } from "@/domain/problem/entity/Problem";
-import type { ReviewEvent, ReviewEventId, ReviewEventLog, NewReviewEvent } from "@/domain/review/ReviewEvent";
+import type { ReviewEvent, ReviewEventId, ReviewEventLog, NewReviewEvent, ReviewAction } from "@/domain/review/ReviewEvent";
 import type { SolvedResult } from "@/domain/learning/entity/Learning";
 import type { SessionId } from "@/domain/session/entity/Session";
 import { v4 } from "uuid";
@@ -16,7 +16,7 @@ type ReviewEventStoreState = {
     reload: () => Promise<void>;
     save: () => Promise<void>
     append: (reviewEvent: NewReviewEvent) => ReviewEvent
-    appendReview: (problemId: ProblemId, sessionId: SessionId, quality: SolvedResult) => ReviewEvent
+    appendReview: (problemId: ProblemId, sessionId: SessionId, quality: SolvedResult, actions: ReviewAction[]) => ReviewEvent
     //appendCancel: (targetEventId: ReviewEventId, sessionId: SessionId) => ReviewEvent
     appendReset: (problemId: ProblemId) => ReviewEvent
     clearAll: () => void
@@ -73,10 +73,10 @@ export const useReviewEventStore = create<ReviewEventStoreState>((set, get) => (
         get().save()
         return event
     },
-    appendReview: (problemId: ProblemId, sessionId: SessionId, solvedResult: SolvedResult) => {
+    appendReview: (problemId: ProblemId, sessionId: SessionId, solvedResult: SolvedResult, actions: ReviewAction[]) => {
         const event: NewReviewEvent = {
             type: "reviewed", problemId, sessionId: sessionId, solvedResult: solvedResult,
-            actions: []
+            actions: actions
         }
         
         return get().append(event);

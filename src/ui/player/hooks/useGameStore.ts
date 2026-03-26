@@ -13,7 +13,7 @@ export type GameEvent =
   | { type: "SOLVE" }
   | { type: "MISTAKE", ply: number}
   | { type: "REVEAL", ply: number}
-  | { type: "ABANDON", ply: number}
+  //| { type: "ABANDON", ply: number}
   
 export type PendingPromotion = {
     from: Square
@@ -145,18 +145,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
                 return true
         }
 
-    },  /*    
-    choosePromotion: (promote: boolean) => {        
-        const pendingPromotion = get().pendingPromotion        
-        if (!pendingPromotion) return
-        const move = new Move(pendingPromotion.from, 
-            pendingPromotion.to,
-            pendingPromotion.pieceType,
-            promote)
-        set({pendingPromotion: null})
-        get().tryMove(move)
-
-    },*/
+    },
     tryMove: (move: Move) => {  // 正解なら true、間違いなら falseを返す
         const { moves, ply} = get()
         console.log("trymove", move)
@@ -244,6 +233,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
 }))
 
 //////////////
+// pure helpers
 function clampPly(ply: number, max: number) {
   return Math.max(0, Math.min(ply, max))
 }
