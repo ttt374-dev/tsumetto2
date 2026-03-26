@@ -77,8 +77,8 @@ export default function BoardView() {
                         />
                     )
                 })
-                const empty = <div></div>
-                const rankLabel = <div className={styles.rankLabel}>
+                const empty = <div key={`empty-${rank}`}></div>
+                const rankLabel = <div className={styles.rankLabel} key={`ranklabel-${rank}`}>
                     {rankLabels[rank - 1]}
                 </div>
                 return [empty, ...cells, rankLabel,]

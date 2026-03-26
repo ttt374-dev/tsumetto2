@@ -59,8 +59,10 @@ export function LearningHistory(){
             最近の学習データ
             <Table size="small">
                 <TableHead>
-                    <TableCell>日付</TableCell>
-                    <TableCell>内容</TableCell>
+                    <TableRow>
+                        <TableCell>日付</TableCell>
+                        <TableCell>内容</TableCell>
+                    </TableRow>
                 </TableHead>
                 <TableBody>
                 {

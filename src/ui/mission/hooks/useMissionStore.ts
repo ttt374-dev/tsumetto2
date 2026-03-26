@@ -8,8 +8,8 @@ type MissionStoreState = {
     setRepository: (repo: MissionRepository) => void
     missions: Mission[]
     reload: () => Promise<void>
-    saveRepo: () => Promise<void>
-    save: (mission: Mission) => void    
+    save: () => Promise<void>
+    saveMission: (mission: Mission) => void    
     deleteMission: (id: MissionId) => void
     replaceAll: (missions: Mission[]) => void
 }
@@ -26,7 +26,7 @@ export const useMissionStore = create<MissionStoreState>((set, get) => ({
         console.log("load", list)
         set({ missions: list })
     },
-    save: async (mission: Mission) => {
+    saveMission: async (mission: Mission) => {
         console.log("save", mission)
         set(state => {
             const index = state.missions.findIndex(d => d.id === mission.id)
@@ -38,19 +38,21 @@ export const useMissionStore = create<MissionStoreState>((set, get) => ({
             }
             return { missions: newMissions }
         })
+        get().save()
 
     },
-    saveRepo: async () => {
+    save: async () => {
         const repo = get().repo
         if (!repo) throw new Error("Repository not initialized")
         repo.replaceAll(get().missions)
     },
     deleteMission: (id: MissionId) => {
         set(state => ({ missions: state.missions.filter(d => d.id !== id) }))
+        get().save()  
     },
 
     replaceAll: (missions: Mission[]) => {
         set({ missions })
-        
+        get().save()  
     },
 }))

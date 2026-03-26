@@ -45,7 +45,7 @@ function useMissionEditorActions(id: string | undefined, queryState: QueryState)
     const draft = useMissionEditorStore(s => s.draft)
     const reset = useMissionEditorStore(s => s.reset)
     //const missionStore = useMissionStore()
-    const { save: saveMission, deleteMission } = useMissionStore()
+    const { saveMission, deleteMission } = useMissionStore()
     //const navigate = useNavigate()    
 
     const save = useCallback(async () => {
