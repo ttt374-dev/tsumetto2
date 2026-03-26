@@ -20,13 +20,13 @@ export default function SessionPlayerScreen() {
     if (vm.status !== "playing") return <>{vm.status}</>
     if (!vm.sessionId) return <>NO SESSION ID</>
 
-    const onUndoLastAnswer = vm.hasLastAnswer() ? vm.undoLastAnswer : undefined
+    //const onUndoLastAnswer = vm.hasLastAnswer() ? vm.undoLastAnswer : undefined
 
     return (<SessionPlayerContent
         problem={vm.problem}
         title={vm.title}
         onSubmitAnswer={vm.submitAnswer}
-        onUndoLastAnswer={onUndoLastAnswer}
+        //onUndoLastAnswer={onUndoLastAnswer}
         onNextProblem={vm.nextProblem}
     />)
 }
@@ -43,6 +43,7 @@ function SessionPlayerContent(props: {
     const navigate = useNavigate()
     const toast = useToast()    
     const summary = useSessionStore(s=>s.summary)
+    const next = useSessionStore(s=>s.next)
     
     const timer = useTimerStore()
     const { state, hasSubmitted, markSubmit, event, clearEvent, finalize} = useGameStore()
@@ -75,8 +76,7 @@ function SessionPlayerContent(props: {
         submitSolvedResult()
         //("submit result")
         
-    }
-    
+    }    
     const handleNext = () => {    
         onLeave()
         props.onNextProblem()
@@ -85,19 +85,20 @@ function SessionPlayerContent(props: {
         onLeave()
         summary()
     }
-    const handleSolved = (res: SolvedResult) => {
-        //submitSolvedResult()
+    const handleSolved = () => {
+        submitSolvedResult()
     }
     // サブミット    
     const submitSolvedResult = () => {
         console.log("submtsovelresult", hasSubmitted)
-        if (!hasSubmitted){
-            //const res = solvedResult || deriveSolvedResult(state, timer.elapsedSec)
-            const res = deriveSolvedResult(state, timer.elapsedSec)
-            props.onSubmitAnswer(res)            
-            toast({message: "submit solved result"})
-            markSubmit()
-        }        
+        if (hasSubmitted) return
+        
+        //const res = solvedResult || deriveSolvedResult(state, timer.elapsedSec)
+        const res = deriveSolvedResult(state, timer.elapsedSec)
+        props.onSubmitAnswer(res)
+        toast({ message: `submit solved result: ${res.outcome}` })
+        markSubmit()
+
     }
 
     const footerPanel: React.ReactNode = (
@@ -111,7 +112,8 @@ function SessionPlayerContent(props: {
                 problem={props.problem}
                 title={props.title}
                 onSolved={handleSolved}
-                onUndoLastAnswer={props.onUndoLastAnswer}
+                //onUndoLastAnswer={props.onUndoLastAnswer}
+                onAfterDelete={next}
                 footerPanel={footerPanel}
             />
 

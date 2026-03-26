@@ -7,7 +7,7 @@ export type ReviewEventId = string
 export type NewReviewEvent =
     | NewReviewReviewedEvent
     | NewReviewResetEvent
-    | NewReviewCancelEvent
+    //| NewReviewCancelEvent
 
 type NewReviewReviewedEvent =
     {
@@ -23,6 +23,7 @@ type NewReviewResetEvent =
         problemId: ProblemId
     }
 
+/*
 type NewReviewCancelEvent =
     {
         type: "cancel"
@@ -31,7 +32,7 @@ type NewReviewCancelEvent =
         sessionId: SessionId
         
     }
-
+*/
 export type ReviewEvent =
     NewReviewEvent & { id: ReviewEventId, at: number }
 

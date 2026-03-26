@@ -3,10 +3,9 @@ import { Box, Drawer, Stack } from "@mui/material"
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from 'react';
 
-import { Problem } from "@/domain/problem/entity/Problem"
+import { Problem, type ProblemId } from "@/domain/problem/entity/Problem"
 import { AppShell } from "../common/components/layout/AppShell";
 import { PlayerRightPanel } from "./components/panels/PlayerRightPanel";
-import { deriveSolvedResult, type SolvedResult } from "@/domain/learning/entity/Learning";
 import { routes } from "../App/useAppNavigation";
 import { useToast } from "../App/providers/ToastProvider";
 import { useGameStore } from "./hooks/useGameStore";
@@ -19,13 +18,15 @@ import ProblemLearningInfoPanel from "./components/panels/ProblemLearningInfoPan
 import { PromotionDialog } from "./dialogs/PromotionDialog";
 import { useBoardInputStore } from "./hooks/useBoardInputStore";
 import { useShallow } from "zustand/react/shallow";
+import { useProblemStore } from "@/ui/store/useProblemStore";
 
 //////////////////////////////////////////////////////////////
-export default function PlayerScreen({ problem, title, onSolved, onUndoLastAnswer, footerPanel }: {
+export default function PlayerScreen({ problem, title, onSolved, onUndoLastAnswer, onAfterDelete, footerPanel }: {
     problem: Problem
     title: React.ReactNode
-    onSolved?: (res: SolvedResult) => void
+    onSolved?: () => void
     onUndoLastAnswer?: () => void
+    onAfterDelete?: () => void
     footerPanel?: React.ReactNode
     }) {
     const timer = useTimerStore()
@@ -46,6 +47,8 @@ export default function PlayerScreen({ problem, title, onSolved, onUndoLastAnswe
             hasSubmitted: s.hasSubmitted,
         })))
     const clearSelection = useBoardInputStore(s=>s.clear)
+    const deleteProblem = useProblemStore(s=>s.deleteProblem)
+    //const next = useSessionStore(s=>s.next)
 
     useEffect(()=>{
         timer.restart()
@@ -57,18 +60,15 @@ export default function PlayerScreen({ problem, title, onSolved, onUndoLastAnswe
         if (state.mistakes > 0) toast({ message: `incorrect: ${state.mistakes}` })
     }, [state.mistakes])
 
-    const handledRef = useRef(false)
-
-
-    
-*/
-    
+    const handledRef = useRef(false)    
+*/    
     useEffect(() => {
         if (!event) return        
         switch (event.type) {
             case "SOLV":
                 timer.stop()
                 toast({message: "solved"})
+                onSolved?.()
                 break
             case "MISTAKE":
                 toast({ message: `incorrect: ${event.mistakes}` })
@@ -78,13 +78,19 @@ export default function PlayerScreen({ problem, title, onSolved, onUndoLastAnswe
         clearEvent()
     }, [event])        
     
-    
+    // handlers
     const handleNavigateToDetail = () => {
         navigate(routes.detail(problem.id))
     }
     const handlePromotionConfirm = (promote: boolean) => {
         choosePromotion(promote)
         clearSelection()
+    }
+    const handleDelete = (id: ProblemId) => {
+        if (!window.confirm("sure to delete ? ")) return
+        deleteProblem(id)
+        onAfterDelete?.()
+        toast({message: `deleted: ${id}`})
     }
 
     return (
@@ -96,6 +102,7 @@ export default function PlayerScreen({ problem, title, onSolved, onUndoLastAnswe
                     problemId={problem.id}
                     onNavigateToDetail={handleNavigateToDetail}
                     onUndoLastAnswer={onUndoLastAnswer}
+                    onDelete={handleDelete}
                 />}
         >
             <Stack sx={{ minHeight: 0, height: "100%" }} spacing={1} >

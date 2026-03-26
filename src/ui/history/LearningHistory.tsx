@@ -1,4 +1,4 @@
-import { Table, TableBody, TableCell, TableHead, TableRow} from "@mui/material"
+import { ListItemText, Table, TableBody, TableCell, TableHead, TableRow} from "@mui/material"
 import { Paper } from "@mui/material";
 import type { ReviewEvent, ReviewEventId } from "@/domain/review/ReviewEvent";
 import { useProblemStore } from "@/ui/store/useProblemStore";
@@ -23,31 +23,35 @@ function EventItemRow(props: {
     switch (props.event.type) {
         case "reviewed": 
             const res = props.event.solvedResult
-            const resText = res.outcome === "solved" ? "詰み" : "失敗"
-            //const mistakesString = res.mistakes > 0 ? `(${res.mistakes}miss)` : ""
-            //const revealedString = res.revealed ? `[解答参照]` : ""
             content = `${byId[props.event.problemId].title}${formatSolvedResult(res)}`; 
             break
+            /*
         case "cancel": 
             const eventId = props.event.targetEventId            
             const problemId = eventLog.find(e=>e.id === eventId)?.problemId
             const title = problemId && byId[problemId]?.title
             content = `キャンセル：${title} (#${props.event.targetEventId.slice(0, 4)})`; 
             break
-
+*/
         case "reset": content = `リセット：${byId[props.event.problemId].title}` ; break
     }
     //console.log("event", props.event)    
+    const dateString = new Date(props.event.at).toLocaleString()
     return (
         <TableRow>
-            <TableCell>{new Date(props.event.at).toLocaleString()}</TableCell>
-            <TableCell>{ content }</TableCell>
+            { /* <TableCell>{new Date(props.event.at).toLocaleString()}</TableCell>*/ }
+            <TableCell>
+                <ListItemText 
+                    primary={ content} 
+                    secondary={ dateString }
+                />
+            </TableCell>
         </TableRow>
     )
 }
 export function LearningHistory(){
     const allevents = useReviewEventStore(s=>s.eventLog)
-    const num = 10
+    const num = 100
     const events = allevents
         .slice() // 元配列を破壊しない
         .sort((a, b) => b.at - a.at) // atで降順
@@ -57,13 +61,7 @@ export function LearningHistory(){
     return (
         <Paper sx={{my: 3}}>
             最近の学習データ
-            <Table size="small">
-                <TableHead>
-                    <TableRow>
-                        <TableCell>日付</TableCell>
-                        <TableCell>内容</TableCell>
-                    </TableRow>
-                </TableHead>
+            <Table size="small">                
                 <TableBody>
                 {
                 events.map((event) =>                    

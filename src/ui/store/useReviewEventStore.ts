@@ -11,13 +11,13 @@ type ReviewEventStoreState = {
     repo?: ReviewEventRepository
     setRepository: (repo: ReviewEventRepository) => void
     eventLog: ReviewEventLog;
-    getLastReviewedEvent: (m: SessionId) => ReviewEvent | undefined;
+    //getLastReviewedEvent: (m: SessionId) => ReviewEvent | undefined;
 
     reload: () => Promise<void>;
     save: () => Promise<void>
     append: (reviewEvent: NewReviewEvent) => ReviewEvent
     appendReview: (problemId: ProblemId, sessionId: SessionId, quality: SolvedResult, sec?: number) => ReviewEvent
-    appendCancel: (targetEventId: ReviewEventId, sessionId: SessionId) => ReviewEvent
+    //appendCancel: (targetEventId: ReviewEventId, sessionId: SessionId) => ReviewEvent
     appendReset: (problemId: ProblemId) => ReviewEvent
     clearAll: () => void
 };
@@ -28,6 +28,7 @@ export const useReviewEventStore = create<ReviewEventStoreState>((set, get) => (
     repo: undefined,
     setRepository: (repo) => set({ repo }),
     eventLog: [],
+    /*
     getLastReviewedEvent: (sessionId: SessionId) => {
         const canceled = new Set<string>()
 
@@ -46,7 +47,7 @@ export const useReviewEventStore = create<ReviewEventStoreState>((set, get) => (
         }
 
         return undefined  
-    },
+    },*/
 
     reload: async () => {
         try {
@@ -56,7 +57,6 @@ export const useReviewEventStore = create<ReviewEventStoreState>((set, get) => (
             const data = await repo.load();
             set({ eventLog: data });
         } catch(e) {
-            //set({ eventLog: [] });
             console.error(e)
         }
     },
@@ -80,6 +80,7 @@ export const useReviewEventStore = create<ReviewEventStoreState>((set, get) => (
         
         return get().append(event);
     },
+    /*
     appendCancel: (targetEventId: ReviewEventId, sessionId: SessionId, ) => {
         //const target = get().eventLog.find(e => e.id === targetEventId && e.type === "reviewed" && e.sessionId === sessionId)
         const target = get().eventLog.find(e=>e.id===targetEventId)
@@ -90,7 +91,7 @@ export const useReviewEventStore = create<ReviewEventStoreState>((set, get) => (
         }
 
         return get().append(event)
-    },
+    },*/
     appendReset: (problemId: ProblemId) => {
         const event: NewReviewEvent = {
             type: 

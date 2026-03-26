@@ -12,13 +12,14 @@ export function projectLearning(
     const canceled = new Set<ReviewEventId>()
     const sorted = [...events].sort((a, b) => a.at - b.at)
     // ① cancel対象を集める
+    /*
     for (const e of sorted) {
         if (e.type === "cancel") {
             canceled.add(e.targetEventId)
         }
-    }
+    }*/
     for (const event of sorted) {
-        if (event.type === "cancel") continue
+        //if (event.type === "cancel") continue
         if (canceled.has(event.id)) continue
 
         switch (event.type) {

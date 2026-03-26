@@ -25,8 +25,8 @@ export type SessionPlayerPlayingVM = {
       nextProblem: () => void
       moveToProblemId: (id: ProblemId) => void
       submitAnswer: (res: SolvedResult) => boolean
-      undoLastAnswer: () => void
-      hasLastAnswer: () => boolean
+      //undoLastAnswer: () => void
+      //hasLastAnswer: () => boolean
       navigateToSummary: () => void
     }
 
@@ -49,9 +49,9 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
     const problem = useProblemStore(s => s.byId[currentProblemId])
 
     // learning event log
-    const getLastEvent = useReviewEventStore(s=>s.getLastReviewedEvent)
+    //const getLastEvent = useReviewEventStore(s=>s.getLastReviewedEvent)
     const appendReview = useReviewEventStore(s=>s.appendReview)
-    const cancel = useReviewEventStore(s=>s.appendCancel)    
+    //const cancel = useReviewEventStore(s=>s.appendCancel)    
 
     // missionName
     const missionName = useMissionStore(
@@ -71,6 +71,7 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
         return true        
     }    
 
+    /*
     const undoLastAnswer = () => {
         if (!sessionId) return
         const last = getLastEvent(sessionId)
@@ -84,7 +85,7 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
     ///////////////////////////////////////////////
     const hasLastAnswer = (): boolean => {
         return sessionId && getLastEvent(sessionId) ? true : false
-    }
+    }*/
     
     if (count === 0) {
         return { status: "idle" }
@@ -107,7 +108,7 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
     return { 
         status: "playing", 
         problemIds, sessionId, results, problem, title, index, count, 
-        nextProblem: next, moveToProblemId, submitAnswer, undoLastAnswer, hasLastAnswer,
+        nextProblem: next, moveToProblemId, submitAnswer, //undoLastAnswer, hasLastAnswer,
         navigateToSummary: summary
      }
 }

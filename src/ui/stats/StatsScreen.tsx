@@ -1,9 +1,7 @@
 import { Box } from "@mui/material";
 import { AppShell } from "../common/components/layout/AppShell";
 import { IntervalDaysStats } from "./components/IntervalDaysStats";
-import { OverdueStats } from "./components/OverdueStats";
 import { ProblemStatsTable } from "./components/ProblemStatsTable";
-import { LearningHistory } from "./components/LearningHistory";
 
 export default function StatsScreen() {
     return (
@@ -15,8 +13,7 @@ export default function StatsScreen() {
             }}>
                 <Box sx={{ flex: 1, overflowY: "auto" }}>
                     <ProblemStatsTable />
-                    <IntervalDaysStats />
-                    
+                    <IntervalDaysStats />                    
                 </Box>
             </Box>
         </AppShell>
