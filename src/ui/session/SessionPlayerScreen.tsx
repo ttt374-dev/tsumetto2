@@ -21,7 +21,7 @@ function toReviewActions(events: GameEvent[]): ReviewAction[] {
       case "MISTAKE":
         return [{ type: "mistake", ply: e.ply, elapsedSec: e.elapsedSec }]
       case "REVEAL":
-        return [{ type: "reveal", ply: e.ply }]
+        return [{ type: "reveal", ply: e.ply, elapsedSec: e.elapsedSec  }]
       default:
         return []
     }

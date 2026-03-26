@@ -12,7 +12,7 @@ export type GameState =  { mistakes: number, isRevealed: boolean, isSolved: bool
 export type GameEvent =
   | { type: "SOLVE" }
   | { type: "MISTAKE", ply: number, elapsedSec: number}
-  | { type: "REVEAL", ply: number}
+  | { type: "REVEAL", ply: number, elapsedSec: number}
   //| { type: "ABANDON", ply: number}
   
 export type PendingPromotion = {
@@ -40,7 +40,7 @@ type GameStore = {
     //choosePromotion: (promote: boolean) => void,
     tryMove: (move: Move, elaspedSec: number) => boolean
 
-    revealAnswer: () => void
+    revealAnswer: (elapsedSec: number) => void
     applyOpponentMove: () => void
     reset: () => void     
     finalize: () => GameState | null
@@ -204,9 +204,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
         }, 500)
 
     },
-    revealAnswer: () => {
+    revealAnswer: (elapsedSec: number) => {
         const event: GameEvent = {
-            type: "REVEAL", ply: get().ply
+            type: "REVEAL", ply: get().ply, elapsedSec
         }
         set(s => ({
             state: {
