@@ -4,9 +4,7 @@ import { create } from "zustand"
 
 import { Move, Position, Square, type PieceType } from "@/domain/kif/entity"
 import { buildUntilPly } from "@/domain/kif/service/buildUntilPly"
-import { resolveIntent, type Intent } from "@/domain/game/intentResolver"
 import { reduceGameState } from "@/ui/player/hooks/gameStateReducer"
-import { PlayLesson } from "@mui/icons-material"
 
 type GamePhase = "playing" | "finished" 
 export type GameState =  { mistakes: number, isRevealed: boolean, isSolved: boolean }    
@@ -41,13 +39,9 @@ type GameStore = {
     ply: number
     pendingPromotion: PendingPromotion | null
     hasSubmitted: boolean    
-    //event: GameEvent | null
     events: GameEvent[]
     
     initialize: (pos: Position, moves: Move[]) => void
-    advancePly: () => void
-    retreatPly: () => void    
-    moveTo: (ply: number) => void
     choosePromotion: (promote: boolean) => Move
     promotionPending: (p: PendingPromotion) => void    
 
@@ -59,6 +53,11 @@ type GameStore = {
     //clearEvent: () => void
     markSubmit: () => void
     markAbandon: (ctx: GameContext) => void
+
+    advancePly: () => void
+    //retreatPly: () => void    
+    moveTo: (ply: number) => void
+    
 }
 
 //// selector
@@ -67,11 +66,10 @@ export const selectGameState = (s: GameStore) => ({
     moves: s.moves,
     ply: s.ply
 })
-export const selectIsLast = (s: GameStore) => {
-    return s.ply >= s.moves.length && (s.moves.length > 0)
-}
+
 export function useCurrentPosition() {
-  const { initialPosition, moves, ply } = useGameStore(useShallow(selectGameState))
+  const { initialPosition, moves } = useGameStore(useShallow(selectGameState))
+  const ply = useGameStore(s=>s.ply)
 
   return useMemo(
     () => buildUntilPly(initialPosition, moves, ply),
@@ -86,10 +84,11 @@ export const useGameStore = create<GameStore>((set, get) => ({
     state: {...DefaultGameState},
     initialPosition: Position.empty(),
     moves: [],
-    ply: 0,
     pendingPromotion: null,
     events: [],
     hasSubmitted: false,
+
+    ply: 0,
     
     initialize: (pos, moves) => {
         set({initialPosition: pos, moves})
@@ -105,21 +104,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
         })
         console.log("reset", get().hasSubmitted)
     }, 
-
-    moveTo: (ply: number) => {       // 範囲外でもclampして強制的に収める仕様     
-        //console.log("mvoeTo: ", ply)
-        const max = get().moves.length
-        //if (ply < 0 || ply > max) return
-        set({ply: clampPly(ply, max)})
-    },
-    advancePly: () => {        
-        const { moveTo, ply} = get()
-        moveTo(ply+1)                
-    },
-    retreatPly: () => {
-        const { moveTo, ply} = get()
-        if (ply > 0) moveTo(ply - 1)
-    },    
+    
     promotionPending: (p: PendingPromotion) => {
         set({ pendingPromotion: p })
     },
@@ -165,7 +150,18 @@ export const useGameStore = create<GameStore>((set, get) => ({
             type: "ABANDON", ply: get().ply, elapsedSec: ctx.elapsedSec
         }
         get().dispatch(event)
-    }
+    },
+
+    moveTo: (ply: number) => {       // 範囲外でもclampして強制的に収める仕様     
+        //console.log("mvoeTo: ", ply)
+        const max = get().moves.length
+        //if (ply < 0 || ply > max) return
+        set({ply: clampPly(ply, max)})
+    },
+    advancePly: () => {        
+        const { moveTo, ply} = get()
+        moveTo(ply+1)                
+    },    
 
 }))
 

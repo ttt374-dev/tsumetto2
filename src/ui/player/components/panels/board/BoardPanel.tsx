@@ -6,8 +6,7 @@ import HandView from "./HandView";
 import BoardView from "./BoardView";
 
 export default function BoardPanel() {
-    //const { moves: correctMoves, ply, advancePly, makeMistake, makeResolve} = useGameStore()
-    const { board, hands } = useCurrentPosition()
+    const { hands } = useCurrentPosition()
     
     return (
         <Stack justifyContent="center" alignContent={"center"}  direction="row" >

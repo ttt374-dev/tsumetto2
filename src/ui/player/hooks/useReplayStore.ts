@@ -8,7 +8,6 @@ type ReplayStore = {
     initialize: (maxPly: number) => void
     reset: () => void
     advancePly: () => void
-    retreatPly: () => void    
     moveTo: (ply: number) => void
     applyOpponentMove: () => void
 }
@@ -32,10 +31,7 @@ export const useReplayStore = create<ReplayStore>((set, get) => ({
         const { moveTo, ply} = get()
         moveTo(ply+1)                
     },
-    retreatPly: () => {
-        const { moveTo, ply} = get()
-        if (ply > 0) moveTo(ply - 1)
-    },
+    
     applyOpponentMove: () => {
         // TOOD
         setTimeout(() => {
