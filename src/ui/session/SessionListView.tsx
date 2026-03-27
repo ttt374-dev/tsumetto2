@@ -1,4 +1,4 @@
-import type { SolvedResult } from "@/domain/learning/entity/Learning"
+import type { SolvedResult } from "@/domain/review/solvedResult"
 import type { ProblemId } from "@/domain/problem/entity/Problem"
 import type { SessionId } from "@/domain/session/entity/Session"
 import { formatSolvedResult } from "@/ui/history/ReviewEventHistory"

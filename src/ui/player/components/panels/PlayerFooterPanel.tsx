@@ -1,4 +1,4 @@
-import type { SolvedResult } from "@/domain/learning/entity/Learning"
+import type { SolvedResult } from "@/domain/review/solvedResult"
 import { Button, Stack, type ButtonProps } from "@mui/material"
 import { useSessionStore } from "@/ui/session/hooks/useSessionStore"
 import { useGameStore } from "@/ui/player/hooks/useGameStore"

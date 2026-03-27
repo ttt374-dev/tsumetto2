@@ -14,6 +14,7 @@ import { useSessionStore } from "@/ui/session/hooks/useSessionStore"
 import type { ReviewAction } from "@/domain/review/ReviewEvent"
 import type { SolvedResult } from "@/domain/review/solvedResult"
 import { deriveSolvedResultFromEvents } from "@/domain/review/service/solvedResultDeriver"
+import { useReplayStore } from "@/ui/player/hooks/useReplayStore"
 
 ///
 function toReviewActions(events: GameEvent[]): ReviewAction[] {
@@ -63,6 +64,7 @@ function SessionPlayerContent(props: {
     const timer = useTimerStore()
     const { hasSubmitted, events, 
         markSubmit, markAbandon } = useGameStore()
+    const ply = useReplayStore(s=>s.ply)
         
     // 初期化
     useEffect(() => {
@@ -119,6 +121,8 @@ function SessionPlayerContent(props: {
     }
     const flush = () => {
         if (hasSubmitted) return
+
+        //markAbandon({ ply, elapsedSec: timer.elapsedSec})
         markAbandon(timer.elapsedSec)
         submitSolvedResult()        
     }

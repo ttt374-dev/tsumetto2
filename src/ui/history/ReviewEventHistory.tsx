@@ -2,7 +2,7 @@ import { Box, List, ListItem, ListItemText } from "@mui/material"
 import type { ReviewEvent } from "@/domain/review/ReviewEvent";
 import { useProblemStore } from "@/ui/store/useProblemStore";
 import { useReviewEventStore } from "@/ui/store/useReviewEventStore";
-import type { SolvedResult } from "@/domain/learning/entity/Learning";
+import type { SolvedResult } from "@/domain/review/solvedResult"
 
 export function formatSolvedResult(res: SolvedResult) {
     const outcome = res.outcome === "solved" ? "詰み" : res.outcome === "failed" ? "失敗" : "未回答"

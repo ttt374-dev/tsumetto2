@@ -2,7 +2,7 @@ import { useMissionStore } from "@/ui/mission/hooks/useMissionStore"
 import { useSessionStore } from "@/ui/session/hooks/useSessionStore"
 import { useProblemStore } from "@/ui/store/useProblemStore"
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem"
-import type { SolvedResult } from '@/domain/learning/entity/Learning';
+import type { SolvedResult } from "@/domain/review/solvedResult"
 import { useReviewEventStore } from '@/ui/store/useReviewEventStore';
 import type { SessionId } from "@/domain/session/entity/Session";
 import type { ReviewAction } from "@/domain/review/ReviewEvent";

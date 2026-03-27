@@ -3,7 +3,7 @@ import { create } from "zustand";
 import type { ReviewEventRepository } from "@/domain/review/repository/ReviewEventRepository";
 import type { ProblemId } from "@/domain/problem/entity/Problem";
 import type { ReviewEvent, ReviewEventId, ReviewEventLog, NewReviewEvent, ReviewAction } from "@/domain/review/ReviewEvent";
-import type { SolvedResult } from "@/domain/learning/entity/Learning";
+import type { SolvedResult } from "@/domain/review/solvedResult"
 import type { SessionId } from "@/domain/session/entity/Session";
 import { v4 } from "uuid";
 

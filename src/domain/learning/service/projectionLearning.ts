@@ -1,5 +1,6 @@
-import { Learning, type LearningRecord, type SolvedResult } from "../entity/Learning"
+import { Learning, type LearningRecord} from "../entity/Learning"
 import type { ReviewEvent, ReviewEventId, ReviewReviewedEvent} from "../../review/ReviewEvent"
+import type { SolvedResult } from "@/domain/review/solvedResult"
 
 const MAX_INTERVAL_DAYS = 60
 const DAY = 60 * 60 * 24 * 1000

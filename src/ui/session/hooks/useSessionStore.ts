@@ -3,7 +3,7 @@ import type { SessionId, SessionPhase } from "@/domain/session/entity/Session";
 import type { ProblemId } from "@/domain/problem/entity/Problem";
 import { v4 } from "uuid";
 import { create } from "zustand";
-import type { SolvedResult } from "@/domain/learning/entity/Learning";
+import type { SolvedResult } from "@/domain/review/solvedResult"
 
 type SessionStore = {
     // ===== state =====
