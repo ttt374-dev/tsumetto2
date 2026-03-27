@@ -117,14 +117,7 @@ export function createGameController() {
                 type: "REVEAL", ply, elapsedSec
             })
         },
-        markAbandon: (elapsedSec: number) => {
-            const game = useGameStore.getState()
-        
-            const { ply } = useReplayStore.getState()
-            game.dispatch({
-                type: "ABANDON", ply, elapsedSec
-            })
-        }
+
     }
 
 }

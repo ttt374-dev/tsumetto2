@@ -88,7 +88,7 @@ export default function PlayerScreen({ problem, title, onSolved, onAfterDelete, 
                     onDelete={handleDelete}
                 />}
         >
-            <Stack sx={{ minHeight: 0, height: "100%" }} spacing={1} >
+            <Stack sx={{ minHeight: 0, height: "100%" }} spacing={1} > 
                 <TitlePanel title={title} />
                 { /* --- 盤面 ---*/}
                 <BoardPanel />

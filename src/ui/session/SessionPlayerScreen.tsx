@@ -13,7 +13,7 @@ import { useSessionStore } from "@/ui/session/hooks/useSessionStore"
 import type { ReviewAction } from "@/domain/review/ReviewEvent"
 import type { SolvedResult } from "@/domain/review/solvedResult"
 import { deriveSolvedResultFromEvents } from "@/domain/review/service/solvedResultDeriver"
-import { createGameController } from "@/ui/player/hooks/createGameController"
+import { useReplayStore } from "@/ui/player/hooks/useReplayStore"
 
 ///
 function toReviewActions(events: GameEvent[]): ReviewAction[] {
@@ -37,10 +37,7 @@ export default function SessionPlayerScreen() {
     if (vm.status !== "playing") return <>{vm.status}</>
     if (!vm.sessionId) return <>NO SESSION ID</>
 
-    //const onUndoLastAnswer = vm.hasLastAnswer() ? vm.undoLastAnswer : undefined
-    return (<SessionPlayerContent
-        vm={vm}
-    />)
+    return (<SessionPlayerContent vm={vm}/>)
 }
 
 function SessionPlayerContent({vm}: {
@@ -49,12 +46,9 @@ function SessionPlayerContent({vm}: {
     const [isOpen, setIsOpen ] = useState(false)
     const [solvedResult, setSolvedResult] = useState<SolvedResult | undefined>(undefined)
     const navigate = useNavigate()
-    const summary = useSessionStore(s=>s.summary)
     const next = useSessionStore(s=>s.next)    
     const timer = useTimerStore()
-    const { hasSubmitted, events, markSubmit } = useGameStore()
-    const controller = createGameController()
-    //const ply = useReplayStore(s=>s.ply)
+    const { hasSubmitted, events, markSubmit, dispatch } = useGameStore()
         
     // 初期化
     useEffect(() => {
@@ -108,16 +102,20 @@ function SessionPlayerContent({vm}: {
     const flush = () => {
         if (hasSubmitted) return
 
-        controller.markAbandon(timer.elapsedSec)
+        const ply = useReplayStore.getState().ply
+        dispatch({type: "ABANDON", ply, elapsedSec: timer.elapsedSec})
+        //controller.markAbandon(timer.elapsedSec)
+        
         //markAbandon(timer.elapsedSec)
         submitSolvedResult()        
     }
 
     const footerPanel: React.ReactNode = (
-        <PlayerFooterPanel 
+        <PlayerFooterPanel
             onNext={handleNext}
             //onSummary={handleSummary}
             onShowList={handleShowList} />)
+            
     return (
         <>
             <PlayerScreen
@@ -138,4 +136,3 @@ function SessionPlayerContent({vm}: {
         </>
     )
 }
-
