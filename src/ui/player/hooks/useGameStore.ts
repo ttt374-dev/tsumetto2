@@ -22,7 +22,8 @@ export type PendingPromotion = {
     to: Square
     pieceType: PieceType
 }
-
+type TryMoveResult = "correct" | "incorrect" | "solved"
+    
 type GameStore = {
     phase: GamePhase,
     state: GameState,
@@ -33,14 +34,15 @@ type GameStore = {
     hasSubmitted: boolean    
     //event: GameEvent | null
     events: GameEvent[]
-
+    
     initialize: (pos: Position, moves: Move[]) => void
     advancePly: () => void
     retreatPly: () => void    
     moveTo: (ply: number) => void
     handleIntent: (intent: Intent, elapsedSec: number) => boolean
-    //choosePromotion: (promote: boolean) => void,
-    tryMove: (move: Move, elaspedSec: number) => boolean
+    choosePromotion: (promote: boolean) => Move
+    promotionPending: (p: PendingPromotion) => void
+    tryMove: (move: Move, elaspedSec: number) => TryMoveResult
 
     revealAnswer: (elapsedSec: number) => void
     applyOpponentMove: () => void
@@ -83,6 +85,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     events: [],
     hasSubmitted: false,
     //result: null,
+    
     initialize: (pos, moves) => {
         set({initialPosition: pos, moves})
         get().reset()
@@ -116,6 +119,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     handleIntent(intent: Intent, elapsedSec: number){
         console.log("handle intent", intent, elapsedSec)
         const { initialPosition, moves, ply, tryMove} = get()     
+        let trymoveResult: TryMoveResult 
         
         switch(intent.type){
             case "move":
@@ -126,31 +130,37 @@ export const useGameStore = create<GameStore>((set, get) => ({
                 if (!result) return false
                 switch (result.type) {
                     case "move":
-                        tryMove(result.move, elapsedSec)
+                        trymoveResult = tryMove(result.move, elapsedSec)
                         break;
                     case "promotionPending":
-                        set({ pendingPromotion: result.pendingPromotion })
+                        get().promotionPending(result.pendingPromotion)
+                        //set({ pendingPromotion: result.pendingPromotion })
                         break;
                 }
                 return true
-            case "choosePromotion":
-                const pendingPromotion = get().pendingPromotion
-                if (!pendingPromotion) return false
-
-                const move = new Move(
-                    pendingPromotion.from,
-                    pendingPromotion.to,
-                    pendingPromotion.pieceType,
-                    intent.promote
-                )
-
-                set({ pendingPromotion: null })
-                tryMove(move, elapsedSec)
+            case "choosePromotion":                
+                const move = get().choosePromotion(intent.promote)
+                trymoveResult = tryMove(move, elapsedSec)
                 return true
         }
 
     },
-    tryMove: (move: Move, elapsedSec: number) => {  // 正解なら true、間違いなら falseを返す
+    promotionPending: (p: PendingPromotion) => {
+        set({ pendingPromotion: p })
+    },
+    choosePromotion: (promote: boolean) => {
+        const pendingPromotion = get().pendingPromotion
+        //if (!pendingPromotion) return null
+        if (!pendingPromotion) throw new Error("pendintPromotion null on choose promotion")
+        set({ pendingPromotion: null })
+        return new Move(
+            pendingPromotion.from,
+            pendingPromotion.to,
+            pendingPromotion.pieceType,
+            promote
+        )
+    },
+    tryMove: (move: Move, elapsedSec: number) => { 
         const { moves, ply} = get()
         //console.log("trymove", move)
         if (!move.equals(moves[ply])) {   // 不正解
@@ -159,32 +169,22 @@ export const useGameStore = create<GameStore>((set, get) => ({
                 type: "MISTAKE", ply: ply, elapsedSec: elapsedSec
             }
             get().dispatch(event)            
-            return false
+            return "incorrect"
         }
         // 正解
         if (ply + 1 >= moves.length) { // 詰めあがり            
-            set(s => {
-                const event: GameEvent = {
-                    type: "SOLVE", ply: ply, elapsedSec: elapsedSec
-                }
-                return ({ 
-                    ply: s.ply + 1, 
-                    result: "solved",
+            const event: GameEvent = {
+                type: "SOLVE", ply: ply, elapsedSec: elapsedSec
+            }
+            get().dispatch(event)
 
-                    state: {
-                        ...s.state,
-                        isSolved: true,
-                    },
-                    //event: event,
-                    events: [...s.events, event],
-                    
-                }
-            )})
+           return "solved"
         } else {   // 自手と応手を進める
             get().advancePly()    
             get().applyOpponentMove()
+            return "correct"
         }
-        return true
+        //return true
     },
     applyOpponentMove: () => {
         // TOOD
