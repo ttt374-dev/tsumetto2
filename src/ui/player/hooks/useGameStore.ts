@@ -11,7 +11,7 @@ type GamePhase = "playing" | "finished"
 export type GameState =  { mistakes: number, isRevealed: boolean, isSolved: boolean }    
 
 export type GameEvent =
-  | { type: "SOLVE", elapsedSec: number }
+  | { type: "SOLVE", ply: number, elapsedSec: number }
   | { type: "MISTAKE", ply: number, elapsedSec: number}
   | { type: "REVEAL", ply: number, elapsedSec: number}
   | { type: "ABANDON", ply: number, elapsedSec: number }
@@ -152,32 +152,24 @@ export const useGameStore = create<GameStore>((set, get) => ({
     },
     tryMove: (move: Move, elapsedSec: number) => {  // 正解なら true、間違いなら falseを返す
         const { moves, ply} = get()
-        console.log("trymove", move)
+        //console.log("trymove", move)
         if (!move.equals(moves[ply])) {   // 不正解
             //set(s => ({ mistakes: s.mistakes + 1 }))
             const event: GameEvent = {
                 type: "MISTAKE", ply: ply, elapsedSec: elapsedSec
             }
-            set(s => ({
-                //event: event, 
-                events: [...s.events, event],
-                state: {
-                    ...s.state,
-                    mistakes: s.state.mistakes + 1,
-                },
-            }))
+            get().dispatch(event)            
             return false
         }
         // 正解
-        if (ply + 1 >= moves.length) { // 詰めあがり
+        if (ply + 1 >= moves.length) { // 詰めあがり            
             set(s => {
-                //const alreadyFired = s.hasFiredOnSolved                
-                //set({phase: "finished"})
                 const event: GameEvent = {
-                    type: "SOLVE", elapsedSec: elapsedSec
+                    type: "SOLVE", ply: ply, elapsedSec: elapsedSec
                 }
                 return ({ 
                     ply: s.ply + 1, 
+                    result: "solved",
 
                     state: {
                         ...s.state,
@@ -185,7 +177,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
                     },
                     //event: event,
                     events: [...s.events, event],
-                    result: "solved",
+                    
                 }
             )})
         } else {   // 自手と応手を進める
@@ -204,30 +196,12 @@ export const useGameStore = create<GameStore>((set, get) => ({
         }, 500)
 
     },
-    revealAnswer: (elapsedSec: number) => {
+    revealAnswer: (elapsedSec: number) => {        
         const event: GameEvent = {
             type: "REVEAL", ply: get().ply, elapsedSec
         }
-        set(s => ({
-            state: {
-                ...s.state,
-                isRevealed: true,
-            },
-            //event: event,
-            events: [...s.events, event]
-        }))
-    },
-    /*
-    finalize: (): GameState | null => {
-        const s = get()
-        if (s.phase === "finished") return null
-
-        set({ phase: "finished" })
-        return s.state
-    }
-    clearEvent: () => {
-        set({ event: null})
-    },*/
+        get().dispatch(event)        
+    },    
     dispatch: (e) => {
         set(s => ({
             events: [...s.events, e],
@@ -241,11 +215,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
         const event: GameEvent = {
             type: "ABANDON", ply: get().ply, elapsedSec
         }
-        set(s=>({
-            ...s.state,
-            //event: event,
-            events: [...s.events, event]
-        }))
+        get().dispatch(event)
         //set({: true})
     }
 
