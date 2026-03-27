@@ -3,10 +3,13 @@ import MovesView from "../views/MovesView";
 import type { Move } from "@/domain/kif/entity";
 import { useGameStore } from "@/ui/player/hooks/useGameStore";
 import { useTimerStore } from "@/ui/player/hooks/useTimerStore";
+import { useReplayStore } from "@/ui/player/hooks/useReplayStore";
 
 
 export default function MovesPanel({moves}: { moves: Move[]}) {
-    const { ply, moveTo, revealAnswer, state} = useGameStore()
+    const { revealAnswer, state} = useGameStore()
+    const { ply, moveTo } = useReplayStore()
+
     const timer = useTimerStore()
 
     const handleRevealAnswer = () => {

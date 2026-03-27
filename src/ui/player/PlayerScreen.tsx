@@ -32,7 +32,7 @@ export default function PlayerScreen({ problem, title, onSolved, onUndoLastAnswe
     }) {
     const timer = useTimerStore()
     const toast = useToast()    
-    const navigate = useNavigate()
+    const navigate = useNavigate()    
 
     const { pendingPromotion, state, events, 
         initialize, } = useGameStore()

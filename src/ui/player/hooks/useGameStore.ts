@@ -24,7 +24,11 @@ export type PendingPromotion = {
     to: Square
     pieceType: PieceType
 }
-export type TryMoveResult = "correct" | "incorrect" | "solved"
+export type GameContext = {
+    elapseSec: number
+    ply: number
+}
+//export type TryMoveResult = "correct" | "incorrect" | "solved"
     
 type GameStore = {
     phase: GamePhase,
@@ -44,7 +48,7 @@ type GameStore = {
     //handleIntent: (intent: Intent, elapsedSec: number) => boolean
     choosePromotion: (promote: boolean) => Move
     promotionPending: (p: PendingPromotion) => void
-    tryMove: (move: Move, elaspedSec: number) => TryMoveResult
+    //tryMove: (move: Move, elaspedSec: number) => TryMoveResult
 
     revealAnswer: (elapsedSec: number) => void
     applyOpponentMove: () => void
@@ -132,7 +136,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
             pendingPromotion.pieceType,
             promote
         )
-    },
+    }, /*
     tryMove: (move: Move, elapsedSec: number) => { 
         const { dispatch, moves, ply} = get()
         //console.log("trymove", move)
@@ -150,30 +154,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
                 break;
         }
         return res
-        /*
-        if (!move.equals(moves[ply])) {   // 不正解
-            //set(s => ({ mistakes: s.mistakes + 1 }))
-            const event: GameEvent = {
-                type: "MISTAKE", ply: ply, elapsedSec: elapsedSec
-            }
-            get().dispatch(event)            
-            return "incorrect"
-        }
-        // 正解
-        if (ply + 1 >= moves.length) { // 詰めあがり            
-            const event: GameEvent = {
-                type: "SOLVE", ply: ply, elapsedSec: elapsedSec
-            }
-            get().dispatch(event)
-
-           return "solved"
-        } else {   // 自手と応手を進める            
-            get().advancePly()    
-            get().applyOpponentMove()
-            return "correct"
-        }*/
-        //return true
-    },
+        
+    },*/
     applyOpponentMove: () => {
         // TOOD
         setTimeout(() => {
