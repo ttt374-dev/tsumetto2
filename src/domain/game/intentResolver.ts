@@ -12,7 +12,7 @@ export type Intent =    // ユーザのアクション
 export type IntentResult =   // ゲームエンジンの状態
     | { type: "move", move: Move}
     | { type: "promotionPending", pendingPromotion: PendingPromotion}
-    | { type: "error", message: string | undefined}
+    //| { type: "error", message: string | undefined}
 
 export function resolveIntent(position: Position, intent: Intent): IntentResult | null {
     if (intent.type === "move") {
