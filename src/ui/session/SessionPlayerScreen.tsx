@@ -122,8 +122,8 @@ function SessionPlayerContent(props: {
     const flush = () => {
         if (hasSubmitted) return
 
-        //markAbandon({ ply, elapsedSec: timer.elapsedSec})
-        markAbandon(timer.elapsedSec)
+        markAbandon({ ply, elapsedSec: timer.elapsedSec})
+        //markAbandon(timer.elapsedSec)
         submitSolvedResult()        
     }
 

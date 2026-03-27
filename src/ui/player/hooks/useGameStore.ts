@@ -29,7 +29,7 @@ export type PendingPromotion = {
     pieceType: PieceType
 }
 export type GameContext = {
-    elapseSec: number
+    elapsedSec: number
     ply: number
 }
     
@@ -51,14 +51,14 @@ type GameStore = {
     choosePromotion: (promote: boolean) => Move
     promotionPending: (p: PendingPromotion) => void    
 
-    revealAnswer: (elapsedSec: number) => void
+    revealAnswer: (ctx: GameContext) => void
     applyOpponentMove: () => void
     reset: () => void     
     //finalize: () => GameState | null
     dispatch: (e: GameEvent) => void
     //clearEvent: () => void
     markSubmit: () => void
-    markAbandon: (elapsedSec: number) => void
+    markAbandon: (ctx: GameContext) => void
 }
 
 //// selector
@@ -107,6 +107,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     }, 
 
     moveTo: (ply: number) => {       // 範囲外でもclampして強制的に収める仕様     
+        //console.log("mvoeTo: ", ply)
         const max = get().moves.length
         //if (ply < 0 || ply > max) return
         set({ply: clampPly(ply, max)})
@@ -144,9 +145,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
         }, 500)
 
     },
-    revealAnswer: (elapsedSec: number) => {        
+    revealAnswer: (ctx: GameContext) => {        
         const event: GameEvent = {
-            type: "REVEAL", ply: get().ply, elapsedSec
+            type: "REVEAL", ply: get().ply, elapsedSec: ctx.elapsedSec
         }
         get().dispatch(event)        
     },    
@@ -159,9 +160,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
     markSubmit: ()=>{
         set({hasSubmitted: true})
     },
-    markAbandon: (elapsedSec: number)=>{
+    markAbandon: (ctx: GameContext)=>{
         const event: GameEvent = {
-            type: "ABANDON", ply: get().ply, elapsedSec
+            type: "ABANDON", ply: get().ply, elapsedSec: ctx.elapsedSec
         }
         get().dispatch(event)
     }
