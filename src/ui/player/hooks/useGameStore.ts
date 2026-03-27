@@ -11,14 +11,18 @@ import { PlayLesson } from "@mui/icons-material"
 type GamePhase = "playing" | "finished" 
 export type GameState =  { mistakes: number, isRevealed: boolean, isSolved: boolean }    
 
+type BaseEvent = {
+    ply: number
+    elapsedSec: number
+}
+
 export type GameEvent =
-  | { type: "SOLVE", ply: number, elapsedSec: number }
-  | { type: "CORRECT", ply: number, elapsedSec: number}
-  | { type: "MISTAKE", ply: number, elapsedSec: number}
-  | { type: "REVEAL", ply: number, elapsedSec: number}
-  | { type: "ABANDON", ply: number, elapsedSec: number }
-  //| { type: "ABANDON", ply: number}
-  
+    | ({ type: "SOLVE" } & BaseEvent)
+    | ({ type: "CORRECT" } & BaseEvent)
+    | ({ type: "MISTAKE" } & BaseEvent)
+    | ({ type: "REVEAL" } & BaseEvent)
+    | ({ type: "ABANDON" } & BaseEvent)
+
 export type PendingPromotion = {
     from: Square
     to: Square
@@ -28,7 +32,6 @@ export type GameContext = {
     elapseSec: number
     ply: number
 }
-//export type TryMoveResult = "correct" | "incorrect" | "solved"
     
 type GameStore = {
     phase: GamePhase,
@@ -45,10 +48,8 @@ type GameStore = {
     advancePly: () => void
     retreatPly: () => void    
     moveTo: (ply: number) => void
-    //handleIntent: (intent: Intent, elapsedSec: number) => boolean
     choosePromotion: (promote: boolean) => Move
-    promotionPending: (p: PendingPromotion) => void
-    //tryMove: (move: Move, elaspedSec: number) => TryMoveResult
+    promotionPending: (p: PendingPromotion) => void    
 
     revealAnswer: (elapsedSec: number) => void
     applyOpponentMove: () => void
@@ -87,10 +88,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
     moves: [],
     ply: 0,
     pendingPromotion: null,
-    //event: null,
     events: [],
     hasSubmitted: false,
-    //result: null,
     
     initialize: (pos, moves) => {
         set({initialPosition: pos, moves})
@@ -101,10 +100,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
             ply: 0, hasSubmitted: false,
             phase: "playing",
             pendingPromotion: null,
-            //event: null,
             events: [],
             state: { ...DefaultGameState},
-            //result: null,
         })
         console.log("reset", get().hasSubmitted)
     }, 
@@ -136,26 +133,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
             pendingPromotion.pieceType,
             promote
         )
-    }, /*
-    tryMove: (move: Move, elapsedSec: number) => { 
-        const { dispatch, moves, ply} = get()
-        //console.log("trymove", move)
-        const res = evaluateMove(move, moves, ply)
-        switch (res) {
-            case "correct":
-                get().advancePly()
-                get().applyOpponentMove()
-                break;
-            case "incorrect":
-                dispatch({ type: "MISTAKE", ply, elapsedSec })
-                break;
-            case "solved":
-                dispatch({ type: "SOLVE", ply, elapsedSec })
-                break;
-        }
-        return res
-        
-    },*/
+    }, 
     applyOpponentMove: () => {
         // TOOD
         setTimeout(() => {
@@ -186,19 +164,12 @@ export const useGameStore = create<GameStore>((set, get) => ({
             type: "ABANDON", ply: get().ply, elapsedSec
         }
         get().dispatch(event)
-        //set({: true})
     }
 
 }))
 
 //////////////
 // pure helpers
-function evaluateMove(move: Move, moves: Move[], ply: number){
-    if (!move.equals(moves[ply])) return "incorrect"
-    if (ply+1>=moves.length) return "solved"
-    return "correct"
-}
-
 
 function clampPly(ply: number, max: number) {
   return Math.max(0, Math.min(ply, max))
