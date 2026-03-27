@@ -4,7 +4,7 @@ import { useCurrentPosition, useGameStore } from "../../../hooks/useGameStore";
 import { useBoardInputStore } from "../../../hooks/useBoardInputStore";
 import { Board, Piece, Square } from "@/domain/kif/entity";
 import { useTimerStore } from "@/ui/player/hooks/useTimerStore";
-import { useGameController } from "@/ui/player/hooks/useGameController";
+import { createGameController } from "@/ui/player/hooks/createGameController";
 
 const fileLabels = ["９", "８", "７", "６", "５", "４", "３", "２", "１"];
 const rankLabels = ["一", "二", "三", "四", "五", "六", "七", "八", "九"];
@@ -35,7 +35,7 @@ export default function BoardView() {
 
     //const position = useCurrentPosition()
     const timer = useTimerStore()
-    const { handleIntent } = useGameController()
+    const { handleIntent } = createGameController()
 
     //const handleIntent = useGameStore(s=>s.handleIntent)
     const clickSquare = useBoardInputStore(s => s.clickSquare)

@@ -4,10 +4,9 @@ import { create } from "zustand"
 
 import { Move, Position, Square, type PieceType } from "@/domain/kif/entity"
 import { buildUntilPly } from "@/domain/kif/service/buildUntilPly"
-import { reduceGameState } from "@/ui/player/hooks/gameStateReducer"
+import { projectGameState } from "@/ui/player/hooks/gameStateReducer"
 import { useReplayStore } from "@/ui/player/hooks/useReplayStore"
 
-//type GamePhase = "playing" | "finished" 
 export type GameState =  { mistakes: number, isRevealed: boolean, isSolved: boolean }    
 
 type BaseEvent = {
@@ -33,7 +32,6 @@ export type GameContext = {
 }
     
 type GameStore = {
-    //phase: GamePhase,
     events: GameEvent[]    // SoT
     state: GameState       // キャッシュ。events から derived
     initialPosition: Position
@@ -51,8 +49,6 @@ type GameStore = {
     markSubmit: () => void    
 }
 export function useCurrentPosition() {
-  //const initialPosition = useGameStore(s=>s.initialPosition)
-  //const moves = useGameStore(s=>s.moves)
     const { initialPosition, moves } = useGameStore(
         useShallow(s => ({
             initialPosition: s.initialPosition,
@@ -66,12 +62,11 @@ export function useCurrentPosition() {
     [initialPosition, moves, ply]
   )
 }
-const DefaultGameState = { mistakes: 0, isRevealed: false, isSolved: false}
+//const DefaultGameState = { mistakes: 0, isRevealed: false, isSolved: false}
 
 ////////////////////////////////////
 export const useGameStore = create<GameStore>((set, get) => ({
-    //phase: "playing",
-    state: {...DefaultGameState},
+    state: projectGameState([]),
     initialPosition: Position.empty(),
     moves: [],
     pendingPromotion: null,
@@ -83,10 +78,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
             initialPosition: pos,
             moves,
             hasSubmitted: false,
-            //phase: "playing",
             pendingPromotion: null,
             events: [],
-            state: { ...DefaultGameState },
+            state: projectGameState([])
+            //state: { ...DefaultGameState },
         })
     },
 
@@ -100,13 +95,22 @@ export const useGameStore = create<GameStore>((set, get) => ({
         if (!pendingPromotion) throw new Error("pendintPromotion null on choose promotion")
         set({ pendingPromotion: null })
         return createMoveFromPendingPromotion(pendingPromotion, promote)
-    },    
+    },
     dispatch: (e) => {
+        set(s => {
+            const events = [...s.events, e]
+            return {
+                events,
+                state: projectGameState(events)
+            }
+        })
+    },
+    /*dispatch: (e) => {
         set(s => ({
             events: [...s.events, e],
             state: reduceGameState(s.state, e),
         }))
-    }, 
+    },*/ 
     markSubmit: ()=>{
         set({ hasSubmitted: true})
     },
@@ -116,9 +120,6 @@ export const useGameStore = create<GameStore>((set, get) => ({
 //////////////
 // pure helpers
 
-function clampPly(ply: number, max: number) {
-    return Math.max(0, Math.min(ply, max))
-}
 function createMoveFromPendingPromotion(pendingPromotion: PendingPromotion, promote: boolean) {
     return new Move(
         pendingPromotion.from,

@@ -8,6 +8,7 @@ type ReplayStore = {
     reset: () => void
     advancePly: () => void
     moveTo: (ply: number) => void
+    advanceTurn: () => void
     applyOpponentMove: () => void
 }
 
@@ -31,6 +32,10 @@ export const useReplayStore = create<ReplayStore>((set, get) => ({
     advancePly: () => {
         const { moveTo, ply } = get()
         moveTo(ply + 1)
+    },
+    advanceTurn: () => {
+        get().advancePly()
+        get().applyOpponentMove()
     },
 
     applyOpponentMove: () => {
