@@ -7,7 +7,7 @@ import { buildUntilPly } from "@/domain/kif/service/buildUntilPly"
 import { reduceGameState } from "@/ui/player/hooks/gameStateReducer"
 import { useReplayStore } from "@/ui/player/hooks/useReplayStore"
 
-type GamePhase = "playing" | "finished" 
+//type GamePhase = "playing" | "finished" 
 export type GameState =  { mistakes: number, isRevealed: boolean, isSolved: boolean }    
 
 type BaseEvent = {
@@ -17,7 +17,7 @@ type BaseEvent = {
 
 export type GameEvent =
     | ({ type: "SOLVE" } & BaseEvent)
-    | ({ type: "CORRECT" } & BaseEvent)
+    //| ({ type: "CORRECT" } & BaseEvent)
     | ({ type: "MISTAKE" } & BaseEvent)
     | ({ type: "REVEAL" } & BaseEvent)
     | ({ type: "ABANDON" } & BaseEvent)
@@ -33,44 +33,33 @@ export type GameContext = {
 }
     
 type GameStore = {
-    phase: GamePhase,
-    state: GameState,
+    //phase: GamePhase,
+    events: GameEvent[]    // SoT
+    state: GameState       // キャッシュ。events から derived
     initialPosition: Position
     moves: Move[]
-    //ply: number
+    hasSubmitted: boolean
+
     pendingPromotion: PendingPromotion | null
-    hasSubmitted: boolean    
-    events: GameEvent[]
     
-    initialize: (pos: Position, moves: Move[]) => void
+    initialize: (pos: Position, moves: Move[]) => void    
+
     choosePromotion: (promote: boolean) => Move
-    promotionPending: (p: PendingPromotion) => void    
-
-    revealAnswer: (ctx: GameContext) => void
-    //applyOpponentMove: () => void
-    reset: () => void     
-    //finalize: () => GameState | null
-    dispatch: (e: GameEvent) => void
-    //clearEvent: () => void
-    markSubmit: () => void
-    markAbandon: (ctx: GameContext) => void
-
-    //advancePly: () => void
-    //retreatPly: () => void    
-    //moveTo: (ply: number) => void
+    promotionPending: (p: PendingPromotion) => void
     
+    dispatch: (e: GameEvent) => void
+    markSubmit: () => void    
 }
-
-//// selector
-
-
 export function useCurrentPosition() {
-  //const { initialPosition, moves } = useGameStore()
-  //const ply = useGameStore(s=>s.ply)
-  const initialPosition = useGameStore(s=>s.initialPosition)
-  const moves = useGameStore(s=>s.moves)
+  //const initialPosition = useGameStore(s=>s.initialPosition)
+  //const moves = useGameStore(s=>s.moves)
+    const { initialPosition, moves } = useGameStore(
+        useShallow(s => ({
+            initialPosition: s.initialPosition,
+            moves: s.moves
+        }))
+    )
   const ply = useReplayStore(s=>s.ply)
-  console.log("usecurretnion posiont", ply)
 
   return useMemo(
     () => buildUntilPly(initialPosition, moves, ply),
@@ -81,7 +70,7 @@ const DefaultGameState = { mistakes: 0, isRevealed: false, isSolved: false}
 
 ////////////////////////////////////
 export const useGameStore = create<GameStore>((set, get) => ({
-    phase: "playing",
+    //phase: "playing",
     state: {...DefaultGameState},
     initialPosition: Position.empty(),
     moves: [],
@@ -89,23 +78,18 @@ export const useGameStore = create<GameStore>((set, get) => ({
     events: [],
     hasSubmitted: false,
 
-    //ply: 0,
-    
     initialize: (pos, moves) => {
-        set({initialPosition: pos, moves})
-        get().reset()
-    },   
-    reset: () => {        
         set({
-            //ply: 0,
+            initialPosition: pos,
+            moves,
             hasSubmitted: false,
-            phase: "playing",
+            //phase: "playing",
             pendingPromotion: null,
             events: [],
-            state: { ...DefaultGameState},
+            state: { ...DefaultGameState },
         })
-        console.log("reset", get().hasSubmitted)
-    }, 
+    },
+
     
     promotionPending: (p: PendingPromotion) => {
         set({ pendingPromotion: p })
@@ -115,43 +99,31 @@ export const useGameStore = create<GameStore>((set, get) => ({
         //if (!pendingPromotion) return null
         if (!pendingPromotion) throw new Error("pendintPromotion null on choose promotion")
         set({ pendingPromotion: null })
-        return new Move(
-            pendingPromotion.from,
-            pendingPromotion.to,
-            pendingPromotion.pieceType,
-            promote
-        )
-    }, 
-    
-    revealAnswer: (ctx: GameContext) => {        
-        const event: GameEvent = {
-            type: "REVEAL", ply: ctx.ply, elapsedSec: ctx.elapsedSec
-        }
-        get().dispatch(event)        
+        return createMoveFromPendingPromotion(pendingPromotion, promote)
     },    
     dispatch: (e) => {
         set(s => ({
             events: [...s.events, e],
             state: reduceGameState(s.state, e),
         }))
-    },
+    }, 
     markSubmit: ()=>{
-        set({hasSubmitted: true})
+        set({ hasSubmitted: true})
     },
-    markAbandon: (ctx: GameContext)=>{
-        const event: GameEvent = {
-            type: "ABANDON", ply: ctx.ply, elapsedSec: ctx.elapsedSec
-        }
-        get().dispatch(event)
-    },
-
-     
-
+    
 }))
 
 //////////////
 // pure helpers
 
 function clampPly(ply: number, max: number) {
-  return Math.max(0, Math.min(ply, max))
+    return Math.max(0, Math.min(ply, max))
+}
+function createMoveFromPendingPromotion(pendingPromotion: PendingPromotion, promote: boolean) {
+    return new Move(
+        pendingPromotion.from,
+        pendingPromotion.to,
+        pendingPromotion.pieceType,
+        promote
+    )
 }

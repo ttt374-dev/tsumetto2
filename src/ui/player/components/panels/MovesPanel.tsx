@@ -5,17 +5,20 @@ import type { Move } from "@/domain/kif/entity";
 import { useGameStore } from "@/ui/player/hooks/useGameStore";
 import { useTimerStore } from "@/ui/player/hooks/useTimerStore";
 import { useReplayStore } from "@/ui/player/hooks/useReplayStore";
+import { useGameController } from "@/ui/player/hooks/useGameController";
 
 
 export default function MovesPanel({moves}: { moves: Move[]}) {
     //const { ply, moveTo, revealAnswer, state} = useGameStore()
-    const { revealAnswer, state} = useGameStore()
+    const { state} = useGameStore()
     const { ply, moveTo } = useReplayStore()
+    const { markRevealed } = useGameController()
 
     const timer = useTimerStore()
 
     const handleRevealAnswer = () => {
-        revealAnswer({ ply, elapsedSec: timer.elapsedSec})
+        markRevealed({ ply, elapsedSec: timer.elapsedSec})
+        //dispatch({ type: "REVEAL", ply, elapsedSec: timer.elapsedSec})
     }
     
     return (

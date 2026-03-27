@@ -15,6 +15,7 @@ import type { ReviewAction } from "@/domain/review/ReviewEvent"
 import type { SolvedResult } from "@/domain/review/solvedResult"
 import { deriveSolvedResultFromEvents } from "@/domain/review/service/solvedResultDeriver"
 import { useReplayStore } from "@/ui/player/hooks/useReplayStore"
+import { useGameController } from "@/ui/player/hooks/useGameController"
 
 ///
 function toReviewActions(events: GameEvent[]): ReviewAction[] {
@@ -62,8 +63,8 @@ function SessionPlayerContent(props: {
     const summary = useSessionStore(s=>s.summary)
     const next = useSessionStore(s=>s.next)    
     const timer = useTimerStore()
-    const { hasSubmitted, events, 
-        markSubmit, markAbandon } = useGameStore()
+    const { hasSubmitted, events, markSubmit } = useGameStore()
+    const { markAbandon } = useGameController()
     const ply = useReplayStore(s=>s.ply)
         
     // 初期化

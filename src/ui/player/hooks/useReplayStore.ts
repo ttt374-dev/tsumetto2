@@ -1,6 +1,5 @@
 import { create } from "zustand"
 
-
 type ReplayStore = {
     ply: number
     maxPly: number
@@ -17,23 +16,23 @@ export const useReplayStore = create<ReplayStore>((set, get) => ({
     maxPly: -1,
 
     initialize: (maxPly: number) => {
-        set({maxPly})
+        set({ maxPly })
     },
     reset: () => {
-        set({ply: 0})
+        set({ ply: 0 })
     },
 
     moveTo: (ply: number) => {       // 範囲外でもclampして強制的に収める仕様             
         //if (ply < 0 || ply > max) return
         //alert(ply)
         if (ply < 0) throw new Error("replay store not initialized")
-        set({ply: clampPly(ply, get().maxPly)})
+        set({ ply: clampPly(ply, get().maxPly) })
     },
-    advancePly: () => {        
-        const { moveTo, ply} = get()
-        moveTo(ply+1)                
+    advancePly: () => {
+        const { moveTo, ply } = get()
+        moveTo(ply + 1)
     },
-    
+
     applyOpponentMove: () => {
         // TOOD
         setTimeout(() => {
@@ -48,5 +47,5 @@ export const useReplayStore = create<ReplayStore>((set, get) => ({
 }))
 //////////////
 function clampPly(ply: number, max: number) {
-  return Math.max(0, Math.min(ply, max))
+    return Math.max(0, Math.min(ply, max))
 }
