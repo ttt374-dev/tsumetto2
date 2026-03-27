@@ -3,10 +3,8 @@ import styles from "./BoardView.module.css";
 import { useCurrentPosition, useGameStore } from "../../../hooks/useGameStore";
 import { useBoardInputStore } from "../../../hooks/useBoardInputStore";
 import { Board, Piece, Square } from "@/domain/kif/entity";
-import { resolveIntent } from "../../../../../domain/game/intentResolver";
-import { Timer } from "@mui/icons-material";
 import { useTimerStore } from "@/ui/player/hooks/useTimerStore";
-import { handleIntent } from "@/domain/game/intentHandler";
+import { useGameController } from "@/ui/player/hooks/useGameController";
 
 const fileLabels = ["９", "８", "７", "６", "５", "４", "３", "２", "１"];
 const rankLabels = ["一", "二", "三", "四", "五", "六", "七", "八", "九"];
@@ -37,6 +35,7 @@ export default function BoardView() {
 
     //const position = useCurrentPosition()
     const timer = useTimerStore()
+    const { handleIntent } = useGameController()
 
     //const handleIntent = useGameStore(s=>s.handleIntent)
     const clickSquare = useBoardInputStore(s => s.clickSquare)

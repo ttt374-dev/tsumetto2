@@ -19,7 +19,7 @@ import { PromotionDialog } from "./dialogs/PromotionDialog";
 import { useBoardInputStore } from "./hooks/useBoardInputStore";
 import { useProblemStore } from "@/ui/store/useProblemStore";
 import type { Intent } from "@/domain/game/intentResolver";
-import { handleIntent } from "@/domain/game/intentHandler";
+import { useGameController } from "@/ui/player/hooks/useGameController";
 
 //////////////////////////////////////////////////////////////
 export default function PlayerScreen({ problem, title, onSolved, onUndoLastAnswer, onAfterDelete, footerPanel }: {
@@ -36,6 +36,7 @@ export default function PlayerScreen({ problem, title, onSolved, onUndoLastAnswe
 
     const { pendingPromotion, state, events, 
         initialize, } = useGameStore()
+    const { handleIntent } = useGameController()
     const clearSelection = useBoardInputStore(s=>s.clear)
     const deleteProblem = useProblemStore(s=>s.deleteProblem)
     //const next = useSessionStore(s=>s.next)

@@ -13,6 +13,7 @@ export type GameState =  { mistakes: number, isRevealed: boolean, isSolved: bool
 
 export type GameEvent =
   | { type: "SOLVE", ply: number, elapsedSec: number }
+  | { type: "CORRECT", ply: number, elapsedSec: number}
   | { type: "MISTAKE", ply: number, elapsedSec: number}
   | { type: "REVEAL", ply: number, elapsedSec: number}
   | { type: "ABANDON", ply: number, elapsedSec: number }
