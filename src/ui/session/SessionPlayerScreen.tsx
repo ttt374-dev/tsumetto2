@@ -65,7 +65,7 @@ function SessionPlayerContent(props: {
     const timer = useTimerStore()
     const { hasSubmitted, events, markSubmit } = useGameStore()
     const controller = createGameController()
-    const ply = useReplayStore(s=>s.ply)
+    //const ply = useReplayStore(s=>s.ply)
         
     // 初期化
     useEffect(() => {

@@ -37,25 +37,20 @@ export default function PlayerScreen({ problem, title, onSolved, onUndoLastAnswe
 
     const { pendingPromotion, state, events, 
         initialize, } = useGameStore()
-    const { handleIntent } = createGameController()
+    const controller = createGameController()
     const clearSelection = useBoardInputStore(s=>s.clear)
     const deleteProblem = useProblemStore(s=>s.deleteProblem)
     const { initialize: initializeReplay } = useReplayStore()
-    //const next = useSessionStore(s=>s.next)
+    
 
     useEffect(()=>{
         //timer.restart()
-        initialize(problem.kifData.initialPosition, problem.kifData.moves)
-        initializeReplay(problem.kifData.moves.length)
+        //initialize(problem.kifData.initialPosition, problem.kifData.moves)
+        //initializeReplay(problem.kifData.moves.length)
+        controller.start(problem)
     }, [problem.id])
 
-    /*
-    useEffect(()=>{
-        if (state.mistakes > 0) toast({ message: `incorrect: ${state.mistakes}` })
-    }, [state.mistakes])
-
-    const handledRef = useRef(false)    
-*/    
+      
     useEffect(() => {
         const last = events.at(-1)
         if (!last) return
@@ -72,21 +67,6 @@ export default function PlayerScreen({ problem, title, onSolved, onUndoLastAnswe
         }
 
     }, [events])
-    /*
-    useEffect(() => {
-        if (!event) return        
-        switch (event.type) {
-            case "SOLVE":
-                timer.stop()
-                toast({message: "solved"})
-                onSolved?.()
-                break
-            case "MISTAKE":
-                toast({ message: `incorrect: [${state.mistakes}]` })
-                break            
-        }   
-        clearEvent()
-    }, [event])     */   
     
     // handlers
     const handleNavigateToDetail = () => {
@@ -99,7 +79,7 @@ export default function PlayerScreen({ problem, title, onSolved, onUndoLastAnswe
         }
         //choosePromotion(promote)
         console.log("elasped sec on handle promotion confirm", timer.elapsedSec)
-        handleIntent(intent, timer.elapsedSec)
+        controller.handleIntent(intent, timer.elapsedSec)
         clearSelection()
     }
     const handleDelete = (id: ProblemId) => {
