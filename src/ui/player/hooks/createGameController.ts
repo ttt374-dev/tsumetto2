@@ -1,9 +1,9 @@
 import { evaluateMove, type EvaluationResult } from "@/domain/game/evaluateMove"
 import { resolveIntent, type Intent, type IntentResult } from "@/domain/game/intentResolver"
-import { KifData, type Move } from "@/domain/kif/entity"
+import { type Move } from "@/domain/kif/entity"
 import { buildUntilPly } from "@/domain/kif/service/buildUntilPly"
 import type { Problem } from "@/domain/problem/entity/Problem"
-import { useGameStore, type PendingPromotion } from "@/ui/player/hooks/useGameStore"
+import { useGameStore } from "@/ui/player/hooks/useGameStore"
 import { useReplayStore } from "@/ui/player/hooks/useReplayStore"
 import { useTimerStore } from "@/ui/player/hooks/useTimerStore"
 
