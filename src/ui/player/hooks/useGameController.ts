@@ -2,13 +2,16 @@ import { resolveIntent, type Intent } from "@/domain/game/intentResolver"
 import type { Move } from "@/domain/kif/entity"
 import { buildUntilPly } from "@/domain/kif/service/buildUntilPly"
 import { useGameStore } from "@/ui/player/hooks/useGameStore"
+import { useReplayStore } from "@/ui/player/hooks/useReplayStore"
 
 export function useGameController() {
     const {
-        initialPosition, moves, ply,
-        advancePly, applyOpponentMove,
+        initialPosition, moves, 
         dispatch, promotionPending, choosePromotion
     } = useGameStore()
+
+    const { ply,
+        advancePly, applyOpponentMove,} = useReplayStore()
 
     return {
         handleIntent: (intent: Intent, elapsedSec: number) => {

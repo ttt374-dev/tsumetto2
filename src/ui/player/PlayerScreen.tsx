@@ -20,6 +20,7 @@ import { useBoardInputStore } from "./hooks/useBoardInputStore";
 import { useProblemStore } from "@/ui/store/useProblemStore";
 import type { Intent } from "@/domain/game/intentResolver";
 import { useGameController } from "@/ui/player/hooks/useGameController";
+import { useReplayStore } from "@/ui/player/hooks/useReplayStore";
 
 //////////////////////////////////////////////////////////////
 export default function PlayerScreen({ problem, title, onSolved, onUndoLastAnswer, onAfterDelete, footerPanel }: {
@@ -39,11 +40,13 @@ export default function PlayerScreen({ problem, title, onSolved, onUndoLastAnswe
     const { handleIntent } = useGameController()
     const clearSelection = useBoardInputStore(s=>s.clear)
     const deleteProblem = useProblemStore(s=>s.deleteProblem)
+    const { initialize: initializeReplay } = useReplayStore()
     //const next = useSessionStore(s=>s.next)
 
     useEffect(()=>{
-        timer.restart()
+        //timer.restart()
         initialize(problem.kifData.initialPosition, problem.kifData.moves)
+        initializeReplay(problem.kifData.moves.length)
     }, [problem.id])
 
     /*

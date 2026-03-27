@@ -5,6 +5,7 @@ import { create } from "zustand"
 import { Move, Position, Square, type PieceType } from "@/domain/kif/entity"
 import { buildUntilPly } from "@/domain/kif/service/buildUntilPly"
 import { reduceGameState } from "@/ui/player/hooks/gameStateReducer"
+import { useReplayStore } from "@/ui/player/hooks/useReplayStore"
 
 type GamePhase = "playing" | "finished" 
 export type GameState =  { mistakes: number, isRevealed: boolean, isSolved: boolean }    
@@ -36,7 +37,7 @@ type GameStore = {
     state: GameState,
     initialPosition: Position
     moves: Move[]
-    ply: number
+    //ply: number
     pendingPromotion: PendingPromotion | null
     hasSubmitted: boolean    
     events: GameEvent[]
@@ -46,7 +47,7 @@ type GameStore = {
     promotionPending: (p: PendingPromotion) => void    
 
     revealAnswer: (ctx: GameContext) => void
-    applyOpponentMove: () => void
+    //applyOpponentMove: () => void
     reset: () => void     
     //finalize: () => GameState | null
     dispatch: (e: GameEvent) => void
@@ -54,22 +55,22 @@ type GameStore = {
     markSubmit: () => void
     markAbandon: (ctx: GameContext) => void
 
-    advancePly: () => void
+    //advancePly: () => void
     //retreatPly: () => void    
-    moveTo: (ply: number) => void
+    //moveTo: (ply: number) => void
     
 }
 
 //// selector
-export const selectGameState = (s: GameStore) => ({
-    initialPosition: s.initialPosition,
-    moves: s.moves,
-    ply: s.ply
-})
+
 
 export function useCurrentPosition() {
-  const { initialPosition, moves } = useGameStore(useShallow(selectGameState))
-  const ply = useGameStore(s=>s.ply)
+  //const { initialPosition, moves } = useGameStore()
+  //const ply = useGameStore(s=>s.ply)
+  const initialPosition = useGameStore(s=>s.initialPosition)
+  const moves = useGameStore(s=>s.moves)
+  const ply = useReplayStore(s=>s.ply)
+  console.log("usecurretnion posiont", ply)
 
   return useMemo(
     () => buildUntilPly(initialPosition, moves, ply),
@@ -88,7 +89,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     events: [],
     hasSubmitted: false,
 
-    ply: 0,
+    //ply: 0,
     
     initialize: (pos, moves) => {
         set({initialPosition: pos, moves})
@@ -96,7 +97,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
     },   
     reset: () => {        
         set({
-            ply: 0, hasSubmitted: false,
+            //ply: 0,
+            hasSubmitted: false,
             phase: "playing",
             pendingPromotion: null,
             events: [],
@@ -120,19 +122,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
             promote
         )
     }, 
-    applyOpponentMove: () => {
-        // TOOD
-        setTimeout(() => {
-            set(s => {
-                const nextPly = clampPly(s.ply + 1, s.moves.length)
-                return { ply: nextPly}
-            })
-        }, 500)
-
-    },
+    
     revealAnswer: (ctx: GameContext) => {        
         const event: GameEvent = {
-            type: "REVEAL", ply: get().ply, elapsedSec: ctx.elapsedSec
+            type: "REVEAL", ply: ctx.ply, elapsedSec: ctx.elapsedSec
         }
         get().dispatch(event)        
     },    
@@ -147,21 +140,12 @@ export const useGameStore = create<GameStore>((set, get) => ({
     },
     markAbandon: (ctx: GameContext)=>{
         const event: GameEvent = {
-            type: "ABANDON", ply: get().ply, elapsedSec: ctx.elapsedSec
+            type: "ABANDON", ply: ctx.ply, elapsedSec: ctx.elapsedSec
         }
         get().dispatch(event)
     },
 
-    moveTo: (ply: number) => {       // 範囲外でもclampして強制的に収める仕様     
-        //console.log("mvoeTo: ", ply)
-        const max = get().moves.length
-        //if (ply < 0 || ply > max) return
-        set({ply: clampPly(ply, max)})
-    },
-    advancePly: () => {        
-        const { moveTo, ply} = get()
-        moveTo(ply+1)                
-    },    
+     
 
 }))
 

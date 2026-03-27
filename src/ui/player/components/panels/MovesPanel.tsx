@@ -8,8 +8,9 @@ import { useReplayStore } from "@/ui/player/hooks/useReplayStore";
 
 
 export default function MovesPanel({moves}: { moves: Move[]}) {
-    const { ply, moveTo, revealAnswer, state} = useGameStore()
-    //const { ply, moveTo } = useReplayStore()
+    //const { ply, moveTo, revealAnswer, state} = useGameStore()
+    const { revealAnswer, state} = useGameStore()
+    const { ply, moveTo } = useReplayStore()
 
     const timer = useTimerStore()
 

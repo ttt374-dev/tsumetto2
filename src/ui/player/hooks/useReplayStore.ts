@@ -14,7 +14,7 @@ type ReplayStore = {
 
 export const useReplayStore = create<ReplayStore>((set, get) => ({
     ply: 0,
-    maxPly: 0,
+    maxPly: -1,
 
     initialize: (maxPly: number) => {
         set({maxPly})
@@ -25,6 +25,8 @@ export const useReplayStore = create<ReplayStore>((set, get) => ({
 
     moveTo: (ply: number) => {       // 範囲外でもclampして強制的に収める仕様             
         //if (ply < 0 || ply > max) return
+        //alert(ply)
+        if (ply < 0) throw new Error("replay store not initialized")
         set({ply: clampPly(ply, get().maxPly)})
     },
     advancePly: () => {        
