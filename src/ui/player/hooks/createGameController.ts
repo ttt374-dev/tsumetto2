@@ -3,10 +3,14 @@ import { resolveIntent, type Intent } from "@/domain/game/intentResolver"
 import { KifData, type Move } from "@/domain/kif/entity"
 import { buildUntilPly } from "@/domain/kif/service/buildUntilPly"
 import type { Problem } from "@/domain/problem/entity/Problem"
-import { useGameStore } from "@/ui/player/hooks/useGameStore"
+import { useGameStore, type PendingPromotion } from "@/ui/player/hooks/useGameStore"
 import { useReplayStore } from "@/ui/player/hooks/useReplayStore"
 import { useTimerStore } from "@/ui/player/hooks/useTimerStore"
 
+type ResolveResult =
+  | { type: "move"; move: Move }
+  | { type: "promotionPending"; pendingPromotion: PendingPromotion }
+  | { type: "none"}
 
 export function createGameController() {
     // helpers    
@@ -17,17 +21,14 @@ export function createGameController() {
             timer: useTimerStore.getState()
         }
     }
-    function advanceTurn() {
-        //const replay = useReplayStore.getState()
-        const { replay } = getCtx()
+    function advanceTurn() {        
+        const replay = useReplayStore.getState()
 
         // 入力禁止状態に
         replay.startAnimation()
-        replay.advancePly()
         // 自分の手
-        
-        //replay.moveTo(3)
-        //alert(useReplayStore.getState().ply)
+        replay.advancePly()
+
 
         // 相手の手（遅延）
         setTimeout(() => {
@@ -38,14 +39,14 @@ export function createGameController() {
         }, 500)
     }
     /////////////
-    function resolveMoveFromIntent(intent: Intent): Move | undefined{
+    function resolveMoveFromIntent(intent: Intent): ResolveResult {
         const { game, replay } = getCtx()
 
-        let move: Move | undefined
+        //let move: Move | undefined
 
         switch (intent.type) {
             case "move":
-            case "drop": {
+            case "drop": 
                 const position = buildUntilPly(
                     game.initialPosition,
                     game.moves,
@@ -53,27 +54,25 @@ export function createGameController() {
                 )
 
                 const result = resolveIntent(position, intent)
-                if (!result) return
+                if (!result) return { type: "none"}
 
                 switch (result.type) {
-                    case "move":
-                        move = result.move
-                        break;
+                    case "move":                        
+                        return { type: "move", move: result.move}
+                        
                     case "promotionPending":
-                        game.promotionPending(result.pendingPromotion)
-                        return
-                }
-                break
-            }
+                        //game.promotionPending(result.pendingPromotion)
+                        return { type: "promotionPending", pendingPromotion: result.pendingPromotion}
+                    default:
+                        return { type: "none"}
+                }            
 
             case "choosePromotion":
-                move = game.choosePromotion(intent.promote)
-                break
+                const move = game.choosePromotion(intent.promote)
+                return { type: "move", move: move}                
         }
-
-        //if (!move) throw new Error("no move")
-        return move
     }
+    
     function evaluate(move: Move): EvaluationResult {
         const { game, replay } = getCtx()
         return evaluateMove(move, game.moves, replay.ply)
@@ -92,10 +91,17 @@ export function createGameController() {
             case "incorrect":
                 game.dispatch({ type: "MISTAKE", ply: replay.ply, elapsedSec })
                 break
-            case "solved":
+            case "solved": {
+                const replay = useReplayStore.getState()
+                const timer = useTimerStore.getState()
                 replay.advancePly()
-                game.dispatch({ type: "SOLVE", ply: replay.ply, elapsedSec })
+                timer.stop()
+
+                const { ply } = useReplayStore.getState()
+
+                game.dispatch({ type: "SOLVE", ply, elapsedSec })
                 break
+            }
         }
     }
     /////////////////////////////////////////////////////
@@ -107,24 +113,33 @@ export function createGameController() {
             timer.restart()
         },
         handleIntent: (intent: Intent, elapsedSec: number) => {
-            const move = resolveMoveFromIntent(intent)
-            if (!move) return false
-            
-            const res = evaluate(move)
-            applyResult(res, elapsedSec)
-            return true
+            const { game } = getCtx()
+            const resolvedResult = resolveMoveFromIntent(intent)
+            switch(resolvedResult.type){
+                case "move":
+                    const res = evaluate(resolvedResult.move)
+                    applyResult(res, elapsedSec)
+                    return true
+                case "promotionPending":
+                    game.promotionPending(resolvedResult.pendingPromotion)
+                    return false
+                default:
+                    return false
+            }
         },
         
         markRevealed: (elapsedSec: number) => {
-            const { game, replay } = getCtx()
+            const { game } = getCtx()
+            const { ply } = useReplayStore.getState()
             game.dispatch({
-                type: "REVEAL", ply: replay.ply, elapsedSec
+                type: "REVEAL", ply, elapsedSec
             })
         },
         markAbandon: (elapsedSec: number) => {
-            const { game, replay } = getCtx()
+            const { game } = getCtx()
+            const { ply } = useReplayStore.getState()
             game.dispatch({
-                type: "ABANDON", ply: replay.ply, elapsedSec
+                type: "ABANDON", ply, elapsedSec
             })
         }
         // helpers

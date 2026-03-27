@@ -57,7 +57,7 @@ export default function PlayerScreen({ problem, title, onSolved, onUndoLastAnswe
 
         switch (last.type) {
             case "SOLVE":
-                timer.stop()
+                //timer.stop()
                 toast({message: "solved"})
                 onSolved?.()
                 break
