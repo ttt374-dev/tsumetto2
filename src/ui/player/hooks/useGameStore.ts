@@ -6,6 +6,7 @@ import { Move, Position, Square, type PieceType } from "@/domain/kif/entity"
 import { buildUntilPly } from "@/domain/kif/service/buildUntilPly"
 import { resolveIntent, type Intent } from "@/domain/game/intentResolver"
 import { reduceGameState } from "@/ui/player/hooks/gameStateReducer"
+import { PlayLesson } from "@mui/icons-material"
 
 type GamePhase = "playing" | "finished" 
 export type GameState =  { mistakes: number, isRevealed: boolean, isSolved: boolean }    
@@ -22,7 +23,7 @@ export type PendingPromotion = {
     to: Square
     pieceType: PieceType
 }
-type TryMoveResult = "correct" | "incorrect" | "solved"
+export type TryMoveResult = "correct" | "incorrect" | "solved"
     
 type GameStore = {
     phase: GamePhase,
@@ -39,7 +40,7 @@ type GameStore = {
     advancePly: () => void
     retreatPly: () => void    
     moveTo: (ply: number) => void
-    handleIntent: (intent: Intent, elapsedSec: number) => boolean
+    //handleIntent: (intent: Intent, elapsedSec: number) => boolean
     choosePromotion: (promote: boolean) => Move
     promotionPending: (p: PendingPromotion) => void
     tryMove: (move: Move, elaspedSec: number) => TryMoveResult
@@ -115,36 +116,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     retreatPly: () => {
         const { moveTo, ply} = get()
         if (ply > 0) moveTo(ply - 1)
-    },
-    handleIntent(intent: Intent, elapsedSec: number){
-        console.log("handle intent", intent, elapsedSec)
-        const { initialPosition, moves, ply, tryMove} = get()     
-        let trymoveResult: TryMoveResult 
-        
-        switch(intent.type){
-            case "move":
-            case "drop":
-                const position = buildUntilPly(initialPosition, moves, ply)
-                const result = resolveIntent(position, intent)
-
-                if (!result) return false
-                switch (result.type) {
-                    case "move":
-                        trymoveResult = tryMove(result.move, elapsedSec)
-                        break;
-                    case "promotionPending":
-                        get().promotionPending(result.pendingPromotion)
-                        //set({ pendingPromotion: result.pendingPromotion })
-                        break;
-                }
-                return true
-            case "choosePromotion":                
-                const move = get().choosePromotion(intent.promote)
-                trymoveResult = tryMove(move, elapsedSec)
-                return true
-        }
-
-    },
+    },    
     promotionPending: (p: PendingPromotion) => {
         set({ pendingPromotion: p })
     },
@@ -161,8 +133,23 @@ export const useGameStore = create<GameStore>((set, get) => ({
         )
     },
     tryMove: (move: Move, elapsedSec: number) => { 
-        const { moves, ply} = get()
+        const { dispatch, moves, ply} = get()
         //console.log("trymove", move)
+        const res = evaluateMove(move, moves, ply)
+        switch (res) {
+            case "correct":
+                get().advancePly()
+                get().applyOpponentMove()
+                break;
+            case "incorrect":
+                dispatch({ type: "MISTAKE", ply, elapsedSec })
+                break;
+            case "solved":
+                dispatch({ type: "SOLVE", ply, elapsedSec })
+                break;
+        }
+        return res
+        /*
         if (!move.equals(moves[ply])) {   // 不正解
             //set(s => ({ mistakes: s.mistakes + 1 }))
             const event: GameEvent = {
@@ -179,11 +166,11 @@ export const useGameStore = create<GameStore>((set, get) => ({
             get().dispatch(event)
 
            return "solved"
-        } else {   // 自手と応手を進める
+        } else {   // 自手と応手を進める            
             get().advancePly()    
             get().applyOpponentMove()
             return "correct"
-        }
+        }*/
         //return true
     },
     applyOpponentMove: () => {
@@ -223,6 +210,13 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
 //////////////
 // pure helpers
+function evaluateMove(move: Move, moves: Move[], ply: number){
+    if (!move.equals(moves[ply])) return "incorrect"
+    if (ply+1>=moves.length) return "solved"
+    return "correct"
+}
+
+
 function clampPly(ply: number, max: number) {
   return Math.max(0, Math.min(ply, max))
 }

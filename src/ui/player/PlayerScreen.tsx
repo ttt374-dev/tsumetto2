@@ -19,6 +19,7 @@ import { PromotionDialog } from "./dialogs/PromotionDialog";
 import { useBoardInputStore } from "./hooks/useBoardInputStore";
 import { useProblemStore } from "@/ui/store/useProblemStore";
 import type { Intent } from "@/domain/game/intentResolver";
+import { handleIntent } from "@/domain/game/intentHandler";
 
 //////////////////////////////////////////////////////////////
 export default function PlayerScreen({ problem, title, onSolved, onUndoLastAnswer, onAfterDelete, footerPanel }: {
@@ -34,7 +35,7 @@ export default function PlayerScreen({ problem, title, onSolved, onUndoLastAnswe
     const navigate = useNavigate()
 
     const { pendingPromotion, state, events, 
-        initialize, handleIntent } = useGameStore()
+        initialize, } = useGameStore()
     const clearSelection = useBoardInputStore(s=>s.clear)
     const deleteProblem = useProblemStore(s=>s.deleteProblem)
     //const next = useSessionStore(s=>s.next)
