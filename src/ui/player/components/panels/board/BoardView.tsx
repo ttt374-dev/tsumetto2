@@ -46,7 +46,9 @@ export default function BoardView() {
         if (!intent) return
         //const result = resolveIntent(position, intent)
         const res = handleIntent(intent, timer.elapsedSec)
-        if (res) clear()
+        console.log("intent res", res)
+        //if (res) clear()
+        if (res.type !== "invalidMove") clear()
         //if (move == "promotionRequired") 
         //move && tryMove(move)
         //tryMove(intent)

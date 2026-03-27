@@ -25,7 +25,7 @@ export type SessionPlayerPlayingVM = {
       results: Record<ProblemId, SolvedResult>
       nextProblem: () => void
       moveToProblemId: (id: ProblemId) => void
-      submitAnswer: (res: SolvedResult, actions: ReviewAction[]) => boolean
+      submitSolvedResult: (res: SolvedResult, actions: ReviewAction[]) => boolean
       //undoLastAnswer: () => void
       //hasLastAnswer: () => boolean
       navigateToSummary: () => void
@@ -60,11 +60,11 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
     )
 
     // navigation
-    const submitAnswer = (res: SolvedResult, actions: ReviewAction[]) => { // submit したら true を返す        
+    const submitSolvedResult = (res: SolvedResult, actions: ReviewAction[]) => { // submit したら true を返す        
         if (!sessionId) return false
-        console.log("submit answer", results)
+        //console.log("submit answer", results)
         if (results[currentProblemId]) {
-            console.log("alread submitted", currentProblemId, res, actions)
+            //console.log("alread submitted", currentProblemId, res, actions)
             return false// allready submitted
         }
         submitResult(currentProblemId, res)
@@ -109,7 +109,7 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
     return { 
         status: "playing", 
         problemIds, sessionId, results, problem, title, index, count, 
-        nextProblem: next, moveToProblemId, submitAnswer, //undoLastAnswer, hasLastAnswer,
+        nextProblem: next, moveToProblemId, submitSolvedResult, //undoLastAnswer, hasLastAnswer,
         navigateToSummary: summary
      }
 }

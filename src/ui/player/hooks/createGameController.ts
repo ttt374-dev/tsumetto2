@@ -9,27 +9,26 @@ import { useTimerStore } from "@/ui/player/hooks/useTimerStore"
 
 export function createGameController() {
     // helpers    
-    
-    function advanceTurn() {        
-        const replay = useReplayStore.getState()
 
-        // 入力禁止状態に
+    let turnId = 0
+
+    function advanceTurn() {
+        const replay = useReplayStore.getState()
+        const currentId = ++turnId
+
         replay.startAnimation()
-        // 自分の手
         replay.advancePly()
 
-
-        // 相手の手（遅延）
         setTimeout(() => {
+            if (currentId !== turnId) return
+
             const replay = useReplayStore.getState()
-            if (replay.phase !== "animating") return
-            
             replay.advancePly()
             replay.endAnimation()
         }, 500)
     }
     /////////////
-    function resolveMoveFromIntent(intent: Intent): IntentResult | null {
+    function resolveMoveFromIntent(intent: Intent): IntentResult {
         const game = useGameStore.getState()
         const replay = useReplayStore.getState()        
 
@@ -40,15 +39,16 @@ export function createGameController() {
                     game.initialPosition,
                     game.moves,
                     replay.ply
-                )
-
-                const result = resolveIntent(position, intent)
-                if (!result) return null
-                return result
-
+                )                
+                return resolveIntent(position, intent)
             case "choosePromotion":
                 const move = game.choosePromotion(intent.promote)
-                return { type: "move", move: move}                
+                return { type: "move", move: move}       
+            default: {
+                const _exhaustive: never = intent
+                return _exhaustive
+            }
+            
         }
     }
     
@@ -75,10 +75,10 @@ export function createGameController() {
                 break
             case "solved":
                 const timer = useTimerStore.getState()
-                const { ply } = useReplayStore.getState()
+                
                 replay.advancePly()
                 timer.stop()
-                
+                const { ply } = useReplayStore.getState()
                 game.dispatch({ type: "SOLVE", ply, elapsedSec })
                 break            
         }
@@ -94,22 +94,20 @@ export function createGameController() {
             replay.initialize(problem.kifData.moves.length)
             timer.restart()
         },
-        handleIntent: (intent: Intent, elapsedSec: number) => {
-            const game = useGameStore.getState()
-        
+        handleIntent: (intent: Intent, elapsedSec: number): IntentResult => {
+            const game = useGameStore.getState()        
             const res = resolveMoveFromIntent(intent)
-            if (!res) return false
-            switch(res.type){
-                case "move":
-                    const result = evaluate(res.move)
-                    applyResult(result, elapsedSec)
-                    return true
-                case "promotionPending":
-                    game.promotionPending(res.pendingPromotion)
-                    return false
-                default:
-                    return false
+            if (res.type === "invalidMove") return res
+            if (res.type === "promotionPending") {
+                game.promotionPending(res.pendingPromotion)
+                return res
             }
+
+            // ここは move 確定
+            const result = evaluate(res.move)
+            applyResult(result, elapsedSec)
+
+            return res
         },
         markRevealed: (elapsedSec: number) => {
             const game = useGameStore.getState()

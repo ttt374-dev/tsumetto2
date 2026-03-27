@@ -1,7 +1,7 @@
-import React, { useRef } from "react"
-import { Box, Drawer, Stack } from "@mui/material"
+import React  from "react"
+import { Box, Stack } from "@mui/material"
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 import { Problem, type ProblemId } from "@/domain/problem/entity/Problem"
 import { AppShell } from "../common/components/layout/AppShell";
@@ -20,36 +20,27 @@ import { useBoardInputStore } from "./hooks/useBoardInputStore";
 import { useProblemStore } from "@/ui/store/useProblemStore";
 import type { Intent } from "@/domain/game/intentResolver";
 import { createGameController } from "@/ui/player/hooks/createGameController";
-import { useReplayStore } from "@/ui/player/hooks/useReplayStore";
 
 //////////////////////////////////////////////////////////////
-export default function PlayerScreen({ problem, title, onSolved, onUndoLastAnswer, onAfterDelete, footerPanel }: {
+export default function PlayerScreen({ problem, title, onSolved, onAfterDelete, footerPanel }: {
     problem: Problem
     title: React.ReactNode
     onSolved?: () => void
-    onUndoLastAnswer?: () => void
     onAfterDelete?: () => void
     footerPanel?: React.ReactNode
-    }) {
+}) {
     const timer = useTimerStore()
-    const toast = useToast()    
-    const navigate = useNavigate()    
+    const toast = useToast()
+    const navigate = useNavigate()
 
-    const { pendingPromotion, state, events, 
-        initialize, } = useGameStore()
+    const { pendingPromotion, state, events } = useGameStore()
     const controller = createGameController()
     const clearSelection = useBoardInputStore(s=>s.clear)
-    const deleteProblem = useProblemStore(s=>s.deleteProblem)
-    const { initialize: initializeReplay } = useReplayStore()
-    
+    const deleteProblem = useProblemStore(s=>s.deleteProblem)    
 
-    useEffect(()=>{
-        //timer.restart()
-        //initialize(problem.kifData.initialPosition, problem.kifData.moves)
-        //initializeReplay(problem.kifData.moves.length)
+    useEffect(()=>{        
         controller.start(problem)
     }, [problem.id])
-
       
     useEffect(() => {
         const last = events.at(-1)
@@ -57,15 +48,12 @@ export default function PlayerScreen({ problem, title, onSolved, onUndoLastAnswe
 
         switch (last.type) {
             case "SOLVE":
-                //timer.stop()
-                toast({message: "solved"})
                 onSolved?.()
                 break
             case "MISTAKE":
                 toast({ message: `incorrect: [${state.mistakes}]` })
                 break
         }
-
     }, [events])
     
     // handlers
@@ -97,7 +85,6 @@ export default function PlayerScreen({ problem, title, onSolved, onUndoLastAnswe
                 <PlayerRightPanel
                     problemId={problem.id}
                     onNavigateToDetail={handleNavigateToDetail}
-                    onUndoLastAnswer={onUndoLastAnswer}
                     onDelete={handleDelete}
                 />}
         >

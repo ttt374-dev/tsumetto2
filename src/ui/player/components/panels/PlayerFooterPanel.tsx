@@ -20,7 +20,7 @@ export function PlayerFooterPanel(props: {
     //onAnswerClick: (answerResult: SolvedResult) => void,    
     onNext: () => void
     onShowList: () => void
-    onSummary: () => void
+    //onSummary: () => void
 }) {
     const summary = useSessionStore(s=>s.summary)
 
