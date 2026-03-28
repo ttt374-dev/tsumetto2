@@ -1,18 +1,14 @@
-import React, { useEffect, useRef, useState } from "react"
+import React, { useEffect, useState } from "react"
 
-import PlayerScreen from "../player/PlayerScreen"
+import PlayerScreen from "@/ui/player/PlayerScreen"
 import { useSessionPlayerViewModel, type SessionPlayerPlayingVM } from "./hooks/useSessionPlayerViewModel"
-import { SolvedDialog } from "../player/dialogs/SolvedDialog"
 import { PlayerFooterPanel } from "@/ui/player/components/panels/PlayerFooterPanel"
-import { useNavigate } from "react-router-dom"
-import { routes } from "@/ui/App/useAppNavigation"
 import { useGameStore, type GameEvent } from "@/ui/player/hooks/useGameStore"
 import { useTimerStore } from "@/ui/player/hooks/useTimerStore"
-import { useSessionStore } from "@/ui/session/hooks/useSessionStore"
 import type { ReviewAction } from "@/domain/review/ReviewEvent"
-import type { SolvedResult } from "@/domain/review/solvedResult"
 import { deriveSolvedResultFromEvents } from "@/domain/review/service/solvedResultDeriver"
 import { useReplayStore } from "@/ui/player/hooks/useReplayStore"
+import { SessionProblemListDialog } from "@/ui/session/SessionProblemListDialog"
 
 
 ////////////////////////////////////////////////
@@ -26,23 +22,19 @@ export default function SessionPlayerScreen() {
 }
 
 function SessionPlayerContent({vm}: { vm: SessionPlayerPlayingVM}) {
-    const navigate = useNavigate()
     const timer = useTimerStore()
     const { hasSubmitted, events, markSubmit, dispatch, state } = useGameStore()
+    const [isListOpen, setIsListOpen] = useState(false)
 
     useEffect(() => {
-
         return () => {
             // 離脱直前に未サブミットなら強制 ABANDON + submit
-            if (!hasSubmitted) {
-                flush()
-
-            }
+            flush()
         }
     }, [vm.problem.id]) // 問題が切り替わるたびに発火
     // ハンドラー
     const handleShowList = () => {
-        navigate(routes.sessionList)
+        setIsListOpen(true)
     }      
     const handleNext = () => {    
         flush()
@@ -63,9 +55,11 @@ function SessionPlayerContent({vm}: { vm: SessionPlayerPlayingVM}) {
         markSubmit()
     }
     const flush = () => {
+        if (hasSubmitted) return  // サブミット済なら何もしない
+
         if (!state.isSolved) {   // もし解かれてなかった、諦めたと見なす
             const ply = useReplayStore.getState().ply
-            alert("YOU GAVE UP")
+            //alert("YOU GAVE UP")
             dispatch({ type: "ABANDON", ply, elapsedSec: timer.elapsedSec })
         }
         submitSolvedResult()        
@@ -74,7 +68,6 @@ function SessionPlayerContent({vm}: { vm: SessionPlayerPlayingVM}) {
     const footerPanel: React.ReactNode = (
         <PlayerFooterPanel
             onNext={handleNext}
-            //onSummary={handleSummary}
             onShowList={handleShowList} />)
             
     return (
@@ -84,11 +77,14 @@ function SessionPlayerContent({vm}: { vm: SessionPlayerPlayingVM}) {
                 title={vm.title}
                 onSolve={handleSolved}
                 onSolvedConfirm={handleNext}
-                //onUndoLastAnswer={props.onUndoLastAnswer}
                 onAfterDelete={vm.nextProblem}
                 footerPanel={footerPanel}
             />
 
+            <SessionProblemListDialog
+                open={isListOpen}
+                onClose={()=>setIsListOpen(false)}
+            />
 
         </>
     )
