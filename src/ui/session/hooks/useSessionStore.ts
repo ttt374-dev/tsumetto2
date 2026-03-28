@@ -4,6 +4,7 @@ import type { ProblemId } from "@/domain/problem/entity/Problem";
 import { v4 } from "uuid";
 import { create } from "zustand";
 import type { SolvedResult } from "@/domain/review/solvedResult"
+import { AddAlertRounded } from "@mui/icons-material";
 
 type SessionStore = {
     // ===== state =====
@@ -69,7 +70,7 @@ export const useSessionStore = create<SessionStore>((set, get) => ({
     next: () =>
         set((s) => {
             const nextIndex = s.currentIndex + 1;
-
+            
             if (nextIndex >= s.problemIds.length) {
                 return { currentIndex: s.problemIds.length }; // finished状態
             }

@@ -1,4 +1,4 @@
-import React  from "react"
+import React, { useState }  from "react"
 import { Box, Stack } from "@mui/material"
 import { useNavigate } from "react-router-dom";
 import { useEffect } from 'react';
@@ -20,12 +20,16 @@ import { useBoardInputStore } from "./hooks/useBoardInputStore";
 import { useProblemStore } from "@/ui/store/useProblemStore";
 import type { Intent } from "@/domain/game/intentResolver";
 import { createGameController } from "@/ui/player/hooks/createGameController";
+import type { SolvedResult } from "@/domain/review/solvedResult";
+import { deriveSolvedResultFromEvents } from "@/domain/review/service/solvedResultDeriver";
+import { SolvedDialog } from "@/ui/player/dialogs/SolvedDialog";
 
 //////////////////////////////////////////////////////////////
-export default function PlayerScreen({ problem, title, onSolved, onAfterDelete, footerPanel }: {
+export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm, onAfterDelete, footerPanel }: {
     problem: Problem
     title: React.ReactNode
-    onSolved?: () => void
+    onSolve?: () => void
+    onSolvedConfirm: () => void
     onAfterDelete?: () => void
     footerPanel?: React.ReactNode
 }) {
@@ -38,8 +42,13 @@ export default function PlayerScreen({ problem, title, onSolved, onAfterDelete, 
     const clearSelection = useBoardInputStore(s=>s.clear)
     const deleteProblem = useProblemStore(s=>s.deleteProblem)    
 
+    const [isSolvedDialogOpen, setIsSolvedDialogOpen] = useState(false)
+    const [solvedResult, setSolvedResult] = useState<SolvedResult | undefined>(undefined)
+
+
     useEffect(()=>{        
         controller.start(problem)
+        setIsSolvedDialogOpen(false)
     }, [problem.id])
       
     useEffect(() => {
@@ -48,7 +57,9 @@ export default function PlayerScreen({ problem, title, onSolved, onAfterDelete, 
 
         switch (last.type) {
             case "SOLVE":
-                onSolved?.()
+                setIsSolvedDialogOpen(true)
+                setSolvedResult(deriveSolvedResultFromEvents(events))
+                const res = onSolve?.()
                 break
             case "MISTAKE":
                 toast({ message: `incorrect: [${state.mistakes}]` })
@@ -106,7 +117,14 @@ export default function PlayerScreen({ problem, title, onSolved, onAfterDelete, 
                 onConfirm={handlePromotionConfirm}
                 onClose={() => {}}
                 >
-            </PromotionDialog>}
+                </PromotionDialog>}
+
+            {solvedResult &&
+                <SolvedDialog open={isSolvedDialogOpen}
+                    onClose={() => setIsSolvedDialogOpen(false)}
+                    onConfirm={onSolvedConfirm}
+                    solvedResult={solvedResult}
+                />}
         </AppShell>
     )
 }

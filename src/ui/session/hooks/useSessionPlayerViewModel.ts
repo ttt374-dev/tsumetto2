@@ -38,7 +38,7 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
     const missionId = useSessionStore(s => s.missionId)
     const sessionId = useSessionStore(s=>s.sessionId)
     const next = useSessionStore(s => s.next)
-    const prev = useSessionStore(s => s.prev)
+    //const prev = useSessionStore(s => s.prev)
     const moveToProblemId = useSessionStore(s=>s.moveToId)
     const results = useSessionStore(s=>s.results)
     const submitResult = useSessionStore(s=>s.submitResult)
@@ -104,7 +104,7 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
     }   
     
     
-    const title = `[${missionName} (${index + 1}/${count})]: ${problem.title}` 
+    const title = `[${missionName} (${index + 1}/${count})]: ${problem.title}`     
     
     return { 
         status: "playing", 

@@ -3,7 +3,6 @@ import React, { useEffect, useRef, useState } from "react"
 import PlayerScreen from "../player/PlayerScreen"
 import { useSessionPlayerViewModel, type SessionPlayerPlayingVM } from "./hooks/useSessionPlayerViewModel"
 import { SolvedDialog } from "../player/dialogs/SolvedDialog"
-import type { Problem } from "@/domain/problem/entity/Problem"
 import { PlayerFooterPanel } from "@/ui/player/components/panels/PlayerFooterPanel"
 import { useNavigate } from "react-router-dom"
 import { routes } from "@/ui/App/useAppNavigation"
@@ -15,21 +14,7 @@ import type { SolvedResult } from "@/domain/review/solvedResult"
 import { deriveSolvedResultFromEvents } from "@/domain/review/service/solvedResultDeriver"
 import { useReplayStore } from "@/ui/player/hooks/useReplayStore"
 
-///
-function toReviewActions(events: GameEvent[]): ReviewAction[] {
-    return events.flatMap((e): ReviewAction[] => {
-        switch (e.type) {
-            case "MISTAKE":
-                return [{ type: "mistake", ply: e.ply, elapsedSec: e.elapsedSec }]
-            case "REVEAL":
-                return [{ type: "reveal", ply: e.ply, elapsedSec: e.elapsedSec }]
-            case "ABANDON":
-                return [{ type: "abandon", ply: e.ply, elapsedSec: e.elapsedSec }]
-            default:
-                return []
-        }
-    })
-}
+
 ////////////////////////////////////////////////
 export default function SessionPlayerScreen() {
     const vm = useSessionPlayerViewModel()
@@ -40,51 +25,30 @@ export default function SessionPlayerScreen() {
     return (<SessionPlayerContent vm={vm}/>)
 }
 
-function SessionPlayerContent({vm}: {
-    vm: SessionPlayerPlayingVM
-}) {
-    const [isOpen, setIsOpen ] = useState(false)
-    const [solvedResult, setSolvedResult] = useState<SolvedResult | undefined>(undefined)
+function SessionPlayerContent({vm}: { vm: SessionPlayerPlayingVM}) {
     const navigate = useNavigate()
-    const next = useSessionStore(s=>s.next)    
     const timer = useTimerStore()
-    const { hasSubmitted, events, markSubmit, dispatch } = useGameStore()
-        
-    // 初期化
-    useEffect(() => {
-        setIsOpen(false)
-    }, [vm.problem.id])
-    const prevLenRef = useRef(0)
+    const { hasSubmitted, events, markSubmit, dispatch, state } = useGameStore()
 
     useEffect(() => {
-        const newEvents = events.slice(prevLenRef.current)
 
-        newEvents.forEach(e => {
-            switch (e.type) {
-                case "SOLVE":
-                    setIsOpen(true)
-                    setSolvedResult(deriveSolvedResultFromEvents(events))
-                    break                
+        return () => {
+            // 離脱直前に未サブミットなら強制 ABANDON + submit
+            if (!hasSubmitted) {
+                flush()
+
             }
-        })
-
-        prevLenRef.current = events.length
-    }, [events])
-
+        }
+    }, [vm.problem.id]) // 問題が切り替わるたびに発火
     // ハンドラー
     const handleShowList = () => {
         navigate(routes.sessionList)
     }      
     const handleNext = () => {    
         flush()
-        //onLeave()
-        vm.nextProblem
-    }/*
-    const handleSummary = () => {
-        flush()
-        //onLeave()
-        summary()
-    }*/
+        vm.nextProblem()
+        
+    }
     const handleSolved = () => {
         submitSolvedResult()
     }
@@ -97,16 +61,13 @@ function SessionPlayerContent({vm}: {
         //console.log("submit solveresult", res, actions)
         vm.submitSolvedResult(res, actions)
         markSubmit()
-
     }
     const flush = () => {
-        if (hasSubmitted) return
-
-        const ply = useReplayStore.getState().ply
-        dispatch({type: "ABANDON", ply, elapsedSec: timer.elapsedSec})
-        //controller.markAbandon(timer.elapsedSec)
-        
-        //markAbandon(timer.elapsedSec)
+        if (!state.isSolved) {   // もし解かれてなかった、諦めたと見なす
+            const ply = useReplayStore.getState().ply
+            alert("YOU GAVE UP")
+            dispatch({ type: "ABANDON", ply, elapsedSec: timer.elapsedSec })
+        }
         submitSolvedResult()        
     }
 
@@ -121,18 +82,29 @@ function SessionPlayerContent({vm}: {
             <PlayerScreen
                 problem={vm.problem}
                 title={vm.title}
-                onSolved={handleSolved}
+                onSolve={handleSolved}
+                onSolvedConfirm={handleNext}
                 //onUndoLastAnswer={props.onUndoLastAnswer}
-                onAfterDelete={next}
+                onAfterDelete={vm.nextProblem}
                 footerPanel={footerPanel}
             />
 
-            {solvedResult &&
-                <SolvedDialog open={isOpen}
-                    onClose={() => setIsOpen(false)}
-                    onConfirm={handleNext}
-                    solvedResult={solvedResult}
-                />}
+
         </>
     )
+}
+////////////////
+function toReviewActions(events: GameEvent[]): ReviewAction[] {
+    return events.flatMap((e): ReviewAction[] => {
+        switch (e.type) {
+            case "MISTAKE":
+                return [{ type: "mistake", ply: e.ply, elapsedSec: e.elapsedSec }]
+            case "REVEAL":
+                return [{ type: "reveal", ply: e.ply, elapsedSec: e.elapsedSec }]
+            case "ABANDON":
+                return [{ type: "abandon", ply: e.ply, elapsedSec: e.elapsedSec }]
+            default:
+                return []
+        }
+    })
 }
