@@ -8,7 +8,7 @@ export function deriveSolvedResult(gameState: GameState, elapsedSec: number): So
     if (gameState.isSolved) {
         outcome = gameState.isRevealed ? "failed" : "solved"
     } else {
-        outcome = !gameState.isRevealed && gameState.mistakes === 0 ? "unanswered" : "failed"
+        outcome = !gameState.isRevealed && gameState.mistakes === 0 ? "abandoned" : "failed"
     }
     return {
         outcome,

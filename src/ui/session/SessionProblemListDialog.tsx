@@ -24,7 +24,12 @@ function SessionProblemListDialogContent({open, onClose, vm}: {
         vm.moveToProblemId(id)
     }
     return (
-        <Dialog open={open} onClose={onClose} fullScreen>
+        <Dialog open={open} onClose={onClose} fullScreen
+            sx={{ 
+                pt: "calc(env(safe-area-inset-bottom) + 16px)",
+                pb: "calc(env(safe-area-inset-top) + 16px)"
+            }}
+            >
             <DialogTitle>問題リスト</DialogTitle>
             <DialogContent sx={{p: 0}}>
                 <SessionListView ids={vm.problemIds}
