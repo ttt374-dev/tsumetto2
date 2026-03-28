@@ -1,6 +1,7 @@
 import { Learning, type LearningRecord} from "../entity/Learning"
 import type { ReviewEvent, ReviewEventId, ReviewReviewedEvent} from "../../review/ReviewEvent"
 import type { SolvedResult } from "@/domain/review/solvedResult"
+import { evaluateScore } from "@/domain/learning/service/evaluateScore"
 
 const MAX_INTERVAL_DAYS = 60
 const DAY = 60 * 60 * 24 * 1000
@@ -77,9 +78,12 @@ function applyReviewedEvent(
     const nextReviewAt = event.at + intervalDays * DAY
     //console.log("event", event)
     //console.log("apply reviewed event", new Date(nextReviewAt).toLocaleDateString(), intervalDays)
-
+    const baseTotalCount = base.solvedCount + base.failedCount
+    const newScore = evaluateScore(event.solvedResult)
+    const newSumScore = baseTotalCount * base.score + newScore
+    const newAverageScore = newSumScore / (baseTotalCount + 1)
     return new Learning(
-        event.problemId, solvedCnt, failedCnt, intervalDays,
+        event.problemId, solvedCnt, failedCnt, newAverageScore, intervalDays, 
         nextReviewAt, easeFactor, event.at, event.solvedResult
     )
 }

@@ -108,7 +108,7 @@ export default function MissionScreen() {
                 >
                     <ListItemText
                         primary={mission.name}
-                        secondary={`問題数：${stats?.problemCount ?? 0}, 正答率：${((stats?.accuracy ?? 0) * 100).toFixed(0)}%`}
+                        secondary={`問題数：${stats?.problemCount ?? 0}, スコア：${((stats?.score ?? 0) ).toFixed(1)}`}
                     />
                 </ListItemButton>
 

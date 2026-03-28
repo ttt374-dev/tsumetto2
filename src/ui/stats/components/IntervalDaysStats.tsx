@@ -1,7 +1,5 @@
-import type { ProblemStats } from "@/domain/problem/valueObject/ProblemStats";
 import { Box, Paper, Stack, Typography } from "@mui/material";
-import type { StatsRowValues } from "./GroupedTable";
-import type { Problem, ProblemId } from "@/domain/problem/entity/Problem";
+import type { ProblemId } from "@/domain/problem/entity/Problem";
 import { useLearningRecordStore } from "@/ui/store/useLearningRecordStore";
 import { useProblemStore } from "@/ui/store/useProblemStore";
 import type { LearningRecord } from "@/domain/learning/entity/Learning";

@@ -34,9 +34,7 @@ export function SummaryView({ stats }: {
             <Stack spacing={2} p={2}>
                 <SummaryRow label="出題問題数" value={stats.problemCount} />
                 <SummaryRow label="解答問題数" value={stats.totalCount} />
-                <SummaryRow label="正解" value={stats.solvedCount} />
-                <SummaryRow label="不正解" value={stats.failedCount} />
-                <SummaryRow label="正解率" value={`${Math.round(stats.accuracy * 100)} %`} />
+                <SummaryRow label="スコア" value={`${stats.score.toFixed(1)}`} />
             </Stack>
         </Paper>
     )

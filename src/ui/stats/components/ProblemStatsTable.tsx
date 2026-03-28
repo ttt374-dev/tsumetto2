@@ -2,10 +2,11 @@ import { ProblemStats } from "@/domain/problem/valueObject/ProblemStats";
 import { useLearningRecordStore } from "@/ui/store/useLearningRecordStore";
 import { useProblemStore } from "@/ui/store/useProblemStore";
 import { useMemo } from "react";
-import { GroupedTable, type StatsRowValues } from "./GroupedTable";
+import { GroupedTable} from "./GroupedTable";
 import { applyFilter } from "@/domain/problem/service/query/applyFilter";
 import { DefaultQueryState } from "@/domain/problem/service/query/ProblemsQuery";
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem";
+import type { StatsRowValues } from "@/ui/stats/components/StatsRow";
 
 export function ProblemStatsTable() {
     const activeProblems = useProblemStore(s => s.activeProblems)
@@ -87,7 +88,7 @@ export function ProblemStatsTable() {
             rows: tagStatsRows,
         }
     ]
-    const columns = ["問題数", "正答率", "E/F", "間隔"]
+    const columns = ["問題数", "スコア", "E/F", "間隔"]
 
     return (
         <GroupedTable groups={groups} columns={columns} />

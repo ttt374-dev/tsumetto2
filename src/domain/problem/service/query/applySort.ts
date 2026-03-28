@@ -24,9 +24,9 @@ export function applySort(
                 vA = a.createdAt
                 vB = b.createdAt
                 break;
-            case "accuracy":
-                vA = la?.accuracy
-                vB = lb?.accuracy
+            case "score":
+                vA = la?.score
+                vB = lb?.score
                 break;
             case "title":
                 vA = a.title;

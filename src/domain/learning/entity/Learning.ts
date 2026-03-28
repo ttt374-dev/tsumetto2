@@ -7,6 +7,7 @@ export type LearningData = {
     problemId: ProblemId
     solvedCount: number
     failedCount: number
+    score: number
 
     intervalDays: number        // 次回までの日数
     nextReviewedAt: number        // 次に解くべき時刻（ms）
@@ -21,6 +22,7 @@ function createDefaultValues(problemId: ProblemId): LearningData {
         problemId: problemId,
         solvedCount: 0,
         failedCount: 0,
+        score: 0,
         intervalDays: 0,
         nextReviewedAt: Date.now(),
         easeFactor: 2.5,
@@ -33,6 +35,7 @@ export class Learning {
         readonly problemId: ProblemId,
         readonly solvedCount: number,
         readonly failedCount: number,
+        readonly score: number,
 
         readonly intervalDays: number,
         readonly nextReviewedAt: number,
@@ -50,6 +53,7 @@ export class Learning {
             problemId: this.problemId,
             solvedCount: this.solvedCount,
             failedCount: this.failedCount,
+            score: this.score,
             intervalDays: this.intervalDays,
             nextReviewedAt: this.nextReviewedAt,
             easeFactor: this.easeFactor,            
@@ -59,6 +63,7 @@ export class Learning {
     }
     static fromDTO(dto: LearningDTO): Learning {
         return new Learning(dto.problemId, dto.solvedCount, dto.failedCount,
+            dto.score,
             dto.intervalDays, dto.nextReviewedAt, dto.easeFactor,
             dto.lastAnsweredAt, dto.lastAnswerResult,
         )
@@ -68,9 +73,9 @@ export class Learning {
     get totalCount(): number { 
         return this.solvedCount + this.failedCount
     }
-    get accuracy(): number { 
-        return this.totalCount === 0 ? 0 : this.solvedCount / this.totalCount
-    }
+    //get accuracy(): number { 
+    //    return this.totalCount === 0 ? 0 : this.solvedCount / this.totalCount
+    //}
 
 }
 

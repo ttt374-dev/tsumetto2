@@ -1,42 +1,7 @@
 import { KeyboardArrowDown, KeyboardArrowRight } from "@mui/icons-material"
 import { Box, IconButton, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
-import { ProblemStats } from "@/domain/problem/valueObject/ProblemStats";
 import { act, useMemo, useState } from "react";
-
-function formatPercentage(value: number) {
-    return `${(value * 100).toFixed(0)}%`
-}
-function StatsRow(props: {
-    label: string
-    stats: ProblemStats
-}) {
-    const totalCount = props.stats.problemCount
-    const accuracy = totalCount > 0 ? formatPercentage(props.stats.accuracy) : "-"
-    const easeFactor = totalCount > 0 ? props.stats.easeFactor.toFixed(2) : "-"
-    const intervalDays = totalCount > 0 ? props.stats.intervalDays.toFixed(0) : "-"
-
-    return (
-        <TableRow>
-            <TableCell   sx={{
-    
-    whiteSpace: "nowrap",
-    overflow: "hidden",
-    textOverflow: "ellipsis"
-  }}>
-                {props.label}
-            </TableCell>
-
-            <TableCell align="right" sx={{ width: 60 }}>{totalCount}</TableCell>
-            <TableCell align="right" sx={{ width: 60 }}>{accuracy}</TableCell>
-            <TableCell align="right" sx={{ width: 60 }}>{easeFactor}</TableCell>
-            <TableCell align="right" sx={{ width: 60 }}>{intervalDays}</TableCell>
-        </TableRow>
-    )
-}
-export type StatsRowValues = {
-    label: string
-    stats: ProblemStats,
-}
+import { StatsRow, type StatsRowValues } from "@/ui/stats/components/StatsRow";
 
 type Group = {
     groupName: string

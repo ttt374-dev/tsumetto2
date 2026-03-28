@@ -8,6 +8,7 @@ export class ProblemStats {
         readonly failedCount: number,        
         readonly easeFactor: number,
         readonly intervalDays: number,
+        readonly score: number,
     ){}
 
     static create(ids: ProblemId[], learningRecords: LearningRecord) {
@@ -15,6 +16,7 @@ export class ProblemStats {
         let failed = 0
         let easeFactor = 0
         let intervalDays = 0       
+        let score = 0
 
         for (const id of ids) {
             const learning = learningRecords[id]
@@ -24,18 +26,21 @@ export class ProblemStats {
             failed += learning.failedCount
             easeFactor += learning.easeFactor
             intervalDays += learning.intervalDays
+            score += learning.score
         }
         easeFactor = (ids.length > 0) ? easeFactor/ids.length : 0
         intervalDays = (ids.length > 0) ? intervalDays/ids.length : 0
+        score = (ids.length > 0) ? score/ids.length : 0
         return new ProblemStats(
             ids.length,
             solved,
             failed,
             easeFactor,
             intervalDays,
+            score,
         )
     }
 
     get totalCount(): number { return this.solvedCount + this.failedCount}
-    get accuracy(): number { return this.totalCount === 0 ? 0 : this.solvedCount / this.totalCount }
+    //get accuracy(): number { return this.totalCount === 0 ? 0 : this.solvedCount / this.totalCount }
 }

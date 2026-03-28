@@ -3,7 +3,7 @@ import type { ProblemType } from "@/domain/problem/entity/Problem";
 // sort
 export type SortKey =
   'createdAt' | 'title' | 'moveCount' |
-  'accuracy' | 'easeFactor' | 'nextReviewedAt' | 'lastAnsweredAt' |
+  'score' | 'easeFactor' | 'nextReviewedAt' | 'lastAnsweredAt' |
   'random'
 export type SortOrder = 'asc' | 'desc';
 

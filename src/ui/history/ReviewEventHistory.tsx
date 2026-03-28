@@ -4,6 +4,7 @@ import { useProblemStore } from "@/ui/store/useProblemStore";
 import { useReviewEventStore } from "@/ui/store/useReviewEventStore";
 import type { SolvedResult } from "@/domain/review/solvedResult"
 import type { Problem } from "@/domain/problem/entity/Problem";
+import { evaluateScore } from "@/domain/learning/service/evaluateScore";
 
 export function formatSolvedResult(res: SolvedResult) {
     const outcome = res.outcome === "solved" ? "成功" : res.outcome === "failed" ? "失敗" : "未回答"
@@ -18,7 +19,8 @@ function formatEvent(problem: Problem | undefined, event: ReviewEvent): string {
     switch (event.type) {
         case "reviewed":
             const res = event.solvedResult
-            content = `${problem?.title}${formatSolvedResult(res)}`;
+            const score = evaluateScore(res)
+            content = `${problem?.title} [${score}] ${formatSolvedResult(res)}`;
             break
         case "reset": content = `リセット：${problem?.title}`; break
     }
