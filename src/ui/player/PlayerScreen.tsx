@@ -59,7 +59,7 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
             case "SOLVE":
                 setIsSolvedDialogOpen(true)
                 setSolvedResult(deriveSolvedResultFromEvents(events))
-                const res = onSolve?.()
+                onSolve?.()
                 break
             case "MISTAKE":
                 toast({ message: `incorrect: [${state.mistakes}]` })
@@ -77,7 +77,7 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
             promote
         }
         //choosePromotion(promote)
-        console.log("elasped sec on handle promotion confirm", timer.elapsedSec)
+        //console.log("elasped sec on handle promotion confirm", timer.elapsedSec)
         controller.handleIntent(intent, timer.elapsedSec)
         clearSelection()
     }
