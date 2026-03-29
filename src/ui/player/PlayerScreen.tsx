@@ -22,7 +22,6 @@ import { createGameController } from "@/ui/player/hooks/createGameController";
 import type { SolvedResult } from "@/domain/review/solvedResult";
 import { deriveSolvedResultFromEvents } from "@/domain/review/service/solvedResultDeriver";
 import { SolvedDialog } from "@/ui/player/dialogs/SolvedDialog";
-import { useReplayStore } from "@/ui/player/hooks/useReplayStore";
 import { createPlayerContext } from "@/ui/player/components/types/PlayerContext";
 
 

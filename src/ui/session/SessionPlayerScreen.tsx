@@ -7,8 +7,8 @@ import { useGameStore, type GameEvent } from "@/ui/player/hooks/useGameStore"
 import { useTimerStore } from "@/ui/player/hooks/useTimerStore"
 import type { ReviewAction } from "@/domain/review/ReviewEvent"
 import { deriveSolvedResultFromEvents } from "@/domain/review/service/solvedResultDeriver"
-import { useReplayStore } from "@/ui/player/hooks/useReplayStore"
 import { SessionProblemListDialog } from "@/ui/session/SessionProblemListDialog"
+import { createPlayerContext } from "@/ui/player/components/types/PlayerContext"
 
 
 ////////////////////////////////////////////////
@@ -22,7 +22,6 @@ export default function SessionPlayerScreen() {
 }
 
 function SessionPlayerContent({vm}: { vm: SessionPlayerPlayingVM}) {
-    const timer = useTimerStore()
     const { hasSubmitted, events, markSubmit, dispatch, state } = useGameStore()
     const [isListOpen, setIsListOpen] = useState(false)
 
@@ -41,7 +40,7 @@ function SessionPlayerContent({vm}: { vm: SessionPlayerPlayingVM}) {
         vm.nextProblem()
         
     }
-    const handleSolved = () => {
+    const handleSolved = () => {        
         submitSolvedResult()
     }
     // サブミット    
@@ -58,9 +57,10 @@ function SessionPlayerContent({vm}: { vm: SessionPlayerPlayingVM}) {
         if (hasSubmitted) return  // サブミット済なら何もしない
 
         if (!state.isSolved) {   // もし解かれてなかった、諦めたと見なす
-            const ply = useReplayStore.getState().ply
+            //const ply = useReplayStore.getState().ply
             //alert("YOU GAVE UP")
-            dispatch({ type: "ABANDON", ply, elapsedSec: timer.elapsedSec })
+            const { ply, elapsedSec} = createPlayerContext()
+            dispatch({ type: "ABANDON", ply, elapsedSec })
         }
         submitSolvedResult()        
     }

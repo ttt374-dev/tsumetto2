@@ -29,15 +29,11 @@ function SquareView({ piece, selected, onClick }: {
 }
 
 export default function BoardView() {
-    const { board } = useCurrentPosition()
-    //const selection = useBoardInputStore(s => s.selection)
-    const selection = useBoardInputStore(s=>s.selection)
-    const ply = useReplayStore(s=>s.ply)
+    const { board } = useCurrentPosition()    
+    const selection = useBoardInputStore(s=>s.selection)    
     const ranks = [...Array(9)].map((_, i) => i + 1)   //   1 → 9
     const files = [...Array(9)].map((_, i) => 9 - i)   // 9 → 1（将棋表記o9i） ???
-
-    //const position = useCurrentPosition()
-    const timer = useTimerStore()
+    
     const { handleIntent } = createGameController()
 
     const clickSquare = useBoardInputStore(s => s.clickSquare)
