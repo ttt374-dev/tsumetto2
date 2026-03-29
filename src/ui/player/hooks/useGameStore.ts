@@ -36,7 +36,7 @@ type GameStore = {
     state: GameState       // キャッシュ。events から derived
     initialPosition: Position
     moves: Move[]
-    hasSubmitted: boolean
+    //hasSubmitted: boolean
 
     pendingPromotion: PendingPromotion | null
     
@@ -46,7 +46,7 @@ type GameStore = {
     promotionPending: (p: PendingPromotion) => void
     
     dispatch: (e: GameEvent) => void
-    markSubmit: () => void    
+    //markSubmit: () => void    
 }
 export function useCurrentPosition() {
     const { initialPosition, moves } = useGameStore(
@@ -77,7 +77,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
         set({
             initialPosition: pos,
             moves,
-            hasSubmitted: false,
+            //hasSubmitted: false,
             pendingPromotion: null,
             events: [],
             state: projectGameState([])
@@ -111,9 +111,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
             state: reduceGameState(s.state, e),
         }))
     },*/ 
+    /*
     markSubmit: ()=>{
         set({ hasSubmitted: true})
-    },
+    },*/
     
 }))
 

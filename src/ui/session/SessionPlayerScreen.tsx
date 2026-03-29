@@ -8,8 +8,6 @@ import type { ReviewAction } from "@/domain/review/ReviewEvent"
 import { deriveSolvedResultFromEvents } from "@/domain/review/service/solvedResultDeriver"
 import { SessionProblemListDialog } from "@/ui/session/SessionProblemListDialog"
 import { createPlayerContext } from "@/ui/player/components/types/PlayerContext"
-import { v4 } from "uuid"
-
 
 ////////////////////////////////////////////////
 export default function SessionPlayerScreen() {
@@ -22,8 +20,9 @@ export default function SessionPlayerScreen() {
 }
 
 function SessionPlayerContent({vm}: { vm: SessionPlayerPlayingVM}) {
-    const { hasSubmitted, events, markSubmit, dispatch, state } = useGameStore()
+    const { events, dispatch, state } = useGameStore()
     const [isListOpen, setIsListOpen] = useState(false)
+    const [ hasSubmitted, setHasSubmitted ] = useState(false)
     
 
     useEffect(() => {        
@@ -52,7 +51,7 @@ function SessionPlayerContent({vm}: { vm: SessionPlayerPlayingVM}) {
         const actions = toReviewActions(events)
         //console.log("submit solveresult", res, actions)
         vm.submitSolvedResult(res, actions)
-        markSubmit()
+        setHasSubmitted(true)
     }
     const flush = () => {
         if (hasSubmitted) return  // サブミット済なら何もしない
