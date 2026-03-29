@@ -4,10 +4,7 @@ import PlayerScreen from "@/ui/player/PlayerScreen"
 import { useSessionPlayerViewModel, type SessionPlayerPlayingVM } from "./hooks/useSessionPlayerViewModel"
 import { PlayerFooterPanel } from "@/ui/player/components/panels/PlayerFooterPanel"
 import { useGameStore, type GameEvent } from "@/ui/player/hooks/useGameStore"
-import type { ReviewAction } from "@/domain/review/ReviewEvent"
-import { deriveSolvedResultFromEvents } from "@/domain/review/service/solvedResultDeriver"
 import { SessionProblemListDialog } from "@/ui/session/SessionProblemListDialog"
-import { createPlayerContext } from "@/ui/player/components/types/PlayerContext"
 
 ////////////////////////////////////////////////
 export default function SessionPlayerScreen() {
@@ -20,15 +17,12 @@ export default function SessionPlayerScreen() {
 }
 
 function SessionPlayerContent({vm}: { vm: SessionPlayerPlayingVM}) {
-    const { events, dispatch, state } = useGameStore()
-    const [isListOpen, setIsListOpen] = useState(false)
-    const [ hasSubmitted, setHasSubmitted ] = useState(false)
-    
+    const [isListOpen, setIsListOpen] = useState(false)        
 
     useEffect(() => {        
         return () => {
             // 離脱直前に未サブミットなら強制 ABANDON + submit
-            flush()
+            vm.flush()
         }
     }, [vm.problem.id]) // 問題が切り替わるたびに発火
     // ハンドラー
@@ -36,31 +30,8 @@ function SessionPlayerContent({vm}: { vm: SessionPlayerPlayingVM}) {
         setIsListOpen(true)
     }      
     const handleNext = () => {    
-        flush()
-        vm.nextProblem()
-        
-    }
-    const handleSolved = () => {        
-        submitSolvedResult()
-    }
-    // サブミット    
-    const submitSolvedResult = () => {
-        if (hasSubmitted) return
-        
-        const res = deriveSolvedResultFromEvents(events) //deriveSolvedResult(state, timer.elapsedSec)
-        const actions = toReviewActions(events)
-        //console.log("submit solveresult", res, actions)
-        vm.submitSolvedResult(res, actions)
-        setHasSubmitted(true)
-    }
-    const flush = () => {
-        if (hasSubmitted) return  // サブミット済なら何もしない
-
-        if (!state.isSolved) {   // もし解かれてなかった、諦めたと見なす
-            const { ply, elapsedSec} = createPlayerContext()
-            dispatch({ type: "ABANDON", ply, elapsedSec })
-        }
-        submitSolvedResult()        
+        vm.flush()
+        vm.nextProblem()        
     }
 
     const footerPanel: React.ReactNode = (
@@ -73,7 +44,7 @@ function SessionPlayerContent({vm}: { vm: SessionPlayerPlayingVM}) {
             <PlayerScreen
                 problem={vm.problem}
                 title={vm.title}
-                onSolve={handleSolved}
+                onSolve={vm.submitSolvedResult}
                 onSolvedConfirm={handleNext}
                 onAfterDelete={vm.nextProblem}
                 footerPanel={footerPanel}
@@ -86,19 +57,4 @@ function SessionPlayerContent({vm}: { vm: SessionPlayerPlayingVM}) {
 
         </>
     )
-}
-////////////////
-function toReviewActions(events: GameEvent[]): ReviewAction[] {
-    return events.flatMap((e): ReviewAction[] => {
-        switch (e.type) {
-            case "MISTAKE":
-                return [{ type: "mistake", ply: e.ply, elapsedSec: e.elapsedSec }]
-            case "REVEAL":
-                return [{ type: "reveal", ply: e.ply, elapsedSec: e.elapsedSec }]
-            case "ABANDON":
-                return [{ type: "abandon", ply: e.ply, elapsedSec: e.elapsedSec }]
-            default:
-                return []
-        }
-    })
 }

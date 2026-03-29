@@ -8,6 +8,9 @@ import type { SessionId } from "@/domain/session/entity/Session";
 import type { ReviewAction } from "@/domain/review/ReviewEvent";
 import { useEffect, useState } from "react"
 import { v4 } from "uuid"
+import { deriveSolvedResultFromEvents } from "@/domain/review/service/solvedResultDeriver"
+import { useGameStore, type GameEvent } from "@/ui/player/hooks/useGameStore"
+import { createPlayerContext } from "@/ui/player/components/types/PlayerContext"
 
 export type SessionPlayerVM =
   | { status: "idle" }
@@ -27,14 +30,17 @@ export type SessionPlayerPlayingVM = {
       results: Record<ProblemId, SolvedResult>
       nextProblem: () => void
       moveToProblemId: (id: ProblemId) => void
-      submitSolvedResult: (res: SolvedResult, actions: ReviewAction[]) => boolean
+      submitSolvedResult: () => boolean
       //undoLastAnswer: () => void
       //hasLastAnswer: () => boolean
       navigateToSummary: () => void
+      flush: () => void
     }
 
 /////////////////////
 export function useSessionPlayerViewModel(): SessionPlayerVM {
+    const [ hasSubmitted, setHasSubmitted ] = useState(false)
+
     const problemIds = useSessionStore(s => s.problemIds)
     const index = useSessionStore(s => s.currentIndex)
     const missionId = useSessionStore(s => s.missionId)
@@ -45,6 +51,7 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
     const results = useSessionStore(s=>s.results)
     const submitResult = useSessionStore(s=>s.submitResult)
     const summary = useSessionStore(s=>s.summary)
+    const { events, dispatch, state } = useGameStore()
 
     const currentProblemId = problemIds[index]
     const count = problemIds.length
@@ -62,18 +69,32 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
     )
 
     // navigation
-    const submitSolvedResult = (res: SolvedResult, actions: ReviewAction[]) => { // submit したら true を返す        
+    const submitSolvedResult = () => { // submit したら true を返す               
         if (!sessionId) return false
+        if (hasSubmitted) return false                
+                
         //console.log("submit answer", results)
         if (results[currentProblemId]) {
             //console.log("alread submitted", currentProblemId, res, actions)
             return false// allready submitted
         }
+        const res = deriveSolvedResultFromEvents(events) //deriveSolvedResult(state, timer.elapsedSec)
+        const actions = toReviewActions(events)
+                
         submitResult(currentProblemId, res)
         const reviewId = v4()
         appendReview(currentProblemId, reviewId, sessionId, res, actions)
         return true        
     }    
+    const flush = () => {
+        if (hasSubmitted) return  // サブミット済なら何もしない
+
+        if (!state.isSolved) {   // もし解かれてなかった、諦めたと見なす
+            const { ply, elapsedSec } = createPlayerContext()
+            dispatch({ type: "ABANDON", ply, elapsedSec })
+        }
+        submitSolvedResult()
+    }
 
     /*
     const undoLastAnswer = () => {
@@ -113,8 +134,24 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
         status: "playing", 
         problemIds, sessionId, results, problem, title, index, count, 
         nextProblem: next, moveToProblemId, submitSolvedResult, //undoLastAnswer, hasLastAnswer,
-        navigateToSummary: summary
+        navigateToSummary: summary, flush,
      }
 }
 
 
+
+////////////////
+function toReviewActions(events: GameEvent[]): ReviewAction[] {
+    return events.flatMap((e): ReviewAction[] => {
+        switch (e.type) {
+            case "MISTAKE":
+                return [{ type: "mistake", ply: e.ply, elapsedSec: e.elapsedSec }]
+            case "REVEAL":
+                return [{ type: "reveal", ply: e.ply, elapsedSec: e.elapsedSec }]
+            case "ABANDON":
+                return [{ type: "abandon", ply: e.ply, elapsedSec: e.elapsedSec }]
+            default:
+                return []
+        }
+    })
+}
