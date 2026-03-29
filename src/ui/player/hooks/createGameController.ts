@@ -52,14 +52,14 @@ export function createGameController() {
         }
     }
     
-    function evaluate(move: Move): EvaluationResult {
+    function evaluate(move: Move, ply: number): EvaluationResult {
         const game = useGameStore.getState()
-        const replay = useReplayStore.getState()
+        //const replay = useReplayStore.getState()
         //return evaluateMove(move, game.moves, replay.ply)
         return evaluateMove({
             move,
             moves: game.moves,
-            ply: replay.ply
+            ply   // : replay.ply
         })
     }
     function applyResult(res: EvaluationResult, elapsedSec: number) {
@@ -95,7 +95,8 @@ export function createGameController() {
             timer.restart()
         },
         handleIntent: (intent: Intent, elapsedSec: number): IntentResult => {
-            const game = useGameStore.getState()        
+            const game = useGameStore.getState()    
+            const replay = useReplayStore.getState()    
             const res = resolveMoveFromIntent(intent)
             if (res.type === "invalidMove") return res
             if (res.type === "promotionPending") {
@@ -104,7 +105,7 @@ export function createGameController() {
             }
 
             // ここは move 確定
-            const result = evaluate(res.move)
+            const result = evaluate(res.move, replay.ply)
             applyResult(result, elapsedSec)
 
             return res

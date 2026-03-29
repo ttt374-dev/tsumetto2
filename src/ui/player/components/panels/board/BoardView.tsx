@@ -37,7 +37,6 @@ export default function BoardView() {
     const timer = useTimerStore()
     const { handleIntent } = createGameController()
 
-    //const handleIntent = useGameStore(s=>s.handleIntent)
     const clickSquare = useBoardInputStore(s => s.clickSquare)
     const clear = useBoardInputStore(s=>s.clear)
 
@@ -49,9 +48,7 @@ export default function BoardView() {
         console.log("intent res", res)
         //if (res) clear()
         if (res.type !== "invalidMove") clear()
-        //if (move == "promotionRequired") 
-        //move && tryMove(move)
-        //tryMove(intent)
+
     }
     const isSelected = (sq: Square): boolean => {
         return selection.type === "board" &&
