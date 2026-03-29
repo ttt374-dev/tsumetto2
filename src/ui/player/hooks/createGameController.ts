@@ -3,9 +3,11 @@ import { resolveIntent, type Intent, type IntentResult } from "@/domain/game/int
 import { type Move } from "@/domain/kif/entity"
 import { buildUntilPly } from "@/domain/kif/service/buildUntilPly"
 import type { Problem } from "@/domain/problem/entity/Problem"
+import type { PlayerContext } from "@/ui/player/components/types/PlayerContext"
 import { useGameStore } from "@/ui/player/hooks/useGameStore"
 import { useReplayStore } from "@/ui/player/hooks/useReplayStore"
 import { useTimerStore } from "@/ui/player/hooks/useTimerStore"
+
 
 export function createGameController() {
     // helpers    
@@ -94,9 +96,9 @@ export function createGameController() {
             replay.initialize(problem.kifData.moves.length)
             timer.restart()
         },
-        handleIntent: (intent: Intent, elapsedSec: number): IntentResult => {
+        handleIntent: (intent: Intent, ctx: PlayerContext): IntentResult => {
             const game = useGameStore.getState()    
-            const replay = useReplayStore.getState()    
+            //const replay = useReplayStore.getState()    
             const res = resolveMoveFromIntent(intent)
             if (res.type === "invalidMove") return res
             if (res.type === "promotionPending") {
@@ -105,8 +107,8 @@ export function createGameController() {
             }
 
             // ここは move 確定
-            const result = evaluate(res.move, replay.ply)
-            applyResult(result, elapsedSec)
+            const result = evaluate(res.move, ctx.ply)
+            applyResult(result, ctx.elapsedSec)
 
             return res
         },

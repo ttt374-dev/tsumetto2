@@ -9,7 +9,6 @@ import { PlayerRightPanel } from "./components/panels/PlayerRightPanel";
 import { routes } from "../App/useAppNavigation";
 import { useToast } from "../App/providers/ToastProvider";
 import { useGameStore } from "./hooks/useGameStore";
-import { useTimerStore } from "./hooks/useTimerStore";
 import TitlePanel from "./components/panels/TitlePanel";
 import MovesPanel from "./components/panels/MovesPanel";
 import BoardPanel from "@/ui/player/components/panels/board/BoardPanel"
@@ -23,6 +22,9 @@ import { createGameController } from "@/ui/player/hooks/createGameController";
 import type { SolvedResult } from "@/domain/review/solvedResult";
 import { deriveSolvedResultFromEvents } from "@/domain/review/service/solvedResultDeriver";
 import { SolvedDialog } from "@/ui/player/dialogs/SolvedDialog";
+import { useReplayStore } from "@/ui/player/hooks/useReplayStore";
+import { createPlayerContext } from "@/ui/player/components/types/PlayerContext";
+
 
 //////////////////////////////////////////////////////////////
 export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm, onAfterDelete, footerPanel }: {
@@ -32,8 +34,7 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
     onSolvedConfirm: () => void
     onAfterDelete?: () => void
     footerPanel?: React.ReactNode
-}) {
-    const timer = useTimerStore()
+}) {    
     const toast = useToast()
     const navigate = useNavigate()
 
@@ -78,7 +79,7 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
         }
         //choosePromotion(promote)
         //console.log("elasped sec on handle promotion confirm", timer.elapsedSec)
-        controller.handleIntent(intent, timer.elapsedSec)
+        controller.handleIntent(intent, createPlayerContext())
         clearSelection()
     }
     const handleDelete = (id: ProblemId) => {

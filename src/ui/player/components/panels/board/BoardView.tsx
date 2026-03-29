@@ -5,6 +5,8 @@ import { useBoardInputStore } from "../../../hooks/useBoardInputStore";
 import { Board, Piece, Square } from "@/domain/kif/entity";
 import { useTimerStore } from "@/ui/player/hooks/useTimerStore";
 import { createGameController } from "@/ui/player/hooks/createGameController";
+import { useReplayStore } from "@/ui/player/hooks/useReplayStore";
+import { createPlayerContext } from "@/ui/player/components/types/PlayerContext";
 
 const fileLabels = ["９", "８", "７", "６", "５", "４", "３", "２", "１"];
 const rankLabels = ["一", "二", "三", "四", "五", "六", "七", "八", "九"];
@@ -30,6 +32,7 @@ export default function BoardView() {
     const { board } = useCurrentPosition()
     //const selection = useBoardInputStore(s => s.selection)
     const selection = useBoardInputStore(s=>s.selection)
+    const ply = useReplayStore(s=>s.ply)
     const ranks = [...Array(9)].map((_, i) => i + 1)   //   1 → 9
     const files = [...Array(9)].map((_, i) => 9 - i)   // 9 → 1（将棋表記o9i） ???
 
@@ -44,7 +47,7 @@ export default function BoardView() {
         const intent = clickSquare(new Square(file, rank), board)
         if (!intent) return
         //const result = resolveIntent(position, intent)
-        const res = handleIntent(intent, timer.elapsedSec)
+        const res = handleIntent(intent, createPlayerContext())
         console.log("intent res", res)
         //if (res) clear()
         if (res.type !== "invalidMove") clear()
