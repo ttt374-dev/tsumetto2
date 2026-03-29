@@ -21,7 +21,7 @@ type NewReviewReviewedEvent =
         problemId: ProblemId
         sessionId: SessionId
         solvedResult: SolvedResult
-        actions: ReviewAction[]
+        //actions: ReviewAction[]
     }
 
 type NewReviewResetEvent =

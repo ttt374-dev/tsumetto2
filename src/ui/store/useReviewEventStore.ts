@@ -16,7 +16,7 @@ type ReviewEventStoreState = {
     reload: () => Promise<void>;
     save: () => Promise<void>
     append: (reviewEvent: NewReviewEvent) => ReviewEvent
-    appendReview: (problemId: ProblemId, reviewId: string, sessionId: SessionId, quality: SolvedResult, actions: ReviewAction[]) => ReviewEvent
+    appendReview: (problemId: ProblemId, reviewId: string, sessionId: SessionId, quality: SolvedResult) => ReviewEvent
     //appendCancel: (targetEventId: ReviewEventId, sessionId: SessionId) => ReviewEvent
     appendReset: (problemId: ProblemId) => ReviewEvent
     clearAll: () => void
@@ -28,26 +28,6 @@ export const useReviewEventStore = create<ReviewEventStoreState>((set, get) => (
     repo: undefined,
     setRepository: (repo) => set({ repo }),
     eventLog: [],
-    /*
-    getLastReviewedEvent: (sessionId: SessionId) => {
-        const canceled = new Set<string>()
-
-        for (let i = get().eventLog.length - 1; i >= 0; i--) {
-            const e = get().eventLog[i]
-
-            if (e.type === "cancel") {
-                canceled.add(e.targetEventId)
-            }
-
-            if (e.type === "reviewed" && e.sessionId === sessionId) {
-                if (!canceled.has(e.id)) {
-                    return e
-                }
-            }
-        }
-
-        return undefined  
-    },*/
 
     reload: async () => {
         try {
@@ -73,11 +53,11 @@ export const useReviewEventStore = create<ReviewEventStoreState>((set, get) => (
         get().save()
         return event
     },
-    appendReview: (problemId: ProblemId, reviewId: string, sessionId: SessionId, solvedResult: SolvedResult, actions: ReviewAction[]) => {
+    appendReview: (problemId: ProblemId, reviewId: string, sessionId: SessionId, solvedResult: SolvedResult) => {
         const event: NewReviewEvent = {
             type: "reviewed", reviewId, 
             problemId, sessionId: sessionId, solvedResult: solvedResult,
-            actions: actions
+            //actions: actions
         }
         console.log("append review", event)
         

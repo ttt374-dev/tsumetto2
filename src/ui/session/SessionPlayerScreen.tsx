@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react"
 import PlayerScreen from "@/ui/player/PlayerScreen"
 import { useSessionPlayerViewModel, type SessionPlayerPlayingVM } from "./hooks/useSessionPlayerViewModel"
 import { PlayerFooterPanel } from "@/ui/player/components/panels/PlayerFooterPanel"
-import { useGameStore, type GameEvent } from "@/ui/player/hooks/useGameStore"
 import { SessionProblemListDialog } from "@/ui/session/SessionProblemListDialog"
 
 ////////////////////////////////////////////////

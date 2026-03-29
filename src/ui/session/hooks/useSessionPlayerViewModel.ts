@@ -57,11 +57,7 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
     const count = problemIds.length
     
     const problem = useProblemStore(s => s.byId[currentProblemId])
-
-    // learning event log
-    //const getLastEvent = useReviewEventStore(s=>s.getLastReviewedEvent)
     const appendReview = useReviewEventStore(s=>s.appendReview)
-    //const cancel = useReviewEventStore(s=>s.appendCancel)    
 
     // missionName
     const missionName = useMissionStore(
@@ -79,11 +75,12 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
             return false// allready submitted
         }
         const res = deriveSolvedResultFromEvents(events) //deriveSolvedResult(state, timer.elapsedSec)
-        const actions = toReviewActions(events)
+        //const actions = toReviewActions(events)
                 
         submitResult(currentProblemId, res)
         const reviewId = v4()
-        appendReview(currentProblemId, reviewId, sessionId, res, actions)
+        appendReview(currentProblemId, reviewId, sessionId, res)
+        setHasSubmitted(true)
         return true        
     }    
     const flush = () => {
@@ -138,7 +135,7 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
      }
 }
 
-
+/*
 
 ////////////////
 function toReviewActions(events: GameEvent[]): ReviewAction[] {
@@ -154,4 +151,4 @@ function toReviewActions(events: GameEvent[]): ReviewAction[] {
                 return []
         }
     })
-}
+}*/
