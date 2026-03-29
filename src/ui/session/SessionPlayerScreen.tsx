@@ -4,11 +4,11 @@ import PlayerScreen from "@/ui/player/PlayerScreen"
 import { useSessionPlayerViewModel, type SessionPlayerPlayingVM } from "./hooks/useSessionPlayerViewModel"
 import { PlayerFooterPanel } from "@/ui/player/components/panels/PlayerFooterPanel"
 import { useGameStore, type GameEvent } from "@/ui/player/hooks/useGameStore"
-import { useTimerStore } from "@/ui/player/hooks/useTimerStore"
 import type { ReviewAction } from "@/domain/review/ReviewEvent"
 import { deriveSolvedResultFromEvents } from "@/domain/review/service/solvedResultDeriver"
 import { SessionProblemListDialog } from "@/ui/session/SessionProblemListDialog"
 import { createPlayerContext } from "@/ui/player/components/types/PlayerContext"
+import { v4 } from "uuid"
 
 
 ////////////////////////////////////////////////
@@ -24,8 +24,9 @@ export default function SessionPlayerScreen() {
 function SessionPlayerContent({vm}: { vm: SessionPlayerPlayingVM}) {
     const { hasSubmitted, events, markSubmit, dispatch, state } = useGameStore()
     const [isListOpen, setIsListOpen] = useState(false)
+    
 
-    useEffect(() => {
+    useEffect(() => {        
         return () => {
             // 離脱直前に未サブミットなら強制 ABANDON + submit
             flush()
@@ -57,8 +58,6 @@ function SessionPlayerContent({vm}: { vm: SessionPlayerPlayingVM}) {
         if (hasSubmitted) return  // サブミット済なら何もしない
 
         if (!state.isSolved) {   // もし解かれてなかった、諦めたと見なす
-            //const ply = useReplayStore.getState().ply
-            //alert("YOU GAVE UP")
             const { ply, elapsedSec} = createPlayerContext()
             dispatch({ type: "ABANDON", ply, elapsedSec })
         }

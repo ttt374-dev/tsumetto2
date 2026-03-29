@@ -16,7 +16,7 @@ type ReviewEventStoreState = {
     reload: () => Promise<void>;
     save: () => Promise<void>
     append: (reviewEvent: NewReviewEvent) => ReviewEvent
-    appendReview: (problemId: ProblemId, sessionId: SessionId, quality: SolvedResult, actions: ReviewAction[]) => ReviewEvent
+    appendReview: (problemId: ProblemId, reviewId: string, sessionId: SessionId, quality: SolvedResult, actions: ReviewAction[]) => ReviewEvent
     //appendCancel: (targetEventId: ReviewEventId, sessionId: SessionId) => ReviewEvent
     appendReset: (problemId: ProblemId) => ReviewEvent
     clearAll: () => void
@@ -73,9 +73,10 @@ export const useReviewEventStore = create<ReviewEventStoreState>((set, get) => (
         get().save()
         return event
     },
-    appendReview: (problemId: ProblemId, sessionId: SessionId, solvedResult: SolvedResult, actions: ReviewAction[]) => {
+    appendReview: (problemId: ProblemId, reviewId: string, sessionId: SessionId, solvedResult: SolvedResult, actions: ReviewAction[]) => {
         const event: NewReviewEvent = {
-            type: "reviewed", problemId, sessionId: sessionId, solvedResult: solvedResult,
+            type: "reviewed", reviewId, 
+            problemId, sessionId: sessionId, solvedResult: solvedResult,
             actions: actions
         }
         console.log("append review", event)

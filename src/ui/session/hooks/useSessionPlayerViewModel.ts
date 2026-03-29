@@ -6,6 +6,8 @@ import type { SolvedResult } from "@/domain/review/solvedResult"
 import { useReviewEventStore } from '@/ui/store/useReviewEventStore';
 import type { SessionId } from "@/domain/session/entity/Session";
 import type { ReviewAction } from "@/domain/review/ReviewEvent";
+import { useEffect, useState } from "react"
+import { v4 } from "uuid"
 
 export type SessionPlayerVM =
   | { status: "idle" }
@@ -68,7 +70,8 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
             return false// allready submitted
         }
         submitResult(currentProblemId, res)
-        appendReview(currentProblemId, sessionId, res, actions)
+        const reviewId = v4()
+        appendReview(currentProblemId, reviewId, sessionId, res, actions)
         return true        
     }    
 
