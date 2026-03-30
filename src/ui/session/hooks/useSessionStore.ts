@@ -24,7 +24,7 @@ type SessionStore = {
 
     // ===== derived (必要最低限だけ) =====
     phase: () => SessionPhase
-
+    getActive: () => SessionState | undefined
     // ===== command =====
     start: (missionId: MissionId, ids: ProblemId[], startIndex?: number) => void;
     next: () => void;
@@ -55,6 +55,11 @@ export const useSessionStore = create<SessionStore>((set, get) => ({
             return "finished";
         return "playing";
     },
+    getActive: (): SessionState | undefined => {
+        const s = get().state
+        if (s.type !== "active") return undefined
+        return s
+    },
 
     // ======================
     // command
@@ -71,6 +76,13 @@ export const useSessionStore = create<SessionStore>((set, get) => ({
                 sessionId: sessionId,
                 problemIds: ids,
                 currentIndex: startIndex,
+                state: {
+                    type: "active",
+                    missionId: missionId,
+                    sessionId: sessionId,
+                    problemIds: ids,
+                    index: startIndex,
+                },
                 //results: {},
                 //answers: [],
             }

@@ -70,6 +70,7 @@ export function ProblemStatsTable() {
             }),
         [allTags, activeProblems, learningRecords]
     )
+    console.log("general stats", statsMapToRows(idsMap["general"]))
     const groups = [
         {
             groupName: "総合",

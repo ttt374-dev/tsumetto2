@@ -1,7 +1,5 @@
 import { Button, Dialog, DialogActions, DialogTitle, Stack } from "@mui/material";
 import { DialogContent } from "@mui/material"
-
-import type { ProblemId } from "@/domain/problem/entity/Problem";
 import { useSessionPlayerViewModel, type SessionPlayerPlayingVM } from "@/ui/session/hooks/useSessionPlayerViewModel";
 import { SessionListView } from "@/ui/session/SessionListView";
 
