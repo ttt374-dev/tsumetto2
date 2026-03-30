@@ -1,9 +1,8 @@
 import { Button, Dialog, DialogActions, DialogTitle } from "@mui/material";
-import type { PendingPromotion } from "../hooks/useGameStore";
 import type { PieceType } from "@/domain/kif/entity";
 
 
-export function PromotionDialog({ open, pieceType, onClose, onConfirm}:{
+export default function PromotionDialog({ open, pieceType, onClose, onConfirm}:{
     open: boolean
     onClose: () => void
     onConfirm: (promote: boolean) => void

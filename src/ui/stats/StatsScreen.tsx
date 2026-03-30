@@ -1,5 +1,6 @@
 import { Box } from "@mui/material";
-import { AppShell } from "../common/components/layout/AppShell";
+
+import { AppShell } from "@/ui/common/components/layout/AppShell";
 import { IntervalDaysStats } from "./components/IntervalDaysStats";
 import { ProblemStatsTable } from "./components/ProblemStatsTable";
 

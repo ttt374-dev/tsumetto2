@@ -1,11 +1,12 @@
 import { create } from "zustand";
+import { v4 } from "uuid";
 
 import type { ReviewEventRepository } from "@/domain/review/repository/ReviewEventRepository";
 import type { ProblemId } from "@/domain/problem/entity/Problem";
-import type { ReviewEvent, ReviewEventId, ReviewEventLog, NewReviewEvent, ReviewAction } from "@/domain/review/ReviewEvent";
+import type { ReviewEvent, ReviewEventLog, NewReviewEvent } from "@/domain/review/ReviewEvent";
 import type { SolvedResult } from "@/domain/review/solvedResult"
 import type { SessionId } from "@/domain/session/entity/Session";
-import { v4 } from "uuid";
+
 
 type ReviewEventStoreState = {
     repo?: ReviewEventRepository

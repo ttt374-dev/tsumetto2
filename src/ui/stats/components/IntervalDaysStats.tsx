@@ -1,10 +1,10 @@
+import { useMemo } from "react";
 import { Box, Paper, Stack, Typography } from "@mui/material";
+
 import type { ProblemId } from "@/domain/problem/entity/Problem";
 import { useLearningRecordStore } from "@/ui/store/useLearningRecordStore";
 import { useProblemStore } from "@/ui/store/useProblemStore";
 import type { LearningRecord } from "@/domain/learning/entity/Learning";
-import { useMemo } from "react";
-
 
 type IntervalBin = {
     label: string

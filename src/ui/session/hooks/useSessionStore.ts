@@ -1,21 +1,12 @@
-import type { MissionId } from "@/domain/mission/entity/Mission";
-import type { SessionId, SessionPhase } from "@/domain/session/entity/Session";
-import type { ProblemId } from "@/domain/problem/entity/Problem";
 import { v4 } from "uuid";
 import { create } from "zustand";
 
-type SessionState = 
-    | { type: "idle"}
-    | { type: "finished"}
-    | { type: "active",
-        sessionId: SessionId,
-        missionId: MissionId,
-        index: number
-    }
+import type { MissionId } from "@/domain/mission/entity/Mission";
+import type { SessionId, SessionPhase } from "@/domain/session/entity/Session";
+import type { ProblemId } from "@/domain/problem/entity/Problem";
 
 type SessionStore = {
     // ===== state =====
-    state: SessionState,
     sessionId?: SessionId,
     missionId?: MissionId;
     problemIds: ProblemId[];
@@ -23,8 +14,7 @@ type SessionStore = {
     //results: Record<ProblemId, SolvedResult>
 
     // ===== derived (必要最低限だけ) =====
-    phase: () => SessionPhase
-    getActive: () => SessionState | undefined
+    phase: () => SessionPhase    
     // ===== command =====
     start: (missionId: MissionId, ids: ProblemId[], startIndex?: number) => void;
     next: () => void;
@@ -55,11 +45,6 @@ export const useSessionStore = create<SessionStore>((set, get) => ({
             return "finished";
         return "playing";
     },
-    getActive: (): SessionState | undefined => {
-        const s = get().state
-        if (s.type !== "active") return undefined
-        return s
-    },
 
     // ======================
     // command
@@ -89,7 +74,6 @@ export const useSessionStore = create<SessionStore>((set, get) => ({
         })
         //return sessionId
     },
-
     next: () =>
         set((s) => {
             const nextIndex = s.currentIndex + 1;
@@ -114,28 +98,11 @@ export const useSessionStore = create<SessionStore>((set, get) => ({
             if (index < 0 || index >= s.problemIds.length) return s;
             return { currentIndex: index };
         }),
-
-
-
     summary: () => {
         set((s) => ({
             currentIndex: s.problemIds.length
         }))
     },
-    /*
-    submitResult: (id: ProblemId, res: SolvedResult | undefined) => {
-        set(s => {
-            const newResults = { ...s.results }
-
-            if (res === undefined) {
-                delete newResults[id]
-            } else {
-                newResults[id] = res
-            }
-            return { results: newResults }
-        })
-    },*/
-
     reset: () =>
         set({
             missionId: undefined,

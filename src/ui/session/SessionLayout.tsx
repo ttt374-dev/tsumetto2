@@ -1,7 +1,8 @@
-import { Outlet, useNavigate } from "react-router-dom";
-import { routes } from "../App/useAppNavigation";
-import { useSessionStore } from "./hooks/useSessionStore";
 import { useEffect } from "react";
+import { Outlet, useNavigate } from "react-router-dom";
+
+import { routes } from "@/ui/App/useAppNavigation";
+import { useSessionStore } from "./hooks/useSessionStore";
 
 export default function SessionLayout() {
     const phase = useSessionStore(s => s.phase())

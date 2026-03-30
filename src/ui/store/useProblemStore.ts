@@ -3,7 +3,6 @@ import { createSelector } from "reselect"
 
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem"
 import type { ProblemRepository } from "@/domain/problem/repository/ProblemRepository"
-import { Save } from "@mui/icons-material"
 
 ///////////////////
 // selector

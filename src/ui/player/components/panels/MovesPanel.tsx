@@ -2,22 +2,20 @@ import { Box, Button, Stack } from "@mui/material";
 
 import MovesView from "../views/MovesView";
 import type { Move } from "@/domain/kif/entity";
-import { useGameStore } from "@/ui/player/hooks/useGameStore";
-import { useTimerStore } from "@/ui/player/hooks/useTimerStore";
 import { useReplayStore } from "@/ui/player/hooks/useReplayStore";
 import { createGameController } from "@/ui/player/hooks/createGameController";
+import { createPlayerContext } from "@/ui/player/components/types/PlayerContext";
 
-
-export default function MovesPanel({moves}: { moves: Move[]}) {
-    //const { ply, moveTo, revealAnswer, state} = useGameStore()
-    const { state} = useGameStore()
-    const { ply, moveTo } = useReplayStore()
+export default function MovesPanel({moves, isMovesVisible}: { 
+    moves: Move[]
+    isMovesVisible: boolean
+}) {
+    const moveTo = useReplayStore(s=>s.moveTo)
     const controller = createGameController()
-
-    const timer = useTimerStore()
+    const { ply, elapsedSec} = createPlayerContext()
 
     const handleRevealAnswer = () => {
-        controller.markRevealed(timer.elapsedSec)
+        controller.markRevealed(elapsedSec)
     }
     
     return (
@@ -36,14 +34,13 @@ export default function MovesPanel({moves}: { moves: Move[]}) {
                 }
             }
         >
-            {state.isRevealed ?
+            {isMovesVisible ?
                 <MovesView moves={moves} currentPlyIndex={ply} onMoveToPly={moveTo} />
                 : (<Stack>
                     <Button onClick={handleRevealAnswer} variant="outlined">
                         手筋を表示
                     </Button>
-                    <Box>手数：{moves.length}手</Box>                   
-
+                    <Box>手数：{moves.length}手</Box>
                 </Stack>)
             }
         </Box>

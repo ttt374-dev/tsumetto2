@@ -1,7 +1,7 @@
 import { Button, Dialog, DialogActions, DialogTitle, Stack } from "@mui/material";
 import { DialogContent } from "@mui/material"
 import { useSessionPlayerViewModel, type SessionPlayerPlayingVM } from "@/ui/session/hooks/useSessionPlayerViewModel";
-import { SessionListView } from "@/ui/session/SessionListView";
+import SessionListView from "@/ui/session/SessionListView";
 
 export function SessionProblemListDialog(props: {
     open: boolean

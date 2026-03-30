@@ -5,16 +5,9 @@ import { useEffect } from 'react';
 
 import { Problem, type ProblemId } from "@/domain/problem/entity/Problem"
 import { AppShell } from "../common/components/layout/AppShell";
-import { PlayerRightPanel } from "./components/panels/PlayerRightPanel";
 import { routes } from "../App/useAppNavigation";
 import { useToast } from "../App/providers/ToastProvider";
 import { useGameStore } from "./hooks/useGameStore";
-import TitlePanel from "./components/panels/TitlePanel";
-import MovesPanel from "./components/panels/MovesPanel";
-import BoardPanel from "@/ui/player/components/panels/board/BoardPanel"
-import TimerControlPanel from "./components/panels/TImerControlPanel";
-import ProblemLearningInfoPanel from "./components/panels/ProblemLearningInfoPanel";
-import { PromotionDialog } from "./dialogs/PromotionDialog";
 import { useBoardInputStore } from "./hooks/useBoardInputStore";
 import { useProblemStore } from "@/ui/store/useProblemStore";
 import type { Intent } from "@/domain/game/intentResolver";
@@ -23,7 +16,16 @@ import type { SolvedResult } from "@/domain/review/solvedResult";
 import { deriveSolvedResultFromEvents } from "@/domain/review/service/solvedResultDeriver";
 import { SolvedDialog } from "@/ui/player/dialogs/SolvedDialog";
 import { createPlayerContext } from "@/ui/player/components/types/PlayerContext";
+import { useReplayStore } from "@/ui/player/hooks/useReplayStore";
 
+import PlayerRightPanel from "./components/panels/PlayerRightPanel";
+import TitlePanel from "./components/panels/TitlePanel";
+import MovesPanel from "./components/panels/MovesPanel";
+import BoardPanel from "@/ui/player/components/panels/board/BoardPanel"
+import TimerControlPanel from "./components/panels/TImerControlPanel";
+import ProblemLearningInfoPanel from "./components/panels/ProblemLearningInfoPanel";
+import PromotionDialog from "./dialogs/PromotionDialog";
+import PlyControlPanel from "@/ui/player/components/panels/PlyControlPanel";
 
 //////////////////////////////////////////////////////////////
 export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm, onAfterDelete, footerPanel }: {
@@ -39,6 +41,7 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
 
     const { pendingPromotion, state, events } = useGameStore()
     const controller = createGameController()
+    const replay = useReplayStore()
     const clearSelection = useBoardInputStore(s=>s.clear)
     const deleteProblem = useProblemStore(s=>s.deleteProblem)    
 
@@ -76,8 +79,6 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
             type: "choosePromotion",
             promote
         }
-        //choosePromotion(promote)
-        //console.log("elasped sec on handle promotion confirm", timer.elapsedSec)
         controller.handleIntent(intent, createPlayerContext())
         clearSelection()
     }
@@ -104,9 +105,21 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
                 { /* --- 盤面 ---*/}
                 <BoardPanel />
 
-                <Stack direction="row" sx={{ minHeight: 0, flexGrow: 1, p: 1 }} spacing={1}>
-                    <MovesPanel moves={problem.kifData.moves} />
-                    <PlayerControlPanel problem={problem} />
+                <Stack direction="row" sx={{ minHeight: 0, flexGrow: 1, p: 1 }} spacing={1}>                    
+                    <MovesPanel moves={problem.kifData.moves} isMovesVisible={state.isRevealed}/>
+                    
+                    <Box sx={{ flex: 1, border: 1, borderColor: "divider" }}>
+                        <TimerControlPanel />
+                        <ProblemLearningInfoPanel problem={problem} />
+                        {state.isRevealed &&
+                            <PlyControlPanel
+                                currentPly={replay.ply}
+                                maxPly={problem.kifData.moves.length}
+                                onPrev={replay.retreatPly}
+                                onNext={replay.advancePly}
+                            />
+                        }
+                    </Box>
                 </Stack>
             </Stack>
 
@@ -119,20 +132,12 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
                 >
                 </PromotionDialog>}
 
-            {solvedResult &&
+            { solvedResult &&
                 <SolvedDialog open={isSolvedDialogOpen}
                     onClose={() => setIsSolvedDialogOpen(false)}
                     onConfirm={onSolvedConfirm}
                     solvedResult={solvedResult}
                 />}
         </AppShell>
-    )
-}
-export function PlayerControlPanel({ problem }: { problem: Problem }) {
-    return (
-        <Box sx={{ flex: 1, border: 1, borderColor: "divider" }}>
-            <TimerControlPanel />
-            <ProblemLearningInfoPanel problem={problem} />
-        </Box>
     )
 }

@@ -1,12 +1,12 @@
-import type { SolvedResult } from "@/domain/review/solvedResult"
+import { Box, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Stack } from "@mui/material"
+
 import type { ProblemId } from "@/domain/problem/entity/Problem"
 import type { SessionId } from "@/domain/session/entity/Session"
 import { formatSolvedResult } from "@/ui/history/ReviewEventHistory"
 import { useProblemStore } from "@/ui/store/useProblemStore"
-import { Box, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Stack } from "@mui/material"
 import { useReviewEventStore } from "@/ui/store/useReviewEventStore"
 
-export function SessionListView(props: {
+export default function SessionListView(props: {
     ids: ProblemId[]
     onSelect: (index: number) => void
     selectedId: ProblemId

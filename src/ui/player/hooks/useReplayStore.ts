@@ -10,6 +10,7 @@ type ReplayStore = {
     initialize: (maxPly: number) => void
     reset: () => void
     advancePly: () => void
+    retreatPly: () => void
     moveTo: (ply: number) => void    
     startAnimation: () => void
     endAnimation: () => void
@@ -38,7 +39,10 @@ export const useReplayStore = create<ReplayStore>((set, get) => ({
         const { moveTo, ply } = get()
         moveTo(ply + 1)
     },
-    
+    retreatPly: () => {
+const { moveTo, ply } = get()
+        moveTo(ply - 1)
+    },
     startAnimation: () => {
         set({ phase: "animating" })
     },

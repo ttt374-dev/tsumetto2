@@ -1,7 +1,5 @@
-import { Box, IconButton, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import { TableCell, TableRow } from "@mui/material";
 import { ProblemStats } from "@/domain/problem/valueObject/ProblemStats";
-import { Label } from "@mui/icons-material";
-
 
 export type StatsRowValues = {
     label: string

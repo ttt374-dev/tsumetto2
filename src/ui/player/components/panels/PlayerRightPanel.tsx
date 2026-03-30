@@ -1,14 +1,12 @@
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import UndoIcon from '@mui/icons-material/Undo';
 
 import type { ProblemId } from "@/domain/problem/entity/Problem"
 import { StarToggleButton } from "@/ui/common/components/StarToggleButton/StarToggleButton"
 import { IconButton, Stack } from "@mui/material"
 import { useStarToggleButton } from '@/ui/common/components/StarToggleButton/useStarToggleButton';
-import type { Props } from '@dnd-kit/core/dist/components/DragOverlay';
 
-export function PlayerRightPanel(props: {
+export default function PlayerRightPanel(props: {
     problemId: ProblemId
     onNavigateToDetail: (id: ProblemId) => void
     onUndoLastAnswer?: () => void

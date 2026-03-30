@@ -1,14 +1,15 @@
+import { v4 } from "uuid";
+import { useNavigate } from "react-router-dom";
 import { useShallow } from "zustand/react/shallow"
+
 import { Box, Button, Stack } from "@mui/material";
 import { SummaryView } from "./SummaryView";
-import { AppShell } from "../common/components/layout/AppShell";
+import { AppShell } from "@/ui/common/components/layout/AppShell";
 import { useSessionStore } from "@/ui/session/hooks/useSessionStore";
 import { ProblemStats } from "@/domain/problem/valueObject/ProblemStats";
 import { projectLearning } from "@/domain/learning/service/projectionLearning";
 import { useReviewEventStore } from "../store/useReviewEventStore";
-import { useNavigate } from "react-router-dom";
 import { routes } from "../App/useAppNavigation";
-import { v4 } from "uuid";
 
 /////////////////////////////////////////////
 export default function SessionSummaryScreen() {

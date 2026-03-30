@@ -1,6 +1,7 @@
 import { KeyboardArrowDown, KeyboardArrowRight } from "@mui/icons-material"
-import { Box, IconButton, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
-import { act, useMemo, useState } from "react";
+import { Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import { useState } from "react";
+
 import { StatsRow, type StatsRowValues } from "@/ui/stats/components/StatsRow";
 
 type Group = {

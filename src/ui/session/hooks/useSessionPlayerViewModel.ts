@@ -89,7 +89,7 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
 
         if (!state.isSolved && (state.isRevealed || state.mistakes > 0)) { // もし解かれてなかった、答えを見た、間違えてたら、諦めたと見なす
             const { ply, elapsedSec } = createPlayerContext()
-            alert("abandon")
+            //alert("abandon")
             dispatch({ type: "ABANDON", ply, elapsedSec })
             submitSolvedResult()
         }
