@@ -71,6 +71,7 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
 
         switch (last.type) {
             case "SOLVE":
+                replay.advancePly()
                 timer.stop()
                 setIsSolvedDialogOpen(true)
                 setSolvedResult(deriveSolvedResultFromEvents(events))
@@ -103,11 +104,22 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
     const handlePromotionConfirm = (promote: boolean) => {
         const intentResult: IntentResult = { type: "move", move: choosePromotion(promote) }
         const ctx = createDecideGameEventContext()
-        const res = decideGameEvent({intentResult, ...ctx})
-        if (res.type === "event"){
-            dispatch(res.event)
-        }        
-        clearSelection()
+
+        const decision = decideGameEvent({ intentResult, ...ctx })
+
+        switch (decision.type) {
+            case "invalidMove":
+                return
+            case "promotionPending":
+                // ここに来たらバグ
+                console.error("Unexpected promotionPending after confirm")
+                return
+            case "event":
+                dispatch(decision.event)
+                clearSelection()
+                return
+        }
+        
     }
     const handleDelete = (id: ProblemId) => {
         if (!window.confirm("sure to delete ? ")) return

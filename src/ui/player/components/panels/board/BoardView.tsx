@@ -1,14 +1,11 @@
 import { Box } from "@mui/material"
+
 import styles from "./BoardView.module.css";
-import { useCurrentPosition, useGameStore } from "../../../hooks/useGameStore";
-import { useBoardInputStore } from "../../../hooks/useBoardInputStore";
+import { useCurrentPosition, useGameStore } from "@/ui/player/hooks/useGameStore";
+import { useBoardInputStore } from "@/ui/player/hooks/useBoardInputStore";
 import { Board, Piece, Square } from "@/domain/kif/entity";
-import { createPlayerContext } from "@/ui/player/components/types/PlayerContext";
 import { createDecideGameEventContext, decideGameEvent } from "@/domain/game/intentHandler";
 import { resolveIntent } from "@/domain/game/intentResolver";
-import { useReplayStore } from "@/ui/player/hooks/useReplayStore";
-import { useTimerStore } from "@/ui/player/hooks/useTimerStore";
-import { CheckBoxTwoTone } from "@mui/icons-material";
 
 const fileLabels = ["９", "８", "７", "６", "５", "４", "３", "２", "１"];
 const rankLabels = ["一", "二", "三", "四", "五", "六", "七", "八", "九"];
@@ -37,11 +34,8 @@ export default function BoardView() {
     const ranks = [...Array(9)].map((_, i) => i + 1)   //   1 → 9
     const files = [...Array(9)].map((_, i) => 9 - i)   // 9 → 1（将棋表記o9i） ???
     
-    //const ctx = createPlayerContext()
     const dispatch = useGameStore(s=>s.dispatch)
-    const moves = useGameStore(s=>s.moves)
     const promotionPending = useGameStore(s=>s.promotionPending)    
-
     const clickSquare = useBoardInputStore(s => s.clickSquare)
     const clear = useBoardInputStore(s=>s.clear)
 
@@ -49,18 +43,20 @@ export default function BoardView() {
         const intent = clickSquare(new Square(file, rank), board)
         if (!intent) return
         const intentResult = resolveIntent(position, intent)        
-        //const remainingMoves = moves.slice(ctx.ply)
-        //const nextMove = moves[ctx.ply]
-        //const isLastMove = ctx.ply + 1 >= moves.length
         const ctx = createDecideGameEventContext()
-        const res = decideGameEvent({intentResult, ...ctx})
-        if (res.type === "invalidMove") return
-        clear()
-        if (res.type === "event"){
-            dispatch(res.event)
-        }
-        if (res.type === "promotionPending"){
-            promotionPending(res.pendingPromotion)
+        const decision = decideGameEvent({intentResult, ...ctx})
+        switch (decision.type) {
+            case "invalidMove":
+                return
+
+            case "promotionPending":
+                promotionPending(decision.pendingPromotion)
+                return
+
+            case "event":
+                dispatch(decision.event)    
+                clear()
+                return
         }
     }
     const isSelected = (sq: Square): boolean => {

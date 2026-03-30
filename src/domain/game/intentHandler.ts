@@ -4,7 +4,7 @@ import { useGameStore, type GameEvent, type PendingPromotion } from "@/ui/player
 import { useReplayStore } from "@/ui/player/hooks/useReplayStore";
 import { useTimerStore } from "@/ui/player/hooks/useTimerStore";
 
-type HandleIntentResult =
+type GameDecision =
   | { type: "invalidMove", reason?: string }
   | { type: "promotionPending"; pendingPromotion: PendingPromotion }
   | { type: "event"; event: GameEvent }
@@ -12,7 +12,7 @@ type HandleIntentResult =
 //////////////////////////////////
 export function decideGameEvent(props: { intentResult: IntentResult, nextMove: Move, isLastMove: boolean,
      ply: number, elapsedSec: number }
-): HandleIntentResult {    
+): GameDecision {    
 
     if (props.intentResult.type === "invalidMove") return { 
         type: "invalidMove",
@@ -40,6 +40,7 @@ function deriveGameEvent(move: Move, nextMove: Move, isLastMove: boolean, ply: n
         return { type: "ADVANCE_TURN"}
     }
 }
+
 /////////////////////////////////////////////////////
 // helpers
 export function createDecideGameEventContext(){
