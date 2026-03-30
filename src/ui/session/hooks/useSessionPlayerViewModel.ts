@@ -6,7 +6,7 @@ import type { SolvedResult } from "@/domain/review/solvedResult"
 import { useReviewEventStore } from '@/ui/store/useReviewEventStore';
 import type { SessionId } from "@/domain/session/entity/Session";
 import type { ReviewAction } from "@/domain/review/ReviewEvent";
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { v4 } from "uuid"
 import { deriveSolvedResultFromEvents } from "@/domain/review/service/solvedResultDeriver"
 import { useGameStore, type GameEvent } from "@/ui/player/hooks/useGameStore"
@@ -45,65 +45,47 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
     const missionId = useSessionStore(s => s.missionId)
     const sessionId = useSessionStore(s=>s.sessionId)
     const next = useSessionStore(s => s.next)
-    //const prev = useSessionStore(s => s.prev)
     const moveTo = useSessionStore(s=>s.moveTo)
-    //const results = useSessionStore(s=>s.results)
-    //const submitResult = useSessionStore(s=>s.submitResult)
     const summary = useSessionStore(s=>s.summary)
     const { events, dispatch, state } = useGameStore()
 
-    const currentProblemId = problemIds[index]
+    const currentProblemId: ProblemId | undefined = problemIds[index]
     const count = problemIds.length
     
-    const problem = useProblemStore(s => s.byId[currentProblemId])
+    const problem: Problem | undefined = useProblemStore(s => s.byId[currentProblemId])
     const appendReview = useReviewEventStore(s=>s.appendReview)
+
+    const reviewedEvents = useReviewEventStore(s=>s.eventLog)
 
     // missionName
     const missionName = useMissionStore(
         s => missionId ? s.missions.find(d => d.id === missionId)?.name ?? "" : ""
     )
-    //const hasSubmitted: Record<ProblemId, boolean> = {}
-    const [submittedIds, setSubmittedIds] = useState<Set<ProblemId>>(new Set())
-
-    useEffect(()=>{
-        setSubmittedIds(new Set())
-    }, [sessionId])
-
     useEffect(()=>{ 
-        //setHasSubmitted(false)
-
         return () => {
-            flush()
+            //flush()
         }
     }, [currentProblemId])
 
+    const hasSubmitted = useMemo(() => problem &&
+        reviewedEvents.filter(e => e.type === "reviewed")
+            .find(e => e.problemId === problem.id && e.sessionId === sessionId)
+        , [problem, reviewedEvents])
+
+
     // navigation
     const submitSolvedResult = () => { // submit したら true を返す               
-        if (!sessionId) return false
-        //if (solvedResultRecords[currentProblemId]) return false
-        if (submittedIds.has(currentProblemId)) return false
+        if (!sessionId) return false        
+        if (hasSubmitted) return false
 
-        //alert("sub res")
-        
-        /*
-        if (results[currentProblemId]) {
-            //console.log("alread submitted", currentProblemId, res, actions)
-            return false// allready submitted
-        }*/
-            const res = deriveSolvedResultFromEvents(events) //deriveSolvedResult(state, timer.elapsedSec)
-        //const actions = toReviewActions(events)
-                
-        //submitResult(currentProblemId, res)
+        const res = deriveSolvedResultFromEvents(events) //deriveSolvedResult(state, timer.elapsedSec)
         const reviewId = v4()
         appendReview(currentProblemId, reviewId, sessionId, res)
         console.log("submit answer", res)
-        //setHasSubmitted(true)
-        //solvedResultRecords[currentProblemId] = res
-        submittedIds.add(currentProblemId)
         return true        
     }    
     const flush = () => {
-        if (submittedIds.has(currentProblemId)) return  // サブミット済なら何もしない        
+        if (hasSubmitted) return    // サブミット済なら何もしない        
 
         if (!state.isSolved && (state.isRevealed || state.mistakes > 0)) { // もし解かれてなかった、答えを見た、間違えてたら、諦めたと見なす
             const { ply, elapsedSec } = createPlayerContext()
@@ -113,22 +95,6 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
         }
         
     }
-
-    /*
-    const undoLastAnswer = () => {
-        if (!sessionId) return
-        const last = getLastEvent(sessionId)
-        if (!last) return       
-        
-        submitResult(last.problemId, undefined)
-        cancel(last.id, sessionId) 
-        console.log("cancel", last.id, results)       
-        prev()
-    }
-    ///////////////////////////////////////////////
-    const hasLastAnswer = (): boolean => {
-        return sessionId && getLastEvent(sessionId) ? true : false
-    }*/
     
     if (count === 0) {
         return { status: "idle" }
