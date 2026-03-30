@@ -4,9 +4,9 @@ import { useCurrentPosition, useGameStore } from "../../../hooks/useGameStore";
 import { useBoardInputStore } from "../../../hooks/useBoardInputStore";
 import { Board, Piece, Square } from "@/domain/kif/entity";
 import { useTimerStore } from "@/ui/player/hooks/useTimerStore";
-import { createGameController } from "@/ui/player/hooks/createGameController";
 import { useReplayStore } from "@/ui/player/hooks/useReplayStore";
 import { createPlayerContext } from "@/ui/player/components/types/PlayerContext";
+import { handleIntent } from "@/domain/game/intentHandler";
 
 const fileLabels = ["９", "８", "７", "６", "５", "４", "３", "２", "１"];
 const rankLabels = ["一", "二", "三", "四", "五", "六", "七", "八", "九"];
@@ -33,8 +33,10 @@ export default function BoardView() {
     const selection = useBoardInputStore(s=>s.selection)    
     const ranks = [...Array(9)].map((_, i) => i + 1)   //   1 → 9
     const files = [...Array(9)].map((_, i) => 9 - i)   // 9 → 1（将棋表記o9i） ???
-    
-    const { handleIntent } = createGameController()
+    const gameState = useGameStore.getState()
+    const replayState = useReplayStore.getState()
+    const dispatch = useGameStore(s=>s.dispatch)
+    const promotionPending = useGameStore(s=>s.promotionPending)    
 
     const clickSquare = useBoardInputStore(s => s.clickSquare)
     const clear = useBoardInputStore(s=>s.clear)
@@ -43,10 +45,20 @@ export default function BoardView() {
         const intent = clickSquare(new Square(file, rank), board)
         if (!intent) return
         //const result = resolveIntent(position, intent)
-        const res = handleIntent(intent)
-        console.log("intent res", res)
+        const res = handleIntent(intent, gameState, gameState, gameState, replayState)
+        if (res.type === "invalidMove") return
+        clear()
+        if (res.type === "event"){
+            dispatch(res.event)
+        }
+        if (res.type === "promotionPending"){
+            promotionPending(res.pendingPromotion)
+        }
+
+        //console.log("intent res", res)
         //if (res) clear()
-        if (res.type !== "invalidMove") clear()
+        //if (res.type !== "invalidMove") clear()
+        
 
     }
     const isSelected = (sq: Square): boolean => {

@@ -11,7 +11,6 @@ import { useGameStore } from "./hooks/useGameStore";
 import { useBoardInputStore } from "./hooks/useBoardInputStore";
 import { useProblemStore } from "@/ui/store/useProblemStore";
 import type { Intent } from "@/domain/game/intentResolver";
-import { createGameController } from "@/ui/player/hooks/createGameController";
 import type { SolvedResult } from "@/domain/review/solvedResult";
 import { deriveSolvedResultFromEvents } from "@/domain/review/service/solvedResultDeriver";
 import { SolvedDialog } from "@/ui/player/dialogs/SolvedDialog";
@@ -26,7 +25,8 @@ import TimerControlPanel from "./components/panels/TImerControlPanel";
 import ProblemLearningInfoPanel from "./components/panels/ProblemLearningInfoPanel";
 import PromotionDialog from "./dialogs/PromotionDialog";
 import PlyControlPanel from "@/ui/player/components/panels/PlyControlPanel";
-import { Reply } from "@mui/icons-material";
+import { useTimerStore } from "@/ui/player/hooks/useTimerStore";
+import { handleIntent } from "@/domain/game/intentHandler";
 
 //////////////////////////////////////////////////////////////
 export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm, onAfterDelete, footerPanel }: {
@@ -40,9 +40,14 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
     const toast = useToast()
     const navigate = useNavigate()
 
-    const { pendingPromotion, state, events } = useGameStore()
-    const controller = createGameController()
+    // 純粋関数に渡すよう
+    const gameState = useGameStore.getState()
+    const replayState = useReplayStore.getState()
+
+    const { initialize, dispatch, pendingPromotion, state, events } = useGameStore()    
+    
     const replay = useReplayStore()
+    const timer = useTimerStore()
     const clearSelection = useBoardInputStore(s=>s.clear)
     const deleteProblem = useProblemStore(s=>s.deleteProblem)    
 
@@ -50,8 +55,13 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
     const [solvedResult, setSolvedResult] = useState<SolvedResult | undefined>(undefined)
 
 
-    useEffect(()=>{        
-        controller.start(problem)
+    useEffect(()=>{ 
+        const { initialPosition, moves} = problem.kifData
+
+        initialize(initialPosition, moves)
+        replay.initialize(moves.length)
+        timer.restart()
+        
         setIsSolvedDialogOpen(false)
     }, [problem.id])
       
@@ -63,8 +73,10 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
 
         switch (last.type) {
             case "SOLVE":
+                timer.stop()
                 setIsSolvedDialogOpen(true)
                 setSolvedResult(deriveSolvedResultFromEvents(events))
+                
                 onSolve?.()
                 break
             case "MISTAKE":
@@ -95,7 +107,12 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
             type: "choosePromotion",
             promote
         }
-        controller.handleIntent(intent)
+        const res = handleIntent(intent, gameState, gameState, gameState, replayState)
+        
+        if (res.type === "event"){            
+            dispatch(res.event)
+        }
+        
         clearSelection()
     }
     const handleDelete = (id: ProblemId) => {

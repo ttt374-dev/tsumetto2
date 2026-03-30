@@ -2,7 +2,7 @@ import { create } from "zustand"
 
 type ReplayPhase = "idle" | "animating"
 
-type ReplayStore = {
+export type ReplayStore = {
     ply: number
     maxPly: number
     phase: ReplayPhase

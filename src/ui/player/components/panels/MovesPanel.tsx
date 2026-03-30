@@ -3,8 +3,8 @@ import { Box, Button, Stack } from "@mui/material";
 import MovesView from "../views/MovesView";
 import type { Move } from "@/domain/kif/entity";
 import { useReplayStore } from "@/ui/player/hooks/useReplayStore";
-import { createGameController } from "@/ui/player/hooks/createGameController";
 import { createPlayerContext } from "@/ui/player/components/types/PlayerContext";
+import { useGameStore } from "@/ui/player/hooks/useGameStore";
 
 export default function MovesPanel({moves, isMovesVisible}: { 
     moves: Move[]
@@ -12,11 +12,11 @@ export default function MovesPanel({moves, isMovesVisible}: {
 }) {
     const moveTo = useReplayStore(s=>s.moveTo)
     const ply = useReplayStore(s=>s.ply)
-    const controller = createGameController() 
-    
+    const dispatch = useGameStore(s=>s.dispatch)   
+    const ctx = createPlayerContext()
 
     const handleRevealAnswer = () => {
-        controller.markRevealed()
+        dispatch({type: "REVEAL", ...ctx})
     }
     
     return (

@@ -20,7 +20,7 @@ export type GameEvent =
     | ({ type: "MISTAKE" } & BaseEvent)
     | ({ type: "REVEAL" } & BaseEvent)
     | ({ type: "ABANDON" } & BaseEvent)
-    | ({ type: "ADVANCE_TURN"})
+    | ({ type: "ADVANCE_TURN"}) 
 
 export type PendingPromotion = {
     from: Square
@@ -32,7 +32,7 @@ export type GameContext = {
     ply: number
 }
     
-type GameStore = {
+export type GameStore = {
     events: GameEvent[]    // SoT
     state: GameState       // キャッシュ。events から derived
     initialPosition: Position

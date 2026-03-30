@@ -26,6 +26,7 @@ export function resolveIntent(position: Position, intent: Intent): IntentResult{
     //return null
 }
 
+
 function resolveBoardMoveIntent(
     position: Position,
     from: Square,
