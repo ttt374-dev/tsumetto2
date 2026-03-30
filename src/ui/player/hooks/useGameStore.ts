@@ -20,6 +20,7 @@ export type GameEvent =
     | ({ type: "MISTAKE" } & BaseEvent)
     | ({ type: "REVEAL" } & BaseEvent)
     | ({ type: "ABANDON" } & BaseEvent)
+    | ({ type: "ADVANCE_TURN"})
 
 export type PendingPromotion = {
     from: Square

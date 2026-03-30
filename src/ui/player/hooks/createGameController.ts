@@ -3,7 +3,7 @@ import { resolveIntent, type Intent, type IntentResult } from "@/domain/game/int
 import { type Move } from "@/domain/kif/entity"
 import { buildUntilPly } from "@/domain/kif/service/buildUntilPly"
 import type { Problem } from "@/domain/problem/entity/Problem"
-import type { PlayerContext } from "@/ui/player/components/types/PlayerContext"
+import { createPlayerContext, type PlayerContext } from "@/ui/player/components/types/PlayerContext"
 import { useGameStore } from "@/ui/player/hooks/useGameStore"
 import { useReplayStore } from "@/ui/player/hooks/useReplayStore"
 import { useTimerStore } from "@/ui/player/hooks/useTimerStore"
@@ -15,6 +15,8 @@ export function createGameController() {
     let turnId = 0
 
     function advanceTurn() {
+        useGameStore.getState().dispatch({type: "ADVANCE_TURN"})
+        /*
         const replay = useReplayStore.getState()
         const currentId = ++turnId
 
@@ -28,6 +30,7 @@ export function createGameController() {
             replay.advancePly()
             replay.endAnimation()
         }, 500)
+        */
     }
     /////////////
     function resolveMoveFromIntent(intent: Intent): IntentResult {
@@ -52,35 +55,24 @@ export function createGameController() {
             }
             
         }
-    }
+    }    
     
-    function evaluate(move: Move, ply: number): EvaluationResult {
+    function applyResult(res: EvaluationResult, ctx: PlayerContext) {
         const game = useGameStore.getState()
-        //const replay = useReplayStore.getState()
-        //return evaluateMove(move, game.moves, replay.ply)
-        return evaluateMove({
-            move,
-            moves: game.moves,
-            ply   // : replay.ply
-        })
-    }
-    function applyResult(res: EvaluationResult, elapsedSec: number) {
-        const game = useGameStore.getState()
-        const replay = useReplayStore.getState()
+        //const ply = useReplayStore.getState().ply
+        const { ply, elapsedSec } = ctx
 
         switch (res.type) {
-            case "correct":                
-                advanceTurn()
-                break
             case "incorrect":
-                game.dispatch({ type: "MISTAKE", ply: replay.ply, elapsedSec })
+                game.dispatch({ type: "MISTAKE", ply, elapsedSec })
                 break
-            case "solved":
-                const timer = useTimerStore.getState()
-                
-                replay.advancePly()
+            case "correct-ongoing":                
+                advanceTurn()
+                break            
+            case "correct-solved":
+                const timer = useTimerStore.getState()                
                 timer.stop()
-                const { ply } = useReplayStore.getState()
+                
                 game.dispatch({ type: "SOLVE", ply, elapsedSec })
                 break            
         }
@@ -96,26 +88,27 @@ export function createGameController() {
             replay.initialize(problem.kifData.moves.length)
             timer.restart()
         },
-        handleIntent: (intent: Intent, ctx: PlayerContext): IntentResult => {
+        handleIntent: (intent: Intent): IntentResult => {
             const game = useGameStore.getState()    
-            //const replay = useReplayStore.getState()    
             const res = resolveMoveFromIntent(intent)
+            
             if (res.type === "invalidMove") return res
             if (res.type === "promotionPending") {
                 game.promotionPending(res.pendingPromotion)
                 return res
             }
 
-            // ここは move 確定
-            const result = evaluate(res.move, ctx.ply)
-            applyResult(result, ctx.elapsedSec)
+            // ここは move 確定            
+            const ctx = createPlayerContext()
+            const result = evaluateMove({move: res.move, moves: game.moves, ply: ctx.ply})
+            applyResult(result, ctx)
 
             return res
         },
-        markRevealed: (elapsedSec: number) => {
+        markRevealed: () => {
             const game = useGameStore.getState()
         
-            const { ply } = useReplayStore.getState()
+            const { ply, elapsedSec } = createPlayerContext()
             game.dispatch({
                 type: "REVEAL", ply, elapsedSec
             })

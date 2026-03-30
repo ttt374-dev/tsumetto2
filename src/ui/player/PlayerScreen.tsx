@@ -26,6 +26,7 @@ import TimerControlPanel from "./components/panels/TImerControlPanel";
 import ProblemLearningInfoPanel from "./components/panels/ProblemLearningInfoPanel";
 import PromotionDialog from "./dialogs/PromotionDialog";
 import PlyControlPanel from "@/ui/player/components/panels/PlyControlPanel";
+import { Reply } from "@mui/icons-material";
 
 //////////////////////////////////////////////////////////////
 export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm, onAfterDelete, footerPanel }: {
@@ -54,6 +55,8 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
         setIsSolvedDialogOpen(false)
     }, [problem.id])
       
+    let turnId = 0
+
     useEffect(() => {
         const last = events.at(-1)
         if (!last) return
@@ -67,6 +70,19 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
             case "MISTAKE":
                 toast({ message: `incorrect: [${state.mistakes}]` })
                 break
+            case "ADVANCE_TURN":
+                const currentId = ++turnId
+                replay.startAnimation()
+                replay.advancePly()
+
+                setTimeout(() => {
+                    if (currentId !== turnId) return
+
+                    const replay = useReplayStore.getState()
+                    replay.advancePly()
+                    replay.endAnimation()
+                }, 500)
+
         }
     }, [events])
     
@@ -79,7 +95,7 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
             type: "choosePromotion",
             promote
         }
-        controller.handleIntent(intent, createPlayerContext())
+        controller.handleIntent(intent)
         clearSelection()
     }
     const handleDelete = (id: ProblemId) => {

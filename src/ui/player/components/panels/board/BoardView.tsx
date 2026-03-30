@@ -43,7 +43,7 @@ export default function BoardView() {
         const intent = clickSquare(new Square(file, rank), board)
         if (!intent) return
         //const result = resolveIntent(position, intent)
-        const res = handleIntent(intent, createPlayerContext())
+        const res = handleIntent(intent)
         console.log("intent res", res)
         //if (res) clear()
         if (res.type !== "invalidMove") clear()

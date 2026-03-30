@@ -11,11 +11,12 @@ export default function MovesPanel({moves, isMovesVisible}: {
     isMovesVisible: boolean
 }) {
     const moveTo = useReplayStore(s=>s.moveTo)
-    const controller = createGameController()
-    const { ply, elapsedSec} = createPlayerContext()
+    const ply = useReplayStore(s=>s.ply)
+    const controller = createGameController() 
+    
 
     const handleRevealAnswer = () => {
-        controller.markRevealed(elapsedSec)
+        controller.markRevealed()
     }
     
     return (
