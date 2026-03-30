@@ -1,6 +1,6 @@
 import { evaluateMove, type EvaluationResult } from "@/domain/game/evaluateMove"
 import { resolveIntent, type Intent, type IntentResult } from "@/domain/game/intentResolver"
-import { Position, type Move } from "@/domain/kif/entity"
+import { Move, Position } from "@/domain/kif/entity"
 import { buildUntilPly } from "@/domain/kif/service/buildUntilPly"
 import { createPlayerContext, type PlayerContext } from "@/ui/player/components/types/PlayerContext"
 import { type GameEvent, type PendingPromotion } from "@/ui/player/hooks/useGameStore"
@@ -20,11 +20,10 @@ type HandleIntentResult =
   | { type: "promotionPending"; pendingPromotion: PendingPromotion }
   | { type: "event"; event: GameEvent }
 
+//////////////////////////////////
 export function handleIntent(intent: Intent,
-    position: Position, nextMove: Move, promotion: PromotionPort, ply: number
-): HandleIntentResult {
-    //const game = useGameStore.getState()    
-    //const replay = useReplayStore.getState()
+    position: Position, remainingMoves: Move[], promotion: PromotionPort, ply: number, elapsedSec: number
+): HandleIntentResult {    
     const res = resolveMoveFromIntent(intent, position, promotion, ply)
 
     if (res.type === "invalidMove") return { 
@@ -32,25 +31,12 @@ export function handleIntent(intent: Intent,
         reason: res.reason
     }
     if (res.type === "promotionPending") {
-        //promotion.promotionPending(res.pendingPromotion)
         return { 
             type: "promotionPending",
             pendingPromotion: res.pendingPromotion
         }
-    }
-
-    // ここは move 確定            
-    //const result = evaluateMove({ move: res.move, moves: gameQuery.moves, ply })
-    //applyResult(result, ctx)
-    const ctx = createPlayerContext()
-    //const event = deriveAction(result, ctx)
-    //applyAction(gameWriter, event)
-
-    //const nextMove = gameQuery.moves[ply]
-    
-    const event: GameEvent = res.move.equals(nextMove) 
-        ? { type: "ADVANCE_PLY"} 
-        : { type: "MISTAKE", ply, elapsedSec: ctx.elapsedSec}
+    }    
+    const event = deriveGameEvent(res.move, remainingMoves, ply, elapsedSec)
     return { type: "event", event}
 }
 
@@ -66,6 +52,16 @@ function resolveMoveFromIntent(intent: Intent, position: Position, promotion: Pr
             const _exhaustive: never = intent
             return _exhaustive
         }
+    }
+}
+function deriveGameEvent(move: Move, remainingMoves: Move[], ply: number, elapsedSec: number): GameEvent {
+    if (!move.equals(remainingMoves[0])){
+        return { type: "MISTAKE", ply, elapsedSec}
+    }
+    if (remainingMoves.length <= 1){
+        return { type: "SOLVE", ply, elapsedSec}
+    } else {
+        return { type: "ADVANCE_TURN"}
     }
 }
 

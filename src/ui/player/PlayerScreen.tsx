@@ -86,28 +86,17 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
                 toast({ message: `incorrect: [${state.mistakes}]` })
                 break
 
-            case "ADVANCE_PLY":                
+            case "ADVANCE_TURN":
                 replay.advancePly()
-
-                if (replay.ply + 1 >= moves.length){
-                    dispatch({type: "SOLVE", ply: replay.ply+1, elapsedSec: timer.elapsedSec})
-                } else {
-                    dispatch({type: "APPLY_OPPONENT_PLY"})
-                }
-            
-                break;
-            case "APPLY_OPPONENT_PLY":
                 replay.startAnimation()
                 const currentId = ++turnId
-                setTimeout(() => {
-                    
+                setTimeout(() => {                    
                     if (currentId !== turnId) return
                     const replay = useReplayStore.getState()
                     replay.advancePly()
                     replay.endAnimation()
                 }, 500)
-                break;
-                
+                break;                
 
         }
     }, [events])
@@ -121,8 +110,9 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
             type: "choosePromotion",
             promote
         }
-        const nextMove = moves[replay.ply]
-        const res = handleIntent(intent, position, nextMove, gameState, replay.ply)
+        //const nextMove = moves[replay.ply]
+        const remainingMoves = moves.slice(replay.ply)
+        const res = handleIntent(intent, position, remainingMoves, gameState, replay.ply, timer.elapsedSec)
         
         if (res.type === "event"){            
             dispatch(res.event)

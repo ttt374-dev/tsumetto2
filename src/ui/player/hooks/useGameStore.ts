@@ -16,7 +16,7 @@ type BaseEvent = {
 
 export type GameEvent =
     | ({ type: "SOLVE" } & BaseEvent)
-    //| ({ type: "CORRECT" } & BaseEvent)
+    | ({ type: "CORRECT" } & BaseEvent)
     | ({ type: "MISTAKE" } & BaseEvent)
     | ({ type: "REVEAL" } & BaseEvent)
     | ({ type: "ABANDON" } & BaseEvent)
