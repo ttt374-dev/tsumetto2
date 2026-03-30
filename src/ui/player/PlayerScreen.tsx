@@ -42,7 +42,7 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
 
     // 純粋関数に渡すよう
     const gameState = useGameStore.getState()
-    const replayState = useReplayStore.getState()
+    
 
     const { initialize, dispatch, pendingPromotion, state, events } = useGameStore()    
     
@@ -107,7 +107,7 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
             type: "choosePromotion",
             promote
         }
-        const res = handleIntent(intent, gameState, gameState, gameState, replayState)
+        const res = handleIntent(intent, gameState, gameState, replay.ply)
         
         if (res.type === "event"){            
             dispatch(res.event)

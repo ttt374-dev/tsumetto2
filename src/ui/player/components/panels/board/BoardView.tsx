@@ -34,7 +34,7 @@ export default function BoardView() {
     const ranks = [...Array(9)].map((_, i) => i + 1)   //   1 → 9
     const files = [...Array(9)].map((_, i) => 9 - i)   // 9 → 1（将棋表記o9i） ???
     const gameState = useGameStore.getState()
-    const replayState = useReplayStore.getState()
+    const ply = useReplayStore(s=>s.ply)
     const dispatch = useGameStore(s=>s.dispatch)
     const promotionPending = useGameStore(s=>s.promotionPending)    
 
@@ -45,7 +45,7 @@ export default function BoardView() {
         const intent = clickSquare(new Square(file, rank), board)
         if (!intent) return
         //const result = resolveIntent(position, intent)
-        const res = handleIntent(intent, gameState, gameState, gameState, replayState)
+        const res = handleIntent(intent, gameState, gameState, ply)
         if (res.type === "invalidMove") return
         clear()
         if (res.type === "event"){
@@ -54,12 +54,6 @@ export default function BoardView() {
         if (res.type === "promotionPending"){
             promotionPending(res.pendingPromotion)
         }
-
-        //console.log("intent res", res)
-        //if (res) clear()
-        //if (res.type !== "invalidMove") clear()
-        
-
     }
     const isSelected = (sq: Square): boolean => {
         return selection.type === "board" &&

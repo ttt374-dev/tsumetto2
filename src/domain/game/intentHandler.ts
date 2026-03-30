@@ -29,12 +29,11 @@ type HandleIntentResult =
   | { type: "event"; event: GameEvent }
 
 export function handleIntent(intent: Intent,
-    gameQuery: GameQuery, gameWriter: GameWritePort, promotion: PromotionPort,
-    replay: ReplayQuery
+    gameQuery: GameQuery, promotion: PromotionPort, ply: number
 ): HandleIntentResult {
     //const game = useGameStore.getState()    
     //const replay = useReplayStore.getState()
-    const res = resolveMoveFromIntent(intent, gameQuery, promotion, replay)
+    const res = resolveMoveFromIntent(intent, gameQuery, promotion, ply)
 
     if (res.type === "invalidMove") return { 
         type: "invalidMove",
@@ -49,8 +48,7 @@ export function handleIntent(intent: Intent,
     }
 
     // ここは move 確定            
-
-    const result = evaluateMove({ move: res.move, moves: gameQuery.moves, ply: replay.ply })
+    const result = evaluateMove({ move: res.move, moves: gameQuery.moves, ply })
     //applyResult(result, ctx)
     const ctx = createPlayerContext()
     const event = deriveAction(result, ctx)
@@ -59,14 +57,8 @@ export function handleIntent(intent: Intent,
     return { type: "event", event}
 }
 
-function buildPosition(game: GameQuery, replay: ReplayQuery): Position {
-    return buildUntilPly(
-        game.initialPosition,
-        game.moves,
-        replay.ply
-    )
-}
-function resolveMoveFromIntent(intent: Intent, gameQuery: GameQuery, promotion: PromotionPort, replay: ReplayQuery): IntentResult {
+
+function resolveMoveFromIntent(intent: Intent, gameQuery: GameQuery, promotion: PromotionPort, ply: number): IntentResult {
     //const game = useGameStore.getState()
     //const replay = useReplayStore.getState()
     //const ctx = createPlayerContext()
@@ -74,7 +66,11 @@ function resolveMoveFromIntent(intent: Intent, gameQuery: GameQuery, promotion: 
     switch (intent.type) {
         case "move":
         case "drop":
-            return resolveIntent(buildPosition(gameQuery, replay), intent)
+            const position = buildUntilPly(
+                gameQuery.initialPosition,
+                gameQuery.moves,
+                ply)
+            return resolveIntent(position, intent)
         case "choosePromotion":
             return { type: "move", move: promotion.choosePromotion(intent.promote) }
         default: {
@@ -97,9 +93,6 @@ function deriveAction(res: EvaluationResult, ctx: PlayerContext): GameEvent {
         }
     }
 }
-function applyAction(dispatcher: GameWritePort, event: GameEvent) {
-    //const game = useGameStore.getState()
-    dispatcher.dispatch(event)
-}
+
 /////////////////////////////////////////////////////
 
