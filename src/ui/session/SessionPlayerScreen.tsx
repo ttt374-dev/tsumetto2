@@ -21,7 +21,7 @@ function SessionPlayerContent({vm}: { vm: SessionPlayerPlayingVM}) {
     useEffect(() => {        
         return () => {
             // 離脱直前に未サブミットなら強制 ABANDON + submit
-            vm.flush()
+            //vm.flush()
         }
     }, [vm.problem.id]) // 問題が切り替わるたびに発火
     // ハンドラー

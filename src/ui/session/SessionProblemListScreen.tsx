@@ -47,8 +47,7 @@ function SessionProblemListContent( { vm } :
             <SessionListView ids={vm.problemIds}
                 onSelect={handleOnSelect}
                 selectedId={vm.problem.id}
-                sessionId={vm.sessionId}
-                results={vm.results}
+                sessionId={vm.sessionId}                
             />
         </AppShell>
     )

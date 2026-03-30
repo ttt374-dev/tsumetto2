@@ -3,8 +3,8 @@ import type { SessionId, SessionPhase } from "@/domain/session/entity/Session";
 import type { ProblemId } from "@/domain/problem/entity/Problem";
 import { v4 } from "uuid";
 import { create } from "zustand";
-import type { SolvedResult } from "@/domain/review/solvedResult"
-import { AddAlertRounded } from "@mui/icons-material";
+
+//type SessionState = 
 
 type SessionStore = {
     // ===== state =====
@@ -12,7 +12,7 @@ type SessionStore = {
     missionId?: MissionId;
     problemIds: ProblemId[];
     currentIndex: number; // ⭐ マスター
-    results: Record<ProblemId, SolvedResult>
+    //results: Record<ProblemId, SolvedResult>
 
     // ===== derived (必要最低限だけ) =====
     phase: () => SessionPhase
@@ -24,7 +24,7 @@ type SessionStore = {
     moveToIndex: (index: number) => void;
     moveToId: (id: ProblemId) => void;
     summary: () => void;
-    submitResult: (id: ProblemId, res: SolvedResult | undefined) => void
+    //submitResult: (id: ProblemId, res: SolvedResult | undefined) => void
     reset: () => void;
 };
 
@@ -104,6 +104,7 @@ export const useSessionStore = create<SessionStore>((set, get) => ({
             currentIndex: s.problemIds.length
         }))
     },
+    /*
     submitResult: (id: ProblemId, res: SolvedResult | undefined) => {
         set(s => {
             const newResults = { ...s.results }
@@ -115,14 +116,14 @@ export const useSessionStore = create<SessionStore>((set, get) => ({
             }
             return { results: newResults }
         })
-    },
+    },*/
 
     reset: () =>
         set({
             missionId: undefined,
             problemIds: [],
             currentIndex: -1,
-            results: {},
+            //results: {},
             //answers: [],
         }),
 }));

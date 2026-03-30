@@ -4,21 +4,27 @@ import type { SessionId } from "@/domain/session/entity/Session"
 import { formatSolvedResult } from "@/ui/history/ReviewEventHistory"
 import { useProblemStore } from "@/ui/store/useProblemStore"
 import { Box, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Stack } from "@mui/material"
+import { useReviewEventStore } from "@/ui/store/useReviewEventStore"
 
 export function SessionListView(props: {
     ids: ProblemId[]
     onSelect: (id: ProblemId) => void
     selectedId: ProblemId
     sessionId: SessionId
-    results: Record<ProblemId, SolvedResult>
+    //results: Record<ProblemId, SolvedResult>
 }) {
     const byId = useProblemStore(s => s.byId)    
+    const eventLog = useReviewEventStore(s=>s.eventLog)
+    const sessionEvents = eventLog.filter(s=>s.type==="reviewed").filter(s=>s.sessionId === props.sessionId)
+    console.log(sessionEvents)    
+
     return (
         <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto" }}>
             <List>
                 {props.ids.map((id, i) => {
                     const problem = byId[id]
-                    const solvedResult: SolvedResult | undefined = props.results[id]
+                    //const solvedResult: SolvedResult | undefined = props.results[id]
+                    const solvedResult = sessionEvents.find(e=>e.problemId===id)?.solvedResult                    
                     const resultString = solvedResult ? formatSolvedResult(solvedResult) : ""
 
                     return (

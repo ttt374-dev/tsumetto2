@@ -10,6 +10,7 @@ export function deriveSolvedResult(gameState: GameState, elapsedSec: number): So
     } else {
         outcome = !gameState.isRevealed && gameState.mistakes === 0 ? "abandoned" : "failed"
     }
+    console.log("derive", outcome, gameState)
     return {
         outcome,
         mistakes: gameState.mistakes,
