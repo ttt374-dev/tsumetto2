@@ -55,20 +55,19 @@ export function LibraryCheckboxControl({ onCheckAll, onUncheckAll,
                         color="primary">
                         <CloseIcon />
                     </IconButton>
-
+                    
+                    { /* タグ編集 */}
+                    <IconButton
+                        onClick={handleOpenTagEditDialog}
+                        disabled={checkedIds.length === 0}>
+                        <EditIcon />
+                    </IconButton>
                     { /* 削除ボタン */}
                     <IconButton
                         onClick={handleDeleteChecked}
                         disabled={checkedIds.length === 0}
                     >
                         <DeleteIcon />
-                    </IconButton>
-                    { /* タグ編集 */}
-                    <IconButton
-                        onClick={handleOpenTagEditDialog}
-                        disabled={checkedIds.length === 0}>
-
-                        <EditIcon />
                     </IconButton>
                 </>
             }
