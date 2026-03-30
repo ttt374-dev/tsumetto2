@@ -6,7 +6,7 @@ import { Board, Piece, Square } from "@/domain/kif/entity";
 import { useTimerStore } from "@/ui/player/hooks/useTimerStore";
 import { useReplayStore } from "@/ui/player/hooks/useReplayStore";
 import { createPlayerContext } from "@/ui/player/components/types/PlayerContext";
-import { handleIntentResult } from "@/domain/game/intentHandler";
+import { decideGameEvent } from "@/domain/game/intentHandler";
 import { resolveIntent } from "@/domain/game/intentResolver";
 
 const fileLabels = ["９", "８", "７", "６", "５", "４", "３", "２", "１"];
@@ -35,7 +35,7 @@ export default function BoardView() {
     const selection = useBoardInputStore(s=>s.selection)    
     const ranks = [...Array(9)].map((_, i) => i + 1)   //   1 → 9
     const files = [...Array(9)].map((_, i) => 9 - i)   // 9 → 1（将棋表記o9i） ???
-    const gameState = useGameStore.getState()
+    
     const ctx = createPlayerContext()
     const dispatch = useGameStore(s=>s.dispatch)
     const moves = useGameStore(s=>s.moves)
@@ -48,9 +48,11 @@ export default function BoardView() {
         const intent = clickSquare(new Square(file, rank), board)
         if (!intent) return
         const result = resolveIntent(position, intent)        
-        const remainingMoves = moves.slice(ctx.ply)
+        //const remainingMoves = moves.slice(ctx.ply)
+        const nextMove = moves[ctx.ply]
+        const isLastMove = ctx.ply + 1 >= moves.length
 
-        const res = handleIntentResult(result, position, remainingMoves, gameState, ctx.ply, ctx.elapsedSec)
+        const res = decideGameEvent(result, nextMove, isLastMove, ctx.ply, ctx.elapsedSec)
         if (res.type === "invalidMove") return
         clear()
         if (res.type === "event"){

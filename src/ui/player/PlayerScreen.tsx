@@ -26,7 +26,7 @@ import ProblemLearningInfoPanel from "./components/panels/ProblemLearningInfoPan
 import PromotionDialog from "./dialogs/PromotionDialog";
 import PlyControlPanel from "@/ui/player/components/panels/PlyControlPanel";
 import { useTimerStore } from "@/ui/player/hooks/useTimerStore";
-import { handleIntentResult } from "@/domain/game/intentHandler";
+import { decideGameEvent } from "@/domain/game/intentHandler";
 import { Position } from "@/domain/kif/entity";
 
 //////////////////////////////////////////////////////////////
@@ -47,8 +47,7 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
 
     const { initialize, dispatch, choosePromotion, pendingPromotion, state, events, moves } = useGameStore()    
     
-    const position = useCurrentPosition()
-    //const moves = useGameStore(s=>s.moves)
+    const position = useCurrentPosition()    
     const replay = useReplayStore()
     const timer = useTimerStore()
     const clearSelection = useBoardInputStore(s=>s.clear)
@@ -58,10 +57,8 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
     const [solvedResult, setSolvedResult] = useState<SolvedResult | undefined>(undefined)
 
 
-    useEffect(()=>{ 
-        const { initialPosition, moves} = problem.kifData
-
-        initialize(initialPosition, moves)
+    useEffect(()=>{        
+        initialize(problem.kifData.initialPosition, problem.kifData.moves)
         replay.initialize(moves.length)
         timer.restart()
         
@@ -106,21 +103,14 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
         navigate(routes.detail(problem.id))
     }
     const handlePromotionConfirm = (promote: boolean) => {
-        const intent: Intent = {
-            type: "choosePromotion",
-            promote
-        }
-        //const nextMove = moves[replay.ply]
-        const remainingMoves = moves.slice(replay.ply)
-
-        const move = choosePromotion(promote)        
-        const intentResult: IntentResult = { type: "move", move }
-        const res = handleIntentResult(intentResult, position, remainingMoves, gameState, replay.ply, timer.elapsedSec)
+        const nextMove = moves[replay.ply]
+        const isLastMove = replay.ply + 1 >= moves.length
         
-        if (res.type === "event"){            
+        const intentResult: IntentResult = { type: "move", move: choosePromotion(promote) }
+        const res = decideGameEvent(intentResult, nextMove, isLastMove, replay.ply, timer.elapsedSec)
+        if (res.type === "event"){
             dispatch(res.event)
-        }
-        
+        }        
         clearSelection()
     }
     const handleDelete = (id: ProblemId) => {
