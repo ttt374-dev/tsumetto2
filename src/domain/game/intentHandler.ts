@@ -21,10 +21,12 @@ type HandleIntentResult =
   | { type: "event"; event: GameEvent }
 
 //////////////////////////////////
-export function handleIntent(intent: Intent,
+
+export function handleIntentResult(res: IntentResult,
     position: Position, remainingMoves: Move[], promotion: PromotionPort, ply: number, elapsedSec: number
 ): HandleIntentResult {    
-    const res = resolveMoveFromIntent(intent, position, promotion, ply)
+    //const res = resolveMoveFromIntent(intent, position, promotion, ply)
+    //console.log("resolvedmove", intent, res)
 
     if (res.type === "invalidMove") return { 
         type: "invalidMove",

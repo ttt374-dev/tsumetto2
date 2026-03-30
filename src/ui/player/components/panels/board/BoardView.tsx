@@ -6,7 +6,8 @@ import { Board, Piece, Square } from "@/domain/kif/entity";
 import { useTimerStore } from "@/ui/player/hooks/useTimerStore";
 import { useReplayStore } from "@/ui/player/hooks/useReplayStore";
 import { createPlayerContext } from "@/ui/player/components/types/PlayerContext";
-import { handleIntent } from "@/domain/game/intentHandler";
+import { handleIntentResult } from "@/domain/game/intentHandler";
+import { resolveIntent } from "@/domain/game/intentResolver";
 
 const fileLabels = ["９", "８", "７", "６", "５", "４", "３", "２", "１"];
 const rankLabels = ["一", "二", "三", "四", "五", "六", "七", "八", "九"];
@@ -46,10 +47,10 @@ export default function BoardView() {
     const handleSquareClick = (file: number, rank: number) => {        
         const intent = clickSquare(new Square(file, rank), board)
         if (!intent) return
-        //const result = resolveIntent(position, intent)
-        const nextMove = moves[ctx.ply]
+        const result = resolveIntent(position, intent)        
         const remainingMoves = moves.slice(ctx.ply)
-        const res = handleIntent(intent, position, remainingMoves, gameState, ctx.ply, ctx.elapsedSec)
+
+        const res = handleIntentResult(result, position, remainingMoves, gameState, ctx.ply, ctx.elapsedSec)
         if (res.type === "invalidMove") return
         clear()
         if (res.type === "event"){

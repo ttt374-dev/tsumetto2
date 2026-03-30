@@ -10,7 +10,7 @@ import { useToast } from "../App/providers/ToastProvider";
 import { useCurrentPosition, useGameStore } from "./hooks/useGameStore";
 import { useBoardInputStore } from "./hooks/useBoardInputStore";
 import { useProblemStore } from "@/ui/store/useProblemStore";
-import type { Intent } from "@/domain/game/intentResolver";
+import type { Intent, IntentResult } from "@/domain/game/intentResolver";
 import type { SolvedResult } from "@/domain/review/solvedResult";
 import { deriveSolvedResultFromEvents } from "@/domain/review/service/solvedResultDeriver";
 import { SolvedDialog } from "@/ui/player/dialogs/SolvedDialog";
@@ -26,7 +26,7 @@ import ProblemLearningInfoPanel from "./components/panels/ProblemLearningInfoPan
 import PromotionDialog from "./dialogs/PromotionDialog";
 import PlyControlPanel from "@/ui/player/components/panels/PlyControlPanel";
 import { useTimerStore } from "@/ui/player/hooks/useTimerStore";
-import { handleIntent } from "@/domain/game/intentHandler";
+import { handleIntentResult } from "@/domain/game/intentHandler";
 import { Position } from "@/domain/kif/entity";
 
 //////////////////////////////////////////////////////////////
@@ -45,7 +45,7 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
     const gameState = useGameStore.getState()
     
 
-    const { initialize, dispatch, pendingPromotion, state, events, moves } = useGameStore()    
+    const { initialize, dispatch, choosePromotion, pendingPromotion, state, events, moves } = useGameStore()    
     
     const position = useCurrentPosition()
     //const moves = useGameStore(s=>s.moves)
@@ -112,7 +112,10 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
         }
         //const nextMove = moves[replay.ply]
         const remainingMoves = moves.slice(replay.ply)
-        const res = handleIntent(intent, position, remainingMoves, gameState, replay.ply, timer.elapsedSec)
+
+        const move = choosePromotion(promote)        
+        const intentResult: IntentResult = { type: "move", move }
+        const res = handleIntentResult(intentResult, position, remainingMoves, gameState, replay.ply, timer.elapsedSec)
         
         if (res.type === "event"){            
             dispatch(res.event)
