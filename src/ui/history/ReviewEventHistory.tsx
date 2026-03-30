@@ -13,16 +13,16 @@ export function formatSolvedResult(res: SolvedResult) {
     return ` ${outcome} ${mistakesString}${revealedString} (${res.elapsedSec}s)`
 
 }
-function formatEvent(problem: Problem | undefined, event: ReviewEvent): string {    
+function formatEvent(title: string, event: ReviewEvent): string {    
     //const eventLog = useReviewEventStore(s=>s.eventLog)
     let content: string
     switch (event.type) {
         case "reviewed":
             const res = event.solvedResult
             const score = evaluateScore(res)
-            content = `${problem?.title} [${score}] ${formatSolvedResult(res)}`;
+            content = `${title} [${score}] ${formatSolvedResult(res)}`;
             break
-        case "reset": content = `リセット：${problem?.title}`; break
+        case "reset": content = `リセット：${title}`; break
     }
     return content
 }
@@ -43,12 +43,13 @@ export function ReviewEventHistory() {
         <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto" }}>
             最近の学習データ
             <List>
-                {events.map(event => {                    
+                {events.map(event => {   
+                    //console.log("histtorylog", event)                 
                     return (
                         <ListItem disablePadding
                             sx={{ borderBottom: 1, borderColor: "divider", px: 1, py: 0 }}>
                             <ListItemText
-                                primary={formatEvent(byId[event.problemId], event)}
+                                primary={formatEvent(byId[event.problemId]?.title, event)}
                                 secondary={formatDateNumber(event.at)}>
                             </ListItemText>
                         </ListItem>

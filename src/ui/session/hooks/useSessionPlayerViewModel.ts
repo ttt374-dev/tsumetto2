@@ -62,7 +62,12 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
     const missionName = useMissionStore(
         s => missionId ? s.missions.find(d => d.id === missionId)?.name ?? "" : ""
     )
-    const hasSubmitted: Record<ProblemId, boolean> = {}
+    //const hasSubmitted: Record<ProblemId, boolean> = {}
+    const [submittedIds, setSubmittedIds] = useState<Set<ProblemId>>(new Set())
+
+    useEffect(()=>{
+        setSubmittedIds(new Set())
+    }, [sessionId])
 
     useEffect(()=>{ 
         //setHasSubmitted(false)
@@ -75,7 +80,8 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
     // navigation
     const submitSolvedResult = () => { // submit したら true を返す               
         if (!sessionId) return false
-        if (hasSubmitted[currentProblemId]) return false
+        //if (solvedResultRecords[currentProblemId]) return false
+        if (submittedIds.has(currentProblemId)) return false
 
         //alert("sub res")
         
@@ -92,18 +98,20 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
         appendReview(currentProblemId, reviewId, sessionId, res)
         console.log("submit answer", res)
         //setHasSubmitted(true)
-        hasSubmitted[currentProblemId] = true
+        //solvedResultRecords[currentProblemId] = res
+        submittedIds.add(currentProblemId)
         return true        
     }    
     const flush = () => {
-        if (hasSubmitted[currentProblemId]) return  // サブミット済なら何もしない        
+        if (submittedIds.has(currentProblemId)) return  // サブミット済なら何もしない        
 
         if (!state.isSolved && (state.isRevealed || state.mistakes > 0)) { // もし解かれてなかった、答えを見た、間違えてたら、諦めたと見なす
             const { ply, elapsedSec } = createPlayerContext()
             alert("abandon")
             dispatch({ type: "ABANDON", ply, elapsedSec })
+            submitSolvedResult()
         }
-        submitSolvedResult()
+        
     }
 
     /*
