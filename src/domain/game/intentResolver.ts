@@ -16,7 +16,7 @@ export type IntentResult =   // ゲームエンジンの状態
 
 export function resolveIntent(position: Position, intent: Intent): IntentResult{
     if (intent.type === "move") {
-        return resolveBoardMoveIntent(position, intent.from, intent.to, intent.promote)
+        return resolveBoardMoveIntent(position, intent.from, intent.to)
     }
     if (intent.type === "drop") {
         return resolveDropIntent(position, intent.pieceType, intent.to)
@@ -31,7 +31,7 @@ function resolveBoardMoveIntent(
     position: Position,
     from: Square,
     to: Square,
-    promote: boolean
+    //promote: boolean
 ): IntentResult {
     const piece = position.board.get(from)
     if (!piece) throw new Error("piece not there")    
@@ -45,7 +45,7 @@ function resolveBoardMoveIntent(
 
     // 駒の移動ルール
     const validMoves = generateValidMovesFrom(position, from)
-    const isValid = validMoves.some(m => m.to.file == to.file && m.to.rank === to.rank && m.promote === promote);
+    const isValid = validMoves.some(m => m.to.file == to.file && m.to.rank === to.rank);
     if (!isValid) {
         console.log("invalid move", from, to, piece)
         return {type: "invalidMove", reason: "illegal move"}
@@ -57,8 +57,7 @@ function resolveBoardMoveIntent(
         return { type: "promotionPending", pendingPromotion: { from, to, pieceType: piece.type}}
     }
     //const promote = true // TODO
-    const move = new Move(from, to, piece.type, false)
-    console.log("resolve move intent", promote, move)     
+    const move = new Move(from, to, piece.type, false) 
     
     return { type: "move", move: move}
 }

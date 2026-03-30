@@ -33,7 +33,6 @@ function deriveGameEvent(move: Move, nextMove: Move, isLastMove: boolean, ply: n
     if (!move.equals(nextMove)){
         return { type: "MISTAKE", ply, elapsedSec}
     }
-    //if (remainingMoves.length <= 1){
     if (isLastMove){
         return { type: "SOLVE", ply, elapsedSec}
     } else {
