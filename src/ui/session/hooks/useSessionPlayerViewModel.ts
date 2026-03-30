@@ -29,7 +29,7 @@ export type SessionPlayerPlayingVM = {
       sessionId: SessionId
       //results: Record<ProblemId, SolvedResult>
       nextProblem: () => void
-      moveToProblemId: (id: ProblemId) => void
+      moveTo: (index: number) => void
       submitSolvedResult: () => boolean
       //undoLastAnswer: () => void
       //hasLastAnswer: () => boolean
@@ -46,7 +46,7 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
     const sessionId = useSessionStore(s=>s.sessionId)
     const next = useSessionStore(s => s.next)
     //const prev = useSessionStore(s => s.prev)
-    const moveToProblemId = useSessionStore(s=>s.moveToId)
+    const moveTo = useSessionStore(s=>s.moveTo)
     //const results = useSessionStore(s=>s.results)
     //const submitResult = useSessionStore(s=>s.submitResult)
     const summary = useSessionStore(s=>s.summary)
@@ -143,7 +143,7 @@ export function useSessionPlayerViewModel(): SessionPlayerVM {
     return { 
         status: "playing", 
         problemIds, sessionId, problem, title, index, count, 
-        nextProblem: next, moveToProblemId, submitSolvedResult, //undoLastAnswer, hasLastAnswer,
+        nextProblem: next, moveTo, submitSolvedResult, //undoLastAnswer, hasLastAnswer,
         navigateToSummary: summary, flush,
      }
 }

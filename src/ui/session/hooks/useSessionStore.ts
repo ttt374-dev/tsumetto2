@@ -4,10 +4,18 @@ import type { ProblemId } from "@/domain/problem/entity/Problem";
 import { v4 } from "uuid";
 import { create } from "zustand";
 
-//type SessionState = 
+type SessionState = 
+    | { type: "idle"}
+    | { type: "finished"}
+    | { type: "active",
+        sessionId: SessionId,
+        missionId: MissionId,
+        index: number
+    }
 
 type SessionStore = {
     // ===== state =====
+    state: SessionState,
     sessionId?: SessionId,
     missionId?: MissionId;
     problemIds: ProblemId[];
@@ -18,11 +26,10 @@ type SessionStore = {
     phase: () => SessionPhase
 
     // ===== command =====
-    start: (missionId: MissionId, ids: ProblemId[], startIndex?: number) => SessionId;
+    start: (missionId: MissionId, ids: ProblemId[], startIndex?: number) => void;
     next: () => void;
     prev: () => void;
-    moveToIndex: (index: number) => void;
-    moveToId: (id: ProblemId) => void;
+    moveTo: (index: number) => void;    
     summary: () => void;
     //submitResult: (id: ProblemId, res: SolvedResult | undefined) => void
     reset: () => void;
@@ -32,11 +39,12 @@ type SessionStore = {
 
 export const useSessionStore = create<SessionStore>((set, get) => ({
     // state
+    state: { type: "idle"},
     missionId: undefined,
     sessionId: undefined,
     problemIds: [],
     currentIndex: -1,
-    results: {},
+    //results: {},
 
     // derived
     phase: () => {
@@ -52,6 +60,9 @@ export const useSessionStore = create<SessionStore>((set, get) => ({
     // command
     // ======================
     start: (missionId, ids, startIndex=0) => {
+        if (ids.length === 0) return    // 空だったらスタートしない
+        if (ids.length <= startIndex) return // startIndex範囲外
+
         const sessionId = v4()
         set((_s) => {
             //console.log("start", missionId, ids, ids.length > 0 ? 0 : -1)
@@ -59,12 +70,12 @@ export const useSessionStore = create<SessionStore>((set, get) => ({
                 missionId: missionId,
                 sessionId: sessionId,
                 problemIds: ids,
-                currentIndex: ids.length > startIndex ? startIndex : -1,
-                results: {},
+                currentIndex: startIndex,
+                //results: {},
                 //answers: [],
             }
         })
-        return sessionId
+        //return sessionId
     },
 
     next: () =>
@@ -86,18 +97,13 @@ export const useSessionStore = create<SessionStore>((set, get) => ({
             };
         }),
 
-    moveToIndex: (index) =>
+    moveTo: (index) =>
         set((s) => {
             if (index < 0 || index >= s.problemIds.length) return s;
             return { currentIndex: index };
         }),
 
-    moveToId: (id) =>
-        set((s) => {
-            const index = s.problemIds.indexOf(id);
-            if (index === -1) return s;
-            return { currentIndex: index };
-        }),
+
 
     summary: () => {
         set((s) => ({

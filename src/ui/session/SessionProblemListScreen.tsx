@@ -33,9 +33,9 @@ function SessionProblemListContent( { vm } :
     { vm: SessionPlayerPlayingVM } 
 ){
     const navigate = useNavigate()
-    const handleOnSelect = (id: ProblemId) => {
+    const handleOnSelect = (index: number) => {
         navigate(routes.back)        
-        vm.moveToProblemId(id)
+        vm.moveTo(index)
     }
 
     //console.log("result", vm.results)

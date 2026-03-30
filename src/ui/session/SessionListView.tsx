@@ -8,7 +8,7 @@ import { useReviewEventStore } from "@/ui/store/useReviewEventStore"
 
 export function SessionListView(props: {
     ids: ProblemId[]
-    onSelect: (id: ProblemId) => void
+    onSelect: (index: number) => void
     selectedId: ProblemId
     sessionId: SessionId
     //results: Record<ProblemId, SolvedResult>
@@ -31,7 +31,7 @@ export function SessionListView(props: {
                         <ListItem
                             sx={{ borderBottom: 1, borderColor: "divider", px: 1, py: 0 }}>
                             <ListItemButton
-                                onClick={() => props.onSelect(id)}
+                                onClick={() => props.onSelect(i)}
                                 selected={props.selectedId === id}>
                                 <ListItemIcon sx={{ minWidth: 32 }}>
                                     {i + 1}.

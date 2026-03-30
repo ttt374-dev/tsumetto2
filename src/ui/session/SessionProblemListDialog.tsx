@@ -20,9 +20,9 @@ function SessionProblemListDialogContent({open, onClose, vm}: {
     onClose: () => void
     vm: SessionPlayerPlayingVM
 }){
-    const handleOnSelect = (id: ProblemId) => {        
+    const handleOnSelect = (index: number) => {        
         onClose()
-        vm.moveToProblemId(id)
+        vm.moveTo(index)
     }
     return (
         <Dialog open={open} onClose={onClose} fullScreen
