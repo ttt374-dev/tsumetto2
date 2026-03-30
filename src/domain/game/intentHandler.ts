@@ -5,10 +5,6 @@ import { buildUntilPly } from "@/domain/kif/service/buildUntilPly"
 import { createPlayerContext, type PlayerContext } from "@/ui/player/components/types/PlayerContext"
 import { type GameEvent, type PendingPromotion } from "@/ui/player/hooks/useGameStore"
 
-type GameWritePort = {
-    dispatch: (event: GameEvent) => void
-}
-
 type GameQuery = {
     initialPosition: Position,
     moves: Move[]
@@ -48,12 +44,17 @@ export function handleIntent(intent: Intent,
     }
 
     // ここは move 確定            
-    const result = evaluateMove({ move: res.move, moves: gameQuery.moves, ply })
+    //const result = evaluateMove({ move: res.move, moves: gameQuery.moves, ply })
     //applyResult(result, ctx)
     const ctx = createPlayerContext()
-    const event = deriveAction(result, ctx)
+    //const event = deriveAction(result, ctx)
     //applyAction(gameWriter, event)
 
+    const nextMove = gameQuery.moves[ply]
+    
+    const event: GameEvent = res.move.equals(nextMove) 
+        ? { type: "ADVANCE_PLY"} 
+        : { type: "MISTAKE", ply, elapsedSec: ctx.elapsedSec}
     return { type: "event", event}
 }
 
@@ -84,7 +85,7 @@ function deriveAction(res: EvaluationResult, ctx: PlayerContext): GameEvent {
         case "incorrect":
             return { type: "MISTAKE", ...ctx }
         case "progress":
-            return { type: "ADVANCE_TURN" }
+            return { type: "ADVANCE_PLY" }
         case "solved":
             return { type: "SOLVE", ...ctx }
         default: {
