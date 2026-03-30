@@ -1,42 +1,31 @@
 import { type IntentResult } from "@/domain/game/intentResolver"
-import { Move, Position } from "@/domain/kif/entity"
-import { type GameEvent, type PendingPromotion } from "@/ui/player/hooks/useGameStore"
+import { Move } from "@/domain/kif/entity"
+import { useGameStore, type GameEvent, type PendingPromotion } from "@/ui/player/hooks/useGameStore"
+import { useReplayStore } from "@/ui/player/hooks/useReplayStore";
+import { useTimerStore } from "@/ui/player/hooks/useTimerStore";
 
-type GameQuery = {
-    initialPosition: Position,
-    moves: Move[]
-}
-
-type PromotionPort = {
-    choosePromotion: (promote: boolean) => Move
-    promotionPending: (pendingPromotion: PendingPromotion) => void
-}
-////////////////////////////////////////////
 type HandleIntentResult =
   | { type: "invalidMove", reason?: string }
   | { type: "promotionPending"; pendingPromotion: PendingPromotion }
   | { type: "event"; event: GameEvent }
 
 //////////////////////////////////
-
-export function decideGameEvent(res: IntentResult, nextMmove: Move, isLastMove: boolean,
-     ply: number, elapsedSec: number
+export function decideGameEvent(props: { intentResult: IntentResult, nextMove: Move, isLastMove: boolean,
+     ply: number, elapsedSec: number }
 ): HandleIntentResult {    
-    //const res = resolveMoveFromIntent(intent, position, promotion, ply)
-    //console.log("resolvedmove", intent, res)
 
-    if (res.type === "invalidMove") return { 
+    if (props.intentResult.type === "invalidMove") return { 
         type: "invalidMove",
-        reason: res.reason
+        reason: props.intentResult.reason
     }
-    if (res.type === "promotionPending") {
+    if (props.intentResult.type === "promotionPending") {
         return { 
             type: "promotionPending",
-            pendingPromotion: res.pendingPromotion
+            pendingPromotion: props.intentResult.pendingPromotion
         }
     }    
     //console.log("handle res", res, remainingMoves)
-    const event = deriveGameEvent(res.move, nextMmove, isLastMove, ply, elapsedSec)
+    const event = deriveGameEvent(props.intentResult.move, props.nextMove, props.isLastMove, props.ply, props.elapsedSec)
     return { type: "event", event}
 }
 
@@ -51,6 +40,15 @@ function deriveGameEvent(move: Move, nextMove: Move, isLastMove: boolean, ply: n
         return { type: "ADVANCE_TURN"}
     }
 }
-
 /////////////////////////////////////////////////////
+// helpers
+export function createDecideGameEventContext(){
+    const moves = useGameStore.getState().moves
+    const ply = useReplayStore.getState().ply
+    const elapsedSec = useTimerStore.getState().elapsedSec
 
+    const nextMove = moves[ply]
+    const isLastMove = ply + 1 >= moves.length
+
+    return { nextMove, isLastMove, ply, elapsedSec}
+}

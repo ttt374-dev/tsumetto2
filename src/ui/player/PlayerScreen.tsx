@@ -3,20 +3,6 @@ import { Box, Stack } from "@mui/material"
 import { useNavigate } from "react-router-dom";
 import { useEffect } from 'react';
 
-import { Problem, type ProblemId } from "@/domain/problem/entity/Problem"
-import { AppShell } from "../common/components/layout/AppShell";
-import { routes } from "../App/useAppNavigation";
-import { useToast } from "../App/providers/ToastProvider";
-import { useCurrentPosition, useGameStore } from "./hooks/useGameStore";
-import { useBoardInputStore } from "./hooks/useBoardInputStore";
-import { useProblemStore } from "@/ui/store/useProblemStore";
-import type { Intent, IntentResult } from "@/domain/game/intentResolver";
-import type { SolvedResult } from "@/domain/review/solvedResult";
-import { deriveSolvedResultFromEvents } from "@/domain/review/service/solvedResultDeriver";
-import { SolvedDialog } from "@/ui/player/dialogs/SolvedDialog";
-import { createPlayerContext } from "@/ui/player/components/types/PlayerContext";
-import { useReplayStore } from "@/ui/player/hooks/useReplayStore";
-
 import PlayerRightPanel from "./components/panels/PlayerRightPanel";
 import TitlePanel from "./components/panels/TitlePanel";
 import MovesPanel from "./components/panels/MovesPanel";
@@ -25,9 +11,21 @@ import TimerControlPanel from "./components/panels/TImerControlPanel";
 import ProblemLearningInfoPanel from "./components/panels/ProblemLearningInfoPanel";
 import PromotionDialog from "./dialogs/PromotionDialog";
 import PlyControlPanel from "@/ui/player/components/panels/PlyControlPanel";
+
+import type { IntentResult } from "@/domain/game/intentResolver";
+import type { SolvedResult } from "@/domain/review/solvedResult";
+import { Problem, type ProblemId } from "@/domain/problem/entity/Problem"
+import { AppShell } from "../common/components/layout/AppShell";
+import { routes } from "../App/useAppNavigation";
+import { useToast } from "../App/providers/ToastProvider";
+import { useCurrentPosition, useGameStore } from "./hooks/useGameStore";
+import { useBoardInputStore } from "./hooks/useBoardInputStore";
+import { useProblemStore } from "@/ui/store/useProblemStore";
+import { deriveSolvedResultFromEvents } from "@/domain/review/service/solvedResultDeriver";
+import { SolvedDialog } from "@/ui/player/dialogs/SolvedDialog";
+import { useReplayStore } from "@/ui/player/hooks/useReplayStore";
 import { useTimerStore } from "@/ui/player/hooks/useTimerStore";
-import { decideGameEvent } from "@/domain/game/intentHandler";
-import { Position } from "@/domain/kif/entity";
+import { createDecideGameEventContext, decideGameEvent } from "@/domain/game/intentHandler";
 
 //////////////////////////////////////////////////////////////
 export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm, onAfterDelete, footerPanel }: {
@@ -103,11 +101,9 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
         navigate(routes.detail(problem.id))
     }
     const handlePromotionConfirm = (promote: boolean) => {
-        const nextMove = moves[replay.ply]
-        const isLastMove = replay.ply + 1 >= moves.length
-        
         const intentResult: IntentResult = { type: "move", move: choosePromotion(promote) }
-        const res = decideGameEvent(intentResult, nextMove, isLastMove, replay.ply, timer.elapsedSec)
+        const ctx = createDecideGameEventContext()
+        const res = decideGameEvent({intentResult, ...ctx})
         if (res.type === "event"){
             dispatch(res.event)
         }        
