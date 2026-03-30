@@ -29,13 +29,15 @@ function SquareView({ piece, selected, onClick }: {
 }
 
 export default function BoardView() {
-    const { board } = useCurrentPosition()    
+    const position = useCurrentPosition()    
+    const { board } = position
     const selection = useBoardInputStore(s=>s.selection)    
     const ranks = [...Array(9)].map((_, i) => i + 1)   //   1 → 9
     const files = [...Array(9)].map((_, i) => 9 - i)   // 9 → 1（将棋表記o9i） ???
     const gameState = useGameStore.getState()
     const ply = useReplayStore(s=>s.ply)
     const dispatch = useGameStore(s=>s.dispatch)
+    const moves = useGameStore(s=>s.moves)
     const promotionPending = useGameStore(s=>s.promotionPending)    
 
     const clickSquare = useBoardInputStore(s => s.clickSquare)
@@ -45,7 +47,8 @@ export default function BoardView() {
         const intent = clickSquare(new Square(file, rank), board)
         if (!intent) return
         //const result = resolveIntent(position, intent)
-        const res = handleIntent(intent, gameState, gameState, ply)
+        const nextMove = moves[ply+1]
+        const res = handleIntent(intent, position, nextMove, gameState, ply)
         if (res.type === "invalidMove") return
         clear()
         if (res.type === "event"){

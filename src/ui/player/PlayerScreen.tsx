@@ -7,7 +7,7 @@ import { Problem, type ProblemId } from "@/domain/problem/entity/Problem"
 import { AppShell } from "../common/components/layout/AppShell";
 import { routes } from "../App/useAppNavigation";
 import { useToast } from "../App/providers/ToastProvider";
-import { useGameStore } from "./hooks/useGameStore";
+import { useCurrentPosition, useGameStore } from "./hooks/useGameStore";
 import { useBoardInputStore } from "./hooks/useBoardInputStore";
 import { useProblemStore } from "@/ui/store/useProblemStore";
 import type { Intent } from "@/domain/game/intentResolver";
@@ -27,6 +27,7 @@ import PromotionDialog from "./dialogs/PromotionDialog";
 import PlyControlPanel from "@/ui/player/components/panels/PlyControlPanel";
 import { useTimerStore } from "@/ui/player/hooks/useTimerStore";
 import { handleIntent } from "@/domain/game/intentHandler";
+import { Position } from "@/domain/kif/entity";
 
 //////////////////////////////////////////////////////////////
 export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm, onAfterDelete, footerPanel }: {
@@ -46,6 +47,8 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
 
     const { initialize, dispatch, pendingPromotion, state, events, moves } = useGameStore()    
     
+    const position = useCurrentPosition()
+    //const moves = useGameStore(s=>s.moves)
     const replay = useReplayStore()
     const timer = useTimerStore()
     const clearSelection = useBoardInputStore(s=>s.clear)
@@ -85,7 +88,7 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
 
             case "ADVANCE_PLY":                
                 replay.advancePly()
-                
+
                 if (replay.ply + 1 >= moves.length){
                     dispatch({type: "SOLVE", ply: replay.ply+1, elapsedSec: timer.elapsedSec})
                 } else {
@@ -118,7 +121,8 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
             type: "choosePromotion",
             promote
         }
-        const res = handleIntent(intent, gameState, gameState, replay.ply)
+        const nextMove = moves[replay.ply]
+        const res = handleIntent(intent, position, nextMove, gameState, replay.ply)
         
         if (res.type === "event"){            
             dispatch(res.event)

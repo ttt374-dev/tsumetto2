@@ -14,10 +14,6 @@ type PromotionPort = {
     choosePromotion: (promote: boolean) => Move
     promotionPending: (pendingPromotion: PendingPromotion) => void
 }
-type ReplayQuery = {
-    ply: number
-}
-
 ////////////////////////////////////////////
 type HandleIntentResult =
   | { type: "invalidMove", reason?: string }
@@ -25,11 +21,11 @@ type HandleIntentResult =
   | { type: "event"; event: GameEvent }
 
 export function handleIntent(intent: Intent,
-    gameQuery: GameQuery, promotion: PromotionPort, ply: number
+    position: Position, nextMove: Move, promotion: PromotionPort, ply: number
 ): HandleIntentResult {
     //const game = useGameStore.getState()    
     //const replay = useReplayStore.getState()
-    const res = resolveMoveFromIntent(intent, gameQuery, promotion, ply)
+    const res = resolveMoveFromIntent(intent, position, promotion, ply)
 
     if (res.type === "invalidMove") return { 
         type: "invalidMove",
@@ -50,7 +46,7 @@ export function handleIntent(intent: Intent,
     //const event = deriveAction(result, ctx)
     //applyAction(gameWriter, event)
 
-    const nextMove = gameQuery.moves[ply]
+    //const nextMove = gameQuery.moves[ply]
     
     const event: GameEvent = res.move.equals(nextMove) 
         ? { type: "ADVANCE_PLY"} 
@@ -59,37 +55,15 @@ export function handleIntent(intent: Intent,
 }
 
 
-function resolveMoveFromIntent(intent: Intent, gameQuery: GameQuery, promotion: PromotionPort, ply: number): IntentResult {
-    //const game = useGameStore.getState()
-    //const replay = useReplayStore.getState()
-    //const ctx = createPlayerContext()
-
+function resolveMoveFromIntent(intent: Intent, position: Position, promotion: PromotionPort, ply: number): IntentResult {
     switch (intent.type) {
         case "move":
-        case "drop":
-            const position = buildUntilPly(
-                gameQuery.initialPosition,
-                gameQuery.moves,
-                ply)
+        case "drop":            
             return resolveIntent(position, intent)
         case "choosePromotion":
             return { type: "move", move: promotion.choosePromotion(intent.promote) }
         default: {
             const _exhaustive: never = intent
-            return _exhaustive
-        }
-    }
-}
-function deriveAction(res: EvaluationResult, ctx: PlayerContext): GameEvent {
-    switch (res.type) {
-        case "incorrect":
-            return { type: "MISTAKE", ...ctx }
-        case "progress":
-            return { type: "ADVANCE_PLY" }
-        case "solved":
-            return { type: "SOLVE", ...ctx }
-        default: {
-            const _exhaustive: never = res
             return _exhaustive
         }
     }
