@@ -29,6 +29,23 @@ import { createDecideGameEventContext, decideGameEvent } from "@/domain/game/int
 import { createPlayerContext } from "@/ui/player/components/types/PlayerContext";
 
 //////////////////////////////////////////////////////////////
+function usePlayerInitializer(problem: Problem){
+    const [isInitialized, setIsInitialized] = useState(false)
+
+    const initializeGame = useGameStore(s=>s.initialize)
+    const initializeReplay = useReplayStore(s=>s.initialize)
+    const restart = useTimerStore(s=>s.restart)
+    
+    useEffect(()=>{                
+        setIsInitialized(false)
+        initializeGame(problem.kifData.initialPosition, problem.kifData.moves)      
+        initializeReplay(problem.kifData.moves.length)
+        restart()        
+        setIsInitialized(true)
+    }, [problem.id])
+
+    return { isInitialized }
+}
 export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm, onAfterDelete, footerPanel }: {
     problem: Problem
     title: React.ReactNode
@@ -39,7 +56,7 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
 }) {    
     const toast = useToast()
     const navigate = useNavigate()    
-    const { initialize, dispatch, choosePromotion, pendingPromotion, state, events, moves } = useGameStore()        
+    const { dispatch, choosePromotion, pendingPromotion, state, events } = useGameStore()        
     
     const replay = useReplayStore()
     const timer = useTimerStore()
@@ -47,44 +64,30 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
     const deleteProblem = useProblemStore(s=>s.deleteProblem)    
 
     const [isSolvedDialogOpen, setIsSolvedDialogOpen] = useState(false)
-    const [solvedResult, setSolvedResult] = useState<SolvedResult | undefined>(undefined)
-    const [isInitialized, setIsInitialized] = useState(false)
-    
-    useEffect(()=>{        
-        setIsInitialized(false)
-        initialize(problem.kifData.initialPosition, problem.kifData.moves)
-        console.log("initialized", events)
-        
-        replay.initialize(problem.kifData.moves.length)
-        timer.restart()        
-        setIsInitialized(true)
-    }, [problem.id])
-      
+
+    const { isInitialized} = usePlayerInitializer(problem)      
     let turnId = 0
 
     useEffect(() => {
         if (!isInitialized) return   // 初期化前は無視
-        console.log("switching", events)
+        //console.log("switching", events)
         const last = events.at(-1)
         if (!last) return
 
         switch (last.type) {
-            case "SOLVE":
-        
+            case "SOLVE":        
                 replay.advancePly()
                 timer.stop()
                 setIsSolvedDialogOpen(true)
-                setSolvedResult(deriveSolvedResultFromEvents(events))                
+                //setSolvedResult(deriveSolvedResultFromEvents(events))                
                 onSolve?.()
                 break
             case "MISTAKE":
                 toast({ message: `incorrect: [${state.mistakes}]` })
                 break
-
             case "ADVANCE_TURN":
                 advanceTurn()
-                break;                
-
+                break;
         }
     }, [events])
 
@@ -185,12 +188,12 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
                 >
                 </PromotionDialog>}
 
-            { solvedResult &&
-                <SolvedDialog open={isSolvedDialogOpen}
-                    onClose={() => setIsSolvedDialogOpen(false)}
-                    onConfirm={onSolvedConfirm}
-                    solvedResult={solvedResult}
-                />}
+            
+            <SolvedDialog open={isSolvedDialogOpen}
+                onClose={() => setIsSolvedDialogOpen(false)}
+                onConfirm={onSolvedConfirm}
+                events={events}
+            />
         </AppShell>
     )
 }
