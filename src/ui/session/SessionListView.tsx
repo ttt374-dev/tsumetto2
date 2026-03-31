@@ -5,6 +5,8 @@ import type { SessionId } from "@/domain/session/entity/Session"
 import { formatSolvedResult } from "@/ui/history/ReviewEventHistory"
 import { useProblemStore } from "@/ui/store/useProblemStore"
 import { useReviewEventStore } from "@/ui/store/useReviewEventStore"
+import type { ReviewEvent } from "@/domain/review/ReviewEvent"
+import type { SolvedResult } from "@/domain/review/solvedResult"
 
 export default function SessionListView(props: {
     ids: ProblemId[]
@@ -15,8 +17,9 @@ export default function SessionListView(props: {
 }) {
     const byId = useProblemStore(s => s.byId)    
     const eventLog = useReviewEventStore(s=>s.eventLog)
-    const sessionEvents = eventLog.filter(s=>s.type==="reviewed").filter(s=>s.sessionId === props.sessionId)
-    console.log(sessionEvents)    
+    //const sessionEvents = eventLog.filter(s=>s.type==="reviewed").filter(s=>s.sessionId === props.sessionId)
+    //console.log(sessionEvents)    
+    const solvedResultMap = getSolvedResultsBySession(eventLog, props.sessionId)
 
     return (
         <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto" }}>
@@ -24,8 +27,9 @@ export default function SessionListView(props: {
                 {props.ids.map((id, i) => {
                     const problem = byId[id]
                     //const solvedResult: SolvedResult | undefined = props.results[id]
-                    const solvedResult = sessionEvents.find(e=>e.problemId===id)?.solvedResult                    
-                    const resultString = solvedResult ? formatSolvedResult(solvedResult) : ""
+                    //const solvedResult = sessionEvents.find(e=>e.problemId===id)?.solvedResult                    
+                    const solvedResult = solvedResultMap[id]
+                    const resultString = solvedResult ? formatSolvedResult(solvedResultMap[id]) : ""
 
                     return (
                         <ListItem
@@ -47,4 +51,23 @@ export default function SessionListView(props: {
             </List>
         </Box>
     )
+}
+
+/////////
+// helper
+// domain / review
+export function getSolvedResultsBySession(
+    events: ReviewEvent[],
+    sessionId: SessionId
+): Record<ProblemId, SolvedResult> {
+    const result: Record<ProblemId, SolvedResult> = {}
+
+    for (const e of events) {
+        if (e.type !== "reviewed") continue
+        if (e.sessionId !== sessionId) continue
+
+        result[e.problemId] = e.solvedResult
+    }
+
+    return result
 }

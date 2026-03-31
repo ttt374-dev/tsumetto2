@@ -8,7 +8,7 @@ import { useProblemStore } from "@/ui/store/useProblemStore";
 
 //////////////////////////////////////////////////
 
-export function LibraryScreen() {
+export default function LibraryScreen() {
     const vm = useLibraryViewModel()   
     const [isOpen, setIsOpen] = useState(false);
     const allSources = useProblemStore(s=>s.allSources)

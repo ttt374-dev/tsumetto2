@@ -1,27 +1,26 @@
 import './App.css'
 import { App as CapacitorApp } from '@capacitor/app';
 import { useEffect, useMemo } from 'react';
-import { BrowserRouter, Routes, Route, Navigate, Outlet, useNavigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useLocation, useNavigationType } from "react-router-dom";
 import { CssBaseline } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material";
 
 import SessionLayout from '../session/SessionLayout.tsx';
-import { LibraryScreen } from '../library/LibraryScreen.tsx';
+import LibraryScreen from '../library/LibraryScreen.tsx';
 import MissionScreen from '../mission/MissionScreen.tsx';
 import MissionEditScreen from '../mission/edit/MissionEditScreen.tsx';
-import SessionPlayerScreen from '../session/SessionPlayerScreen';
-import { RepositoryContext, type RepositoryContextValue } from './providers/RepositoryProvider';
-import { ToastProvider } from './providers/ToastProvider';
-import { ListScreen } from '../list/ListScreen';
 import StatsScreen from '../stats/StatsScreen';
 import SinglePlayerScreen from '../player/SinglePlayerScreen';
+import SessionPlayerScreen from '../session/SessionPlayerScreen';
+import SessionSummaryScreen from '../summary/MissionSummaryScreen.tsx';
+import ProblemDetailScreen from '../detail/ProblemDetailScreen.tsx';
+import HistoryScreen from '@/ui/history/HistoryScreen.tsx';
+
+import { RepositoryContext } from './providers/RepositoryProvider';
+import { ToastProvider } from './providers/ToastProvider';
 import { bootstrapApp, createRepositories } from './bootstrapApp';
 import { routes } from './useAppNavigation';
-import SessionSummaryScreen from '../summary/MissionSummaryScreen.tsx';
-import { ProblemDetailScreen } from '../detail/ProblemDetailScreen.tsx';
-import SessionProblemListScreen from '@/ui/session/SessionProblemListScreen.tsx';
-import HistoryScreen from '@/ui/history/HistoryScreen.tsx';
 
 export const theme = createTheme({
     cssVariables: true,   // ← これ必須
@@ -83,7 +82,6 @@ function App() {
                                     { /* <Route path="list" element={}/>*/ }
                                 </Route>
                                 <Route path="summary" element={<SessionSummaryScreen />} />
-                                <Route path="list" element={<SessionProblemListScreen/>}/>
                             </Route>
 
                             <Route path={routes.mission} element={<MissionScreen />} />
@@ -92,7 +90,6 @@ function App() {
                             <Route path={routes.library} element={<LibraryScreen />} />
                             { /* <Route path="/view/:id" element={<ViewerScreen />} /> */ }
                             <Route path="/play/:id" element={<SinglePlayerScreen />} />
-                            <Route path="/list" element={<ListScreen />} />
                             <Route path="/detail/:id" element={<ProblemDetailScreen/>}/>
 
                             <Route path={routes.stats} element={<StatsScreen />} />

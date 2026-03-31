@@ -1,29 +1,34 @@
 import { Button, Dialog, DialogActions, DialogTitle, Stack } from "@mui/material";
 import { DialogContent } from "@mui/material"
-import { useSessionPlayerViewModel, type SessionPlayerPlayingVM } from "@/ui/session/hooks/useSessionPlayerViewModel";
 import SessionListView from "@/ui/session/SessionListView";
+import { useSessionStore } from "@/ui/session/hooks/useSessionStore";
+import { useNavigate } from "react-router-dom";
+import { routes } from "@/ui/App/useAppNavigation";
+import type { Problem, ProblemId } from "@/domain/problem/entity/Problem";
+import type { SessionId } from "@/domain/session/entity/Session";
 
 export function SessionProblemListDialog(props: {
     open: boolean
     onClose: () => void
-}){
-    const vm = useSessionPlayerViewModel()
-    if (vm.status !== "playing") return
-    return (<SessionProblemListDialogContent 
-        open={props.open} onClose={props.onClose} vm={vm}/>)
-}
+    selectedProblemId: ProblemId
+    sessionId: SessionId
+}){    
+    const moveTo = useSessionStore(s=>s.moveTo)
+    const problemIds = useSessionStore(s => s.problemIds)
 
-function SessionProblemListDialogContent({open, onClose, vm}: {
-    open: boolean
-    onClose: () => void
-    vm: SessionPlayerPlayingVM
-}){
-    const handleOnSelect = (index: number) => {        
-        onClose()
-        vm.moveTo(index)
+    const navigate = useNavigate()
+
+    const navigateToSummary = () => {
+        navigate(routes.sessionSummary)
     }
+
+    const handleOnSelect = (index: number) => {        
+        props.onClose()
+        moveTo(index)
+    }
+    
     return (
-        <Dialog open={open} onClose={onClose} fullScreen
+        <Dialog open={props.open} onClose={props.onClose} fullScreen
             sx={{ 
                 pt: "calc(env(safe-area-inset-bottom) + 16px)",
                 pb: "calc(env(safe-area-inset-top) + 16px)"
@@ -31,17 +36,17 @@ function SessionProblemListDialogContent({open, onClose, vm}: {
             >
             <DialogTitle>問題リスト</DialogTitle>
             <DialogContent sx={{p: 0}}>
-                <SessionListView ids={vm.problemIds}
+                <SessionListView ids={problemIds}
                     onSelect={handleOnSelect}
-                    selectedId={vm.problem.id}
-                    sessionId={vm.sessionId}
+                    selectedId={props.selectedProblemId}
+                    sessionId={props.sessionId}
                 />
             </DialogContent>
             <DialogActions sx={{ p: 0, width: "100%", display: "flex" }}>
-                <Button onClick={onClose} fullWidth variant="contained">
+                <Button onClick={props.onClose} fullWidth variant="contained">
                     戻る
                 </Button>
-                <Button onClick={vm.navigateToSummary} fullWidth variant="outlined">
+                <Button onClick={navigateToSummary} fullWidth variant="outlined">
                     サマリーへ
                 </Button>
             </DialogActions>

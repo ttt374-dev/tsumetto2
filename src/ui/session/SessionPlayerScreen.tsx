@@ -25,7 +25,7 @@ function SessionPlayerContent(props: {
     
     const { solve, goNext, skip } = useSessionCompletion(props.problem, props.sessionId)
     const { title } = useSessionPlayerTitleMaker(props.problem)
-    
+    //alert(props.problem.id)
     const footerPanel: React.ReactNode = (
         <PlayerFooterPanel
             onNext={goNext}
@@ -45,6 +45,8 @@ function SessionPlayerContent(props: {
             <SessionProblemListDialog
                 open={isListOpen}
                 onClose={()=>setIsListOpen(false)}
+                selectedProblemId={props.problem.id}
+                sessionId={props.sessionId}
             />
 
         </>

@@ -16,7 +16,7 @@ import type { Problem, ProblemId } from "@/domain/problem/entity/Problem";
 import { ProblemInfoPanel } from "./components/ProblemInfoPanel";
 import { LearningDetailPanel } from "./components/LearningDetailPanel";
 
-export function ProblemDetailScreen(){
+export default function ProblemDetailScreen(){
     const { id } = useParams<{ id: string }>()
     const problem = useProblemStore(s => id ? s.byId[id] : undefined)
     if (!problem) return <div>Not found</div>
