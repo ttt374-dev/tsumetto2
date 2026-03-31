@@ -19,7 +19,7 @@ import type { MissionExecutionMode } from "@/ui/mission/components/MissionExecut
 
 export function useMissionViewModel() {
     const navigate = useNavigate();
-    const toast = useToast();
+    //const toast = useToast();
 
     // Store
     const missions = useMissionStore(s => s.missions);
@@ -28,7 +28,7 @@ export function useMissionViewModel() {
     //const problems = useProblemStore(s => s.activeProblems);
     const problems = useProblemStore(selectActiveProblems);
     const learningRecords = useLearningRecordStore(s => s.records);
-    const reloadProblems = useProblemStore(s => s.reload);
+    //const reloadProblems = useProblemStore(s => s.reload);
     const startSession = useSessionStore(s => s.start);
 
     // UI 用配列
@@ -87,21 +87,12 @@ export function useMissionViewModel() {
         navigate(routes.sessionPlay);
     };
 
-    const importer = useImport(async (res) => {
-        await reloadProblems();
-        toast({
-            message: `imported: ${res.summary.imported}, skipped: ${res.summary.skipped}, failed: ${res.summary.failed}`,
-        });
-    });
-
-    const backupRestoreDialog = useBackupRestoreDialog();
-
     return {
         missionArray,
         missionStats,
         onDragEnd,
         onCreateMission,
         onStartSession,
-        presenter: { importer, backupRestoreDialog },
+        //presenter: { importer, backupRestoreDialog },
     };
 }

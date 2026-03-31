@@ -17,6 +17,10 @@ import MissionFabMenu from "./components/MissionFabMenu";
 import { useLongPress } from "@/ui/library/hooks/useLongPress";
 import { DefaultMissionExecutionMode, ExecutionModeControl, type MissionExecutionMode } from "@/ui/mission/components/MissionExecutionModeControl";
 import type { ProblemStats } from "@/domain/problem/valueObject/ProblemStats";
+import { useImport } from "@/ui/Import/useImport";
+import { useToast } from "@/ui/App/providers/ToastProvider";
+import { useProblemStore } from "@/ui/store/useProblemStore";
+import { useBackupRestoreDialog } from "@/ui/common/components/dialogs/BackupRestoreDialog";
 
 export default function MissionScreen() {
     const { onCreateMission } = useMissionViewModel();
@@ -50,7 +54,17 @@ export default function MissionScreen() {
 }
 ///////////////////////////
 function MissionRelatedDialogs(){
-    const { presenter: { importer, backupRestoreDialog } } = useMissionViewModel();
+    const reloadProblems = useProblemStore(s => s.reload);
+    const toast = useToast()
+
+    const importer = useImport(async (res) => {
+        await reloadProblems();
+        toast({
+            message: `imported: ${res.summary.imported}, skipped: ${res.summary.skipped}, failed: ${res.summary.failed}`,
+        });
+    });
+    const backupRestoreDialog = useBackupRestoreDialog();
+
     return (
         <>
             {/* ダイアログ */}
@@ -66,11 +80,9 @@ function MissionList(props: {
     toggleEditMode: () => void
     executionMode: MissionExecutionMode
 }) {
-    const { missionArray, onDragEnd, missionStats, onCreateMission, onStartSession, presenter: { importer, backupRestoreDialog } } 
-        = useMissionViewModel();
+    const { missionArray, onDragEnd, missionStats, onStartSession }  = useMissionViewModel();
 
-    // dnd-kit センサ
-    // ー
+    // dnd-kit センサ    
     const sensors = useSensors(
         useSensor(PointerSensor, {
             activationConstraint: {
