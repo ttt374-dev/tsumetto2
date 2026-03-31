@@ -12,14 +12,14 @@ export default function SessionListView(props: {
     ids: ProblemId[]
     onSelect: (index: number) => void
     selectedId: ProblemId
-    sessionId: SessionId
-    //results: Record<ProblemId, SolvedResult>
+    //sessionId: SessionId
+    solvedResultMap: Record<ProblemId, SolvedResult>
 }) {
     const byId = useProblemStore(s => s.byId)    
     const eventLog = useReviewEventStore(s=>s.eventLog)
     //const sessionEvents = eventLog.filter(s=>s.type==="reviewed").filter(s=>s.sessionId === props.sessionId)
     //console.log(sessionEvents)    
-    const solvedResultMap = getSolvedResultsBySession(eventLog, props.sessionId)
+    //const solvedResultMap = getSolvedResultsBySession(eventLog, props.sessionId)
 
     return (
         <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto" }}>
@@ -28,11 +28,11 @@ export default function SessionListView(props: {
                     const problem = byId[id]
                     //const solvedResult: SolvedResult | undefined = props.results[id]
                     //const solvedResult = sessionEvents.find(e=>e.problemId===id)?.solvedResult                    
-                    const solvedResult = solvedResultMap[id]
-                    const resultString = solvedResult ? formatSolvedResult(solvedResultMap[id]) : ""
+                    const res = props.solvedResultMap[id]
+                    const resultString = res ? formatSolvedResult(res) : ""
 
                     return (
-                        <ListItem
+                        <ListItem key={i}
                             sx={{ borderBottom: 1, borderColor: "divider", px: 1, py: 0 }}>
                             <ListItemButton
                                 onClick={() => props.onSelect(i)}
@@ -53,21 +53,3 @@ export default function SessionListView(props: {
     )
 }
 
-/////////
-// helper
-// domain / review
-export function getSolvedResultsBySession(
-    events: ReviewEvent[],
-    sessionId: SessionId
-): Record<ProblemId, SolvedResult> {
-    const result: Record<ProblemId, SolvedResult> = {}
-
-    for (const e of events) {
-        if (e.type !== "reviewed") continue
-        if (e.sessionId !== sessionId) continue
-
-        result[e.problemId] = e.solvedResult
-    }
-
-    return result
-}

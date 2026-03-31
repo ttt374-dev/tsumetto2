@@ -52,11 +52,11 @@ export const theme = createTheme({
         }
     },
 });
+
 function App() {
     const repos = useMemo(() => createRepositories(), [])
     bootstrapApp(repos)
-    //useAndroidBack(); // 最上位で呼ぶ
-    
+    //useAndroidBack(); // 最上位で呼ぶ    
 
     return (
         <ThemeProvider
@@ -109,7 +109,6 @@ export default App
 
 
 ///////////
-
 export function useAndroidBack() {
     useEffect(() => {
         const handlerPromise = CapacitorApp.addListener("backButton", (event: { canGoBack: boolean }) => {

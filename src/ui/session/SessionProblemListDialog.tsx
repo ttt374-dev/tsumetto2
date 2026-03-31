@@ -1,17 +1,21 @@
 import { Button, Dialog, DialogActions, DialogTitle, Stack } from "@mui/material";
 import { DialogContent } from "@mui/material"
+
 import SessionListView from "@/ui/session/SessionListView";
+
 import { useSessionStore } from "@/ui/session/hooks/useSessionStore";
 import { useNavigate } from "react-router-dom";
 import { routes } from "@/ui/App/useAppNavigation";
-import type { Problem, ProblemId } from "@/domain/problem/entity/Problem";
-import type { SessionId } from "@/domain/session/entity/Session";
+import type { ProblemId } from "@/domain/problem/entity/Problem";
+import type { SolvedResult } from "@/domain/review/solvedResult";
 
-export function SessionProblemListDialog(props: {
+export default function SessionProblemListDialog(props: {
     open: boolean
     onClose: () => void
     selectedProblemId: ProblemId
-    sessionId: SessionId
+    //sessionId: SessionId
+    solvedResultMap: Record<ProblemId, SolvedResult>
+
 }){    
     const moveTo = useSessionStore(s=>s.moveTo)
     const problemIds = useSessionStore(s => s.problemIds)
@@ -39,7 +43,7 @@ export function SessionProblemListDialog(props: {
                 <SessionListView ids={problemIds}
                     onSelect={handleOnSelect}
                     selectedId={props.selectedProblemId}
-                    sessionId={props.sessionId}
+                    solvedResultMap={props.solvedResultMap}
                 />
             </DialogContent>
             <DialogActions sx={{ p: 0, width: "100%", display: "flex" }}>
