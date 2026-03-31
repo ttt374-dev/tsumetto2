@@ -22,6 +22,9 @@ export const routes = {
     // detail
     detail: (id: ProblemId) => `/detail/${id}`,
 
+    // list
+    list: "/list",
+
     // stats
     stats: "/stats",
 

@@ -7,20 +7,20 @@ import { CssBaseline } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material";
 
 import SessionLayout from '../session/SessionLayout.tsx';
-import LibraryScreen from '../library/LibraryScreen.tsx';
 import MissionScreen from '../mission/MissionScreen.tsx';
 import MissionEditScreen from '../mission/edit/MissionEditScreen.tsx';
-import StatsScreen from '../stats/StatsScreen';
-import SinglePlayerScreen from '../player/SinglePlayerScreen';
 import SessionPlayerScreen from '../session/SessionPlayerScreen';
-import SessionSummaryScreen from '../summary/MissionSummaryScreen.tsx';
-import ProblemDetailScreen from '../detail/ProblemDetailScreen.tsx';
-import HistoryScreen from '@/ui/history/HistoryScreen.tsx';
-
 import { RepositoryContext } from './providers/RepositoryProvider';
 import { ToastProvider } from './providers/ToastProvider';
+import { ListScreen } from '../list/ListScreen';
+import StatsScreen from '../stats/StatsScreen';
+import SinglePlayerScreen from '../player/SinglePlayerScreen';
 import { bootstrapApp, createRepositories } from './bootstrapApp';
 import { routes } from './useAppNavigation';
+import SessionSummaryScreen from '../summary/MissionSummaryScreen.tsx';
+import HistoryScreen from '@/ui/history/HistoryScreen.tsx';
+import ProblemDetailScreen from '@/ui/detail/ProblemDetailScreen.tsx';
+import LibraryScreen from '@/ui/library/LibraryScreen.tsx';
 
 export const theme = createTheme({
     cssVariables: true,   // ← これ必須
@@ -52,11 +52,11 @@ export const theme = createTheme({
         }
     },
 });
-
 function App() {
     const repos = useMemo(() => createRepositories(), [])
     bootstrapApp(repos)
-    //useAndroidBack(); // 最上位で呼ぶ    
+    //useAndroidBack(); // 最上位で呼ぶ
+    
 
     return (
         <ThemeProvider
@@ -90,6 +90,7 @@ function App() {
                             <Route path={routes.library} element={<LibraryScreen />} />
                             { /* <Route path="/view/:id" element={<ViewerScreen />} /> */ }
                             <Route path="/play/:id" element={<SinglePlayerScreen />} />
+                            <Route path="/list" element={<ListScreen />} />
                             <Route path="/detail/:id" element={<ProblemDetailScreen/>}/>
 
                             <Route path={routes.stats} element={<StatsScreen />} />
@@ -109,6 +110,7 @@ export default App
 
 
 ///////////
+
 export function useAndroidBack() {
     useEffect(() => {
         const handlerPromise = CapacitorApp.addListener("backButton", (event: { canGoBack: boolean }) => {

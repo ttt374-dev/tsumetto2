@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Box, ToggleButton, List, ListItem, ListItemButton, ListItemText, Stack, ToggleButtonGroup, IconButton, keyframes } from "@mui/material";
+import { useRef, useState } from "react";
+import { Box, ToggleButton, List, ListItem, ListItemButton, ListItemText, Stack, ToggleButtonGroup, IconButton, keyframes, Checkbox, FormControlLabel, TextField } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
@@ -15,6 +15,7 @@ import type { Mission, MissionId } from "@/domain/mission/entity/Mission";
 import { useMissionModeStore } from "./hooks/useMissionModeStore";
 import MissionFabMenu from "./components/MissionFabMenu";
 import { useLongPress } from "@/ui/library/hooks/useLongPress";
+import { DefaultMissionExecutionMode, ExecutionModeControl, type MissionExecutionMode } from "@/ui/mission/components/MissionExecutionModeControl";
 
 export default function MissionScreen() {
     const { missionArray, onDragEnd, missionStats, onCreateMission, onStartSession, presenter: { importer, backupRestoreDialog } } =
@@ -28,6 +29,8 @@ export default function MissionScreen() {
 
     })
 
+    const [executionMode, setExecutionMode] = useState<MissionExecutionMode>(DefaultMissionExecutionMode)
+    
     // dnd-kit センサー
     const sensors = useSensors(
         useSensor(PointerSensor, {
@@ -83,8 +86,12 @@ export default function MissionScreen() {
                 <ListItemButton
                     onClick={() => {
                         if (isLongPressedRef.current) return
-                        if (!editMode) onStartSession(mission)
-                        else navigate(routes.missionEdit(mission.id))                        
+                        if (!editMode) {
+                            const limit = executionMode.type === "partial" ? 
+                                executionMode.limit : null
+                            onStartSession(mission, limit)
+                            
+                        } else navigate(routes.missionEdit(mission.id))                        
                     }}
                     {...bind}
                     disabled={!editMode && (stats?.problemCount === 0)} 
@@ -136,6 +143,9 @@ export default function MissionScreen() {
             fab={<MissionFabMenu onCreateNewMission={onCreateMission} />}
 
         >
+            <ExecutionModeControl 
+                value={executionMode} 
+                onChange={m=>setExecutionMode(m)}/>
             <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto" }}> { /* , touchAction: "pan-y" */ }
                 <DndContext sensors={sensors} 
                     collisionDetection={closestCenter}
@@ -158,3 +168,4 @@ export default function MissionScreen() {
         </AppShell>
     );
 }
+

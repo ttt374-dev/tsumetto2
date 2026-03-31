@@ -74,13 +74,11 @@ export function useMissionViewModel() {
     // 既存の操作
     const onCreateMission = () => navigate(routes.newMission);
 
-    const onStartSession = (mission: Mission) => {
+    const onStartSession = (mission: Mission, limit: number | null = null) => {
         const filtered = applyQuery(
             problems,
             learningRecords,
-            mission.queryState,            
-        );
-
+            mission.queryState, limit);
         startSession(mission.id, filtered.map(p => p.id));
         navigate(routes.sessionPlay);
     };

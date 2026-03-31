@@ -38,7 +38,7 @@ type LibraryViewProps = {
 }
 
 /////////////////////////////////////////
-export function LibraryView({ ids, query, actionMode, changeActionMode,
+export default function LibraryView({ ids, query, actionMode, changeActionMode,
     itemActions, onItemClick, selection, onFilterControlOpen }: LibraryViewProps) {
     
     const isFiltered = !isEqual(query, DefaultQueryState);

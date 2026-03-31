@@ -1,21 +1,19 @@
+import { useState } from "react";
 import { Drawer } from "@mui/material";
+
+import LibraryView from "./components/LibraryView";
 import { AppShell } from "../common/components/layout/AppShell";
-import { LibraryView } from "./components/LibraryView";
 import { useLibraryViewModel } from "./hooks/useLibraryViewModel";
 import { FilterControlPanel } from "@/ui/common/query-control/FilterControlPanel";
-import { useState } from "react";
 import { useProblemStore } from "@/ui/store/useProblemStore";
 
 //////////////////////////////////////////////////
-
 export default function LibraryScreen() {
     const vm = useLibraryViewModel()   
     const [isOpen, setIsOpen] = useState(false);
     const allSources = useProblemStore(s=>s.allSources)
     return (
-        <AppShell
-            header="Library"
-        >
+        <AppShell header="Library">
             <LibraryView
                 ids={vm.ids}
                 query={vm.query}
@@ -24,8 +22,7 @@ export default function LibraryScreen() {
                 itemActions={vm.itemActions}
                 onItemClick={vm.onItemClick}
                 selection={vm.selection}
-                onFilterControlOpen={()=>setIsOpen(true)}
-            />                                    
+                onFilterControlOpen={()=>setIsOpen(true)}/>                                    
             {vm.dialogs.tagEdit.dialogElement}    
 
             <Drawer anchor="bottom" open={isOpen} 
@@ -38,11 +35,9 @@ export default function LibraryScreen() {
                             borderTopRightRadius: 24,
                         },
                     },
-                }}>
-                
+                }}>                
                 <FilterControlPanel
                     query={vm.query} allSources={allSources} />
-
             </Drawer>        
         </AppShell>
     )
