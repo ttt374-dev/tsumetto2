@@ -3,15 +3,14 @@ import type { SolvedResult } from "@/domain/review/solvedResult"
 import type { GameEvent } from "@/ui/player/hooks/useGameStore"
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material"
 
-export function SolvedDialog({ open, onClose, onConfirm, events, confirmLabel="次へ" }: {
+export function SolvedDialog({ open, onClose, onConfirm, solvedResult, confirmLabel="次へ" }: {
     open: boolean
     onClose: () => void
     onConfirm: () => void
-    events: GameEvent[],
-    //solvedResult: SolvedResult
+    solvedResult: SolvedResult
     confirmLabel?: string
 }) {
-    const solvedResult = deriveSolvedResultFromEvents(events)
+    
     return (
         <Dialog open={open} onClose={onClose} maxWidth="xl">
             <DialogTitle>

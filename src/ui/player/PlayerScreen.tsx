@@ -1,4 +1,4 @@
-import React, { useState }  from "react"
+import React, { useRef, useState }  from "react"
 import { Box, Button, Stack } from "@mui/material"
 import { useNavigate } from "react-router-dom";
 import { useEffect } from 'react';
@@ -8,25 +8,25 @@ import TitlePanel from "./components/panels/TitlePanel";
 import MovesPanel from "./components/panels/MovesPanel";
 import BoardPanel from "@/ui/player/components/panels/board/BoardPanel"
 import TimerControlPanel from "./components/panels/TImerControlPanel";
-import ProblemLearningInfoPanel from "./components/panels/ProblemLearningInfoPanel";
 import PromotionDialog from "./dialogs/PromotionDialog";
 import PlyControlPanel from "@/ui/player/components/panels/PlyControlPanel";
 
 import type { IntentResult } from "@/domain/game/intentResolver";
-import type { SolvedResult } from "@/domain/review/solvedResult";
 import { Problem, type ProblemId } from "@/domain/problem/entity/Problem"
 import { AppShell } from "../common/components/layout/AppShell";
 import { routes } from "../App/useAppNavigation";
 import { useToast } from "../App/providers/ToastProvider";
-import { useCurrentPosition, useGameStore } from "./hooks/useGameStore";
+import { useGameStore, type GameEvent } from "./hooks/useGameStore";
 import { useBoardInputStore } from "./hooks/useBoardInputStore";
 import { useProblemStore } from "@/ui/store/useProblemStore";
-import { deriveSolvedResultFromEvents } from "@/domain/review/service/solvedResultDeriver";
 import { SolvedDialog } from "@/ui/player/dialogs/SolvedDialog";
 import { useReplayStore } from "@/ui/player/hooks/useReplayStore";
 import { useTimerStore } from "@/ui/player/hooks/useTimerStore";
 import { createDecideGameEventContext, decideGameEvent } from "@/domain/game/intentHandler";
 import { createPlayerContext } from "@/ui/player/components/types/PlayerContext";
+import type { SolvedResult } from "@/domain/review/solvedResult";
+import { deriveSolvedResultFromEvents } from "@/domain/review/service/solvedResultDeriver";
+import { isInteger } from "lodash";
 
 //////////////////////////////////////////////////////////////
 function usePlayerInitializer(problem: Problem){
@@ -46,6 +46,57 @@ function usePlayerInitializer(problem: Problem){
 
     return { isInitialized }
 }
+function useRevealHandler(){
+    const { dispatch } = useGameStore()            
+    const ctx = createPlayerContext()  
+    
+    const onRevealAnswer = () => {
+        dispatch({type: "REVEAL", ...ctx})
+    }
+    return { onRevealAnswer }
+
+}
+function useGameEventHandler(isInitialized: boolean, onSolve?: () => void){
+    const [isSolvedDialogOpen, setIsSolvedDialogOpen] = useState(false)
+    const [solvedResult, setSolvedResult] = useState<SolvedResult|undefined>(undefined)
+    const events = useGameStore(s=>s.events)    
+    const replay = useReplayStore()
+    const stopTimer = useTimerStore(s=>s.stop)
+
+    useEffect(() => {
+        if (!isInitialized) return   // 初期化前は無視
+        const last = events.at(-1)
+        if (!last) return
+
+        switch (last.type) {
+            case "SOLVE":        
+                replay.advancePly()
+                stopTimer()
+                setIsSolvedDialogOpen(true)
+                setSolvedResult(deriveSolvedResultFromEvents(events))
+                onSolve?.()
+                break            
+            case "ADVANCE_TURN":
+                advanceTurn()
+                break;
+        }
+    }, [events])
+
+    const turnIdRef = useRef(0)    
+    const advanceTurn = () => {
+        replay.advancePly()
+        replay.startAnimation()
+        const currentId = ++turnIdRef.current
+        setTimeout(() => {
+            if (currentId !== turnIdRef.current) return
+            const replay = useReplayStore.getState()
+            replay.advancePly()
+            replay.endAnimation()
+        }, 500)
+    }
+    return { isSolvedDialogOpen, setIsSolvedDialogOpen, solvedResult}
+}
+///////////////////////////////////////////
 export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm, onAfterDelete, footerPanel }: {
     problem: Problem
     title: React.ReactNode
@@ -56,86 +107,30 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
 }) {    
     const toast = useToast()
     const navigate = useNavigate()    
-    const { dispatch, choosePromotion, pendingPromotion, state, events } = useGameStore()        
     
-    const replay = useReplayStore()
-    const timer = useTimerStore()
-    const clearSelection = useBoardInputStore(s=>s.clear)
+    const {  state } = useGameStore()            
+    const replay = useReplayStore()    
+    
     const deleteProblem = useProblemStore(s=>s.deleteProblem)    
+    const { isInitialized } = usePlayerInitializer(problem)
+    const {onRevealAnswer } = useRevealHandler()
 
-    const [isSolvedDialogOpen, setIsSolvedDialogOpen] = useState(false)
-
-    const { isInitialized} = usePlayerInitializer(problem)      
-    let turnId = 0
-
-    useEffect(() => {
-        if (!isInitialized) return   // 初期化前は無視
-        //console.log("switching", events)
-        const last = events.at(-1)
-        if (!last) return
-
-        switch (last.type) {
-            case "SOLVE":        
-                replay.advancePly()
-                timer.stop()
-                setIsSolvedDialogOpen(true)
-                //setSolvedResult(deriveSolvedResultFromEvents(events))                
-                onSolve?.()
-                break
-            case "MISTAKE":
-                toast({ message: `incorrect: [${state.mistakes}]` })
-                break
-            case "ADVANCE_TURN":
-                advanceTurn()
-                break;
-        }
-    }, [events])
-
-    const advanceTurn = () => {
-        replay.advancePly()
-        replay.startAnimation()
-        const currentId = ++turnId
-        setTimeout(() => {
-            if (currentId !== turnId) return
-            const replay = useReplayStore.getState()
-            replay.advancePly()
-            //console.log("adva turn", currentId, turnId)
-            replay.endAnimation()
-        }, 500)
-    }
+    const { isSolvedDialogOpen, setIsSolvedDialogOpen, solvedResult } 
+        = useGameEventHandler(isInitialized, onSolve)
+    const { element: promotionDialogElement } = usePromotionDialog()
+    
     // handlers
     const handleNavigateToDetail = () => {
         navigate(routes.detail(problem.id))
     }
-    const handlePromotionConfirm = (promote: boolean) => {
-        const intentResult: IntentResult = { type: "move", move: choosePromotion(promote) }
-        const ctx = createDecideGameEventContext()
-        const decision = decideGameEvent({ intentResult, ...ctx })
-
-        switch (decision.type) {
-            case "invalidMove":
-                return
-            case "promotionPending":
-                // ここに来たらバグ
-                console.error("Unexpected promotionPending after confirm")
-                return
-            case "event":
-                dispatch(decision.event)
-                clearSelection()
-                return
-        }
-        
-    }
+    
     const handleDelete = (id: ProblemId) => {
         if (!window.confirm("sure to delete ? ")) return
         deleteProblem(id)
         onAfterDelete?.()
         toast({message: `deleted: ${id}`})
-    }
-    const ctx = createPlayerContext()
-    const handleRevealAnswer = () => {
-        dispatch({type: "REVEAL", ...ctx})
-    }
+    }    
+    
     ////////////////////////////////////////////////////////////////////////
     return (
         <AppShell
@@ -153,47 +148,72 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
                 { /* --- 盤面 ---*/}
                 <BoardPanel />
 
-                <Stack direction="row" sx={{ minHeight: 0, flexGrow: 1, p: 1 }} spacing={1}>                    
-                    <MovesPanel 
+                <Stack direction="row" sx={{ minHeight: 0, flexGrow: 1, p: 1 }} spacing={1}>
+                    <MovesPanel
                         problem={problem}
-                        moves={problem.kifData.moves} isMovesVisible={state.isRevealed}/>
-                    
+                        moves={problem.kifData.moves} isMovesVisible={state.isRevealed} />
+
                     <Box sx={{ flex: 1, border: 1, borderColor: "divider" }}>
                         <TimerControlPanel />
-                        
+
                         {state.isRevealed ?
                             <PlyControlPanel
                                 currentPly={replay.ply}
                                 maxPly={problem.kifData.moves.length}
                                 onPrev={replay.retreatPly}
-                                onNext={replay.advancePly}                                
-                            />: (<Stack>
-                    <Button onClick={handleRevealAnswer} variant="outlined">
-                        手筋を表示
-                    </Button>
-                    
-                    
-                </Stack>)
+                                onNext={replay.advancePly}
+                            /> : (<Stack>
+                                <Button onClick={onRevealAnswer} variant="outlined">
+                                    手筋を表示
+                                </Button>
+                            </Stack>)
                         }
                     </Box>
                 </Stack>
             </Stack>
 
-            { pendingPromotion && 
-            <PromotionDialog 
-                open={pendingPromotion !== null}
-                pieceType={pendingPromotion.pieceType}
-                onConfirm={handlePromotionConfirm}
-                onClose={() => {}}
-                >
-                </PromotionDialog>}
-
+            { promotionDialogElement }
             
+            { solvedResult &&
             <SolvedDialog open={isSolvedDialogOpen}
                 onClose={() => setIsSolvedDialogOpen(false)}
                 onConfirm={onSolvedConfirm}
-                events={events}
-            />
+                solvedResult={solvedResult}
+            />}
         </AppShell>
     )
+}
+function usePromotionDialog(){
+    const { pendingPromotion } = useGameStore()        
+    const { dispatch, choosePromotion } = useGameStore()    
+    const clearSelection = useBoardInputStore(s=>s.clear)
+
+    const onPromotionConfirm = (promote: boolean) => {
+        const intentResult: IntentResult = { type: "move", move: choosePromotion(promote) }
+        const ctx = createDecideGameEventContext()
+        const decision = decideGameEvent({ intentResult, ...ctx })
+
+        switch (decision.type) {
+            case "invalidMove":
+                return
+            case "promotionPending":
+                // ここに来たらバグ
+                console.error("Unexpected promotionPending after confirm")
+                return
+            case "event":
+                dispatch(decision.event)
+                clearSelection()
+                return
+        }        
+    }
+    const element = pendingPromotion && 
+            <PromotionDialog 
+                open={pendingPromotion !== null}
+                pieceType={pendingPromotion.pieceType}
+                onConfirm={onPromotionConfirm}
+                onClose={() => {}}
+                >
+                </PromotionDialog>
+    
+    return { element }
 }
