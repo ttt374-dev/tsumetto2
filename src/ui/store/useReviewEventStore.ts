@@ -16,11 +16,11 @@ type ReviewEventStoreState = {
 
     reload: () => Promise<void>;
     save: () => Promise<void>
-    append: (reviewEvent: NewReviewEvent) => ReviewEvent
-    appendReview: (problemId: ProblemId, reviewId: string, sessionId: SessionId, quality: SolvedResult) => ReviewEvent
+    append: (reviewEvent: NewReviewEvent) => Promise<ReviewEvent>
+    appendReview: (problemId: ProblemId, reviewId: string, sessionId: SessionId, quality: SolvedResult) => Promise<ReviewEvent>
     //appendCancel: (targetEventId: ReviewEventId, sessionId: SessionId) => ReviewEvent
-    appendReset: (problemId: ProblemId) => ReviewEvent
-    clearAll: () => void
+    appendReset: (problemId: ProblemId) => Promise<ReviewEvent>
+    clearAll: () => Promise<void>
 };
 
 function createReviewEventId(){ return v4()}
@@ -46,15 +46,15 @@ export const useReviewEventStore = create<ReviewEventStoreState>((set, get) => (
         if (!repo) throw new Error("Repository not initialized")
         repo.replaceAll(get().eventLog)
     },
-    append: (newevent: NewReviewEvent): ReviewEvent => {
-        const event: ReviewEvent = { ...newevent, id: createReviewEventId(), at: Date.now() }        
+    append: async (newevent: NewReviewEvent): Promise<ReviewEvent> => {
+        const event: ReviewEvent = { ...newevent, id: createReviewEventId(), at: Date.now(), syncStatus: "pending" }        
         set(state => ({
             eventLog: [...state.eventLog, event]
         }))
         get().save()
         return event
     },
-    appendReview: (problemId: ProblemId, reviewId: string, sessionId: SessionId, solvedResult: SolvedResult) => {
+    appendReview: async (problemId: ProblemId, reviewId: string, sessionId: SessionId, solvedResult: SolvedResult) => {
         const event: NewReviewEvent = {
             type: "reviewed", reviewId, 
             problemId, sessionId: sessionId, solvedResult: solvedResult,
@@ -76,14 +76,14 @@ export const useReviewEventStore = create<ReviewEventStoreState>((set, get) => (
 
         return get().append(event)
     },*/
-    appendReset: (problemId: ProblemId) => {
+    appendReset: async (problemId: ProblemId) => {
         const event: NewReviewEvent = {
             type: 
             "reset", problemId
         }
         return get().append(event)
     },
-    clearAll: () => {
+    clearAll: async () => {
         set({eventLog: []})
         get().save()
     }

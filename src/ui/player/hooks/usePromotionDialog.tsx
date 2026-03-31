@@ -1,4 +1,4 @@
-import { createDecideGameEventContext, decideGameEvent } from "@/domain/game/intentHandler"
+import { createDecideGameEventContext, decideGameEvent } from "@/domain/game/decideGameEvent"
 import type { IntentResult } from "@/domain/game/intentResolver"
 import PromotionDialog from "@/ui/player/dialogs/PromotionDialog"
 import { useBoardInputStore } from "@/ui/player/store/useBoardInputStore"
