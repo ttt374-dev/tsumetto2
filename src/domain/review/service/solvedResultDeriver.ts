@@ -29,7 +29,7 @@ function findFinalEvent(events: GameEvent[]) {
 export function deriveSolvedResultFromEvents(events: GameEvent[]): SolvedResult {
     const state = projectGameState(events)
     const finished = findFinalEvent(events)
-    const elapsedSec = finished?.elapsedSec ?? 0
+    const elapsedSec = finished?.elapsedSec ?? events[-1].elapsedSec ?? 0    
 
     return deriveSolvedResult(state, elapsedSec)
 }

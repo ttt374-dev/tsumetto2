@@ -36,7 +36,7 @@ function deriveGameEvent(move: Move, nextMove: Move, isLastMove: boolean, ply: n
     if (isLastMove){
         return { type: "SOLVE", ply, elapsedSec}
     } else {
-        return { type: "ADVANCE_TURN"}
+        return { type: "ADVANCE_TURN", ply, elapsedSec}
     }
 }
 

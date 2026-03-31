@@ -1,5 +1,5 @@
 import React, { useState }  from "react"
-import { Box, Stack } from "@mui/material"
+import { Box, Button, Stack } from "@mui/material"
 import { useNavigate } from "react-router-dom";
 import { useEffect } from 'react';
 
@@ -26,6 +26,7 @@ import { SolvedDialog } from "@/ui/player/dialogs/SolvedDialog";
 import { useReplayStore } from "@/ui/player/hooks/useReplayStore";
 import { useTimerStore } from "@/ui/player/hooks/useTimerStore";
 import { createDecideGameEventContext, decideGameEvent } from "@/domain/game/intentHandler";
+import { createPlayerContext } from "@/ui/player/components/types/PlayerContext";
 
 //////////////////////////////////////////////////////////////
 export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm, onAfterDelete, footerPanel }: {
@@ -37,15 +38,9 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
     footerPanel?: React.ReactNode
 }) {    
     const toast = useToast()
-    const navigate = useNavigate()
-
-    // 純粋関数に渡すよう
-    const gameState = useGameStore.getState()
+    const navigate = useNavigate()    
+    const { initialize, dispatch, choosePromotion, pendingPromotion, state, events, moves } = useGameStore()        
     
-
-    const { initialize, dispatch, choosePromotion, pendingPromotion, state, events, moves } = useGameStore()    
-    
-    const position = useCurrentPosition()    
     const replay = useReplayStore()
     const timer = useTimerStore()
     const clearSelection = useBoardInputStore(s=>s.clear)
@@ -54,10 +49,9 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
     const [isSolvedDialogOpen, setIsSolvedDialogOpen] = useState(false)
     const [solvedResult, setSolvedResult] = useState<SolvedResult | undefined>(undefined)
 
-
     useEffect(()=>{        
         initialize(problem.kifData.initialPosition, problem.kifData.moves)
-        replay.initialize(moves.length)
+        replay.initialize(problem.kifData.moves.length)
         timer.restart()
         
         setIsSolvedDialogOpen(false)
@@ -86,10 +80,12 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
                 replay.advancePly()
                 replay.startAnimation()
                 const currentId = ++turnId
-                setTimeout(() => {                    
+                setTimeout(() => { 
+                             
                     if (currentId !== turnId) return
                     const replay = useReplayStore.getState()
                     replay.advancePly()
+                    console.log("adva turn", currentId, turnId)          
                     replay.endAnimation()
                 }, 500)
                 break;                
@@ -127,7 +123,11 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
         onAfterDelete?.()
         toast({message: `deleted: ${id}`})
     }
-
+    const ctx = createPlayerContext()
+    const handleRevealAnswer = () => {
+        dispatch({type: "REVEAL", ...ctx})
+    }
+    
     return (
         <AppShell
             header={"Player"}
@@ -145,18 +145,26 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
                 <BoardPanel />
 
                 <Stack direction="row" sx={{ minHeight: 0, flexGrow: 1, p: 1 }} spacing={1}>                    
-                    <MovesPanel moves={problem.kifData.moves} isMovesVisible={state.isRevealed}/>
+                    <MovesPanel 
+                        problem={problem}
+                        moves={problem.kifData.moves} isMovesVisible={state.isRevealed}/>
                     
                     <Box sx={{ flex: 1, border: 1, borderColor: "divider" }}>
                         <TimerControlPanel />
-                        <ProblemLearningInfoPanel problem={problem} />
-                        {state.isRevealed &&
+                        
+                        {state.isRevealed ?
                             <PlyControlPanel
                                 currentPly={replay.ply}
                                 maxPly={problem.kifData.moves.length}
                                 onPrev={replay.retreatPly}
-                                onNext={replay.advancePly}
-                            />
+                                onNext={replay.advancePly}                                
+                            />: (<Stack>
+                    <Button onClick={handleRevealAnswer} variant="outlined">
+                        手筋を表示
+                    </Button>
+                    
+                    
+                </Stack>)
                         }
                     </Box>
                 </Stack>

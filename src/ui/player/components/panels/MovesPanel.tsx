@@ -5,10 +5,13 @@ import type { Move } from "@/domain/kif/entity";
 import { useReplayStore } from "@/ui/player/hooks/useReplayStore";
 import { createPlayerContext } from "@/ui/player/components/types/PlayerContext";
 import { useGameStore } from "@/ui/player/hooks/useGameStore";
+import ProblemLearningInfoPanel from "@/ui/player/components/panels/ProblemLearningInfoPanel";
+import type { Problem } from "@/domain/problem/entity/Problem";
 
-export default function MovesPanel({moves, isMovesVisible}: { 
+export default function MovesPanel({moves, isMovesVisible, problem}: { 
     moves: Move[]
     isMovesVisible: boolean
+    problem: Problem
 }) {
     const moveTo = useReplayStore(s=>s.moveTo)
     const ply = useReplayStore(s=>s.ply)
@@ -38,10 +41,8 @@ export default function MovesPanel({moves, isMovesVisible}: {
             {isMovesVisible ?
                 <MovesView moves={moves} currentPlyIndex={ply} onMoveToPly={moveTo} />
                 : (<Stack>
-                    <Button onClick={handleRevealAnswer} variant="outlined">
-                        手筋を表示
-                    </Button>
                     <Box>手数：{moves.length}手</Box>
+                    <ProblemLearningInfoPanel problem={problem} />
                 </Stack>)
             }
         </Box>

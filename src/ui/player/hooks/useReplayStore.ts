@@ -1,3 +1,4 @@
+import { ConstructionOutlined } from "@mui/icons-material"
 import { create } from "zustand"
 
 type ReplayPhase = "idle" | "animating"
@@ -23,6 +24,7 @@ export const useReplayStore = create<ReplayStore>((set, get) => ({
     phase: "idle",
 
     initialize: (maxPly: number) => {
+        console.log("maxply", maxPly)
         set({ maxPly, ply: 0, phase: "idle" })
     },
     reset: () => {
@@ -33,6 +35,7 @@ export const useReplayStore = create<ReplayStore>((set, get) => ({
         const { maxPly, phase } = get()
         assertInitialized(maxPly)
         ////if (phase !== "idle") return   // ← アニメ中は無効
+        console.log("moveto", ply, maxPly)
         set({ ply: clampPly(ply, maxPly) })
     },
     advancePly: () => {
@@ -40,7 +43,7 @@ export const useReplayStore = create<ReplayStore>((set, get) => ({
         moveTo(ply + 1)
     },
     retreatPly: () => {
-const { moveTo, ply } = get()
+        const { moveTo, ply } = get()
         moveTo(ply - 1)
     },
     startAnimation: () => {

@@ -1,4 +1,4 @@
-export type SolvedOutcome = "solved" | "failed" | "abandoned" | "skipped"
+export type SolvedOutcome = "solved" | "failed" | "abandoned" | "unanswered"
 
 export type SolvedResult = {
     outcome: SolvedOutcome
@@ -9,7 +9,7 @@ export type SolvedResult = {
 }
 export function createDefaultSolvedResult(): SolvedResult {
     return {
-        outcome: "skipped",
+        outcome: "unanswered",
         mistakes: 0,
         isRevealed: false,
         isSolved: false,

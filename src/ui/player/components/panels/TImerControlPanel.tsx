@@ -15,6 +15,7 @@ export default function TimerControlPanel(){
             variant="contained"
             sx={{
                 p: 1,
+                m: 1,
                 borderRadius: 2,
                 background: "linear-gradient(145deg, #ffffff, #e6e6e6)",
 
