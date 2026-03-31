@@ -1,21 +1,13 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
-import { useToast } from "../../App/providers/ToastProvider";
-import { routes } from "@/ui/App/useAppNavigation";
 import { arrayMove } from "@dnd-kit/sortable";
 
-import { applyQuery } from "@/domain/problem/service/query/applyQuery";
 import { useMissionStore } from "@/ui/mission/hooks/useMissionStore";
 import { selectActiveProblems, useProblemStore } from "@/ui/store/useProblemStore";
-import { useSessionStore } from "@/ui/session/hooks/useSessionStore";
 import { useLearningRecordStore } from "@/ui/store/useLearningRecordStore";
 import { applyFilter } from "@/domain/problem/service/query/applyFilter";
 import type { Mission } from "@/domain/mission/entity/Mission";
 import { ProblemStats } from "@/domain/problem/valueObject/ProblemStats";
-import { useImport } from "@/ui/Import/useImport";
-import { useBackupRestoreDialog } from "@/ui/common/components/dialogs/BackupRestoreDialog";
 import { DefaultQueryState } from "@/domain/problem/service/query/ProblemsQuery";
-import type { MissionExecutionMode } from "@/ui/mission/components/MissionExecutionModeControl";
 
 export function useMissionViewModel() {
     // Store
@@ -50,20 +42,12 @@ export function useMissionViewModel() {
         [missionArray, replaceAll]
     );
 
-
-    return {
-        missionArray,
-        onDragEnd,
-    };
-}
-/////////////
-
-////////////////////////
-export function useMissionStats(missionArray: Mission[]){
+    ///////////
+    // missionArray に基づく stats
     const problems = useProblemStore(selectActiveProblems);
     const learningRecords = useLearningRecordStore(s => s.records);
 
-    // missionArray に基づく stats
+    
     const missionStats = useMemo(() => {
         const map = new Map<string, ProblemStats>();
         for (const mission of missionArray) {
@@ -76,6 +60,10 @@ export function useMissionStats(missionArray: Mission[]){
     }, [missionArray, problems, learningRecords]);
 
 
-    return { missionStats }
-
+    return {
+        missionArray,
+        onDragEnd,
+        missionStats,
+    };
 }
+/////////////
