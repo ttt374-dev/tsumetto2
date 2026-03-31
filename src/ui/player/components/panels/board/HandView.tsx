@@ -21,7 +21,6 @@ function HandPieceView({ pieceType, selected, count, owner, onClick }: {
     count: number
     onClick?: () => void
 }) {
-    //const countString = count > 1 ? numberToKanjiTwoDigits(count) : ""
     return (
         <span style={{ marginRight: 5 }} onClick={() => onClick?.()}            
             className={`${styles.handpiece}

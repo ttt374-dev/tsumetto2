@@ -21,8 +21,7 @@ export function createRepositories() {
         mission: new MissionRepository(new LocalStorageMissionPersistence()),
     }
 }
-export function bootstrapApp(repos: RepositoryContextValue) {
-    
+export function bootstrapApp(repos: RepositoryContextValue){
     useEffect(() => {
         const syncService = new ReviewSyncService()
         syncService.start()
@@ -41,21 +40,6 @@ export function bootstrapApp(repos: RepositoryContextValue) {
         // 初期化フラグ
         let isInitializing = true
 
-        const _saveMissionRepo = debounce(async (missions: Mission[]) => {
-            missionRepo.replaceAll(missions)}, 1000)     
-        // subscribe 設定
-        /*
-        const saveMissionRepo = debounce(async (missions: Mission[]) => {
-            missionRepo.replaceAll(missions)}, 1000)     
-        const saveLearningRepo = debounce(
-            async (eventLog: ReviewEventLog) => {
-                await learningRepo.replaceAll(eventLog)
-            },
-            1000
-        )           
-        const saveProblemRepo = debounce(async (byId: Record<ProblemId, Problem>) => 
-            {problemRepo.replaceAll(Object.values(byId))}, 1000)       
-        */
         const saveMissionRepo = async (missions: Mission[]) => {
             missionRepo.replaceAll(missions)
         }
@@ -65,23 +49,6 @@ export function bootstrapApp(repos: RepositoryContextValue) {
         const saveProblemRepo = async (byId: Record<ProblemId, Problem>) => {
             problemRepo.replaceAll(Object.values(byId))
         }
-        
-        const missionUnsub = useMissionStore.subscribe(state => {
-            if (isInitializing) return           
-            saveMissionRepo(state.missions)      
-            
-        })
-        const learningUnsub = useReviewEventStore.subscribe(state => {
-            if (isInitializing) return
-            saveLearningRepo(state.eventLog)
-            //learningRepo.replaceAll(state.eventLog)
-        })
-        const problemUnSub = useProblemStore.subscribe(state => {
-            if (isInitializing) return 
-            saveProblemRepo(state.byId)
-            //problemRepo.replaceAll(Object.values(state.byId))
-        })
-            
         
         // bootstrap 本体
         const bootstrap = async () => {
@@ -94,17 +61,6 @@ export function bootstrapApp(repos: RepositoryContextValue) {
             isInitializing = false
         }
         bootstrap()
-
-        // クリーンアップ
-        /*
-        return () => {
-            missionUnsub()
-            saveMissionRepo.flush?.()
-            learningUnsub()
-            saveLearningRepo.flush?.()
-            problemUnSub()
-            saveProblemRepo.flush?.()
-        }*/
     }, [repos])
     
 }

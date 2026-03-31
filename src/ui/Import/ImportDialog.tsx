@@ -15,77 +15,77 @@ export function useImportViewModel(files: File[]) {
     )
 
     const hasDuplicatedTitle = (): boolean => {
-        return files.some(f => existingTitles.has(f.name))        
+        return files.some(f => existingTitles.has(f.name))
     }
 
     return { allSources, hasDuplicatedTitle }
 }
 /////////////////////////////////////////////////////////////////////////
-export function ImportDialog({open, onClose, onImport, filesToImport}: {
+export function ImportDialog({ open, onClose, onImport, filesToImport }: {
     open: boolean
     onClose: () => void
     filesToImport: File[]
     onImport: (options: ImportOptions) => void
-}){
-    const vm = useImportViewModel(filesToImport)   
-    const [options, setOptions] = useState<ImportOptions>({...DefaultImportOptions})
-        
+}) {
+    const vm = useImportViewModel(filesToImport)
+    const [options, setOptions] = useState<ImportOptions>({ ...DefaultImportOptions })
+
     return (
         <Dialog open={open} fullWidth >
             <DialogTitle>
                 棋譜ファイルのインポート
             </DialogTitle>
-            <DialogContent>    
+            <DialogContent>
                 <Stack spacing={2}>
-                { filesToImport.length} 件のファイルをインポートします。
-                <ProblemTypeFilterControl
-                    problemType={options.problemType} onChange={(v)=>
-                        v && setOptions(prev=>({...prev, problemType: v}))
-                    }
-                />
-                <SourceFilterControl
-                    source={options.source} onChange={v=>
-                        v && setOptions(prev=>({...prev, source: v}))
-                    } sources={vm.allSources}/>
+                    {filesToImport.length} 件のファイルをインポートします。
+                    <ProblemTypeFilterControl
+                        problemType={options.problemType} onChange={(v) =>
+                            v && setOptions(prev => ({ ...prev, problemType: v }))
+                        }
+                    />
+                    <SourceFilterControl
+                        source={options.source} onChange={v =>
+                            v && setOptions(prev => ({ ...prev, source: v }))
+                        } sources={vm.allSources} />
 
-                <ProblemTagEditor
-                    label={"tags"}
-                    value={options.tags}
-                    onChange={(next) => { setOptions({...options, tags: next})}}
-                />
-                {/* オプション*/}
-                {vm.hasDuplicatedTitle() &&
-                    <FormControl>
-                        <FormLabel>同名タイトルの処理</FormLabel>
-                        <RadioGroup
-                            value={options.duplicateTitleStrategy}
-                            onChange={(e) =>
-                                setOptions({
-                                    ...options,
-                                    duplicateTitleStrategy:
-                                        e.target.value as DuplicateTitleStrategy
-                                })
-                            }
-                        >
-                            <FormControlLabel
-                                value="overwrite"
-                                control={<Radio />}
-                                label="上書きする"
-                            />
-                            <FormControlLabel
-                                value="rename"
-                                control={<Radio />}
-                                label="名前を変えて保存"
-                            />
-                            <FormControlLabel
-                                value="skip"
-                                control={<Radio />}
-                                label="スキップする"
-                            />
-                        </RadioGroup>
-                    </FormControl>
-                }
-</Stack>                 
+                    <ProblemTagEditor
+                        label={"tags"}
+                        value={options.tags}
+                        onChange={(next) => { setOptions({ ...options, tags: next }) }}
+                    />
+                    {/* オプション*/}
+                    {vm.hasDuplicatedTitle() &&
+                        <FormControl>
+                            <FormLabel>同名タイトルの処理</FormLabel>
+                            <RadioGroup
+                                value={options.duplicateTitleStrategy}
+                                onChange={(e) =>
+                                    setOptions({
+                                        ...options,
+                                        duplicateTitleStrategy:
+                                            e.target.value as DuplicateTitleStrategy
+                                    })
+                                }
+                            >
+                                <FormControlLabel
+                                    value="overwrite"
+                                    control={<Radio />}
+                                    label="上書きする"
+                                />
+                                <FormControlLabel
+                                    value="rename"
+                                    control={<Radio />}
+                                    label="名前を変えて保存"
+                                />
+                                <FormControlLabel
+                                    value="skip"
+                                    control={<Radio />}
+                                    label="スキップする"
+                                />
+                            </RadioGroup>
+                        </FormControl>
+                    }
+                </Stack>
             </DialogContent>
             <DialogActions>
                 <Button onClick={onClose}>

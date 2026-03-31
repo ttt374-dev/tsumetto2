@@ -5,7 +5,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-import { IconButton, Stack, TextField } from '@mui/material';
+import { IconButton, Stack } from '@mui/material';
 import type { ProblemId } from "@/domain/problem/entity/Problem";
 import type { LibraryItemActions } from "./LibraryView";
 import type { LibraryActionMode } from "../hooks/useLibraryViewModel";

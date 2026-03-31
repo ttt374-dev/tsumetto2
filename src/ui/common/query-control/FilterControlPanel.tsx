@@ -9,7 +9,6 @@ import type { useProblemsQuery } from "@/ui/common/hooks/useProblemsQuery";
 
 export const UNSPECIFIED = "__UNSPECIFIED__";
 
-
 type Props = {
   query: ReturnType<typeof useProblemsQuery>
   allSources: string[]

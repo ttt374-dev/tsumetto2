@@ -1,7 +1,5 @@
-import { Divider, FormControl, IconButton, InputLabel, MenuItem, Paper, Select, Stack, TextField } from '@mui/material';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Box, Button } from "@mui/material"
-import PlayArrowIcon from "@mui/icons-material/PlayArrow";
-import DeleteIcon from '@mui/icons-material/Delete';
+import { Box, Button, Paper, Stack } from '@mui/material';
+
 import type { Learning } from '@/domain/learning/entity/Learning';
 
 export function LearningDetailPanel( { learning, onResetLearning} : {
@@ -14,8 +12,6 @@ export function LearningDetailPanel( { learning, onResetLearning} : {
                 <Box>平均スコア</Box>
                 <Box>{learning.score.toFixed(1)}</Box>
             </Stack>
-
-
             {learning.lastAnswerResult &&
                 <Stack direction="row" justifyContent="space-between">
                     <Box>前回結果</Box>

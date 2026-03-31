@@ -1,9 +1,5 @@
 import type { Problem } from "@/domain/problem/entity/Problem"
-import { Divider, FormControl, IconButton, InputLabel, MenuItem, Paper, Select, Stack, TextField } from '@mui/material';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Box, Button } from "@mui/material"
-import PlayArrowIcon from "@mui/icons-material/PlayArrow";
-
-
+import { Box, Paper, Stack } from "@mui/material"
 
 export function ProblemInfoPanel({problem}: {
     problem: Problem

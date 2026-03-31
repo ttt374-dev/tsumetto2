@@ -3,7 +3,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { useProblemStore } from '@/ui/store/useProblemStore';
 import { useLearningRecordStore } from '@/ui/store/useLearningRecordStore';
 import { useReviewEventStore } from '@/ui/store/useReviewEventStore';
-import type { NewReviewEvent } from '@/domain/review/ReviewEvent';
 
 export type SourceOption = {
     id: string

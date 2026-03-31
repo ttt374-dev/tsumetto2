@@ -1,13 +1,13 @@
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import DeleteIcon from '@mui/icons-material/Delete';
-
 import { Box, Button, Divider, IconButton, Stack, TextField } from "@mui/material";
+import { useNavigate, useParams } from "react-router-dom";
+
 import { AppShell } from "../common/components/layout/AppShell";
 import { CancelableTextField } from "../shared/components/CancelableTextfield";
 import { ProblemTypeSelect } from "./components/ProblemTypeSelect";
 import { ProblemTagEditor } from "../common/components/ProblemTagEditor";
 import { FreeSoloAutocomplete } from "../shared/components/FreeSoloAutocomplete";
-import { useNavigate, useParams } from "react-router-dom";
 import { useProblemStore } from "../store/useProblemStore";
 import { routes } from "../App/useAppNavigation";
 import { useProblemDetailViewModel } from "./hooks/useProblemDetailViewModel";

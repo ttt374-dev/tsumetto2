@@ -3,7 +3,6 @@ import type { ReviewEvent } from "@/domain/review/ReviewEvent";
 import { useProblemStore } from "@/ui/store/useProblemStore";
 import { useReviewEventStore } from "@/ui/store/useReviewEventStore";
 import type { SolvedResult } from "@/domain/review/solvedResult"
-import type { Problem } from "@/domain/problem/entity/Problem";
 import { evaluateScore } from "@/domain/learning/service/evaluateScore";
 
 export function formatSolvedResult(res: SolvedResult) {
@@ -14,7 +13,6 @@ export function formatSolvedResult(res: SolvedResult) {
 
 }
 function formatEvent(title: string, event: ReviewEvent): string {    
-    //const eventLog = useReviewEventStore(s=>s.eventLog)
     let content: string
     switch (event.type) {
         case "reviewed":

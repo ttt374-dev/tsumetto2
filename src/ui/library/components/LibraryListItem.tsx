@@ -1,5 +1,5 @@
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem";
-import { Box, Checkbox, colors, IconButton, ListItem, ListItemButton, ListItemIcon, ListItemText, Stack, Typography } from "@mui/material";
+import { Box, Checkbox, ListItem, ListItemButton, ListItemIcon, ListItemText, Stack, Typography } from "@mui/material";
 import { useLongPress } from "../hooks/useLongPress";
 import { StarToggleButton } from "@/ui/common/components/StarToggleButton/StarToggleButton";
 import { useProblemStore } from "@/ui/store/useProblemStore";
