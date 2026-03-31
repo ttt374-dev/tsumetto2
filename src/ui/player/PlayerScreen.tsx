@@ -48,28 +48,33 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
 
     const [isSolvedDialogOpen, setIsSolvedDialogOpen] = useState(false)
     const [solvedResult, setSolvedResult] = useState<SolvedResult | undefined>(undefined)
-
+    const [isInitialized, setIsInitialized] = useState(false)
+    
     useEffect(()=>{        
+        setIsInitialized(false)
         initialize(problem.kifData.initialPosition, problem.kifData.moves)
-        replay.initialize(problem.kifData.moves.length)
-        timer.restart()
+        console.log("initialized", events)
         
-        setIsSolvedDialogOpen(false)
+        replay.initialize(problem.kifData.moves.length)
+        timer.restart()        
+        setIsInitialized(true)
     }, [problem.id])
       
     let turnId = 0
 
     useEffect(() => {
+        if (!isInitialized) return   // 初期化前は無視
+        console.log("switching", events)
         const last = events.at(-1)
         if (!last) return
 
         switch (last.type) {
             case "SOLVE":
+        
                 replay.advancePly()
                 timer.stop()
                 setIsSolvedDialogOpen(true)
-                setSolvedResult(deriveSolvedResultFromEvents(events))
-                
+                setSolvedResult(deriveSolvedResultFromEvents(events))                
                 onSolve?.()
                 break
             case "MISTAKE":
@@ -77,22 +82,24 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
                 break
 
             case "ADVANCE_TURN":
-                replay.advancePly()
-                replay.startAnimation()
-                const currentId = ++turnId
-                setTimeout(() => { 
-                             
-                    if (currentId !== turnId) return
-                    const replay = useReplayStore.getState()
-                    replay.advancePly()
-                    console.log("adva turn", currentId, turnId)          
-                    replay.endAnimation()
-                }, 500)
+                advanceTurn()
                 break;                
 
         }
     }, [events])
-    
+
+    const advanceTurn = () => {
+        replay.advancePly()
+        replay.startAnimation()
+        const currentId = ++turnId
+        setTimeout(() => {
+            if (currentId !== turnId) return
+            const replay = useReplayStore.getState()
+            replay.advancePly()
+            //console.log("adva turn", currentId, turnId)
+            replay.endAnimation()
+        }, 500)
+    }
     // handlers
     const handleNavigateToDetail = () => {
         navigate(routes.detail(problem.id))
@@ -100,7 +107,6 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
     const handlePromotionConfirm = (promote: boolean) => {
         const intentResult: IntentResult = { type: "move", move: choosePromotion(promote) }
         const ctx = createDecideGameEventContext()
-
         const decision = decideGameEvent({ intentResult, ...ctx })
 
         switch (decision.type) {
@@ -127,7 +133,7 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
     const handleRevealAnswer = () => {
         dispatch({type: "REVEAL", ...ctx})
     }
-    
+    ////////////////////////////////////////////////////////////////////////
     return (
         <AppShell
             header={"Player"}
