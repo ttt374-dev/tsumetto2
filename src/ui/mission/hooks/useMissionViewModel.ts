@@ -15,6 +15,7 @@ import { ProblemStats } from "@/domain/problem/valueObject/ProblemStats";
 import { useImport } from "@/ui/Import/useImport";
 import { useBackupRestoreDialog } from "@/ui/common/components/dialogs/BackupRestoreDialog";
 import { DefaultQueryState } from "@/domain/problem/service/query/ProblemsQuery";
+import type { MissionExecutionMode } from "@/ui/mission/components/MissionExecutionModeControl";
 
 export function useMissionViewModel() {
     const navigate = useNavigate();
@@ -74,7 +75,10 @@ export function useMissionViewModel() {
     // 既存の操作
     const onCreateMission = () => navigate(routes.newMission);
 
-    const onStartSession = (mission: Mission, limit: number | null = null) => {
+    const onStartSession = (mission: Mission, executionMode: MissionExecutionMode) => {
+        const limit = executionMode.type === "partial" ? 
+            executionMode.limit : null
+
         const filtered = applyQuery(
             problems,
             learningRecords,
