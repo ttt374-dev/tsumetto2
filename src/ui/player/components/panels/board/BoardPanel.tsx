@@ -1,7 +1,7 @@
 import { Box, Stack } from "@mui/material";
 
 import styles from "./BoardView.module.css";
-import { useCurrentPosition, useGameStore } from "../../../hooks/useGameStore";
+import { useCurrentPosition, useGameStore } from "../../../store/useGameStore";
 import HandView from "./HandView";
 import BoardView from "./BoardView";
 

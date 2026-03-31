@@ -1,6 +1,6 @@
 import { deriveSolvedResultFromEvents } from "@/domain/review/service/solvedResultDeriver"
 import type { SolvedResult } from "@/domain/review/solvedResult"
-import type { GameEvent } from "@/ui/player/hooks/useGameStore"
+import type { GameEvent } from "@/ui/player/store/useGameStore"
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material"
 
 export function SolvedDialog({ open, onClose, onConfirm, solvedResult, confirmLabel="次へ" }: {

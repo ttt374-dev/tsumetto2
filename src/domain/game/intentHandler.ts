@@ -1,8 +1,8 @@
 import { type IntentResult } from "@/domain/game/intentResolver"
 import { Move } from "@/domain/kif/entity"
-import { useGameStore, type GameEvent, type PendingPromotion } from "@/ui/player/hooks/useGameStore"
-import { useReplayStore } from "@/ui/player/hooks/useReplayStore";
-import { useTimerStore } from "@/ui/player/hooks/useTimerStore";
+import { useGameStore, type GameEvent, type PendingPromotion } from "@/ui/player/store/useGameStore"
+import { useReplayStore } from "@/ui/player/store/useReplayStore";
+import { useTimerStore } from "@/ui/player/store/useTimerStore";
 
 type GameDecision =
   | { type: "invalidMove", reason?: string }

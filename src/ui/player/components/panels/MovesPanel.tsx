@@ -2,9 +2,9 @@ import { Box, Button, Stack } from "@mui/material";
 
 import MovesView from "../views/MovesView";
 import type { Move } from "@/domain/kif/entity";
-import { useReplayStore } from "@/ui/player/hooks/useReplayStore";
+import { useReplayStore } from "@/ui/player/store/useReplayStore";
 import { createPlayerContext } from "@/ui/player/components/types/PlayerContext";
-import { useGameStore } from "@/ui/player/hooks/useGameStore";
+import { useGameStore } from "@/ui/player/store/useGameStore";
 import ProblemLearningInfoPanel from "@/ui/player/components/panels/ProblemLearningInfoPanel";
 import type { Problem } from "@/domain/problem/entity/Problem";
 

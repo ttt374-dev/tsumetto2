@@ -1,6 +1,6 @@
 import type { Hand, PieceType, Player } from "@/domain/kif/entity"
 
-import { useBoardInputStore } from "@/ui/player/hooks/useBoardInputStore"
+import { useBoardInputStore } from "@/ui/player/store/useBoardInputStore"
 import { formatPlayer } from "../../views/MovesView"
 import styles from "./BoardView.module.css";
 import { Box } from "@mui/material";

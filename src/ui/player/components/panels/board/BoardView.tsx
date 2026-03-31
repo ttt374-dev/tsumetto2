@@ -1,8 +1,8 @@
 import { Box } from "@mui/material"
 
 import styles from "./BoardView.module.css";
-import { useCurrentPosition, useGameStore } from "@/ui/player/hooks/useGameStore";
-import { useBoardInputStore } from "@/ui/player/hooks/useBoardInputStore";
+import { useCurrentPosition, useGameStore } from "@/ui/player/store/useGameStore";
+import { useBoardInputStore } from "@/ui/player/store/useBoardInputStore";
 import { Board, Piece, Square } from "@/domain/kif/entity";
 import { createDecideGameEventContext, decideGameEvent } from "@/domain/game/intentHandler";
 import { resolveIntent } from "@/domain/game/intentResolver";

@@ -9,7 +9,7 @@ import type { ReviewAction } from "@/domain/review/ReviewEvent";
 import { useEffect, useMemo, useState } from "react"
 import { v4 } from "uuid"
 import { deriveSolvedResultFromEvents } from "@/domain/review/service/solvedResultDeriver"
-import { useGameStore, type GameEvent } from "@/ui/player/hooks/useGameStore"
+import { useGameStore, type GameEvent } from "@/ui/player/store/useGameStore"
 import { createPlayerContext } from "@/ui/player/components/types/PlayerContext"
 
 export type SessionPlayerVM =

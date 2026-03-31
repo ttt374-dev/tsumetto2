@@ -1,4 +1,4 @@
-import { useTimerStore } from "@/ui/player/hooks/useTimerStore"
+import { useTimerStore } from "@/ui/player/store/useTimerStore"
 import { Button, Typography } from "@mui/material"
 
 export default function TimerControlPanel(){

@@ -4,8 +4,8 @@ import { create } from "zustand"
 
 import { Move, Position, Square, type PieceType } from "@/domain/kif/entity"
 import { buildUntilPly } from "@/domain/kif/service/buildUntilPly"
-import { projectGameState } from "@/ui/player/hooks/gameStateReducer"
-import { useReplayStore } from "@/ui/player/hooks/useReplayStore"
+import { useReplayStore } from "@/ui/player/store/useReplayStore"
+import { projectGameState } from "@/domain/game/gameStateReducer"
 
 export type GameState =  { mistakes: number, isRevealed: boolean, isSolved: boolean }    
 
@@ -78,14 +78,11 @@ export const useGameStore = create<GameStore>((set, get) => ({
         set({
             initialPosition: pos,
             moves,
-            //hasSubmitted: false,
             pendingPromotion: null,
             events: [],
             state: projectGameState([])
-            //state: { ...DefaultGameState },
         })
     },
-
     
     promotionPending: (p: PendingPromotion) => {
         set({ pendingPromotion: p })
@@ -105,17 +102,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
                 state: projectGameState(events)
             }
         })
-    },
-    /*dispatch: (e) => {
-        set(s => ({
-            events: [...s.events, e],
-            state: reduceGameState(s.state, e),
-        }))
-    },*/ 
-    /*
-    markSubmit: ()=>{
-        set({ hasSubmitted: true})
-    },*/
+    },   
     
 }))
 

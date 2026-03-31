@@ -1,5 +1,5 @@
-import { useReplayStore } from "@/ui/player/hooks/useReplayStore"
-import { useTimerStore } from "@/ui/player/hooks/useTimerStore"
+import { useReplayStore } from "@/ui/player/store/useReplayStore"
+import { useTimerStore } from "@/ui/player/store/useTimerStore"
 
 export type PlayerContext = {
   ply: number
