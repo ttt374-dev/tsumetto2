@@ -46,7 +46,7 @@ export type GameStore = {
     choosePromotion: (promote: boolean) => Move
     promotionPending: (p: PendingPromotion) => void
     
-    dispatch: (e: GameEvent) => void
+    dispatch: (e: GameEvent) => GameEvent[]
     //markSubmit: () => void    
 }
 export function useCurrentPosition() {
@@ -94,15 +94,20 @@ export const useGameStore = create<GameStore>((set, get) => ({
         set({ pendingPromotion: null })
         return createMoveFromPendingPromotion(pendingPromotion, promote)
     },
-    dispatch: (e) => {
+    dispatch: (e): GameEvent[] => {
+        let nextEvents: GameEvent[] = []
+
         set(s => {
-            const events = [...s.events, e]
+            nextEvents = [...s.events, e]
             return {
-                events,
-                state: projectGameState(events)
+                events: nextEvents,
+                state: projectGameState(nextEvents)
             }
         })
-    },   
+
+        //return nextEvents
+        return nextEvents
+    },
     
 }))
 

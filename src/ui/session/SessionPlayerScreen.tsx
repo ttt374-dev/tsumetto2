@@ -5,8 +5,7 @@ import { PlayerFooterPanel } from "@/ui/player/components/panels/PlayerFooterPan
 import { SessionProblemListDialog } from "@/ui/session/SessionProblemListDialog"
 import type { Problem } from "@/domain/problem/entity/Problem"
 import type { SessionId } from "@/domain/session/entity/Session"
-import { useSolvedResultSubmitter } from "@/ui/session/hooks/useSolvedResultSubmitter"
-import { useSessionStore } from "@/ui/session/hooks/useSessionStore"
+import { useSessionCompletion } from "@/ui/session/hooks/useSessionCompletion"
 import { useSessionPlayerTitleMaker } from "@/ui/session/hooks/useSessionPlayerTitleMaker"
 import { useSessionPlayerStatus } from "@/ui/session/hooks/useSessionPlayerStatus"
 
@@ -24,31 +23,22 @@ function SessionPlayerContent(props: {
 }){
     const [isListOpen, setIsListOpen] = useState(false)        
     
-    const { submitSolvedResult, flush } = useSolvedResultSubmitter(props.problem, props.sessionId)
+    const { solve, goNext, skip } = useSessionCompletion(props.problem, props.sessionId)
     const { title } = useSessionPlayerTitleMaker(props.problem)
-    const nextProblem = useSessionStore(s=>s.next)
-
-    const handleSolve = () => {
-        submitSolvedResult()
-    }
-    const handleNext = async () => {
-        flush()
-        nextProblem()
-    }
-    const handleAfterDelete = () => {}
-        const footerPanel: React.ReactNode = (
+    
+    const footerPanel: React.ReactNode = (
         <PlayerFooterPanel
-            onNext={handleNext}
-            onShowList={()=>setIsListOpen(true)} />)
+            onNext={goNext}
+            onShowList={() => setIsListOpen(true)} />)
 
     return (
         <>
             <PlayerScreen
                 problem={props.problem}
                 title={title}
-                onSolve={handleSolve}
-                onSolvedConfirm={handleNext}
-                onAfterDelete={handleAfterDelete}
+                onSolve={solve}
+                onSolvedConfirm={goNext}
+                onAfterDelete={skip}
                 footerPanel={footerPanel}
             />
 
