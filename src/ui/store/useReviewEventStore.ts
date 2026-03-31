@@ -12,6 +12,7 @@ type ReviewEventStoreState = {
     repo?: ReviewEventRepository
     setRepository: (repo: ReviewEventRepository) => void
     eventLog: ReviewEventLog;
+    isDirty: boolean,
     //getLastReviewedEvent: (m: SessionId) => ReviewEvent | undefined;
 
     reload: () => Promise<void>;
@@ -20,7 +21,7 @@ type ReviewEventStoreState = {
     appendReview: (problemId: ProblemId, reviewId: string, sessionId: SessionId, quality: SolvedResult) => Promise<ReviewEvent>
     //appendCancel: (targetEventId: ReviewEventId, sessionId: SessionId) => ReviewEvent
     appendReset: (problemId: ProblemId) => Promise<ReviewEvent>
-    clearAll: () => Promise<void>
+    clearAll: () => Promise<void>  
 };
 
 function createReviewEventId(){ return v4()}
@@ -29,6 +30,7 @@ export const useReviewEventStore = create<ReviewEventStoreState>((set, get) => (
     repo: undefined,
     setRepository: (repo) => set({ repo }),
     eventLog: [],
+    isDirty: false,
 
     reload: async () => {
         try {
@@ -47,11 +49,13 @@ export const useReviewEventStore = create<ReviewEventStoreState>((set, get) => (
         repo.replaceAll(get().eventLog)
     },
     append: async (newevent: NewReviewEvent): Promise<ReviewEvent> => {
-        const event: ReviewEvent = { ...newevent, id: createReviewEventId(), at: Date.now(), syncStatus: "pending" }        
+        const event: ReviewEvent = { ...newevent, id: createReviewEventId(), at: Date.now() }        
         set(state => ({
+            isDirty: true,
             eventLog: [...state.eventLog, event]
         }))
-        get().save()
+        //get().save()
+
         return event
     },
     appendReview: async (problemId: ProblemId, reviewId: string, sessionId: SessionId, solvedResult: SolvedResult) => {
@@ -86,7 +90,7 @@ export const useReviewEventStore = create<ReviewEventStoreState>((set, get) => (
     clearAll: async () => {
         set({eventLog: []})
         get().save()
-    }
+    },
+    
 }
-
 ));

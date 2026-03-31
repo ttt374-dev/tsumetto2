@@ -12,6 +12,7 @@ import { bindKey, debounce } from 'lodash';
 import type { Mission } from '@/domain/mission/entity/Mission';
 import type { ReviewEventLog } from '@/domain/review/ReviewEvent';
 import type { Problem, ProblemId } from '@/domain/problem/entity/Problem';
+import { ReviewSyncService } from '@/application/reviewSyncService';
 
 export function createRepositories() {
     return {
@@ -21,6 +22,12 @@ export function createRepositories() {
     }
 }
 export function bootstrapApp(repos: RepositoryContextValue) {
+    
+    useEffect(() => {
+        const syncService = new ReviewSyncService()
+        syncService.start()
+    }, [])
+
     useEffect(() => {
         const missionRepo = repos.mission
         const learningRepo = repos.reviewEvent

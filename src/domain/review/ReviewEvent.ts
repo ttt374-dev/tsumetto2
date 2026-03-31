@@ -40,9 +40,9 @@ type NewReviewCancelEvent =
         
     }
 */
-type SyncStatus = "pending" | "synced" | "failed"
+//type SyncStatus = "pending" | "synced" | "failed"
 export type ReviewEvent =
-    NewReviewEvent & { id: ReviewEventId, at: number, syncStatus: SyncStatus }
+    NewReviewEvent & { id: ReviewEventId, at: number }
 
 export type ReviewReviewedEvent = Extract<ReviewEvent, { type: "reviewed" }>;
 

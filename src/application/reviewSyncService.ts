@@ -1,4 +1,6 @@
-class ReviewSyncService {
+import { useReviewEventStore } from "@/ui/store/useReviewEventStore"
+
+export class ReviewSyncService {
     private running = false
 
     start() {
@@ -9,21 +11,25 @@ class ReviewSyncService {
 
     async loop() {
         while (this.running) {
-            await this.process()
+            await this.flushIfDirty()
             await sleep(2000)
         }
     }
 
-    async process() {
-        const unsynced = getReviewStore().getUnsynced()
+    async flushIfDirty() {
+        const store = useReviewEventStore.getState()
 
-        for (const r of unsynced) {
-            try {
-                await repo.save(r)
-                markSynced(r.id)
-            } catch {
-                markFailed(r.id)
-            }
+        if (!store.isDirty) return
+
+        try {
+            await store.repo?.replaceAll(store.eventLog)
+            console.log("SYNC REPLACEALL")
+            useReviewEventStore.setState({ isDirty: false })
+        } catch (e) {
+            console.error("sync failed", e)
         }
     }
 }
+
+const sleep = (ms: number) =>
+    new Promise(resolve => setTimeout(resolve, ms))

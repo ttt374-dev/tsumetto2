@@ -9,4 +9,6 @@ export async function initializeAppUsecase(
     if (missions.length === 0) {
         await missionRepository.replaceAll([createDefaultMission()])
     }
+
+    
 }
