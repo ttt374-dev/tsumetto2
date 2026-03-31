@@ -29,6 +29,14 @@ export class ReviewSyncService {
             console.error("sync failed", e)
         }
     }
+    async flushNow() {
+        const store = useReviewEventStore.getState()
+
+        if (!store.isDirty) return
+
+        await store.repo?.replaceAll(store.eventLog)
+        useReviewEventStore.setState({ isDirty: false })
+    }
 }
 
 const sleep = (ms: number) =>

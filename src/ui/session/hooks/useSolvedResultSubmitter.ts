@@ -22,20 +22,20 @@ export function useSolvedResultSubmitter(problem: Problem, sessionId: SessionId)
         [problem.id, sessionId, reviewedEvents])
 
     // navigation
-    const submitSolvedResult = async (result?: SolvedResult) => {
+    const submitSolvedResult = (result?: SolvedResult) => {
         if (hasSubmitted) return
 
         const res = result ?? deriveSolvedResultFromEvents(events) //deriveSolvedResult(state, timer.elapsedSec)
         const reviewId = v4()
-        await appendReview(problem.id, reviewId, sessionId, res)
+        appendReview(problem.id, reviewId, sessionId, res)
         console.log("submit answer", res)        
     }    
-    const flush = async () => {
+    const flush = () => {
         if (hasSubmitted) return    // サブミット済なら何もしない        
 
         if (shouldAbandon()){
             dispatch(createAbandonEvent())
-            await submitSolvedResult()
+            submitSolvedResult()
         }        
     }
     const shouldAbandon = () =>

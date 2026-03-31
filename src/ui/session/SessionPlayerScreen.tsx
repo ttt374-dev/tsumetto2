@@ -32,7 +32,7 @@ function SessionPlayerContent(props: {
         submitSolvedResult()
     }
     const handleNext = async () => {
-        await flush()
+        flush()
         nextProblem()
     }
     const handleAfterDelete = () => {}
