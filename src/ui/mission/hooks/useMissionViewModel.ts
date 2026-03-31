@@ -18,18 +18,9 @@ import { DefaultQueryState } from "@/domain/problem/service/query/ProblemsQuery"
 import type { MissionExecutionMode } from "@/ui/mission/components/MissionExecutionModeControl";
 
 export function useMissionViewModel() {
-    const navigate = useNavigate();
-    //const toast = useToast();
-
     // Store
     const missions = useMissionStore(s => s.missions);
     const replaceAll = useMissionStore(s => s.replaceAll);
-
-    //const problems = useProblemStore(s => s.activeProblems);
-    const problems = useProblemStore(selectActiveProblems);
-    const learningRecords = useLearningRecordStore(s => s.records);
-    //const reloadProblems = useProblemStore(s => s.reload);
-    const startSession = useSessionStore(s => s.start);
 
     // UI 用配列
     const [missionArray, setMissionArray] = useState<Mission[]>([]);
@@ -59,6 +50,19 @@ export function useMissionViewModel() {
         [missionArray, replaceAll]
     );
 
+
+    return {
+        missionArray,
+        onDragEnd,
+    };
+}
+/////////////
+
+////////////////////////
+export function useMissionStats(missionArray: Mission[]){
+    const problems = useProblemStore(selectActiveProblems);
+    const learningRecords = useLearningRecordStore(s => s.records);
+
     // missionArray に基づく stats
     const missionStats = useMemo(() => {
         const map = new Map<string, ProblemStats>();
@@ -72,27 +76,6 @@ export function useMissionViewModel() {
     }, [missionArray, problems, learningRecords]);
 
 
-    // 既存の操作
-    const onCreateMission = () => navigate(routes.newMission);
+    return { missionStats }
 
-    const onStartSession = (mission: Mission, executionMode: MissionExecutionMode) => {
-        const limit = executionMode.type === "partial" ? 
-            executionMode.limit : null
-
-        const filtered = applyQuery(
-            problems,
-            learningRecords,
-            mission.queryState, limit);
-        startSession(mission.id, filtered.map(p => p.id));
-        navigate(routes.sessionPlay);
-    };
-
-    return {
-        missionArray,
-        missionStats,
-        onDragEnd,
-        onCreateMission,
-        onStartSession,
-        //presenter: { importer, backupRestoreDialog },
-    };
 }

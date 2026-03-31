@@ -8,7 +8,7 @@ import { SortableContext, useSortable, arrayMove, verticalListSortingStrategy } 
 import { CSS } from "@dnd-kit/utilities";
 
 import { AppShell } from "../common/components/layout/AppShell";
-import { useMissionViewModel } from "./hooks/useMissionViewModel";
+import {  useMissionStats, useMissionViewModel } from "./hooks/useMissionViewModel";
 import { useNavigate } from "react-router-dom";
 import { routes } from "../App/useAppNavigation";
 import type { Mission, MissionId } from "@/domain/mission/entity/Mission";
@@ -21,30 +21,26 @@ import { useImport } from "@/ui/Import/useImport";
 import { useToast } from "@/ui/App/providers/ToastProvider";
 import { useProblemStore } from "@/ui/store/useProblemStore";
 import { useBackupRestoreDialog } from "@/ui/common/components/dialogs/BackupRestoreDialog";
+import { useMissionStarter } from "@/ui/mission/hooks/useMissionStarter";
+import { useMissionCreator } from "@/ui/mission/hooks/useMissionCreator";
 
 export default function MissionScreen() {
-    const { onCreateMission } = useMissionViewModel();
-    
-    const {editMode, toggleEditMode } = useMissionModeStore()    
-    const [executionMode, setExecutionMode] = useState<MissionExecutionMode>(DefaultMissionExecutionMode)   
+    const { createMission } = useMissionCreator()    
+    const [ executionMode, setExecutionMode] = useState<MissionExecutionMode>(DefaultMissionExecutionMode)   
 
     return (
         <AppShell
             header="Missions"
             rightActions={
-                <IconButton onClick={toggleEditMode} sx={{color: !editMode ? "white" : "default"}}>
-                    <EditIcon  />
-                </IconButton>
+                <MissionEditModeControl/>
             }
-            fab={<MissionFabMenu onCreateNewMission={onCreateMission} />}
+            fab={<MissionFabMenu onCreateNewMission={createMission} />}
         >
             <ExecutionModeControl 
                 value={executionMode} 
                 onChange={m=>setExecutionMode(m)}/>
             
-            <MissionList
-                editMode={editMode}
-                toggleEditMode={toggleEditMode}
+            <MissionList                
                 executionMode={executionMode}
             />           
             <MissionRelatedDialogs/>
@@ -53,6 +49,14 @@ export default function MissionScreen() {
     );
 }
 ///////////////////////////
+function MissionEditModeControl(){
+    const { editMode, toggleEditMode } = useMissionModeStore()
+    return (
+        <IconButton onClick={toggleEditMode} sx={{ color: !editMode ? "white" : "default" }}>
+            <EditIcon />
+        </IconButton>
+    )
+}
 function MissionRelatedDialogs(){
     const reloadProblems = useProblemStore(s => s.reload);
     const toast = useToast()
@@ -76,11 +80,12 @@ function MissionRelatedDialogs(){
 }
 ///////////////////
 function MissionList(props: {
-    editMode: boolean
-    toggleEditMode: () => void
+    
     executionMode: MissionExecutionMode
 }) {
-    const { missionArray, onDragEnd, missionStats, onStartSession }  = useMissionViewModel();
+    const { missionArray, onDragEnd }  = useMissionViewModel();
+    const { startMission } = useMissionStarter()
+    const { missionStats } = useMissionStats(missionArray)
 
     // dnd-kit センサ    
     const sensors = useSensors(
@@ -96,6 +101,7 @@ function MissionList(props: {
             },
         })
     );
+    
     return (
         <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto" }}> { /* , touchAction: "pan-y" */}
             <DndContext sensors={sensors}
@@ -108,10 +114,9 @@ function MissionList(props: {
                             <SortableMissionItem
                                 key={mission.id}
                                 mission={mission}
-                                editMode={props.editMode}
-                                toggleEditMode={props.toggleEditMode}
-                                startSession={() => onStartSession(mission, props.executionMode)}
-                                missionStats={missionStats}
+                                
+                                startMission={() => startMission(mission, props.executionMode)}
+                                missionStats={missionStats.get(mission.id)}
                             />
                         ))}
                     </List>
@@ -123,15 +128,15 @@ function MissionList(props: {
 /////////////
 function SortableMissionItem(props: {
     mission: Mission 
-    editMode: boolean
-    toggleEditMode: () => void
-    startSession: () => void
-    //executionMode: MissionExecutionMode
-    missionStats: Map<string, ProblemStats>
+    
+    startMission: () => void
+    missionStats: ProblemStats | undefined //    Map<string, ProblemStats>
 }) {
+    const {editMode, toggleEditMode } = useMissionModeStore()    
+
     const { bind, isLongPressedRef } = useLongPress({
         onLongPress: () => {
-            props.toggleEditMode()
+            toggleEditMode()
         },
 
     })
@@ -143,21 +148,22 @@ function SortableMissionItem(props: {
         touchAction: "none"
     };
 
-    const stats = props.missionStats.get(props.mission.id);
+    //const stats = props.missionStats.get(props.mission.id);
+    const stats = props.missionStats
 
     const onItemClick = () => {
         if (isLongPressedRef.current) return
-        if (!props.editMode) {
-            props.startSession()
+        if (!editMode) {
+            props.startMission()
         } else navigate(routes.missionEdit(props.mission.id))
     }
-    const disabled = !props.editMode && (stats?.problemCount === 0)
+    const disabled = !editMode && (stats?.problemCount === 0)
     
     ////////////////
     return (
         <ListItem
             ref={sortable.setNodeRef}
-            style={props.editMode ? style : undefined}
+            style={editMode ? style : undefined}
             disablePadding
             sx={{
                 borderBottom: '1px solid',
@@ -169,7 +175,7 @@ function SortableMissionItem(props: {
                 //backgroundColor: isReorder ? "action.hover" : "inherit",
             }}
             secondaryAction={
-                props.editMode &&
+                editMode &&
                 <IconButton
                     {...sortable.attributes}
                     {...sortable.listeners}
@@ -185,10 +191,10 @@ function SortableMissionItem(props: {
                 {...bind}
                 disabled={disabled}
                 sx={{
-                    bgcolor: props.editMode ? "action.hover" : "transparent",
+                    bgcolor: editMode ? "action.hover" : "transparent",
                     position: "relative",
 
-                    "&::before": props.editMode
+                    "&::before": editMode
                         ? {
                             content: '""',
                             position: "absolute",
