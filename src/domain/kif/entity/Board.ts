@@ -1,9 +1,7 @@
-export type Handicap = "平手" | "二枚落ち" | "四枚落ち"
-
-
 import { Piece, type PieceDTO, type Player } from "./Piece"
 import { Square } from "./Square"
 
+export type Handicap = "平手" | "二枚落ち" | "四枚落ち"
 type SquareGrid = Map<string, Piece | null>
 
 export class Board {

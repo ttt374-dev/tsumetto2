@@ -4,14 +4,13 @@ import DoneIcon from '@mui/icons-material/Done'
 import CloseIcon from '@mui/icons-material/Close'
 import EditIcon from '@mui/icons-material/Edit';
 
-
 type Props = {
     label?: string,
     initialText: string,
     onUpdateText: (title: string) => void
 }
 
-export function EditableText({label="Text", initialText, onUpdateText }: Props) {
+export function EditableText({ label = "Text", initialText, onUpdateText }: Props) {
     const [text, setText] = useState(initialText)
     const [editing, setEditing] = useState(false);
 
@@ -25,7 +24,7 @@ export function EditableText({label="Text", initialText, onUpdateText }: Props) 
     }
     const inputRef = useRef<HTMLInputElement | null>(null)
 
-   
+
     useEffect(() => {
         if (editing) {
             inputRef.current?.focus()
@@ -56,7 +55,7 @@ export function EditableText({label="Text", initialText, onUpdateText }: Props) 
                 </IconButton>
 
             </Stack>
-            : (<Stack direction="row"  onClick={handleEdit}>
+            : (<Stack direction="row" onClick={handleEdit}>
                 <Typography flexGrow={1}>{text}</Typography>
 
                 <IconButton onClick={handleEdit}>
@@ -64,5 +63,5 @@ export function EditableText({label="Text", initialText, onUpdateText }: Props) 
                 </IconButton>
             </Stack>
             )
-        )
-    }
+    )
+}

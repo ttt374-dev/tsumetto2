@@ -1,15 +1,20 @@
+import type { Learning } from "@/domain/learning/entity/Learning"
 import { deriveSolvedResultFromEvents } from "@/domain/review/service/solvedResultDeriver"
 import type { SolvedResult } from "@/domain/review/solvedResult"
+import { formatDuration } from "@/ui/common/formatter"
 import type { GameEvent } from "@/ui/player/store/useGameStore"
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material"
 
-export function SolvedDialog({ open, onClose, onConfirm, solvedResult, confirmLabel="次へ" }: {
+export function SolvedDialog({ open, onClose, onConfirm, solvedResult, learning }: {
     open: boolean
     onClose: () => void
     onConfirm: () => void
     solvedResult: SolvedResult
-    confirmLabel?: string
+    learning: Learning
+    
 }) {
+    console.log("learning", learning)
+    const confirmLabel = "確認"
     
     return (
         <Dialog open={open} onClose={onClose} maxWidth="xl">
@@ -21,6 +26,9 @@ export function SolvedDialog({ open, onClose, onConfirm, solvedResult, confirmLa
                 <Box>間違い回数：{solvedResult.mistakes}</Box>
                 <Box>解答参照：{solvedResult.isRevealed ? "参照" : "なし"}</Box>
                 <Box>秒数: {solvedResult.elapsedSec}</Box>
+
+                <Box>スコア：{learning.score.toFixed(1)}</Box>
+                <Box>次レビュー：{formatDuration(learning.nextReviewedAt - Date.now())}</Box>
             </DialogContent>
             <DialogActions>
                 <Button variant="outlined" color="info" onClick={() => { onClose() }}>
@@ -34,3 +42,4 @@ export function SolvedDialog({ open, onClose, onConfirm, solvedResult, confirmLa
         </Dialog>
     )
 }
+

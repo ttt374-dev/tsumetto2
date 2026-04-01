@@ -1,7 +1,7 @@
 import type { ProblemId } from "@/domain/problem/entity/Problem"
 import type { SolvedResult } from "@/domain/review/solvedResult"
 
-const MAX_INTERVAL_DAYS = 60
+//const MAX_INTERVAL_DAYS = 60
 
 export type LearningData = {
     problemId: ProblemId

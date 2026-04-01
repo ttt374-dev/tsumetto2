@@ -9,7 +9,7 @@ type MissionEditorState = {
     startEdit: (mission: Mission) => void
 
     setName: (name: string) => void
-    setQuery: (snapshot: Mission["queryState"]) => void    
+    setQuery: (snapshot: Mission["queryState"]) => void
 
     reset: () => void
 }

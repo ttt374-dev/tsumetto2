@@ -1,8 +1,8 @@
 import { v4 } from 'uuid'
 import { KifData, type KifDataDTO } from '../../kif/entity'
 import { parseKif } from '@/domain/kif/service/parser/parseKif'
+import type { ProblemType } from '@/domain/problem/entity/ProblemType'
 
-export type ProblemType = "standard" | "realistic" | "hisshi" | "tesuji"
 export type Tags = string[]
 
 export type ProblemData = {

@@ -1,12 +1,15 @@
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem";
 import { Box, Checkbox, ListItem, ListItemButton, ListItemIcon, ListItemText, Stack, Typography } from "@mui/material";
-import { useLongPress } from "../hooks/useLongPress";
+
+import { useLongPress } from "@/ui/common/hooks/useLongPress";
 import { StarToggleButton } from "@/ui/common/components/StarToggleButton/StarToggleButton";
 import { useProblemStore } from "@/ui/store/useProblemStore";
 import { useLearningRecordStore } from "@/ui/store/useLearningRecordStore";
 import { useStarToggleButton } from '@/ui/common/components/StarToggleButton/useStarToggleButton';
 import { Learning } from "@/domain/learning/entity/Learning";
 import type { LibraryActionMode } from "@/ui/library/hooks/useLibraryViewModel";
+import { problemTypeToLabel } from "@/domain/problem/entity/ProblemType";
+import { formatLearningPerformance } from "@/ui/common/formatter";
 
 export const LibraryListItem = function LibraryListItem({ id, onItemClick,
     showCheckbox, isChecked, onToggleChecked, onChangeActionMode,
@@ -54,10 +57,11 @@ export const LibraryListItem = function LibraryListItem({ id, onItemClick,
                 <ListItemText
                     primary={
                         <Stack direction="row" justifyContent={"space-between"} alignItems="center">
-                            <Typography variant="subtitle1" fontWeight="bold" flex={4}  color="text.primary">
+                            <Typography variant="subtitle1" fontWeight="bold" flex={8}  color="text.primary">
                                 {problem.title}
                             </Typography>
-                            <Typography variant="body2" flex={1}>
+                            <Typography variant="body2" flex={3}>
+                                {problemTypeToLabel(problem.type)}
                                 {problem.kifData.moves.length}手
                             </Typography>
                             <Stack direction="row" flex={1}>
@@ -121,11 +125,4 @@ export function LearningSection(props: {
         </Stack>
 
     )
-}
-export function formatLearningPerformance(learning: Learning): string {
-    
-    const indays = inDays(learning.nextReviewedAt)
-    const scoreString = learning.score.toFixed(1)
-    return `[${scoreString}](${learning.solvedCount}:${learning.failedCount})`
-   
 }

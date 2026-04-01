@@ -15,13 +15,13 @@ export default function MovesPanel({moves, isMovesVisible, problem}: {
 }) {
     const moveTo = useReplayStore(s=>s.moveTo)
     const ply = useReplayStore(s=>s.ply)
-    const dispatch = useGameStore(s=>s.dispatch)   
+    //const dispatch = useGameStore(s=>s.dispatch)   
     const ctx = createPlayerContext()
-
+/*
     const handleRevealAnswer = () => {
         dispatch({type: "REVEAL", ...ctx})
     }
-    
+  */  
     return (
         <Box
             flex={1}

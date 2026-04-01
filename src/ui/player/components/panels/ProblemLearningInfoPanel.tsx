@@ -1,5 +1,6 @@
 import type { Problem } from "@/domain/problem/entity/Problem"
-import { formatLearningPerformance } from "@/ui/library/components/LibraryListItem"
+import { problemTypeToLabel } from "@/domain/problem/entity/ProblemType"
+import { formatDuration, formatLearningPerformance, formatNextReviewIn } from "@/ui/common/formatter"
 import { useLearningRecordStore } from "@/ui/store/useLearningRecordStore"
 import { Box } from "@mui/material"
 
@@ -12,12 +13,22 @@ export default function ProblemLearningInfoPanel(props: {
     const learning = records[problem.id
         
     ]
+    
     return (<>
-        <Box>タイプ：{problem.type}</Box>
+        <Box>タイプ：{problemTypeToLabel(problem.type)}</Box>
         {problem.source && <Box>出典：{problem.source}</Box>}
         {problem.tags && <Box>{problem.tags.join(",")}</Box>}
 
-        {learning && formatLearningPerformance(learning)}
+        {learning && 
+            <>
+                <Box>
+                    { formatLearningPerformance(learning) }
+                </Box>
+                <Box>
+                    { formatNextReviewIn(learning.nextReviewedAt)}
+                </Box>
+
+            </>}
 
     </>)
 }

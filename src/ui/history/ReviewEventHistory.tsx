@@ -3,7 +3,8 @@ import type { ReviewEvent } from "@/domain/review/ReviewEvent";
 import { useProblemStore } from "@/ui/store/useProblemStore";
 import { useReviewEventStore } from "@/ui/store/useReviewEventStore";
 import type { SolvedResult } from "@/domain/review/solvedResult"
-import { evaluateScore } from "@/domain/learning/service/evaluateScore";
+import { calculateScore } from "@/domain/learning/service/calclateScore";
+import { formatDateNumber } from "@/ui/common/formatter/formatDateNumber";
 
 export function formatSolvedResult(res: SolvedResult) {
     const outcome = res.outcome === "solved" ? "成功" : res.outcome === "failed" ? "失敗" : "未回答"
@@ -17,16 +18,14 @@ function formatEvent(title: string, event: ReviewEvent): string {
     switch (event.type) {
         case "reviewed":
             const res = event.solvedResult
-            const score = evaluateScore(res)
+            const score = calculateScore(res)
             content = `${title} [${score}] ${formatSolvedResult(res)}`;
             break
         case "reset": content = `リセット：${title}`; break
     }
     return content
 }
-function formatDateNumber(number: number): string {
-    return new Date(number).toLocaleString()
-}
+
 export function ReviewEventHistory() {
     const byId = useProblemStore(s => s.byId)
     const allevents = useReviewEventStore(s => s.eventLog)

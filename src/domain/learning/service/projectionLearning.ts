@@ -1,17 +1,14 @@
 import { Learning, type LearningRecord} from "../entity/Learning"
 import type { ReviewEvent, ReviewEventId, ReviewReviewedEvent} from "../../review/ReviewEvent"
 import type { SolvedResult } from "@/domain/review/solvedResult"
-import { evaluateScore } from "@/domain/learning/service/evaluateScore"
+import { calculateScore } from "@/domain/learning/service/calclateScore"
 
 const MAX_INTERVAL_DAYS = 60
 const DAY = 60 * 60 * 24 * 1000
-export function projectLearning(
-    events: readonly ReviewEvent[]
-): LearningRecord {
 
+export function projectLearning(events: readonly ReviewEvent[]): LearningRecord {
     const record: LearningRecord = {}
-
-    const canceled = new Set<ReviewEventId>()
+    //const canceled = new Set<ReviewEventId>()
     const sorted = [...events].sort((a, b) => a.at - b.at)
     // ① cancel対象を集める
     /*
@@ -22,7 +19,7 @@ export function projectLearning(
     }*/
     for (const event of sorted) {
         //if (event.type === "cancel") continue
-        if (canceled.has(event.id)) continue
+        //if (canceled.has(event.id)) continue
 
         switch (event.type) {
             case "reviewed": {
@@ -79,7 +76,7 @@ function applyReviewedEvent(
     //console.log("event", event)
     //console.log("apply reviewed event", new Date(nextReviewAt).toLocaleDateString(), intervalDays)
     const baseTotalCount = base.solvedCount + base.failedCount
-    const newScore = evaluateScore(event.solvedResult)
+    const newScore = calculateScore(event.solvedResult)
     const newSumScore = baseTotalCount * base.score + newScore
     const newAverageScore = newSumScore / (baseTotalCount + 1)
     return new Learning(

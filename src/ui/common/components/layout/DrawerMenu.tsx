@@ -28,8 +28,7 @@ export function DrawerMenu({ isOpen, onClose,
                     </ListItemButton>
                     <ListItemButton onClick={() => onNavigateToHistory()}>
                         <ListItemText primary="履歴" />
-                    </ListItemButton>
-                    
+                    </ListItemButton>                    
 
                     <Divider />
 

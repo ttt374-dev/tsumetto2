@@ -1,11 +1,11 @@
 import { Box, ToggleButton, List, ListItem, ListItemButton, ListItemText, Stack, ToggleButtonGroup, IconButton, keyframes, Checkbox, FormControlLabel, TextField } from "@mui/material";
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
-import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
 import { useNavigate } from "react-router-dom";
 import type { Mission } from "@/domain/mission/entity/Mission";
-import { useLongPress } from "@/ui/library/hooks/useLongPress";
+import { useLongPress } from "@/ui/common/hooks/useLongPress";
 import type { ProblemStats } from "@/domain/problem/valueObject/ProblemStats";
 import { useMissionModeStore } from "@/ui/mission/hooks/useMissionModeStore";
 import { routes } from "@/ui/App/useAppNavigation";
@@ -54,8 +54,6 @@ export function SortableMissionItem(props: {
                 //px: 2,
                 display: 'flex',
                 alignItems: 'center',
-                //animation: reorderable ? `${shake} 0.2s infinite` : "none",
-                //backgroundColor: isReorder ? "action.hover" : "inherit",
             }}
             secondaryAction={
                 editMode &&
@@ -73,10 +71,9 @@ export function SortableMissionItem(props: {
                 onClick={onItemClick}
                 {...bind}
                 disabled={disabled}
-                sx={{
+                sx={theme => ({
                     bgcolor: editMode ? "action.hover" : "transparent",
                     position: "relative",
-
                     "&::before": editMode
                         ? {
                             content: '""',
@@ -85,10 +82,10 @@ export function SortableMissionItem(props: {
                             top: 0,
                             bottom: 0,
                             width: 4,
-                            bgcolor: "primary.main",
+                            bgcolor: theme.palette.primary.main,
                         }
                         : {}
-                }}
+                })}
 
             >
                 <ListItemText
@@ -104,3 +101,4 @@ export function SortableMissionItem(props: {
 const formatStats = (stats: ProblemStats) => {
     return `問題数：${stats.problemCount ?? 0}, スコア：${((stats.score)).toFixed(1)}`
 }
+

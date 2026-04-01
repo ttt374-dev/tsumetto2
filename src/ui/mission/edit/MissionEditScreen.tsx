@@ -11,10 +11,6 @@ import { routes } from "../../App/useAppNavigation";
 import { FilterControlPanel } from "../../common/query-control/FilterControlPanel";
 import { useToast } from "@/ui/App/providers/ToastProvider";
 
-//const UNSPECIFIED = "__UNSPECIFIED__";
-//type ProblemTypeUi = ProblemType | typeof UNSPECIFIED
-//type SourceUi = string | typeof UNSPECIFIED
-
 export default function MissionEditScreen() {
     const toast = useToast()
     const {
@@ -27,7 +23,7 @@ export default function MissionEditScreen() {
     const handleNavigateToList = () => {
         //console.log("nav: ids", problemIds)
         navigate(routes.list, { state: { ids: problemIds, title: `デッキ ${name}：問題リスト` } })
-    }    
+    }
     const handleMissionNameClear = () => {
         setName("")
     }
@@ -36,7 +32,7 @@ export default function MissionEditScreen() {
         toast({ message: "保存しました" })
         navigate(routes.back)
     }
-    const handleDeleteMission = () => {        
+    const handleDeleteMission = () => {
         if (!window.confirm("are you sure to delete")) return
         remove()
         toast({ message: "削除しました" })
@@ -70,7 +66,7 @@ export default function MissionEditScreen() {
                     pt: 2
                 }}>
                     <Grid size={12}>
-                        <TextField label="ミッション名" fullWidth value={name} 
+                        <TextField label="ミッション名" fullWidth value={name}
                             InputProps={{
                                 endAdornment: name && (
                                     <InputAdornment position="end">
@@ -82,22 +78,21 @@ export default function MissionEditScreen() {
                             }}
                             onChange={e => setName(e.target.value)} />
                     </Grid>
-                    
-                    <FilterControlPanel 
+
+                    <FilterControlPanel
                         query={query} allSources={allSources}
                     />
-                    
-                        <Grid size={3}>
+
+                    <Grid size={3}>
                         <Typography>ラベル：</Typography>
-                        </Grid>
-                        <Grid size={9}>
-                         <FormControl fullWidth>
-                              
+                    </Grid>
+                    <Grid size={9}>
+                        <FormControl fullWidth>
 
                             <InputLabel>並び順</InputLabel>
-                        <SortControl queryState={query.state} onSetSortKey={query.setSortKey}
-                            onToggleOrder={query.toggleSortOrder} />
-                            </FormControl>
+                            <SortControl queryState={query.state} onSetSortKey={query.setSortKey}
+                                onToggleOrder={query.toggleSortOrder} />
+                        </FormControl>
                     </Grid>
                 </Grid>
             </Box>

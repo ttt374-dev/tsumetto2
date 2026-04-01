@@ -1,6 +1,6 @@
 import { useReducer } from "react";
 
-import type { ProblemType } from "@/domain/problem/entity/Problem";
+import type { ProblemType } from "@/domain/problem/entity/ProblemType";
 import { DefaultQueryState, type BooleanQueryKey, type MateBucket, type QueryState, type SortKey } from "@/domain/problem/service/query/ProblemsQuery";
 import { queryReducer } from "@/domain/problem/service/query/queryReducer";
 

@@ -1,5 +1,5 @@
-import { useMemo } from "react";
-import { Box, Paper, Stack, Typography } from "@mui/material";
+import { useMemo, useState } from "react";
+import { Box, Checkbox, FormControlLabel, Paper, Stack, Typography } from "@mui/material";
 
 import type { ProblemId } from "@/domain/problem/entity/Problem";
 import { useLearningRecordStore } from "@/ui/store/useLearningRecordStore";
@@ -11,36 +11,42 @@ type IntervalBin = {
     min: number
     max: number
 }
-
 function createExponentialBins(boundaries: number[]): IntervalBin[] {
-    const bins: IntervalBin[] = []
+    const bins: IntervalBin[] = [];
 
     for (let i = 0; i < boundaries.length; i++) {
-        const min = boundaries[i]
-        const max =
-            i === boundaries.length - 1
-                ? Infinity
-                : boundaries[i + 1] - 1
+        const min = boundaries[i];
+        let max: number;
+        let label: string;
 
-        const label =
-            max === Infinity
-                ? `${min}日以上`
-                : min === max
-                    ? `${min}日`
-                    : `${min}-${max}日`
+        if (i === 0) {
+            // 最初の bin は「min以下」
+            max = boundaries[i + 1] - 1;
+            label = `${min}日以下`;
+        } else if (i === boundaries.length - 1) {
+            // 最後の bin は「min以上」
+            max = Infinity;
+            label = `${min}日以上`;
+        } else {
+            max = boundaries[i + 1] - 1;
+            //label = min === max ? `${min}日` : `${min}-${max}日`;
+            label = `${min}-${max}日`;
+        }
 
-        bins.push({ label, min, max })
+        bins.push({ min, max, label });
     }
 
-    return bins
+    return bins;
 }
 
 function buildIntervalHistogramBinned(
     ids: ProblemId[],
-    learningRecords: LearningRecord
+    learningRecords: LearningRecord,
+    includeDelay: boolean = true,
 ) {
-    const boundaries = [1, 3, 7, 14, 30, 60, 120]
-    const bins = createExponentialBins(boundaries)
+    const boundariesWithDelay = [-7, -3, 1, 3, 7, 14, 30, 60]
+    const boundariesNoDelay = [1, 3, 7, 14, 30, 60]
+    const bins = createExponentialBins(includeDelay ? boundariesWithDelay : boundariesNoDelay)
 
     const counts = bins.map(bin => ({
         label: bin.label,
@@ -51,7 +57,8 @@ function buildIntervalHistogramBinned(
         const learning = learningRecords[id]
         if (!learning) return
 
-        const days = learning.intervalDays
+        //const days = learning.intervalDays
+        const days = (learning.nextReviewedAt - Date.now()) / (24*60*60*1000)
 
         const binIndex = bins.findIndex(
             b => days >= b.min && days <= b.max
@@ -121,13 +128,22 @@ export function IntervalHistogram({
 export function IntervalDaysStats() {
     const activeProblems = useProblemStore(s => s.activeProblems)
     const records = useLearningRecordStore(s => s.records)
+    const [includeDelay, setIncludeDelay ] = useState(true)
+
     const histogram = useMemo(() =>
-        buildIntervalHistogramBinned(activeProblems.map(p => p.id), records),
-        [activeProblems, records])
+        buildIntervalHistogramBinned(activeProblems.map(p => p.id), records, includeDelay),
+        [activeProblems, records, includeDelay])
 
     return (
         <Paper>
-            学習間隔
+            <Box>学習間隔</Box>
+            
+            <FormControlLabel
+                control={
+                    <Checkbox checked={includeDelay} onChange={()=>setIncludeDelay(s=>!s)}/>
+                }
+                label={"遅延も含む"}/>
+            
             <Stack spacing={2} p={2}>
                 <IntervalHistogram data={histogram} />
             </Stack>

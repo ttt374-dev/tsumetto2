@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack"
 
 import styles from "./AppLayout.module.css";
-import { AppBar, Box, Drawer, IconButton, List, ListItemButton, ListItemText, Menu, MenuItem, Toolbar, Typography } from "@mui/material";
+import { AppBar, Box, IconButton,  Toolbar, Typography } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useNavigate } from "react-router-dom";
 import { routes } from "@/ui/App/useAppNavigation";
@@ -34,7 +34,6 @@ export function AppLayout({ header, footer, children, rightActions, fab, drawer,
                         </IconButton> 
                         : <ArrowBackIcon onClick={()=>navigate(routes.back)}/>
                     }
-
                     <Typography>
                         {header}
                     </Typography>
@@ -49,26 +48,21 @@ export function AppLayout({ header, footer, children, rightActions, fab, drawer,
             <div className={styles.footer}>{footer}</div>
 
             {fab && (
-                <Box
-                    sx={{
-                        position: "fixed",
-                        bottom:  `calc(16px + env(safe-area-inset-bottom))`,
-                        right: 16,
-                        zIndex: theme => theme.zIndex.drawer + 1,
-
-                        left: "50%",
-                        transform: "translateX(-50%)",
-                        width: "100%",
-                        maxWidth: 500, // App の max-width と合わせる
-                        pointerEvents: "none",
-                    }}
-                >
-                    <Box sx={{ display: "flex", justifyContent: "flex-end", pr: 2, pointerEvents: "auto", height: 100 }}>
-                        {fab}
-                    </Box>
-                </Box>
+                <FabBottomRight fab={fab}/>
             )}            
-            
         </div>
     );
+}
+function FabBottomRight({fab} : { fab: React.ReactNode}) {
+    return (<Box
+        sx={{
+            position: "fixed",
+            bottom: `calc(16px + env(safe-area-inset-bottom))`,
+            right: 16,
+            zIndex: theme => theme.zIndex.drawer + 1,
+            pointerEvents: "auto",
+        }}
+    >
+        {fab}
+    </Box>)
 }

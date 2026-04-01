@@ -6,11 +6,8 @@ export default function MissionFabMenu({ onCreateNewMission }: {
     //onImportFiles: () => void
 }) {
     return (
-        <Fab onClick={onCreateNewMission}
-            color="primary"
-            sx={{ position: "fixed", bottom: 16, right: 16 }}>
+        <Fab onClick={onCreateNewMission} color="primary">
             <AddIcon />
         </Fab>
-
     );
 }

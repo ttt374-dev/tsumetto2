@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import EditIcon from '@mui/icons-material/Edit';
+import AddIcon from '@mui/icons-material/Add'
 
 import { AppShell } from "../common/components/layout/AppShell";
 import { useNavigate } from "react-router-dom";
@@ -22,7 +23,12 @@ export default function MissionScreen() {
         <AppShell
             header="Missions"
             rightActions={
+                <>
+                <IconButton onClick={()=>navigate(routes.newMission)} sx={{color: "white"}}>
+                    <AddIcon/>
+                </IconButton>
                 <MissionEditModeControl/>
+                </>
             }
             fab={<MissionFabMenu onCreateNewMission={()=>navigate(routes.newMission)} />}
         >
@@ -47,6 +53,7 @@ function MissionEditModeControl(){
         </IconButton>
     )
 }
+
 function MissionRelatedDialogs(){
     const reloadProblems = useProblemStore(s => s.reload);
     const toast = useToast()

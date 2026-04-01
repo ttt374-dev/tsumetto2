@@ -1,3 +1,5 @@
+import { projectLearning } from "@/domain/learning/service/projectionLearning"
+import type { Problem } from "@/domain/problem/entity/Problem"
 import { deriveSolvedResultFromEvents } from "@/domain/review/service/solvedResultDeriver"
 import type { SolvedResult } from "@/domain/review/solvedResult"
 import { useToast } from "@/ui/App/providers/ToastProvider"
@@ -7,9 +9,11 @@ import { useReplayController } from "@/ui/player/hooks/useReplayController"
 import { useGameStore } from "@/ui/player/store/useGameStore"
 import { useReplayStore } from "@/ui/player/store/useReplayStore"
 import { useTimerStore } from "@/ui/player/store/useTimerStore"
+import { useLearningRecordStore } from "@/ui/store/useLearningRecordStore"
+import { useReviewEventStore } from "@/ui/store/useReviewEventStore"
 import { useEffect, useState } from "react"
 
-export function useGameEventHandler(isInitialized: boolean, 
+export function useGameEventHandler(problem: Problem, 
     onSolve: () => void, onSolvedConfirm: () => void){
     const [isSolvedDialogOpen, setIsSolvedDialogOpen] = useState(false)
     const [solvedResult, setSolvedResult] = useState<SolvedResult|undefined>(undefined)
@@ -17,9 +21,28 @@ export function useGameEventHandler(isInitialized: boolean,
     const gameState = useGameStore(s=>s.state)
     const replay = useReplayStore()
     const stopTimer = useTimerStore(s=>s.stop)
-    const replayCtrl = useReplayController()
+    const replayCtrl = useReplayController()    
+    const records = useLearningRecordStore(s=>s.records)    
+    const learning = records[problem.id]
+    
     const toast = useToast()
+  
+    // 初期化処理
+    const [isInitialized, setIsInitialized] = useState(false)
 
+    const initializeGame = useGameStore(s=>s.initialize)
+    const initializeReplay = useReplayStore(s=>s.initialize)
+    const restart = useTimerStore(s=>s.restart)
+    
+    useEffect(()=>{                
+        setIsInitialized(false)
+        initializeGame(problem.kifData.initialPosition, problem.kifData.moves)      
+        initializeReplay(problem.kifData.moves.length)
+        restart()        
+        setIsInitialized(true)
+    }, [problem.id])
+
+    // イベント処理
     useEffect(() => {
         if (!isInitialized) return   // 初期化前は無視
         const last = events.at(-1)
@@ -42,11 +65,13 @@ export function useGameEventHandler(isInitialized: boolean,
         }
     }, [events])
 
+    //const learning = projectLearning()
     const element = solvedResult &&
         <SolvedDialog open={isSolvedDialogOpen}
             onClose={() => setIsSolvedDialogOpen(false)}
             onConfirm={onSolvedConfirm}
             solvedResult={solvedResult}
+            learning={learning}
         />
 
     return { element}
