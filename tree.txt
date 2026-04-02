@@ -1,14 +1,19 @@
 src
 ├── application
+│   ├── reviewSyncService.ts
 │   └── usecase
-│       ├── backup
-│       │   └── BackupRestoreUsecase.ts
 │       ├── initializeApp
 │       │   └── useInitializeAppUsecase.ts
 │       └── problem
+│           ├── backup
+│           │   └── BackupRestoreUsecase.ts
 │           └── import
 │               └── ImportProblemsUsecase.ts
 ├── domain
+│   ├── game
+│   │   ├── decideGameEvent.ts
+│   │   ├── gameStateReducer.ts
+│   │   └── intentResolver.ts
 │   ├── kif
 │   │   ├── entity
 │   │   │   ├── Board.ts
@@ -17,7 +22,14 @@ src
 │   │   │   ├── Move.ts
 │   │   │   ├── Piece.ts
 │   │   │   ├── Position.ts
+│   │   │   ├── Square.ts
 │   │   │   └── index.ts
+│   │   ├── rules
+│   │   │   ├── __test__
+│   │   │   │   └── validMove.test.ts
+│   │   │   ├── index.ts
+│   │   │   ├── promotion.ts
+│   │   │   └── validMoveGenerator.ts
 │   │   └── service
 │   │       ├── __test__
 │   │       │   ├── move.test.ts
@@ -33,11 +45,9 @@ src
 │   │           └── parseMove.ts
 │   ├── learning
 │   │   ├── entity
-│   │   │   ├── Learning.ts
-│   │   │   └── LearningEvent.ts
-│   │   ├── repository
-│   │   │   └── LearningEventRepository.ts
+│   │   │   └── Learning.ts
 │   │   └── service
+│   │       ├── calclateScore.ts
 │   │       └── projectionLearning.ts
 │   ├── mission
 │   │   ├── entity
@@ -47,24 +57,29 @@ src
 │   │       └── MissionRepository.ts
 │   ├── problem
 │   │   ├── entity
-│   │   │   └── Problem.ts
+│   │   │   ├── Problem.ts
+│   │   │   └── ProblemType.ts
 │   │   ├── repository
 │   │   │   └── ProblemRepository.ts
 │   │   ├── service
 │   │   │   └── query
 │   │   │       ├── ProblemsQuery.ts
-│   │   │       ├── __test__
+│   │   │       ├── __tests__
 │   │   │       │   └── filter.test.ts
 │   │   │       ├── applyFilter.ts
 │   │   │       ├── applyQuery.ts
 │   │   │       ├── applySort.ts
-│   │   │       ├── filter.ts
 │   │   │       ├── mateFilter.ts
-│   │   │       ├── queryReducer.ts
-│   │   │       ├── sort.ts
-│   │   │       └── useProblemsQuery.ts
+│   │   │       └── queryReducer.ts
 │   │   └── valueObject
 │   │       └── ProblemStats.ts
+│   ├── review
+│   │   ├── ReviewEvent.ts
+│   │   ├── repository
+│   │   │   └── ReviewEventRepository.ts
+│   │   ├── service
+│   │   │   └── solvedResultDeriver.ts
+│   │   └── solvedResult.ts
 │   └── session
 │       └── entity
 │           └── Session.ts
@@ -96,33 +111,40 @@ src
     │   │   │   └── useStarToggleButton.ts
     │   │   ├── dialogs
     │   │   │   ├── BackupRestoreDialog.tsx
-    │   │   │   ├── MultipleProblemsEditorDialog.tsx
-    │   │   │   └── MultipleProblemsTagEditDialog.tsx
+    │   │   │   └── MultipleProblemsEditorDialog.tsx
     │   │   └── layout
     │   │       ├── AppLayout.module.css
     │   │       ├── AppLayout.tsx
     │   │       ├── AppShell.tsx
     │   │       └── DrawerMenu.tsx
+    │   ├── formatter
+    │   │   ├── formatDateNumber.ts
+    │   │   ├── formatDuration.ts
+    │   │   ├── formatLearningPerformance.ts
+    │   │   ├── formatNextReviewIn.ts
+    │   │   └── index.ts
     │   ├── hooks
-    │   │   └── useQuery.ts
-    │   ├── query-control
-    │   │   ├── BooleanFilterControl.tsx
-    │   │   ├── FilterControlPanel.tsx
-    │   │   ├── MateLengthFilterControl.tsx
-    │   │   ├── ProblemTypeFilterControl.tsx
-    │   │   ├── SortControl.tsx
-    │   │   ├── SourceFilterControl.tsx
-    │   │   └── TagCheckboxFilterControl.tsx
-    │   └── utils
-    │       └── numberToKanji.ts
+    │   │   ├── useLongPress.ts
+    │   │   └── useProblemsQuery.ts
+    │   └── query-control
+    │       ├── BooleanFilterControl.tsx
+    │       ├── FilterControlPanel.tsx
+    │       ├── MateLengthFilterControl.tsx
+    │       ├── ProblemTypeFilterControl.tsx
+    │       ├── SortControl.tsx
+    │       ├── SourceFilterControl.tsx
+    │       └── TagCheckboxFilterControl.tsx
     ├── detail
-    │   ├── ProblemDetailDialog.tsx
     │   ├── ProblemDetailScreen.tsx
     │   ├── components
+    │   │   ├── LearningDetailPanel.tsx
+    │   │   ├── ProblemInfoPanel.tsx
     │   │   └── ProblemTypeSelect.tsx
     │   └── hooks
-    │       ├── useProblemDetailDialog.tsx
-    │       └── useProblemDetailDialogViewModel.tsx
+    │       └── useProblemDetailViewModel.ts
+    ├── history
+    │   ├── HistoryScreen.tsx
+    │   └── ReviewEventHistory.tsx
     ├── library
     │   ├── LibraryScreen.tsx
     │   ├── components
@@ -131,48 +153,73 @@ src
     │   │   └── LibraryView.tsx
     │   └── hooks
     │       ├── useLibraryCheckbox.ts
-    │       ├── useLibraryViewModel.ts
-    │       └── useLongPress.ts
+    │       └── useLibraryViewModel.ts
     ├── list
     │   ├── ListDialog.tsx
     │   ├── ListScreen.tsx
     │   └── ListView.tsx
     ├── mission
-    │   ├── MissionEditScreen.tsx
     │   ├── MissionScreen.tsx
     │   ├── components
-    │   │   └── MissionFabMenu.tsx
+    │   │   ├── MissionExecutionModeControl.tsx
+    │   │   ├── MissionFabMenu.tsx
+    │   │   ├── MissionList.tsx
+    │   │   └── SortablMissionItem.tsx
+    │   ├── edit
+    │   │   ├── MissionEditScreen.tsx
+    │   │   ├── useMissionEditViewModel.ts
+    │   │   └── useMissionEditorStore.ts
     │   └── hooks
-    │       ├── useMissionEditViewModel.ts
     │       ├── useMissionModeStore.ts
+    │       ├── useMissionStarter.ts
+    │       ├── useMissionStore.ts
     │       └── useMissionViewModel.ts
     ├── player
     │   ├── PlayerScreen.tsx
     │   ├── SinglePlayerScreen.tsx
     │   ├── components
-    │   │   ├── PlayerView.tsx
-    │   │   ├── RightActionsDrawer.tsx
-    │   │   ├── SwipeWrapper.tsx
-    │   │   ├── actions
-    │   │   │   ├── PlayerAnswerActions.tsx
-    │   │   │   └── PlayerRightActions.tsx
+    │   │   ├── ___RightActionsDrawer.tsx
+    │   │   ├── ___SwipeWrapper.tsx
     │   │   ├── panels
-    │   │   │   ├── BoardPanel.tsx
     │   │   │   ├── MovesPanel.tsx
-    │   │   │   └── PlyControlPanel.tsx
+    │   │   │   ├── PlayerFooterPanel.tsx
+    │   │   │   ├── PlayerRightPanel.tsx
+    │   │   │   ├── PlyControlPanel.tsx
+    │   │   │   ├── ProblemLearningInfoPanel.tsx
+    │   │   │   ├── TImerControlPanel.tsx
+    │   │   │   ├── TitlePanel.tsx
+    │   │   │   └── board
+    │   │   │       ├── BoardPanel.tsx
+    │   │   │       ├── BoardView.module.css
+    │   │   │       ├── BoardView.tsx
+    │   │   │       └── HandView.tsx
+    │   │   ├── types
+    │   │   │   └── PlayerContext.ts
     │   │   └── views
-    │   │       ├── BoardView.module.css
-    │   │       ├── BoardView.tsx
     │   │       └── MovesView.tsx
-    │   └── hooks
-    │       ├── usePlayerPresenter.ts
-    │       ├── useReplayController.ts
-    │       └── useTimer.ts
+    │   ├── dialogs
+    │   │   ├── PromotionDialog.tsx
+    │   │   └── SolvedDialog.tsx
+    │   ├── hooks
+    │   │   ├── useGameEventHandler.tsx
+    │   │   ├── usePlayerInitializer.ts
+    │   │   ├── usePromotionDialog.tsx
+    │   │   └── useReplayController.ts
+    │   └── store
+    │       ├── useBoardInputStore.ts
+    │       ├── useGameStore.ts
+    │       ├── useReplayStore.ts
+    │       └── useTimerStore.ts
     ├── session
     │   ├── SessionLayout.tsx
+    │   ├── SessionListView.tsx
     │   ├── SessionPlayerScreen.tsx
+    │   ├── SessionProblemListDialog.tsx
     │   └── hooks
-    │       └── useSessionPlayerViewModel.ts
+    │       ├── useSessionCompletion.ts
+    │       ├── useSessionPlayerStatus.ts
+    │       ├── useSessionPlayerTitleMaker.ts
+    │       └── useSessionStore.ts
     ├── shared
     │   ├── components
     │   │   ├── CancelableTextfield.tsx
@@ -183,28 +230,24 @@ src
     │   │   ├── GenericListMenu.tsx
     │   │   └── MultipleFilesButton.tsx
     │   └── hooks
-    │       └── useFileSelector.tsx
+    │       ├── useFileSelector.tsx
+    │       └── useTimer.ts
     ├── stats
     │   ├── StatsScreen.tsx
     │   └── components
     │       ├── GroupedTable.tsx
     │       ├── IntervalDaysStats.tsx
-    │       ├── LearningHistory.tsx
     │       ├── OverdueStats.tsx
+    │       ├── PerformanceSummary.tsx
     │       ├── ProblemStatsTable.tsx
     │       └── StatsRow.tsx
     ├── store
-    │   ├── useDeckEditorStore.ts
-    │   ├── useLearningEventStore.ts
     │   ├── useLearningRecordStore.ts
-    │   ├── useMissionStore.ts
     │   ├── useProblemStore.ts
     │   ├── useProblemsQueryStore.ts
-    │   └── useSessionStore.ts
-    ├── summary
-    │   ├── MissionSummaryScreen.tsx
-    │   └── SummaryView.tsx
-    └── viewer
-        └── ViewerScreen.tsx
+    │   └── useReviewEventStore.ts
+    └── summary
+        ├── MissionSummaryScreen.tsx
+        └── SummaryView.tsx
 
-69 directories, 139 files
+78 directories, 173 files

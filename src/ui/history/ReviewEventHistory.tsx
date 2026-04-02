@@ -3,7 +3,7 @@ import type { ReviewEvent } from "@/domain/review/ReviewEvent";
 import { useProblemStore } from "@/ui/store/useProblemStore";
 import { useReviewEventStore } from "@/ui/store/useReviewEventStore";
 import type { SolvedResult } from "@/domain/review/solvedResult"
-import { calculateScore } from "@/domain/learning/service/calclateScore";
+import { calculateScore } from "@/domain/learning/service/calculateScore";
 import { formatDateNumber } from "@/ui/common/formatter/formatDateNumber";
 
 export function formatSolvedResult(res: SolvedResult) {

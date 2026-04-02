@@ -1,4 +1,5 @@
-import { Problem, type ProblemId, type ProblemType } from "@/domain/problem/entity/Problem";
+import { Problem, type ProblemId } from "@/domain/problem/entity/Problem";
+import type { ProblemType } from "@/domain/problem/entity/ProblemType";
 import type { ProblemRepository } from "@/domain/problem/repository/ProblemRepository";
 
 export type DuplicateTitleStrategy = "skip" | "rename" | "overwrite"

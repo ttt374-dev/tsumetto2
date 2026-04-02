@@ -1,5 +1,5 @@
+import type { ProblemType } from '@/domain/problem/entity/ProblemType';
 import { Divider, FormControl, IconButton, InputLabel, MenuItem, Paper, Select, Stack, TextField } from '@mui/material';
-import { type ProblemId, type ProblemType } from "@/domain/problem/entity/Problem";
 
 export const problemTypeOptions = [
     { value: "standard", label: "正規（駒あまりなし）" },

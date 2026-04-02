@@ -1,19 +1,16 @@
 import type { Problem } from "@/domain/problem/entity/Problem"
 import { problemTypeToLabel } from "@/domain/problem/entity/ProblemType"
-import { formatDuration, formatLearningPerformance, formatNextReviewIn } from "@/ui/common/formatter"
+import { formatLearningPerformance, formatNextReviewIn } from "@/ui/learning/learningFormatter"
 import { useLearningRecordStore } from "@/ui/store/useLearningRecordStore"
 import { Box } from "@mui/material"
 
 export default function ProblemLearningInfoPanel(props: {
-    problem: Problem
-    
+    problem: Problem    
 }) {
     const { problem } = props
     const records = useLearningRecordStore(s=>s.records)
-    const learning = records[problem.id
-        
-    ]
-    
+    const learning = records[problem.id]
+
     return (<>
         <Box>タイプ：{problemTypeToLabel(problem.type)}</Box>
         {problem.source && <Box>出典：{problem.source}</Box>}

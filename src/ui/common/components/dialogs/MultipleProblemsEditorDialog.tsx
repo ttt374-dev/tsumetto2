@@ -1,9 +1,10 @@
-import type { ProblemId, ProblemType } from "@/domain/problem/entity/Problem";
+import type { ProblemId } from "@/domain/problem/entity/Problem";
 import { FreeSoloAutocomplete } from "@/ui/shared/components/FreeSoloAutocomplete";
 import { useProblemStore } from "@/ui/store/useProblemStore";
 import { Autocomplete, Box, Button, Checkbox, Chip, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, FormGroup, FormLabel, InputLabel, List, ListItem, ListItemIcon, ListItemText, MenuItem, Select, Stack, TextField } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { ProblemTypeSelect } from "../../../detail/components/ProblemTypeSelect";
+import type { ProblemType } from "@/domain/problem/entity/ProblemType";
 
 export function useMultipleProblemsEditDialog() {
     const [open, setOpen] = useState(false)

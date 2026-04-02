@@ -1,6 +1,6 @@
-import { FormControl, Grid, InputLabel, MenuItem, Select, TextField } from "@mui/material";
-import { type ProblemType } from "@/domain/problem/entity/Problem";
+import { MenuItem, TextField } from "@mui/material";
 import { UNSPECIFIED } from "./FilterControlPanel";
+import type { ProblemType } from "@/domain/problem/entity/ProblemType";
 
 type ProblemTypeUi = ProblemType | typeof UNSPECIFIED
 export function ProblemTypeFilterControl( {problemType, onChange}: { 

@@ -1,4 +1,4 @@
-import type { ProblemType } from "@/domain/problem/entity/Problem";
+import type { ProblemType } from "@/domain/problem/entity/ProblemType";
 
 // sort
 export type SortKey =

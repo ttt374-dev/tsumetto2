@@ -1,7 +1,7 @@
 import { Learning, type LearningRecord} from "../entity/Learning"
 import type { ReviewEvent, ReviewEventId, ReviewReviewedEvent} from "../../review/ReviewEvent"
 import type { SolvedResult } from "@/domain/review/solvedResult"
-import { calculateScore } from "@/domain/learning/service/calclateScore"
+import { calculateScore } from "@/domain/learning/service/calculateScore"
 
 const MAX_INTERVAL_DAYS = 60
 const DAY = 60 * 60 * 24 * 1000
