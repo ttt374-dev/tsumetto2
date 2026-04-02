@@ -2,17 +2,29 @@ import type { Problem } from "@/domain/problem/entity/Problem";
 import type { ProblemType } from "@/domain/problem/entity/ProblemType";
 
 
-export const ProblemTypeLabelMap: Record<ProblemType, string> = {
+export function toProblemViewData(p: Problem) {
+    return {
+        typeText: problemTypeLabelMap[p.type],
+        tagsText: p.tags.join(","),
+        plyLengthText: `${p.kifData.moves.length}手`,
+    }
+}
+
+const problemTypeLabelMap: Record<ProblemType, string> = {
     "standard": "標準",
     "realistic": "実践",
     "hisshi": "必死",
     "tesuji": "手筋"
 }
 
+export function toProblemTypeText(type: ProblemType): string {
+    return problemTypeLabelMap[type]
+}
+
 export const problemPresenter = {
     plyLength: {
         label: "手数",
-        getText: (p: Problem) => `${p.kifData.moves.length}手`
+        getText: (p: Problem) => toProblemViewData(p).plyLengthText
     },
     createdAt: {
         label: "追加日",
@@ -24,7 +36,7 @@ export const problemPresenter = {
     },
     type: {
         label: "問題タイプ",
-        getText: (p: Problem) => ProblemTypeLabelMap[p.type]
+        getText: (p: Problem) => toProblemViewData(p).typeText
     },
     source: {
         label: "出典",
@@ -32,6 +44,6 @@ export const problemPresenter = {
     },
     tags: {
         label: "タグ",
-        getText: (p: Problem) => p.tags.join(",")
+        getText: (p: Problem) => toProblemViewData(p).tagsText
     }
 }

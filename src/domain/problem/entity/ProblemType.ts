@@ -1,6 +1,15 @@
 
-export type ProblemType = "standard" | "realistic" | "hisshi" | "tesuji"
+//export type ProblemType = "standard" | "realistic" | "hisshi" | "tesuji"
 
+export const PROBLEM_TYPES = [
+  "standard",
+  "realistic",
+  "hisshi",
+  "tesuji"
+] as const
+
+export type ProblemType = typeof PROBLEM_TYPES[number]
+/*
 export function problemTypeToLabel(type: ProblemType): string{
     const labelMap: Record<ProblemType, string> = {
         "standard": "標準",
@@ -10,4 +19,4 @@ export function problemTypeToLabel(type: ProblemType): string{
     }
     return labelMap[type]
 
-}
+}*/

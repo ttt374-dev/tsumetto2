@@ -1,6 +1,6 @@
 import type { Problem } from "@/domain/problem/entity/Problem"
-import { learningPresenter } from "@/ui/learning/learningPresenter"
-import { problemPresenter } from "@/ui/problem/presenter/problemPresenter"
+import { toLearningViewData } from "@/ui/presenter/learningPresenter"
+import { problemPresenter } from "@/ui/presenter/problemPresenter"
 import { useLearningRecordStore } from "@/ui/store/useLearningRecordStore"
 import { Box } from "@mui/material"
 
@@ -10,8 +10,9 @@ export default function ProblemLearningInfoPanel(props: {
     const { problem } = props
     const records = useLearningRecordStore(s=>s.records)
     const learning = records[problem.id]
-    const lp = learningPresenter
     const pp = problemPresenter
+
+    const learningVm = toLearningViewData(learning)
 
     return (<>
         <Box>
@@ -26,10 +27,10 @@ export default function ProblemLearningInfoPanel(props: {
         {learning && 
             <>
                 <Box>
-                    { lp.performance.getText(learning) }
+                    { learningVm.performaceText }
                 </Box>
                 <Box>
-                    { lp.nextReviewedIn.getText(learning)}
+                    { learningVm.nextReviewedInText}
                 </Box>
 
             </>}

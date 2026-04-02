@@ -5,21 +5,25 @@ import { useReviewEventStore } from "@/ui/store/useReviewEventStore";
 import type { SolvedResult } from "@/domain/review/solvedResult"
 import { calculateScore } from "@/domain/learning/service/calculateScore";
 import { formatDateNumber } from "@/ui/common/formatter/formatDateNumber";
+import { toSolvedResultViewData } from "@/ui/presenter/solvedResultPresenter";
 
+/*
 export function formatSolvedResult(res: SolvedResult) {
     const outcome = res.outcome === "solved" ? "成功" : res.outcome === "failed" ? "失敗" : "未回答"
     const mistakesString = res.mistakes > 0 ? `(${res.mistakes}miss)` : ""
     const revealedString = res.isRevealed ? `[解答参照]` : ""
     return ` ${outcome} ${mistakesString}${revealedString} (${res.elapsedSec}s)`
 
-}
+}*/
 function formatEvent(title: string, event: ReviewEvent): string {    
+    
     let content: string
     switch (event.type) {
         case "reviewed":
             const res = event.solvedResult
             const score = calculateScore(res)
-            content = `${title} [${score}] ${formatSolvedResult(res)}`;
+            const vd = toSolvedResultViewData(res)
+            content = `${title} [${score}] ${vd.summaryText}`;
             break
         case "reset": content = `リセット：${title}`; break
     }

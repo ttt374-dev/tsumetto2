@@ -1,9 +1,10 @@
 import { MenuItem, TextField } from "@mui/material";
-import { UNSPECIFIED } from "./FilterControlPanel";
-import type { ProblemType } from "@/domain/problem/entity/ProblemType";
-import { ProblemTypeLabelMap } from "@/ui/problem/presenter/problemPresenter";
+import { PROBLEM_TYPES, type ProblemType } from "@/domain/problem/entity/ProblemType";
+import { toProblemTypeText, } from "@/ui/presenter/problemPresenter";
 
-type ProblemTypeUi = ProblemType | typeof UNSPECIFIED
+const UNSPECIFIED_TYPE = "__UNSPECIFIED_TYPE"
+const UNSPECIFIED_TYPE_LABEL = "（タイプ指定なし）"
+type ProblemTypeUi = ProblemType | typeof UNSPECIFIED_TYPE
 
 type Props =
   | {
@@ -17,30 +18,45 @@ type Props =
       onChange: (type: ProblemType | undefined) => void
     }
 
-export function ProblemTypeFilterControl( {problemType, onChange, allowUnspecified}: Props){
+    // 指定なしを許可するかどうかを指定すること
+export function ProblemTypeFilterControl( props: Props){
+    const { problemType, onChange, allowUnspecified } = props
+
+    const uiValue: ProblemTypeUi = allowUnspecified
+        ? (problemType ?? UNSPECIFIED_TYPE)
+        : problemType
+
+    const options: {value: ProblemTypeUi, label: string}[] = []
+
+    if (allowUnspecified) options.push({value: UNSPECIFIED_TYPE, label: UNSPECIFIED_TYPE_LABEL})
+    
+    PROBLEM_TYPES.map(type=> {        
+        options.push({value: type as ProblemTypeUi, label: toProblemTypeText(type) })
+    }
+        
+    )
+        
     return (
-        <TextField select value={problemType ?? UNSPECIFIED} fullWidth
+        <TextField select value={uiValue} fullWidth
             label="問題タイプ"
             onChange={(e) => {
-                if (allowUnspecified){
-                    const value = e.target.value as ProblemTypeUi
-                    onChange(value === UNSPECIFIED ? undefined : value)
-                } else {
-                    const value = e.target.value as ProblemType
-                    onChange(value)
-                }
+                const value = e.target.value
 
-                //addFilter({
-                //    problemType: value === UNSPECIFIED ? undefined : value
-                //})
+                if (allowUnspecified) {
+                    if (value === UNSPECIFIED_TYPE) {
+                        onChange(undefined)
+                    } else {
+                        onChange(value as ProblemType)
+                    }
+                } else {
+                    onChange(value as ProblemType)
+                }
             }}
         >
-            { allowUnspecified && <MenuItem value={UNSPECIFIED}>（種類指定なし）</MenuItem>}
-            { 
-                Object.entries(ProblemTypeLabelMap).map(([k,v])=>(
-                    <MenuItem key={k} value={v}>{v}</MenuItem>
-                ))
-            }
+            { options.map(h=>(
+                <MenuItem key={h.value} value={h.value}>{h.label}</MenuItem>
+            )) }
+
         </TextField>
 
     )

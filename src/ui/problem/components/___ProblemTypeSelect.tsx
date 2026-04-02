@@ -1,5 +1,7 @@
+/*
 import type { ProblemType } from '@/domain/problem/entity/ProblemType';
 import { Divider, FormControl, IconButton, InputLabel, MenuItem, Paper, Select, Stack, TextField } from '@mui/material';
+
 
 export const problemTypeOptions = [
     { value: "standard", label: "正規（駒あまりなし）" },
@@ -37,3 +39,4 @@ export function ___ProblemTypeSelect({ value, onChange }: {
         </FormControl>
     );
 }
+*/

@@ -8,8 +8,8 @@ import { useLearningRecordStore } from "@/ui/store/useLearningRecordStore";
 import { useStarToggleButton } from '@/ui/common/components/StarToggleButton/useStarToggleButton';
 import { Learning } from "@/domain/learning/entity/Learning";
 import type { LibraryActionMode } from "@/ui/library/hooks/useLibraryViewModel";
-import { problemTypeToLabel } from "@/domain/problem/entity/ProblemType";
-import { learningPresenter } from "@/ui/learning/learningPresenter";
+import { toProblemTypeText } from "@/ui/presenter/problemPresenter";
+import { toLearningViewData } from "@/ui/presenter/learningPresenter";
 
 export const LibraryListItem = function LibraryListItem({ id, onItemClick,
     showCheckbox, isChecked, onToggleChecked, onChangeActionMode,
@@ -61,7 +61,7 @@ export const LibraryListItem = function LibraryListItem({ id, onItemClick,
                                 {problem.title}
                             </Typography>
                             <Typography variant="body2" flex={3}>
-                                {problemTypeToLabel(problem.type)}
+                                {toProblemTypeText(problem.type)}
                                 {problem.kifData.moves.length}手
                             </Typography>
                             <Stack direction="row" flex={1}>
@@ -93,10 +93,8 @@ export const LibraryListItem = function LibraryListItem({ id, onItemClick,
                             {learning && 
                                 <LearningSection learning={learning} />
                             }
-</>
-
+                    </>
                     }
-
                 >
 
                 </ListItemText>
@@ -112,15 +110,16 @@ export function inDays(date: number, now: number = Date.now()): number {
 export function LearningSection(props: {
     learning: Learning
 }) {
-    const nextReviewedAt = new Date(props.learning.nextReviewedAt).toLocaleString()
+    const vm = toLearningViewData(props.learning)
+    //const nextReviewedAt = new Date(props.learning.nextReviewedAt).toLocaleString()
     return (
         <Stack direction="row" justifyContent="flex-end" spacing={2}>
             <Box>
-                {nextReviewedAt}
+                {vm.nextReviewedAtText}
             </Box>
 
             <Box>
-                {learningPresenter.performance.getText(props.learning)}
+                {vm.performaceText}
             </Box>
         </Stack>
 

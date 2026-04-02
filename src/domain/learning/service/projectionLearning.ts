@@ -59,6 +59,7 @@ function applyReviewedEvent(
         failedCnt++
         intervalDays = 1
         easeFactor = Math.max(1.3, easeFactor - 0.2)
+    } else if (false) {      // TODO: もし前回回答日から時間がたってなえればなにもしない
     } else {
         solvedCnt++
         if (intervalDays === 0) intervalDays = 1

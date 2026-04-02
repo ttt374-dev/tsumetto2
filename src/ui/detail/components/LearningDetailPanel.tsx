@@ -1,11 +1,13 @@
 import { Box, Button, Paper, Stack } from '@mui/material';
 
 import type { Learning } from '@/domain/learning/entity/Learning';
+import { toLearningViewData } from '@/ui/presenter/learningPresenter';
 
 export function LearningDetailPanel( { learning, onResetLearning} : {
     learning: Learning
     onResetLearning: () => void
 }) {
+    const vm = toLearningViewData(learning)
     return (<Paper sx={{ p: 1 }}>
         <Stack>
             <Stack direction="row" justifyContent="space-between">
@@ -24,13 +26,13 @@ export function LearningDetailPanel( { learning, onResetLearning} : {
             {learning.lastAnsweredAt &&
                 <Stack direction="row" justifyContent="space-between">
                     <Box>前回解答日</Box>
-                    <Box>{new Date(learning.lastAnsweredAt).toLocaleString()}</Box>
+                    <Box>{vm.lastAnsweredAtText}</Box>
                 </Stack>
             }
 
             <Stack direction="row" justifyContent="space-between">
                 <Box>次回レビュー日</Box>
-                <Box>{new Date(learning.nextReviewedAt).toLocaleString()}</Box>
+                <Box>{vm.nextReviewedAtText}</Box>
             </Stack>
 
             <Stack direction="row" justifyContent="space-between">
@@ -40,7 +42,7 @@ export function LearningDetailPanel( { learning, onResetLearning} : {
 
             <Stack direction="row" justifyContent="space-between">
                 <Box>Ease Factor</Box>
-                <Box>{learning.easeFactor.toFixed(2)}</Box>
+                <Box>{vm.easeFactorText}</Box>
             </Stack>
         </Stack>
         <Stack direction="row" justifyContent="flex-end">
