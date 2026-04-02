@@ -1,6 +1,6 @@
 import type { Problem } from "@/domain/problem/entity/Problem"
-import { problemTypeToLabel } from "@/domain/problem/entity/ProblemType"
-import { formatLearningPerformance, formatNextReviewIn } from "@/ui/learning/learningFormatter"
+import { learningPresenter } from "@/ui/learning/learningPresenter"
+import { problemPresenter } from "@/ui/problem/presenter/problemPresenter"
 import { useLearningRecordStore } from "@/ui/store/useLearningRecordStore"
 import { Box } from "@mui/material"
 
@@ -10,19 +10,26 @@ export default function ProblemLearningInfoPanel(props: {
     const { problem } = props
     const records = useLearningRecordStore(s=>s.records)
     const learning = records[problem.id]
+    const lp = learningPresenter
+    const pp = problemPresenter
 
     return (<>
-        <Box>タイプ：{problemTypeToLabel(problem.type)}</Box>
-        {problem.source && <Box>出典：{problem.source}</Box>}
-        {problem.tags && <Box>{problem.tags.join(",")}</Box>}
+        <Box>
+            {pp.type.label}：{pp.type.getText(problem)}
+        </Box>
+        {problem.source && 
+            <Box>
+                {pp.source.label}：{problem.source}</Box>}
+        {problem.tags && 
+            <Box>{pp.tags.getText(problem)}</Box>}
 
         {learning && 
             <>
                 <Box>
-                    { formatLearningPerformance(learning) }
+                    { lp.performance.getText(learning) }
                 </Box>
                 <Box>
-                    { formatNextReviewIn(learning.nextReviewedAt)}
+                    { lp.nextReviewedIn.getText(learning)}
                 </Box>
 
             </>}

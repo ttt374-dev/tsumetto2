@@ -9,7 +9,7 @@ import { useStarToggleButton } from '@/ui/common/components/StarToggleButton/use
 import { Learning } from "@/domain/learning/entity/Learning";
 import type { LibraryActionMode } from "@/ui/library/hooks/useLibraryViewModel";
 import { problemTypeToLabel } from "@/domain/problem/entity/ProblemType";
-import { formatLearningPerformance } from "@/ui/learning/learningFormatter";
+import { learningPresenter } from "@/ui/learning/learningPresenter";
 
 export const LibraryListItem = function LibraryListItem({ id, onItemClick,
     showCheckbox, isChecked, onToggleChecked, onChangeActionMode,
@@ -120,7 +120,7 @@ export function LearningSection(props: {
             </Box>
 
             <Box>
-                {formatLearningPerformance(props.learning)}
+                {learningPresenter.performance.getText(props.learning)}
             </Box>
         </Stack>
 

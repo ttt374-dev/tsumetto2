@@ -5,7 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import { AppShell } from "../common/components/layout/AppShell";
 import { CancelableTextField } from "../shared/components/CancelableTextfield";
-import { ProblemTypeSelect } from "./components/ProblemTypeSelect";
+import { ProblemTypeSelect } from "../problem/components/ProblemTypeSelect";
 import { ProblemTagEditor } from "../common/components/ProblemTagEditor";
 import { FreeSoloAutocomplete } from "../shared/components/FreeSoloAutocomplete";
 import { useProblemStore } from "../store/useProblemStore";
@@ -13,7 +13,7 @@ import { routes } from "../App/useAppNavigation";
 import { useProblemDetailViewModel } from "./hooks/useProblemDetailViewModel";
 import { StarToggleButton } from "../common/components/StarToggleButton/StarToggleButton";
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem";
-import { ProblemInfoPanel } from "./components/ProblemInfoPanel";
+import { ProblemInfoPanel } from "../problem/components/ProblemInfoPanel";
 import { LearningDetailPanel } from "./components/LearningDetailPanel";
 
 export default function ProblemDetailScreen(){

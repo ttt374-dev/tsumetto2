@@ -5,71 +5,71 @@ import { queryReducer } from "@/domain/problem/service/query/queryReducer"
 import type { ProblemType } from "@/domain/problem/entity/ProblemType"
 
 type QueryStore = {
-  state: QueryState
-  dispatch: (action: QueryAction) => void
+    state: QueryState
+    dispatch: (action: QueryAction) => void
 
-  // ---- convenience API ----
-  setAll: (payload: Partial<QueryState>) => void
-  setSortKey: (key: SortKey) => void
-  toggleSortOrder: () => void
+    // ---- convenience API ----
+    setAll: (payload: Partial<QueryState>) => void
+    setSortKey: (key: SortKey) => void
+    toggleSortOrder: () => void
 
-  setText: (text?: string) => void
-  setProblemType: (value?: ProblemType) => void
-  setSource: (value?: string) => void
-  setTags: (tags?: string[]) => void
-  setMateBuckets: (buckets?: MateBucket[]) => void
+    setText: (text?: string) => void
+    setProblemType: (value?: ProblemType) => void
+    setSource: (value?: string) => void
+    setTags: (tags?: string[]) => void
+    setMateBuckets: (buckets?: MateBucket[]) => void
 
-  toggleFlag: (key: BooleanQueryKey) => void
-  setPartial: (partial: Partial<QueryState>) => void
-  reset: () => void
+    toggleFlag: (key: BooleanQueryKey) => void
+    setPartial: (partial: Partial<QueryState>) => void
+    reset: () => void
 }
 
 export const useProblemsQueryStore = create<QueryStore>((set, get) => ({
-  state: DefaultQueryState,
+    state: DefaultQueryState,
 
-  // -----------------------
-  // core
-  // -----------------------
-  dispatch: (action) =>
-    set((store) => ({
-      state: queryReducer(store.state, action),
-    })),
+    // -----------------------
+    // core
+    // -----------------------
+    dispatch: (action) =>
+        set((store) => ({
+            state: queryReducer(store.state, action),
+        })),
 
-  // -----------------------
-  // convenience wrappers
-  // -----------------------
-  setAll: (payload) =>
-    get().dispatch({ type: "SET_ALL", payload }),
+    // -----------------------
+    // convenience wrappers
+    // -----------------------
+    setAll: (payload) =>
+        get().dispatch({ type: "SET_ALL", payload }),
 
-  setSortKey: (key) =>
-    get().dispatch({ type: "SET_SORT_KEY", key }),
+    setSortKey: (key) =>
+        get().dispatch({ type: "SET_SORT_KEY", key }),
 
-  toggleSortOrder: () =>
-    get().dispatch({ type: "TOGGLE_SORT_ORDER" }),
+    toggleSortOrder: () =>
+        get().dispatch({ type: "TOGGLE_SORT_ORDER" }),
 
-  setText: (text) =>
-    get().dispatch({ type: "SET_TEXT", text }),
+    setText: (text) =>
+        get().dispatch({ type: "SET_TEXT", text }),
 
-  setProblemType: (value) =>
-    get().dispatch({ type: "SET_PROBLEM_TYPE", value }),
+    setProblemType: (value) =>
+        get().dispatch({ type: "SET_PROBLEM_TYPE", value }),
 
-  setSource: (value) =>
-    get().dispatch({ type: "SET_SOURCE", value }),
+    setSource: (value) =>
+        get().dispatch({ type: "SET_SOURCE", value }),
 
-  setTags: (tags) =>
-    get().dispatch({ type: "SET_TAGS", tags }),
+    setTags: (tags) =>
+        get().dispatch({ type: "SET_TAGS", tags }),
 
-  setMateBuckets: (buckets) =>
-    get().dispatch({ type: "SET_MATE_BUCKETS", buckets }),
+    setMateBuckets: (buckets) =>
+        get().dispatch({ type: "SET_MATE_BUCKETS", buckets }),
 
-  toggleFlag: (key) =>
-    get().dispatch({ type: "TOGGLE_FLAG", key }),
+    toggleFlag: (key) =>
+        get().dispatch({ type: "TOGGLE_FLAG", key }),
 
-  setPartial: (partial) =>
-    get().dispatch({ type: "SET_PARTIAL", partial }),
+    setPartial: (partial) =>
+        get().dispatch({ type: "SET_PARTIAL", partial }),
 
-  reset: () =>
-    get().dispatch({ type: "RESET" }),
+    reset: () =>
+        get().dispatch({ type: "RESET" }),
 }))
 /*
 export const useQueryStore = create<QueryController>((set, get) => ({
