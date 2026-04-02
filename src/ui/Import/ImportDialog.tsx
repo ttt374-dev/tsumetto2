@@ -39,9 +39,11 @@ export function ImportDialog({ open, onClose, onImport, filesToImport }: {
                 <Stack spacing={2}>
                     {filesToImport.length} 件のファイルをインポートします。
                     <ProblemTypeFilterControl
-                        problemType={options.problemType} onChange={(v) =>
+                        problemType={options.problemType} 
+                        onChange={(v) =>
                             v && setOptions(prev => ({ ...prev, problemType: v }))
                         }
+                        allowUnspecified={true}
                     />
                     <SourceFilterControl
                         source={options.source} onChange={v =>

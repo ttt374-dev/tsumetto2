@@ -5,7 +5,6 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import { AppShell } from "../common/components/layout/AppShell";
 import { CancelableTextField } from "../shared/components/CancelableTextfield";
-import { ProblemTypeSelect } from "../problem/components/ProblemTypeSelect";
 import { ProblemTagEditor } from "../common/components/ProblemTagEditor";
 import { FreeSoloAutocomplete } from "../shared/components/FreeSoloAutocomplete";
 import { useProblemStore } from "../store/useProblemStore";
@@ -15,6 +14,7 @@ import { StarToggleButton } from "../common/components/StarToggleButton/StarTogg
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem";
 import { ProblemInfoPanel } from "../problem/components/ProblemInfoPanel";
 import { LearningDetailPanel } from "./components/LearningDetailPanel";
+import { ProblemTypeFilterControl } from "@/ui/common/query-control/ProblemTypeFilterControl";
 
 export default function ProblemDetailScreen(){
     const { id } = useParams<{ id: string }>()
@@ -99,9 +99,10 @@ export function ProblemDetailContent( { problem }: { problem: Problem}) {
                 }}>
                 {/* タイトル編集 */}
                 <CancelableTextField label="タイトル" value={title} onCommit={title => setTitle(title)} />
-                <ProblemTypeSelect
-                    value={type}
+                <ProblemTypeFilterControl
+                    problemType={type}
                     onChange={v => setType(v)}
+                    allowUnspecified={false}
                 />
                 <FreeSoloAutocomplete
                     label="出典"

@@ -26,7 +26,9 @@ export function FilterControlPanel({query, allSources}: Props){
             <Grid size={6}>
                 <ProblemTypeFilterControl 
                     problemType={query.state.problemType} 
-                    onChange={type => query.setProblemType(type)}/>
+                    onChange={type => query.setProblemType(type)}
+                    allowUnspecified={true}
+                    />
             </Grid>
 
             <Grid size={6}>

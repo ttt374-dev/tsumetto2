@@ -1,5 +1,13 @@
 import type { Problem } from "@/domain/problem/entity/Problem";
-import { problemTypeToLabel } from "@/domain/problem/entity/ProblemType";
+import type { ProblemType } from "@/domain/problem/entity/ProblemType";
+
+
+export const ProblemTypeLabelMap: Record<ProblemType, string> = {
+    "standard": "標準",
+    "realistic": "実践",
+    "hisshi": "必死",
+    "tesuji": "手筋"
+}
 
 export const problemPresenter = {
     plyLength: {
@@ -16,7 +24,7 @@ export const problemPresenter = {
     },
     type: {
         label: "問題タイプ",
-        getText: (p: Problem) => problemTypeToLabel(p.type)
+        getText: (p: Problem) => ProblemTypeLabelMap[p.type]
     },
     source: {
         label: "出典",

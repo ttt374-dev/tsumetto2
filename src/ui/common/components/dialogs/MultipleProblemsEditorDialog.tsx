@@ -3,8 +3,8 @@ import { FreeSoloAutocomplete } from "@/ui/shared/components/FreeSoloAutocomplet
 import { useProblemStore } from "@/ui/store/useProblemStore";
 import { Autocomplete, Box, Button, Checkbox, Chip, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, FormGroup, FormLabel, InputLabel, List, ListItem, ListItemIcon, ListItemText, MenuItem, Select, Stack, TextField } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
-import { ProblemTypeSelect } from "../../../problem/components/ProblemTypeSelect";
 import type { ProblemType } from "@/domain/problem/entity/ProblemType";
+import { ProblemTypeFilterControl } from "@/ui/common/query-control/ProblemTypeFilterControl";
 
 export function useMultipleProblemsEditDialog() {
     const [open, setOpen] = useState(false)
@@ -32,9 +32,10 @@ function ProblemTypeSelectControl(props: {
     onChange: (type: ProblemType) => void
 }) {
     return (<FormControl fullWidth>
-        <ProblemTypeSelect
-            value={props.type}
+        <ProblemTypeFilterControl
+            problemType={props.type}
             onChange={v => props.onChange(v)}
+            allowUnspecified={false}
         />
     </FormControl>)
 }

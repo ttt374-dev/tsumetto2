@@ -7,7 +7,7 @@ export const problemTypeOptions = [
     { value: "hisshi", label: "必死（受けなし）" },
 ] as const;
 
-export function ProblemTypeSelect({ value, onChange }: {
+export function ___ProblemTypeSelect({ value, onChange }: {
     value: ProblemType;
     onChange: (value: ProblemType) => void;
 }) {
