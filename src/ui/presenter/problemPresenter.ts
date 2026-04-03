@@ -7,6 +7,10 @@ export function toProblemViewData(p: Problem) {
         typeText: problemTypeLabelMap[p.type],
         tagsText: p.tags.join(","),
         plyLengthText: `${p.kifData.moves.length}手`,
+        createdAtText: p.createdAt.toLocaleString(),
+        updatedAtText: p.updatedAt.toLocaleString(),
+
+        handicapText: p.kifData.headers["手合割"],
     }
 }
 
@@ -20,6 +24,8 @@ const problemTypeLabelMap: Record<ProblemType, string> = {
 export function toProblemTypeText(type: ProblemType): string {
     return problemTypeLabelMap[type]
 }
+
+/*
 
 export const problemPresenter = {
     plyLength: {
@@ -47,3 +53,4 @@ export const problemPresenter = {
         getText: (p: Problem) => toProblemViewData(p).tagsText
     }
 }
+    */

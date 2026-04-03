@@ -1,7 +1,6 @@
 import type { Learning } from "@/domain/learning/entity/Learning";
 import { formatDuration } from "@/ui/common/formatter";
 
-
 export function toLearningViewData(l: Learning){
     return {
         scoreText: l.score.toFixed(1),
@@ -13,5 +12,3 @@ export function toLearningViewData(l: Learning){
         performaceText: `[${l.score.toFixed(1)}](${l.solvedCount}:${l.failedCount})`
     }
 }
-
-

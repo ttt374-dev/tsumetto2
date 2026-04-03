@@ -2,11 +2,11 @@ import { Box, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Stack 
 
 import type { ProblemId } from "@/domain/problem/entity/Problem"
 import type { SessionId } from "@/domain/session/entity/Session"
-import { formatSolvedResult } from "@/ui/history/ReviewEventHistory"
 import { useProblemStore } from "@/ui/store/useProblemStore"
 import { useReviewEventStore } from "@/ui/store/useReviewEventStore"
 import type { ReviewEvent } from "@/domain/review/ReviewEvent"
 import type { SolvedResult } from "@/domain/review/solvedResult"
+import { toSolvedResultViewData } from "@/ui/presenter/solvedResultPresenter"
 
 export default function SessionListView(props: {
     ids: ProblemId[]
@@ -21,6 +21,7 @@ export default function SessionListView(props: {
     //console.log(sessionEvents)    
     //const solvedResultMap = getSolvedResultsBySession(eventLog, props.sessionId)
 
+    
     return (
         <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto" }}>
             <List>
@@ -29,7 +30,8 @@ export default function SessionListView(props: {
                     //const solvedResult: SolvedResult | undefined = props.results[id]
                     //const solvedResult = sessionEvents.find(e=>e.problemId===id)?.solvedResult                    
                     const res = props.solvedResultMap[id]
-                    const resultString = res ? formatSolvedResult(res) : ""
+                    const vd = toSolvedResultViewData(res)
+                    const resultString = res ? vd.summaryText : ""
 
                     return (
                         <ListItem key={i}

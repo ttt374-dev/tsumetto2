@@ -8,7 +8,7 @@ import { useLearningRecordStore } from "@/ui/store/useLearningRecordStore";
 import { useStarToggleButton } from '@/ui/common/components/StarToggleButton/useStarToggleButton';
 import { Learning } from "@/domain/learning/entity/Learning";
 import type { LibraryActionMode } from "@/ui/library/hooks/useLibraryViewModel";
-import { toProblemTypeText } from "@/ui/presenter/problemPresenter";
+import { toProblemViewData } from "@/ui/presenter/problemPresenter";
 import { toLearningViewData } from "@/ui/presenter/learningPresenter";
 
 export const LibraryListItem = function LibraryListItem({ id, onItemClick,
@@ -34,6 +34,7 @@ export const LibraryListItem = function LibraryListItem({ id, onItemClick,
 
     })
     const starController = useStarToggleButton(id)
+    const vd = toProblemViewData(problem)
 
     //////////////////////////////////////////////////////////
     return (
@@ -61,8 +62,8 @@ export const LibraryListItem = function LibraryListItem({ id, onItemClick,
                                 {problem.title}
                             </Typography>
                             <Typography variant="body2" flex={3}>
-                                {toProblemTypeText(problem.type)}
-                                {problem.kifData.moves.length}手
+                                { vd.tagsText}
+                                { vd.plyLengthText}
                             </Typography>
                             <Stack direction="row" flex={1}>
                                 <StarToggleButton starred={starController.starred}
@@ -111,7 +112,6 @@ export function LearningSection(props: {
     learning: Learning
 }) {
     const vm = toLearningViewData(props.learning)
-    //const nextReviewedAt = new Date(props.learning.nextReviewedAt).toLocaleString()
     return (
         <Stack direction="row" justifyContent="flex-end" spacing={2}>
             <Box>

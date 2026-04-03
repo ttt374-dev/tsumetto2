@@ -38,7 +38,6 @@ export function ReviewEventHistory() {
         .slice() // 元配列を破壊しない
         .sort((a, b) => b.at - a.at) // atで降順
         .slice(0, num);
-    //const dateString = new Date(props.event.at).toLocaleString()
 
     return (
         <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto" }}>

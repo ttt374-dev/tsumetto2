@@ -1,31 +1,31 @@
 import type { Problem } from "@/domain/problem/entity/Problem"
-import { problemPresenter } from "@/ui/presenter/problemPresenter"
+import { toProblemViewData } from "@/ui/presenter/problemPresenter"
 import { Box, Paper, Stack } from "@mui/material"
 
 export function ProblemInfoPanel({problem}: {
     problem: Problem
-}){
-    const pp = problemPresenter
+}){    
+    const vd = toProblemViewData(problem)
 
     return (<Paper sx={{ p: 1 }}>
         <Stack>
             <Stack direction="row" justifyContent="space-between">
                 <Box>手合割</Box>
-                <Box>{problem.kifData.headers["手合割"]}</Box>
+                <Box>{vd.handicapText}</Box>
             </Stack>
 
             <Stack direction="row" justifyContent="space-between">
-                <Box> { pp.plyLength.label}</Box>
-                <Box>{ pp.plyLength.getText(problem) } </Box>
+                <Box>手数</Box>
+                <Box>{ vd.plyLengthText } </Box>
             </Stack>
 
             <Stack direction="row" justifyContent="space-between">
-                <Box>{ pp.createdAt.label}</Box>
-                <Box>{ pp.createdAt.getText(problem)}</Box>
+                <Box>追加日</Box>
+                <Box>{ vd.createdAtText}</Box>
             </Stack>
             <Stack direction="row" justifyContent="space-between">
-                <Box> { pp.updatedAt.label} </Box>
-                <Box> { pp.updatedAt.getText(problem)}</Box>
+                <Box>更新日</Box>
+                <Box> { vd.updatedAtText}</Box>
             </Stack>
         </Stack>
     </Paper>)
