@@ -12,7 +12,6 @@ import MissionEditScreen from '../mission/edit/MissionEditScreen.tsx';
 import SessionPlayerScreen from '../session/SessionPlayerScreen';
 import { RepositoryContext } from './providers/RepositoryProvider';
 import { ToastProvider } from './providers/ToastProvider';
-import { ListScreen } from '../list/ListScreen';
 import StatsScreen from '../stats/StatsScreen';
 import SinglePlayerScreen from '../player/SinglePlayerScreen';
 import { bootstrapApp, createRepositories } from './bootstrapApp';
@@ -90,7 +89,6 @@ function App() {
                             <Route path={routes.library} element={<LibraryScreen />} />
                             { /* <Route path="/view/:id" element={<ViewerScreen />} /> */ }
                             <Route path="/play/:id" element={<SinglePlayerScreen />} />
-                            <Route path="/list" element={<ListScreen />} />
                             <Route path="/detail/:id" element={<ProblemDetailScreen/>}/>
 
                             <Route path={routes.stats} element={<StatsScreen />} />
