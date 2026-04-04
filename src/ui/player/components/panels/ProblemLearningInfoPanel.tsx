@@ -1,6 +1,6 @@
 import type { Problem } from "@/domain/problem/entity/Problem"
 import { toLearningViewData } from "@/ui/presenter/learningPresenter"
-import { toProblemViewData } from "@/ui/presenter/problemPresenter"
+import { toProblemViewData } from "@/ui/problem/problemPresenter"
 import { useLearningRecordStore } from "@/ui/store/useLearningRecordStore"
 import { Box } from "@mui/material"
 

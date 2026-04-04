@@ -1,6 +1,6 @@
 import { MenuItem, TextField } from "@mui/material";
 import { PROBLEM_TYPES, type ProblemType } from "@/domain/problem/entity/ProblemType";
-import { toProblemTypeText, } from "@/ui/presenter/problemPresenter";
+import { toProblemTypeText, } from "@/ui/problem/problemPresenter";
 
 const UNSPECIFIED_TYPE = "__UNSPECIFIED_TYPE"
 const UNSPECIFIED_TYPE_LABEL = "（タイプ指定なし）"

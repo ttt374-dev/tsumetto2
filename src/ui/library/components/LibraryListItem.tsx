@@ -8,7 +8,7 @@ import { useLearningRecordStore } from "@/ui/store/useLearningRecordStore";
 import { useStarToggleButton } from '@/ui/common/components/StarToggleButton/useStarToggleButton';
 import { Learning } from "@/domain/learning/entity/Learning";
 import type { LibraryActionMode } from "@/ui/library/hooks/useLibraryViewModel";
-import { toProblemViewData } from "@/ui/presenter/problemPresenter";
+import { toProblemViewData } from "@/ui/problem/problemPresenter";
 import { toLearningViewData } from "@/ui/presenter/learningPresenter";
 
 export const LibraryListItem = function LibraryListItem({ id, onItemClick,

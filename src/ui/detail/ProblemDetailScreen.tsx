@@ -12,9 +12,9 @@ import { routes } from "../App/useAppNavigation";
 import { useProblemDetailViewModel } from "./hooks/useProblemDetailViewModel";
 import { StarToggleButton } from "../common/components/StarToggleButton/StarToggleButton";
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem";
-import { ProblemInfoPanel } from "../problem/components/ProblemInfoPanel";
 import { LearningDetailPanel } from "./components/LearningDetailPanel";
 import { ProblemTypeFilterControl } from "@/ui/common/query-control/ProblemTypeFilterControl";
+import { ProblemInfoPanel } from "@/ui/domains/problem/problem/components/ProblemInfoPanel";
 
 export default function ProblemDetailScreen(){
     const { id } = useParams<{ id: string }>()
