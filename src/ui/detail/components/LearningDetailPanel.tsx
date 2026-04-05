@@ -7,7 +7,6 @@ export function LearningDetailPanel( { learningState, onResetLearning} : {
     learningState: LearningState
     onResetLearning: () => void
 }) {
-    //const vm = toLearningViewData(learning)
     const vm = toLearningStateViewData(learningState)
     return (<Paper sx={{ p: 1 }}>
         <Stack>

@@ -67,7 +67,8 @@ function applyReviewedEvent(prev: LearningState, event: ReviewEvent): LearningSt
         score, easeFactor,
         nextReviewedAt,
         intervalDays,
-        lastAnsweredAt: event.at        
+        lastAnsweredAt: event.at,
+        lastSolvedResult: event.solvedResult,
     }
 }
 //////////////////////////////////

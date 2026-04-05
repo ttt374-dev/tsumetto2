@@ -5,7 +5,7 @@ import { useReviewEventStore } from "@/ui/store/useReviewEventStore";
 import type { SolvedResult } from "@/domain/review/solvedResult"
 import { calculateScore } from "@/domain/learning/service/calculateScore";
 import { formatDateNumber } from "@/ui/common/formatter/formatDateNumber";
-import { toSolvedResultViewData } from "@/ui/presenter/solvedResultPresenter";
+import { toSolvedResultViewData } from "@/ui/domains/learning/solvedResultPresenter";
 
 /*
 export function formatSolvedResult(res: SolvedResult) {

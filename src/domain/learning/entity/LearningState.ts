@@ -1,3 +1,5 @@
+import type { SolvedResult } from "@/domain/review/solvedResult"
+
 export type LearningState = {
     attemptCount: number,
     solvedCount: number,
@@ -8,6 +10,7 @@ export type LearningState = {
     easeFactor: number,
 
     lastAnsweredAt?: number,
+    lastSolvedResult?: SolvedResult
 }
 
 export const DefaultLearningState: LearningState = {
@@ -20,5 +23,6 @@ export const DefaultLearningState: LearningState = {
     easeFactor: 2.5,
 
     lastAnsweredAt: undefined,
+    lastSolvedResult: undefined,
 }
 
