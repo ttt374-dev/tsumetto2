@@ -1,8 +1,5 @@
 
-import type { Learning } from "@/domain/learning/entity/Learning";
 import type { LearningState } from "@/domain/learning/entity/LearningState";
-import type { ProblemStats } from "@/domain/problem/valueObject/ProblemStats";
-import { toLearningViewData } from "@/ui/presenter/learningPresenter";
 import { Box, Button, Paper, Stack } from "@mui/material";
 
 function SummaryRow({

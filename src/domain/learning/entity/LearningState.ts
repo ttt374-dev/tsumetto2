@@ -1,8 +1,3 @@
-import { calculateScore } from "@/domain/learning/service/calculateScore"
-import type { ProblemId } from "@/domain/problem/entity/Problem"
-import type { ReviewEvent } from "@/domain/review/ReviewEvent"
-import type { SolvedResult } from "@/domain/review/solvedResult"
-
 export type LearningState = {
     attemptCount: number,
     failedCount: number,

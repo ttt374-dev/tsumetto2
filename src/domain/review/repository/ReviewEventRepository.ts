@@ -19,7 +19,7 @@ export class ReviewEventRepository {
     }
 }
 ////////////////////////////////////
-const LEARNING_EVENT_LOG_FILE = "learning_event_log.json";
+const REVIEW_EVENT_LOG_FILE = "learning_event_log.json";
 
 export interface ReviewEventPersistence {
     load(): Promise<ReviewEvent[]>
@@ -30,7 +30,7 @@ export class LocalStorageReviewEventPersistence implements ReviewEventPersistenc
     async load(): Promise<ReviewEvent[]> {
         try {
             const result = await Filesystem.readFile({
-                path: LEARNING_EVENT_LOG_FILE,
+                path: REVIEW_EVENT_LOG_FILE,
                 directory: Directory.Data,
                 encoding: Encoding.UTF8,
             });
@@ -43,7 +43,7 @@ export class LocalStorageReviewEventPersistence implements ReviewEventPersistenc
             return data
 
         } catch (e) {
-            console.error("learning event store load error", e)
+            console.error("review event store load error", e)
             return [];
             //throw e
         }
@@ -52,13 +52,13 @@ export class LocalStorageReviewEventPersistence implements ReviewEventPersistenc
     async save(events: ReviewEvent[]): Promise<void> {
         try {
             await Filesystem.writeFile({
-                path: LEARNING_EVENT_LOG_FILE,
+                path: REVIEW_EVENT_LOG_FILE,
                 data: JSON.stringify(events),
                 directory: Directory.Data,
                 encoding: Encoding.UTF8,
             });
         } catch (e){
-            console.error("learning event store write error", e)
+            console.error("review event store write error", e)
             throw e
         }
     }
