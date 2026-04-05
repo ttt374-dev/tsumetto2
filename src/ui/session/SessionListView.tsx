@@ -6,7 +6,7 @@ import { useProblemStore } from "@/ui/store/useProblemStore"
 import { useReviewEventStore } from "@/ui/store/useReviewEventStore"
 import type { ReviewEvent } from "@/domain/review/ReviewEvent"
 import type { SolvedResult } from "@/domain/review/solvedResult"
-import { toSolvedResultViewData } from "@/ui/presenter/solvedResultPresenter"
+import { toSolvedResultViewData } from "@/ui/domains/learning/solvedResultPresenter"
 
 export default function SessionListView(props: {
     ids: ProblemId[]

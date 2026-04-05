@@ -10,7 +10,7 @@ import TimerControlPanel from "./components/panels/TImerControlPanel";
 import PlyControlPanel from "@/ui/player/components/panels/PlyControlPanel";
 
 import { Problem, type ProblemId } from "@/domain/problem/entity/Problem"
-import { AppShell } from "../common/components/layout/AppShell";
+import { AppShell } from "../layout/AppShell";
 import { routes } from "../App/useAppNavigation";
 import { useToast } from "../App/providers/ToastProvider";
 import { useGameStore, type GameEvent } from "./store/useGameStore";

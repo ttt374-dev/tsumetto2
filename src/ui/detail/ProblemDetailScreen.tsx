@@ -3,7 +3,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { Box, Button, Divider, IconButton, Stack, TextField } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { AppShell } from "../common/components/layout/AppShell";
+import { AppShell } from "../layout/AppShell";
 import { CancelableTextField } from "../shared/components/CancelableTextfield";
 import { ProblemTagEditor } from "../common/components/ProblemTagEditor";
 import { FreeSoloAutocomplete } from "../shared/components/FreeSoloAutocomplete";

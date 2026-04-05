@@ -4,7 +4,7 @@ import { useShallow } from "zustand/react/shallow"
 
 import { Box, Button, Stack } from "@mui/material";
 import { SummaryView } from "./SummaryView";
-import { AppShell } from "@/ui/common/components/layout/AppShell";
+import { AppShell } from "@/ui/layout/AppShell";
 import { useSessionStore } from "@/ui/session/hooks/useSessionStore";
 import { ProblemStats } from "@/domain/problem/valueObject/ProblemStats";
 import { projectLearning } from "@/domain/learning/service/projectionLearning";

@@ -9,7 +9,7 @@ import { useStarToggleButton } from '@/ui/common/components/StarToggleButton/use
 import { Learning } from "@/domain/learning/entity/Learning";
 import type { LibraryActionMode } from "@/ui/library/hooks/useLibraryViewModel";
 import { toProblemViewData } from "@/ui/problem/problemPresenter";
-import { toLearningViewData } from "@/ui/presenter/learningPresenter";
+import { toLearningViewData } from "@/ui/domains/learning/learningPresenter";
 
 export const LibraryListItem = function LibraryListItem({ id, onItemClick,
     showCheckbox, isChecked, onToggleChecked, onChangeActionMode,

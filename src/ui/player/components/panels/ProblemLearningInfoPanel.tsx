@@ -1,5 +1,5 @@
 import type { Problem } from "@/domain/problem/entity/Problem"
-import { toLearningViewData } from "@/ui/presenter/learningPresenter"
+import { toLearningViewData } from "@/ui/domains/learning/learningPresenter"
 import { toProblemViewData } from "@/ui/problem/problemPresenter"
 import { useLearningRecordStore } from "@/ui/store/useLearningRecordStore"
 import { Box } from "@mui/material"

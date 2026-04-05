@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add'
 
-import { AppShell } from "../common/components/layout/AppShell";
+import { AppShell } from "../layout/AppShell";
 import { useNavigate } from "react-router-dom";
 import { routes } from "../App/useAppNavigation";
 import { useMissionModeStore } from "./hooks/useMissionModeStore";

@@ -1,5 +1,5 @@
 
-import { AppShell } from "@/ui/common/components/layout/AppShell";
+import { AppShell } from "@/ui/layout/AppShell";
 import { ReviewEventHistory } from "@/ui/history/ReviewEventHistory";
 
 export default function HistoryScreen(){

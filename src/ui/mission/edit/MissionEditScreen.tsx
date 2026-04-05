@@ -4,7 +4,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 
 import SortControl from "../../common/query-control/SortControl";
 import { useMissionEditViewModel } from "./useMissionEditViewModel";
-import { AppShell } from "../../common/components/layout/AppShell";
+import { AppShell } from "../../layout/AppShell";
 import { useListDialog } from "../../list/ListDialog";
 import { useNavigate } from "react-router-dom";
 import { routes } from "../../App/useAppNavigation";
