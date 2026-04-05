@@ -14,7 +14,7 @@ export function projectLearning(events: readonly ReviewEvent[]): LearningRecord 
             case "reviewed": {
                 const prev =
                     record[event.problemId] ??
-                    Learning.create(event.problemId)
+                    Learning.create()
 
                 record[event.problemId] =
                     applyReviewedEvent(prev, event)
@@ -23,7 +23,7 @@ export function projectLearning(events: readonly ReviewEvent[]): LearningRecord 
             case "reset": {
                 // 👇 その problem だけ初期化
                 record[event.problemId] =
-                    Learning.create(event.problemId)
+                    Learning.create()
                 break
             }
         }
@@ -70,7 +70,7 @@ function applyReviewedEvent(
     const newSumScore = baseTotalCount * base.score + newScore
     const newAverageScore = newSumScore / (baseTotalCount + 1)
     return new Learning(
-        event.problemId, solvedCnt, failedCnt, newAverageScore, intervalDays, 
+        solvedCnt, failedCnt, newAverageScore, intervalDays, 
         nextReviewAt, easeFactor, event.at, event.solvedResult
     )
 }

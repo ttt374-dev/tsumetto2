@@ -4,7 +4,7 @@ import type { SolvedResult } from "@/domain/review/solvedResult"
 //const MAX_INTERVAL_DAYS = 60
 
 export type LearningData = {
-    problemId: ProblemId
+    //problemId: ProblemId
     solvedCount: number
     failedCount: number
     score: number
@@ -17,9 +17,9 @@ export type LearningData = {
     lastAnswerResult?: SolvedResult
 }
 
-function createDefaultValues(problemId: ProblemId): LearningData {
+function createDefaultValues(): LearningData {
     return {
-        problemId: problemId,
+        //problemId: problemId,
         solvedCount: 0,
         failedCount: 0,
         score: 0,
@@ -32,7 +32,7 @@ export type LearningDTO = LearningData
 //////////////////////////////////////////////////////////////////
 export class Learning {
     constructor(
-        readonly problemId: ProblemId,
+        //readonly problemId: ProblemId,
         readonly solvedCount: number,
         readonly failedCount: number,
         readonly score: number,
@@ -45,12 +45,12 @@ export class Learning {
         readonly lastAnswerResult?: SolvedResult,
 
     ){}
-    static create(problemId: ProblemId, init?: Partial<LearningData>): Learning {
-        return Learning.fromDTO({...createDefaultValues(problemId),  ...init})
+    static create(init?: Partial<LearningData>): Learning {
+        return Learning.fromDTO({...createDefaultValues(),  ...init})
     }
     toDTO(): LearningDTO {
         return {
-            problemId: this.problemId,
+            //problemId: this.problemId,
             solvedCount: this.solvedCount,
             failedCount: this.failedCount,
             score: this.score,
@@ -62,7 +62,7 @@ export class Learning {
         }
     }
     static fromDTO(dto: LearningDTO): Learning {
-        return new Learning(dto.problemId, dto.solvedCount, dto.failedCount,
+        return new Learning(dto.solvedCount, dto.failedCount,
             dto.score,
             dto.intervalDays, dto.nextReviewedAt, dto.easeFactor,
             dto.lastAnsweredAt, dto.lastAnswerResult,
