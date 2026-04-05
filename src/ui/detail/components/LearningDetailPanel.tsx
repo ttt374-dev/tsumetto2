@@ -1,29 +1,21 @@
 import { Box, Button, Paper, Stack } from '@mui/material';
 
-import type { Learning } from '@/domain/learning/entity/Learning';
-import { toLearningViewData } from '@/ui/presenter/learningPresenter';
+import type { LearningState } from '@/domain/learning/entity/LearningState';
+import { toLearningStateViewData } from '@/ui/domains/learning/learningPresenter';
 
-export function LearningDetailPanel( { learning, onResetLearning} : {
-    learning: Learning
+export function LearningDetailPanel( { learningState, onResetLearning} : {
+    learningState: LearningState
     onResetLearning: () => void
 }) {
-    const vm = toLearningViewData(learning)
+    //const vm = toLearningViewData(learning)
+    const vm = toLearningStateViewData(learningState)
     return (<Paper sx={{ p: 1 }}>
         <Stack>
             <Stack direction="row" justifyContent="space-between">
                 <Box>平均スコア</Box>
-                <Box>{learning.score.toFixed(1)}</Box>
+                <Box>{vm.scoreText}</Box>
             </Stack>
-            {learning.lastAnswerResult &&
-                <Stack direction="row" justifyContent="space-between">
-                    <Box>前回結果</Box>
-                    <Box>
-                        間違い回数：{learning.lastAnswerResult.mistakes} / 
-                        答え照合：{learning.lastAnswerResult.isRevealed}
-                    </Box>
-                </Stack>
-            }
-            {learning.lastAnsweredAt &&
+            {learningState.lastAnsweredAt &&
                 <Stack direction="row" justifyContent="space-between">
                     <Box>前回解答日</Box>
                     <Box>{vm.lastAnsweredAtText}</Box>
@@ -37,7 +29,7 @@ export function LearningDetailPanel( { learning, onResetLearning} : {
 
             <Stack direction="row" justifyContent="space-between">
                 <Box>インターバル</Box>
-                <Box>{learning.intervalDays}</Box>
+                <Box>{learningState.intervalDays}</Box>
             </Stack>
 
             <Stack direction="row" justifyContent="space-between">

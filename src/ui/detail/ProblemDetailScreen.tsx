@@ -15,6 +15,9 @@ import type { Problem, ProblemId } from "@/domain/problem/entity/Problem";
 import { ProblemInfoPanel } from "../problem/components/ProblemInfoPanel";
 import { LearningDetailPanel } from "./components/LearningDetailPanel";
 import { ProblemTypeFilterControl } from "@/ui/common/query-control/ProblemTypeFilterControl";
+import { useReviewEventStore } from "@/ui/store/useReviewEventStore";
+import { projectLearningState } from "@/domain/learning/service/projectLearningState";
+import { aggregateLearningStates } from "@/domain/learning/service/aggregateLearningState";
 
 export default function ProblemDetailScreen(){
     const { id } = useParams<{ id: string }>()
@@ -31,6 +34,9 @@ export function ProblemDetailContent( { problem }: { problem: Problem}) {
             save, resetLearning
         } = useProblemDetailViewModel(problem.id, true)
         
+    const events = useReviewEventStore(s=>s.eventLog).filter(s=>s.problemId===problem.id)
+    const records = projectLearningState(events)
+    const learningState = aggregateLearningStates(records)
 
     const handleLearningReset = () => {
         if (!window.confirm("学習データをクリアしますか？")) return
@@ -119,7 +125,7 @@ export function ProblemDetailContent( { problem }: { problem: Problem}) {
                 <Divider />
 
                 {learning &&
-                    <LearningDetailPanel learning={learning} onResetLearning={handleLearningReset} />
+                    <LearningDetailPanel learningState={learningState} onResetLearning={handleLearningReset} />
                 }
                 <TextField
                     label="コメント"
