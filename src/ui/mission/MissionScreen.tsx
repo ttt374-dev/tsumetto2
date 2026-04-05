@@ -8,10 +8,10 @@ import { routes } from "../App/useAppNavigation";
 import { useMissionModeStore } from "./hooks/useMissionModeStore";
 import MissionFabMenu from "./components/MissionFabMenu";
 import { DefaultMissionExecutionMode, ExecutionModeControl, type MissionExecutionMode } from "@/ui/mission/components/MissionExecutionModeControl";
-import { useImport } from "@/ui/Import/useImport";
+import { useImport } from "@/ui/dialogs/Import/useImport";
 import { useToast } from "@/ui/App/providers/ToastProvider";
 import { useProblemStore } from "@/ui/store/useProblemStore";
-import { useBackupRestoreDialog } from "@/ui/common/components/dialogs/BackupRestoreDialog";
+import { useBackupRestoreDialog } from "@/ui/dialogs/BackupRestoreDialog";
 import { MissionList } from "@/ui/mission/components/MissionList";
 import { IconButton } from "@mui/material";
 

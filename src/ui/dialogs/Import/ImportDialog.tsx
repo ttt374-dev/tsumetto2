@@ -1,6 +1,6 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, Stack } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
-import { ProblemTagEditor } from "../common/components/ProblemTagEditor";
+import { ProblemTagEditor } from "../../common/components/ProblemTagEditor";
 import { DefaultImportOptions, getExsitingTitle, type DuplicateTitleStrategy, type ImportOptions } from "@/application/usecase/problem/import/ImportProblemsUsecase";
 import { ProblemTypeFilterControl } from "@/ui/common/query-control/ProblemTypeFilterControl";
 import { SourceFilterControl } from "@/ui/common/query-control/SourceFilterControl";
