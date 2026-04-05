@@ -1,5 +1,8 @@
 
+import type { Learning } from "@/domain/learning/entity/Learning";
+import type { LearningState } from "@/domain/learning/entity/LearningState";
 import type { ProblemStats } from "@/domain/problem/valueObject/ProblemStats";
+import { toLearningViewData } from "@/ui/presenter/learningPresenter";
 import { Box, Button, Paper, Stack } from "@mui/material";
 
 function SummaryRow({
@@ -25,17 +28,18 @@ function SummaryRow({
         </Stack>
     )
 }
-export function SummaryView({ stats }: {
-    stats: ProblemStats,
+export function SummaryView({state}: {
+    //stats: ProblemStats,
+    state: LearningState
 }) {
+    
     
     return (
         <Paper>
             <Stack spacing={2} p={2}>
-                <SummaryRow label="出題問題数" value={stats.problemCount} />
-                <SummaryRow label="解答問題数" value={stats.totalCount} />
-                <SummaryRow label="失敗" value={stats.failedCount} />
-                <SummaryRow label="スコア" value={stats.score.toFixed(1)} />
+                <SummaryRow label="解答問題数" value={state.attemptCount} />
+                <SummaryRow label="失敗" value={state.failedCount} />
+                <SummaryRow label="スコア" value={state.score.toFixed(1)} />
             </Stack>
         </Paper>
     )

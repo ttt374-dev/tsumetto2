@@ -10,6 +10,8 @@ import { ProblemStats } from "@/domain/problem/valueObject/ProblemStats";
 import { projectLearning } from "@/domain/learning/service/projectionLearning";
 import { useReviewEventStore } from "../store/useReviewEventStore";
 import { routes } from "../App/useAppNavigation";
+import { projectLearningState } from "@/domain/learning/service/projectLearningState";
+import { aggregateLearningStates } from "@/domain/learning/service/aggregateLearningState";
 
 /////////////////////////////////////////////
 export default function SessionSummaryScreen() {
@@ -40,6 +42,8 @@ export default function SessionSummaryScreen() {
         startSession(createOnetimeSessionId(), ids)
         navigate(routes.sessionPlay)
     }
+    const records = projectLearningState(sessionEventLog)
+    const learningState = aggregateLearningStates(records)
 
     return (
         <AppShell header={"Summary"}>
@@ -47,7 +51,7 @@ export default function SessionSummaryScreen() {
                 ミッション完了
             </Box>
 
-            <SummaryView stats={stats} />
+            <SummaryView state={learningState} />
 
             <Stack direction="row" spacing={1}>
                 <Button variant="outlined" onClick={handleRetry} fullWidth>
@@ -55,7 +59,7 @@ export default function SessionSummaryScreen() {
                 </Button>
                 
                 <Button variant="outlined" onClick={handleReview} fullWidth
-                    disabled={stats.failedCount === 0}
+                    disabled={learningState.failedCount === 0}
                 >
                     間違い復習
                 </Button>

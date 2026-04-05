@@ -7,6 +7,7 @@ export type SolvedResult = {
     isSolved: boolean
     elapsedSec: number
 }
+
 export function createDefaultSolvedResult(): SolvedResult {
     return {
         outcome: "unanswered",
@@ -16,4 +17,3 @@ export function createDefaultSolvedResult(): SolvedResult {
         elapsedSec: 10,
     }
 }
-

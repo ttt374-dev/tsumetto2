@@ -17,7 +17,7 @@ import StatsScreen from '../stats/StatsScreen';
 import SinglePlayerScreen from '../player/SinglePlayerScreen';
 import { bootstrapApp, createRepositories } from './bootstrapApp';
 import { routes } from './useAppNavigation';
-import SessionSummaryScreen from '../summary/MissionSummaryScreen.tsx';
+import SessionSummaryScreen from '../summary/SessionSummaryScreen.tsx';
 import HistoryScreen from '@/ui/history/HistoryScreen.tsx';
 import ProblemDetailScreen from '@/ui/detail/ProblemDetailScreen.tsx';
 import LibraryScreen from '@/ui/library/LibraryScreen.tsx';
