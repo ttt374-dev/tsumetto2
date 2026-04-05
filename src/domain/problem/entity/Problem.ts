@@ -124,32 +124,38 @@ export class Problem {
     setStarred(starred: boolean): Problem {
         return Problem.fromDTO({
             ...this.toDTO(),
-            starred: starred
+            starred
         })
     }
     setTitle(title: string): Problem {
         return Problem.fromDTO({
             ...this.toDTO(),
-            title: title,
+            title,
         })
 
     }
     setType(type: ProblemType): Problem {
         return Problem.fromDTO({
             ...this.toDTO(),
-            type: type,
+            type,
         })
     }
     setSource(source: string): Problem {
         return Problem.fromDTO({
             ...this.toDTO(),
-            source: source,
+            source,
         })
     }
     setTags(tags: string[]): Problem {
         return Problem.fromDTO({
             ...this.toDTO(),
-            tags: tags
+            tags
+        })
+    }
+    setComment(comment: string): Problem {
+        return Problem.fromDTO({
+            ...this.toDTO(),
+            comment,
         })
     }
     

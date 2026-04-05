@@ -1,5 +1,6 @@
-import { Problem, type ProblemDTO, type ProblemId } from "@/domain/problem/entity/Problem";
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
+
+import { Problem, type ProblemId } from "@/domain/problem/entity/Problem";
 import { useProblemStore } from '@/ui/store/useProblemStore';
 import { useLearningRecordStore } from '@/ui/store/useLearningRecordStore';
 import { useReviewEventStore } from '@/ui/store/useReviewEventStore';
@@ -11,15 +12,30 @@ type ProblemEditDraft = {
     starred: boolean
     type: ProblemType
     source: string
+    comment: string
 }
 function toEditDraft(problem: Problem): ProblemEditDraft {
-  return {
-    title: problem.title,
-    tags: problem.tags ?? [],
-    starred: problem.starred,
-    type: problem.type ?? "standard",
-    source: problem.source ?? "",
-  }
+    return {
+        title: problem.title,
+        tags: problem.tags ?? [],
+        starred: problem.starred,
+        type: problem.type ?? "standard",
+        source: problem.source ?? "",
+        comment: problem.comment,
+    }
+}
+
+function applyDraftToProblem(
+    prev: Problem,
+    draft: ProblemEditDraft
+): Problem {
+    return prev
+        .setTitle(draft.title)
+        .setSource(draft.source)
+        .setTags(draft.tags)
+        .setStarred(draft.starred)
+        .setType(draft.type)
+        .setComment(draft.comment)
 }
 
 //////////////////////////
@@ -36,12 +52,10 @@ export function useProblemDetailViewModel(
 ) {
     // problem store
     const problem = useProblemStore(s => s.byId[problemId])
-    //const activeProblems = useProblemStore(s=>s.activeProblems)
     const updateProblem = useProblemStore(s => s.updateProblem)
     const deleteProblems = useProblemStore(s => s.deleteProblems)
     const allTags = useProblemStore(s => s.allTags)
     const allSources = useProblemStore(s => s.allSources)
-    //const allSources = useProbl
 
     // learning store
     const appendReset = useReviewEventStore(s => s.appendReset)
@@ -49,19 +63,12 @@ export function useProblemDetailViewModel(
     const learning = problem ? learningRecords[problem.id] : undefined
 
     // local state
-    const [draft, setDraft] = useState<ProblemEditDraft>()
-
-    //const [title, setTitle] = useState("")
-    const [tags, setTags] = useState<string[]>([])
-    const [starred, setStarred] = useState(false)
-    const [source, setSource] = useState("")
-    const [type, setType] = useState<ProblemType>("standard")
-    const [comment, setComment] = useState("")
+    const [draft, setDraft] = useState<ProblemEditDraft|null>(null)
 
     // open 時に初期値セット
     useEffect(() => {
-        if (open && problem) {
-            start()
+        if (open && problem && !draft) {
+            setDraft(toEditDraft(problem))
         }
     }, [open, problem])
 
@@ -69,41 +76,29 @@ export function useProblemDetailViewModel(
         key: K,
         value: ProblemEditDraft[K]
     ) {
-        setDraft(d => ({ ...d!, [key]: value }))
+        //setDraft(d => ({ ...d!, [key]: value }))
+        setDraft(d => {
+            if (!d) return d
+            return { ...d, [key]: value }
+        })
     }
     //////////////////////////////////////////////////////////
-    const start = () => {
-
-        setDraft(toEditDraft(problem))
-
-        //setTitle(problem.title)
-        setTags(problem.tags ?? [])
-        setStarred(problem.starred)
-        setType(problem.type ?? "standard")
-        setSource(problem.source ?? "")
-    }
     const remove = () => {
         if (!problem) return
         deleteProblems([problem.id])
-        //onClose()
     }
 
     const save = async () => {
-        if (!problem) return
-        console.log("save problem", problem, starred)
-        //console.log("save source", source)
-        
-        updateProblem(problemId, prev =>
-            prev.setTitle(draft?.title ?? "")
-                .setTags(tags)
-                .setStarred(starred)
-                .setSource(source)
-        )
-        
-        //onClose()
+        if (!problem || !draft) return
+        console.log("save problem", draft)
+        updateProblem(problemId, prev => applyDraftToProblem(prev, draft))
+
     }
-    const toggleStar = () => {
-        setStarred(prev => !prev)
+    const toggleStar = () => {        
+        setDraft(d => {
+            if (!d) return d
+            return { ...d, starred: !d.starred }
+        })
     }
     // 学習データリセット
     const resetLearning = () => {
@@ -111,12 +106,20 @@ export function useProblemDetailViewModel(
     }
 
     return {
-        problem, learning, allSources,
+        problem, learning, allSources, allTags,
         title: draft?.title ?? "",
-        //title, 
-        tags, starred, allTags, type, source,  comment,
-        remove, save, resetLearning, 
+        starred: draft?.starred ?? false,
+        source: draft?.source ?? "",
+        type: draft?.type ?? "standard",
+        tags: draft?.tags ?? [],
+        comment: draft?.comment ?? "",
+
+        remove, save, resetLearning,
         setTitle: (v: string) => updateField("title", v),
-        setTags, setType, setSource, setComment, toggleStar,
+        setSource: (v: string) => updateField("source", v),
+        setType: (v: ProblemType) => updateField("type", v),
+        setTags: (v: string[]) => updateField("tags", v),
+        setComment: (v: string) => updateField("comment", v),
+        toggleStar,
     }
 }
