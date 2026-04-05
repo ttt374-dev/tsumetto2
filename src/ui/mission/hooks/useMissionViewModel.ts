@@ -3,7 +3,7 @@ import { arrayMove } from "@dnd-kit/sortable";
 
 import { useMissionStore } from "@/ui/mission/hooks/useMissionStore";
 import { selectActiveProblems, useProblemStore } from "@/ui/store/useProblemStore";
-import { useLearningRecordStore } from "@/ui/store/useLearningRecordStore";
+import { useLearningRecordStore } from "@/ui/domains/learning/useLearningRecordStore";
 import { applyFilter } from "@/domain/problem/service/query/applyFilter";
 import type { Mission } from "@/domain/mission/entity/Mission";
 import { ProblemStats } from "@/domain/problem/valueObject/ProblemStats";

@@ -4,7 +4,7 @@ import { useMemo } from "react"
 
 import type { LearningRecord } from "@/domain/learning/entity/Learning"
 import type { ProblemId } from "@/domain/problem/entity/Problem"
-import { useLearningRecordStore } from "@/ui/store/useLearningRecordStore"
+import { useLearningRecordStore } from "@/ui/domains/learning/useLearningRecordStore"
 import { useProblemStore } from "@/ui/store/useProblemStore"
 
 type OverdueItem = {

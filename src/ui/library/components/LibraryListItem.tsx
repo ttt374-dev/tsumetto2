@@ -4,7 +4,7 @@ import { Box, Checkbox, ListItem, ListItemButton, ListItemIcon, ListItemText, St
 import { useLongPress } from "@/ui/common/hooks/useLongPress";
 import { StarToggleButton } from "@/ui/common/components/StarToggleButton/StarToggleButton";
 import { useProblemStore } from "@/ui/store/useProblemStore";
-import { useLearningRecordStore } from "@/ui/store/useLearningRecordStore";
+import { useLearningRecordStore } from "@/ui/domains/learning/useLearningRecordStore";
 import { useStarToggleButton } from '@/ui/common/components/StarToggleButton/useStarToggleButton';
 import { Learning } from "@/domain/learning/entity/Learning";
 import type { LibraryActionMode } from "@/ui/library/hooks/useLibraryViewModel";

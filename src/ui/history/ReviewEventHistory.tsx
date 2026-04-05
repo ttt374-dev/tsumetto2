@@ -2,21 +2,11 @@ import { Box, List, ListItem, ListItemText } from "@mui/material"
 import type { ReviewEvent } from "@/domain/review/ReviewEvent";
 import { useProblemStore } from "@/ui/store/useProblemStore";
 import { useReviewEventStore } from "@/ui/store/useReviewEventStore";
-import type { SolvedResult } from "@/domain/review/solvedResult"
 import { calculateScore } from "@/domain/learning/service/calculateScore";
 import { formatDateNumber } from "@/ui/common/formatter/formatDateNumber";
 import { toSolvedResultViewData } from "@/ui/domains/learning/solvedResultPresenter";
 
-/*
-export function formatSolvedResult(res: SolvedResult) {
-    const outcome = res.outcome === "solved" ? "成功" : res.outcome === "failed" ? "失敗" : "未回答"
-    const mistakesString = res.mistakes > 0 ? `(${res.mistakes}miss)` : ""
-    const revealedString = res.isRevealed ? `[解答参照]` : ""
-    return ` ${outcome} ${mistakesString}${revealedString} (${res.elapsedSec}s)`
-
-}*/
-function formatEvent(title: string, event: ReviewEvent): string {    
-    
+function formatEvent(title: string, event: ReviewEvent): string {
     let content: string
     switch (event.type) {
         case "reviewed":
@@ -30,8 +20,22 @@ function formatEvent(title: string, event: ReviewEvent): string {
     return content
 }
 
-export function ReviewEventHistory() {
+function HistoryListItem({ event }: {
+    event: ReviewEvent
+}) {
     const byId = useProblemStore(s => s.byId)
+
+    return (<ListItem disablePadding
+        sx={{ borderBottom: 1, borderColor: "divider", px: 1, py: 0 }}>
+        <ListItemText
+            primary={formatEvent(byId[event.problemId]?.title, event)}
+            secondary={formatDateNumber(event.at)}>
+        </ListItemText>
+    </ListItem>)
+
+}
+export function ReviewEventHistory() {
+
     const allevents = useReviewEventStore(s => s.eventLog)
     const num = 100
     const events = allevents
@@ -43,18 +47,9 @@ export function ReviewEventHistory() {
         <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto" }}>
             最近の学習データ
             <List>
-                {events.map(event => {   
-                    //console.log("histtorylog", event)                 
-                    return (
-                        <ListItem disablePadding
-                            sx={{ borderBottom: 1, borderColor: "divider", px: 1, py: 0 }}>
-                            <ListItemText
-                                primary={formatEvent(byId[event.problemId]?.title, event)}
-                                secondary={formatDateNumber(event.at)}>
-                            </ListItemText>
-                        </ListItem>
-                    )
-                })}
+                {events.map(event => 
+                    <HistoryListItem event={event} />                
+                )}
             </List>
         </Box>
     )

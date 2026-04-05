@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { Box, Checkbox, FormControlLabel, Paper, Stack, Typography } from "@mui/material";
 
 import type { ProblemId } from "@/domain/problem/entity/Problem";
-import { useLearningRecordStore } from "@/ui/store/useLearningRecordStore";
+import { useLearningRecordStore } from "@/ui/domains/learning/useLearningRecordStore";
 import { useProblemStore } from "@/ui/store/useProblemStore";
 import type { LearningRecord } from "@/domain/learning/entity/Learning";
 

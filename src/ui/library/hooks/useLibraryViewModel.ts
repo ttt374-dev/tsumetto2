@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom"
 import { routes } from "@/ui/App/useAppNavigation"
 
 import { selectActiveProblems, useProblemStore } from "@/ui/store/useProblemStore"
-import { useLearningRecordStore } from "@/ui/store/useLearningRecordStore"
+import { useLearningRecordStore } from "@/ui/domains/learning/useLearningRecordStore"
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem"
 import { applyQuery } from "@/domain/problem/service/query/applyQuery"
 import { useLibraryCheckbox } from "./useLibraryCheckbox"

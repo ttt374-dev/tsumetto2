@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 
 import { ProblemStats } from "@/domain/problem/valueObject/ProblemStats";
-import { useLearningRecordStore } from "@/ui/store/useLearningRecordStore";
+import { useLearningRecordStore } from "@/ui/domains/learning/useLearningRecordStore";
 import { useProblemStore } from "@/ui/store/useProblemStore";
 import { GroupedTable} from "./GroupedTable";
 import { applyFilter } from "@/domain/problem/service/query/applyFilter";

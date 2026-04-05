@@ -9,7 +9,7 @@ import { useReplayController } from "@/ui/player/hooks/useReplayController"
 import { useGameStore } from "@/ui/player/store/useGameStore"
 import { useReplayStore } from "@/ui/player/store/useReplayStore"
 import { useTimerStore } from "@/ui/player/store/useTimerStore"
-import { useLearningRecordStore } from "@/ui/store/useLearningRecordStore"
+import { useLearningRecordStore } from "@/ui/domains/learning/useLearningRecordStore"
 import { useReviewEventStore } from "@/ui/store/useReviewEventStore"
 import { useEffect, useState } from "react"
 
