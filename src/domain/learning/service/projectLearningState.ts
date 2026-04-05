@@ -34,20 +34,23 @@ function applyReviewedEvent(prev: LearningState, event: ReviewEvent): LearningSt
     if (event.type !== "reviewed") return prev
 
     //let easeFactor: number
-    let intervalDays: number
+    let intervalDays = prev.intervalDays
+    let solvedCount = prev.solvedCount
     let failedCount = prev.failedCount
 
     const quality = deriveAnswerQuality(event.solvedResult)
 
     if (quality <= 2) { // 失敗
+        failedCount++
         intervalDays = 1
         //easeFactor = Math.max(1.3, prev.easeFactor - 0.2)
-        failedCount++
+        
     } else {
+        solvedCount++
         intervalDays =
-            (prev.intervalDays < 1) ? 1 :
-                (prev.intervalDays === 1) ? 3 :
-                    Math.min(Math.round(prev.intervalDays * prev.easeFactor), MAX_INTERVAL_DAYS)
+            (intervalDays < 1) ? 1 :
+                (intervalDays === 1) ? 3 :
+                    Math.min(Math.round(intervalDays * prev.easeFactor), MAX_INTERVAL_DAYS)
     }
     const easeFactor = Math.max(
         1.3,
@@ -60,10 +63,11 @@ function applyReviewedEvent(prev: LearningState, event: ReviewEvent): LearningSt
 
     return {
         attemptCount: prev.attemptCount + 1,
+        solvedCount, failedCount,
         score, easeFactor,
         nextReviewedAt,
         intervalDays,
-        failedCount,
+        lastAnsweredAt: event.at        
     }
 }
 //////////////////////////////////
