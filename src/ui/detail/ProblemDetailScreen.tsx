@@ -29,7 +29,7 @@ export default function ProblemDetailScreen(){
 
 export function ProblemDetailContent( { problem }: { problem: Problem}) {
         const {
-            learning, title, tags, starred, source, type, allSources, comment,
+            title, tags, starred, source, type, allSources, comment,
             setTitle, setTags, toggleStar, setType, setSource, remove, setComment,
             save, resetLearning
         } = useProblemDetailViewModel(problem.id, true)
@@ -124,7 +124,7 @@ export function ProblemDetailContent( { problem }: { problem: Problem}) {
                 <ProblemInfoPanel problem={problem} />
                 <Divider />
 
-                {learning &&
+                {learningState &&
                     <LearningDetailPanel learningState={learningState} onResetLearning={handleLearningReset} />
                 }
                 <TextField

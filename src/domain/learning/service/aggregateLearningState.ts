@@ -7,16 +7,18 @@ export function aggregateLearningStates(
     const values = Object.values(record)
     if (values.length === 0) return {...DefaultLearningState}
 
-    let totalAttempt = 0
-    let totalFailed = 0
+    let attemptCount = 0
+    let solvedCount = 0
+    let failedCount = 0
     let weightedScoreSum = 0
     let intervalSum = 0
     let easeFactorSum = 0
     let nextReviewedAtMin = Infinity
 
     for (const s of values) {
-        totalAttempt += s.attemptCount
-        totalFailed += s.failedCount
+        attemptCount += s.attemptCount
+        solvedCount += s.solvedCount
+        failedCount += s.failedCount
 
         weightedScoreSum += s.score * s.attemptCount
 
@@ -29,11 +31,11 @@ export function aggregateLearningStates(
     }
 
     const count = values.length
+    const score = attemptCount === 0 ? 0 : weightedScoreSum / attemptCount
 
     return {
-        attemptCount: totalAttempt,
-        failedCount: totalFailed,
-        score: totalAttempt === 0 ? 0 : weightedScoreSum / totalAttempt,
+        attemptCount, solvedCount, failedCount,
+        score,
         intervalDays: intervalSum / count,
         nextReviewedAt: nextReviewedAtMin,
         easeFactor: easeFactorSum / count,

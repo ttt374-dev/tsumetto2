@@ -61,6 +61,7 @@ export function useProblemDetailViewModel(
     const appendReset = useReviewEventStore(s => s.appendReset)
     const learningRecords = useLearningRecordStore(s => s.records)
     const learning = problem ? learningRecords[problem.id] : undefined
+    const learningState = useLearningRecordStore(s=>s.getState(problem.id))    
 
     // local state
     const [draft, setDraft] = useState<ProblemEditDraft|null>(null)
@@ -106,7 +107,7 @@ export function useProblemDetailViewModel(
     }
 
     return {
-        problem, learning, allSources, allTags,
+        problem, learningState, allSources, allTags,
         title: draft?.title ?? "",
         starred: draft?.starred ?? false,
         source: draft?.source ?? "",
