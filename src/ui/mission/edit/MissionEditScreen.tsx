@@ -14,7 +14,7 @@ import { useToast } from "@/ui/App/providers/ToastProvider";
 export default function MissionEditScreen() {
     const toast = useToast()
     const {
-        name, allSources, query, stats, ids: problemIds,
+        name, allSources, query, ids: problemIds, summary,
         setName, save, remove,
     } = useMissionEditViewModel();
 
@@ -98,7 +98,7 @@ export default function MissionEditScreen() {
             </Box>
 
             <Button onClick={handleNavigateToList} variant="outlined" sx={{ m: 1 }}>
-                全{stats.problemCount}問、スコア {(stats.score).toFixed(1)}
+                全{summary.problemCount}問、平均スコア {(summary.avgScore).toFixed(1)}
             </Button>
 
             {listDialog.dialogElement}

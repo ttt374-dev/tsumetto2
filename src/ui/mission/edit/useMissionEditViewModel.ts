@@ -8,6 +8,7 @@ import { ProblemStats } from "@/domain/problem/valueObject/ProblemStats"
 import { useProblemsQuery } from "@/ui/common/hooks/useProblemsQuery"
 import { DefaultQueryState, type QueryState } from "@/domain/problem/service/query/ProblemsQuery"
 import { useMissionEditorStore } from "@/ui/mission/edit/useMissionEditorStore"
+import { computeLearningSummary } from "@/domain/learning/service/computeLearningSummary"
 
 const ID_NEW = "new"
 
@@ -29,14 +30,14 @@ function useMissionEditorInitializer(id: string | undefined) {
     }, [id, missions])
 }
 function useMissionEditorList(queryState: QueryState){
-    const problems = useProblemStore(s => s.activeProblems)
+    const activeProblems = useProblemStore(s => s.activeProblems)
     const learningRecords = useLearningRecordStore(s => s.records)
 
-    const activeProblems = useMemo(() =>
-        applyQuery(problems, learningRecords, queryState),
-        [problems, learningRecords, queryState])
-    const ids = activeProblems.map(p => p.id)
-    return { ids, activeProblems, learningRecords}
+    const selectedProblems = useMemo(() =>
+        applyQuery(activeProblems, learningRecords, queryState),
+        [activeProblems, learningRecords, queryState])
+    const ids = selectedProblems.map(p => p.id)
+    return { ids, activeProblems: selectedProblems}
 }
 
 function useMissionEditorActions(id: string | undefined, queryState: QueryState) {    
@@ -102,9 +103,11 @@ export function useMissionEditViewModel() {
     // --------------------------
     // List, Stats
     // --------------------------
-    const { ids, learningRecords} = useMissionEditorList(query.state)
-    const stats =  useMemo(()=> ProblemStats.create(ids, learningRecords),
-        [ids, learningRecords])
+    const { ids} = useMissionEditorList(query.state)
+    //const stats =  useMemo(()=> ProblemStats.create(ids, learningRecords),
+    //    [ids, learningRecords])
+    const learningRecords = useLearningRecordStore(s=>s.stateRecords)
+    const summary = computeLearningSummary(ids, learningRecords)
 
     // --------------------------
     // 保存・削除
@@ -118,7 +121,8 @@ export function useMissionEditViewModel() {
         allTags, allSources,
         query,
         ids, 
-        stats,
+        //stats,
+        summary,
         isNew: id === ID_NEW,
 
         setName,
