@@ -1,4 +1,4 @@
-import { Box, ToggleButton, List, ListItem, ListItemButton, ListItemText, Stack, ToggleButtonGroup, IconButton, keyframes, Checkbox, FormControlLabel, TextField } from "@mui/material";
+import { ListItem, ListItemButton, ListItemText, IconButton, keyframes, Checkbox, FormControlLabel, TextField } from "@mui/material";
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -6,14 +6,18 @@ import { CSS } from "@dnd-kit/utilities";
 import { useNavigate } from "react-router-dom";
 import type { Mission } from "@/domain/mission/entity/Mission";
 import { useLongPress } from "@/ui/common/hooks/useLongPress";
-import type { ProblemStats } from "@/domain/problem/valueObject/ProblemStats";
 import { useMissionModeStore } from "@/ui/mission/hooks/useMissionModeStore";
 import { routes } from "@/ui/App/useAppNavigation";
+import { computeLearningSummary } from "@/domain/learning/service/computeLearningSummary";
+import { useProblemStore } from "@/ui/store/useProblemStore";
+import { applyQuery } from "@/domain/problem/service/query/applyQuery";
+import { useLearningRecordStore } from "@/ui/domains/learning/useLearningRecordStore";
+import type { LearningSummary } from "@/domain/learning/entity/LearningSummary";
 
 export function SortableMissionItem(props: {
     mission: Mission     
     startMission: () => void
-    missionStats: ProblemStats | undefined //    Map<string, ProblemStats>
+    //missionStats: ProblemStats | undefined //    Map<string, ProblemStats>
 }) {
     const {editMode, toggleEditMode } = useMissionModeStore()    
 
@@ -30,9 +34,12 @@ export function SortableMissionItem(props: {
         transition: sortable.transition,
         touchAction: "none"
     };
-
-    //const stats = props.missionStats.get(props.mission.id);
-    const stats = props.missionStats
+    const activeIds = useProblemStore(s=>s.activeProblems)
+    const records = useLearningRecordStore(s=>s.records)
+    const learningStateRecords = useLearningRecordStore(s=>s.stateRecords)
+    const ids = applyQuery(activeIds, records, props.mission.queryState).map(p=>p.id)
+    const summary = computeLearningSummary(ids, learningStateRecords)
+    
 
     const onItemClick = () => {
         if (isLongPressedRef.current) return
@@ -40,7 +47,7 @@ export function SortableMissionItem(props: {
             props.startMission()
         } else navigate(routes.missionEdit(props.mission.id))
     }
-    const disabled = !editMode && (stats?.problemCount === 0)
+    const disabled = !editMode && (summary.problemCount === 0)
     
     ////////////////
     return (
@@ -90,7 +97,7 @@ export function SortableMissionItem(props: {
             >
                 <ListItemText
                     primary={props.mission.name}
-                    secondary={stats && formatStats(stats)}
+                    secondary={formatSummary(summary)}
                 />
             </ListItemButton>
 
@@ -98,7 +105,7 @@ export function SortableMissionItem(props: {
     );
 }
 // helpers
-const formatStats = (stats: ProblemStats) => {
-    return `問題数：${stats.problemCount ?? 0}, スコア：${((stats.score)).toFixed(1)}`
+const formatSummary = (summary: LearningSummary) => {
+    return `問題数：${summary.problemCount ?? 0}, スコア：${((summary.avgScore)).toFixed(1)}`
 }
 

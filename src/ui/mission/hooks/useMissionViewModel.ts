@@ -29,7 +29,7 @@ export function useMissionViewModel() {
     return {
         missionArray,
         onDragEnd: reorder,
-        missionStats,
+        //missionStats,
     };
 }
 /////////////

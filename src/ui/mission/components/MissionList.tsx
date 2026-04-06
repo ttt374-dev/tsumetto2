@@ -25,7 +25,7 @@ function createSensors(){
 export function MissionList(props: {    
     executionMode: MissionExecutionMode
 }) {
-    const { missionArray, onDragEnd, missionStats }  = useMissionViewModel();
+    const { missionArray, onDragEnd }  = useMissionViewModel();
     const { startMission } = useMissionStarter()
 
     // dnd-kit センサ    
@@ -42,10 +42,8 @@ export function MissionList(props: {
                         {missionArray.map(mission => (
                             <SortableMissionItem
                                 key={mission.id}
-                                mission={mission}
-                                
+                                mission={mission}                                
                                 startMission={() => startMission(mission, props.executionMode)}
-                                missionStats={missionStats.get(mission.id)}
                             />
                         ))}
                     </List>

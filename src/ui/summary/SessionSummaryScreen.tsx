@@ -27,7 +27,6 @@ export default function SessionSummaryScreen() {
         .filter(e => ("sessionId" in e && e.sessionId === sessionId))
 
     const sessionLearningRecords = projectLearningState(sessionEventLog)
-    //const stats = ProblemStats.create(ids, sessionLearningRecords)
 
     const navigate = useNavigate()
     const createOnetimeSessionId = () => 
