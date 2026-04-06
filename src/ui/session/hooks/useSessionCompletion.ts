@@ -7,7 +7,7 @@ import type { SolvedResult } from "@/domain/review/solvedResult"
 import type { SessionId } from "@/domain/session/entity/Session"
 import { createPlayerContext } from "@/ui/player/components/types/PlayerContext"
 import { useGameStore, type GameEvent } from "@/ui/player/store/useGameStore"
-import { useReviewEventStore } from "@/ui/store/useReviewEventStore"
+import { useReviewEventStore } from "@/ui/domains/learning/hooks/useReviewEventStore"
 import { useSessionStore } from "@/ui/session/hooks/useSessionStore"
 
 export function useSessionCompletion(problem: Problem, sessionId: SessionId){

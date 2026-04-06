@@ -1,5 +1,5 @@
 import { useSessionStore } from "@/ui/session/hooks/useSessionStore"
-import { useProblemStore } from "@/ui/store/useProblemStore"
+import { useProblemStore } from "@/ui/domains/problem/hooks/useProblemStore"
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem"
 import type { SessionId } from "@/domain/session/entity/Session";
 

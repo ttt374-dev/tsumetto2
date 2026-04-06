@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 
 import { ProblemStats } from "@/domain/problem/valueObject/ProblemStats";
-import { useLearningRecordStore } from "@/ui/domains/learning/useLearningRecordStore";
-import { useProblemStore } from "@/ui/store/useProblemStore";
+import { useLearningRecordStore } from "@/ui/domains/learning/hooks/useLearningRecordStore";
+import { useProblemStore } from "@/ui/domains/problem/hooks/useProblemStore";
 import { GroupedTable} from "./GroupedTable";
 import { applyFilter } from "@/domain/problem/service/query/applyFilter";
 import { DefaultQueryState } from "@/domain/problem/service/query/ProblemsQuery";

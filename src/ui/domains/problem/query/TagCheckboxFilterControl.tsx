@@ -1,4 +1,4 @@
-import { useProblemStore } from "@/ui/store/useProblemStore"
+import { useProblemStore } from "@/ui/domains/problem/hooks/useProblemStore"
 import { FormGroup, Paper, Chip, FormLabel, FormControl} from "@mui/material"
 
 export function TagCheckboxFilterControl({

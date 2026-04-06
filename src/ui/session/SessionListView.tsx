@@ -2,11 +2,11 @@ import { Box, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Stack 
 
 import type { ProblemId } from "@/domain/problem/entity/Problem"
 import type { SessionId } from "@/domain/session/entity/Session"
-import { useProblemStore } from "@/ui/store/useProblemStore"
-import { useReviewEventStore } from "@/ui/store/useReviewEventStore"
+import { useProblemStore } from "@/ui/domains/problem/hooks/useProblemStore"
+import { useReviewEventStore } from "@/ui/domains/learning/hooks/useReviewEventStore"
 import type { ReviewEvent } from "@/domain/review/ReviewEvent"
 import type { SolvedResult } from "@/domain/review/solvedResult"
-import { toSolvedResultViewData } from "@/ui/domains/learning/solvedResultPresenter"
+import { toSolvedResultViewData } from "@/ui/domains/learning/hooks/solvedResultPresenter"
 
 export default function SessionListView(props: {
     ids: ProblemId[]

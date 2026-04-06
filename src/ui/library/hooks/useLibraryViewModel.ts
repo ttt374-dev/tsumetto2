@@ -2,13 +2,13 @@ import { useCallback, useEffect, useMemo, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { routes } from "@/ui/App/useAppNavigation"
 
-import { selectActiveProblems, useProblemStore } from "@/ui/store/useProblemStore"
-import { useLearningRecordStore } from "@/ui/domains/learning/useLearningRecordStore"
+import { selectActiveProblems, useProblemStore } from "@/ui/domains/problem/hooks/useProblemStore"
+import { useLearningRecordStore } from "@/ui/domains/learning/hooks/useLearningRecordStore"
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem"
 import { applyQuery } from "@/domain/problem/service/query/applyQuery"
 import { useLibraryCheckbox } from "./useLibraryCheckbox"
 import { useMultipleProblemsEditDialog } from "@/ui/dialogs/MultipleProblemsEditorDialog"
-import { useProblemsQueryStore } from "@/ui/store/useProblemsQueryStore"
+import { useProblemsQueryStore } from "@/ui/domains/problem/hooks/useProblemsQueryStore"
 
 export type LibraryActionMode = "selection" | "view" 
 

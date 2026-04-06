@@ -7,15 +7,15 @@ import { AppShell } from "../common/components/layout/AppShell";
 import { CancelableTextField } from "../shared/components/CancelableTextfield";
 import { ProblemTagEditor } from "../common/components/ProblemTagEditor";
 import { FreeSoloAutocomplete } from "../shared/components/FreeSoloAutocomplete";
-import { useProblemStore } from "../store/useProblemStore";
+import { useProblemStore } from "../domains/problem/hooks/useProblemStore";
 import { routes } from "../App/useAppNavigation";
 import { useProblemDetailViewModel } from "./hooks/useProblemDetailViewModel";
 import { StarToggleButton } from "../common/components/StarToggleButton/StarToggleButton";
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem";
-import { ProblemInfoPanel } from "../problem/components/ProblemInfoPanel";
+import { ProblemInfoPanel } from "../domains/problem/components/ProblemInfoPanel";
 import { LearningDetailPanel } from "../domains/learning/components/LearningDetailPanel";
 import { ProblemTypeFilterControl } from "@/ui/domains/problem/query/ProblemTypeFilterControl";
-import { useReviewEventStore } from "@/ui/store/useReviewEventStore";
+import { useReviewEventStore } from "@/ui/domains/learning/hooks/useReviewEventStore";
 import { projectLearningState } from "@/domain/learning/service/projectLearningState";
 import { aggregateLearningStates } from "@/domain/learning/service/aggregateLearningState";
 

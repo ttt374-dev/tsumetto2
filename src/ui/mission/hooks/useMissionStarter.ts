@@ -2,9 +2,9 @@ import { useNavigate } from "react-router-dom";
 import { routes } from "@/ui/App/useAppNavigation";
 
 import { applyQuery } from "@/domain/problem/service/query/applyQuery";
-import { selectActiveProblems, useProblemStore } from "@/ui/store/useProblemStore";
+import { selectActiveProblems, useProblemStore } from "@/ui/domains/problem/hooks/useProblemStore";
 import { useSessionStore } from "@/ui/session/hooks/useSessionStore";
-import { useLearningRecordStore } from "@/ui/domains/learning/useLearningRecordStore";
+import { useLearningRecordStore } from "@/ui/domains/learning/hooks/useLearningRecordStore";
 import type { Mission } from "@/domain/mission/entity/Mission";
 import type { MissionExecutionMode } from "@/ui/mission/components/MissionExecutionModeControl";
 

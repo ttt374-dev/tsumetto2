@@ -9,7 +9,7 @@ import { IconButton, Stack } from '@mui/material';
 import type { ProblemId } from "@/domain/problem/entity/Problem";
 import type { LibraryItemActions } from "./LibraryView";
 import type { LibraryActionMode } from "../hooks/useLibraryViewModel";
-import { useProblemStore } from "@/ui/store/useProblemStore";
+import { useProblemStore } from "@/ui/domains/problem/hooks/useProblemStore";
 
 export function LibraryCheckboxControl({ onCheckAll, onUncheckAll,
     onChangeActionMode, actionMode, onOpenEditDialog, checkedIds,

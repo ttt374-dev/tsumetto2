@@ -6,7 +6,7 @@ import type { ReviewEventLog } from "@/domain/review/ReviewEvent"
 import type { Mission } from "@/domain/mission/entity/Mission"
 import type { ProblemRepository } from "@/domain/problem/repository/ProblemRepository"
 import { useMissionStore } from "@/ui/mission/hooks/useMissionStore"
-import { useProblemStore } from "@/ui/store/useProblemStore"
+import { useProblemStore } from "@/ui/domains/problem/hooks/useProblemStore"
 
 export type BackupResult = Result<BackupResultOk, BackupRestoreError>
 

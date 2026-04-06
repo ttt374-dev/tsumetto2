@@ -1,4 +1,4 @@
-import { useReviewEventStore } from "@/ui/store/useReviewEventStore"
+import { useReviewEventStore } from "@/ui/domains/learning/hooks/useReviewEventStore"
 
 export class ReviewSyncService {
     private running = false

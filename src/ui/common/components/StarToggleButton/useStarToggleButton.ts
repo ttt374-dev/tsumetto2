@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react"
 import { Problem, type ProblemId } from "@/domain/problem/entity/Problem"
-import { useProblemStore } from "@/ui/store/useProblemStore"
+import { useProblemStore } from "@/ui/domains/problem/hooks/useProblemStore"
 
 export function useStarToggleButton(id: ProblemId, updateStore: boolean = true){
     const problemToggleStar = useProblemStore(s=>s.toggleStar)

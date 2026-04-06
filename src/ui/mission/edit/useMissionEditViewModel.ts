@@ -1,6 +1,6 @@
 import { useMissionStore } from "@/ui/mission/hooks/useMissionStore"
-import { useProblemStore } from "@/ui/store/useProblemStore"
-import { useLearningRecordStore } from "@/ui/domains/learning/useLearningRecordStore"
+import { useProblemStore } from "@/ui/domains/problem/hooks/useProblemStore"
+import { useLearningRecordStore } from "@/ui/domains/learning/hooks/useLearningRecordStore"
 import { applyQuery } from "@/domain/problem/service/query/applyQuery"
 import { useCallback, useEffect, useMemo } from "react"
 import { useParams } from "react-router-dom"

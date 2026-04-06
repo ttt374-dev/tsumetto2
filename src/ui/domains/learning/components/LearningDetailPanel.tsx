@@ -1,7 +1,7 @@
 import { Box, Button, Paper, Stack } from '@mui/material';
 
 import type { LearningState } from '@/domain/learning/entity/LearningState';
-import { toLearningStateViewData } from '@/ui/domains/learning/learningPresenter';
+import { toLearningStateViewData } from '@/ui/domains/learning/hooks/learningPresenter';
 
 export function LearningDetailPanel( { learningState, onResetLearning} : {
     learningState: LearningState

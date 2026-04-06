@@ -1,6 +1,6 @@
 import type { ProblemId } from "@/domain/problem/entity/Problem";
 import { FreeSoloAutocomplete } from "@/ui/shared/components/FreeSoloAutocomplete";
-import { useProblemStore } from "@/ui/store/useProblemStore";
+import { useProblemStore } from "@/ui/domains/problem/hooks/useProblemStore";
 import { Autocomplete, Box, Button, Checkbox, Chip, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, FormGroup, FormLabel, InputLabel, List, ListItem, ListItemIcon, ListItemText, MenuItem, Select, Stack, TextField } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import type { ProblemType } from "@/domain/problem/entity/ProblemType";

@@ -2,8 +2,8 @@ import { Box } from "@mui/material"
 
 import type { Problem } from "@/domain/problem/entity/Problem"
 import { toProblemViewData } from "@/ui/domains/problem/hooks/problemPresenter"
-import { useLearningRecordStore } from "@/ui/domains/learning/useLearningRecordStore"
-import { toLearningStateViewData } from "@/ui/domains/learning/learningPresenter"
+import { useLearningRecordStore } from "@/ui/domains/learning/hooks/useLearningRecordStore"
+import { toLearningStateViewData } from "@/ui/domains/learning/hooks/learningPresenter"
 
 export default function ProblemLearningInfoPanel(props: {
     problem: Problem    

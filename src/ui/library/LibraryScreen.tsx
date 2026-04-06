@@ -5,7 +5,7 @@ import LibraryView from "./components/LibraryView";
 import { AppShell } from "../common/components/layout/AppShell";
 import { useLibraryViewModel } from "./hooks/useLibraryViewModel";
 import { FilterControlPanel } from "@/ui/domains/problem/query/FilterControlPanel";
-import { useProblemStore } from "@/ui/store/useProblemStore";
+import { useProblemStore } from "@/ui/domains/problem/hooks/useProblemStore";
 
 //////////////////////////////////////////////////
 export default function LibraryScreen() {
