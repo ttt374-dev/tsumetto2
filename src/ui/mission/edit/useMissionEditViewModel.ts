@@ -4,11 +4,12 @@ import { useLearningRecordStore } from "@/ui/domains/learning/useLearningRecordS
 import { applyQuery } from "@/domain/problem/service/query/applyQuery"
 import { useCallback, useEffect, useMemo } from "react"
 import { useParams } from "react-router-dom"
-import { ProblemStats } from "@/domain/problem/valueObject/ProblemStats"
 import { useProblemsQuery } from "@/ui/common/hooks/useProblemsQuery"
 import { DefaultQueryState, type QueryState } from "@/domain/problem/service/query/ProblemsQuery"
 import { useMissionEditorStore } from "@/ui/mission/edit/useMissionEditorStore"
 import { computeLearningSummary } from "@/domain/learning/service/computeLearningSummary"
+import { PropaneSharp } from "@mui/icons-material"
+import type { ProblemId } from "@/domain/problem/entity/Problem"
 
 const ID_NEW = "new"
 
@@ -29,17 +30,6 @@ function useMissionEditorInitializer(id: string | undefined) {
         return () => reset()
     }, [id, missions])
 }
-function useMissionEditorList(queryState: QueryState){
-    const activeProblems = useProblemStore(s => s.activeProblems)
-    const learningRecords = useLearningRecordStore(s => s.records)
-
-    const selectedProblems = useMemo(() =>
-        applyQuery(activeProblems, learningRecords, queryState),
-        [activeProblems, learningRecords, queryState])
-    const ids = selectedProblems.map(p => p.id)
-    return { ids, activeProblems: selectedProblems}
-}
-
 function useMissionEditorActions(id: string | undefined, queryState: QueryState) {    
     const draft = useMissionEditorStore(s => s.draft)
     const reset = useMissionEditorStore(s => s.reset)
@@ -103,11 +93,11 @@ export function useMissionEditViewModel() {
     // --------------------------
     // List, Stats
     // --------------------------
-    const { ids} = useMissionEditorList(query.state)
-    //const stats =  useMemo(()=> ProblemStats.create(ids, learningRecords),
-    //    [ids, learningRecords])
-    const learningRecords = useLearningRecordStore(s=>s.stateRecords)
-    const summary = computeLearningSummary(ids, learningRecords)
+    //const { ids} = useMissionEditorList(query.state)
+    const activeProblems = useProblemStore(s=>s.activeProblems)
+    const records = useLearningRecordStore(s=>s.stateRecords)
+    const ids = applyQuery(activeProblems, records, query.state).map(p=>p.id)
+    const summary = computeLearningSummary(ids, records)
 
     // --------------------------
     // 保存・削除

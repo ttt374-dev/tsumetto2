@@ -11,14 +11,14 @@ import type { StatsRowValues } from "@/ui/stats/components/StatsRow";
 
 export function ProblemStatsTable() {
     const activeProblems = useProblemStore(s => s.activeProblems)
-    const learningRecords = useLearningRecordStore(s => s.records)
+    const learningRecords = useLearningRecordStore(s => s.stateRecords)
 
     const queryState = { ...DefaultQueryState, dueForReviewOnly: true}
     const dueForReviewOnly = applyFilter(activeProblems, learningRecords, queryState)
     console.log("due review", dueForReviewOnly)
 
     // 総合
-    const unanswered = activeProblems.filter(p => { learningRecords[p.id]?.totalCount > 0 })
+    const unanswered = activeProblems.filter(p => { learningRecords[p.id]?.attemptCount > 0 })
     const idsMap: Record<string, Record<string, Problem[]>> = {}
 
     idsMap["general"] =  {

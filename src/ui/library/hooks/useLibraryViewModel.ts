@@ -13,10 +13,11 @@ import { useBackupRestoreDialog } from "@/ui/common/components/dialogs/BackupRes
 import { useMultipleProblemsEditDialog } from "@/ui/common/components/dialogs/MultipleProblemsEditorDialog"
 import type { QueryState } from "@/domain/problem/service/query/ProblemsQuery"
 import { useProblemsQueryStore } from "@/ui/store/useProblemsQueryStore"
+import type { LearningState } from "@/domain/learning/entity/LearningState"
 
 export type LibraryActionMode = "selection" | "view" 
 
-function useLibraryListVM(problems: Problem[], learningRecords: LearningRecord, queryState: QueryState) {
+function useLibraryListVM(problems: Problem[], learningRecords: Record<ProblemId, LearningState>, queryState: QueryState) {
     const libraryItems = useMemo(() =>
         applyQuery(problems, learningRecords, queryState),
         [problems, learningRecords, queryState]
@@ -80,7 +81,7 @@ function useLibraryCommands(){
 export function useLibraryViewModel() {
     const query = useProblemsQueryStore()
 
-    const learningRecords = useLearningRecordStore(s => s.records)
+    const learningRecords = useLearningRecordStore(s => s.stateRecords)
     const [actionMode, setActionMode] = useState<LibraryActionMode>("view")
     const toast = useToast()
 

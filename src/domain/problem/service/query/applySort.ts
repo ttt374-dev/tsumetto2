@@ -1,15 +1,15 @@
 // domain/problemRecord/sortProblemRecords.ts
 
-import type { Learning } from "@/domain/learning/entity/Learning";
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem"
 import type { QueryState } from "./ProblemsQuery";
+import type { LearningState } from "@/domain/learning/entity/LearningState";
 
 //type SortKey = SortState["key"]
 //type SortValue = string | number
 
 export function applySort(
-    problems: Problem[],
-    learningRecords: Record<ProblemId, Learning>,
+problems: Problem[],
+    learningRecords: Record<ProblemId, LearningState>,
     queryState: QueryState
 ): Problem[] {
     return [...problems].sort((a, b) => {

@@ -11,7 +11,7 @@ import type { MissionExecutionMode } from "@/ui/mission/components/MissionExecut
 
 export function useMissionStarter(){
     const problems = useProblemStore(selectActiveProblems);
-    const learningRecords = useLearningRecordStore(s => s.records);
+    const learningRecords = useLearningRecordStore(s => s.stateRecords);
     const navigate = useNavigate()
     
     const start = useSessionStore(s => s.start);

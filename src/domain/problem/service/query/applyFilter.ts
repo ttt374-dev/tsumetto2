@@ -1,17 +1,18 @@
 import type { Learning, LearningRecord } from "@/domain/learning/entity/Learning";
 import { matchMateBuckets } from "./mateFilter";
-import type { Problem } from "@/domain/problem/entity/Problem";
+import type { Problem, ProblemId } from "@/domain/problem/entity/Problem";
 import type { QueryState } from "./ProblemsQuery";
+import type { LearningState } from "@/domain/learning/entity/LearningState";
 
 //////////////////////////////////
 export const applyFilter = (
     problems: Problem[],
-    learningRecords: LearningRecord,
+    learningRecords: Record<ProblemId, LearningState>,
     queryState: QueryState
 ): Problem[] => {
     const now = Date.now()
     
-    const predicates: Array<(problem: Problem, learning: Learning | undefined) => boolean> = [
+    const predicates: Array<(problem: Problem, learning: LearningState | undefined) => boolean> = [
         // 未回答のみ
         (_, learning) =>
             !queryState.unansweredOnly ||

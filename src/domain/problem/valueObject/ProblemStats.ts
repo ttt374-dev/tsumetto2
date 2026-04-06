@@ -1,5 +1,6 @@
 import type { LearningRecord } from "@/domain/learning/entity/Learning"
 import type { Problem, ProblemId } from "../entity/Problem"
+import type { LearningState } from "@/domain/learning/entity/LearningState"
 
 export class ProblemStats {
     constructor(
@@ -11,7 +12,7 @@ export class ProblemStats {
         readonly score: number,
     ){}
 
-    static create(ids: ProblemId[], learningRecords: LearningRecord) {
+    static create(ids: ProblemId[], learningRecords: Record<ProblemId, LearningState>) {
         let solved = 0
         let failed = 0
         let easeFactor = 0

@@ -2,12 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { arrayMove } from "@dnd-kit/sortable";
 
 import { useMissionStore } from "@/ui/mission/hooks/useMissionStore";
-import { selectActiveProblems, useProblemStore } from "@/ui/store/useProblemStore";
-import { useLearningRecordStore } from "@/ui/domains/learning/useLearningRecordStore";
-import { applyFilter } from "@/domain/problem/service/query/applyFilter";
 import type { Mission } from "@/domain/mission/entity/Mission";
-import { ProblemStats } from "@/domain/problem/valueObject/ProblemStats";
-import { DefaultQueryState } from "@/domain/problem/service/query/ProblemsQuery";
 
 export function useMissionViewModel() {
     // Store
@@ -24,35 +19,13 @@ export function useMissionViewModel() {
         setMissionArray(sorted);
     }, [missions]);
 
-    const { missionStats} = useMissionStats(missionArray)
-
     return {
         missionArray,
         onDragEnd: reorder,
         //missionStats,
     };
 }
-/////////////
 
-function useMissionStats(missionArray: Mission[]){
-    ///////////
-    // missionArray に基づく stats
-    const problems = useProblemStore(selectActiveProblems);
-    const learningRecords = useLearningRecordStore(s => s.records);
-    
-    const missionStats = useMemo(() => {
-        const map = new Map<string, ProblemStats>();
-        for (const mission of missionArray) {            
-            const filtered = applyFilter(problems, learningRecords, mission.queryState ?? DefaultQueryState);
-            const stats = ProblemStats.create(filtered.map(p => p.id), learningRecords);
-            map.set(mission.id, stats);
-        }
-        return map;
-    }, [missionArray, problems, learningRecords]);
-
-    return { missionStats}
-
-}
 /////////////////////////
 function useMissionReorder(
     missionArray: Mission[],

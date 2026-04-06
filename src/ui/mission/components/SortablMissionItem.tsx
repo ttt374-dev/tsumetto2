@@ -17,7 +17,6 @@ import type { LearningSummary } from "@/domain/learning/entity/LearningSummary";
 export function SortableMissionItem(props: {
     mission: Mission     
     startMission: () => void
-    //missionStats: ProblemStats | undefined //    Map<string, ProblemStats>
 }) {
     const {editMode, toggleEditMode } = useMissionModeStore()    
 
@@ -35,7 +34,7 @@ export function SortableMissionItem(props: {
         touchAction: "none"
     };
     const activeIds = useProblemStore(s=>s.activeProblems)
-    const records = useLearningRecordStore(s=>s.records)
+    const records = useLearningRecordStore(s=>s.stateRecords)
     const learningStateRecords = useLearningRecordStore(s=>s.stateRecords)
     const ids = applyQuery(activeIds, records, props.mission.queryState).map(p=>p.id)
     const summary = computeLearningSummary(ids, learningStateRecords)
