@@ -3,11 +3,11 @@ import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add'
 
 import { AppShell } from "../../common/components/layout/AppShell";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { routes } from "../../App/useAppNavigation";
 import { useMissionModeStore } from "./hooks/useMissionModeStore";
 import MissionFabMenu from "./components/MissionFabMenu";
-import { DefaultMissionExecutionMode, ExecutionModeControl, type MissionExecutionMode } from "@/ui/screens/mission/components/MissionExecutionModeControl";
+import { ExecutionModeControl, type MissionExecutionMode } from "@/ui/screens/mission/components/MissionExecutionModeControl";
 import { useImport } from "@/ui/dialogs/Import/useImport";
 import { useToast } from "@/ui/App/providers/ToastProvider";
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
@@ -19,7 +19,11 @@ import { useUiSettingsStore } from "@/ui/settings/useUiSettingsStore";
 export default function MissionScreen() {
     //const [ executionMode, setExecutionMode] = useState<MissionExecutionMode>(DefaultMissionExecutionMode)   
     const uiSettings = useUiSettingsStore()
+    
     const executionMode = uiSettings.settings.missionExecutionMode
+    const executionPartialLimit = uiSettings.settings.missionPartialLimit
+    
+    
     const navigate = useNavigate()
 
     return (
@@ -36,11 +40,14 @@ export default function MissionScreen() {
             fab={<MissionFabMenu onCreateNewMission={()=>navigate(routes.newMission)} />}
         >
             <ExecutionModeControl 
-                value={executionMode} 
-                onChange={m=>uiSettings.setSettings({missionExecutionMode: m})}/>
+                mode={executionMode} 
+                limit={executionPartialLimit}
+                onChange={(mode, limit)=>
+                uiSettings.setSettings({missionExecutionMode: mode, missionPartialLimit: limit})}/>
             
             <MissionList                
                 executionMode={executionMode}
+                executionPartialLimit={executionPartialLimit}
             />           
             <MissionRelatedDialogs/>
             

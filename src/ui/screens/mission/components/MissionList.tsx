@@ -24,13 +24,15 @@ function createSensors(){
 }
 export function MissionList(props: {    
     executionMode: MissionExecutionMode
+    executionPartialLimit: number
 }) {
     const { missionArray, onDragEnd }  = useMissionViewModel();
     const { startMission } = useMissionStarter()
-
+    
     // dnd-kit センサ    
     const sensors = createSensors()
     
+    const limit = props.executionMode === "partial" ? props.executionPartialLimit : null
     return (
         <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto" }}> { /* , touchAction: "pan-y" */}
             <DndContext sensors={sensors}
@@ -43,7 +45,7 @@ export function MissionList(props: {
                             <SortableMissionItem
                                 key={mission.id}
                                 mission={mission}                                
-                                startMission={() => startMission(mission, props.executionMode)}
+                                startMission={() => startMission(mission, limit)}
                             />
                         ))}
                     </List>
