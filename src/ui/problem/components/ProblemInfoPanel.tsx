@@ -1,5 +1,5 @@
 import type { Problem } from "@/domain/problem/entity/Problem"
-import { toProblemViewData } from "@/ui/domains/problem/problemPresenter"
+import { toProblemViewData } from "@/ui/domains/problem/hooks/problemPresenter"
 import { Box, Paper, Stack } from "@mui/material"
 
 export function ProblemInfoPanel({problem}: {

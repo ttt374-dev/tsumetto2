@@ -7,7 +7,7 @@ import { useProblemStore } from "@/ui/store/useProblemStore";
 import { useLearningRecordStore } from "@/ui/domains/learning/useLearningRecordStore";
 import { useStarToggleButton } from '@/ui/common/components/StarToggleButton/useStarToggleButton';
 import type { LibraryActionMode } from "@/ui/library/hooks/useLibraryViewModel";
-import { toProblemViewData } from "@/ui/domains/problem/problemPresenter";
+import { toProblemViewData } from "@/ui/domains/problem/hooks/problemPresenter";
 import type { LearningState } from "@/domain/learning/entity/LearningState";
 import { toLearningStateViewData } from "@/ui/domains/learning/learningPresenter";
 

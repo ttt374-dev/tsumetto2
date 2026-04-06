@@ -2,13 +2,13 @@ import { Box, Button, FormControl, FormControlLabel, Grid, IconButton, InputAdor
 import DeleteIcon from '@mui/icons-material/Delete';
 import ClearIcon from '@mui/icons-material/Clear';
 
-import SortControl from "../../common/query-control/SortControl";
+import SortControl from "../../domains/problem/query/SortControl";
 import { useMissionEditViewModel } from "./useMissionEditViewModel";
 import { AppShell } from "../../common/components/layout/AppShell";
 import { useListDialog } from "../../list/ListDialog";
 import { useNavigate } from "react-router-dom";
 import { routes } from "../../App/useAppNavigation";
-import { FilterControlPanel } from "../../common/query-control/FilterControlPanel";
+import { FilterControlPanel } from "../../domains/problem/query/FilterControlPanel";
 import { useToast } from "@/ui/App/providers/ToastProvider";
 
 export default function MissionEditScreen() {

@@ -5,7 +5,7 @@ import { TagCheckboxFilterControl } from "./TagCheckboxFilterControl";
 import { BooleanFilterControl } from "./BooleanFilterControl";
 import { ProblemTypeFilterControl } from "./ProblemTypeFilterControl";
 import { SourceFilterControl } from "./SourceFilterControl";
-import type { useProblemsQuery } from "@/ui/common/hooks/useProblemsQuery";
+import type { useProblemsQuery } from "@/ui/domains/problem/hooks/useProblemsQuery";
 
 //export const UNSPECIFIED = "__UNSPECIFIED__";
 

@@ -4,7 +4,7 @@ import { useLearningRecordStore } from "@/ui/domains/learning/useLearningRecordS
 import { applyQuery } from "@/domain/problem/service/query/applyQuery"
 import { useCallback, useEffect, useMemo } from "react"
 import { useParams } from "react-router-dom"
-import { useProblemsQuery } from "@/ui/common/hooks/useProblemsQuery"
+import { useProblemsQuery } from "@/ui/domains/problem/hooks/useProblemsQuery"
 import { DefaultQueryState, type QueryState } from "@/domain/problem/service/query/ProblemsQuery"
 import { useMissionEditorStore } from "@/ui/mission/edit/useMissionEditorStore"
 import { computeLearningSummary } from "@/domain/learning/service/computeLearningSummary"

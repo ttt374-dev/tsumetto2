@@ -4,7 +4,7 @@ import { useProblemStore } from "@/ui/store/useProblemStore";
 import { Autocomplete, Box, Button, Checkbox, Chip, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, FormGroup, FormLabel, InputLabel, List, ListItem, ListItemIcon, ListItemText, MenuItem, Select, Stack, TextField } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import type { ProblemType } from "@/domain/problem/entity/ProblemType";
-import { ProblemTypeFilterControl } from "@/ui/common/query-control/ProblemTypeFilterControl";
+import { ProblemTypeFilterControl } from "@/ui/domains/problem/query/ProblemTypeFilterControl";
 
 export function useMultipleProblemsEditDialog() {
     const [open, setOpen] = useState(false)

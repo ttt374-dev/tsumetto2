@@ -7,7 +7,7 @@ import { useLearningRecordStore } from "@/ui/domains/learning/useLearningRecordS
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem"
 import { applyQuery } from "@/domain/problem/service/query/applyQuery"
 import { useLibraryCheckbox } from "./useLibraryCheckbox"
-import { useMultipleProblemsEditDialog } from "@/ui/common/components/dialogs/MultipleProblemsEditorDialog"
+import { useMultipleProblemsEditDialog } from "@/ui/dialogs/MultipleProblemsEditorDialog"
 import { useProblemsQueryStore } from "@/ui/store/useProblemsQueryStore"
 
 export type LibraryActionMode = "selection" | "view" 

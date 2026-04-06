@@ -4,7 +4,7 @@ import { AppLayout } from "./AppLayout"
 import { DrawerMenu } from "./DrawerMenu";
 import { useToast } from "@/ui/App/providers/ToastProvider";
 import { useProblemStore } from "@/ui/store/useProblemStore";
-import { useBackupRestoreDialog } from "../dialogs/BackupRestoreDialog";
+import { useBackupRestoreDialog } from "../../../dialogs/BackupRestoreDialog";
 import { routes } from "@/ui/App/useAppNavigation";
 import { useImport } from "../../../Import/useImport";
 
