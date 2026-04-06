@@ -9,6 +9,7 @@ import { IconButton, Stack } from '@mui/material';
 import type { ProblemId } from "@/domain/problem/entity/Problem";
 import type { LibraryItemActions } from "./LibraryView";
 import type { LibraryActionMode } from "../hooks/useLibraryViewModel";
+import { useProblemStore } from "@/ui/store/useProblemStore";
 
 export function LibraryCheckboxControl({ onCheckAll, onUncheckAll,
     onChangeActionMode, actionMode, itemActions, checkedIds,
@@ -22,9 +23,12 @@ export function LibraryCheckboxControl({ onCheckAll, onUncheckAll,
 }) {
     const confirmFn = () => window.confirm("Are you sure to delete selected?")
     const handleOpenTagEditDialog = () => itemActions.openTagEditDialog(checkedIds)
+    const deleteProblems = useProblemStore(s=>s.deleteProblems)
     const handleDeleteChecked = () => {
+        if (checkedIds.length === 0) return
         if (!confirmFn()) return
-        itemActions.deleteChecked()
+        deleteProblems(checkedIds)
+        //itemActions.deleteChecked()
     }
 
     return (
