@@ -12,7 +12,7 @@ export type BackupResult = Result<BackupResultOk, BackupRestoreError>
 
 type ResultCount = {
     problemCount: number
-    learningCount: number
+    reviewEventCount: number
     missionCount: number
 }
 export type BackupResultOk = {
@@ -53,14 +53,14 @@ export function useBackupRestoreUsecase(
             const filename = `kif-backup-${Date.now()}.json`
 
             let problems: Problem[]
-            let learnings: ReviewEventLog
+            let reviewEvents: ReviewEventLog
             let missions: Mission[]
             let backupData: BackupData
             let json: string
 
             try {
                 problems = await problemRepo.load()
-                learnings = await reviewRepo.load()
+                reviewEvents = await reviewRepo.load()
                 missions = await missionRepo.findAll()
             } catch (e) {
                 if (e instanceof Error) {
@@ -74,7 +74,7 @@ export function useBackupRestoreUsecase(
             try {
                 backupData = {
                     problems: problems.map(p => p.toDTO()),
-                    reviewEvents: learnings,
+                    reviewEvents: reviewEvents,
                     missions: missions,
                 }
                 json = JSON.stringify(backupData, null, 2)
@@ -92,7 +92,7 @@ export function useBackupRestoreUsecase(
                 value: {
                     filename: filename,
                     problemCount: problems.length,
-                    learningCount: learnings.length,
+                    reviewEventCount: reviewEvents.length,
                     missionCount: missions.length,
                 }
             }
@@ -126,7 +126,7 @@ export function useBackupRestoreUsecase(
                 ok: true,
                 value: {
                     problemCount: backupData.problems.length,
-                    learningCount: backupData.reviewEvents.length,
+                    reviewEventCount: backupData.reviewEvents.length,
                     missionCount: backupData.missions.length,
                 },
             }

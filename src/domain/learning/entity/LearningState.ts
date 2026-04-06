@@ -22,7 +22,7 @@ export const DefaultLearningState: LearningState = {
     nextReviewedAt: Date.now(),    
     easeFactor: 2.5,
 
-    lastAnsweredAt: undefined,
-    lastSolvedResult: undefined,
+    //lastAnsweredAt: undefined,
+    //lastSolvedResult: undefined,
 }
 

@@ -6,12 +6,11 @@ import { Box, Button, Stack } from "@mui/material";
 import { SummaryView } from "./SummaryView";
 import { AppShell } from "@/ui/common/components/layout/AppShell";
 import { useSessionStore } from "@/ui/session/hooks/useSessionStore";
-import { ProblemStats } from "@/domain/problem/valueObject/ProblemStats";
-import { projectLearning } from "@/domain/learning/service/projectionLearning";
 import { useReviewEventStore } from "../store/useReviewEventStore";
 import { routes } from "../App/useAppNavigation";
 import { projectLearningState } from "@/domain/learning/service/projectLearningState";
 import { aggregateLearningStates } from "@/domain/learning/service/aggregateLearningState";
+import { computeLearningSummary } from "@/domain/learning/service/computeLearningSummary";
 
 /////////////////////////////////////////////
 export default function SessionSummaryScreen() {
@@ -27,8 +26,8 @@ export default function SessionSummaryScreen() {
     const sessionEventLog = reviewEventLog
         .filter(e => ("sessionId" in e && e.sessionId === sessionId))
 
-    const sessionLearningRecords = projectLearning(sessionEventLog)
-    const stats = ProblemStats.create(ids, sessionLearningRecords)
+    const sessionLearningRecords = projectLearningState(sessionEventLog)
+    //const stats = ProblemStats.create(ids, sessionLearningRecords)
 
     const navigate = useNavigate()
     const createOnetimeSessionId = () => 
@@ -44,6 +43,7 @@ export default function SessionSummaryScreen() {
     }
     const records = projectLearningState(sessionEventLog)
     const learningState = aggregateLearningStates(records)
+    const summary = computeLearningSummary(ids, records)
 
     return (
         <AppShell header={"Summary"}>
@@ -51,7 +51,7 @@ export default function SessionSummaryScreen() {
                 ミッション完了
             </Box>
 
-            <SummaryView state={learningState} />
+            <SummaryView summary={summary} />
 
             <Stack direction="row" spacing={1}>
                 <Button variant="outlined" onClick={handleRetry} fullWidth>
@@ -59,7 +59,7 @@ export default function SessionSummaryScreen() {
                 </Button>
                 
                 <Button variant="outlined" onClick={handleReview} fullWidth
-                    disabled={learningState.failedCount === 0}
+                    disabled={summary.failedCount === 0}
                 >
                     間違い復習
                 </Button>

@@ -65,7 +65,7 @@ export function useGameEventHandler(problem: Problem,
         }
     }, [events])
 
-    //const learning = projectLearning()
+    
     const element = solvedResult &&
         <SolvedDialog open={isSolvedDialogOpen}
             onClose={() => setIsSolvedDialogOpen(false)}
