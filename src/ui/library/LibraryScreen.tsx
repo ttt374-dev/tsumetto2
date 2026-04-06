@@ -19,11 +19,9 @@ export default function LibraryScreen() {
                 query={vm.query}
                 actionMode={vm.mode}
                 changeActionMode={vm.changeActionMode}
-                itemActions={vm.itemActions}
                 onItemClick={vm.onItemClick}
                 selection={vm.selection}
                 onFilterControlOpen={()=>setIsOpen(true)}
-                //onOpenEditDialog={vm.itemActions.openTagEditDialog}
                 onOpenEditDialog={vm.dialogs.tagEdit.openDialog}
             />                                    
             {vm.dialogs.tagEdit.dialogElement}    

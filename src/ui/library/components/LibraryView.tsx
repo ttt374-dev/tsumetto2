@@ -22,7 +22,7 @@ type LibraryViewProps = {
     query: ReturnType<typeof useProblemsQuery>
     actionMode: LibraryActionMode
     changeActionMode: (mode: LibraryActionMode) => void
-    itemActions: LibraryItemActions,
+    //itemActions: LibraryItemActions,
 
     selection: {
         checkedIds: ProblemId[]
@@ -40,7 +40,7 @@ type LibraryViewProps = {
 
 /////////////////////////////////////////
 export default function LibraryView({ ids, query, actionMode, changeActionMode,
-    itemActions, onItemClick, selection, onFilterControlOpen, onOpenEditDialog }: LibraryViewProps) {
+    onItemClick, selection, onFilterControlOpen, onOpenEditDialog }: LibraryViewProps) {
     
     const isFiltered = !isEqual(query, DefaultQueryState);
 
