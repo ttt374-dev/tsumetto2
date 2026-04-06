@@ -3,13 +3,13 @@ import { Box, Checkbox, ListItem, ListItemButton, ListItemIcon, ListItemText, St
 
 import { useLongPress } from "@/ui/common/hooks/useLongPress";
 import { StarToggleButton } from "@/ui/common/components/StarToggleButton/StarToggleButton";
-import { useProblemStore } from "@/ui/domains/problem/hooks/useProblemStore";
-import { useLearningRecordStore } from "@/ui/domains/learning/hooks/useLearningRecordStore";
+import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
+import { useLearningRecordStore } from "@/ui/features/learning/hooks/useLearningRecordStore";
 import { useStarToggleButton } from '@/ui/common/components/StarToggleButton/useStarToggleButton';
 import type { LibraryActionMode } from "@/ui/screens/library/hooks/useLibraryViewModel";
-import { toProblemViewData } from "@/ui/domains/problem/hooks/problemPresenter";
+import { toProblemViewData } from "@/ui/features/problem/hooks/problemPresenter";
 import type { LearningState } from "@/domain/learning/entity/LearningState";
-import { toLearningStateViewData } from "@/ui/domains/learning/hooks/learningPresenter";
+import { toLearningStateViewData } from "@/ui/features/learning/hooks/learningPresenter";
 
 export const LibraryListItem = function LibraryListItem({ id, onItemClick,
     showCheckbox, isChecked, onToggleChecked, onChangeActionMode,

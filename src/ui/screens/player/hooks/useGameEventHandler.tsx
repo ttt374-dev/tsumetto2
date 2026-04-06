@@ -8,7 +8,7 @@ import { useReplayController } from "@/ui/screens/player/hooks/useReplayControll
 import { useGameStore } from "@/ui/screens/player/store/useGameStore"
 import { useReplayStore } from "@/ui/screens/player/store/useReplayStore"
 import { useTimerStore } from "@/ui/screens/player/store/useTimerStore"
-import { useLearningRecordStore } from "@/ui/domains/learning/hooks/useLearningRecordStore"
+import { useLearningRecordStore } from "@/ui/features/learning/hooks/useLearningRecordStore"
 import { useEffect, useState } from "react"
 
 export function useGameEventHandler(problem: Problem, 

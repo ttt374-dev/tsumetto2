@@ -1,6 +1,6 @@
 import { Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 
-import { useReviewEventStore } from "@/ui/domains/learning/hooks/useReviewEventStore"
+import { useReviewEventStore } from "@/ui/features/learning/hooks/useReviewEventStore"
 import type { ReviewEvent } from "@/domain/review/ReviewEvent";
 import { projectLearningState } from "@/domain/learning/service/projectLearningState";
 

@@ -2,9 +2,9 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl,
 import { useEffect, useMemo, useState } from "react";
 import { ProblemTagEditor } from "../../common/components/ProblemTagEditor";
 import { DefaultImportOptions, getExsitingTitle, type DuplicateTitleStrategy, type ImportOptions } from "@/application/usecase/problem/import/ImportProblemsUsecase";
-import { ProblemTypeFilterControl } from "@/ui/domains/problem/query/ProblemTypeFilterControl";
-import { SourceFilterControl } from "@/ui/domains/problem/query/SourceFilterControl";
-import { useProblemStore } from "@/ui/domains/problem/hooks/useProblemStore";
+import { ProblemTypeFilterControl } from "@/ui/features/problem/query/ProblemTypeFilterControl";
+import { SourceFilterControl } from "@/ui/features/problem/query/SourceFilterControl";
+import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
 
 export function useImportViewModel(files: File[]) {
     const allSources = useProblemStore(s => s.allSources)

@@ -1,4 +1,4 @@
-import { useProblemStore } from "@/ui/domains/problem/hooks/useProblemStore"
+import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore"
 import { Autocomplete, Chip, TextField } from "@mui/material"
 
 type Props = {

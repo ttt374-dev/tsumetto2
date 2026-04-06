@@ -1,37 +1,26 @@
 import { Box, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Stack } from "@mui/material"
 
 import type { ProblemId } from "@/domain/problem/entity/Problem"
-import type { SessionId } from "@/domain/session/entity/Session"
-import { useProblemStore } from "@/ui/domains/problem/hooks/useProblemStore"
-import { useReviewEventStore } from "@/ui/domains/learning/hooks/useReviewEventStore"
-import type { ReviewEvent } from "@/domain/review/ReviewEvent"
+import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore"
 import type { SolvedResult } from "@/domain/review/solvedResult"
-import { toSolvedResultViewData } from "@/ui/domains/learning/hooks/solvedResultPresenter"
+import { toSolvedResultViewData } from "@/ui/features/learning/hooks/solvedResultPresenter"
 
 export default function SessionListView(props: {
     ids: ProblemId[]
     onSelect: (index: number) => void
     selectedId: ProblemId
-    //sessionId: SessionId
     solvedResultMap: Record<ProblemId, SolvedResult>
 }) {
     const byId = useProblemStore(s => s.byId)    
-    const eventLog = useReviewEventStore(s=>s.eventLog)
-    //const sessionEvents = eventLog.filter(s=>s.type==="reviewed").filter(s=>s.sessionId === props.sessionId)
-    //console.log(sessionEvents)    
-    //const solvedResultMap = getSolvedResultsBySession(eventLog, props.sessionId)
-
+    //const eventLog = useReviewEventStore(s=>s.eventLog)
     
     return (
         <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto" }}>
             <List>
                 {props.ids.map((id, i) => {
                     const problem = byId[id]
-                    //const solvedResult: SolvedResult | undefined = props.results[id]
-                    //const solvedResult = sessionEvents.find(e=>e.problemId===id)?.solvedResult                    
                     const res = props.solvedResultMap[id]
-                    const vd = toSolvedResultViewData(res)
-                    const resultString = res ? vd.summaryText : ""
+                    const resultString = res ? toSolvedResultViewData(res).summaryText : ""
 
                     return (
                         <ListItem key={i}

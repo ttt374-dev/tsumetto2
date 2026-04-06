@@ -10,7 +10,7 @@ import MissionFabMenu from "./components/MissionFabMenu";
 import { DefaultMissionExecutionMode, ExecutionModeControl, type MissionExecutionMode } from "@/ui/screens/mission/components/MissionExecutionModeControl";
 import { useImport } from "@/ui/dialogs/Import/useImport";
 import { useToast } from "@/ui/App/providers/ToastProvider";
-import { useProblemStore } from "@/ui/domains/problem/hooks/useProblemStore";
+import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
 import { useBackupRestoreDialog } from "@/ui/dialogs/BackupRestoreDialog";
 import { MissionList } from "@/ui/screens/mission/components/MissionList";
 import { IconButton } from "@mui/material";

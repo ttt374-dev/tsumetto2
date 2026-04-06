@@ -6,8 +6,8 @@ import { useBackupRestoreUsecase, type BackupData, type BackupResult, type Resto
 import { fileBackupWriter } from "@/infrastructure/fileBackupWriter"
 import { useRepositoryContext } from "@/ui/App/providers/RepositoryProvider"
 import { useToast } from "@/ui/App/providers/ToastProvider"
-import { useProblemStore } from "@/ui/domains/problem/hooks/useProblemStore"
-import { useReviewEventStore } from "@/ui/domains/learning/hooks/useReviewEventStore"
+import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore"
+import { useReviewEventStore } from "@/ui/features/learning/hooks/useReviewEventStore"
 import { useMissionStore } from "@/ui/screens/mission/hooks/useMissionStore"
 
 export function useBackupRestoreDialog(){

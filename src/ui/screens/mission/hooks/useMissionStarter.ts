@@ -2,8 +2,8 @@ import { useNavigate } from "react-router-dom";
 import { routes } from "@/ui/App/useAppNavigation";
 
 import { applyQuery } from "@/domain/problem/service/query/applyQuery";
-import { selectActiveProblems, useProblemStore } from "@/ui/domains/problem/hooks/useProblemStore";
-import { useLearningRecordStore } from "@/ui/domains/learning/hooks/useLearningRecordStore";
+import { selectActiveProblems, useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
+import { useLearningRecordStore } from "@/ui/features/learning/hooks/useLearningRecordStore";
 import type { Mission } from "@/domain/mission/entity/Mission";
 import type { MissionExecutionMode } from "@/ui/screens/mission/components/MissionExecutionModeControl";
 import { useSessionStore } from "@/ui/screens/session/hooks/useSessionStore";

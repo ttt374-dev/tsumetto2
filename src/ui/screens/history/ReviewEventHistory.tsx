@@ -1,10 +1,10 @@
 import { Box, List, ListItem, ListItemText } from "@mui/material"
 import type { ReviewEvent } from "@/domain/review/ReviewEvent";
-import { useProblemStore } from "@/ui/domains/problem/hooks/useProblemStore";
-import { useReviewEventStore } from "@/ui/domains/learning/hooks/useReviewEventStore";
+import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
+import { useReviewEventStore } from "@/ui/features/learning/hooks/useReviewEventStore";
 import { calculateScore } from "@/domain/learning/service/calculateScore";
 import { formatDateNumber } from "@/ui/common/formatter/formatDateNumber";
-import { toSolvedResultViewData } from "@/ui/domains/learning/hooks/solvedResultPresenter";
+import { toSolvedResultViewData } from "@/ui/features/learning/hooks/solvedResultPresenter";
 
 function formatEvent(title: string, event: ReviewEvent): string {
     let content: string

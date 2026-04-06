@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 
 import { Problem, type ProblemId } from "@/domain/problem/entity/Problem";
-import { useProblemStore } from '@/ui/domains/problem/hooks/useProblemStore';
-import { useLearningRecordStore } from '@/ui/domains/learning/hooks/useLearningRecordStore';
-import { useReviewEventStore } from '@/ui/domains/learning/hooks/useReviewEventStore';
+import { useProblemStore } from '@/ui/features/problem/hooks/useProblemStore';
+import { useLearningRecordStore } from '@/ui/features/learning/hooks/useLearningRecordStore';
+import { useReviewEventStore } from '@/ui/features/learning/hooks/useReviewEventStore';
 import type { ProblemType } from "@/domain/problem/entity/ProblemType";
 
 type ProblemEditDraft = {

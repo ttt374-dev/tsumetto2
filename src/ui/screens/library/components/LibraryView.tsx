@@ -3,12 +3,12 @@ import FilterListOutlinedIcon from "@mui/icons-material/FilterListOutlined";
 import { Box, IconButton, List, Stack } from "@mui/material"
 import { isEqual } from "lodash";
 
-import SortControl from "../../../domains/problem/query/SortControl"
+import SortControl from "../../../features/problem/query/SortControl"
 import { LibraryListItem } from "./LibraryListItem"
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem"
 import { LibraryCheckboxControl } from "./LibraryCheckboxControl";
 import type { LibraryActionMode } from "../hooks/useLibraryViewModel";
-import type { useProblemsQuery } from "@/ui/domains/problem/hooks/useProblemsQuery";
+import type { useProblemsQuery } from "@/ui/features/problem/hooks/useProblemsQuery";
 import { DefaultQueryState } from "@/domain/problem/service/query/ProblemsQuery";
 
 export type LibraryItemActions = {

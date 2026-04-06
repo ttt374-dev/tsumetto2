@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom"
 import { AppLayout } from "./AppLayout"
 import { DrawerMenu } from "./DrawerMenu";
 import { useToast } from "@/ui/App/providers/ToastProvider";
-import { useProblemStore } from "@/ui/domains/problem/hooks/useProblemStore";
+import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
 import { useBackupRestoreDialog } from "../../../dialogs/BackupRestoreDialog";
 import { routes } from "@/ui/App/useAppNavigation";
 import { useImport } from "../../../dialogs/Import/useImport";

@@ -6,7 +6,7 @@ import type { ReviewEventLog } from "@/domain/review/ReviewEvent";
 import type { ProblemId } from "@/domain/problem/entity/Problem";
 import { projectLearningState } from "@/domain/learning/service/projectLearningState";
 import type { LearningState } from "@/domain/learning/entity/LearningState";
-import { useReviewEventStore } from "@/ui/domains/learning/hooks/useReviewEventStore";
+import { useReviewEventStore } from "@/ui/features/learning/hooks/useReviewEventStore";
 
 
 type LearningRecordStoreState = {

@@ -6,7 +6,7 @@ import { Box, Button, Stack } from "@mui/material";
 import { SummaryView } from "./SummaryView";
 import { AppShell } from "@/ui/common/components/layout/AppShell";
 
-import { useReviewEventStore } from "../../domains/learning/hooks/useReviewEventStore";
+import { useReviewEventStore } from "../../features/learning/hooks/useReviewEventStore";
 import { routes } from "../../App/useAppNavigation";
 import { projectLearningState } from "@/domain/learning/service/projectLearningState";
 import { aggregateLearningStates } from "@/domain/learning/service/aggregateLearningState";

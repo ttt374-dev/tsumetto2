@@ -1,11 +1,11 @@
 
 import { useEffect } from 'react';
 
-import { useProblemStore } from '@/ui/domains/problem/hooks/useProblemStore';
+import { useProblemStore } from '@/ui/features/problem/hooks/useProblemStore';
 import { MissionRepository, LocalStorageMissionPersistence } from '@/domain/mission/repository/MissionRepository';
 import { useMissionStore } from '@/ui/screens/mission/hooks/useMissionStore';
 import { LocalStorageReviewEventPersistence, ReviewEventRepository } from '@/domain/review/repository/ReviewEventRepository';
-import { useReviewEventStore } from '@/ui/domains/learning/hooks/useReviewEventStore';
+import { useReviewEventStore } from '@/ui/features/learning/hooks/useReviewEventStore';
 import { type RepositoryContextValue } from './providers/RepositoryProvider';
 import { LocalStrorageProblemPersistence, ProblemRepository } from '@/domain/problem/repository/ProblemRepository';
 import { initializeAppUsecase } from '@/application/usecase/initializeApp/useInitializeAppUsecase';

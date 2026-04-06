@@ -9,9 +9,9 @@ import { useLongPress } from "@/ui/common/hooks/useLongPress";
 import { useMissionModeStore } from "@/ui/screens/mission/hooks/useMissionModeStore";
 import { routes } from "@/ui/App/useAppNavigation";
 import { computeLearningSummary } from "@/domain/learning/service/computeLearningSummary";
-import { useProblemStore } from "@/ui/domains/problem/hooks/useProblemStore";
+import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
 import { applyQuery } from "@/domain/problem/service/query/applyQuery";
-import { useLearningRecordStore } from "@/ui/domains/learning/hooks/useLearningRecordStore";
+import { useLearningRecordStore } from "@/ui/features/learning/hooks/useLearningRecordStore";
 import type { LearningSummary } from "@/domain/learning/entity/LearningSummary";
 
 export function SortableMissionItem(props: {

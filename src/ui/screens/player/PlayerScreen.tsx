@@ -14,7 +14,7 @@ import { AppShell } from "../../common/components/layout/AppShell";
 import { routes } from "../../App/useAppNavigation";
 import { useToast } from "../../App/providers/ToastProvider";
 import { useGameStore, type GameEvent } from "./store/useGameStore";
-import { useProblemStore } from "@/ui/domains/problem/hooks/useProblemStore";
+import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
 import { useReplayStore } from "@/ui/screens/player/store/useReplayStore";
 import { usePlayerInitializer } from "@/ui/screens/player/hooks/usePlayerInitializer";
 import { useGameEventHandler, useRevealHandler } from "@/ui/screens/player/hooks/useGameEventHandler";
