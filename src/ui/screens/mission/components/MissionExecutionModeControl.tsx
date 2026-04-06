@@ -2,10 +2,10 @@ import { Box, Checkbox, FormControlLabel, TextField } from "@mui/material"
 import { useRef } from "react"
 
 export type MissionExecutionMode =
-  | { type: "full" }
-  | { type: "partial", limit: number }
+    | { type: "full" }
+    | { type: "partial", limit: number }
 
-export const DefaultMissionExecutionMode: MissionExecutionMode = { type: "partial", limit: 10}
+export const DefaultMissionExecutionMode: MissionExecutionMode = { type: "partial", limit: 10 }
 export function ExecutionModeControl(props: {
     value: MissionExecutionMode
     onChange: (mode: MissionExecutionMode) => void

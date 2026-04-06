@@ -14,9 +14,12 @@ import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
 import { useBackupRestoreDialog } from "@/ui/dialogs/BackupRestoreDialog";
 import { MissionList } from "@/ui/screens/mission/components/MissionList";
 import { IconButton } from "@mui/material";
+import { useUiSettingsStore } from "@/ui/settings/useUiSettingsStore";
 
 export default function MissionScreen() {
-    const [ executionMode, setExecutionMode] = useState<MissionExecutionMode>(DefaultMissionExecutionMode)   
+    //const [ executionMode, setExecutionMode] = useState<MissionExecutionMode>(DefaultMissionExecutionMode)   
+    const uiSettings = useUiSettingsStore()
+    const executionMode = uiSettings.settings.missionExecutionMode
     const navigate = useNavigate()
 
     return (
@@ -34,7 +37,7 @@ export default function MissionScreen() {
         >
             <ExecutionModeControl 
                 value={executionMode} 
-                onChange={m=>setExecutionMode(m)}/>
+                onChange={m=>uiSettings.setSettings({missionExecutionMode: m})}/>
             
             <MissionList                
                 executionMode={executionMode}
