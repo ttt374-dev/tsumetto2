@@ -6,7 +6,6 @@ export type MissionExecutionMode =
   | { type: "partial", limit: number }
 
 export const DefaultMissionExecutionMode: MissionExecutionMode = { type: "partial", limit: 10}
-
 export function ExecutionModeControl(props: {
     value: MissionExecutionMode
     onChange: (mode: MissionExecutionMode) => void
@@ -16,7 +15,6 @@ export function ExecutionModeControl(props: {
     const lastLimitRef = useRef(10)
     const isPartial = value.type === "partial"
     const limit = isPartial ? value.limit : lastLimitRef.current
-
     return (
         <Box>
             <FormControlLabel

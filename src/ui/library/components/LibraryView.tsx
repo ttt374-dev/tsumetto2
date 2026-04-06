@@ -18,11 +18,9 @@ export type LibraryItemActions = {
 
 type LibraryViewProps = {
     ids: ProblemId[]
-    //query: QueryController
     query: ReturnType<typeof useProblemsQuery>
     actionMode: LibraryActionMode
     changeActionMode: (mode: LibraryActionMode) => void
-    //itemActions: LibraryItemActions,
 
     selection: {
         checkedIds: ProblemId[]
@@ -54,7 +52,6 @@ export default function LibraryView({ ids, query, actionMode, changeActionMode,
                     actionMode={actionMode}
                     checkedIds={selection.checkedIds}
                     onChangeActionMode={changeActionMode}
-                    //onOpenEditDialog={itemActions.openTagEditDialog}
                     onOpenEditDialog={onOpenEditDialog}
                 />
 

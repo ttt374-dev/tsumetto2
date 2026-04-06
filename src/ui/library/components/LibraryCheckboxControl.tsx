@@ -23,14 +23,12 @@ export function LibraryCheckboxControl({ onCheckAll, onUncheckAll,
     onOpenEditDialog: (ids: ProblemId[]) => void
 }) {
     const confirmFn = () => window.confirm("Are you sure to delete selected?")
-    //const handleOpenTagEditDialog = () => itemActions.openTagEditDialog(checkedIds)
     const handleOpenTagEditDialog = () => onOpenEditDialog(checkedIds)
     const deleteProblems = useProblemStore(s=>s.deleteProblems)
     const handleDeleteChecked = () => {
         if (checkedIds.length === 0) return
         if (!confirmFn()) return
         deleteProblems(checkedIds)
-        //itemActions.deleteChecked()
     }
 
     return (
