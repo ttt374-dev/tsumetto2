@@ -22,7 +22,10 @@ export default function LibraryScreen() {
                 itemActions={vm.itemActions}
                 onItemClick={vm.onItemClick}
                 selection={vm.selection}
-                onFilterControlOpen={()=>setIsOpen(true)}/>                                    
+                onFilterControlOpen={()=>setIsOpen(true)}
+                //onOpenEditDialog={vm.itemActions.openTagEditDialog}
+                onOpenEditDialog={vm.dialogs.tagEdit.openDialog}
+            />                                    
             {vm.dialogs.tagEdit.dialogElement}    
 
             <Drawer anchor="bottom" open={isOpen} 

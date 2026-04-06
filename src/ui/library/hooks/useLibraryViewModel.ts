@@ -24,20 +24,13 @@ function useLibraryListVM(problems: Problem[], learningRecords: Record<ProblemId
     return { libraryItems, ids}
 }
 function useLibraryDialogsVM(checkedIds: ProblemId[], reload: () => Promise<void>){
-    //const startSession = useSessionStore(s=>s.start)
-    const navigate = useNavigate()
     // -----------------------------
     // ダイアログ
     // -----------------------------
-    
-    //const viewerDialog = useViewerDialog()
-    //const backupRestoreDialog = useBackupRestoreDialog()
+   
     const tagEditDialog = useMultipleProblemsEditDialog()
 
     return {
-        //viewer: viewerDialog,
-        //detail: detailDialog,
-        //backupRestore: backupRestoreDialog,
         tagEdit: tagEditDialog,
     }
 }

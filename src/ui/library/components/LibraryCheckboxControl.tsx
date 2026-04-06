@@ -12,17 +12,19 @@ import type { LibraryActionMode } from "../hooks/useLibraryViewModel";
 import { useProblemStore } from "@/ui/store/useProblemStore";
 
 export function LibraryCheckboxControl({ onCheckAll, onUncheckAll,
-    onChangeActionMode, actionMode, itemActions, checkedIds,
+    onChangeActionMode, actionMode, onOpenEditDialog, checkedIds,
 }: {
     onCheckAll: () => void,
     onUncheckAll: () => void,
     checkedIds: ProblemId[],
     actionMode: LibraryActionMode,
-    itemActions: LibraryItemActions,
+    //itemActions: LibraryItemActions,
     onChangeActionMode: (mode: LibraryActionMode) => void
+    onOpenEditDialog: (ids: ProblemId[]) => void
 }) {
     const confirmFn = () => window.confirm("Are you sure to delete selected?")
-    const handleOpenTagEditDialog = () => itemActions.openTagEditDialog(checkedIds)
+    //const handleOpenTagEditDialog = () => itemActions.openTagEditDialog(checkedIds)
+    const handleOpenTagEditDialog = () => onOpenEditDialog(checkedIds)
     const deleteProblems = useProblemStore(s=>s.deleteProblems)
     const handleDeleteChecked = () => {
         if (checkedIds.length === 0) return

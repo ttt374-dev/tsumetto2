@@ -34,12 +34,13 @@ type LibraryViewProps = {
     }
     onItemClick: (p: Problem) => void
     onFilterControlOpen: () => void
+    onOpenEditDialog: (ids: ProblemId[]) => void
     
 }
 
 /////////////////////////////////////////
 export default function LibraryView({ ids, query, actionMode, changeActionMode,
-    itemActions, onItemClick, selection, onFilterControlOpen }: LibraryViewProps) {
+    itemActions, onItemClick, selection, onFilterControlOpen, onOpenEditDialog }: LibraryViewProps) {
     
     const isFiltered = !isEqual(query, DefaultQueryState);
 
@@ -53,7 +54,8 @@ export default function LibraryView({ ids, query, actionMode, changeActionMode,
                     actionMode={actionMode}
                     checkedIds={selection.checkedIds}
                     onChangeActionMode={changeActionMode}
-                    itemActions={itemActions}
+                    //onOpenEditDialog={itemActions.openTagEditDialog}
+                    onOpenEditDialog={onOpenEditDialog}
                 />
 
                 <Box sx={{ flexGrow: 1 }} />
