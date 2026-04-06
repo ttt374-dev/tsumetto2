@@ -8,7 +8,7 @@ import { useRepositoryContext } from "@/ui/App/providers/RepositoryProvider"
 import { useToast } from "@/ui/App/providers/ToastProvider"
 import { useProblemStore } from "@/ui/domains/problem/hooks/useProblemStore"
 import { useReviewEventStore } from "@/ui/domains/learning/hooks/useReviewEventStore"
-import { useMissionStore } from "@/ui/mission/hooks/useMissionStore"
+import { useMissionStore } from "@/ui/screens/mission/hooks/useMissionStore"
 
 export function useBackupRestoreDialog(){
     const [open, setOpen] = useState(false)

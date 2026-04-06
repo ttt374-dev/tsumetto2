@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 
 import { useProblemStore } from '@/ui/domains/problem/hooks/useProblemStore';
 import { MissionRepository, LocalStorageMissionPersistence } from '@/domain/mission/repository/MissionRepository';
-import { useMissionStore } from '@/ui/mission/hooks/useMissionStore';
+import { useMissionStore } from '@/ui/screens/mission/hooks/useMissionStore';
 import { LocalStorageReviewEventPersistence, ReviewEventRepository } from '@/domain/review/repository/ReviewEventRepository';
 import { useReviewEventStore } from '@/ui/domains/learning/hooks/useReviewEventStore';
 import { type RepositoryContextValue } from './providers/RepositoryProvider';

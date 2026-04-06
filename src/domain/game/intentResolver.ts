@@ -1,5 +1,5 @@
 import { Move, Piece, Square, type PieceType, type Position } from "@/domain/kif/entity";
-import type { PendingPromotion } from "@/ui/player/store/useGameStore";
+import type { PendingPromotion } from "@/ui/screens/player/store/useGameStore";
 import { canPromote } from "../kif/rules/promotion";
 import { generateValidMovesFrom } from "../kif/rules/validMoveGenerator";
 

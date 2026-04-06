@@ -1,4 +1,4 @@
-import type { GameEvent, GameState } from "@/ui/player/store/useGameStore"
+import type { GameEvent, GameState } from "@/ui/screens/player/store/useGameStore"
 
 export function reduceGameState(state: GameState, e: GameEvent): GameState {
     switch (e.type) {

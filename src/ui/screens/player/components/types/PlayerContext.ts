@@ -1,0 +1,14 @@
+import { useReplayStore } from "@/ui/screens/player/store/useReplayStore"
+import { useTimerStore } from "@/ui/screens/player/store/useTimerStore"
+
+export type PlayerContext = {
+  ply: number
+  elapsedSec: number
+ 
+}
+export function createPlayerContext(): PlayerContext {
+  const ply = useReplayStore.getState().ply
+  const elapsedSec = useTimerStore.getState().elapsedSec
+
+  return { ply, elapsedSec }
+}

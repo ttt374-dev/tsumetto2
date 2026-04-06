@@ -6,21 +6,21 @@ import { useLocation, useNavigationType } from "react-router-dom";
 import { CssBaseline } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material";
 
-import SessionLayout from '../session/SessionLayout.tsx';
-import MissionScreen from '../mission/MissionScreen.tsx';
-import MissionEditScreen from '../mission/edit/MissionEditScreen.tsx';
-import SessionPlayerScreen from '../session/SessionPlayerScreen';
+import MissionScreen from '@/ui/screens/mission/MissionScreen.tsx';
+import MissionEditScreen from '@/ui/screens/mission/edit/MissionEditScreen.tsx';
 import { RepositoryContext } from './providers/RepositoryProvider';
 import { ToastProvider } from './providers/ToastProvider';
-import { ListScreen } from '../list/ListScreen';
-import StatsScreen from '../stats/StatsScreen';
-import SinglePlayerScreen from '../player/SinglePlayerScreen';
+import { ListScreen } from '@/ui/dialogs/list/ListScreen.tsx';
+import StatsScreen from '@/ui/screens/stats/StatsScreen.tsx';
+import SinglePlayerScreen from '@/ui/screens/player/SinglePlayerScreen.tsx';
 import { bootstrapApp, createRepositories } from './bootstrapApp';
 import { routes } from './useAppNavigation';
-import SessionSummaryScreen from '../summary/SessionSummaryScreen.tsx';
-import HistoryScreen from '@/ui/history/HistoryScreen.tsx';
-import ProblemDetailScreen from '@/ui/detail/ProblemDetailScreen.tsx';
-import LibraryScreen from '@/ui/library/LibraryScreen.tsx';
+import SessionSummaryScreen from '@/ui/screens/summary/SessionSummaryScreen.tsx';
+import ProblemDetailScreen from '@/ui/screens/detail/ProblemDetailScreen.tsx';
+import LibraryScreen from '@/ui/screens/library/LibraryScreen.tsx';
+import SessionLayout from '@/ui/screens/session/SessionLayout.tsx';
+import SessionPlayerScreen from '@/ui/screens/session/SessionPlayerScreen.tsx';
+import HistoryScreen from '@/ui/screens/history/HistoryScreen.tsx';
 
 export const theme = createTheme({
     cssVariables: true,   // ← これ必須
