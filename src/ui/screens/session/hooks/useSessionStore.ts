@@ -61,18 +61,8 @@ export const useSessionStore = create<SessionStore>((set, get) => ({
                 sessionId: sessionId,
                 problemIds: ids,
                 currentIndex: startIndex,
-                state: {
-                    type: "active",
-                    missionId: missionId,
-                    sessionId: sessionId,
-                    problemIds: ids,
-                    index: startIndex,
-                },
-                //results: {},
-                //answers: [],
             }
         })
-        //return sessionId
     },
     next: () =>
         set((s) => {
@@ -81,7 +71,6 @@ export const useSessionStore = create<SessionStore>((set, get) => ({
             if (nextIndex >= s.problemIds.length) {
                 return { currentIndex: s.problemIds.length }; // finished状態
             }
-
             return { currentIndex: nextIndex };
         }),
 
@@ -108,7 +97,5 @@ export const useSessionStore = create<SessionStore>((set, get) => ({
             missionId: undefined,
             problemIds: [],
             currentIndex: -1,
-            //results: {},
-            //answers: [],
         }),
 }));

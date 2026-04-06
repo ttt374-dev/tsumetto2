@@ -11,8 +11,7 @@ export default function SessionListView(props: {
     selectedId: ProblemId
     solvedResultMap: Record<ProblemId, SolvedResult>
 }) {
-    const byId = useProblemStore(s => s.byId)    
-    //const eventLog = useReviewEventStore(s=>s.eventLog)
+    const byId = useProblemStore(s => s.byId)        
     
     return (
         <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto" }}>
