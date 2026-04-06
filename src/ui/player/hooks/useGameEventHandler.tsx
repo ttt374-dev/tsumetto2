@@ -1,4 +1,3 @@
-import { projectLearning } from "@/domain/learning/service/projectionLearning"
 import type { Problem } from "@/domain/problem/entity/Problem"
 import { deriveSolvedResultFromEvents } from "@/domain/review/service/solvedResultDeriver"
 import type { SolvedResult } from "@/domain/review/solvedResult"
@@ -10,7 +9,6 @@ import { useGameStore } from "@/ui/player/store/useGameStore"
 import { useReplayStore } from "@/ui/player/store/useReplayStore"
 import { useTimerStore } from "@/ui/player/store/useTimerStore"
 import { useLearningRecordStore } from "@/ui/domains/learning/useLearningRecordStore"
-import { useReviewEventStore } from "@/ui/store/useReviewEventStore"
 import { useEffect, useState } from "react"
 
 export function useGameEventHandler(problem: Problem, 
@@ -22,7 +20,7 @@ export function useGameEventHandler(problem: Problem,
     const replay = useReplayStore()
     const stopTimer = useTimerStore(s=>s.stop)
     const replayCtrl = useReplayController()    
-    const records = useLearningRecordStore(s=>s.records)    
+    const records = useLearningRecordStore(s=>s.stateRecords)    
     const learning = records[problem.id]
     
     const toast = useToast()

@@ -1,12 +1,12 @@
 import { Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 
 import { useReviewEventStore } from "@/ui/store/useReviewEventStore"
-import { projectLearning } from "@/domain/learning/service/projectionLearning";
 import type { ReviewEvent } from "@/domain/review/ReviewEvent";
+import { projectLearningState } from "@/domain/learning/service/projectLearningState";
 
 function calcAverageScore(events: ReviewEvent[]): number { 
     if (events.length === 0) return 0;   
-    const records = projectLearning(events)
+    const records = projectLearningState(events)
     return Object.values(records).reduce((sum, e) => sum + e.score, 0) / events.length
 }
 

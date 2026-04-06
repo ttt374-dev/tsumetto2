@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
-import { projectLearning } from "@/domain/learning/service/projectionLearning";
-import type { LearningRecord } from "@/domain/learning/entity/Learning";
+//import { projectLearning } from "@/domain/learning/service/projectionLearning";
+//import type { LearningRecord } from "@/domain/learning/entity/Learning";
 import type { ReviewEventLog } from "@/domain/review/ReviewEvent";
 import type { ProblemId } from "@/domain/problem/entity/Problem";
 import { projectLearningState } from "@/domain/learning/service/projectLearningState";
@@ -10,7 +10,7 @@ import { useReviewEventStore } from "@/ui/store/useReviewEventStore";
 
 
 type LearningRecordStoreState = {
-  records: LearningRecord;
+  //records: LearningRecord;
   stateRecords: Record<ProblemId, LearningState>
   getState: (id: ProblemId) => LearningState
   updateFromEventLog: (eventLog: ReviewEventLog) => void;
@@ -23,7 +23,7 @@ export const useLearningRecordStore = create<LearningRecordStoreState>((set, get
 
   updateFromEventLog: (eventLog) => {
     set({
-      records: projectLearning(eventLog),
+      //records: projectLearning(eventLog),
       stateRecords: projectLearningState(eventLog),
      });    
   },

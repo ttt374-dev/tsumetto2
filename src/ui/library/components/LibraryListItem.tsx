@@ -6,10 +6,10 @@ import { StarToggleButton } from "@/ui/common/components/StarToggleButton/StarTo
 import { useProblemStore } from "@/ui/store/useProblemStore";
 import { useLearningRecordStore } from "@/ui/domains/learning/useLearningRecordStore";
 import { useStarToggleButton } from '@/ui/common/components/StarToggleButton/useStarToggleButton';
-import { Learning } from "@/domain/learning/entity/Learning";
 import type { LibraryActionMode } from "@/ui/library/hooks/useLibraryViewModel";
 import { toProblemViewData } from "@/ui/domains/problem/problemPresenter";
-import { toLearningViewData } from "@/ui/presenter/learningPresenter";
+import type { LearningState } from "@/domain/learning/entity/LearningState";
+import { toLearningStateViewData } from "@/ui/domains/learning/learningPresenter";
 
 export const LibraryListItem = function LibraryListItem({ id, onItemClick,
     showCheckbox, isChecked, onToggleChecked, onChangeActionMode,
@@ -24,7 +24,7 @@ export const LibraryListItem = function LibraryListItem({ id, onItemClick,
 
     }) {
     const problem = useProblemStore(s => s.byId[id])
-    const learning = useLearningRecordStore(s => s.records[id])
+    const learning = useLearningRecordStore(s => s.stateRecords[id])
 
     const { bind, isLongPressedRef } = useLongPress({
         onLongPress: () => {          
@@ -109,9 +109,9 @@ export function inDays(date: number, now: number = Date.now()): number {
     return Math.ceil((date - now) / DAY_MS)
 }
 export function LearningSection(props: {
-    learning: Learning
+    learning: LearningState
 }) {
-    const vm = toLearningViewData(props.learning)
+    const vm = toLearningStateViewData(props.learning)
     return (
         <Stack direction="row" justifyContent="flex-end" spacing={2}>
             <Box>

@@ -1,4 +1,4 @@
-import type { Learning } from "@/domain/learning/entity/Learning"
+import type { LearningState } from "@/domain/learning/entity/LearningState"
 import { deriveSolvedResultFromEvents } from "@/domain/review/service/solvedResultDeriver"
 import type { SolvedResult } from "@/domain/review/solvedResult"
 import { formatDuration } from "@/ui/common/formatter"
@@ -10,7 +10,7 @@ export function SolvedDialog({ open, onClose, onConfirm, solvedResult, learning 
     onClose: () => void
     onConfirm: () => void
     solvedResult: SolvedResult
-    learning: Learning
+    learning: LearningState
     
 }) {
     console.log("learning", learning)

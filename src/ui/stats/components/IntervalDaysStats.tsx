@@ -4,7 +4,7 @@ import { Box, Checkbox, FormControlLabel, Paper, Stack, Typography } from "@mui/
 import type { ProblemId } from "@/domain/problem/entity/Problem";
 import { useLearningRecordStore } from "@/ui/domains/learning/useLearningRecordStore";
 import { useProblemStore } from "@/ui/store/useProblemStore";
-import type { LearningRecord } from "@/domain/learning/entity/Learning";
+import type { LearningState } from "@/domain/learning/entity/LearningState";
 
 type IntervalBin = {
     label: string
@@ -41,7 +41,7 @@ function createExponentialBins(boundaries: number[]): IntervalBin[] {
 
 function buildIntervalHistogramBinned(
     ids: ProblemId[],
-    learningRecords: LearningRecord,
+    learningRecords: Record<ProblemId, LearningState>,
     includeDelay: boolean = true,
 ) {
     const boundariesWithDelay = [-7, -3, 1, 3, 7, 14, 30, 60]
@@ -127,7 +127,7 @@ export function IntervalHistogram({
 //////////////////////////
 export function IntervalDaysStats() {
     const activeProblems = useProblemStore(s => s.activeProblems)
-    const records = useLearningRecordStore(s => s.records)
+    const records = useLearningRecordStore(s => s.stateRecords)
     const [includeDelay, setIncludeDelay ] = useState(true)
 
     const histogram = useMemo(() =>

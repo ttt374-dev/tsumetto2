@@ -8,8 +8,6 @@ import { useLearningRecordStore } from "@/ui/domains/learning/useLearningRecordS
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem"
 import { applyQuery } from "@/domain/problem/service/query/applyQuery"
 import { useLibraryCheckbox } from "./useLibraryCheckbox"
-import type { LearningRecord } from "@/domain/learning/entity/Learning"
-import { useBackupRestoreDialog } from "@/ui/common/components/dialogs/BackupRestoreDialog"
 import { useMultipleProblemsEditDialog } from "@/ui/common/components/dialogs/MultipleProblemsEditorDialog"
 import type { QueryState } from "@/domain/problem/service/query/ProblemsQuery"
 import { useProblemsQueryStore } from "@/ui/store/useProblemsQueryStore"

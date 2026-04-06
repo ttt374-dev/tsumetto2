@@ -1,3 +1,4 @@
+/*
 import type { ProblemId } from "@/domain/problem/entity/Problem"
 import type { SolvedResult } from "@/domain/review/solvedResult"
 
@@ -79,4 +80,4 @@ export class Learning {
 
 }
 
-export type LearningRecord = Record<ProblemId, Learning>
+export type LearningRecord = Record<ProblemId, Learning>*/

@@ -1,4 +1,3 @@
-import type { LearningRecord } from "@/domain/learning/entity/Learning"
 import type { Problem, ProblemId } from "../entity/Problem"
 import type { LearningState } from "@/domain/learning/entity/LearningState"
 
