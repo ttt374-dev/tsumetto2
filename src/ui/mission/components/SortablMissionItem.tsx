@@ -35,9 +35,9 @@ export function SortableMissionItem(props: {
     };
     const activeIds = useProblemStore(s=>s.activeProblems)
     const records = useLearningRecordStore(s=>s.stateRecords)
-    const learningStateRecords = useLearningRecordStore(s=>s.stateRecords)
+    const learningRecords = useLearningRecordStore(s=>s.stateRecords)
     const ids = applyQuery(activeIds, records, props.mission.queryState).map(p=>p.id)
-    const summary = computeLearningSummary(ids, learningStateRecords)
+    const summary = computeLearningSummary(ids, learningRecords)
     
 
     const onItemClick = () => {

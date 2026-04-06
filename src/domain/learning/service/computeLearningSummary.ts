@@ -3,7 +3,7 @@ import type { LearningSummary } from "@/domain/learning/entity/LearningSummary";
 import type { ProblemId } from "@/domain/problem/entity/Problem";
 
 
-export function computeLearningSummary(ids: ProblemId[], learningStateRecords: Record<ProblemId, LearningState>): LearningSummary {
+export function computeLearningSummary(ids: ProblemId[], learningRecords: Record<ProblemId, LearningState>): LearningSummary {
     let attemptCount = 0
     let solvedCount = 0
     let failedCount = 0
@@ -12,7 +12,7 @@ export function computeLearningSummary(ids: ProblemId[], learningStateRecords: R
     let sumScore = 0
 
     for (const id of ids){
-        const s = learningStateRecords[id]
+        const s = learningRecords[id]
         if (!s) continue
 
         attemptCount += s.attemptCount
