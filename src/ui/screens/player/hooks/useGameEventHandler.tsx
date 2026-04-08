@@ -10,6 +10,7 @@ import { useReplayStore } from "@/ui/screens/player/store/useReplayStore"
 import { useTimerStore } from "@/ui/screens/player/store/useTimerStore"
 import { useLearningRecordStore } from "@/ui/features/learning/hooks/useLearningRecordStore"
 import { useEffect, useState } from "react"
+import type { LearningState } from "@/domain/learning/entity/LearningState"
 
 export function useGameEventHandler(problem: Problem, 
     onSolve: () => void, onSolvedConfirm: () => void){

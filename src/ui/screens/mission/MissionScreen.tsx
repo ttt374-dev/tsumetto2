@@ -1,6 +1,4 @@
-import { useRef, useState } from "react";
 import EditIcon from '@mui/icons-material/Edit';
-import AddIcon from '@mui/icons-material/Add'
 
 import { AppShell } from "../../common/components/layout/AppShell";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -29,14 +27,7 @@ export default function MissionScreen() {
     return (
         <AppShell
             header="Missions"
-            rightActions={
-                <>
-                <IconButton onClick={()=>navigate(routes.newMission)} sx={{color: "white"}}>
-                    <AddIcon/>
-                </IconButton>
-                <MissionEditModeControl/>
-                </>
-            }
+            rightActions={<MissionEditModeControl/>}
             fab={<MissionFabMenu onCreateNewMission={()=>navigate(routes.newMission)} />}
         >
             <ExecutionModeControl 

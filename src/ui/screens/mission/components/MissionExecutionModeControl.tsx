@@ -9,7 +9,6 @@ export function ExecutionModeControl(props: {
     onChange: (mode: MissionExecutionMode, limit: number) => void
 }) {    
     const isPartial = props.mode === "partial"
-    //const limit = isPartial ? value.limit : lastLimitRef.current
     const label = isPartial ? (
         <Box sx={{ display: "flex", alignItems: "center" }}>
             最初の

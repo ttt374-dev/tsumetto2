@@ -10,10 +10,10 @@ export function SolvedDialog({ open, onClose, onConfirm, solvedResult, learning 
     onClose: () => void
     onConfirm: () => void
     solvedResult: SolvedResult
-    learning: LearningState
+    learning: LearningState | undefined
     
 }) {
-    console.log("learning", learning)
+    //console.log("learning", learning)
     const confirmLabel = "確認"
     
     return (
@@ -27,8 +27,11 @@ export function SolvedDialog({ open, onClose, onConfirm, solvedResult, learning 
                 <Box>解答参照：{solvedResult.isRevealed ? "参照" : "なし"}</Box>
                 <Box>秒数: {solvedResult.elapsedSec}</Box>
 
-                <Box>スコア：{learning.score.toFixed(1)}</Box>
-                <Box>次レビュー：{formatDuration(learning.nextReviewedAt - Date.now())}</Box>
+                {learning && <>
+                    <Box>平均スコア：{learning.score.toFixed(1)}</Box>
+                    <Box>次レビュー：{formatDuration(learning.nextReviewedAt - Date.now())}</Box>
+                </>
+                }
             </DialogContent>
             <DialogActions>
                 <Button variant="outlined" color="info" onClick={() => { onClose() }}>

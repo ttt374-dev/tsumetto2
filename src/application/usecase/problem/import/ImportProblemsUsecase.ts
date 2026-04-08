@@ -70,6 +70,7 @@ export function useImportProblemsUsecase(problemRepo: ProblemRepository) {
 
         //const activeProblems = useProblemStore(s=>s.activeProblems)
         //const deleteProblem = useProblemStore(s=>s.deleteProblem)
+        //console.log("import option", options)
 
         try {
             const buf = await file.arrayBuffer();
@@ -94,7 +95,10 @@ export function useImportProblemsUsecase(problemRepo: ProblemRepository) {
             }
             //const title = resolveTitle(file.name, existingTitles)
             //console.log("import tags", options)
-            const newProblem = Problem.createFromText(text, title)?.setTags(options.tags)
+            const newProblem = Problem.createFromText(text, title)
+                ?.setTags(options.tags)
+                ?.setSource(options.source)
+                ?.setType(options.problemType)
 
             console.log("import problem", newProblem)
             if (!newProblem) { return { status: "failed", message: "parse error" } }
