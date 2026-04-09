@@ -1,5 +1,5 @@
 import { Checkbox, FormControl, FormControlLabel, FormLabel, List, ListItem, Paper } from "@mui/material";
-import type { BooleanQueryKey, QueryState } from "@/domain/problem/service/query/ProblemsQuery";
+import type { BooleanQueryKey, QueryState } from "@/domain/problem/service/query/QueryState";
 
 
 export function BooleanFilterControl({ queryState, onToggleFilter}: {

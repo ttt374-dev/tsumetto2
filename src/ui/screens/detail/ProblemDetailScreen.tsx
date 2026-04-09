@@ -36,7 +36,8 @@ export function ProblemDetailContent( { problem }: { problem: Problem}) {
         
     const events = useReviewEventStore(s=>s.eventLog).filter(s=>s.problemId===problem.id)
     const records = projectLearningState(events)
-    const learningState = aggregateLearningStates(records)
+    const learningState = records[problem.id]
+    //const learningState = aggregateLearningStates(records)
 
     const handleLearningReset = () => {
         if (!window.confirm("学習データをクリアしますか？")) return

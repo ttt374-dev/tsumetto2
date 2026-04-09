@@ -13,7 +13,7 @@ type ReviewEventStoreState = {
     setRepository: (repo: ReviewEventRepository) => void
     eventLog: ReviewEventLog;
     isDirty: boolean,
-    //getLastReviewedEvent: (m: SessionId) => ReviewEvent | undefined;
+    //getLastReviewe1vent: (m: SessionId) => ReviewEvent | undefined;
 
     reload: () => Promise<void>;
     save: () => Promise<void>

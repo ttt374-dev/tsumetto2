@@ -1,6 +1,6 @@
 import { FormControl, FormLabel, FormGroup, FormControlLabel, Checkbox, Paper, } from "@mui/material"
 
-import type { MateBucket } from "@/domain/problem/service/query/ProblemsQuery"
+import type { MateBucket } from "@/domain/problem/service/query/QueryState"
 
 type Props = {
     mateBuckets: MateBucket[] | undefined

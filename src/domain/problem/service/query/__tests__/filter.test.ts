@@ -1,7 +1,7 @@
 import { Problem } from "@/domain/problem/entity/Problem";
 import { describe, expect, it } from "vitest";
 import { applyFilter } from "../applyFilter";
-import { DefaultQueryState } from "../ProblemsQuery";
+import { DefaultQueryState } from "../QueryState";
 
 
 describe("filter", () => {

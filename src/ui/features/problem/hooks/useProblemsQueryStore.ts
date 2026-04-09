@@ -1,6 +1,6 @@
 import { create } from "zustand"
 
-import { DefaultQueryState, type BooleanQueryKey, type MateBucket, type QueryAction, type QueryState, type SortKey } from "@/domain/problem/service/query/ProblemsQuery"
+import { DefaultQueryState, type BooleanQueryKey, type MateBucket, type QueryAction, type QueryState, type SortKey } from "@/domain/problem/service/query/QueryState"
 import { queryReducer } from "@/domain/problem/service/query/queryReducer"
 import type { ProblemType } from "@/domain/problem/entity/ProblemType"
 

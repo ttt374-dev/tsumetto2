@@ -1,6 +1,6 @@
 import { matchMateBuckets } from "./mateFilter";
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem";
-import type { QueryState } from "./ProblemsQuery";
+import type { QueryState } from "./QueryState";
 import type { LearningState } from "@/domain/learning/entity/LearningState";
 
 //////////////////////////////////

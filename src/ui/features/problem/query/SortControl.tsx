@@ -1,7 +1,18 @@
 import { Box, IconButton, Tooltip, Button, Select, MenuItem, Stack } from "@mui/material";
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import type { QueryState, SortKey } from "@/domain/problem/service/query/ProblemsQuery";
+import type { QueryState, SortKey } from "@/domain/problem/service/query/QueryState";
+
+export const SortKeyLabel: Record<SortKey, string> = {
+    "createdAt": "追加日",
+    "title": "タイトル",
+    "score": "スコア",
+    "easeFactor": "習熟度",
+    "nextReviewedAt": "次回レビュー日",
+    "lastAnsweredAt": "前回解答日",
+    "moveCount": "手数",
+    "random": "ランダム",
+}
 
 export function SortKeyControl(props: {
     queryState: QueryState,
@@ -12,13 +23,9 @@ export function SortKeyControl(props: {
     }
     return (
         <Select value={props.queryState.sortKey} onChange={handleChangeKey} size="small">
-            <MenuItem key="createdAt" value="createdAt">追加順</MenuItem>
-            <MenuItem key="title" value="title">名前順</MenuItem>
-            <MenuItem key="score" value="score">スコア</MenuItem>
-            <MenuItem key="easeFactor" value="easeFactor">習熟度</MenuItem>
-            <MenuItem key="nextReviewedAt" value="nextReviewedAt">次レビュー日</MenuItem>
-            <MenuItem key="lastAnsweredAt" value="lastAnsweredAt">最終解答日</MenuItem>
-            <MenuItem key="random" value="random">ランダム</MenuItem>
+            { Object.entries(SortKeyLabel).map(([k, v]) =>(
+                <MenuItem key={k} value={k}>{v}</MenuItem>    
+            ))}           
         </Select>
     )
 

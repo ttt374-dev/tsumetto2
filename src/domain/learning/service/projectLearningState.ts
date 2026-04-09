@@ -61,6 +61,8 @@ function applyReviewedEvent(prev: LearningState, event: ReviewEvent): LearningSt
     const newScore = calculateScore(event.solvedResult)
     const score = updateAverage(prev.attemptCount, prev.score, newScore).averageScore
 
+    //console.log("last answeredat", event.at)
+
     return {
         attemptCount: prev.attemptCount + 1,
         solvedCount, failedCount,

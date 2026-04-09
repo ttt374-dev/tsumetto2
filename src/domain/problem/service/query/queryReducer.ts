@@ -1,4 +1,4 @@
-import { DefaultQueryState, type BooleanQueryKey, type QueryState, type QueryAction } from "./ProblemsQuery"
+import { DefaultQueryState, type BooleanQueryKey, type QueryState, type QueryAction } from "./QueryState"
 
 export function queryReducer(
     state: QueryState = DefaultQueryState,

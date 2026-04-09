@@ -1,6 +1,6 @@
 import { v4 } from "uuid";
 import type { Mission } from "./Mission";
-import { DefaultQueryState } from "@/domain/problem/service/query/ProblemsQuery";
+import { DefaultQueryState } from "@/domain/problem/service/query/QueryState";
 
 const DEFAULT_MISSION_NAME = "for review"
 

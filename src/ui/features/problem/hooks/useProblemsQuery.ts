@@ -1,7 +1,7 @@
 import { useReducer } from "react";
 
 import type { ProblemType } from "@/domain/problem/entity/ProblemType";
-import { DefaultQueryState, type BooleanQueryKey, type MateBucket, type QueryState, type SortKey } from "@/domain/problem/service/query/ProblemsQuery";
+import { DefaultQueryState, type BooleanQueryKey, type MateBucket, type QueryState, type SortKey } from "@/domain/problem/service/query/QueryState";
 import { queryReducer } from "@/domain/problem/service/query/queryReducer";
 
 export function useProblemsQuery(initial?: Partial<QueryState>) {

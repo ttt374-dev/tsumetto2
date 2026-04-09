@@ -8,6 +8,7 @@ export function LearningDetailPanel( { learningState, onResetLearning} : {
     onResetLearning: () => void
 }) {
     const vm = toLearningStateViewData(learningState)
+    console.log("vm", vm, learningState)
     return (<Paper sx={{ p: 1 }}>
         <Stack>
             <Stack direction="row" justifyContent="space-between">

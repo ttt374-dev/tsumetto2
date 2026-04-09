@@ -1,4 +1,4 @@
-import type { QueryState } from "@/domain/problem/service/query/ProblemsQuery"
+import type { QueryState } from "@/domain/problem/service/query/QueryState"
 
 export type QuerySnapshot = {
   queryState: QueryState,

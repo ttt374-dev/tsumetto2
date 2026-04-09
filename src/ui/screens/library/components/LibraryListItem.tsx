@@ -10,6 +10,10 @@ import type { LibraryActionMode } from "@/ui/screens/library/hooks/useLibraryVie
 import { toProblemViewData } from "@/ui/features/problem/hooks/problemPresenter";
 import type { LearningState } from "@/domain/learning/entity/LearningState";
 import { toLearningStateViewData } from "@/ui/features/learning/hooks/learningPresenter";
+import type { QueryState, SortKey } from "@/domain/problem/service/query/QueryState";
+import { useProblemsQueryStore } from "@/ui/features/problem/hooks/useProblemsQueryStore";
+import { SortKeyLabel } from "@/ui/features/problem/query/SortControl";
+
 
 export const LibraryListItem = function LibraryListItem({ id, onItemClick,
     showCheckbox, isChecked, onToggleChecked, onChangeActionMode,
@@ -18,10 +22,10 @@ export const LibraryListItem = function LibraryListItem({ id, onItemClick,
         showCheckbox: boolean,
         onItemClick: (p: Problem) => void,
         isChecked: boolean,
-        onToggleChecked: (id: ProblemId) => void,
-        selected?: boolean,
+        onToggleChecked: (id: ProblemId) => void,        
         onChangeActionMode: (mode: LibraryActionMode) => void
-
+        selected?: boolean,
+        //sortKey?: SortKey
     }) {
     const problem = useProblemStore(s => s.byId[id])
     const learning = useLearningRecordStore(s => s.stateRecords[id])
@@ -34,7 +38,31 @@ export const LibraryListItem = function LibraryListItem({ id, onItemClick,
 
     })
     const starController = useStarToggleButton(id)
-    const vd = toProblemViewData(problem)
+    const vdProblem = toProblemViewData(problem)    
+    const sortKey = useProblemsQueryStore(s=>s.state.sortKey)
+
+    const getSortKeyText = (sortKey: SortKey) => {
+        if (!learning) return ""
+        const vdLearning = toLearningStateViewData(learning)
+        let text = undefined
+        switch (sortKey) {
+            case "createdAt":
+                text = vdProblem.createdAtText
+                break;
+            case "score":
+                text = vdLearning.scoreText
+                break
+            case "nextReviewedAt":
+                text = vdLearning.nextReviewedInText
+                break
+            case "easeFactor":
+                text = vdLearning.easeFactorText
+                break
+        }
+        const label = text !== undefined ? SortKeyLabel[sortKey] : "出典"
+        text = text ? text : vdProblem.sourceText
+        return `${label}: ${text}`
+    }
 
     //////////////////////////////////////////////////////////
     return (
@@ -58,12 +86,12 @@ export const LibraryListItem = function LibraryListItem({ id, onItemClick,
                 <ListItemText
                     primary={
                         <Stack direction="row" justifyContent={"space-between"} alignItems="center">
-                            <Typography variant="subtitle1" fontWeight="bold" flex={8}  color="text.primary">
+                            <Typography variant="subtitle1" fontWeight="bold" flex={10}  color="text.primary">
                                 {problem.title}
                             </Typography>
                             <Typography variant="body2" flex={3}>
-                                { vd.tagsText}
-                                { vd.plyLengthText}
+                                { vdProblem.typeText}
+                                { vdProblem.plyLengthText}
                             </Typography>
                             <Stack direction="row" flex={1}>
                                 <StarToggleButton starred={starController.starred}
@@ -78,12 +106,12 @@ export const LibraryListItem = function LibraryListItem({ id, onItemClick,
                         },
                     }}
                     secondary={<>
-
                             {/* 二行目: 出典*/}
                             <Stack direction="row" justifyContent={"space-between"}>
                                 { problem.source &&
                                 <Typography variant="body2">
-                                    出典：{problem.source}
+                                    {/*出典：{problem.source}*/}
+                                    { getSortKeyText(sortKey)}
                                 </Typography>}
                                 { /* <Typography variant="body2">
                                     {problem.tags.join(",")}

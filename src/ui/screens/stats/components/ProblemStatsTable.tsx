@@ -5,7 +5,7 @@ import { useLearningRecordStore } from "@/ui/features/learning/hooks/useLearning
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
 import { GroupedTable} from "./GroupedTable";
 import { applyFilter } from "@/domain/problem/service/query/applyFilter";
-import { DefaultQueryState } from "@/domain/problem/service/query/ProblemsQuery";
+import { DefaultQueryState } from "@/domain/problem/service/query/QueryState";
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem";
 import type { StatsRowValues } from "@/ui/screens/stats/components/StatsRow";
 

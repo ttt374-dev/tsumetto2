@@ -9,7 +9,7 @@ import type { Problem, ProblemId } from "@/domain/problem/entity/Problem"
 import { LibraryCheckboxControl } from "./LibraryCheckboxControl";
 import type { LibraryActionMode } from "../hooks/useLibraryViewModel";
 import type { useProblemsQuery } from "@/ui/features/problem/hooks/useProblemsQuery";
-import { DefaultQueryState } from "@/domain/problem/service/query/ProblemsQuery";
+import { DefaultQueryState } from "@/domain/problem/service/query/QueryState";
 
 export type LibraryItemActions = {
     openTagEditDialog: (ids: ProblemId[]) => void
@@ -38,10 +38,8 @@ type LibraryViewProps = {
 
 /////////////////////////////////////////
 export default function LibraryView({ ids, query, actionMode, changeActionMode,
-    onItemClick, selection, onFilterControlOpen, onOpenEditDialog }: LibraryViewProps) {
-    
+    onItemClick, selection, onFilterControlOpen, onOpenEditDialog }: LibraryViewProps) {    
     const isFiltered = !isEqual(query, DefaultQueryState);
-
     return (
         <>
             <Stack direction="row">
@@ -86,9 +84,7 @@ export default function LibraryView({ ids, query, actionMode, changeActionMode,
                         />
                     ))}
                 </List>
-            </Box>
-
-            
+            </Box>            
         </>
     )
 }

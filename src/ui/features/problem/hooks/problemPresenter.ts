@@ -5,6 +5,7 @@ import type { ProblemType } from "@/domain/problem/entity/ProblemType";
 export function toProblemViewData(p: Problem) {
     return {
         typeText: problemTypeLabelMap[p.type],
+        sourceText: p.source,
         tagsText: p.tags.join(","),
         plyLengthText: `${p.kifData.moves.length}手`,
         createdAtText: new Date(p.createdAt).toLocaleString(),
@@ -13,7 +14,6 @@ export function toProblemViewData(p: Problem) {
         handicapText: p.kifData.headers["手合割"],
     }
 }
-
 const problemTypeLabelMap: Record<ProblemType, string> = {
     "standard": "標準",
     "realistic": "実践",
