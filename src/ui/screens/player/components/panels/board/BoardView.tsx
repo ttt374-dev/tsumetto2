@@ -29,10 +29,20 @@ function SquareView({ piece, selected, onClick }: {
 
 export default function BoardView() {
     const position = useCurrentPosition()    
+    const reversed = true
+    
     const { board } = position
-    const selection = useBoardInputStore(s=>s.selection)    
-    const ranks = [...Array(9)].map((_, i) => i + 1)   //   1 → 9
-    const files = [...Array(9)].map((_, i) => 9 - i)   // 9 → 1（将棋表記o9i） ???
+    const selection = useBoardInputStore(s => s.selection)
+    const ranks = reversed
+        ? [...Array(9)].map((_, i) => 9 - i) // 9 → 1
+        : [...Array(9)].map((_, i) => i + 1) // 1 → 9
+
+    const files = reversed
+        ? [...Array(9)].map((_, i) => i + 1) // 1 → 9
+        : [...Array(9)].map((_, i) => 9 - i) // 9 → 1
+    
+    
+    const displayRankLabels = reversed ? [...rankLabels].reverse() : rankLabels
     
     const dispatch = useGameStore(s=>s.dispatch)
     const promotionPending = useGameStore(s=>s.promotionPending)    
@@ -67,12 +77,7 @@ export default function BoardView() {
 
     return (
         <Box className={styles.board}>
-            {/* 上の筋表示 */}
-            <div></div>
-            {fileLabels.map((f, i) => (
-                <div key={i} className={styles.fileLabel}>{f}</div>
-            ))}
-            <div></div>
+            <FileLabels location="top" reversed={reversed}/>
             {/* 盤面 + 左側の段表示 */}
             {ranks.flatMap(rank => {
                 const cells = files.map(file => {
@@ -91,8 +96,28 @@ export default function BoardView() {
                 const rankLabel = <div className={styles.rankLabel} key={`ranklabel-${rank}`}>
                     {rankLabels[rank - 1]}
                 </div>
-                return [empty, ...cells, rankLabel,]
+                return !reversed ? [empty, ...cells, rankLabel,] : [ rankLabel, ...cells, empty]
             })}
+            <FileLabels location="bottom" reversed={reversed}/>
         </Box>
     )
+
 }
+
+    function FileLabels(props: {
+        reversed: boolean
+        location: "top" | "bottom"
+    }) {
+        const displayFileLabels = props.reversed ? [...fileLabels].reverse() : fileLabels
+        const visible = (props.reversed && props.location === "bottom") ||
+            ( !props.reversed && props.location === "top")
+        return (<>
+        <div></div>
+            {
+                displayFileLabels.map((f, i) => (
+                    <div key={i} className={styles.fileLabel}>{ visible && f}</div>
+                ))
+            }
+            <div></div>
+            </>)
+    }
