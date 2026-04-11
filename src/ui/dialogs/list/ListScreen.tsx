@@ -17,8 +17,8 @@ export function ListScreen(){
     const ids = state?.ids ?? []
     const title = state?.title ?? "List"
     const handleSeletProblem = (id: ProblemId) => {
-        //navigate(routes.problemView(id))
-        navigate(routes.player(id))
+        navigate(routes.detail(id))
+        //navigate(routes.player(id))
 
     }
 

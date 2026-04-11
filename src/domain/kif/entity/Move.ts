@@ -24,6 +24,7 @@ export class Move {
         console.log("eq move", a, b)
 
         return a.from?.rank === b.from?.rank &&
+            a.from?.file === b.from?.file &&
             a.to.file === b.to.file &&
             a.to.rank === b.to.rank &&
             a.pieceType === b.pieceType &&

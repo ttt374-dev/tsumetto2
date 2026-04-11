@@ -1,8 +1,10 @@
 import { create } from "zustand"
 
-import { type Square, type PieceType, type Player, Board} from "@/domain/kif/entity"
+import { type Square, type PieceType, type Player, Board, Position} from "@/domain/kif/entity"
 import type { Intent } from "@/domain/game/intentResolver";
-import { useGameStore } from "@/ui/screens/player/store/useGameStore";
+import { getCurrentPosition, useGameStore } from "@/ui/screens/player/store/useGameStore";
+import { buildUntilPly } from "@/domain/kif/service/buildUntilPly";
+import { useReplayStore } from "@/ui/screens/player/store/useReplayStore";
 
 export type Selection =
     | { type: "none" }
@@ -12,27 +14,33 @@ export type Selection =
 type BoardInputStore = {
     selection: Selection
 
-    clickSquare: (sq: Square, board: Board) => Intent | null
+    clickSquare: (sq: Square) => Intent | null
     clickHandPiece: (piece: PieceType, owner: Player) => void
     clear: () => void
 }
+
 
 export const useBoardInputStore = create<BoardInputStore>((set, get) => ({
     //state: { type: "idle"},
     selection: { type: "none" },
 
-    clickSquare: (sq, board) => {
+    clickSquare: (sq) => {
+        const position = getCurrentPosition()
         const selection = get().selection
-        const piece = board.get(sq)
+        const piece = position.board.get(sq)
         
         //const userplayer = "black"
-        const userplayer = useGameStore.getState().userSide
-        console.log("userplayer", userplayer)
+        const gameState = useGameStore.getState()
+        const userplayer = gameState.userSide
+        //const ply = useReplayStore.getState().ply
+        //const position = buildUntilPly(gameState.initialPosition, gameState.moves, ply)
+        //console.log("userplayer", userplayer)
+        
 
         switch(selection.type){
             case "none":
                 if (!piece) return null
-                if (piece.owner !== userplayer) return null
+                if (piece.owner !== userplayer || position.sideToMove != userplayer) return null
                 set({ selection: {type: "board", square: sq}})
                 return null            
                 

@@ -10,14 +10,14 @@ export const routes = {
 
     // library
     library: "/library",
-    problemView: (id: ProblemId) => `/view/${id}`,
+    //problemView: (id: ProblemId) => `/view/${id}`,
     player: (id: ProblemId) => `/play/${id}`,
 
     // session
     session: "/session",
     sessionPlay: "/session/play",
     sessionSummary: "/session/summary",
-    sessionList: "/session/list",
+    //sessionList: "/session/list",
 
     // detail
     detail: (id: ProblemId) => `/detail/${id}`,

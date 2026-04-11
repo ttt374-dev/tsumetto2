@@ -28,6 +28,17 @@ export const KanjiToPieceItem: Record<string, PieceItem> = {
     玉: { type: "king", promoted: false }
 }
 
+type BasePromoted = 'base' | 'promoted'
+
+export const PieceTypeToKanjiMapping: Record<BasePromoted, Record<PieceType, string>> = {
+    'base': {
+        pawn: "歩", lance: "香", knight: "桂", silver: "銀", gold: "金", bishop: "角", rook: "飛", king: "玉"
+    },
+    'promoted': {
+        pawn: "と", lance: "杏", knight: "圭", silver: "全", gold: "金", bishop: "馬", rook: "龍", king: "玉"    
+    }
+}
+
 export class Piece {
     constructor(
         readonly type: PieceType,
@@ -36,13 +47,15 @@ export class Piece {
     ) { }
 
     format(): string {
+        /*
         const baseMapping = {
             pawn: "歩", lance: "香", knight: "桂", silver: "銀", gold: "金", bishop: "角", rook: "飛", king: "玉"
         }
         const promotedMapping = {
             pawn: "と", lance: "杏", knight: "圭", silver: "全", gold: "金", bishop: "馬", rook: "龍", king: "玉"
-        }
-        return this.promoted ? promotedMapping[this.type] : baseMapping[this.type]
+        }*/
+       const basePromoted: BasePromoted = this.promoted ? 'promoted' : 'base'
+       return PieceTypeToKanjiMapping[basePromoted][this.type]
     }
 
     demote(): Piece {

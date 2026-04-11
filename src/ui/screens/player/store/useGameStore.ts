@@ -52,6 +52,7 @@ export type GameStore = {
     //markSubmit: () => void    
     toggleReversed: () => void,
     toggleUserSide: () => void,
+    
 }
 export function useCurrentPosition() {
     const { initialPosition, moves } = useGameStore(
@@ -67,6 +68,12 @@ export function useCurrentPosition() {
     [initialPosition, moves, ply]
   )
 }
+export function getCurrentPosition (): Position {
+  const { initialPosition, moves } = useGameStore.getState()
+  const ply = useReplayStore.getState().ply
+  return buildUntilPly(initialPosition, moves, ply)
+}
+
 //const DefaultGameState = { mistakes: 0, isRevealed: false, isSolved: false}
 
 ////////////////////////////////////

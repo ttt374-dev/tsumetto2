@@ -19,7 +19,7 @@ export default function MissionEditScreen() {
     } = useMissionEditViewModel();
 
     const navigate = useNavigate()
-    const listDialog = useListDialog(problemIds, (id) => navigate(routes.problemView(id)))
+    const listDialog = useListDialog(problemIds, (id) => navigate(routes.detail(id)))
     const handleNavigateToList = () => {
         //console.log("nav: ids", problemIds)
         navigate(routes.list, { state: { ids: problemIds, title: `デッキ ${name}：問題リスト` } })

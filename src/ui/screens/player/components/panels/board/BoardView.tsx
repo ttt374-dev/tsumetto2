@@ -34,7 +34,7 @@ export default function BoardView({ reversed}: { reversed: boolean}) {
     const clear = useBoardInputStore(s=>s.clear)
 
     const handleSquareClick = (file: number, rank: number) => {        
-        const intent = clickSquare(new Square(file, rank), board)
+        const intent = clickSquare(new Square(file, rank))
         if (!intent) return
         const intentResult = resolveIntent(position, intent)        
         const ctx = createDecideGameEventContext()
