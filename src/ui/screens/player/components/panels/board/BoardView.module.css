@@ -19,7 +19,7 @@
   /* background: #f8f4e6;*/
 }
 
-.white {
+.rotated {
   transform: rotate(180deg);
 }
 .selected {
@@ -39,7 +39,7 @@
   /* 少し余白 */
 }
 .handpiece {
-  font-size: 18px;
+  font-size: 20px;
 }
 
 .handpieceBlack { 

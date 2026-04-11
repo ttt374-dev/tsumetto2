@@ -47,7 +47,7 @@ export default function HandView({ hand, owner }: { hand: Hand, owner: Player })
     const pieceTypes: PieceType[] = ["rook", "bishop", "gold", "silver", "knight", "lance", "pawn"]
     
     return (
-        <Box className={owner === "black" ? styles.handpieceBlack : ""}>
+        <Box >
             {formatPlayer(owner)}
             { hand.isEmpty() && "なし"}
             {

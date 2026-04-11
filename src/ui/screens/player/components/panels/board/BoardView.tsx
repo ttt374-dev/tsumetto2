@@ -6,30 +6,15 @@ import { useBoardInputStore } from "@/ui/screens/player/store/useBoardInputStore
 import { Board, Piece, Square } from "@/domain/kif/entity";
 import { createDecideGameEventContext, decideGameEvent } from "@/domain/game/decideGameEvent";
 import { resolveIntent } from "@/domain/game/intentResolver";
+import { SquareView } from "@/ui/screens/player/components/panels/board/SquareView";
 
 const fileLabels = ["９", "８", "７", "６", "５", "４", "３", "２", "１"];
 const rankLabels = ["一", "二", "三", "四", "五", "六", "七", "八", "九"];
 
-function SquareView({ piece, selected, onClick }: {
-    piece: Piece | null
-    selected: boolean
-    onClick?: () => void
-}) {
-    return (
-        <div
-            className={`${styles.cell}  
-            ${selected && styles.selected}
-            ${piece?.owner === 'white' ? styles.white : ''}`}
-            onClick={onClick}
-        >
-            {piece ? piece.format() : null}
-        </div>
-    )
-}
 
-export default function BoardView() {
-    const position = useCurrentPosition()    
-    const reversed = true
+
+export default function BoardView({ reversed}: { reversed: boolean}) {
+    const position = useCurrentPosition()        
     
     const { board } = position
     const selection = useBoardInputStore(s => s.selection)
@@ -41,8 +26,7 @@ export default function BoardView() {
         ? [...Array(9)].map((_, i) => i + 1) // 1 → 9
         : [...Array(9)].map((_, i) => 9 - i) // 9 → 1
     
-    
-    const displayRankLabels = reversed ? [...rankLabels].reverse() : rankLabels
+       
     
     const dispatch = useGameStore(s=>s.dispatch)
     const promotionPending = useGameStore(s=>s.promotionPending)    
@@ -88,6 +72,7 @@ export default function BoardView() {
                             key={Board.squareKey(new Square(file, rank))}
                             piece={piece}
                             selected={isSelected(sq)}
+                            reversed={reversed}
                             onClick={() => handleSquareClick(file, rank)}
                         />
                     )

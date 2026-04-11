@@ -5,18 +5,20 @@ import { useCurrentPosition } from "../../../store/useGameStore";
 import HandView from "./HandView";
 import BoardView from "./BoardView";
 
-export default function BoardPanel() {
+export default function BoardPanel( { reversed = false}: { reversed?: boolean }) {
     const { hands } = useCurrentPosition()
+    const topPlayer = reversed ? "black" : "white"
+    const bottomPlayer = reversed ? "white" : "black"
     
     return (
         <Stack justifyContent="center" alignContent={"center"}  direction="row" >
             <Box className={styles.container}>
                 {/* 持駒表示 */}
-                <HandView hand={hands.get("white")} owner="white" />
+                <HandView hand={hands.get(topPlayer)} owner={topPlayer} />
 
-                <BoardView/>
+                <BoardView reversed={reversed}/>
                 {/* 持駒表示 */}
-                <HandView hand={hands.get("black")} owner="black" />
+                <HandView hand={hands.get(bottomPlayer)} owner={bottomPlayer} />
             </Box>
         </Stack >
     )

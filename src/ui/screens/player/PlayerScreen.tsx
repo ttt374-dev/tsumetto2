@@ -1,6 +1,8 @@
 import React from "react"
-import { Box, Button, Stack } from "@mui/material"
+import { Box, Button, IconButton, Stack } from "@mui/material"
 import { useNavigate } from "react-router-dom";
+import ScreenRotationIcon from '@mui/icons-material/ScreenRotation';
+import SwapVertIcon from '@mui/icons-material/SwapVert';
 
 import PlayerRightPanel from "./components/panels/PlayerRightPanel";
 import TitlePanel from "./components/panels/TitlePanel";
@@ -18,6 +20,7 @@ import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
 import { useReplayStore } from "@/ui/screens/player/store/useReplayStore";
 import { useGameEventHandler, useRevealHandler } from "@/ui/screens/player/hooks/useGameEventHandler";
 import { usePromotionDialog } from "@/ui/screens/player/hooks/usePromotionDialog";
+import { reverse } from "lodash";
 
 ///////////////////////////////////////////
 export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm, onAfterDelete, footerPanel }: {
@@ -28,9 +31,12 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
     onAfterDelete?: () => void
     footerPanel?: React.ReactNode
 }) {
-    const gameState = useGameStore(s=>s.state)            
+    const gameState = useGameStore(s=>s.state)      
+    const reversed = useGameStore(s=>s.displayReversed)      
+    const toggleReversed = useGameStore(s=>s.toggleReversed)
     const replay = useReplayStore()        
     const deleteProblem = useProblemStore(s=>s.deleteProblem)    
+    
     
     //const { isInitialized } = usePlayerInitializer(problem)
     const {onRevealAnswer } = useRevealHandler()
@@ -52,6 +58,7 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
         toast({message: `deleted: ${id}`})
     }    
     
+    
     ////////////////////////////////////////////////////////////////////////
     return (
         <AppShell
@@ -67,7 +74,7 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
             <Stack sx={{ minHeight: 0, height: "100%" }} spacing={1} > 
                 <TitlePanel title={title} />
                 { /* --- 盤面 ---*/}
-                <BoardPanel />
+                <BoardPanel reversed={reversed}/>
 
                 <Stack direction="row" sx={{ minHeight: 0, flexGrow: 1, p: 1 }} spacing={1}>
                     <MovesPanel
@@ -76,6 +83,9 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
 
                     <Box sx={{ flex: 1, border: 1, borderColor: "divider" }}>
                         <TimerControlPanel />
+                        <IconButton onClick={toggleReversed}>
+                            <SwapVertIcon/>
+                        </IconButton>
 
                         {gameState.isRevealed ?
                             <PlyControlPanel
