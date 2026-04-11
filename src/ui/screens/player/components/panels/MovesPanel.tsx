@@ -16,7 +16,7 @@ export default function MovesPanel({moves, isMovesVisible, problem}: {
     const moveTo = useReplayStore(s=>s.moveTo)
     const ply = useReplayStore(s=>s.ply)
     //const dispatch = useGameStore(s=>s.dispatch)   
-    const ctx = createPlayerContext()
+    //const ctx = createPlayerContext()
 /*
     const handleRevealAnswer = () => {
         dispatch({type: "REVEAL", ...ctx})
@@ -41,7 +41,7 @@ export default function MovesPanel({moves, isMovesVisible, problem}: {
             {isMovesVisible ?
                 <MovesView moves={moves} currentPlyIndex={ply} onMoveToPly={moveTo} />
                 : (<Stack>
-                    <Box>手数：{moves.length}手</Box>
+                    <Box>手数：{ ply > 0 ? `${ply} / ` : ""}  {moves.length}手</Box>
                     <ProblemLearningInfoPanel problem={problem} />
                 </Stack>)
             }

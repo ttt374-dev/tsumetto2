@@ -32,8 +32,10 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
     footerPanel?: React.ReactNode
 }) {
     const gameState = useGameStore(s=>s.state)      
-    const reversed = useGameStore(s=>s.displayReversed)      
+    const reversed = useGameStore(s=>s.displayReversed)    
+    const userSide = useGameStore(s=>s.userSide)  
     const toggleReversed = useGameStore(s=>s.toggleReversed)
+    const toggleUserSide = useGameStore(s=>s.toggleUserSide)
     const replay = useReplayStore()        
     const deleteProblem = useProblemStore(s=>s.deleteProblem)    
     
@@ -82,10 +84,17 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
                         moves={problem.kifData.moves} isMovesVisible={gameState.isRevealed} />
 
                     <Box sx={{ flex: 1, border: 1, borderColor: "divider" }}>
-                        <TimerControlPanel />
-                        <IconButton onClick={toggleReversed}>
-                            <SwapVertIcon/>
-                        </IconButton>
+                        <Stack direction="row" alignItems="center">
+                            <TimerControlPanel />
+
+                            <IconButton onClick={toggleReversed}>
+                                <SwapVertIcon />
+                            </IconButton>
+
+                            <Box onClick={toggleUserSide}>
+                                {userSide === "black" ? "▲" : "△"}
+                            </Box>
+                        </Stack>
 
                         {gameState.isRevealed ?
                             <PlyControlPanel

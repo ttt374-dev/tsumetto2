@@ -2,6 +2,7 @@ import { create } from "zustand"
 
 import { type Square, type PieceType, type Player, Board} from "@/domain/kif/entity"
 import type { Intent } from "@/domain/game/intentResolver";
+import { useGameStore } from "@/ui/screens/player/store/useGameStore";
 
 export type Selection =
     | { type: "none" }
@@ -23,7 +24,10 @@ export const useBoardInputStore = create<BoardInputStore>((set, get) => ({
     clickSquare: (sq, board) => {
         const selection = get().selection
         const piece = board.get(sq)
-        const userplayer = "black"
+        
+        //const userplayer = "black"
+        const userplayer = useGameStore.getState().userSide
+        console.log("userplayer", userplayer)
 
         switch(selection.type){
             case "none":

@@ -2,7 +2,7 @@ import { useShallow } from "zustand/react/shallow"
 import { useMemo } from "react"
 import { create } from "zustand"
 
-import { Move, Position, Square, type PieceType } from "@/domain/kif/entity"
+import { Move, Position, Square, type PieceType, type Player } from "@/domain/kif/entity"
 import { buildUntilPly } from "@/domain/kif/service/buildUntilPly"
 import { useReplayStore } from "@/ui/screens/player/store/useReplayStore"
 import { projectGameState } from "@/domain/game/gameStateReducer"
@@ -39,6 +39,7 @@ export type GameStore = {
     moves: Move[]
     //hasSubmitted: boolean
     displayReversed: boolean
+    userSide: Player
 
     pendingPromotion: PendingPromotion | null
     
@@ -50,6 +51,7 @@ export type GameStore = {
     dispatch: (e: GameEvent) => GameEvent[]
     //markSubmit: () => void    
     toggleReversed: () => void,
+    toggleUserSide: () => void,
 }
 export function useCurrentPosition() {
     const { initialPosition, moves } = useGameStore(
@@ -76,6 +78,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
     events: [],
     hasSubmitted: false,
     displayReversed: false,
+    userSide: "black",
+    //userSide: "white",
 
     initialize: (pos, moves) => {
         set({
@@ -83,7 +87,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
             moves,
             pendingPromotion: null,
             events: [],
-            state: projectGameState([])
+            state: projectGameState([]),
+            displayReversed: false,
+            userSide: "black"
         })
     },
     
@@ -112,7 +118,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
         return nextEvents
     },
     toggleReversed: () =>  
-        set(s => ({ displayReversed: !s.displayReversed}))     
+        set(s => ({ displayReversed: !s.displayReversed})),
+    toggleUserSide: () => 
+        set(s => ({ userSide: s.userSide === "black" ? "white" : "black"})),
+    
 }))
 
 //////////////

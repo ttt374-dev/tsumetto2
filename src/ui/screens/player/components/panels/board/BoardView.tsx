@@ -61,7 +61,7 @@ export default function BoardView({ reversed}: { reversed: boolean}) {
 
     return (
         <Box className={styles.board}>
-            <FileLabels location="top" reversed={reversed}/>
+            <FileLabels location="top" reversed={reversed}/>    
             {/* 盤面 + 左側の段表示 */}
             {ranks.flatMap(rank => {
                 const cells = files.map(file => {

@@ -5,7 +5,7 @@
 .board {
   display: grid;
   grid-template-columns: 20px repeat(9, 35px) 20px;
-  grid-template-rows: 20px repeat(9, 35px);
+  grid-template-rows: 12px repeat(9, 35px) 12px;
 
 }
 
@@ -28,13 +28,13 @@
 }
 .fileLabel {
   display: grid;
-  font-size: 12px;
+  font-size: 8px;
 }
 
 .rankLabel {
   display: grid;
   align-items: center;
-  font-size: 12px;
+  font-size: 8px;
 
   /* 少し余白 */
 }
