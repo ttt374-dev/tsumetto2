@@ -44,7 +44,7 @@ export default function HandView({ hand, owner }: { hand: Hand, owner: Player })
     const isSelected = (pieceType: PieceType, owner: Player) => {
         return selection.type === "hand" &&
             selection.pieceType === pieceType &&
-            owner === userSide && sideToMove === userSide
+            owner === sideToMove
 
     }
     const pieceTypes: PieceType[] = ["rook", "bishop", "gold", "silver", "knight", "lance", "pawn"]

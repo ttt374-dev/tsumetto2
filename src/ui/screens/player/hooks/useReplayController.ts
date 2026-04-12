@@ -2,12 +2,11 @@ import { useRef } from "react"
 
 import { useReplayStore } from "@/ui/screens/player/store/useReplayStore"
 
-export function useReplayController(){
+export function useReplayController() {
     const replay = useReplayStore()
     const turnIdRef = useRef(0)
 
-    const advanceTurn = () => {
-        replay.advancePly()
+    const advanceOpponentPly = () => {
         replay.startAnimation()
         const currentId = ++turnIdRef.current
         setTimeout(() => {
@@ -17,6 +16,10 @@ export function useReplayController(){
             replay.endAnimation()
         }, 500)
     }
+    const advanceTurn = () => {
+        replay.advancePly()
+        advanceOpponentPly()
+    }
 
-    return { advanceTurn }
+    return { advanceTurn, advanceOpponentPly }
 }

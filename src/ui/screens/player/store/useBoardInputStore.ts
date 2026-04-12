@@ -40,7 +40,7 @@ export const useBoardInputStore = create<BoardInputStore>((set, get) => ({
         switch(selection.type){
             case "none":
                 if (!piece) return null
-                if (piece.owner !== userplayer || position.sideToMove != userplayer) return null
+                if (piece.owner !== position.sideToMove) return null
                 set({ selection: {type: "board", square: sq}})
                 return null            
                 
@@ -49,7 +49,7 @@ export const useBoardInputStore = create<BoardInputStore>((set, get) => ({
                     set({ selection: { type: "none" } })    
                     return null 
                 }
-                if (piece?.owner === userplayer) return null
+                if (piece?.owner === position.sideToMove) return null
                 return { type: "move", from: selection.square, to: sq, promote: false }
             case "hand":  // 持ち駒→盤面
                 set({ selection: { type: "none" } })
