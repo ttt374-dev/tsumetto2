@@ -18,6 +18,8 @@ export default function BoardView({ reversed}: { reversed: boolean}) {
     
     const { board } = position
     const selection = useBoardInputStore(s => s.selection)
+    const userSide = useGameStore(s=>s.userSide)
+    
     const ranks = reversed
         ? [...Array(9)].map((_, i) => 9 - i) // 9 → 1
         : [...Array(9)].map((_, i) => i + 1) // 1 → 9
@@ -25,8 +27,6 @@ export default function BoardView({ reversed}: { reversed: boolean}) {
     const files = reversed
         ? [...Array(9)].map((_, i) => i + 1) // 1 → 9
         : [...Array(9)].map((_, i) => 9 - i) // 9 → 1
-    
-       
     
     const dispatch = useGameStore(s=>s.dispatch)
     const promotionPending = useGameStore(s=>s.promotionPending)    
@@ -37,12 +37,14 @@ export default function BoardView({ reversed}: { reversed: boolean}) {
         const intent = clickSquare(new Square(file, rank))
         if (!intent) return
         const intentResult = resolveIntent(position, intent)        
+        
+        const isUserTurn = position.sideToMove === userSide
         const ctx = createDecideGameEventContext()
-        const decision = decideGameEvent({intentResult, ...ctx})
+        
+        const decision = decideGameEvent({intentResult, isUserTurn, ...ctx})
         switch (decision.type) {
             case "invalidMove":
                 return
-
             case "promotionPending":
                 promotionPending(decision.pendingPromotion)
                 return

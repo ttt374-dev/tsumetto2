@@ -1,5 +1,5 @@
 import { type IntentResult } from "@/domain/game/intentResolver"
-import { Move } from "@/domain/kif/entity"
+import { Move, type Player } from "@/domain/kif/entity"
 import { useGameStore, type GameEvent, type PendingPromotion } from "@/ui/screens/player/store/useGameStore"
 import { useReplayStore } from "@/ui/screens/player/store/useReplayStore";
 import { useTimerStore } from "@/ui/screens/player/store/useTimerStore";
@@ -11,9 +11,9 @@ type GameDecision =
 
 //////////////////////////////////
 export function decideGameEvent(props: { intentResult: IntentResult, nextMove: Move, isLastMove: boolean,
-     ply: number, elapsedSec: number }
-): GameDecision {    
-
+     ply: number, elapsedSec: number, isUserTurn: boolean }
+): GameDecision {
+    console.log("decide event", props)
     if (props.intentResult.type === "invalidMove") return { 
         type: "invalidMove",
         reason: props.intentResult.reason
@@ -24,19 +24,23 @@ export function decideGameEvent(props: { intentResult: IntentResult, nextMove: M
             pendingPromotion: props.intentResult.pendingPromotion
         }
     }    
-    //console.log("handle res", res, remainingMoves)
-    const event = deriveGameEvent(props.intentResult.move, props.nextMove, props.isLastMove, props.ply, props.elapsedSec)
+    const event = deriveGameEvent(props.intentResult.move, props.nextMove, props.isLastMove, props.ply, props.elapsedSec, props.isUserTurn)
     return { type: "event", event}
 }
 
-function deriveGameEvent(move: Move, nextMove: Move, isLastMove: boolean, ply: number, elapsedSec: number): GameEvent {
+function deriveGameEvent(move: Move, nextMove: Move, isLastMove: boolean, ply: number, elapsedSec: number, isUserTurn: boolean): GameEvent {
+    console.log("is userturn", isUserTurn)
     if (!move.equals(nextMove)){
         return { type: "MISTAKE", ply, elapsedSec}
     }
     if (isLastMove){
         return { type: "SOLVE", ply, elapsedSec}
     } else {
-        return { type: "ADVANCE_TURN", ply, elapsedSec}
+        if (isUserTurn){
+            return { type: "ADVANCE_TURN", ply, elapsedSec}
+        } else { 
+            return { type: "ADVANCE_PLY", ply, elapsedSec}
+        }
     }
 }
 

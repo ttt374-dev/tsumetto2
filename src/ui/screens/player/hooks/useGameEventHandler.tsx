@@ -58,6 +58,12 @@ export function useGameEventHandler(problem: Problem,
             case "MISTAKE":
                 toast({message: `mistake: ${gameState.mistakes}`})
                 break;
+            case "ADVANCE_PLY":
+                replay.advancePly()
+                break;
+            case "ADVANCE_OPPONENT_PLY":
+                replayCtrl.advanceOpponentPly()
+                break
             case "ADVANCE_TURN":
                 replayCtrl.advanceTurn()
                 break;
