@@ -139,15 +139,18 @@ export function inDays(date: number, now: number = Date.now()): number {
 export function LearningSection(props: {
     learning: LearningState
 }) {
-    const vm = toLearningStateViewData(props.learning)
+    const vd = toLearningStateViewData(props.learning)
     return (
         <Stack direction="row" justifyContent="flex-end" spacing={2}>
             <Box>
-                {vm.nextReviewedInText}
+                {vd.masteryLevelText}
+            </Box>
+            <Box>
+                {vd.nextReviewedInText}
             </Box>
 
             <Box>
-                {vm.performaceText}
+                {vd.performaceText}
             </Box>
         </Stack>
 

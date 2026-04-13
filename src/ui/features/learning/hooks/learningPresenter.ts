@@ -1,4 +1,4 @@
-import type { LearningState } from "@/domain/learning/entity/LearningState";
+import { MasteryLevelTextMapping, type LearningState } from "@/domain/learning/entity/LearningState";
 import { formatDuration } from "@/ui/common/formatter";
 
 
@@ -10,7 +10,8 @@ export function toLearningStateViewData(state: LearningState) {
         easeFactorText: state.easeFactor.toFixed(2),
 
         nextReviewedInText: formatDuration(state.nextReviewedAt - Date.now()),
-        performaceText: `[${state.score.toFixed(1)}](${state.solvedCount}:${state.failedCount})`
+        performaceText: `[${state.score.toFixed(1)}](${state.solvedCount}:${state.failedCount})`,
+        masteryLevelText: MasteryLevelTextMapping[state.masteryLevel],
     }
 
 }

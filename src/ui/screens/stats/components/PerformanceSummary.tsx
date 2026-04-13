@@ -38,9 +38,9 @@ export default function PerformaceSummary(){
     }
     return (
         <>
-        <Box>
-            パフォーマンス・summary
-        </Box>
+        <h4>
+            パフォーマンス・サマリー
+        </h4>
         <TableContainer component={Paper}>
             <Table>
                 <TableHead>

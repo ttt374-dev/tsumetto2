@@ -39,5 +39,6 @@ export function aggregateLearningStates(
         intervalDays: intervalSum / count,
         nextReviewedAt: nextReviewedAtMin,
         easeFactor: easeFactorSum / count,
+        masteryLevel: "learning"
     }
 }

@@ -32,6 +32,9 @@ export default function ProblemLearningInfoPanel(props: {
                 <Box>
                     { learningStateVd.nextReviewedInText}
                 </Box>
+                <Box>
+                    { learningStateVd.masteryLevelText }
+                </Box>
 
             </>}
 

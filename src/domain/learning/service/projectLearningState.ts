@@ -1,6 +1,6 @@
 
 import { deriveAnswerQuality } from "@/domain/learning/entity/AnswerQuality"
-import { DefaultLearningState, type LearningState } from "@/domain/learning/entity/LearningState"
+import { DefaultLearningState, type LearningState, type MasteryLevel } from "@/domain/learning/entity/LearningState"
 import { calculateScore } from "@/domain/learning/service/calculateScore"
 import type { ProblemId } from "@/domain/problem/entity/Problem"
 import type { ReviewEvent } from "@/domain/review/ReviewEvent"
@@ -37,6 +37,7 @@ function applyReviewedEvent(prev: LearningState, event: ReviewEvent): LearningSt
     let intervalDays = prev.intervalDays
     let solvedCount = prev.solvedCount
     let failedCount = prev.failedCount
+    //let masteryLevel = prev.masteryLevel
 
     const quality = deriveAnswerQuality(event.solvedResult)
 
@@ -66,6 +67,13 @@ function applyReviewedEvent(prev: LearningState, event: ReviewEvent): LearningSt
     const score = updateAverage(prev.attemptCount, prev.score, newScore).averageScore
 
     //console.log("last answeredat", event.at)
+    // mastered
+    let masteryLevel = prev.masteryLevel
+    if (intervalDays > 7 && easeFactor > 2.5){
+        masteryLevel = "mastered"
+    } else {
+        masteryLevel = "learning"
+    }
 
     return {
         attemptCount: prev.attemptCount + 1,
@@ -73,6 +81,7 @@ function applyReviewedEvent(prev: LearningState, event: ReviewEvent): LearningSt
         score, easeFactor,
         nextReviewedAt,
         intervalDays,
+        masteryLevel,
         lastAnsweredAt: event.at,
         lastSolvedResult: event.solvedResult,
     }

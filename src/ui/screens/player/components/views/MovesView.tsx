@@ -28,7 +28,7 @@ export default function MovesView({ moves: moves, currentPlyIndex, onMoveToPly }
         const el = itemRefs.current[currentPlyIndex];
         if (el) {
             el.scrollIntoView({
-                block: "nearest",   // ← 上下どちらか近い方へ
+                block: "center", 
                 behavior: "smooth", // ← 再生中は外してもOK
             });
         }

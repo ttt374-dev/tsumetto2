@@ -2,7 +2,7 @@ import { PieceTypeToKanjiMapping, type Hand, type PieceType, type Player } from 
 import { useBoardInputStore } from "@/ui/screens/player/store/useBoardInputStore"
 import { formatPlayer } from "../../views/MovesView"
 import styles from "./BoardView.module.css";
-import { Box } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 import { useCurrentPosition } from "@/ui/screens/player/store/useGameStore";
 
 function HandPieceView({ pieceType, selected, count, owner, onClick }: { 
@@ -38,8 +38,7 @@ export default function HandView({ hand, owner }: { hand: Hand, owner: Player })
     const pieceTypes: PieceType[] = ["rook", "bishop", "gold", "silver", "knight", "lance", "pawn"]
     
     return (
-        <Box >
-            { sideToMove === owner && "〇"}
+        <Stack direction="row" justifyContent={"center"} >
             {formatPlayer(owner)}
             { hand.isEmpty() && "なし"}
             {
@@ -51,8 +50,16 @@ export default function HandView({ hand, owner }: { hand: Hand, owner: Player })
                         key={`handpiece-${owner}-${pieceType}`}
                         pieceType={pieceType} selected={isSelected(pieceType, owner)} count={count} owner={owner}
                         onClick={() => handleHandpieceClick(pieceType)}/>)
-                })
+            })
             }
-        </Box>
+            {sideToMove === owner &&
+
+                <Box sx={{
+        position: "absolute",
+        right: 16,
+      }}
+                    justifyContent={"right"}
+                >〇</Box>}
+        </Stack>
     )
 }
