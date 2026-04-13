@@ -47,10 +47,14 @@ function applyReviewedEvent(prev: LearningState, event: ReviewEvent): LearningSt
         
     } else {
         solvedCount++
-        intervalDays =
-            (intervalDays < 1) ? 1 :
-                (intervalDays === 1) ? 3 :
-                    Math.min(Math.round(intervalDays * prev.easeFactor), MAX_INTERVAL_DAYS)
+        if (prev.lastAnsweredAt && (event.at - prev.lastAnsweredAt) < 60 * 10 * 1000){
+            ; // noop: 前回から１０分経ってないとおきはパラメータは変えない
+        } else {
+            intervalDays =
+                (intervalDays < 1) ? 1 :
+                    (intervalDays === 1) ? 3 :
+                        Math.min(Math.round(intervalDays * prev.easeFactor), MAX_INTERVAL_DAYS)
+        }
     }
     const easeFactor = Math.max(
         1.3,

@@ -89,7 +89,7 @@ export const LibraryListItem = function LibraryListItem({ id, onItemClick,
                             <Typography variant="subtitle1" fontWeight="bold" flex={10}  color="text.primary">
                                 {problem.title}
                             </Typography>
-                            <Typography variant="body2" flex={3}>
+                            <Typography variant="body2" flex={2}>
                                 { vdProblem.typeText}
                                 { vdProblem.plyLengthText}
                             </Typography>
@@ -143,7 +143,7 @@ export function LearningSection(props: {
     return (
         <Stack direction="row" justifyContent="flex-end" spacing={2}>
             <Box>
-                {vm.nextReviewedAtText}
+                {vm.nextReviewedInText}
             </Box>
 
             <Box>
