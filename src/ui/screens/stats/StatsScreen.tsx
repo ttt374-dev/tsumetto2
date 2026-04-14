@@ -5,7 +5,7 @@ import { IntervalDaysStats } from "./components/IntervalDaysStats";
 import { ProblemStatsTable } from "./components/ProblemStatsTable";
 import PerformaceSummary from "@/ui/screens/stats/components/PerformanceSummary";
 import { useLearningRecordStore } from "@/ui/features/learning/hooks/useLearningRecordStore";
-import { getLearningStatus, type MasteryStatus } from "@/domain/learning/entity/LearningState";
+import { getMasteryStatus, type MasteryStatus } from "@/domain/learning/entity/LearningState";
 
 export function MasterySummary(){
     const records = useLearningRecordStore(s=>s.stateRecords)
@@ -13,7 +13,7 @@ export function MasterySummary(){
         "unlearned": 0, "learning": 0, "young": 0, "matured": 0, "relearning": 0,}
 
     Object.values(records).map(l=>{
-        data[getLearningStatus(l)]++
+        data[getMasteryStatus(l)]++
     })
 
     return (<>

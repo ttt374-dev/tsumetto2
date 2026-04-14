@@ -1,14 +1,6 @@
 import type { ReviewReviewedEvent } from "@/domain/review/ReviewEvent"
 
 export type MasteryStatus = | "unlearned" | "learning" | "young" | "matured" | "relearning"
-export const MasteryLevelTextMapping: Record<MasteryStatus, string> = {
-    "unlearned": "未習熟",
-    "learning": "習熟中",
-    "matured": "復習（習熟期）",
-    "young": "復習（未習熟期）",
-    "relearning": "再習得中"
-
-}
 export type LearningQueue = "new" | "learn" | "relearn" | "review"
 export const LearningStep = [1, 10, 60]
 
@@ -32,7 +24,7 @@ export type LearningState = {
 
     lastEvent?: ReviewReviewedEvent
 }
-
+//////////////////////////////////////
 export const DefaultLearningState: LearningState = {
     stats: {
         attemptCount: 0,
@@ -52,18 +44,13 @@ export const DefaultLearningState: LearningState = {
     lastEvent: undefined,
 }
 
-export function getLearningStatus(state: LearningState): MasteryStatus{
-    switch(state.schedulingState.queue){
-        case "new":
-            return "unlearned"
-        case "learn":
-            return "learning"
-        case "review":
-            if (state.schedulingState.intervalDays < 21)
-                return "young"
-            else
-                return "matured"
-        case "relearn":
-            return "relearning"
-    }
+export function getMasteryStatus(state: LearningState): MasteryStatus {
+    const { queue, intervalDays } = state.schedulingState
+
+    if (queue === "new") return "unlearned"
+    if (queue === "learn") return "learning"
+    if (queue === "relearn") return "relearning"
+
+    // review
+    return intervalDays < 21 ? "young" : "matured"
 }
