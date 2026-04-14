@@ -24,8 +24,8 @@ export class ProblemStats {
 
             solved += learning.stats.solvedCount
             failed += learning.stats.failedCount
-            easeFactor += learning.easeFactor
-            intervalDays += learning.intervalDays
+            easeFactor += learning.schedulingState.easeFactor
+            intervalDays += learning.schedulingState.intervalDays
             score += learning.score
         }
         easeFactor = (ids.length > 0) ? easeFactor/ids.length : 0

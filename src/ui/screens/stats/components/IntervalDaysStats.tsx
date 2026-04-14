@@ -58,7 +58,7 @@ function buildIntervalHistogramBinned(
         if (!learning) return
 
         //const days = learning.intervalDays
-        const days = (learning.nextReviewedAt - Date.now()) / (24*60*60*1000)
+        const days = (learning.schedulingState.nextReviewedAt - Date.now()) / (24*60*60*1000)
 
         const binIndex = bins.findIndex(
             b => days >= b.min && days <= b.max

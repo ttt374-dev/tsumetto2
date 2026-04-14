@@ -39,14 +39,15 @@ function buildOverdueHistogram(
 
     ids.forEach(id => {
         const record = learningRecords[id]
-
-        if (!record?.nextReviewedAt) {
+        if (!record) return
+        
+        if (!record.schedulingState.nextReviewedAt) {
             noDueDate++
             return
         }
 
         const diffDays = Math.floor(
-            (now.getTime() - new Date(record.nextReviewedAt).getTime()) /
+            (now.getTime() - new Date(record.schedulingState.nextReviewedAt).getTime()) /
             (1000 * 60 * 60 * 24)
         )
 
@@ -74,10 +75,10 @@ function getOverdueItems(
     return ids
         .map(id => {
             const record = learningRecords[id]
-            if (!record?.nextReviewedAt) return null
+            if (!record?.schedulingState.nextReviewedAt) return null
 
             const diffDays = Math.floor(
-                (now.getTime() - new Date(record.nextReviewedAt).getTime()) /
+                (now.getTime() - new Date(record.schedulingState.nextReviewedAt).getTime()) /
                 (1000 * 60 * 60 * 24)
             )
 
@@ -86,7 +87,7 @@ function getOverdueItems(
             return {
                 id,
                 overdueDays: diffDays,
-                dueDate: new Date(record.nextReviewedAt),
+                dueDate: new Date(record.schedulingState.nextReviewedAt),
             }
         })
         .filter((v): v is OverdueItem => v !== null)

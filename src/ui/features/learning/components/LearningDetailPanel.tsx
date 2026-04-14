@@ -29,7 +29,7 @@ export function LearningDetailPanel( { learningState, onResetLearning} : {
 
             <Stack direction="row" justifyContent="space-between">
                 <Box>インターバル</Box>
-                <Box>{learningState.intervalDays}</Box>
+                <Box>{learningState.schedulingState.intervalDays}</Box>
             </Stack>
 
             <Stack direction="row" justifyContent="space-between">

@@ -33,19 +33,19 @@ function applyReviewedEvent(prev: LearningState, event: ReviewEvent): LearningSt
     if (event.type !== "reviewed") return prev
 
     //let easeFactor: number
-    let intervalDays = prev.intervalDays
+    let intervalDays = prev.schedulingState.intervalDays
     let solvedCount = prev.stats.solvedCount
     let failedCount = prev.stats.failedCount
-    let stepIndex = prev.stepIndex
-    let queue = prev.queue
+    let stepIndex = prev.schedulingState.stepIndex
+    let queue = prev.schedulingState.queue
     //let masteryLevel = prev.masteryLevel
-    let nextReviewedAt = prev.nextReviewedAt
+    let nextReviewedAt = prev.schedulingState.nextReviewedAt
 
     const quality = deriveAnswerQuality(event.solvedResult)
     const easeFactor = Math.max(
         1.3,
         //easeFactor + 0.1 - (3 - quality) * 0.05
-        prev.easeFactor + (0.1 - (3 - quality) * (0.08 + (3 - quality) * 0.02))
+        prev.schedulingState.easeFactor + (0.1 - (3 - quality) * (0.08 + (3 - quality) * 0.02))
     )
     if (quality <= 2) { // 失敗
         failedCount++
@@ -66,7 +66,7 @@ function applyReviewedEvent(prev: LearningState, event: ReviewEvent): LearningSt
             intervalDays =
                 (intervalDays < 1) ? 1 :
                     (intervalDays === 1) ? 3 :
-                        Math.min(Math.round(intervalDays * prev.easeFactor), MAX_INTERVAL_DAYS)
+                        Math.min(Math.round(intervalDays * prev.schedulingState.easeFactor), MAX_INTERVAL_DAYS)
             nextReviewedAt = event.at + intervalDays * 60 * 60 * 24 * 1000
         }
     }
@@ -87,15 +87,18 @@ function applyReviewedEvent(prev: LearningState, event: ReviewEvent): LearningSt
     return {
         stats: { 
             attemptCount: prev.stats.attemptCount + 1,
-            solvedCount, 
+            solvedCount,
             failedCount,
         },
-        score, easeFactor,
-        nextReviewedAt,
-        intervalDays,
+        schedulingState: {
+            easeFactor,
+            nextReviewedAt,
+            intervalDays,
 
-        queue, stepIndex,
-        masteryLevel,
+            queue, stepIndex,
+
+        },
+        masteryLevel, score, 
         lastEvent: event,
     }
 }

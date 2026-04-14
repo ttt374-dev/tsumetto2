@@ -31,18 +31,10 @@ type MasteryState = {
 
 export type LearningState = {
     stats: LearningStats,
+    schedulingState: SchedulingState,
 
-    intervalDays: number,
-    nextReviewedAt: number,
-    easeFactor: number,
-
-    queue: LearningQueue,
-    stepIndex: number,
     masteryLevel: MasteryLevel,
     score: number,
-
-    //lastAnsweredAt?: number,
-    //lastSolvedResult?: SolvedResult
 
     lastEvent?: ReviewReviewedEvent
 }
@@ -53,16 +45,16 @@ export const DefaultLearningState: LearningState = {
         solvedCount: 0,
         failedCount: 0,
     },
-    score: 0,
-    intervalDays: 0,
-    nextReviewedAt: Date.now(),
-    easeFactor: 2.5,
+    schedulingState: {
+        intervalDays: 0,
+        nextReviewedAt: Date.now(),
+        easeFactor: 2.5,
 
-    queue: "new",
-    stepIndex: 0,
+        queue: "new",
+        stepIndex: 0,
+    },
     masteryLevel: "unlearned",
-
-
+    score: 0,
 
     //lastAnsweredAt: undefined,
     //lastSolvedResult: undefined,

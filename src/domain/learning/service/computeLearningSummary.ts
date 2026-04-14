@@ -18,8 +18,8 @@ export function computeLearningSummary(ids: ProblemId[], learningRecords: Record
         attemptCount += s.stats.attemptCount
         solvedCount += s.stats.solvedCount
         failedCount += s.stats.failedCount
-        sumEaseFactor += s.easeFactor
-        sumIntervalDays += s.intervalDays
+        sumEaseFactor += s.schedulingState.easeFactor
+        sumIntervalDays += s.schedulingState.intervalDays
         sumScore += s.score
     }
 

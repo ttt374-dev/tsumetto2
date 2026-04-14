@@ -33,8 +33,8 @@ problems: Problem[],
                 vB = b.title;
                 break;
             case "nextReviewedAt":
-                vA = la?.nextReviewedAt ?? 0;
-                vB = lb?.nextReviewedAt ?? 0;
+                vA = la?.schedulingState.nextReviewedAt ?? 0;
+                vB = lb?.schedulingState.nextReviewedAt ?? 0;
                 break;
             case "lastAnsweredAt":
                 vA = la?.lastEvent?.at ?? 0;

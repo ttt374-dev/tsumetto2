@@ -31,8 +31,8 @@ export const applyFilter = (
         // ミッション対象
         (_problem, learning) =>
             !queryState.dueForReviewOnly ||
-            learning?.nextReviewedAt === undefined ||
-            learning.nextReviewedAt <= now,
+            learning?.schedulingState.nextReviewedAt === undefined ||
+            learning.schedulingState.nextReviewedAt <= now,
 
         // スターつきのみ
         (problem, _) =>
