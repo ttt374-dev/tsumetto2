@@ -34,8 +34,8 @@ function applyReviewedEvent(prev: LearningState, event: ReviewEvent): LearningSt
 
     //let easeFactor: number
     let intervalDays = prev.intervalDays
-    let solvedCount = prev.solvedCount
-    let failedCount = prev.failedCount
+    let solvedCount = prev.stats.solvedCount
+    let failedCount = prev.stats.failedCount
     let stepIndex = prev.stepIndex
     let queue = prev.queue
     //let masteryLevel = prev.masteryLevel
@@ -73,7 +73,7 @@ function applyReviewedEvent(prev: LearningState, event: ReviewEvent): LearningSt
 
     //const nextReviewedAt = event.at + intervalDays * DAY
     const newScore = calculateScore(event.solvedResult)
-    const score = updateAverage(prev.attemptCount, prev.score, newScore).averageScore
+    const score = updateAverage(prev.stats.attemptCount, prev.score, newScore).averageScore
 
     //console.log("last answeredat", event.at)
     // mastered
@@ -85,8 +85,11 @@ function applyReviewedEvent(prev: LearningState, event: ReviewEvent): LearningSt
     }
 
     return {
-        attemptCount: prev.attemptCount + 1,
-        solvedCount, failedCount,
+        stats: { 
+            attemptCount: prev.stats.attemptCount + 1,
+            solvedCount, 
+            failedCount,
+        },
         score, easeFactor,
         nextReviewedAt,
         intervalDays,

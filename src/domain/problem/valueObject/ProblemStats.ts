@@ -22,8 +22,8 @@ export class ProblemStats {
             const learning = learningRecords[id]
             if (!learning) continue
 
-            solved += learning.solvedCount
-            failed += learning.failedCount
+            solved += learning.stats.solvedCount
+            failed += learning.stats.failedCount
             easeFactor += learning.easeFactor
             intervalDays += learning.intervalDays
             score += learning.score

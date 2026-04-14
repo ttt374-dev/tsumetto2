@@ -15,9 +15,9 @@ export function computeLearningSummary(ids: ProblemId[], learningRecords: Record
         const s = learningRecords[id]
         if (!s) continue
 
-        attemptCount += s.attemptCount
-        solvedCount += s.solvedCount
-        failedCount += s.failedCount
+        attemptCount += s.stats.attemptCount
+        solvedCount += s.stats.solvedCount
+        failedCount += s.stats.failedCount
         sumEaseFactor += s.easeFactor
         sumIntervalDays += s.intervalDays
         sumScore += s.score

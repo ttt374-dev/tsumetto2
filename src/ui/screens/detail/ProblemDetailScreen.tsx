@@ -17,7 +17,7 @@ import { LearningDetailPanel } from "../../features/learning/components/Learning
 import { ProblemTypeFilterControl } from "@/ui/features/problem/query/ProblemTypeFilterControl";
 import { useReviewEventStore } from "@/ui/features/learning/hooks/useReviewEventStore";
 import { projectLearningState } from "@/domain/learning/service/projectLearningState";
-import { aggregateLearningStates } from "@/domain/learning/service/aggregateLearningState";
+
 
 export default function ProblemDetailScreen(){
     const { id } = useParams<{ id: string }>()
@@ -37,8 +37,7 @@ export function ProblemDetailContent( { problem }: { problem: Problem}) {
     const events = useReviewEventStore(s=>s.eventLog).filter(s=>s.problemId===problem.id)
     const records = projectLearningState(events)
     const learningState = records[problem.id]
-    //const learningState = aggregateLearningStates(records)
-
+    
     const handleLearningReset = () => {
         if (!window.confirm("学習データをクリアしますか？")) return
         resetLearning()

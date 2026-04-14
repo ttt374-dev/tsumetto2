@@ -18,7 +18,7 @@ export function ProblemStatsTable() {
     console.log("due review", dueForReviewOnly)
 
     // 総合
-    const unanswered = activeProblems.filter(p => { learningRecords[p.id]?.attemptCount > 0 })
+    const unanswered = activeProblems.filter(p => { learningRecords[p.id]?.stats.attemptCount > 0 })
     const idsMap: Record<string, Record<string, Problem[]>> = {}
 
     idsMap["general"] =  {

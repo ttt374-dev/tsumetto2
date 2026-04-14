@@ -10,7 +10,7 @@ export function toLearningStateViewData(state: LearningState) {
         easeFactorText: state.easeFactor.toFixed(2),
 
         nextReviewedInText: formatDuration(state.nextReviewedAt - Date.now()),
-        performaceText: `[${state.score.toFixed(1)}](${state.solvedCount}:${state.failedCount})`,
+        performaceText: `[${state.score.toFixed(1)}](${state.stats.solvedCount}:${state.stats.failedCount})`,
         masteryLevelText: MasteryLevelTextMapping[state.masteryLevel],
     }
 

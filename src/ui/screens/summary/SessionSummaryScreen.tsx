@@ -31,7 +31,7 @@ export default function SessionSummaryScreen() {
     const createOnetimeSessionId = () => 
         `REVIEW-ONETIME-SESSION-${v4()}`
     const handleReview = () => {
-        const failedIds = Object.keys(sessionLearningRecords).filter(k => sessionLearningRecords[k].failedCount > 0)
+        const failedIds = Object.keys(sessionLearningRecords).filter(k => sessionLearningRecords[k].stats.failedCount > 0)
         startSession(createOnetimeSessionId(), failedIds)
         navigate(routes.sessionPlay)
     }
@@ -40,7 +40,6 @@ export default function SessionSummaryScreen() {
         navigate(routes.sessionPlay)
     }
     const records = projectLearningState(sessionEventLog)
-    //const learningState = aggregateLearningStates(records)
     const summary = computeLearningSummary(ids, records)
 
     return (

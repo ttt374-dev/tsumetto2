@@ -15,7 +15,7 @@ export const applyFilter = (
         // 未回答のみ
         (_, learning) =>
             !queryState.unansweredOnly ||
-            !(learning && learning.solvedCount + learning.failedCount > 0),
+            !(learning && learning.stats.solvedCount + learning.stats.failedCount > 0),
 
         // 問題タイプ
         (problem, _) =>
