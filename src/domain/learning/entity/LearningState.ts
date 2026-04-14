@@ -4,12 +4,12 @@ export type MasteryStatus = | "unlearned" | "learning" | "young" | "matured" | "
 export type LearningQueue = "new" | "learn" | "relearn" | "review"
 export const LearningStep = [1, 10, 60]
 
-type LearningStats = {
+export type LearningStats = {
     attemptCount: number
     solvedCount: number
     failedCount: number
 }
-type SchedulingState = {
+export type SchedulingState = {
     queue: LearningQueue
     intervalDays: number
     nextReviewedAt: number
