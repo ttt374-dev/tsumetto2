@@ -1,8 +1,8 @@
 import { deriveAnswerQuality } from "@/domain/learning/entity/AnswerQuality"
-import { DefaultLearningState, LearningStep, type LearningState, type LearningStats, type SchedulingState } from "@/domain/learning/entity/LearningState"
+import { createDefaultLearningState, LearningStep, type LearningState, type LearningStats, type SchedulingState } from "@/domain/learning/entity/LearningState"
 import { calculateScore } from "@/domain/learning/service/calculateScore"
 import type { ProblemId } from "@/domain/problem/entity/Problem"
-import type { ReviewEvent } from "@/domain/review/ReviewEvent"
+import type { ReviewEvent, ReviewReviewedEvent } from "@/domain/review/ReviewEvent"
 
 export function projectLearningState(events: ReviewEvent[]): Record<ProblemId, LearningState> {
     const records: Record<ProblemId, LearningState> = {}
@@ -11,14 +11,13 @@ export function projectLearningState(events: ReviewEvent[]): Record<ProblemId, L
         const pid = event.problemId
         switch (event.type) {
             case "reviewed": {
-                const prev = records[pid] ??
-                    { ...DefaultLearningState }
+                const prev = records[pid] ?? createDefaultLearningState()                 
                 records[pid] = applyReviewedEvent(prev, event)
                 break
             }
             case "reset": {
                 // 👇 その problem だけ初期化
-                records[pid] = structuredClone(DefaultLearningState)
+                records[pid] = createDefaultLearningState()
                 break;
             }
         }
@@ -28,9 +27,7 @@ export function projectLearningState(events: ReviewEvent[]): Record<ProblemId, L
 ///////////////////////////////////////////////
 const MAX_INTERVAL_DAYS = 60
 
-function applyReviewedEvent(prev: LearningState, lastEvent: ReviewEvent): LearningState {
-    if (lastEvent.type !== "reviewed") return prev
-    
+function applyReviewedEvent(prev: LearningState, lastEvent: ReviewReviewedEvent): LearningState {   
     const quality = deriveAnswerQuality(lastEvent.solvedResult)
     const stats = updateStats(prev.stats, quality)
     const schedulingState = schedule(prev.schedulingState, quality, lastEvent.at)
@@ -48,12 +45,13 @@ function applyReviewedEvent(prev: LearningState, lastEvent: ReviewEvent): Learni
 //////////////////////////////////
 // helper
 function updateAverage(
-    attemptCount: number,
+    prevAttemptCount: number,
     averageScore: number,
     newScore: number
 ) {
-    const newAttemptCount = attemptCount + 1
-    const newAverage = (averageScore * attemptCount + newScore) / newAttemptCount
+    const newAttemptCount = prevAttemptCount + 1
+
+    const newAverage = newAttemptCount > 0 ? (averageScore * prevAttemptCount + newScore) / newAttemptCount : 0
 
     return {
         attemptCount: newAttemptCount,
@@ -74,6 +72,9 @@ function schedule(prev: SchedulingState, quality: number, now: number): Scheduli
     let { intervalDays, stepIndex, queue, easeFactor } = prev
     let nextReviewedAt = prev.nextReviewedAt
 
+    if (queue === "new") {
+        queue = "learn"
+    }
     easeFactor = Math.max(
         1.3,
         easeFactor + (0.1 - (3 - quality) * (0.08 + (3 - quality) * 0.02))
@@ -83,6 +84,8 @@ function schedule(prev: SchedulingState, quality: number, now: number): Scheduli
         intervalDays = 1
         stepIndex = 0
         if (queue === "review") queue = "relearn"
+        nextReviewedAt = now + LearningStep[0] * 60 * 1000       
+        
     } else {
         if (stepIndex + 1 < LearningStep.length) {
             nextReviewedAt = now + LearningStep[stepIndex] * 60 * 1000

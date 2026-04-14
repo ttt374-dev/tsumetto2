@@ -2,7 +2,7 @@ import type { ReviewReviewedEvent } from "@/domain/review/ReviewEvent"
 
 export type MasteryStatus = | "unlearned" | "learning" | "young" | "matured" | "relearning"
 export type LearningQueue = "new" | "learn" | "relearn" | "review"
-export const LearningStep = [1, 10, 60]
+export const LearningStep = [1, 10, 60*12]
 
 export type LearningStats = {
     attemptCount: number
@@ -25,23 +25,24 @@ export type LearningState = {
     lastEvent?: ReviewReviewedEvent
 }
 //////////////////////////////////////
-export const DefaultLearningState: LearningState = {
-    stats: {
-        attemptCount: 0,
-        solvedCount: 0,
-        failedCount: 0,
-    },
-    schedulingState: {
-        intervalDays: 0,
-        nextReviewedAt: Date.now(),
-        easeFactor: 2.5,
+export function createDefaultLearningState(now: number = Date.now()): LearningState {
+    return {
+        stats: {
+            attemptCount: 0,
+            solvedCount: 0,
+            failedCount: 0,
+        },
+        schedulingState: {
+            intervalDays: 0,
+            nextReviewedAt: now,
+            easeFactor: 2.5,
 
-        queue: "new",
-        stepIndex: 0,
-    },
-    score: 0,
-
-    lastEvent: undefined,
+            queue: "new",
+            stepIndex: 0,
+        },
+        score: 0,
+        lastEvent: undefined,
+    }
 }
 
 export function getMasteryStatus(state: LearningState): MasteryStatus {
