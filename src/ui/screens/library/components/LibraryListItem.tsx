@@ -143,7 +143,7 @@ export function LearningSection(props: {
     return (
         <Stack direction="row" justifyContent="flex-end" spacing={2}>
             <Box>
-                {vd.masteryLevelText}
+                {vd.masteryStatusText}
             </Box>
             <Box>
                 {vd.nextReviewedInText}

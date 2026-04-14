@@ -1,6 +1,6 @@
 
 import { deriveAnswerQuality } from "@/domain/learning/entity/AnswerQuality"
-import { DefaultLearningState, LearningStep, type LearningState, type MasteryLevel } from "@/domain/learning/entity/LearningState"
+import { DefaultLearningState, LearningStep, type LearningState} from "@/domain/learning/entity/LearningState"
 import { calculateScore } from "@/domain/learning/service/calculateScore"
 import type { ProblemId } from "@/domain/problem/entity/Problem"
 import type { ReviewEvent } from "@/domain/review/ReviewEvent"
@@ -77,12 +77,7 @@ function applyReviewedEvent(prev: LearningState, event: ReviewEvent): LearningSt
 
     //console.log("last answeredat", event.at)
     // mastered
-    let masteryLevel = prev.masteryLevel
-    if (intervalDays > 7 && easeFactor > 2.5){
-        masteryLevel = "mastered"
-    } else {
-        masteryLevel = "learning"
-    }
+    
 
     return {
         stats: { 
@@ -98,7 +93,7 @@ function applyReviewedEvent(prev: LearningState, event: ReviewEvent): LearningSt
             queue, stepIndex,
 
         },
-        masteryLevel, score, 
+        score, 
         lastEvent: event,
     }
 }
