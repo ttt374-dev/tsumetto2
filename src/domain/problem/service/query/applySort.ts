@@ -37,8 +37,8 @@ problems: Problem[],
                 vB = lb?.nextReviewedAt ?? 0;
                 break;
             case "lastAnsweredAt":
-                vA = la?.lastAnsweredAt ?? 0;
-                vB = lb?.lastAnsweredAt ?? 0;
+                vA = la?.lastEvent?.at ?? 0;
+                vB = lb?.lastEvent?.at ?? 0;
                 break;
             case "random":
                 vA = Math.random()

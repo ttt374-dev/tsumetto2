@@ -15,7 +15,7 @@ export function LearningDetailPanel( { learningState, onResetLearning} : {
                 <Box>平均スコア</Box>
                 <Box>{vm.scoreText}</Box>
             </Stack>
-            {learningState.lastAnsweredAt &&
+            {learningState.lastEvent &&
                 <Stack direction="row" justifyContent="space-between">
                     <Box>前回解答日</Box>
                     <Box>{vm.lastAnsweredAtText}</Box>
