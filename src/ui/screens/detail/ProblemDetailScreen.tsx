@@ -1,5 +1,6 @@
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import DeleteIcon from '@mui/icons-material/Delete';
+import PauseIcon from "@mui/icons-material/Pause"
 import { Box, Button, Divider, IconButton, Stack, TextField } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -55,6 +56,9 @@ export function ProblemDetailContent( { problem }: { problem: Problem}) {
         save()
         navigate(routes.back)
     }
+    const handleSuspend = () => {
+
+    }
     const onStartPlay = (id: ProblemId) => 
         navigate(routes.player(id))
 
@@ -73,6 +77,9 @@ export function ProblemDetailContent( { problem }: { problem: Problem}) {
                          sx={{color: "white"}}>
                             <PlayArrowIcon />
                         </IconButton>}
+                    <IconButton onClick={handleSuspend} sx={{color: "white"}}>
+                        <PauseIcon/>
+                    </IconButton>
                     <IconButton onClick={handleDeleteClick}  sx={{color: "white"}}>
                         <DeleteIcon />
                     </IconButton>

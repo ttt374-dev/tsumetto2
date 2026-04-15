@@ -6,11 +6,11 @@ export function useStarToggleButton(id: ProblemId, updateStore: boolean = true){
     const problemToggleStar = useProblemStore(s=>s.toggleStar)
     const problem = useProblemStore(s=>s.byId[id])
      
-    const [starred, setStarred] = useState(problem?.starred ?? false)
+    const [starred, setStarred] = useState(problem?.isStarred ?? false)
 
     useEffect(()=>{
         if (!problem) return
-        setStarred(problem.starred)
+        setStarred(problem.isStarred)
     }, [problem])
     
     const toggleStar = useCallback(async () => {

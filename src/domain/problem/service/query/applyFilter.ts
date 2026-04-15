@@ -37,7 +37,7 @@ export const applyFilter = (
         // スターつきのみ
         (problem, _) =>
             !queryState.starredOnly ||
-            problem.starred,
+            problem.isStarred,
 
         // 手数
         //(e) =>

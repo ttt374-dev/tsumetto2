@@ -15,7 +15,9 @@ export type ProblemData = {
     tags: string[]
     comment: string,
 
-    starred: boolean
+    isStarred: boolean
+    isReferecenOnly: boolean
+    
     createdAt: number
     updatedAt: number
     deletedAt?: number
@@ -31,7 +33,8 @@ function createDefaultValues(): ProblemData {
         tags: [],
         comment: "",
 
-        starred: false,
+        isStarred: false,
+        isReferecenOnly: false,
         createdAt: Date.now(),
         updatedAt: Date.now(),
         deletedAt: undefined
@@ -52,7 +55,8 @@ export class Problem {
         readonly tags: Tags,
         readonly comment: string,
 
-        readonly starred: boolean,
+        readonly isStarred: boolean,
+        readonly isReferenceOnly: boolean,
         readonly createdAt: number,
         readonly updatedAt: number,
         readonly deletedAt?: number,
@@ -76,7 +80,8 @@ export class Problem {
             tags: [...this.tags],
             comment: this.comment,
 
-            starred: this.starred,
+            isStarred: this.isStarred,
+            isReferecenOnly: this.isReferenceOnly,
             createdAt: this.createdAt,
             updatedAt: this.updatedAt,            
             deletedAt: this.deletedAt
@@ -86,7 +91,7 @@ export class Problem {
     static fromDTO(dto: ProblemDTO): Problem {
         return new Problem(dto.id, dto.title, KifData.fromDTO(dto.kifData),            
             dto.type, dto.source, dto.tags, dto.comment,
-            dto.starred, 
+            dto.isStarred, dto.isReferecenOnly,
             dto.createdAt, dto.updatedAt, dto.deletedAt)
     }
     static createFromText(text: string, title: string): Problem | null{
@@ -116,7 +121,7 @@ export class Problem {
     toggleStar(): Problem {
         const r= Problem.fromDTO({
             ...this.toDTO(),
-            starred: !this.starred,
+            isStarred: !this.isStarred,
         })
         //console.log("toggle", r)
         return r
@@ -124,7 +129,7 @@ export class Problem {
     setStarred(starred: boolean): Problem {
         return Problem.fromDTO({
             ...this.toDTO(),
-            starred
+            isStarred: starred
         })
     }
     setTitle(title: string): Problem {

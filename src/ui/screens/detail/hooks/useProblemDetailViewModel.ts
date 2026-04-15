@@ -18,7 +18,7 @@ function toEditDraft(problem: Problem): ProblemEditDraft {
     return {
         title: problem.title,
         tags: problem.tags ?? [],
-        starred: problem.starred,
+        starred: problem.isStarred,
         type: problem.type ?? "standard",
         source: problem.source ?? "",
         comment: problem.comment,

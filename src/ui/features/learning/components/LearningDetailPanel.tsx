@@ -12,6 +12,10 @@ export function LearningDetailPanel( { learningState, onResetLearning} : {
     return (<Paper sx={{ p: 1 }}>
         <Stack>
             <Stack direction="row" justifyContent="space-between">
+                <Box>習熟ステータス</Box>
+                <Box>{vm.masteryStatusText}</Box>
+            </Stack>
+            <Stack direction="row" justifyContent="space-between">
                 <Box>平均スコア</Box>
                 <Box>{vm.scoreText}</Box>
             </Stack>
