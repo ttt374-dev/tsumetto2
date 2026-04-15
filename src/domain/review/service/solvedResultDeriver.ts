@@ -2,17 +2,18 @@ import { projectGameState } from "@/domain/game/gameStateReducer"
 import type { SolvedOutcome, SolvedResult } from "@/domain/review/solvedResult"
 import type { GameEvent, GameState } from "@/ui/screens/player/store/useGameStore"
 
-export function deriveSolvedResult(gameState: GameState, elapsedSec: number): SolvedResult {
+export function deriveOutcome(solvedResult: SolvedResult): SolvedOutcome{
     let outcome: SolvedOutcome
 
-    if (gameState.isSolved) {
-        outcome = gameState.isRevealed ? "failed" : "solved"
+    if (solvedResult.isSolved) {
+        outcome = solvedResult.isRevealed ? "failed" : "solved"
     } else {
-        outcome = !gameState.isRevealed && gameState.mistakes === 0 ? "abandoned" : "failed"
+        outcome = !solvedResult.isRevealed && solvedResult.mistakes === 0 ? "abandoned" : "failed"
     }
-    console.log("derive", outcome, gameState)
+    return outcome
+}
+export function deriveSolvedResult(gameState: GameState, elapsedSec: number): SolvedResult {
     return {
-        outcome,
         mistakes: gameState.mistakes,
         isRevealed: gameState.isRevealed,
         isSolved: gameState.isSolved,

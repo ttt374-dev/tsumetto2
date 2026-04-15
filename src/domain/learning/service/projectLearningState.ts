@@ -3,6 +3,8 @@ import { createDefaultLearningState, LearningStep, type LearningState, type Lear
 import { calculateScore } from "@/domain/learning/service/calculateScore"
 import type { ProblemId } from "@/domain/problem/entity/Problem"
 import type { ReviewEvent, ReviewReviewedEvent } from "@/domain/review/ReviewEvent"
+import { deriveOutcome } from "@/domain/review/service/solvedResultDeriver"
+import type { SolvedResult } from "@/domain/review/solvedResult"
 
 export function projectLearningState(events: ReviewEvent[]): Record<ProblemId, LearningState> {
     const records: Record<ProblemId, LearningState> = {}
@@ -29,11 +31,12 @@ const MAX_INTERVAL_DAYS = 60
 
 function applyReviewedEvent(prev: LearningState, lastEvent: ReviewReviewedEvent): LearningState {   
     const quality = deriveAnswerQuality(lastEvent.solvedResult)
-    const stats = updateStats(prev.stats, quality)
+    const stats = updateStats(prev.stats, lastEvent.solvedResult)
     const schedulingState = schedule(prev.schedulingState, quality, lastEvent.at)
 
     const newScore = calculateScore(lastEvent.solvedResult)
-    const score = updateAverage(prev.stats.attemptCount, prev.score, newScore).averageScore
+    //console.log("score", newScore, prev.score, stats.attemptCount, stats.solvedCount)
+    const score = updateAverage(stats.attemptCount-1, prev.score, newScore).averageScore
 
     return {
         stats,
@@ -58,8 +61,9 @@ function updateAverage(
         averageScore: newAverage,
     }
 }
-function updateStats(prev: LearningStats, quality: number): LearningStats {
-    const isCorrect = quality >= 3
+function updateStats(prev: LearningStats, solvedResult: SolvedResult): LearningStats {
+    const outcome = deriveOutcome(solvedResult)
+    const isCorrect = outcome === "solved"
 
     return {
         attemptCount: prev.attemptCount + 1,
@@ -79,13 +83,12 @@ function schedule(prev: SchedulingState, quality: number, now: number): Scheduli
         1.3,
         easeFactor + (0.1 - (3 - quality) * (0.08 + (3 - quality) * 0.02))
     )
-
-    if (quality <= 2) {
+    //console.log("schedule: failed", quality, queue)
+    if (quality <= 2) {        
         intervalDays = 1
         stepIndex = 0
         if (queue === "review") queue = "relearn"
-        nextReviewedAt = now + LearningStep[0] * 60 * 1000       
-        
+        nextReviewedAt = now + LearningStep[0] * 60 * 1000               
     } else {
         if (stepIndex + 1 < LearningStep.length) {
             nextReviewedAt = now + LearningStep[stepIndex] * 60 * 1000

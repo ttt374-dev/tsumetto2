@@ -1,19 +1,20 @@
 export type SolvedOutcome = "solved" | "failed" | "abandoned" | "unanswered"
 
 export type SolvedResult = {
-    outcome: SolvedOutcome
+    //outcome: SolvedOutcome
     mistakes: number
     isRevealed: boolean
     isSolved: boolean
     elapsedSec: number
 }
 
-export function createDefaultSolvedResult(): SolvedResult {
+export function createDefaultSolvedResult( partial: Partial<SolvedResult> = {}): SolvedResult {
     return {
-        outcome: "unanswered",
+        //outcome: "unanswered",
         mistakes: 0,
         isRevealed: false,
         isSolved: false,
         elapsedSec: 10,
+        ...partial
     }
 }
