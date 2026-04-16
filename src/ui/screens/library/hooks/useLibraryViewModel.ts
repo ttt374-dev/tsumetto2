@@ -39,7 +39,6 @@ export function useLibraryViewModel() {
     
     const problems = useProblemStore(selectActiveProblems)
     const ids = applyQuery(problems, learningRecords, query.state).map(p=>p.id)   
-
     
     const selection = useLibrarySelectionVM(ids)      
     const dialogs = {
@@ -61,7 +60,6 @@ export function useLibraryViewModel() {
                 break;
             case "view":
                 navigate(routes.detail(p.id))
-
         }        
     }, [actionMode, selection.toggleChecked])
     

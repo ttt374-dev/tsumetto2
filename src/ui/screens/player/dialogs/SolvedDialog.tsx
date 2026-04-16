@@ -1,8 +1,7 @@
 import type { LearningState } from "@/domain/learning/entity/LearningState"
-import { deriveOutcome } from "@/domain/review/service/solvedResultDeriver"
 import type { SolvedResult } from "@/domain/review/solvedResult"
-import { formatDuration } from "@/ui/common/formatter"
-import { learningStateLabels } from "@/ui/features/learning/hooks/learningPresenter"
+import { learningStateLabels, toLearningStateViewData } from "@/ui/features/learning/hooks/learningPresenter"
+import { solvedResultLabels, toSolvedResultViewData } from "@/ui/features/learning/hooks/solvedResultPresenter"
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material"
 
 export function SolvedDialog({ open, onClose, onConfirm, solvedResult, learning }: {
@@ -13,9 +12,9 @@ export function SolvedDialog({ open, onClose, onConfirm, solvedResult, learning 
     learning: LearningState | undefined
     
 }) {
-    //console.log("learning", learning)
     const confirmLabel = "確認"
-    const outcome = deriveOutcome(solvedResult)
+    const svd = toSolvedResultViewData(solvedResult)
+    const lvd = learning && toLearningStateViewData(learning)
 
     return (
         <Dialog open={open} onClose={onClose} maxWidth="xl">
@@ -23,14 +22,14 @@ export function SolvedDialog({ open, onClose, onConfirm, solvedResult, learning 
                 詰みました
             </DialogTitle>
             <DialogContent>
-                <Box>結果：{outcome}</Box>
-                <Box>間違い回数：{solvedResult.mistakes}</Box>
-                <Box>解答参照：{solvedResult.isRevealed ? "参照" : "なし"}</Box>
-                <Box>秒数: {solvedResult.elapsedSec}</Box>
+                <Box>{ solvedResultLabels["outcome"]}：{svd.outcome}</Box>
+                <Box>{ solvedResultLabels["mistakes"]}：{svd.mistakes}</Box>
+                <Box>{ solvedResultLabels["revealed"]}：{svd.isRevealed}</Box>
+                <Box>{ solvedResultLabels["elapsedSec"]}:{svd.elapsedSec}</Box>
 
-                {learning && <>
-                    <Box>平均スコア：{learning.score.toFixed(1)}</Box>
-                    <Box>{ learningStateLabels["nextReviewedAt"]}：{formatDuration(learning.schedulingState.nextReviewedAt - Date.now())}</Box>
+                {lvd && <>
+                    <Box>平均スコア：{lvd.score}</Box>
+                    <Box>{ learningStateLabels["nextReviewedAt"]}：{lvd.nextReviewedIn}</Box>
                 </>
                 }
             </DialogContent>

@@ -25,6 +25,7 @@ export type ImportResult =
     | {
         status: "imported"
         problemId: ProblemId
+        importedAt: number
     }
     | {
         status: "skipped"
@@ -104,7 +105,7 @@ export function useImportProblemsUsecase(problemRepo: ProblemRepository) {
             if (!newProblem) { return { status: "failed", message: "parse error" } }
             await problemRepo.add(newProblem)
             console.log("import file", newProblem)
-            return { status: "imported", problemId: newProblem.id }
+            return { status: "imported", problemId: newProblem.id, importedAt: newProblem.createdAt }
         } catch (e) {
             const message = `Failed to import file ${file.name}:`
             console.error(message, e);

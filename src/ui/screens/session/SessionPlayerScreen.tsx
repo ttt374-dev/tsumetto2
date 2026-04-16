@@ -12,12 +12,13 @@ import { useSessionPlayerStatus } from "@/ui/screens/session/hooks/useSessionPla
 import { useSessionCompletion } from "@/ui/screens/session/hooks/useSessionCompletion"
 import { useSessionPlayerTitleMaker } from "@/ui/screens/session/hooks/useSessionPlayerTitleMaker"
 import SessionProblemListDialog from "@/ui/screens/session/SessionProblemListDialog"
+import { AppShell } from "@/ui/common/components/layout/AppShell"
 
 ////////////////////////////////////////////////
 export default function SessionPlayerScreen(){    
     const res = useSessionPlayerStatus()
     
-    if (res.status!=="active") return <>not ready</>
+    if (res.status!=="active") return <AppShell>not ready</AppShell>
     return <SessionPlayerContent problem={res.problem} sessionId={res.sessionId}/>
 }
 function SessionPlayerContent(props: {

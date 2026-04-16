@@ -1,4 +1,4 @@
-import type { Problem, ProblemId } from "../entity/Problem"
+import type { ProblemId } from "../entity/Problem"
 import type { LearningState } from "@/domain/learning/entity/LearningState"
 
 export class ProblemStats {
@@ -14,6 +14,7 @@ export class ProblemStats {
     static create(ids: ProblemId[], learningRecords: Record<ProblemId, LearningState>) {
         let solved = 0
         let failed = 0
+        let attempted = 0
         let easeFactor = 0
         let intervalDays = 0       
         let score = 0
@@ -24,13 +25,14 @@ export class ProblemStats {
 
             solved += learning.stats.solvedCount
             failed += learning.stats.failedCount
+            attempted += learning.stats.attemptCount
             easeFactor += learning.schedulingState.easeFactor
             intervalDays += learning.schedulingState.intervalDays
             score += learning.score
         }
         easeFactor = (ids.length > 0) ? easeFactor/ids.length : 0
         intervalDays = (ids.length > 0) ? intervalDays/ids.length : 0
-        score = (ids.length > 0) ? score/ids.length : 0
+        score = (ids.length > 0) ? score/attempted : 0
         return new ProblemStats(
             ids.length,
             solved,

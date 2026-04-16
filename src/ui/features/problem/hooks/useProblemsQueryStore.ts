@@ -1,6 +1,6 @@
 import { create } from "zustand"
 
-import { DefaultQueryState, type BooleanQueryKey, type MateBucket, type QueryAction, type QueryState, type SortKey } from "@/domain/problem/service/query/QueryState"
+import { DefaultQueryState, type BooleanQueryKey, type MateBucket, type QueryAction, type QueryState, type SortKey, type SortOrder } from "@/domain/problem/service/query/QueryState"
 import { queryReducer } from "@/domain/problem/service/query/queryReducer"
 import type { ProblemType } from "@/domain/problem/entity/ProblemType"
 
@@ -11,6 +11,7 @@ type QueryStore = {
     // ---- convenience API ----
     setAll: (payload: Partial<QueryState>) => void
     setSortKey: (key: SortKey) => void
+    setSortOrder: (order: SortOrder) => void
     toggleSortOrder: () => void
 
     setText: (text?: string) => void
@@ -43,6 +44,9 @@ export const useProblemsQueryStore = create<QueryStore>((set, get) => ({
 
     setSortKey: (key) =>
         get().dispatch({ type: "SET_SORT_KEY", key }),
+
+    setSortOrder: (order) =>
+        get().dispatch({ type: "SET_SORT_ORDER", order }),
 
     toggleSortOrder: () =>
         get().dispatch({ type: "TOGGLE_SORT_ORDER" }),

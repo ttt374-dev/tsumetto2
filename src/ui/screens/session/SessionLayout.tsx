@@ -11,15 +11,15 @@ export default function SessionLayout() {
     useEffect(() => {
         switch (phase) {
             case "idle":
-                navigate(routes.mission)
+                navigate(routes.mission, { replace: true})
                 //<Navigate to={routes.mission} />
                 break;
             case "playing":
-                navigate(routes.sessionPlay)
+                navigate(routes.sessionPlay, { replace: true})
                 //<Navigate to={routes.sessionPlay} />
                 break
             case "finished":
-                navigate(routes.sessionSummary)
+                navigate(routes.sessionSummary, { replace: true})
                 //<Navigate to={routes.sessionSummary} />
                 break
         }

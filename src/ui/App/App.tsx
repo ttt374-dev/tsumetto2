@@ -55,8 +55,7 @@ export const theme = createTheme({
 function App() {
     const repos = useMemo(() => createRepositories(), [])
     bootstrapApp(repos)
-    //useAndroidBack(); // 最上位で呼ぶ
-    
+    //useAndroidBack(); // 最上位で呼ぶ    
 
     return (
         <ThemeProvider
@@ -70,13 +69,10 @@ function App() {
                     problem: repos.problem,
                     reviewEvent: repos.reviewEvent,
                     mission: repos.mission,
-
                 }}>
                     <BrowserRouter>
-                        { /* <DebugHistory /> */ }
-                        
-                        <Routes>                           
-
+                        <DebugHistory />                         
+                        <Routes>
                             <Route path={routes.session} element={<SessionLayout />}>
                                 <Route path="play" element={<SessionPlayerScreen />} >
                                     { /* <Route path="list" element={}/>*/ }

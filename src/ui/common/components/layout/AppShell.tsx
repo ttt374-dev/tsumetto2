@@ -8,6 +8,7 @@ import { useBackupRestoreDialog } from "../../../dialogs/BackupRestoreDialog";
 import { routes } from "@/ui/App/useAppNavigation";
 import { useImport } from "../../../dialogs/Import/useImport";
 import { useSessionStore } from "@/ui/screens/session/hooks/useSessionStore";
+import { useProblemsQueryStore } from "@/ui/features/problem/hooks/useProblemsQueryStore";
 
 interface Props {
     header?: React.ReactNode;
@@ -23,9 +24,12 @@ export function AppShell({ header, footer, rightActions, fab, children, navigate
     const navigate = useNavigate()
     const toast = useToast()
     const startSession = useSessionStore(s=>s.start)
+    const setSortKey = useProblemsQueryStore(s=>s.setSortKey)    
+    const setSortOrder = useProblemsQueryStore(s=>s.setSortOrder)
+    const setPartial = useProblemsQueryStore(s=>s.setPartial)
 
     const reload = useProblemStore(s => s.reload)
-    const importer = useImport(async (res) => {
+    const importer = useImport(async (res) => {        
         await reload()
         toast({
             message: `imported: ${res.summary.imported}, skipped: ${res.summary.skipped}, failed: ${res.summary.failed}`
@@ -33,8 +37,12 @@ export function AppShell({ header, footer, rightActions, fab, children, navigate
         
         const ids = res.results.filter(r=>r.status==="imported").map(r=>r.problemId)
         startSession("IMPORTED-KIF", ids)
-        navigate(routes.sessionPlay)
-        //navigate(routes.list, { state: { title: "imported kif files", ids: ids }})
+        //navigate(routes.sessionPlay)
+        navigate(routes.list, { state: { title: "imported kif files", ids: ids }})
+        //setSortKey("createdAt")
+        //setSortOrder("desc")
+        //setPartial({createdAfter: Date.now() - 10 * 1000})
+        //navigate(routes.library)
     });
     const backupRestoreDialog = useBackupRestoreDialog();
     //const drawer = undefined

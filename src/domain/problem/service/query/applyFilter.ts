@@ -2,6 +2,7 @@ import { matchMateBuckets } from "./mateFilter";
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem";
 import type { QueryState } from "./QueryState";
 import type { LearningState } from "@/domain/learning/entity/LearningState";
+import { QuestionAnswer } from "@mui/icons-material";
 
 //////////////////////////////////
 export const applyFilter = (
@@ -38,10 +39,15 @@ export const applyFilter = (
         (problem, _) =>
             !queryState.starredOnly ||
             problem.isStarred,
+
         // 閲覧のみは除外
         (problem, _) =>
             !queryState.excludeReferenceOnly ||
             !problem.isReferenceOnly,
+        // 作成日時
+        (problem, _) =>
+            !queryState.createdAfter ||
+            problem.createdAt > queryState.createdAfter,
             
 
         // 手数

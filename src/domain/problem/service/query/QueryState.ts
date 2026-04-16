@@ -30,6 +30,7 @@ export type QueryState = {
     excludeReferenceOnly: boolean
     problemType?: ProblemType
     source?: string
+    createdAfter?: number,
 
     tags?: string[]
     mateBuckets?: MateBucket[]
@@ -42,6 +43,7 @@ export type QueryAction =
     | { type: "SET_ALL", payload: Partial<QueryState>}
     // sort
     | { type: "SET_SORT_KEY"; key: SortKey }
+    | { type: "SET_SORT_ORDER"; order: SortOrder }    
     | { type: "TOGGLE_SORT_ORDER" }
     // filter
     | { type: "SET_TEXT"; text?: string }

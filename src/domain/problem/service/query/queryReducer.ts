@@ -22,6 +22,8 @@ export function queryReducer(
                         ? "desc"
                         : "asc"
             }
+        case "SET_SORT_ORDER":
+            return {...state, sortOrder: action.order }
 
         case "TOGGLE_SORT_ORDER":
             return {

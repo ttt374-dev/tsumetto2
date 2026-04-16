@@ -1,6 +1,6 @@
 import { MenuItem, TextField } from "@mui/material";
 import { PROBLEM_TYPES, type ProblemType } from "@/domain/problem/entity/ProblemType";
-import { toProblemTypeText, } from "@/ui/features/problem/hooks/problemPresenter";
+import { problemTypeLabels } from "@/ui/features/problem/hooks/problemPresenter";
 
 const UNSPECIFIED_TYPE = "__UNSPECIFIED_TYPE"
 const UNSPECIFIED_TYPE_LABEL = "（タイプ指定なし）"
@@ -31,7 +31,7 @@ export function ProblemTypeFilterControl( props: Props){
     if (allowUnspecified) options.push({value: UNSPECIFIED_TYPE, label: UNSPECIFIED_TYPE_LABEL})
     
     PROBLEM_TYPES.map(type=> {        
-        options.push({value: type as ProblemTypeUi, label: toProblemTypeText(type) })
+        options.push({value: type as ProblemTypeUi, label: problemTypeLabels[type] })
     }
         
     )

@@ -19,7 +19,7 @@ export default function SessionListView(props: {
                 {props.ids.map((id, i) => {
                     const problem = byId[id]
                     const res = props.solvedResultMap[id]
-                    const resultString = res ? toSolvedResultViewData(res).summaryText : ""
+                    const resultString = res ? toSolvedResultViewData(res).summary : ""
 
                     return (
                         <ListItem key={i}

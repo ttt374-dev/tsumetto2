@@ -13,7 +13,7 @@ function formatEvent(title: string, event: ReviewEvent): string {
             const res = event.solvedResult
             const score = calculateScore(res)
             const vd = toSolvedResultViewData(res)
-            content = `${title} [${score}] ${vd.summaryText}`;
+            content = `${title} [${score}] ${vd.summary}`;
             break
         case "reset": content = `リセット：${title}`; break
     }
