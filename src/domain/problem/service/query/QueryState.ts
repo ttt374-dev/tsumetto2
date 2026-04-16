@@ -27,6 +27,7 @@ export type QueryState = {
     unansweredOnly: boolean
     dueForReviewOnly: boolean
     starredOnly: boolean
+    excludeReferenceOnly: boolean
     problemType?: ProblemType
     source?: string
 
@@ -34,7 +35,7 @@ export type QueryState = {
     mateBuckets?: MateBucket[]
 }
 
-export type BooleanQueryKey = "starredOnly" | "unansweredOnly" | "dueForReviewOnly"
+export type BooleanQueryKey = "starredOnly" | "unansweredOnly" | "dueForReviewOnly" | "excludeReferenceOnly"
 
 export type QueryAction =
     // setter
@@ -59,5 +60,6 @@ export const DefaultQueryState: QueryState = {
     unansweredOnly: false,
     dueForReviewOnly: false,
     starredOnly: false,
+    excludeReferenceOnly: false,
 }
 

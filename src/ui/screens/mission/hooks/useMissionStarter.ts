@@ -16,8 +16,7 @@ export function useMissionStarter(){
     
     const start = useSessionStore(s => s.start);
 
-    const startMission = (mission: Mission, limit: number | null) => {
-        
+    const startMission = (mission: Mission, limit: number | null) => {       
 
         const filtered = applyQuery(
             problems,

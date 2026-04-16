@@ -1,7 +1,7 @@
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import DeleteIcon from '@mui/icons-material/Delete';
 import PauseIcon from "@mui/icons-material/Pause"
-import { Box, Button, Divider, IconButton, Stack, TextField } from "@mui/material";
+import { Box, Button, Checkbox, Divider, FormControlLabel, IconButton, Stack, TextField } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { AppShell } from "../../common/components/layout/AppShell";
@@ -18,6 +18,7 @@ import { LearningDetailPanel } from "../../features/learning/components/Learning
 import { ProblemTypeFilterControl } from "@/ui/features/problem/query/ProblemTypeFilterControl";
 import { useReviewEventStore } from "@/ui/features/learning/hooks/useReviewEventStore";
 import { projectLearningState } from "@/domain/learning/service/projectLearningState";
+import { problemFieldLabels } from "@/ui/features/problem/hooks/problemPresenter";
 
 
 export default function ProblemDetailScreen(){
@@ -30,9 +31,9 @@ export default function ProblemDetailScreen(){
 
 export function ProblemDetailContent( { problem }: { problem: Problem}) {
         const {
-            title, tags, starred, source, type, allSources, comment,
+            title, tags, starred, source, type, allSources, comment, isReferenceOnly,
             setTitle, setTags, toggleStar, setType, setSource, remove, setComment,
-            save, resetLearning
+            save, resetLearning, toggleReferenceOnly,
         } = useProblemDetailViewModel(problem.id, true)
         
     const events = useReviewEventStore(s=>s.eventLog).filter(s=>s.problemId===problem.id)
@@ -59,6 +60,7 @@ export function ProblemDetailContent( { problem }: { problem: Problem}) {
     const handleSuspend = () => {
 
     }
+    
     const onStartPlay = (id: ProblemId) => 
         navigate(routes.player(id))
 
@@ -77,9 +79,7 @@ export function ProblemDetailContent( { problem }: { problem: Problem}) {
                          sx={{color: "white"}}>
                             <PlayArrowIcon />
                         </IconButton>}
-                    <IconButton onClick={handleSuspend} sx={{color: "white"}}>
-                        <PauseIcon/>
-                    </IconButton>
+                    
                     <IconButton onClick={handleDeleteClick}  sx={{color: "white"}}>
                         <DeleteIcon />
                     </IconButton>
@@ -117,8 +117,12 @@ export function ProblemDetailContent( { problem }: { problem: Problem}) {
                     onChange={v => setType(v)}
                     allowUnspecified={false}
                 />
+                <FormControlLabel
+                    label="閲覧のみ"
+                    control={
+                    <Checkbox checked={isReferenceOnly} onChange={toggleReferenceOnly}/>}/>
                 <FreeSoloAutocomplete
-                    label="出典"
+                    label={problemFieldLabels["source"]}
                     value={source}
                     options={allSources}
                     onChange={v => setSource(v ?? "")}

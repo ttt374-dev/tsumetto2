@@ -22,6 +22,10 @@ export function BooleanFilterControl({ queryState, onToggleFilter}: {
                     <Checkbox checked={queryState.dueForReviewOnly}
                         onChange={() => { onToggleFilter("dueForReviewOnly") }} />}
                     label="レビュー対象" />
+                <FormControlLabel control={
+                    <Checkbox checked={queryState.excludeReferenceOnly}
+                        onChange={() => { onToggleFilter("excludeReferenceOnly") }} />}
+                    label="閲覧のみは除外" />
             </Paper>
         </FormControl>
     )    

@@ -5,7 +5,8 @@ export const PROBLEM_TYPES = [
   "standard",
   "realistic",
   "hisshi",
-  "tesuji"
+  "tesuji",
+  "wholegame",
 ] as const
 
 export type ProblemType = typeof PROBLEM_TYPES[number]

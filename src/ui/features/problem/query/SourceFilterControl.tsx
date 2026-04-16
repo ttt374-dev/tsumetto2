@@ -1,3 +1,4 @@
+import { problemFieldLabels } from "@/ui/features/problem/hooks/problemPresenter";
 import { Grid, MenuItem, Select, TextField } from "@mui/material";
 
 const UNSPECIFIED_SOURCE = "__UNSPECIFIED"
@@ -10,7 +11,7 @@ export function SourceFilterControl( {source, onChange, sources}: {
 }){
     return (
         <TextField select value={source ?? UNSPECIFIED_SOURCE} fullWidth
-            label="出典"
+            label={problemFieldLabels["source"]}
             onChange={e => onChange(e.target.value === UNSPECIFIED_SOURCE ? undefined : (e.target.value as string))}            
         >
             <MenuItem value={UNSPECIFIED_SOURCE}>（出典指定なし）</MenuItem>

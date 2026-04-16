@@ -2,22 +2,31 @@ import { getMasteryStatus, type LearningState, type MasteryStatus } from "@/doma
 import { formatDuration } from "@/ui/common/formatter";
 
 export const MasteryLevelTextMapping: Record<MasteryStatus, string> = {
-    "unlearned": "未習熟",
-    "learning": "習熟中",
-    "matured": "復習（習熟期）",
-    "young": "復習（未習熟期）",
-    "relearning": "再習得中"
+    unlearned: "未習熟",
+    learning: "習熟中",
+    matured: "復習（習熟期）",
+    young: "復習（未習熟期）",
+    relearning: "再習得中"
 }
 
+export const learningStateLabels = {
+    score: "スコア",
+    nextReviewedAt: "次回レビュー日",
+    lastAnsweredAt: "前回解答日",
+    easeFactor: "習熟度",
+    intervalDays: "インターバル",
+    masteryStatus: "習熟度合い",    
+}
 export function toLearningStateViewData(state: LearningState) {
     return {
-        scoreText: state.score.toFixed(1),
-        nextReviewedAtText: new Date(state.schedulingState.nextReviewedAt).toLocaleString(),
-        lastAnsweredAtText: state.lastEvent ? new Date(state.lastEvent.at).toLocaleString() : "",
-        easeFactorText: state.schedulingState.easeFactor.toFixed(2),
+        score: state.score.toFixed(1),
+        nextReviewedAt: new Date(state.schedulingState.nextReviewedAt).toLocaleString(),
+        lastAnsweredAt: state.lastEvent ? new Date(state.lastEvent.at).toLocaleString() : "",
+        easeFactor: state.schedulingState.easeFactor.toFixed(2),
+        intervalDays: `${state.schedulingState.intervalDays}d`,
 
-        nextReviewedInText: formatDuration(state.schedulingState.nextReviewedAt - Date.now()),
-        performaceText: `[${state.score.toFixed(1)}](${state.stats.solvedCount}:${state.stats.failedCount})`,
-        masteryStatusText: getMasteryStatus(state),
+        nextReviewedIn: formatDuration(state.schedulingState.nextReviewedAt - Date.now()),
+        performace: `[${state.score.toFixed(1)}](${state.stats.solvedCount}:${state.stats.failedCount})`,
+        masteryStatus: getMasteryStatus(state),
     }
 }

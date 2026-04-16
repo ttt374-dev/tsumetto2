@@ -5,6 +5,7 @@ import { Autocomplete, Box, Button, Checkbox, Chip, Dialog, DialogActions, Dialo
 import { useEffect, useMemo, useState } from "react";
 import type { ProblemType } from "@/domain/problem/entity/ProblemType";
 import { ProblemTypeFilterControl } from "@/ui/features/problem/query/ProblemTypeFilterControl";
+import { problemFieldLabels } from "@/ui/features/problem/hooks/problemPresenter";
 
 export function useMultipleProblemsEditDialog() {
     const [open, setOpen] = useState(false)
@@ -46,7 +47,7 @@ function SourceSelectControl(props: {
     const allSources = useProblemStore(s => s.allSources)
     return (<FormControl fullWidth>
         <FreeSoloAutocomplete
-            label="出典"
+            label={problemFieldLabels["source"]}
             value={props.source}
             options={allSources}
             onChange={v => props.onChange(v ?? "")}

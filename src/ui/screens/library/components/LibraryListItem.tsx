@@ -47,20 +47,20 @@ export const LibraryListItem = function LibraryListItem({ id, onItemClick,
         let text = undefined
         switch (sortKey) {
             case "createdAt":
-                text = vdProblem.createdAtText
+                text = vdProblem.createdAt
                 break;
             case "score":
-                text = vdLearning.scoreText
+                text = vdLearning.score
                 break
             case "nextReviewedAt":
-                text = vdLearning.nextReviewedInText
+                text = vdLearning.nextReviewedIn
                 break
             case "easeFactor":
-                text = vdLearning.easeFactorText
+                text = vdLearning.easeFactor
                 break
         }
         const label = text !== undefined ? SortKeyLabel[sortKey] : "出典"
-        text = text ? text : vdProblem.sourceText
+        text = text ? text : vdProblem.source
         return `${label}: ${text}`
     }
 
@@ -90,8 +90,8 @@ export const LibraryListItem = function LibraryListItem({ id, onItemClick,
                                 {problem.title}
                             </Typography>
                             <Typography variant="body2" flex={2}>
-                                { vdProblem.typeText}
-                                { vdProblem.plyLengthText}
+                                { vdProblem.type}
+                                { vdProblem.plyLength}
                             </Typography>
                             <Stack direction="row" flex={1}>
                                 <StarToggleButton starred={starController.starred}
@@ -143,14 +143,14 @@ export function LearningSection(props: {
     return (
         <Stack direction="row" justifyContent="flex-end" spacing={2}>
             <Box>
-                {vd.masteryStatusText}
+                {vd.masteryStatus}
             </Box>
             <Box>
-                {vd.nextReviewedInText}
+                {vd.nextReviewedIn}
             </Box>
 
             <Box>
-                {vd.performaceText}
+                {vd.performace}
             </Box>
         </Stack>
 

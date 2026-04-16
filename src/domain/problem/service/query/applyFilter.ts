@@ -38,6 +38,11 @@ export const applyFilter = (
         (problem, _) =>
             !queryState.starredOnly ||
             problem.isStarred,
+        // 閲覧のみは除外
+        (problem, _) =>
+            !queryState.excludeReferenceOnly ||
+            !problem.isReferenceOnly,
+            
 
         // 手数
         //(e) =>

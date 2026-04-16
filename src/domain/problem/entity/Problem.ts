@@ -132,6 +132,12 @@ export class Problem {
             isStarred: starred
         })
     }
+    setReferenceOnly(isReferecenOnly: boolean): Problem {
+        return Problem.fromDTO({
+            ...this.toDTO(),
+            isReferecenOnly
+        })
+    }
     setTitle(title: string): Problem {
         return Problem.fromDTO({
             ...this.toDTO(),

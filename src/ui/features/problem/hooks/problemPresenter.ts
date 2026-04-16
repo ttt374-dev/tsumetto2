@@ -1,56 +1,38 @@
 import type { Problem } from "@/domain/problem/entity/Problem";
 import type { ProblemType } from "@/domain/problem/entity/ProblemType";
 
-
-export function toProblemViewData(p: Problem) {
+type problemViewField = "title"| "type" | "source" | "tags" | "plyLength" | "createdAt" | "updatedAt" | "handicap"
+export function toProblemViewData(p: Problem): Record<problemViewField, any> {
     return {
-        typeText: problemTypeLabelMap[p.type],
-        sourceText: p.source,
-        tagsText: p.tags.join(","),
-        plyLengthText: `${p.kifData.moves.length}手`,
-        createdAtText: new Date(p.createdAt).toLocaleString(),
-        updatedAtText: new Date(p.updatedAt).toLocaleString(),
-
-        handicapText: p.kifData.headers["手合割"],
+        title: p.title,
+        type: problemTypeLabelMap[p.type],
+        source: p.source,
+        tags: p.tags.join(","),
+        plyLength: `${p.kifData.moves.length}手`,
+        createdAt: new Date(p.createdAt).toLocaleString(),
+        updatedAt: new Date(p.updatedAt).toLocaleString(),
+        handicap: p.kifData.headers["手合割"],
     }
 }
+export const problemFieldLabels: Record<problemViewField, string> = {
+    title: "タイトル",
+    type: "問題タイプ",
+    plyLength: "手数",
+    source: "出典",
+    tags: "タグ",
+    createdAt: "作成日時",
+    updatedAt: "更新日時",
+    handicap: "手合割"
+}
 const problemTypeLabelMap: Record<ProblemType, string> = {
-    "standard": "標準",
-    "realistic": "実践",
-    "hisshi": "必死",
-    "tesuji": "手筋"
+    standard: "標準",
+    realistic: "実践",
+    hisshi: "必死",
+    tesuji: "手筋",
+    wholegame: "ゲーム全体"
 }
 
 export function toProblemTypeText(type: ProblemType): string {
     return problemTypeLabelMap[type]
 }
 
-/*
-
-export const problemPresenter = {
-    plyLength: {
-        label: "手数",
-        getText: (p: Problem) => toProblemViewData(p).plyLengthText
-    },
-    createdAt: {
-        label: "追加日",
-        getText: (p: Problem) => p.createdAt.toLocaleString()
-    },
-    updatedAt: {
-        label: "更新日",
-        getText: (p: Problem) => p.updatedAt.toLocaleString()
-    },
-    type: {
-        label: "問題タイプ",
-        getText: (p: Problem) => toProblemViewData(p).typeText
-    },
-    source: {
-        label: "出典",
-        getText: (p: Problem) => p.source
-    },
-    tags: {
-        label: "タグ",
-        getText: (p: Problem) => toProblemViewData(p).tagsText
-    }
-}
-    */

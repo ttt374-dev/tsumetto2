@@ -2,15 +2,17 @@ import { Box, IconButton, Tooltip, Button, Select, MenuItem, Stack } from "@mui/
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import type { QueryState, SortKey } from "@/domain/problem/service/query/QueryState";
+import { problemFieldLabels } from "@/ui/features/problem/hooks/problemPresenter";
+import { learningStateLabels } from "@/ui/features/learning/hooks/learningPresenter";
 
 export const SortKeyLabel: Record<SortKey, string> = {
-    "createdAt": "追加日",
-    "title": "タイトル",
-    "score": "スコア",
-    "easeFactor": "習熟度",
-    "nextReviewedAt": "次回レビュー日",
-    "lastAnsweredAt": "前回解答日",
-    "moveCount": "手数",
+    "createdAt": problemFieldLabels["createdAt"],
+    "title": problemFieldLabels["title"],
+    "score": learningStateLabels["score"],
+    "easeFactor": learningStateLabels["easeFactor"],
+    "nextReviewedAt": learningStateLabels["nextReviewedAt"],
+    "lastAnsweredAt": learningStateLabels["lastAnsweredAt"],
+    "moveCount": problemFieldLabels["plyLength"],
     "random": "ランダム",
 }
 

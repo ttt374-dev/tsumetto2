@@ -5,11 +5,13 @@ import { useProblemStore } from '@/ui/features/problem/hooks/useProblemStore';
 import { useLearningRecordStore } from '@/ui/features/learning/hooks/useLearningRecordStore';
 import { useReviewEventStore } from '@/ui/features/learning/hooks/useReviewEventStore';
 import type { ProblemType } from "@/domain/problem/entity/ProblemType";
+import { isRegExp } from 'lodash';
 
 type ProblemEditDraft = {
     title: string
     tags: string[]
     starred: boolean
+    isReferenceOnly: boolean
     type: ProblemType
     source: string
     comment: string
@@ -19,6 +21,7 @@ function toEditDraft(problem: Problem): ProblemEditDraft {
         title: problem.title,
         tags: problem.tags ?? [],
         starred: problem.isStarred,
+        isReferenceOnly: problem.isReferenceOnly,
         type: problem.type ?? "standard",
         source: problem.source ?? "",
         comment: problem.comment,
@@ -34,6 +37,7 @@ function applyDraftToProblem(
         .setSource(draft.source)
         .setTags(draft.tags)
         .setStarred(draft.starred)
+        .setReferenceOnly(draft.isReferenceOnly)
         .setType(draft.type)
         .setComment(draft.comment)
 }
@@ -99,6 +103,13 @@ export function useProblemDetailViewModel(
             return { ...d, starred: !d.starred }
         })
     }
+    const toggleReferenceOnly = () => {        
+        setDraft(d => {
+            if (!d) return d
+            return { ...d, isReferenceOnly: !d.isReferenceOnly }
+        })
+    }
+    
     // 学習データリセット
     const resetLearning = () => {
         appendReset(problemId)
@@ -108,6 +119,7 @@ export function useProblemDetailViewModel(
         problem, learningState, allSources, allTags,
         title: draft?.title ?? "",
         starred: draft?.starred ?? false,
+        isReferenceOnly: draft?.isReferenceOnly ?? false,
         source: draft?.source ?? "",
         type: draft?.type ?? "standard",
         tags: draft?.tags ?? [],
@@ -119,6 +131,6 @@ export function useProblemDetailViewModel(
         setType: (v: ProblemType) => updateField("type", v),
         setTags: (v: string[]) => updateField("tags", v),
         setComment: (v: string) => updateField("comment", v),
-        toggleStar,
+        toggleStar, toggleReferenceOnly,
     }
 }

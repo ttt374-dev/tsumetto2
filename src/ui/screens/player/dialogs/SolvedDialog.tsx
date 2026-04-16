@@ -2,6 +2,7 @@ import type { LearningState } from "@/domain/learning/entity/LearningState"
 import { deriveOutcome } from "@/domain/review/service/solvedResultDeriver"
 import type { SolvedResult } from "@/domain/review/solvedResult"
 import { formatDuration } from "@/ui/common/formatter"
+import { learningStateLabels } from "@/ui/features/learning/hooks/learningPresenter"
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material"
 
 export function SolvedDialog({ open, onClose, onConfirm, solvedResult, learning }: {
@@ -29,7 +30,7 @@ export function SolvedDialog({ open, onClose, onConfirm, solvedResult, learning 
 
                 {learning && <>
                     <Box>平均スコア：{learning.score.toFixed(1)}</Box>
-                    <Box>次レビュー：{formatDuration(learning.schedulingState.nextReviewedAt - Date.now())}</Box>
+                    <Box>{ learningStateLabels["nextReviewedAt"]}：{formatDuration(learning.schedulingState.nextReviewedAt - Date.now())}</Box>
                 </>
                 }
             </DialogContent>

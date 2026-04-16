@@ -33,7 +33,7 @@ export function DrawerMenu({ isOpen, onClose,
                     <Divider />
 
                     <ListItemButton onClick={() => { onImport(); onClose() }}>
-                        <ListItemText primary="棋譜登録" />
+                        <ListItemText primary="棋譜の取り込み" />
                     </ListItemButton>
                     <ListItemButton onClick={() => { onBackupRestore(); onClose() }}>
                         <ListItemText primary="バックアップ・復旧" />

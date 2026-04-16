@@ -1,5 +1,6 @@
+import { problemFieldLabels } from "@/ui/features/problem/hooks/problemPresenter"
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore"
-import { Autocomplete, Chip, TextField } from "@mui/material"
+import { Autocomplete, TextField } from "@mui/material"
 
 type Props = {
     value: string[]
@@ -10,7 +11,7 @@ type Props = {
 export function ProblemTagEditor({
     value,
     onChange,
-    label = "タグ",
+    label = problemFieldLabels["tags"],
 }: Props) {
     const allTags = useProblemStore(s=>s.allTags)
     return (

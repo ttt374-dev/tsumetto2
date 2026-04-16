@@ -1,5 +1,5 @@
 import type { Problem } from "@/domain/problem/entity/Problem"
-import { toProblemViewData } from "@/ui/features/problem/hooks/problemPresenter"
+import { problemFieldLabels, toProblemViewData } from "@/ui/features/problem/hooks/problemPresenter"
 import { Box, Paper, Stack } from "@mui/material"
 
 export function ProblemInfoPanel({problem}: {
@@ -10,22 +10,22 @@ export function ProblemInfoPanel({problem}: {
     return (<Paper sx={{ p: 1 }}>
         <Stack>
             <Stack direction="row" justifyContent="space-between">
-                <Box>手合割</Box>
-                <Box>{vd.handicapText}</Box>
+                <Box>{problemFieldLabels["handicap"]}</Box>
+                <Box>{vd.handicap}</Box>
             </Stack>
 
             <Stack direction="row" justifyContent="space-between">
-                <Box>手数</Box>
-                <Box>{ vd.plyLengthText } </Box>
+                <Box>{ problemFieldLabels["plyLength"]}</Box>
+                <Box>{ vd.plyLength } </Box>
             </Stack>
 
             <Stack direction="row" justifyContent="space-between">
-                <Box>追加日</Box>
-                <Box>{ vd.createdAtText}</Box>
+                <Box>{ problemFieldLabels["createdAt"] }</Box>
+                <Box>{ vd.createdAt}</Box>
             </Stack>
             <Stack direction="row" justifyContent="space-between">
-                <Box>更新日</Box>
-                <Box> { vd.updatedAtText}</Box>
+                <Box>{ problemFieldLabels["updatedAt"] }</Box>
+                <Box> { vd.updatedAt}</Box>
             </Stack>
         </Stack>
     </Paper>)
