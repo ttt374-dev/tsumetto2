@@ -7,27 +7,40 @@ import type { ProblemRepository } from "@/domain/problem/repository/ProblemRepos
 ///////////////////
 // selector
 export const selectActiveProblems = createSelector(
-  (s: ProblemState) => s.byId,
-  (byId) => Object.values(byId).filter(p => !p.deletedAt)
+    (s: ProblemState) => s.byId,
+    (byId) => Object.values(byId).filter(p => !p.deletedAt)
+)
+export const selectActiveProblemIdSet = createSelector(
+    (s: ProblemState) => s.byId,
+    (byId) => {
+        const set = new Set<string>()
+        for (const p of Object.values(byId)) {
+            if (!p.deletedAt) {
+                set.add(p.id)
+            }
+        }
+        return set
+    }
 )
 export const selectAllTags = (s: ProblemState): string[] => {
-  const set = new Set<string>()
-  Object.values(s.byId).forEach(p => {
-    if (p.deletedAt) return
-    p.tags?.forEach(tag => set.add(tag))
-  })
-  return Array.from(set)
+    const set = new Set<string>()
+    Object.values(s.byId).forEach(p => {
+        if (p.deletedAt) return
+        p.tags?.forEach(tag => set.add(tag))
+    })
+    return Array.from(set)
 }
 
 export const selectAllSources = (s: ProblemState): string[] => {
-  const set = new Set<string>()
-  Object.values(s.byId).forEach(p => {
-    if (p.deletedAt) return
-    const src = p.source
-    if (src && src.trim() !== "") set.add(src)
-  })
-  return Array.from(set)
+    const set = new Set<string>()
+    Object.values(s.byId).forEach(p => {
+        if (p.deletedAt) return
+        const src = p.source
+        if (src && src.trim() !== "") set.add(src)
+    })
+    return Array.from(set)
 }
+
 
 /////////////////////////
 export type ProblemState = {
@@ -39,8 +52,8 @@ export type ProblemState = {
     ids: ProblemId[]
     allTags: string[]
     allSources: string[]
-    activeProblems: Problem[]    
-    
+    activeProblems: Problem[]
+
     reload: () => Promise<void>
     save: () => Promise<void>
     updateProblem: (id: ProblemId, updater: (p: Problem) => Problem) => void
@@ -60,7 +73,7 @@ export function extractTags(problems: Problem[]): string[] {
 // internal functions
 function derive(byId: Record<ProblemId, Problem>) {
     const activeProblems = Object.values(byId)
-        .filter(p => !p.deletedAt)    
+        .filter(p => !p.deletedAt)
     const ids = activeProblems.map(p => p.id)
 
     const tagSet = new Set<string>()
@@ -95,9 +108,9 @@ export const useProblemStore = create<ProblemState>((set, get) => ({
     byId: {},
     activeProblems: [],
     allTags: [],
-    allSources: [],   
-    
-    reload: async () => {       
+    allSources: [],
+
+    reload: async () => {
         const repo = get().repo
         if (!repo) throw new Error("Repository not initialized")
 
@@ -107,8 +120,8 @@ export const useProblemStore = create<ProblemState>((set, get) => ({
         data.forEach(p => {
             byId[p.id] = p
         })
-        set(reduceById(byId))       
-        
+        set(reduceById(byId))
+
     },
     save: async () => {
         const { repo, byId } = get()
@@ -131,7 +144,7 @@ export const useProblemStore = create<ProblemState>((set, get) => ({
 
             //const next = current.withUpdated(updater)
             const next = updater(current)
-            if (next !== current) {                
+            if (next !== current) {
                 newById[id] = next
                 changed = true
                 //updated.push(next)
@@ -195,10 +208,10 @@ export const useProblemStore = create<ProblemState>((set, get) => ({
 
         if (updated.length === 0) return
 
-        set(reduceById(newById))        
+        set(reduceById(newById))
         state.save()
     }
-,
+    ,
 
 }))
 

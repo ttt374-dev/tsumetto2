@@ -10,10 +10,9 @@ import type { LibraryActionMode } from "@/ui/screens/library/hooks/useLibraryVie
 import { toProblemViewData } from "@/ui/features/problem/hooks/problemPresenter";
 import type { LearningState } from "@/domain/learning/entity/LearningState";
 import { toLearningStateViewData } from "@/ui/features/learning/hooks/learningPresenter";
-import type { QueryState, SortKey } from "@/domain/problem/service/query/QueryState";
+import type { SortKey } from "@/domain/problem/service/query/QueryState";
 import { useProblemsQueryStore } from "@/ui/features/problem/hooks/useProblemsQueryStore";
 import { SortKeyLabel } from "@/ui/features/problem/query/SortControl";
-
 
 export const LibraryListItem = function LibraryListItem({ id, onItemClick,
     showCheckbox, isChecked, onToggleChecked, onChangeActionMode,
@@ -25,7 +24,6 @@ export const LibraryListItem = function LibraryListItem({ id, onItemClick,
         onToggleChecked: (id: ProblemId) => void,        
         onChangeActionMode: (mode: LibraryActionMode) => void
         selected?: boolean,
-        //sortKey?: SortKey
     }) {
     const problem = useProblemStore(s => s.byId[id])
     const learning = useLearningRecordStore(s => s.stateRecords[id])
@@ -35,14 +33,11 @@ export const LibraryListItem = function LibraryListItem({ id, onItemClick,
             onChangeActionMode("selection")  
             onToggleChecked(id)
         },
-
     })
     const starController = useStarToggleButton(id)
     const vdProblem = toProblemViewData(problem)    
     const sortKey = useProblemsQueryStore(s=>s.state.sortKey)
-
     const getSortKeyText = (sortKey: SortKey) => {
-
         const vdLearning = learning && toLearningStateViewData(learning)
         let text = undefined
         switch (sortKey) {
@@ -59,10 +54,7 @@ export const LibraryListItem = function LibraryListItem({ id, onItemClick,
                 text = vdLearning?.easeFactor
                 break
         }
-        return text ? `${SortKeyLabel[sortKey]}: ${text}` : ""
-        //const label = text !== undefined ? SortKeyLabel[sortKey] : ""
-        //text = text ? text : vdProblem.source
-        //return `${label}: ${text}`
+        return text ? `${SortKeyLabel[sortKey]}: ${text}` : ""        
     }
 
     //////////////////////////////////////////////////////////
@@ -128,7 +120,6 @@ export const LibraryListItem = function LibraryListItem({ id, onItemClick,
 }
 const DAY_MS = 60 * 60 * 24 * 1000
 export function inDays(date: number, now: number = Date.now()): number {
-    //return (date - now) / (60 * 60 * 24 * 1000)
     return Math.ceil((date - now) / DAY_MS)
 }
 export function LearningSection(props: {
@@ -143,11 +134,9 @@ export function LearningSection(props: {
             <Box>
                 {vd.nextReviewedIn}
             </Box>
-
             <Box>
                 {vd.performace}
             </Box>
         </Stack>
-
     )
 }

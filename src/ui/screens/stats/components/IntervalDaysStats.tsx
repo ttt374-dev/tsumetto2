@@ -44,7 +44,7 @@ function buildIntervalHistogramBinned(
     learningRecords: Record<ProblemId, LearningState>,
     includeDelay: boolean = true,
 ) {
-    const boundariesWithDelay = [-7, -3, 1, 3, 7, 14, 30, 60]
+    const boundariesWithDelay = [-7, -3, 0, 1, 3, 7, 14, 30, 60]
     const boundariesNoDelay = [1, 3, 7, 14, 30, 60]
     const bins = createExponentialBins(includeDelay ? boundariesWithDelay : boundariesNoDelay)
 

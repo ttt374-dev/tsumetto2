@@ -18,12 +18,12 @@ export function ProblemStatsTable() {
     console.log("due review", dueForReviewOnly)
 
     // 総合
-    const unanswered = activeProblems.filter(p => { learningRecords[p.id]?.stats.attemptCount > 0 })
+    const answered = activeProblems.filter(p => learningRecords[p.id] !== undefined)    
     const idsMap: Record<string, Record<string, Problem[]>> = {}
 
     idsMap["general"] =  {
-        "全問題": activeProblems,
-        "未完了": unanswered,
+        "解答済問題": answered,
+        //"未完了": unanswered,
         "レビュー対象": dueForReviewOnly,
     }
     

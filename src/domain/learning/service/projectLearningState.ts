@@ -35,7 +35,6 @@ function applyReviewedEvent(prev: LearningState, lastEvent: ReviewReviewedEvent)
     const schedulingState = schedule(prev.schedulingState, quality, lastEvent.at)
 
     const newScore = calculateScore(lastEvent.solvedResult)
-    //console.log("score", newScore, prev.score, stats.attemptCount, stats.solvedCount)
     const score = updateAverage(stats.attemptCount-1, prev.score, newScore).averageScore
 
     return {
@@ -53,9 +52,7 @@ function updateAverage(
     newScore: number
 ) {
     const newAttemptCount = prevAttemptCount + 1
-
     const newAverage = newAttemptCount > 0 ? (averageScore * prevAttemptCount + newScore) / newAttemptCount : 0
-
     return {
         attemptCount: newAttemptCount,
         averageScore: newAverage,
@@ -85,7 +82,6 @@ function schedule(prev: SchedulingState, quality: number, now: number): Scheduli
         1.3,
         easeFactor + (0.1 - (3 - quality) * (0.08 + (3 - quality) * 0.02))
     )
-    //console.log("schedule: failed", quality, queue)
     if (quality <= 2) {        
         intervalDays = 1
         stepIndex = 0
@@ -95,7 +91,7 @@ function schedule(prev: SchedulingState, quality: number, now: number): Scheduli
         if (stepIndex + 1 < LearningStep.length) {
             nextReviewedAt = now + LearningStep[stepIndex] * 60 * 1000
             stepIndex++
-            console.log("schedule, step", stepIndex, LearningStep[stepIndex] * 60 * 1000)
+            //console.log("schedule, step", stepIndex, LearningStep[stepIndex] * 60 * 1000)
         } else {
             queue = "review"
             intervalDays =
