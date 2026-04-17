@@ -1,5 +1,5 @@
 import { deriveAnswerQuality } from "@/domain/learning/entity/AnswerQuality"
-import { createDefaultLearningState, LearningStep, type LearningState, type LearningStats, type SchedulingState } from "@/domain/learning/entity/LearningState"
+import { createDefaultLearningState, type LearningState, type LearningStats, type SchedulingState } from "@/domain/learning/entity/LearningState"
 import { calculateScore } from "@/domain/learning/service/calculateScore"
 import type { ProblemId } from "@/domain/problem/entity/Problem"
 import type { ReviewEvent, ReviewReviewedEvent } from "@/domain/review/ReviewEvent"
@@ -72,6 +72,8 @@ function updateStats(prev: LearningStats, solvedResult: SolvedResult): LearningS
     }
 }
 
+export const LearningStep = [1, 10, 60*12]
+
 function schedule(prev: SchedulingState, quality: number, now: number): SchedulingState {
     let { intervalDays, stepIndex, queue, easeFactor } = prev
     let nextReviewedAt = prev.nextReviewedAt
@@ -93,6 +95,7 @@ function schedule(prev: SchedulingState, quality: number, now: number): Scheduli
         if (stepIndex + 1 < LearningStep.length) {
             nextReviewedAt = now + LearningStep[stepIndex] * 60 * 1000
             stepIndex++
+            console.log("schedule, step", stepIndex, LearningStep[stepIndex] * 60 * 1000)
         } else {
             queue = "review"
             intervalDays =

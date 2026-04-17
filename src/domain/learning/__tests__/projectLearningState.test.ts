@@ -5,8 +5,13 @@ import type { ReviewReviewedEvent } from "@/domain/review/ReviewEvent"
 import { createDefaultSolvedResult } from "@/domain/review/solvedResult"
 
 describe("projectLearningState", () => {
+    const date = Date.now()
     it("review", () => {
+        let events
+        let records
+        let s
         const p1 = Problem.create()
+        // １問正解
         const e1: ReviewReviewedEvent = {
             type: "reviewed",
             id: "e1",
@@ -14,9 +19,12 @@ describe("projectLearningState", () => {
             problemId: p1.id,
             sessionId: "session",
             solvedResult: createDefaultSolvedResult({isSolved: true}),
-            at: Date.now(),
-
+            at: date,
         }        
+        s = projectLearningState([e1])[p1.id]
+        expect(s.schedulingState.stepIndex).toEqual(1)
+        expect(s.schedulingState.nextReviewedAt).toEqual(date + 60 * 1000)
+
         const e2: ReviewReviewedEvent = {
             type: "reviewed",
             id: "e2",
@@ -24,12 +32,12 @@ describe("projectLearningState", () => {
             problemId: p1.id,
             sessionId: "session",
             solvedResult: createDefaultSolvedResult({isSolved: true}),
-            at: Date.now(),
+            at: date,
 
         }    
-        let events = [e1, e2]
-        let records = projectLearningState(events)
-        let s = records[p1.id]
+        events = [e1, e2]
+        records = projectLearningState(events)
+        s = records[p1.id]
         //console.log("score", s.score)
 
         expect(s.lastEvent?.problemId).toEqual(p1.id)
@@ -38,7 +46,7 @@ describe("projectLearningState", () => {
         expect(s.stats.failedCount).toEqual(0)
         expect(s.schedulingState.stepIndex).toEqual(2)
         expect(s.schedulingState.queue).toEqual("learn")
-
+        expect(s.schedulingState.nextReviewedAt).toEqual(date + 600 * 1000)
         // ３問連続正解で learn -> review に
         const e3: ReviewReviewedEvent = {
             type: "reviewed",

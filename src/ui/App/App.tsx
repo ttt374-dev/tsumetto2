@@ -71,7 +71,7 @@ function App() {
                     mission: repos.mission,
                 }}>
                     <BrowserRouter>
-                        <DebugHistory />                         
+                        { /* <DebugHistory />                         */ }
                         <Routes>
                             <Route path={routes.session} element={<SessionLayout />}>
                                 <Route path="play" element={<SessionPlayerScreen />} >

@@ -18,6 +18,10 @@ export const learningStateLabels = {
     masteryStatus: "習熟度合い",    
 }
 export function toLearningStateViewData(state: LearningState) {
+    const masteryStatus = getMasteryStatus(state)
+    let masteryStatusLabel = MasteryLevelTextMapping[masteryStatus]
+    if (masteryStatus === "learning") masteryStatusLabel += `[${state.schedulingState.stepIndex}]`
+
     return {
         score: state.score.toFixed(1),
         nextReviewedAt: new Date(state.schedulingState.nextReviewedAt).toLocaleString(),
@@ -27,6 +31,6 @@ export function toLearningStateViewData(state: LearningState) {
 
         nextReviewedIn: formatDuration(state.schedulingState.nextReviewedAt - Date.now()),
         performace: `[${state.score.toFixed(1)}](${state.stats.solvedCount}:${state.stats.failedCount})`,
-        masteryStatus: getMasteryStatus(state),
+        masteryStatus: masteryStatusLabel,
     }
 }

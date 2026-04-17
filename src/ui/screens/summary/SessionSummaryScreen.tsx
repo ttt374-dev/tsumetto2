@@ -47,7 +47,6 @@ export default function SessionSummaryScreen() {
             <Box>
                 ミッション完了
             </Box>
-
             <SummaryView summary={summary} />
 
             <Stack direction="row" spacing={1}>
@@ -62,8 +61,9 @@ export default function SessionSummaryScreen() {
                 </Button>
                 <Button variant="contained" fullWidth onClick={() => {
                     reset()
+                    navigate(routes.back)
                 }}>
-                    ミッションリストに戻る
+                    戻る
                 </Button>
             </Stack>
         </AppShell>

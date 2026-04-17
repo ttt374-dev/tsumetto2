@@ -1,4 +1,4 @@
-import { Grid, TextField } from "@mui/material";
+import { Button, Grid, TextField } from "@mui/material";
 
 import { MateLengthFilterControl } from "./MateLengthFilterControl";
 import { TagCheckboxFilterControl } from "./TagCheckboxFilterControl";
@@ -6,6 +6,7 @@ import { BooleanFilterControl } from "./BooleanFilterControl";
 import { ProblemTypeFilterControl } from "./ProblemTypeFilterControl";
 import { SourceFilterControl } from "./SourceFilterControl";
 import type { useProblemsQuery } from "@/ui/features/problem/hooks/useProblemsQuery";
+import { useProblemsQueryStore } from "@/ui/features/problem/hooks/useProblemsQueryStore";
 
 //export const UNSPECIFIED = "__UNSPECIFIED__";
 
@@ -14,6 +15,8 @@ type Props = {
   allSources: string[]
 }
 export function FilterControlPanel({query, allSources}: Props){
+    const reset = useProblemsQueryStore(s=>s.reset)
+
     return (
         <Grid container spacing={2}>
             <Grid size={12}>
@@ -56,6 +59,11 @@ export function FilterControlPanel({query, allSources}: Props){
                     selectedTags={query.state.tags ?? []}
                     onChange={(tags => query.setTags(tags))}
                 />
+            </Grid>
+            <Grid size={12}>
+                <Button onClick={reset}>
+                    リセット
+                </Button>
             </Grid>
         </Grid>
     )

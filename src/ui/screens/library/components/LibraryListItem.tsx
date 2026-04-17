@@ -42,26 +42,27 @@ export const LibraryListItem = function LibraryListItem({ id, onItemClick,
     const sortKey = useProblemsQueryStore(s=>s.state.sortKey)
 
     const getSortKeyText = (sortKey: SortKey) => {
-        if (!learning) return ""
-        const vdLearning = toLearningStateViewData(learning)
+
+        const vdLearning = learning && toLearningStateViewData(learning)
         let text = undefined
         switch (sortKey) {
             case "createdAt":
                 text = vdProblem.createdAt
                 break;
             case "score":
-                text = vdLearning.score
+                text = vdLearning?.score
                 break
             case "nextReviewedAt":
-                text = vdLearning.nextReviewedIn
+                text = vdLearning?.nextReviewedIn
                 break
             case "easeFactor":
-                text = vdLearning.easeFactor
+                text = vdLearning?.easeFactor
                 break
         }
-        const label = text !== undefined ? SortKeyLabel[sortKey] : "出典"
-        text = text ? text : vdProblem.source
-        return `${label}: ${text}`
+        return text ? `${SortKeyLabel[sortKey]}: ${text}` : ""
+        //const label = text !== undefined ? SortKeyLabel[sortKey] : ""
+        //text = text ? text : vdProblem.source
+        //return `${label}: ${text}`
     }
 
     //////////////////////////////////////////////////////////
@@ -108,15 +109,9 @@ export const LibraryListItem = function LibraryListItem({ id, onItemClick,
                     secondary={<>
                             {/* 二行目: 出典*/}
                             <Stack direction="row" justifyContent={"space-between"}>
-                                { problem.source &&
                                 <Typography variant="body2">
-                                    {/*出典：{problem.source}*/}
                                     { getSortKeyText(sortKey)}
-                                </Typography>}
-                                { /* <Typography variant="body2">
-                                    {problem.tags.join(",")}
                                 </Typography>
-                                */ }
                             </Stack>
                             {/* 学習データ */}
                             {learning && 
