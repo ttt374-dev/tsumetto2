@@ -22,7 +22,7 @@ export function ProblemStatsTable() {
     const idsMap: Record<string, Record<string, Problem[]>> = {}
 
     idsMap["general"] =  {
-        "解答済問題": answered,
+        "全問題": activeProblems,
         //"未完了": unanswered,
         "レビュー対象": dueForReviewOnly,
     }

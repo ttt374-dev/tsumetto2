@@ -18,21 +18,28 @@ type OverdueItem = {
 function buildOverdueHistogram(
     ids: ProblemId[],
     learningRecords: Record<ProblemId, LearningState>
-) {
+): HistogramItem[] {
     const now = new Date()
 
     const bins = [
-        { label: "期限内", min: -Infinity, max: -1 },
-        { label: "-3日遅れ", min: 0, max: 3 },
-        { label: "4-7日遅れ", min: 4, max: 7 },
-        { label: "8-14日遅れ", min: 8, max: 14 },
-        { label: "15-30日遅れ", min: 15, max: 30 },
         { label: "30日以上遅れ", min: 31, max: Infinity },
+        { label: "15-30日遅れ", min: 15, max: 30 },
+        { label: "8-14日遅れ", min: 8, max: 14 },
+        { label: "4-7日遅れ", min: 4, max: 7 },
+        { label: "1-3日遅れ", min: 1, max: 3 },
+               
+        
+        { label: "今日期限", min: -0, max: 0 },      
+        { label: "1-3日後", min: -3, max: -1 },
+        { label: "4-7日後", min: -7, max: -4 },
+        { label: "8日以上先", min: -Infinity, max: -8 },
+        
+        
     ]
-
     const counts = bins.map(b => ({
         label: b.label,
         count: 0,
+        overdue: b.min > 0,
     }))
 
     let noDueDate = 0
@@ -63,7 +70,7 @@ function buildOverdueHistogram(
 
     return [
         ...counts,
-        { label: "期限未設定", count: noDueDate },
+        { label: "期限未設定", count: noDueDate, overdue: false },
     ]
 }
 function getOverdueItems(
@@ -134,6 +141,7 @@ export function OverdueTable({ items }: Props) {
 type HistogramItem = {
     label: string
     count: number
+    overdue: boolean
 }
 
 export function OverdueHistogram({
@@ -185,7 +193,7 @@ export function OverdueHistogram({
                                     sx={{
                                         width: `${widthPercent}%`,
                                         height: "100%",
-                                        backgroundColor: "error.main",
+                                        backgroundColor: item.overdue ? "error.main" : "primary.main",
                                         transition: "width 0.4s ease",
                                     }}
                                 />
@@ -207,13 +215,14 @@ export function OverdueStats() {
 
     const histogram = useMemo(
         () => buildOverdueHistogram(ids, learningRecords)
-            .filter(h => h.label !== "期限内" && h.label !== "期限未設定"),
+            //.filter(h => h.label !== "期限内" && h.label !== "期限未設定")
+            ,
         [ids, learningRecords]
     )
 
     return (
         <Paper>
-            遅延
+            レビュー期限
             <OverdueHistogram data={histogram} />
 
         </Paper>

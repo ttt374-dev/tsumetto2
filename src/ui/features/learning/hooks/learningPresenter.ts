@@ -2,7 +2,7 @@ import { getMasteryStatus, type LearningState, type MasteryStatus } from "@/doma
 import { formatDuration } from "@/ui/common/formatter";
 
 export const MasteryLevelTextMapping: Record<MasteryStatus, string> = {
-    unlearned: "未習熟",
+    unlearned: "未解答",
     learning: "習熟中",
     matured: "復習（習熟期）",
     young: "復習（未習熟期）",

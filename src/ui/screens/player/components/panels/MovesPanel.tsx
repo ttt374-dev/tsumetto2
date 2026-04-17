@@ -1,11 +1,9 @@
-import { Box, Button, Stack } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 
 import MovesView from "../views/MovesView";
+import ProblemLearningInfoPanel from "@/ui/screens/player/components/panels/ProblemLearningInfoPanel";
 import type { Move } from "@/domain/kif/entity";
 import { useReplayStore } from "@/ui/screens/player/store/useReplayStore";
-import { createPlayerContext } from "@/ui/screens/player/components/types/PlayerContext";
-import { useGameStore } from "@/ui/screens/player/store/useGameStore";
-import ProblemLearningInfoPanel from "@/ui/screens/player/components/panels/ProblemLearningInfoPanel";
 import type { Problem } from "@/domain/problem/entity/Problem";
 
 export default function MovesPanel({moves, isMovesVisible, problem}: { 
@@ -15,13 +13,7 @@ export default function MovesPanel({moves, isMovesVisible, problem}: {
 }) {
     const moveTo = useReplayStore(s=>s.moveTo)
     const ply = useReplayStore(s=>s.ply)
-    //const dispatch = useGameStore(s=>s.dispatch)   
-    //const ctx = createPlayerContext()
-/*
-    const handleRevealAnswer = () => {
-        dispatch({type: "REVEAL", ...ctx})
-    }
-  */  
+
     return (
         <Box
             flex={1}
@@ -41,7 +33,6 @@ export default function MovesPanel({moves, isMovesVisible, problem}: {
             {isMovesVisible ?
                 <MovesView moves={moves} currentPlyIndex={ply} onMoveToPly={moveTo} />
                 : (<Stack>
-                    <Box>手数：{ ply > 0 ? `${ply} / ` : ""}  {moves.length}手</Box>
                     <ProblemLearningInfoPanel problem={problem} />
                 </Stack>)
             }

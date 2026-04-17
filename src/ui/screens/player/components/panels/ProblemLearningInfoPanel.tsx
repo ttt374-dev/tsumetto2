@@ -1,42 +1,39 @@
 import { Box } from "@mui/material"
 
 import type { Problem } from "@/domain/problem/entity/Problem"
-import { problemFieldLabels, toProblemViewData } from "@/ui/features/problem/hooks/problemPresenter"
+import { toProblemViewData } from "@/ui/features/problem/hooks/problemPresenter"
 import { useLearningRecordStore } from "@/ui/features/learning/hooks/useLearningRecordStore"
 import { toLearningStateViewData } from "@/ui/features/learning/hooks/learningPresenter"
 
 export default function ProblemLearningInfoPanel(props: {
-    problem: Problem    
+    problem: Problem
 }) {
     const { problem } = props
-    const learningState = useLearningRecordStore(s=>s.getState(problem.id))
+    const learningState = useLearningRecordStore(s => s.getState(problem.id))
     const learningStateVd = learningState && toLearningStateViewData(learningState)
-
     const problemVd = toProblemViewData(problem)
 
-    return (<>
-        <Box>
-            問題タイプ：{problemVd.type}
-        </Box>
-        {problem.source && 
+    return (
+        <>
             <Box>
-                {problemFieldLabels["source"]}：{problem.source}</Box>}
-        {problem.tags && 
-            <Box>{problemVd.tags}</Box>}
+                {problemVd.type}{problemVd.plyLength}
+            </Box>
+            {problem.source &&
+                <Box>{problem.source}</Box>}
+            {problem.tags &&
+                <Box>{problemVd.tags}</Box>}
 
-        {learningStateVd && 
-            <>
-                <Box>
-                    { learningStateVd.performace }
-                </Box>
-                <Box>
-                    { learningStateVd.nextReviewedIn}
-                </Box>
-                <Box>
-                    { learningStateVd.masteryStatus }
-                </Box>
-
-            </>}
-
-    </>)
+            {learningStateVd &&
+                <>
+                    <Box>
+                        {learningStateVd.performace}
+                    </Box>
+                    <Box>
+                        {learningStateVd.nextReviewedIn}
+                    </Box>
+                    <Box>
+                        {learningStateVd.masteryStatus}
+                    </Box>
+                </>}
+        </>)
 }

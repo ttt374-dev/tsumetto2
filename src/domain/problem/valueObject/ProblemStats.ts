@@ -18,6 +18,7 @@ export class ProblemStats {
         let easeFactor = 0
         let intervalDays = 0       
         let score = 0
+        let effective = 0
 
         for (const id of ids) {
             const learning = learningRecords[id]
@@ -29,10 +30,11 @@ export class ProblemStats {
             easeFactor += learning.schedulingState.easeFactor
             intervalDays += learning.schedulingState.intervalDays
             score += learning.score
+            effective++
         }
-        easeFactor = (ids.length > 0) ? easeFactor/ids.length : 0
-        intervalDays = (ids.length > 0) ? intervalDays/ids.length : 0
-        score = (ids.length > 0) ? score/attempted : 0
+        easeFactor = (ids.length > 0) ? easeFactor/effective : 0
+        intervalDays = (ids.length > 0) ? intervalDays/effective : 0
+        score = (ids.length > 0) ? score/effective : 0
         return new ProblemStats(
             ids.length,
             solved,

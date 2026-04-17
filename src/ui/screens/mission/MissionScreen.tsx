@@ -1,11 +1,11 @@
 import EditIcon from '@mui/icons-material/Edit';
+import { useNavigate } from "react-router-dom";
 
-import { AppShell } from "../../common/components/layout/AppShell";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { routes } from "../../App/useAppNavigation";
+import { AppShell } from "@/ui/common/components/layout/AppShell";
+import { routes } from "@/ui/App/useAppNavigation";
 import { useMissionModeStore } from "./hooks/useMissionModeStore";
 import MissionFabMenu from "./components/MissionFabMenu";
-import { ExecutionModeControl, type MissionExecutionMode } from "@/ui/screens/mission/components/MissionExecutionModeControl";
+import { ExecutionModeControl } from "@/ui/screens/mission/components/MissionExecutionModeControl";
 import { useImport } from "@/ui/dialogs/Import/useImport";
 import { useToast } from "@/ui/App/providers/ToastProvider";
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
@@ -15,12 +15,10 @@ import { IconButton } from "@mui/material";
 import { useUiSettingsStore } from "@/ui/settings/useUiSettingsStore";
 
 export default function MissionScreen() {
-    //const [ executionMode, setExecutionMode] = useState<MissionExecutionMode>(DefaultMissionExecutionMode)   
     const uiSettings = useUiSettingsStore()
     
     const executionMode = uiSettings.settings.missionExecutionMode
-    const executionPartialLimit = uiSettings.settings.missionPartialLimit
-    
+    const executionPartialLimit = uiSettings.settings.missionPartialLimit    
     
     const navigate = useNavigate()
 
