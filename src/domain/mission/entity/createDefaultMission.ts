@@ -11,7 +11,7 @@ export function createDefaultMission(): Mission {
         queryState: {...DefaultQueryState, 
             sortKey: "nextReviewedAt",
             sortOrder: "asc",
-            dueForReviewOnly: true,
+            //dueForReviewOnly: true,
         },
         createdAt: Date.now(),
         order: 0,

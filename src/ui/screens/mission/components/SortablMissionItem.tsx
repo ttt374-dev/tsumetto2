@@ -105,5 +105,6 @@ export function SortableMissionItem(props: {
 }
 // helpers
 const formatSummary = (summary: LearningSummary) => {
-    return `問題数：${summary.problemCount ?? 0}, スコア：${((summary.avgScore)).toFixed(1)}`
+    const ratio = summary.problemCount === 0 ? 0 : (1 - summary.overdueCount / summary.problemCount) * 100
+    return `問題数：${summary.problemCount ?? 0}, スコア：${((summary.avgScore)).toFixed(1)}, 達成率：${ratio.toFixed(0)}%`
 }

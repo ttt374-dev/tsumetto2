@@ -1,19 +1,22 @@
 import type { LearningState } from "@/domain/learning/entity/LearningState";
 import type { LearningSummary } from "@/domain/learning/entity/LearningSummary";
 import type { ProblemId } from "@/domain/problem/entity/Problem";
+import { over } from "lodash";
 
 
 export function computeLearningSummary(ids: ProblemId[], learningRecords: Record<ProblemId, LearningState>): LearningSummary {
     let attemptCount = 0
     let solvedCount = 0
     let failedCount = 0
+    let overdueCount = 0
     let sumIntervalDays = 0
     let sumEaseFactor = 0
-    let sumScore = 0
+    let sumScore = 0    
+    const now = Date.now()
 
     for (const id of ids){
         const s = learningRecords[id]
-        if (!s) continue
+        if (!s) { overdueCount++; continue }
 
         attemptCount += s.stats.attemptCount
         solvedCount += s.stats.solvedCount
@@ -21,6 +24,7 @@ export function computeLearningSummary(ids: ProblemId[], learningRecords: Record
         sumEaseFactor += s.schedulingState.easeFactor
         sumIntervalDays += s.schedulingState.intervalDays
         sumScore += s.score
+        if (s.schedulingState.nextReviewedAt < now) overdueCount++
     }
 
     const problemCount = ids.length
@@ -29,7 +33,7 @@ export function computeLearningSummary(ids: ProblemId[], learningRecords: Record
     const avgScore = problemCount > 0 ? sumScore / problemCount : 0
 
     return {
-        problemCount: ids.length, attemptCount, solvedCount, failedCount,
+        problemCount: ids.length, attemptCount, solvedCount, failedCount, overdueCount,
         avgIntervalDays, avgEaseFactor, avgScore,
     }
     

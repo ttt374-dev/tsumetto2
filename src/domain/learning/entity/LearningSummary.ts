@@ -5,6 +5,7 @@ export type LearningSummary = {
     attemptCount: number,
     solvedCount: number,
     failedCount: number,
+    overdueCount: number,
 
     avgScore: number,
     avgIntervalDays: number,
