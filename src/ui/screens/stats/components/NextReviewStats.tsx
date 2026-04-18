@@ -1,14 +1,17 @@
 import { Paper, Typography, Stack, Box} from "@mui/material"
-import { useMemo } from "react"
+import { act, useMemo } from "react"
 
 import type { ProblemId } from "@/domain/problem/entity/Problem"
 import { useLearningRecordStore } from "@/ui/features/learning/hooks/useLearningRecordStore"
-import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore"
 import type { LearningState } from "@/domain/learning/entity/LearningState"
+import { useNavigate } from "react-router-dom"
+import { routes } from "@/ui/App/useAppNavigation"
+import { useQueryActiveProblems } from "@/ui/features/problem/hooks/useQueryActiveProblems"
 
 type HistogramItem = {
-    count: number
+    //count: number
     bin: HistogramBin
+    ids: ProblemId[]
 }
 
 type HistogramBin = { 
@@ -28,15 +31,17 @@ function createBinsFromEdges(edges: number[]): HistogramBin[] {
 }
 
 function formatLabel(min: number, max: number): string {
-    if (min === -Infinity) return `${max}日以上先`
-    if (max === Infinity) return `${min}日以上遅れ`
+    if (min === -Infinity) return `${Math.abs(max)}日以上遅れ`
+    if (max === Infinity) return `${min}日以上先`
+    if (min === 0 && max === 1) return "今日"
 
-    if (max <= 0) return `${Math.abs(max)}-${Math.abs(min)}日後`
-    if (min >= 0) return `${min}-${max}日遅れ`
+    if (max <= 0) return `${Math.abs(max)}-${Math.abs(min) - 1}日遅れ`
+    if (min >= 0) return `${min}-${max - 1}日後`
 
-    return "今日期限"
+    return ""
 }
 function calcDiffDays(vA: number, vB: number) {
+    //return (vA - vB) / (1000 * 60 * 60 * 24)
     const a = new Date(vA)
     const b = new Date(vB)
     a.setHours(0, 0, 0, 0)
@@ -48,14 +53,13 @@ function buildNextReviewHistogram(
     learningRecords: Record<ProblemId, LearningState>
 ): HistogramItem[] {
     const now = new Date()
-    const edges = [-Infinity, -31, -15, -8, -4, -1, 0, 1, 4, 8, 15, 31, Infinity]
+    const edges = [-Infinity, -31, -15, -8, 0, 1, 8, 15, 31, Infinity]
     const bins = createBinsFromEdges(edges)
     const items: HistogramItem[] = bins.map(b => ({
-        count: 0,
+        //count: 0,
         bin: b,
+        ids: []
     }))
-
-    //let noDueDate = 0
 
     ids.forEach(id => {
         const record = learningRecords[id]
@@ -63,40 +67,42 @@ function buildNextReviewHistogram(
         
         const diffDays = calcDiffDays(record.schedulingState.nextReviewedAt, now.getTime())
         const binIndex = bins.findIndex(
-            b => diffDays >= b.min && diffDays <= b.max
+            //b => diffDays >= b.min && diffDays <= b.max
+            b => diffDays >= b.min && diffDays < b.max
         )
-        console.log("binindex", binIndex, record)
         if (binIndex !== -1) {
-            items[binIndex].count++
+            //items[binIndex].count++
+            items[binIndex].ids.push(id)
         }
     })
-    console.log("hist", items, ids)
-    //const noDueDateBin = { label: "期限未設定", min: -Infinity, max: -Infinity}
-    return [
-        ...items,
-        //{ count: noDueDate, bin:  noDueDateBin },
-    ]
+    return items
 }
 
 export function NextReviewHistogram({data}: {
     data: HistogramItem[]
 }) {
-    const filtered = data.filter(d => d.count > 0)
+    const filtered = data.filter(d => d.ids.length > 0).sort((a, b) => a.bin.min - b.bin.min)
 
     if (filtered.length === 0) {
         return <Typography>No data available</Typography>
     }
 
-    const max = Math.max(...filtered.map(d => d.count), 1)
+    const max = Math.max(...filtered.map(d => d.ids.length), 1)
+    const navigate = useNavigate()
+    const handleClick = (ids: ProblemId[]) => {
+        navigate(routes.list, { state: { ids: ids }})
+    }
+    
 
     return (
         <Paper sx={{ p: 2 }}>
             <Stack spacing={1.5}>
                 {filtered.map(item => {
-                    const widthPercent = (item.count / max) * 100
+                    const widthPercent = (item.ids.length / max) * 100
 
                     return (
-                        <Box key={item.bin.label}>
+                        <Box key={`${item.bin.min}-${item.bin.max}`} 
+                            onClick={()=>handleClick(item.ids)}>
                             <Stack
                                 direction="row"
                                 justifyContent="space-between"
@@ -109,27 +115,12 @@ export function NextReviewHistogram({data}: {
                                     variant="body2"
                                     sx={{ fontWeight: 600 }}
                                 >
-                                    {item.count}
+                                    {item.ids.length}
                                 </Typography>
                             </Stack>
 
-                            <Box
-                                sx={{
-                                    height: 10,
-                                    backgroundColor: "grey.200",
-                                    borderRadius: 5,
-                                    overflow: "hidden",
-                                }}
-                            >
-                                <Box
-                                    sx={{
-                                        width: `${widthPercent}%`,
-                                        height: "100%",
-                                        backgroundColor: item.bin.min > 0 ? "warning.main" : "primary.main",
-                                        transition: "width 0.4s ease",
-                                    }}
-                                />
-                            </Box>
+                            <HistogramPercentBar percent={widthPercent} 
+                                overdue={item.bin.max <= 0}/>
                         </Box>
                     )
                 })}
@@ -137,8 +128,27 @@ export function NextReviewHistogram({data}: {
         </Paper>
     )
 }
+function HistogramPercentBar({ percent, overdue} : { percent: number, overdue: boolean}){
+    return (<Box
+        sx={{
+            height: 10,
+            backgroundColor: "grey.200",
+            borderRadius: 5,
+            overflow: "hidden",
+        }}
+    >
+        <Box
+            sx={{
+                width: `${percent}%`,
+                height: "100%",
+                backgroundColor: overdue ? "warning.main" : "primary.main",
+                transition: "width 0.4s ease",
+            }}
+        />
+    </Box>)
+}
 export function NextReviewStats() {
-    const ids = useProblemStore(s => s.activeProblems).map(p => p.id)
+    const ids = useQueryActiveProblems({sortKey: "nextReviewedAt", sortOrder: "asc"}).map(p=>p.id)
     const learningRecords = useLearningRecordStore(s => s.stateRecords)    
 
     const histogram = useMemo(
@@ -154,75 +164,4 @@ export function NextReviewStats() {
         </Paper>
     )
 }
-/*
-type OverdueItem = {
-    id: ProblemId
-    overdueDays: number
-    dueDate: Date
-}
 
-////////////////////////////
-function getOverdueItems(
-    ids: ProblemId[],
-    learningRecords: Record<ProblemId, LearningState>
-): OverdueItem[] {
-    const now = new Date()
-
-    return ids
-        .map(id => {
-            const record = learningRecords[id]
-            if (!record?.schedulingState.nextReviewedAt) return null
-
-            const diffDays = Math.floor(
-                (now.getTime() - new Date(record.schedulingState.nextReviewedAt).getTime()) /
-                (1000 * 60 * 60 * 24)
-            )
-
-            if (diffDays <= 0) return null
-
-            return {
-                id,
-                overdueDays: diffDays,
-                dueDate: new Date(record.schedulingState.nextReviewedAt),
-            }
-        })
-        .filter((v): v is OverdueItem => v !== null)
-        .sort((a, b) => b.overdueDays - a.overdueDays) // 遅い順
-}
-
-type Props = {
-    items: OverdueItem[]
-}
-
-export function OverdueTable({ items }: Props) {
-    if (items.length === 0) {
-        return <Typography>🎉 期限超過はありません</Typography>
-    }
-
-    return (
-        <Paper sx={{ overflow: "auto" }}>
-            <Table size="small">
-                <TableHead>
-                    <TableRow>
-                        <TableCell>Problem</TableCell>
-                        <TableCell align="right">遅延日数</TableCell>
-                        <TableCell align="right">期限</TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {items.map(item => (
-                        <TableRow key={item.id}>
-                            <TableCell>{item.id}</TableCell>
-                            <TableCell align="right">
-                                {item.overdueDays} 日
-                            </TableCell>
-                            <TableCell align="right">
-                                {item.dueDate.toLocaleDateString()}
-                            </TableCell>
-                        </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
-        </Paper>
-    )
-}*/

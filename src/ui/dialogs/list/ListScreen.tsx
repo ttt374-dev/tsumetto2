@@ -3,6 +3,7 @@ import { AppShell } from "../../common/components/layout/AppShell";
 import { ListView } from "./ListView";
 import { useLocation, useNavigate } from "react-router-dom";
 import { routes } from "../../App/useAppNavigation";
+import { Button } from "@mui/material";
 
 type ViewerLocationState = {
     title: string
@@ -23,7 +24,8 @@ export function ListScreen(){
     }
 
     return (
-        <AppShell header={ title }>
+        <AppShell header={ title }
+            footer={<Button variant="outlined" onClick={()=>navigate(routes.back)}>戻る</Button>}>
             <ListView ids={ids} onSelectProblem={handleSeletProblem}/>            
         </AppShell>
     )
