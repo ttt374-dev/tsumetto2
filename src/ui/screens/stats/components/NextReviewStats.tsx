@@ -1,7 +1,4 @@
-import {
-    Table, TableBody, TableCell, TableHead, TableRow,
-    Paper, Typography, Stack, Box
-} from "@mui/material"
+import { Paper, Typography, Stack, Box} from "@mui/material"
 import { useMemo } from "react"
 
 import type { ProblemId } from "@/domain/problem/entity/Problem"
@@ -10,9 +7,7 @@ import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore"
 import type { LearningState } from "@/domain/learning/entity/LearningState"
 
 type HistogramItem = {
-    //label: string
     count: number
-    //overdue: boolean
     bin: HistogramBin
 }
 
@@ -21,59 +16,69 @@ type HistogramBin = {
     min: number,
     max: number,
 }
-function createBins(): HistogramBin[] {
-    return [
-        { label: "30日以上遅れ", min: 31, max: Infinity },
-        { label: "15-30日遅れ", min: 15, max: 30 },
-        { label: "8-14日遅れ", min: 8, max: 14 },
-        { label: "4-7日遅れ", min: 4, max: 7 },
-        { label: "1-3日遅れ", min: 1, max: 3 },
+function createBinsFromEdges(edges: number[]): HistogramBin[] {
+    return edges.slice(0, -1).map((min, i) => {
+        const max = edges[i + 1]
+        return {
+            min,
+            max,
+            label: formatLabel(min, max),
+        }
+    })
+}
 
-        { label: "今日期限", min: -0, max: 0 },
-        { label: "1-3日後", min: -3, max: -1 },
-        { label: "4-7日後", min: -7, max: -4 },
-        { label: "8日以上先", min: -Infinity, max: -8 },        
-    ]
+function formatLabel(min: number, max: number): string {
+    if (min === -Infinity) return `${max}日以上先`
+    if (max === Infinity) return `${min}日以上遅れ`
+
+    if (max <= 0) return `${Math.abs(max)}-${Math.abs(min)}日後`
+    if (min >= 0) return `${min}-${max}日遅れ`
+
+    return "今日期限"
 }
-function calcDiffDays(vA: number, vB: number){
-    return  Math.floor((vA - vB) / (1000 * 60 * 60 * 24))
+function calcDiffDays(vA: number, vB: number) {
+    const a = new Date(vA)
+    const b = new Date(vB)
+    a.setHours(0, 0, 0, 0)
+    b.setHours(0, 0, 0, 0)
+    return Math.floor((a.getTime() - b.getTime()) / (1000 * 60 * 60 * 24))
 }
-function buildOverdueHistogram(
+function buildNextReviewHistogram(
     ids: ProblemId[],
     learningRecords: Record<ProblemId, LearningState>
 ): HistogramItem[] {
     const now = new Date()
-    const bins = createBins()
+    const edges = [-Infinity, -31, -15, -8, -4, -1, 0, 1, 4, 8, 15, 31, Infinity]
+    const bins = createBinsFromEdges(edges)
     const items: HistogramItem[] = bins.map(b => ({
-        label: b.label,
         count: 0,
-        overdue: b.min > 0,
         bin: b,
     }))
 
-    let noDueDate = 0
+    //let noDueDate = 0
 
     ids.forEach(id => {
         const record = learningRecords[id]
-        if (!record) { noDueDate++; return }
+        if (!record) return
         
-        const diffDays = calcDiffDays(now.getTime(), record.schedulingState.nextReviewedAt)
+        const diffDays = calcDiffDays(record.schedulingState.nextReviewedAt, now.getTime())
         const binIndex = bins.findIndex(
             b => diffDays >= b.min && diffDays <= b.max
         )
+        console.log("binindex", binIndex, record)
         if (binIndex !== -1) {
             items[binIndex].count++
         }
     })
-    const noDueDateBin = { label: "期限未設定", min: -Infinity, max: -Infinity}
+    console.log("hist", items, ids)
+    //const noDueDateBin = { label: "期限未設定", min: -Infinity, max: -Infinity}
     return [
         ...items,
-        { count: noDueDate, bin:  noDueDateBin },
+        //{ count: noDueDate, bin:  noDueDateBin },
     ]
 }
 
-
-export function OverdueHistogram({data}: {
+export function NextReviewHistogram({data}: {
     data: HistogramItem[]
 }) {
     const filtered = data.filter(d => d.count > 0)
@@ -132,27 +137,20 @@ export function OverdueHistogram({data}: {
         </Paper>
     )
 }
-export function OverdueStats() {
+export function NextReviewStats() {
     const ids = useProblemStore(s => s.activeProblems).map(p => p.id)
-    const learningRecords = useLearningRecordStore(s => s.stateRecords)
-    /*
-    const overdueItems = useMemo(
-        () => getOverdueItems(ids, learningRecords),
-        [ids, learningRecords]
-    )*/
+    const learningRecords = useLearningRecordStore(s => s.stateRecords)    
 
     const histogram = useMemo(
-        () => buildOverdueHistogram(ids, learningRecords)
-            //.filter(h => h.label !== "期限内" && h.label !== "期限未設定")
-            ,
+        () => buildNextReviewHistogram(ids, learningRecords),
         [ids, learningRecords]
     )
-
+    const unanswered = ids.filter(id=>learningRecords[id] === undefined).length
     return (
         <Paper>
             レビュー期限
-            <OverdueHistogram data={histogram} />
-
+            <NextReviewHistogram data={histogram} />
+            未解答：{unanswered}
         </Paper>
     )
 }

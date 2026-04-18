@@ -5,7 +5,7 @@ import { IntervalDaysStats } from "./components/IntervalDaysStats";
 import { ProblemStatsTable } from "./components/ProblemStatsTable";
 import PerformaceSummary from "@/ui/screens/stats/components/PerformanceSummary";
 import { MasterySummary } from "@/ui/screens/stats/components/MasterySummary";
-import { OverdueStats } from "@/ui/screens/stats/components/OverdueStats";
+import { NextReviewStats } from "@/ui/screens/stats/components/NextReviewStats";
 
 export default function StatsScreen() {
     return (
@@ -17,7 +17,7 @@ export default function StatsScreen() {
             }}>
                 <Box sx={{ flex: 1, overflowY: "auto" }}>
                     <ProblemStatsTable />
-                    <OverdueStats/>
+                    <NextReviewStats/>
                     <PerformaceSummary/>
                     <MasterySummary/>
                 </Box>
