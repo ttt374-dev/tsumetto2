@@ -15,29 +15,18 @@ import { IconButton } from "@mui/material";
 import { useUiSettingsStore } from "@/ui/settings/useUiSettingsStore";
 
 export default function MissionScreen() {
-    const uiSettings = useUiSettingsStore()
-    
-    const executionMode = uiSettings.settings.missionExecutionMode
-    const executionPartialLimit = uiSettings.settings.missionPartialLimit    
-    
+    //const uiSettings = useUiSettingsStore()    
     const navigate = useNavigate()
+    const editMode = useMissionModeStore(s=>s.editMode)
 
     return (
         <AppShell
             header="Missions"
             rightActions={<MissionEditModeControl/>}
-            fab={<MissionFabMenu onCreateNewMission={()=>navigate(routes.newMission)} />}
+            fab={!editMode && <MissionFabMenu onCreateNewMission={()=>navigate(routes.newMission)} />}
         >
-            <ExecutionModeControl 
-                mode={executionMode} 
-                limit={executionPartialLimit}
-                onChange={(mode, limit)=>
-                uiSettings.setSettings({missionExecutionMode: mode, missionPartialLimit: limit})}/>
-            
-            <MissionList                
-                executionMode={executionMode}
-                executionPartialLimit={executionPartialLimit}
-            />           
+
+            <MissionList/>           
             <MissionRelatedDialogs/>
             
         </AppShell>

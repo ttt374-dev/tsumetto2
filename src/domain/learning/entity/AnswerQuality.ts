@@ -7,7 +7,7 @@ export function deriveAnswerQuality(solvedResult: SolvedResult): AnswerQuality {
     const outcome = deriveOutcome(solvedResult)
 
     if (outcome === "failed" || outcome === "abandoned") return 0
-    if (solvedResult.mistakes > 4) return 2
+    if (solvedResult.mistakes > 5) return 2
     if (solvedResult.elapsedSec > 10) return 4
     return 5
 }

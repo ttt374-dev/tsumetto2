@@ -10,6 +10,7 @@ import { routes } from "../../App/useAppNavigation";
 import { projectLearningState } from "@/domain/learning/service/projectLearningState";
 import { computeLearningSummary } from "@/domain/learning/service/computeLearningSummary";
 import { useSessionStore } from "@/ui/screens/session/hooks/useSessionStore";
+import { usePlannerStore } from "@/ui/screens/session/hooks/usePlannerStore";
 
 /////////////////////////////////////////////
 export default function SessionSummaryScreen() {
@@ -20,7 +21,7 @@ export default function SessionSummaryScreen() {
             reset: s.reset,
             startSession: s.start
         })))
-
+    const planner = usePlannerStore()
     const reviewEventLog = useReviewEventStore(s => s.eventLog)
     const sessionEventLog = reviewEventLog
         .filter(e => ("sessionId" in e && e.sessionId === sessionId))
@@ -38,6 +39,10 @@ export default function SessionSummaryScreen() {
     const handleRetry = () => {        
         startSession(createOnetimeSessionId(), ids)
         navigate(routes.sessionPlay)
+    }
+    const handleNextChunk = () => {
+        const chunk = planner.nextChunk()
+        planner.missionId&& chunk && startSession(planner.missionId, chunk)
     }
     const records = projectLearningState(sessionEventLog)
     const summary = computeLearningSummary(ids, records)
@@ -59,7 +64,13 @@ export default function SessionSummaryScreen() {
                 >
                     間違い復習
                 </Button>
-                <Button variant="contained" fullWidth onClick={() => {
+
+                <Button variant="contained" onClick={handleNextChunk} fullWidth
+                    disabled={!planner.hasNext()}
+                >
+                    次のチャンクへ
+                </Button>
+                <Button variant="outlined" fullWidth onClick={() => {
                     reset()
                     navigate(routes.back)
                 }}>

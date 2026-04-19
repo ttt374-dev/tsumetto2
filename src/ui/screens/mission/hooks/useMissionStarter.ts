@@ -6,23 +6,26 @@ import { selectActiveProblems, useProblemStore } from "@/ui/features/problem/hoo
 import { useLearningRecordStore } from "@/ui/features/learning/hooks/useLearningRecordStore";
 import type { Mission } from "@/domain/mission/entity/Mission";
 import { useSessionStore } from "@/ui/screens/session/hooks/useSessionStore";
+import { usePlannerStore } from "@/ui/screens/session/hooks/usePlannerStore";
 
 
 export function useMissionStarter(){
     const problems = useProblemStore(selectActiveProblems);
     const learningRecords = useLearningRecordStore(s => s.stateRecords);
     const navigate = useNavigate()
-    
-    const start = useSessionStore(s => s.start);
+    const planner = usePlannerStore()    
+    const start = useSessionStore(s => s.start);    
 
-    const startMission = (mission: Mission, limit: number | null) => {       
-
-        const filtered = applyQuery(
+    const startMission = (mission: Mission) => {       
+        const ids = applyQuery(
             problems,
             learningRecords,
-            mission.queryState, limit);
-        start(mission.id, filtered.map(p => p.id));
-        console.log("start mission", routes.sessionPlay)
+            mission.queryState).map(p=>p.id)
+
+        planner.create(mission.id, ids, 5)
+        const chunk = planner.nextChunk()
+        chunk && start(mission.id, chunk);  // TODO: chunk が空の時の処理
+        //console.log("start mission", routes.sessionPlay)
         navigate(routes.sessionPlay);
     };
 

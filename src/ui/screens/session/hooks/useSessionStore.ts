@@ -16,7 +16,7 @@ type SessionStore = {
     // ===== derived (必要最低限だけ) =====
     phase: () => SessionPhase    
     // ===== command =====
-    start: (missionId: MissionId, ids: ProblemId[], startIndex?: number) => void;
+    start: (missionId: MissionId, ids: ProblemId[]) => void;
     next: () => void;
     prev: () => void;
     moveTo: (index: number) => void;    
@@ -49,18 +49,16 @@ export const useSessionStore = create<SessionStore>((set, get) => ({
     // ======================
     // command
     // ======================
-    start: (missionId, ids, startIndex=0) => {
+    start: (missionId, ids) => {
         if (ids.length === 0) return    // 空だったらスタートしない
-        if (ids.length <= startIndex) return // startIndex範囲外
 
         const sessionId = v4()
         set((_s) => {
-            //console.log("start", missionId, ids, ids.length > 0 ? 0 : -1)
             return {
                 missionId: missionId,
                 sessionId: sessionId,
                 problemIds: ids,
-                currentIndex: startIndex,
+                currentIndex: 0,
             }
         })
     },

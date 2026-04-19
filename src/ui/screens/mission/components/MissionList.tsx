@@ -2,7 +2,6 @@ import { Box, ToggleButton, List, ListItem, ListItemButton, ListItemText, Stack,
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, type UniqueIdentifier, TouchSensor } from "@dnd-kit/core";
 import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
 
-import { type MissionExecutionMode } from "@/ui/screens/mission/components/MissionExecutionModeControl";
 import { useMissionStarter } from "@/ui/screens/mission/hooks/useMissionStarter";
 import { useMissionViewModel } from "@/ui/screens/mission/hooks/useMissionViewModel";
 import { SortableMissionItem } from "@/ui/screens/mission/components/SortablMissionItem";
@@ -22,17 +21,13 @@ function createSensors(){
         })
     );
 }
-export function MissionList(props: {    
-    executionMode: MissionExecutionMode
-    executionPartialLimit: number
-}) {
+export function MissionList() {
     const { missionArray, onDragEnd }  = useMissionViewModel();
     const { startMission } = useMissionStarter()
     
     // dnd-kit センサ    
-    const sensors = createSensors()
-    
-    const limit = props.executionMode === "partial" ? props.executionPartialLimit : null
+    const sensors = createSensors()   
+
     return (
         <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto" }}> { /* , touchAction: "pan-y" */}
             <DndContext sensors={sensors}
@@ -45,7 +40,7 @@ export function MissionList(props: {
                             <SortableMissionItem
                                 key={mission.id}
                                 mission={mission}                                
-                                startMission={() => startMission(mission, limit)}
+                                startMission={() => startMission(mission)}
                             />
                         ))}
                     </List>
