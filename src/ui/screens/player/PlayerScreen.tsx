@@ -42,7 +42,8 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
     
     //const { isInitialized } = usePlayerInitializer(problem)
     const {onRevealAnswer } = useRevealHandler()
-    const { element: solveDialogElement } = useGameEventHandler(problem, onSolve, onSolvedConfirm)
+    const { element: solveDialogElement } = 
+        useGameEventHandler(problem, onSolve, onSolvedConfirm)
     const { element: promotionDialogElement } = usePromotionDialog()
 
     const toast = useToast()

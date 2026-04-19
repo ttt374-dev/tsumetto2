@@ -2,9 +2,7 @@ import { create } from "zustand"
 
 import { type Square, type PieceType, type Player, Board, Position} from "@/domain/kif/entity"
 import type { Intent } from "@/domain/game/intentResolver";
-import { getCurrentPosition, useGameStore } from "@/ui/screens/player/store/useGameStore";
-import { buildUntilPly } from "@/domain/kif/service/buildUntilPly";
-import { useReplayStore } from "@/ui/screens/player/store/useReplayStore";
+import { getCurrentPosition } from "@/ui/screens/player/store/useGameStore";
 
 export type Selection =
     | { type: "none" }
@@ -30,8 +28,8 @@ export const useBoardInputStore = create<BoardInputStore>((set, get) => ({
         const piece = position.board.get(sq)
         
         //const userplayer = "black"
-        const gameState = useGameStore.getState()
-        const userplayer = gameState.userSide
+        //const gameState = useGameStore.getState()
+        //const userplayer = gameState.userSide
         //const ply = useReplayStore.getState().ply
         //const position = buildUntilPly(gameState.initialPosition, gameState.moves, ply)
         //console.log("userplayer", userplayer)

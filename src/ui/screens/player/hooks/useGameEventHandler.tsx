@@ -11,6 +11,7 @@ import { useTimerStore } from "@/ui/screens/player/store/useTimerStore"
 import { useLearningRecordStore } from "@/ui/features/learning/hooks/useLearningRecordStore"
 import { useEffect, useState } from "react"
 import type { LearningState } from "@/domain/learning/entity/LearningState"
+import { useBoardInputStore } from "@/ui/screens/player/store/useBoardInputStore"
 
 export function useGameEventHandler(problem: Problem, 
     onSolve: () => void, onSolvedConfirm: () => void){
@@ -31,12 +32,14 @@ export function useGameEventHandler(problem: Problem,
 
     const initializeGame = useGameStore(s=>s.initialize)
     const initializeReplay = useReplayStore(s=>s.initialize)
+    const clearSelection = useBoardInputStore(s=>s.clear)
     const restart = useTimerStore(s=>s.restart)
     
     useEffect(()=>{                
         setIsInitialized(false)
         initializeGame(problem.kifData.initialPosition, problem.kifData.moves)      
         initializeReplay(problem.kifData.moves.length)
+        clearSelection()
         restart()        
         setIsInitialized(true)
     }, [problem.id])
