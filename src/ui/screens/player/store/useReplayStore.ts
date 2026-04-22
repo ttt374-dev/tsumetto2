@@ -1,15 +1,14 @@
-import { ConstructionOutlined } from "@mui/icons-material"
 import { create } from "zustand"
 
 type ReplayPhase = "idle" | "animating"
 
 export type ReplayStore = {
     ply: number
-    maxPly: number
+    maxPly: number | null
     phase: ReplayPhase
 
     initialize: (maxPly: number) => void
-    reset: () => void
+    //reset: () => void
     advancePly: () => void
     retreatPly: () => void
     moveTo: (ply: number) => void    
@@ -17,51 +16,64 @@ export type ReplayStore = {
     endAnimation: () => void
 }
 
-
 export const useReplayStore = create<ReplayStore>((set, get) => ({
     ply: 0,
-    maxPly: -1,
+    maxPly: null,
     phase: "idle",
 
-    initialize: (maxPly: number) => {
-        console.log("maxply", maxPly)
+    initialize: (maxPly) => {
         set({ maxPly, ply: 0, phase: "idle" })
     },
-    reset: () => {
-        set({ ply: 0 })
+
+    moveTo: (ply) => {
+        const { ply: current, maxPly } = get()
+        if (maxPly === null) throw new Error("replay store not initialized")
+        
+        const next = ReplayEngine.moveTo({ ply: current, maxPly }, ply)
+        set(next)
     },
 
-    moveTo: (ply: number) => {       // 範囲外でもclampして強制的に収める仕様             
-        const { maxPly, phase } = get()
-        assertInitialized(maxPly)
-        ////if (phase !== "idle") return   // ← アニメ中は無効
-        console.log("moveto", ply, maxPly)
-        set({ ply: clampPly(ply, maxPly) })
-    },
     advancePly: () => {
-        const { moveTo, ply } = get()
-        moveTo(ply + 1)
+        const { ply, maxPly } = get()
+        if (maxPly === null) throw new Error("replay store not initialized")
+        const next = ReplayEngine.advance({ ply, maxPly })
+        set(next)
     },
+
     retreatPly: () => {
-        const { moveTo, ply } = get()
-        moveTo(ply - 1)
+        const { ply, maxPly } = get()
+        if (maxPly === null) throw new Error("replay store not initialized")
+        const next = ReplayEngine.retreat({ ply, maxPly })
+        set(next)
     },
-    startAnimation: () => {
-        set({ phase: "animating" })
-    },
 
-    endAnimation: () => {
-        set({ phase: "idle" })
-    },    
-
-
+    startAnimation: () => set({ phase: "animating" }),
+    endAnimation: () => set({ phase: "idle" }),
 }))
-//////////////
-function clampPly(ply: number, max: number) {
-    return Math.max(0, Math.min(ply, max))
+
+////////////////////////
+export type ReplayState = {
+    ply: number
+    maxPly: number
 }
-function assertInitialized(maxPly: number) {
-    if (maxPly < 0) {
-        throw new Error("replay store not initialized")
+
+export const ReplayEngine = {
+    clamp(ply: number, maxPly: number) {
+        return Math.max(0, Math.min(ply, maxPly))
+    },
+
+    moveTo(state: ReplayState, ply: number): ReplayState {
+        return {
+            ...state,
+            ply: this.clamp(ply, state.maxPly)
+        }
+    },
+
+    advance(state: ReplayState): ReplayState {
+        return this.moveTo(state, state.ply + 1)
+    },
+
+    retreat(state: ReplayState): ReplayState {
+        return this.moveTo(state, state.ply - 1)
     }
 }

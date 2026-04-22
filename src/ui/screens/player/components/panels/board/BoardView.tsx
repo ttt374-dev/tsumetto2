@@ -48,7 +48,6 @@ export default function BoardView({ reversed }: { reversed: boolean }) {
         }
     }
     const isSelected = (sq: Square): boolean => {
-
         return selection.type === "board" &&
             selection.square.file === sq.file &&
             selection.square.rank === sq.rank
