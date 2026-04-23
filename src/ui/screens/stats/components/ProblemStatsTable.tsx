@@ -8,6 +8,7 @@ import { applyFilter } from "@/domain/problem/service/query/applyFilter";
 import { DefaultQueryState } from "@/domain/problem/service/query/QueryState";
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem";
 import type { StatsRowValues } from "@/ui/screens/stats/components/StatsRow";
+import { computeLearningSummary } from "@/domain/learning/service/computeLearningSummary";
 
 export function ProblemStatsTable() {
     const activeProblems = useProblemStore(s => s.activeProblems)
@@ -15,10 +16,10 @@ export function ProblemStatsTable() {
 
     const queryState = { ...DefaultQueryState, dueForReviewOnly: true}
     const dueForReviewOnly = applyFilter(activeProblems, learningRecords, queryState)
-    console.log("due review", dueForReviewOnly)
+    //console.log("due review", dueForReviewOnly)
 
     // 総合
-    const answered = activeProblems.filter(p => learningRecords[p.id] !== undefined)    
+    //const answered = activeProblems.filter(p => learningRecords[p.id] !== undefined)    
     const idsMap: Record<string, Record<string, Problem[]>> = {}
 
     idsMap["general"] =  {
@@ -53,7 +54,6 @@ export function ProblemStatsTable() {
         "7手": mate7,
         "9手以上": mate9,
     }
-
     
     // タグ
     const allTags = useProblemStore(s => s.allTags)
@@ -67,6 +67,7 @@ export function ProblemStatsTable() {
                 return {
                     label: tag,
                     stats: ProblemStats.create(filteredIds, learningRecords)
+                    //stats: computeLearningSummary(filteredIds, learningRecords)
                 }
             }),
         [allTags, activeProblems, learningRecords]

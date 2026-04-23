@@ -1,5 +1,6 @@
 import { TableCell, TableRow } from "@mui/material";
 import { ProblemStats } from "@/domain/problem/valueObject/ProblemStats";
+import { computeLearningSummary } from "@/domain/learning/service/computeLearningSummary";
 
 export type StatsRowValues = {
     label: string
@@ -15,6 +16,7 @@ export function StatsRow(props: {
     const score = totalCount > 0 ? props.stats.score.toFixed(1) : "-"
     const easeFactor = totalCount > 0 ? props.stats.easeFactor.toFixed(2) : "-"
     const intervalDays = totalCount > 0 ? props.stats.intervalDays.toFixed(0) : "-"
+    
     const width = 60
     //console.log("statsorw", props.label, props.stats)
     return (

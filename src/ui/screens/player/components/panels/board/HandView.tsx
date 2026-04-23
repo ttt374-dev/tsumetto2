@@ -5,10 +5,9 @@ import styles from "./BoardView.module.css";
 import { Box, Stack } from "@mui/material";
 import { useCurrentPosition } from "@/ui/screens/player/store/useGameStore";
 
-function HandPieceView({ pieceType, selected, count, owner, onClick }: { 
+function HandPieceView({ pieceType, selected, count, onClick }: { 
     pieceType: PieceType
     selected: boolean
-    owner: Player
     count: number
     onClick?: () => void
 }) {
@@ -50,7 +49,7 @@ export default function HandView({ hand, owner }: { hand: Hand, owner: Player })
                 return (
                     <HandPieceView 
                         key={`handpiece-${owner}-${pieceType}`}
-                        pieceType={pieceType} selected={isSelected(pieceType, owner)} count={count} owner={owner}
+                        pieceType={pieceType} selected={isSelected(pieceType, owner)} count={count}
                         onClick={() => handleHandpieceClick(pieceType)}/>)
             })
             }

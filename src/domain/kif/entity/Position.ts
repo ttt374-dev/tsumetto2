@@ -32,7 +32,6 @@ export class Position {
 
         let piece = this.board.get(from)
         const fromStr = `${from.file}, ${from.rank}`
-        //if (!piece) throw new Error(`no piece on from: [${move.pieceType}] [${fromStr}]`)
         if (!piece) return { ok: false, error: { code: "no-piece-from"}}
 
         // capture

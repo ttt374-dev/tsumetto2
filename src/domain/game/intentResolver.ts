@@ -34,7 +34,7 @@ function resolveBoardMoveIntent(
     //promote: boolean
 ): IntentResult {
     const piece = position.board.get(from)
-    if (!piece) throw new Error("piece not there")    
+    if (!piece) return { type: "invalidMove", reason: "piece not there"}
 
     // 手番チェック
     if (piece.owner !== position.sideToMove) return { type: "invalidMove", reason: "not own turn"}

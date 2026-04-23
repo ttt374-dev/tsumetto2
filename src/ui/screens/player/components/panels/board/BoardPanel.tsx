@@ -7,7 +7,7 @@ import BoardView from "./BoardView";
 
 export default function BoardPanel( { reversed = false}: { reversed?: boolean }) {
     const resPosition = useCurrentPosition()
-    if (!resPosition.ok) return <>Error</>
+    if (!resPosition.ok) return <>Error: { resPosition.error.code} at { resPosition.ply } </>
     const { hands } = resPosition.value
     const topPlayer = reversed ? "black" : "white"
     const bottomPlayer = reversed ? "white" : "black"

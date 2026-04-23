@@ -4,6 +4,8 @@ import { parseKif } from "../parser/parseKif";
 import { parseMoveLine, parseMoves } from "../parser/parseMove";
 import { buildUntilPly } from "../buildUntilPly";
 import { parseHand } from "../parser/parseHand";
+import { responsiveFontSizes } from "@mui/material";
+import { ReportProblem } from "@mui/icons-material";
 
 describe("parse moves", () => {
     it("move", () => {
@@ -63,14 +65,18 @@ describe("parse moves", () => {
         const hands = Hands.empty()
         let state = new Position(Board.create(), hands.add('black', 'knight'))
         const drop = new Move(null, Square.create(2, 9), "knight")
-        state = drop.apply(state)
+        let resPosition = drop.apply(state)
+        if (!resPosition.ok) throw new Error
+        state = resPosition.value
         const res = parseMoveLine(text)
         if (!res.ok || res.value.kind === "skip") {
             throw new Error(`expected parsed but got`)
         }
 
         expect(res.value.move.pieceType).toEqual("knight")
-        state = res.value.move.apply(state)
+        resPosition = res.value.move.apply(state)
+        if (!resPosition.ok) throw new Error
+        state = resPosition.value
         const sq = new Square(5, 5)
         expect(state.board.get(sq)?.promoted).toBeTruthy
         expect(state.board.get(sq)?.type).toEqual("knight")
@@ -207,8 +213,9 @@ describe("実録parse", () => {
             //const initial = Position.create()
             //initial.board.dump()
             //const history = { initial: Position.create(), moves: moves }
-            const state = buildUntilPly(Position.create(), moves, 11)
-            expect(state.board.get(new Square(4, 8))?.type).toEqual("king")
+            const resPosition = buildUntilPly(Position.create(), moves, 11)
+            if (!resPosition.ok) throw new Error
+            expect(resPosition.value.board.get(new Square(4, 8))?.type).toEqual("king")
         }
     })
 

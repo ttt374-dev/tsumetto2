@@ -23,7 +23,6 @@ export function parseHand(handStr: string): ParseHandResult {
         consumed += match[0]
 
         const item = KanjiToPieceItem[kanji]
-        //if (!item) throw new Error(`Unknown piece kanji: ${kanji}`)
         if (!item) return { ok: false, error: { code: "unknown-piece-kanji", cause: kanji}}
 
         const nRes: Result<number, ParseHandError> =

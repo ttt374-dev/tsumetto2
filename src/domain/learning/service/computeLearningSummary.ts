@@ -1,7 +1,6 @@
 import type { LearningState } from "@/domain/learning/entity/LearningState";
 import type { LearningSummary } from "@/domain/learning/entity/LearningSummary";
 import type { ProblemId } from "@/domain/problem/entity/Problem";
-import { over } from "lodash";
 
 
 export function computeLearningSummary(ids: ProblemId[], learningRecords: Record<ProblemId, LearningState>): LearningSummary {

@@ -1,9 +1,9 @@
 import { Box } from "@mui/material"
 
 import styles from "./BoardView.module.css";
-import { useCurrentPosition, useGameStore } from "@/ui/screens/player/store/useGameStore";
+import { useGameStore } from "@/ui/screens/player/store/useGameStore";
 import { useBoardInputStore } from "@/ui/screens/player/store/useBoardInputStore";
-import { Board, Piece, Position, Square } from "@/domain/kif/entity";
+import { Board,  Position, Square } from "@/domain/kif/entity";
 import { createDecideGameEventContext, decideGameEvent } from "@/domain/game/decideGameEvent";
 import { resolveIntent } from "@/domain/game/intentResolver";
 import { SquareView } from "@/ui/screens/player/components/panels/board/SquareView";
@@ -12,8 +12,8 @@ import { useReplayStore } from "@/ui/screens/player/store/useReplayStore";
 const fileLabels = ["９", "８", "７", "６", "５", "４", "３", "２", "１"];
 const rankLabels = ["一", "二", "三", "四", "五", "六", "七", "八", "九"];
 
-export default function BoardView({ position, reversed }: { 
-    position: Position, reversed: boolean }) {
+export default function BoardView({ position, reversed = false }: { 
+    position: Position, reversed?: boolean }) {
 
     const selection = useBoardInputStore(s => s.selection)
     const userSide = useGameStore(s => s.userSide)
