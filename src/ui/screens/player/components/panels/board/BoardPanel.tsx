@@ -6,7 +6,9 @@ import HandView from "./HandView";
 import BoardView from "./BoardView";
 
 export default function BoardPanel( { reversed = false}: { reversed?: boolean }) {
-    const { hands } = useCurrentPosition()
+    const resPosition = useCurrentPosition()
+    if (!resPosition.ok) return <>Error</>
+    const { hands } = resPosition.value
     const topPlayer = reversed ? "black" : "white"
     const bottomPlayer = reversed ? "white" : "black"
     
@@ -16,7 +18,7 @@ export default function BoardPanel( { reversed = false}: { reversed?: boolean })
                 {/* 持駒表示 */}
                 <HandView hand={hands.get(topPlayer)} owner={topPlayer} />
 
-                <BoardView reversed={reversed}/>
+                <BoardView position={resPosition.value} reversed={reversed}/>
                 {/* 持駒表示 */}
                 <HandView hand={hands.get(bottomPlayer)} owner={bottomPlayer} />
             </Box>

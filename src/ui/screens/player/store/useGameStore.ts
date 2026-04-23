@@ -3,7 +3,7 @@ import { useMemo } from "react"
 import { create } from "zustand"
 
 import { Move, Position, Square, type PieceType, type Player } from "@/domain/kif/entity"
-import { buildUntilPly } from "@/domain/kif/service/buildUntilPly"
+import { buildUntilPly, type BuildPositionResult } from "@/domain/kif/service/buildUntilPly"
 import { useReplayStore } from "@/ui/screens/player/store/useReplayStore"
 import { projectGameState } from "@/domain/game/gameStateReducer"
 
@@ -39,7 +39,6 @@ export type GameStore = {
     state: GameState       // キャッシュ。events から derived
     initialPosition: Position
     moves: Move[]
-    //hasSubmitted: boolean
     displayReversed: boolean
     userSide: Player
 
@@ -70,7 +69,7 @@ export function useCurrentPosition() {
     [initialPosition, moves, ply]
   )
 }
-export function getCurrentPosition (): Position {
+export function getCurrentPosition (): BuildPositionResult {
   const { initialPosition, moves } = useGameStore.getState()
   const ply = useReplayStore.getState().ply
   return buildUntilPly(initialPosition, moves, ply)

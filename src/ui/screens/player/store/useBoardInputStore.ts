@@ -23,17 +23,12 @@ export const useBoardInputStore = create<BoardInputStore>((set, get) => ({
     selection: { type: "none" },
 
     clickSquare: (sq) => {
-        const position = getCurrentPosition()
+        const res = getCurrentPosition()
+        if (!res.ok) return null
+        const position = res.value
+        const piece = position.board.get(sq)       
         const selection = get().selection
-        const piece = position.board.get(sq)
-        
-        //const userplayer = "black"
-        //const gameState = useGameStore.getState()
-        //const userplayer = gameState.userSide
-        //const ply = useReplayStore.getState().ply
-        //const position = buildUntilPly(gameState.initialPosition, gameState.moves, ply)
-        //console.log("userplayer", userplayer)
-        
+
 
         switch(selection.type){
             case "none":

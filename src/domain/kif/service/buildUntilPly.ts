@@ -1,22 +1,31 @@
-import type { KifHistory, Move, Position } from "../entity";
+import type { Move, Position } from "../entity";
 
+export type BuildPositionResult =
+    | { ok: true; value: Position }
+    | { ok: false; error: unknown; ply: number; move: Move }
 
-export function buildUntilPly(initialPosition: Position, moves: Move[], ply: number): Position {
-    //console.log("build ply", ply, history)
-    return moves
-        .slice(0, ply)
-        .reduce((state, move) => move.apply(state), initialPosition)
+export function buildUntilPly(
+    initialPosition: Position,
+    moves: Move[],
+    ply: number
+): BuildPositionResult {
+    let state = initialPosition
+
+    for (let i = 0; i < ply; i++) {
+        const move = moves[i]
+        const res = move.apply(state)
+
+        if (!res.ok) {
+            return {
+                ok: false,
+                error: res.error,
+                ply: i + 1,
+                move,
+            }
+        }
+
+        state = res.value
+    }
+
+    return { ok: true, value: state }
 }
-
-
-
-/*
-export function ___buildUntilPly(history: KifHistory, ply: number): Position {
-  console.log("build ply", ply, history)
-  return history.moves
-    .slice(0, ply)
-    .reduce((state, move) => move.apply(state), history.initial)
-}
-
-
-*/

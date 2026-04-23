@@ -9,6 +9,7 @@
 
 }
 
+/* ** cell ** */
 .cell {
   border: 1px solid #aaa;
   display: flex;
@@ -19,6 +20,11 @@
   /* background: #f8f4e6;*/
 }
 
+.flash {
+  outline: 2px solid rgba(255, 200, 0, 0.9);
+  outline-offset: -2px;
+  transition: outline 0.1s ease;
+}
 .rotated {
   transform: rotate(180deg);
 }
@@ -26,6 +32,12 @@
   border: 2px solid #ccc;
   background-color:#ccc;  
 }
+.lastTo {
+  outline: 2px solid rgba(255, 80, 80, 0.9);
+  outline-offset: -2px;
+}
+
+/*  label */
 .fileLabel {
   display: grid;
   font-size: 8px;

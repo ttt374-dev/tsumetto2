@@ -19,6 +19,7 @@ export function useGameEventHandler(problem: Problem,
     const events = useGameStore(s=>s.events)    
     const gameState = useGameStore(s=>s.state)
     const replay = useReplayStore()
+    const stopTimer = useTimerStore(s=>s.stop)
     const replayCtrl = useReplayController()    
     const records = useLearningRecordStore(s=>s.stateRecords)    
     const learning = records[problem.id]

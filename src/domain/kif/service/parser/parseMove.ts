@@ -16,7 +16,13 @@ export function parseMoves(lines: string[]): Result<Move[], ParseErrorWithContex
     let prevSquare: Square | undefined = undefined
 
     for (let i = 0; i < lines.length; i++) {
-    //for (const line of lines){
+        const line = lines[i]
+
+        // ★ これを追加
+        if (line.trim().startsWith("変化")) {
+            break
+        }
+
         const res = parseMoveLine(lines[i], prevSquare)
         if (!res.ok) return { ok: false, error: withContext( { domain: "move", detail: res.error}, i+1, lines[i])}
         if (res.value.kind !== "move") continue        

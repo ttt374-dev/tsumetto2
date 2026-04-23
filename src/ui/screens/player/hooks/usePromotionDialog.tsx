@@ -9,7 +9,9 @@ export function usePromotionDialog(){
     const { dispatch, choosePromotion } = useGameStore()    
     const clearSelection = useBoardInputStore(s=>s.clear)
     const userSide = useGameStore(s=>s.userSide)
-    const position = useCurrentPosition()
+    const res = useCurrentPosition()
+    if (!res.ok) return { element: null }
+    const position = res.value
 
     const onPromotionConfirm = (promote: boolean) => {
         const intentResult: IntentResult = { type: "move", move: choosePromotion(promote) }

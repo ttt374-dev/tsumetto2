@@ -37,16 +37,13 @@ export function parseKif(text: string): ParseKifResult {
         } else {
             moveLines.push(line)
         }
-
     }
     if (!inMoves) return { ok: false, error: { domain: "move", detail: { "code": "missing-move-section"}}}
 
-    //const handicap = headers["手合割"]     
     const resboard = parseInitialBoard(initialPositionLines)
     if (!resboard.ok) return { ok: false, error: { domain: "board", detail: resboard.error}}
     const board = resboard.value.kind === "board" ? resboard.value.board : Board.create()
     
-    //console.log("後手の持ち駒", headers["後手の持駒"])
     const resBlack = parseHand(headers["先手の持駒"])
     const resWhite = parseHand(headers["後手の持駒"])
     if (!resBlack.ok) return { ok: false, error: { domain: "hand", detail: resBlack.error}}

@@ -1,6 +1,7 @@
-import type { Position } from "./Position"
+import type { ApplyMoveError, Position } from "./Position"
 import type { PieceType } from "./Piece"
 import type { Square } from "@/domain/kif/entity/Square"
+import type { Result } from "@/shared/result"
 
 export class Move {
     constructor(
@@ -30,7 +31,7 @@ export class Move {
             a.pieceType === b.pieceType &&
             a.promote === b.promote
     }
-    apply(state: Position): Position {
+    apply(state: Position): Result<Position, ApplyMoveError> {
         return state.applyMove(this)
     }
     /////////////////////////////////

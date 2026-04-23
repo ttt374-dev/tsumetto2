@@ -2,6 +2,9 @@ import { Board, type BoardDTO } from "./Board"
 import { Hand, Hands, type HandDTO } from "./Hand"
 import { Piece, type Player } from "./Piece"
 import type { Move } from "./Move"
+import type { Result } from "@/shared/result"
+
+export type ApplyMoveError = { code: "no-piece-from"}
 
 export class Position {
     constructor(
@@ -16,20 +19,21 @@ export class Position {
         return new Position(Board.empty(), Hands.empty())
     }
 
-    applyMove(move: Move): Position {
+    applyMove(move: Move): Result<Position, ApplyMoveError> {
         if (move.isDrop()) {
             return this.applyDrop(move)
         }
         return this.applyNormalMove(move)
     }
 
-    private applyNormalMove(move: Move): Position {
+    private applyNormalMove(move: Move): Result<Position, ApplyMoveError> {
         const from = move.from!
         const to = move.to
 
         let piece = this.board.get(from)
         const fromStr = `${from.file}, ${from.rank}`
-        if (!piece) throw new Error(`no piece on from: [${move.pieceType}] [${fromStr}]`)
+        //if (!piece) throw new Error(`no piece on from: [${move.pieceType}] [${fromStr}]`)
+        if (!piece) return { ok: false, error: { code: "no-piece-from"}}
 
         // capture
         const target = this.board.get(to)
@@ -49,13 +53,13 @@ export class Position {
                 .set(to, piece)
         //console.log("apply move", nextBoard.dump(), piece)
 
-        return new Position(
+        return { ok: true, value: new Position(
             nextBoard,
             hands,
             flip(this.sideToMove)
-        )
+        )}
     }
-    private applyDrop(move: Move): Position {
+    private applyDrop(move: Move): Result<Position, ApplyMoveError> {
         //console.log("apply drop", move, this.sideToMove, this.hands.toDTO())
         const piece = new Piece(move.pieceType, this.sideToMove)
         
@@ -67,11 +71,11 @@ export class Position {
         //    [this.turn]: this.hands[this.turn].remove(move.pieceType)
         //}
 
-        return new Position(
+        return { ok: true, value: new Position(
             nextBoard,
             nextHands,
             flip(this.sideToMove)
-        )
+        )}
     }
     //////////////////////////
     // serialize    
@@ -93,10 +97,7 @@ export class Position {
     }
 }
 
-
-
 const flip = (c: Player): Player => (c === "black" ? "white" : "black")
-
 
 export type PositionDTO = {
     board: BoardDTO

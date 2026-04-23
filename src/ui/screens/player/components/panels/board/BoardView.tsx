@@ -3,28 +3,29 @@ import { Box } from "@mui/material"
 import styles from "./BoardView.module.css";
 import { useCurrentPosition, useGameStore } from "@/ui/screens/player/store/useGameStore";
 import { useBoardInputStore } from "@/ui/screens/player/store/useBoardInputStore";
-import { Board, Piece, Square } from "@/domain/kif/entity";
+import { Board, Piece, Position, Square } from "@/domain/kif/entity";
 import { createDecideGameEventContext, decideGameEvent } from "@/domain/game/decideGameEvent";
 import { resolveIntent } from "@/domain/game/intentResolver";
 import { SquareView } from "@/ui/screens/player/components/panels/board/SquareView";
+import { useReplayStore } from "@/ui/screens/player/store/useReplayStore";
 
 const fileLabels = ["９", "８", "７", "６", "５", "４", "３", "２", "１"];
 const rankLabels = ["一", "二", "三", "四", "五", "六", "七", "八", "九"];
 
-export default function BoardView({ reversed }: { reversed: boolean }) {
-    const position = useCurrentPosition()
+export default function BoardView({ position, reversed }: { 
+    position: Position, reversed: boolean }) {
 
-    const { board, sideToMove } = position
     const selection = useBoardInputStore(s => s.selection)
     const userSide = useGameStore(s => s.userSide)
-
-    const ranks = [...Array(9)].map((_, i) => reversed ? 9 - i : i + 1)
-    const files = [...Array(9)].map((_, i) => reversed ? i + 1 : 9 - i)
-
     const dispatch = useGameStore(s => s.dispatch)
     const promotionPending = useGameStore(s => s.promotionPending)
     const clickSquare = useBoardInputStore(s => s.clickSquare)
     const clear = useBoardInputStore(s => s.clear)
+    const { board, sideToMove } = position
+    
+    const ranks = [...Array(9)].map((_, i) => reversed ? 9 - i : i + 1)
+    const files = [...Array(9)].map((_, i) => reversed ? i + 1 : 9 - i)
+
 
     const handleSquareClick = (file: number, rank: number) => {
         const intent = clickSquare(new Square(file, rank))
@@ -52,7 +53,14 @@ export default function BoardView({ reversed }: { reversed: boolean }) {
             selection.square.file === sq.file &&
             selection.square.rank === sq.rank
     }
-
+    const moves = useGameStore(s => s.moves)
+    const ply = useReplayStore(s=>s.ply)
+    const lastMove = ply > 0 ? moves[ply - 1] : null
+    const isLastMoveTo = (sq: Square) =>
+        !lastMove ? false :
+        lastMove.to &&
+        lastMove.to.file === sq.file &&
+        lastMove.to.rank === sq.rank
     return (
         <Box className={styles.board}>
             <FileLabels location="top" reversed={reversed} />
@@ -67,6 +75,7 @@ export default function BoardView({ reversed }: { reversed: boolean }) {
                             piece={piece}
                             selected={isSelected(sq)}
                             reversed={reversed}
+                            lastTo={isLastMoveTo(sq)}
                             onClick={() => handleSquareClick(file, rank)}
                         />
                     )
