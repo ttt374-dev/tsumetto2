@@ -7,7 +7,7 @@ import { useParams } from "react-router-dom"
 import { useProblemsQuery } from "@/ui/features/problem/hooks/useProblemsQuery"
 import { DefaultQueryState, type QueryState } from "@/domain/problem/service/query/QueryState"
 import { useMissionEditorStore } from "@/ui/screens/mission/edit/useMissionEditorStore"
-import { computeLearningSummary } from "@/domain/learning/service/computeLearningSummary"
+import { computeStatsSummary } from "@/domain/learning/service/computeLearningSummary"
 
 const ID_NEW = "new"
 
@@ -95,7 +95,7 @@ export function useMissionEditViewModel() {
     const activeProblems = useProblemStore(s=>s.activeProblems)
     const records = useLearningRecordStore(s=>s.stateRecords)
     const ids = applyQuery(activeProblems, records, query.state).map(p=>p.id)
-    const summary = computeLearningSummary(ids, records)
+    const summary = computeStatsSummary(ids, records)
 
     // --------------------------
     // 保存・削除

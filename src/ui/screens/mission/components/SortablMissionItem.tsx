@@ -8,11 +8,11 @@ import type { Mission } from "@/domain/mission/entity/Mission";
 import { useLongPress } from "@/ui/common/hooks/useLongPress";
 import { useMissionModeStore } from "@/ui/screens/mission/hooks/useMissionModeStore";
 import { routes } from "@/ui/App/useAppNavigation";
-import { computeLearningSummary } from "@/domain/learning/service/computeLearningSummary";
+import { computeStatsSummary } from "@/domain/learning/service/computeLearningSummary";
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
 import { applyQuery } from "@/domain/problem/service/query/applyQuery";
 import { useLearningRecordStore } from "@/ui/features/learning/hooks/useLearningRecordStore";
-import type { LearningSummary } from "@/domain/learning/entity/LearningSummary";
+import type { StatsSummary } from "@/domain/learning/entity/StatsSummary";
 
 export function SortableMissionItem(props: {
     mission: Mission     
@@ -37,7 +37,7 @@ export function SortableMissionItem(props: {
     const records = useLearningRecordStore(s=>s.stateRecords)
     const learningRecords = useLearningRecordStore(s=>s.stateRecords)
     const ids = applyQuery(activeIds, records, props.mission.queryState).map(p=>p.id)
-    const summary = computeLearningSummary(ids, learningRecords)
+    const summary = computeStatsSummary(ids, learningRecords)
     
 
     const onItemClick = () => {
@@ -104,7 +104,7 @@ export function SortableMissionItem(props: {
     );
 }
 // helpers
-const formatSummary = (summary: LearningSummary) => {
+const formatSummary = (summary: StatsSummary) => {
     const ratio = summary.problemCount === 0 ? 0 : (1 - summary.overdueCount / summary.problemCount) * 100
     return `問題数：${summary.problemCount ?? 0}, スコア：${((summary.avgScore)).toFixed(1)}, 達成率：${ratio.toFixed(0)}%`
 }

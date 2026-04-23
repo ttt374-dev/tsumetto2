@@ -1,6 +1,6 @@
 
 
-export type LearningSummary = {
+export type StatsSummary = {
     problemCount: number,
     attemptCount: number,
     solvedCount: number,

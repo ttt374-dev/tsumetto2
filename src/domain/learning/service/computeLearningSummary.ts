@@ -1,9 +1,9 @@
 import type { LearningState } from "@/domain/learning/entity/LearningState";
-import type { LearningSummary } from "@/domain/learning/entity/LearningSummary";
+import type { StatsSummary } from "@/domain/learning/entity/StatsSummary";
 import type { ProblemId } from "@/domain/problem/entity/Problem";
 
 
-export function computeLearningSummary(ids: ProblemId[], learningRecords: Record<ProblemId, LearningState>): LearningSummary {
+export function computeStatsSummary(ids: ProblemId[], learningRecords: Record<ProblemId, LearningState>): StatsSummary {
     let attemptCount = 0
     let solvedCount = 0
     let failedCount = 0

@@ -8,7 +8,7 @@ import { AppShell } from "@/ui/common/components/layout/AppShell";
 import { useReviewEventStore } from "../../features/learning/hooks/useReviewEventStore";
 import { routes } from "../../App/useAppNavigation";
 import { projectLearningState } from "@/domain/learning/service/projectLearningState";
-import { computeLearningSummary } from "@/domain/learning/service/computeLearningSummary";
+import { computeStatsSummary } from "@/domain/learning/service/computeLearningSummary";
 import { useSessionStore } from "@/ui/screens/session/hooks/useSessionStore";
 import { usePlannerStore } from "@/ui/screens/session/hooks/usePlannerStore";
 
@@ -45,7 +45,7 @@ export default function SessionSummaryScreen() {
         planner.missionId&& chunk && startSession(planner.missionId, chunk)
     }
     const records = projectLearningState(sessionEventLog)
-    const summary = computeLearningSummary(ids, records)
+    const summary = computeStatsSummary(ids, records)
 
     return (
         <AppShell header={"Summary"}>

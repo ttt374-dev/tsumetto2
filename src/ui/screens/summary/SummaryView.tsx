@@ -1,5 +1,5 @@
 
-import type { LearningSummary } from "@/domain/learning/entity/LearningSummary";
+import type { StatsSummary } from "@/domain/learning/entity/StatsSummary";
 import { Box, Button, Paper, Stack } from "@mui/material";
 
 function SummaryRow({
@@ -26,7 +26,7 @@ function SummaryRow({
     )
 }
 export function SummaryView({summary}: {    
-    summary: LearningSummary
+    summary: StatsSummary
 }) {       
     return (
         <Paper>

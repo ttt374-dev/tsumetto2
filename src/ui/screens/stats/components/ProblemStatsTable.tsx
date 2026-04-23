@@ -1,6 +1,5 @@
 import { useMemo } from "react";
 
-import { ProblemStats } from "@/domain/problem/valueObject/ProblemStats";
 import { useLearningRecordStore } from "@/ui/features/learning/hooks/useLearningRecordStore";
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
 import { GroupedTable} from "./GroupedTable";
@@ -8,7 +7,7 @@ import { applyFilter } from "@/domain/problem/service/query/applyFilter";
 import { DefaultQueryState } from "@/domain/problem/service/query/QueryState";
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem";
 import type { StatsRowValues } from "@/ui/screens/stats/components/StatsRow";
-import { computeLearningSummary } from "@/domain/learning/service/computeLearningSummary";
+import { computeStatsSummary } from "@/domain/learning/service/computeLearningSummary";
 
 export function ProblemStatsTable() {
     const activeProblems = useProblemStore(s => s.activeProblems)
@@ -38,7 +37,8 @@ export function ProblemStatsTable() {
                 .map(p=>p.id)
             return { 
                 label: source, 
-                stats: ProblemStats.create(filteredIds, learningRecords)
+                //stats: ProblemStats.create(filteredIds, learningRecords)
+                stats: computeStatsSummary(filteredIds, learningRecords)
             }
         }), [allSources, activeProblems, learningRecords])
     
@@ -66,8 +66,8 @@ export function ProblemStatsTable() {
 
                 return {
                     label: tag,
-                    stats: ProblemStats.create(filteredIds, learningRecords)
-                    //stats: computeLearningSummary(filteredIds, learningRecords)
+                    //stats: ProblemStats.create(filteredIds, learningRecords)
+                    stats: computeStatsSummary(filteredIds, learningRecords)
                 }
             }),
         [allTags, activeProblems, learningRecords]
@@ -101,7 +101,8 @@ export function ProblemStatsTable() {
     function statsMapToRows(statsMap: Record<string, Problem[]>): StatsRowValues[] {
         return Object.entries(statsMap).map(([label, problems]) => ({
             label,
-            stats: ProblemStats.create(problems.map(p=>p.id), learningRecords),
+            //stats: ProblemStats.create(problems.map(p=>p.id), learningRecords),
+            stats: computeStatsSummary(problems.map(p=>p.id), learningRecords)
         }))
     }
 }
