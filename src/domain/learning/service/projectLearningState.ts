@@ -6,6 +6,9 @@ import type { ReviewEvent, ReviewReviewedEvent } from "@/domain/review/ReviewEve
 import { deriveOutcome } from "@/domain/review/service/solvedResultDeriver"
 import type { SolvedResult } from "@/domain/review/solvedResult"
 
+const LearningStep = [10, 60, 60*12]
+const MAX_INTERVAL_DAYS = 60
+
 export function projectLearningState(events: ReviewEvent[]): Record<ProblemId, LearningState> {
     const records: Record<ProblemId, LearningState> = {}
     const sorted = [...events].sort((a, b) => a.at - b.at)
@@ -27,7 +30,6 @@ export function projectLearningState(events: ReviewEvent[]): Record<ProblemId, L
     return records
 }
 ///////////////////////////////////////////////
-const MAX_INTERVAL_DAYS = 60
 
 function applyReviewedEvent(prev: LearningState, lastEvent: ReviewReviewedEvent): LearningState {   
     const quality = deriveAnswerQuality(lastEvent.solvedResult)
@@ -68,8 +70,6 @@ function updateStats(prev: LearningStats, solvedResult: SolvedResult): LearningS
         failedCount: prev.failedCount + (isCorrect ? 0 : 1),
     }
 }
-
-export const LearningStep = [1, 10, 60*12]
 
 function schedule(prev: SchedulingState, quality: number, now: number): SchedulingState {
     let { intervalDays, stepIndex, queue, easeFactor } = prev

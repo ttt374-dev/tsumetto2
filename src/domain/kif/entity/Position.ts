@@ -1,10 +1,12 @@
 import { Board, type BoardDTO } from "./Board"
 import { Hand, Hands, type HandDTO } from "./Hand"
-import { Piece, type Player } from "./Piece"
+import { Piece, type PieceType, type Player } from "./Piece"
 import type { Move } from "./Move"
 import type { Result } from "@/shared/result"
 
-export type ApplyMoveError = { code: "no-piece-from"}
+export type ApplyMoveError = 
+    | { code: "no-piece-from"}
+    | { code: "not-enough-piece", pieceType: PieceType}
 
 export class Position {
     constructor(
@@ -38,7 +40,10 @@ export class Position {
         const target = this.board.get(to)
         let hands = this.hands
         if (target) {
-            hands = hands.add(this.sideToMove, target.type)
+            const resHands = hands.add(this.sideToMove, target.type)
+            if(!resHands.ok) return resHands
+            hands = resHands.value
+
         }
 
         // promote
@@ -64,7 +69,9 @@ export class Position {
         
 
         const nextBoard = this.board.set(move.to, piece)
-        const nextHands = this.hands.remove(this.sideToMove, move.pieceType)
+        //const nextHands = this.hands.remove(this.sideToMove, move.pieceType)
+        const resHands = this.hands.remove(this.sideToMove, move.pieceType)
+        if (!resHands.ok) return resHands
         //const nextHands = {
         //    ...this.hands,
         //    [this.turn]: this.hands[this.turn].remove(move.pieceType)
@@ -72,7 +79,7 @@ export class Position {
 
         return { ok: true, value: new Position(
             nextBoard,
-            nextHands,
+            resHands.value,
             flip(this.sideToMove)
         )}
     }

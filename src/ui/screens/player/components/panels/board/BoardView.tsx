@@ -61,6 +61,12 @@ export default function BoardView({ position, reversed = false }: {
         lastMove.to &&
         lastMove.to.file === sq.file &&
         lastMove.to.rank === sq.rank
+    
+    const isLastMoveFrom = (sq: Square) =>
+        !lastMove ? false :
+        lastMove.from !== null &&
+        lastMove.from.file === sq.file &&
+        lastMove.from.rank === sq.rank
     return (
         <Box className={styles.board}>
             <FileLabels location="top" reversed={reversed} />
@@ -76,6 +82,7 @@ export default function BoardView({ position, reversed = false }: {
                             selected={isSelected(sq)}
                             reversed={reversed}
                             lastTo={isLastMoveTo(sq)}
+                            lastFrom={isLastMoveFrom(sq)}
                             onClick={() => handleSquareClick(file, rank)}
                         />
                     )

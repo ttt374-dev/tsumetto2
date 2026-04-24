@@ -1,56 +1,63 @@
 .container {
-  border: 1px solid #aaa;
+    border: 1px solid #aaa;
 }
 
 .board {
-  display: grid;
-  grid-template-columns: 20px repeat(9, 35px) 20px;
-  grid-template-rows: 12px repeat(9, 35px) 12px;
+    display: grid;
+    grid-template-columns: 20px repeat(9, 35px) 20px;
+    grid-template-rows: 12px repeat(9, 35px) 12px;
 
 }
 
 /* ** cell ** */
 .cell {
-  border: 1px solid #aaa;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 28px;
-  background: var(--mui-palette-board-bg);
-  /* background: #f8f4e6;*/
+    border: 1px solid #aaa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    background: var(--mui-palette-board-bg);
+    /* background: #f8f4e6;*/
 }
 
 .flash {
-  outline: 2px solid rgba(255, 200, 0, 0.9);
-  outline-offset: -2px;
-  transition: outline 0.1s ease;
+    outline: 2px solid rgba(255, 200, 0, 0.9);
+    outline-offset: -2px;
+    transition: outline 0.1s ease;
 }
+
 .rotated {
-  transform: rotate(180deg);
+    transform: rotate(180deg);
 }
+
 .selected {
-  border: 2px solid #ccc;
-  background-color:#ccc;  
+    border: 2px solid #ccc;
+    background-color: #ccc;
 }
+
 .lastTo {
-  outline: 2px solid rgba(255, 80, 80, 0.9);
-  outline-offset: -2px;
+    outline: 2px solid rgba(255, 80, 80, 0.9);
+    outline-offset: -2px;
+}
+.lastFrom {
+    outline: 2px solid rgba(255, 80, 80, 0.4);
+    outline-offset: -2px;
 }
 
 /*  label */
 .fileLabel {
-  display: grid;
-  font-size: 8px;
+    display: grid;
+    font-size: 8px;
 }
 
 .rankLabel {
-  display: grid;
-  align-items: center;
-  font-size: 8px;
+    display: grid;
+    align-items: center;
+    font-size: 8px;
 
-  /* 少し余白 */
+    /* 少し余白 */
 }
+
 .handpiece {
-  font-size: 20px;
+    font-size: 20px;
 }
-

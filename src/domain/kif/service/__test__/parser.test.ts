@@ -63,7 +63,9 @@ describe("parse moves", () => {
         const text = "  1 ５五成桂(29)"
         //let state = BoardState.create()
         const hands = Hands.empty()
-        let state = new Position(Board.create(), hands.add('black', 'knight'))
+        const resHands = hands.add('black', 'knight')
+        if(!resHands.ok) throw new Error
+        let state = new Position(Board.create(), resHands.value )
         const drop = new Move(null, Square.create(2, 9), "knight")
         let resPosition = drop.apply(state)
         if (!resPosition.ok) throw new Error

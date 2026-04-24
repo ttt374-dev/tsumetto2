@@ -1,4 +1,6 @@
+import type { ApplyMoveError } from "@/domain/kif/entity/Position"
 import { Piece, type PieceType, type Player, } from "./Piece"
+import type { Result } from "@/shared/result"
 
 export class Hand {
     private readonly counts: Record<PieceType, number>
@@ -33,21 +35,22 @@ export class Hand {
     }
 
     // 駒を追加して新しい Hand を返す（Immutable）
-    add(pieceType: PieceType, n: number = 1): Hand {
-        return new Hand({
+    add(pieceType: PieceType, n: number = 1): Result<Hand, ApplyMoveError> {
+        return { ok: true, value: new Hand({
             ...this.counts,
             [pieceType]: this.count(pieceType) + n
-        })
+        })}
     }
 
     // 駒を減らして新しい Hand を返す（Immutable）
-    remove(pieceType: PieceType, n: number = 1): Hand {        
+    remove(pieceType: PieceType, n: number = 1): Result<Hand, ApplyMoveError> {        
         const current = this.count(pieceType)
-        if (current < n) throw new Error(`Not enough pieces: ${pieceType}`)
-        return new Hand({
+        //if (current < n) throw new Error(`Not enough pieces: ${pieceType}`)
+        if (current < n) return { ok: false, error: { code: "not-enough-piece", pieceType} }
+        return { ok: true, value: new Hand({
             ...this.counts,
             [pieceType]: current - n
-        })
+        })}
     }
 
     toObject(): Record<PieceType, number> {
@@ -90,18 +93,22 @@ export class Hands {
         return this.byPlayer[player]
     }
 
-    add(player: Player, pieceType: PieceType): Hands {
-        return new Hands({
+    add(player: Player, pieceType: PieceType): Result<Hands, ApplyMoveError> {
+        const res = this.byPlayer[player].add(pieceType)
+        if (!res.ok) return res
+        return { ok: true, value: new Hands({
             ...this.byPlayer,
-            [player]: this.byPlayer[player].add(pieceType),
-        })
+            [player]: res.value,
+        })}
     }
 
-    remove(player: Player, pieceType: PieceType): Hands {
-        return new Hands({
+    remove(player: Player, pieceType: PieceType): Result<Hands, ApplyMoveError> {
+        const res = this.byPlayer[player].remove(pieceType)
+        if (!res.ok) return res
+        return { ok: true, value: new Hands({
             ...this.byPlayer,
-            [player]: this.byPlayer[player].remove(pieceType),
-        })
+            [player]: res.value,
+        })}
     }
 
     // serialize
