@@ -82,13 +82,13 @@ function schedule(prev: SchedulingState, quality: number, now: number): Scheduli
         1.3,
         easeFactor + (0.1 - (3 - quality) * (0.08 + (3 - quality) * 0.02))
     )
-    if (quality <= 2) {        
+    if (quality < 2) {        
         intervalDays = 1
         stepIndex = 0
         if (queue === "review") queue = "relearn"
         nextReviewedAt = now + LearningStep[0] * 60 * 1000               
     } else {
-        if (stepIndex + 1 < LearningStep.length) {
+        if (quality < 5 && stepIndex + 1 < LearningStep.length) {
             nextReviewedAt = now + LearningStep[stepIndex] * 60 * 1000
             stepIndex++
             //console.log("schedule, step", stepIndex, LearningStep[stepIndex] * 60 * 1000)

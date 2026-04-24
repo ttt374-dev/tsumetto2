@@ -148,7 +148,9 @@ function HistogramPercentBar({ percent, overdue} : { percent: number, overdue: b
     </Box>)
 }
 export function NextReviewStats() {
-    const ids = useQueryActiveProblems({sortKey: "nextReviewedAt", sortOrder: "asc"}).map(p=>p.id)
+    const ids = useQueryActiveProblems({
+        sortKey: "nextReviewedAt", sortOrder: "asc", excludeReferenceOnly: true})
+        .map(p=>p.id)
     const learningRecords = useLearningRecordStore(s => s.stateRecords)    
 
     const histogram = useMemo(

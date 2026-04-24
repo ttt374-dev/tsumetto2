@@ -91,7 +91,7 @@ export function ProblemStatsTable() {
             rows: tagStatsRows,
         }
     ]
-    const columns = ["問題数", "スコア", "E/F", "間隔"]
+    const columns = ["問題数", "スコア", "E/F", "達成率"]
 
     return (
         <GroupedTable groups={groups} columns={columns} />

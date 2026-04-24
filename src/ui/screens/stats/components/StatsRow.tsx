@@ -1,26 +1,27 @@
 import { TableCell, TableRow } from "@mui/material";
-import { ProblemStats } from "@/domain/problem/valueObject/ProblemStats";
 import type { StatsSummary } from "@/domain/learning/entity/StatsSummary";
 
 export type StatsRowValues = {
     label: string
-    //stats: ProblemStats,
     stats: StatsSummary
 }
 
+function toStatsSummaryViewData(stats: StatsSummary){
+    const totalCount = stats.attemptCount
+    return {
+        problemCount: stats.problemCount,
+        avgScore: totalCount > 0 ? stats.avgScore.toFixed(1) : "-",
+        avgEaseFactor: totalCount > 0 ? stats.avgEaseFactor.toFixed(2) : "-",
+        completeRatio: totalCount > 0 ? `${((1 - stats.overdueCount / stats.problemCount) * 100).toFixed(0)}%` : "-"        
+    }
+}
 export function StatsRow(props: {
     label: string
-    //stats: ProblemStats
     stats: StatsSummary
 }) {
-    const problemCount = props.stats.problemCount
-    const totalCount = props.stats.problemCount
-    const score = totalCount > 0 ? props.stats.avgScore.toFixed(1) : "-"
-    const easeFactor = totalCount > 0 ? props.stats.avgEaseFactor.toFixed(2) : "-"
-    const intervalDays = totalCount > 0 ? props.stats.avgIntervalDays.toFixed(0) : "-"
-    
+    const vd = toStatsSummaryViewData(props.stats)
     const width = 60
-    //console.log("statsorw", props.label, props.stats)
+    const data = [vd.problemCount, vd.avgScore, vd.avgEaseFactor, vd.completeRatio]
     return (
         <TableRow>
             <TableCell sx={{
@@ -31,10 +32,9 @@ export function StatsRow(props: {
                 {props.label}
             </TableCell>
 
-            <TableCell align="right" sx={{ width: width }}>{problemCount}</TableCell>
-            <TableCell align="right" sx={{ width: width }}>{score}</TableCell>
-            <TableCell align="right" sx={{ width: width }}>{easeFactor}</TableCell>
-            <TableCell align="right" sx={{ width: width }}>{intervalDays}</TableCell>
+            { data.map(d=>(
+                <TableCell align="right" sx={{ width: width }}>{d}</TableCell>    
+            ))}            
         </TableRow>
     )
 }

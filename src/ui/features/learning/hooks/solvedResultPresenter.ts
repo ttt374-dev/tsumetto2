@@ -4,7 +4,7 @@ import type { SolvedResult } from "@/domain/review/solvedResult";
 export const solvedResultLabels = {
     outcome: "結果",
     mistakes: "間違い回数",
-    revealed: "解答参照",
+    isRevealed: "解答参照",
     elapsedSec: "経過秒数",
 }
 

@@ -1,3 +1,4 @@
+import { deriveAnswerQuality } from "@/domain/learning/entity/AnswerQuality"
 import type { LearningState } from "@/domain/learning/entity/LearningState"
 import type { SolvedResult } from "@/domain/review/solvedResult"
 import { learningStateLabels, toLearningStateViewData } from "@/ui/features/learning/hooks/learningPresenter"
@@ -15,21 +16,22 @@ export function SolvedDialog({ open, onClose, onConfirm, solvedResult, learning 
     const confirmLabel = "確認"
     const svd = toSolvedResultViewData(solvedResult)
     const lvd = learning && toLearningStateViewData(learning)
-
+    const quality = deriveAnswerQuality(solvedResult)
+    const pdata = ["outcome", "mistakes", "isRevealed", "elapsedSec"] as const
     return (
         <Dialog open={open} onClose={onClose} maxWidth="xl">
             <DialogTitle>
                 詰みました
             </DialogTitle>
             <DialogContent>
-                <Box>{ solvedResultLabels["outcome"]}：{svd.outcome}</Box>
-                <Box>{ solvedResultLabels["mistakes"]}：{svd.mistakes}</Box>
-                <Box>{ solvedResultLabels["revealed"]}：{svd.isRevealed}</Box>
-                <Box>{ solvedResultLabels["elapsedSec"]}:{svd.elapsedSec}</Box>
+                { pdata.map(d=>(
+                    <Box>{ solvedResultLabels[d]}：{svd[d]}</Box>    
+                ))}                
 
                 {lvd && <>
                     <Box>平均スコア：{lvd.score}</Box>
                     <Box>{ learningStateLabels["nextReviewedAt"]}：{lvd.nextReviewedIn}</Box>
+                    <Box>Answer Quality：{quality}</Box>
                 </>
                 }
             </DialogContent>
