@@ -17,6 +17,7 @@
     justify-content: center;
     font-size: 28px;
     background: var(--mui-palette-board-bg);
+    cursor: default;
     /* background: #f8f4e6;*/
 }
 

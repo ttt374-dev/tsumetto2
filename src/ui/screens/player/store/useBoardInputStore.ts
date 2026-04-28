@@ -23,12 +23,11 @@ export const useBoardInputStore = create<BoardInputStore>((set, get) => ({
     selection: { type: "none" },
 
     clickSquare: (sq) => {
-        const res = getCurrentPosition()
-        if (!res.ok) return null
-        const position = res.value
+        const resPosition = getCurrentPosition()
+        if (!resPosition.ok) return null
+        const position = resPosition.value
         const piece = position.board.get(sq)       
         const selection = get().selection
-
 
         switch(selection.type){
             case "none":

@@ -16,6 +16,7 @@ import { routes } from "@/ui/App/useAppNavigation";
 import { v4 } from "uuid";
 import { WindowSharp } from "@mui/icons-material";
 import { SaveAsMissionDialog } from "@/ui/screens/library/dialogs/SaveAsMissionDialog";
+import FooterNavigation from "@/ui/common/components/FooterNavigation";
 
 //////////////////////////////////////////////////
 export default function LibraryScreen() {
@@ -58,6 +59,7 @@ export default function LibraryScreen() {
                     </IconButton>
                 </>
             }
+            footer={<FooterNavigation/>}
         >
             <LibraryView
                 ids={vm.ids}

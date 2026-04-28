@@ -5,17 +5,15 @@ import { AppShell } from "@/ui/common/components/layout/AppShell";
 import { routes } from "@/ui/App/useAppNavigation";
 import { useMissionModeStore } from "./hooks/useMissionModeStore";
 import MissionFabMenu from "./components/MissionFabMenu";
-import { ExecutionModeControl } from "@/ui/screens/mission/components/MissionExecutionModeControl";
 import { useImport } from "@/ui/dialogs/Import/useImport";
 import { useToast } from "@/ui/App/providers/ToastProvider";
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
 import { useBackupRestoreDialog } from "@/ui/dialogs/BackupRestoreDialog";
 import { MissionList } from "@/ui/screens/mission/components/MissionList";
-import { IconButton } from "@mui/material";
-import { useUiSettingsStore } from "@/ui/settings/useUiSettingsStore";
+import FooterNavigation from '@/ui/common/components/FooterNavigation';
+import { IconButton } from '@mui/material';
 
 export default function MissionScreen() {
-    //const uiSettings = useUiSettingsStore()    
     const navigate = useNavigate()
     const editMode = useMissionModeStore(s=>s.editMode)
 
@@ -24,6 +22,7 @@ export default function MissionScreen() {
             header="Missions"
             rightActions={<MissionEditModeControl/>}
             fab={!editMode && <MissionFabMenu onCreateNewMission={()=>navigate(routes.newMission)} />}
+            footer={<FooterNavigation/>}
         >
 
             <MissionList/>           
