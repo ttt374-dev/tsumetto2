@@ -46,12 +46,12 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
     
     //const { isInitialized } = usePlayerInitializer(problem)
     const {onRevealAnswer } = useRevealHandler()
-    const { solvedResult, solvedResultDialog } = useGameEventHandler(problem, onSolve)
+    const { solvedResultDialog } = useGameEventHandler(problem, onSolve)
     //const { element: promotionDialogElement } = usePromotionDialog()
     const promotionDialog = usePromotionDialog()
     //const solvedResultDialog = useDialog()
-    const records = useLearningRecordStore(s => s.stateRecords)
-    const learning = records[problem.id]
+    //const records = useLearningRecordStore(s => s.stateRecords)
+    //const learning = records[problem.id]
 
 
     const toast = useToast()
@@ -129,13 +129,13 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
                     onClose={() => { }}
                 />}
 
-            {solvedResult &&
+            {solvedResultDialog.solvedResult &&
                 <SolvedDialog
                     open={solvedResultDialog.open}
                     onClose={solvedResultDialog.closeDialog}
+                    solvedResult={solvedResultDialog.solvedResult}
+                    learningState={solvedResultDialog.learningState}
                     onConfirm={onSolvedConfirm}
-                    solvedResult={solvedResult}
-                    learning={learning}
                 />}
         </AppShell>
     )

@@ -1,24 +1,42 @@
 import { deriveAnswerQuality } from "@/domain/learning/entity/AnswerQuality"
 import type { LearningState } from "@/domain/learning/entity/LearningState"
+import type { ProblemId } from "@/domain/problem/entity/Problem"
 import type { SolvedResult } from "@/domain/review/solvedResult"
 import { learningStateLabels, toLearningStateViewData } from "@/ui/features/learning/hooks/learningPresenter"
 import { solvedResultLabels, toSolvedResultViewData } from "@/ui/features/learning/hooks/solvedResultPresenter"
 import { useLearningRecordStore } from "@/ui/features/learning/hooks/useLearningRecordStore"
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material"
+import { useState } from "react"
 
+export function useSolvedDialog(){
+    const [open, setOpen] = useState(false)
+    const [solvedResult, setSolvedResult] = useState<SolvedResult|undefined>(undefined)
+    const [learningState, setLearningState] = useState<LearningState|undefined>(undefined)
+    const records = useLearningRecordStore(s=>s.stateRecords)
 
-export function SolvedDialog({ open, onClose, onConfirm, solvedResult, learning }: {
+    const openDialog = (pid: ProblemId, solvedResult: SolvedResult) => { 
+        setOpen(true)
+        setSolvedResult(solvedResult)
+        setLearningState(records[pid])
+    }
+    const closeDialog = () => { setOpen(false) }
+
+    return { open, solvedResult,
+        openDialog, closeDialog, learningState}
+}
+
+export function SolvedDialog({ open, onClose, onConfirm, solvedResult, learningState }: {
     open: boolean
     onClose: () => void
     onConfirm: () => void
     solvedResult: SolvedResult
-    learning: LearningState | undefined
+    learningState: LearningState | undefined
     
 }) {
 
     const confirmLabel = "確認"
     const svd = toSolvedResultViewData(solvedResult)
-    const lvd = learning && toLearningStateViewData(learning)
+    const lvd = learningState && toLearningStateViewData(learningState)
     const quality = deriveAnswerQuality(solvedResult)
     const pdata = ["outcome", "mistakes", "isRevealed", "elapsedSec"] as const            
 

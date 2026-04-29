@@ -3,7 +3,7 @@ import { deriveSolvedResultFromEvents } from "@/domain/review/service/solvedResu
 import type { SolvedResult } from "@/domain/review/solvedResult"
 import { useToast } from "@/ui/App/providers/ToastProvider"
 import { createPlayerContext } from "@/ui/screens/player/components/types/PlayerContext"
-import { SolvedDialog } from "@/ui/screens/player/dialogs/SolvedDialog"
+import { SolvedDialog, useSolvedDialog } from "@/ui/screens/player/dialogs/SolvedDialog"
 import { useReplayController } from "@/ui/screens/player/hooks/useReplayController"
 import { useGameStore } from "@/ui/screens/player/store/useGameStore"
 import { useReplayStore } from "@/ui/screens/player/store/useReplayStore"
@@ -23,7 +23,7 @@ export function useGameEventHandler(problem: Problem, onSolve: () => void){
     const replayCtrl = useReplayController()    
     const records = useLearningRecordStore(s=>s.stateRecords)    
     //const learning = records[problem.id]
-    const solvedResultDialog = useDialog()
+    const solvedResultDialog = useSolvedDialog()
 
     const toast = useToast()
   
@@ -55,8 +55,9 @@ export function useGameEventHandler(problem: Problem, onSolve: () => void){
                 replay.advancePly()
                 stopTimer()
                 //setIsSolvedDialogOpen(true)
-                solvedResultDialog.openDialog()
-                setSolvedResult(deriveSolvedResultFromEvents(events))
+                const solvedResult = deriveSolvedResultFromEvents(events)
+                solvedResultDialog.openDialog(problem.id, solvedResult)
+                //setSolvedResult(deriveSolvedResultFromEvents(events))
                 onSolve?.()
                 break        
             case "MISTAKE":
