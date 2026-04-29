@@ -5,11 +5,12 @@ import { useImportProblemsUsecase, type ImportFilesResult, type ImportOptions } 
 import { ImportDialog } from "./ImportDialog"
 import { useFileSelector } from "@/ui/shared/hooks/useFileSelector"
 
-export function useImport(onAfterImported?: (result: ImportFilesResult) => void){
+export function useImportController(onAfterImported?: (result: ImportFilesResult) => void){
     const repos = useRepositoryContext()
     const [files, setFiles] = useState<File[] | null>(null)
     const [open, setOpen] = useState(false)
     const [importing, setImporting] = useState(false)
+    const [result, setResult] = useState<ImportFilesResult | null>(null)
  
     const onFilesSelected = (files: File[]) => {
         setFiles(files)
@@ -29,13 +30,14 @@ export function useImport(onAfterImported?: (result: ImportFilesResult) => void)
             setImporting(true)
             const usecase = useImportProblemsUsecase(repos.problem)
             const result = await usecase.importFiles(files, options)
-            onAfterImported?.(result)
+            //onAfterImported?.(result)
+            setResult(result) // ← ここ
         } finally {
             setImporting(false)
             cancel()
         }
     }
-    
+    /*
     const dialogElement = (
         open && files &&
         <ImportDialog
@@ -44,23 +46,22 @@ export function useImport(onAfterImported?: (result: ImportFilesResult) => void)
             onImport={confirm}
             filesToImport={files}
         />
-    )
+    )*/
 
     return {
         // picker
-        //...picker,
         openFilesSelectDialog: picker.openDialog,
         filesSelectElement: picker.inputElement,
-
 
         // dialog
         open,
         files,
         importing,
-        dialogElement,
-
+        //dialogElement,
+        result,
         // actions
         confirm,
         cancel,
+        
     }
 }

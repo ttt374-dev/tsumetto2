@@ -1,6 +1,14 @@
 import type { ReviewReviewedEvent } from "@/domain/review/ReviewEvent"
 
-export type MasteryStatus = | "unlearned" | "learning" | "young" | "matured" | "relearning"
+export const MasteryStatuses = [
+  "unlearned",
+  "learning",
+  "young",
+  "matured",
+  "relearning",
+] as const
+export type MasteryStatus = typeof MasteryStatuses[number]
+//export type MasteryStatus = | "unlearned" | "learning" | "young" | "matured" | "relearning"
 export type LearningQueue = "new" | "learn" | "relearn" | "review"
 
 

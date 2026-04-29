@@ -8,7 +8,7 @@ import { AppShell } from "@/ui/common/components/layout/AppShell";
 import { routes } from "@/ui/App/useAppNavigation";
 import { useMissionModeStore } from "./hooks/useMissionModeStore";
 import MissionFabMenu from "./components/MissionFabMenu";
-import { useImport } from "@/ui/dialogs/Import/useImport";
+import { useImportController } from "@/ui/dialogs/Import/useImportController";
 import { useToast } from "@/ui/App/providers/ToastProvider";
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
 import { useBackupRestoreDialog } from "@/ui/dialogs/BackupRestoreDialog";
@@ -24,7 +24,16 @@ function MissionRightAction(){
         <MissionEditModeControl/>
     </>)
 }
-
+///////////////////////////
+function MissionEditModeControl(){
+    const { editMode, toggleEditMode } = useMissionModeStore()
+    return (
+        <IconButton onClick={toggleEditMode} sx={{ color: !editMode ? "white" : "default" }}>
+            <EditIcon />
+        </IconButton>
+    )
+}
+///////////////////
 export default function MissionScreen() {
     //const editMode = useMissionModeStore(s=>s.editMode)
 
@@ -38,40 +47,11 @@ export default function MissionScreen() {
         >
 
             <MissionList/>           
-            <MissionRelatedDialogs/>
+            
             
         </AppShell>
     );
 }
-///////////////////////////
-function MissionEditModeControl(){
-    const { editMode, toggleEditMode } = useMissionModeStore()
-    return (
-        <IconButton onClick={toggleEditMode} sx={{ color: !editMode ? "white" : "default" }}>
-            <EditIcon />
-        </IconButton>
-    )
-}
 
-function MissionRelatedDialogs(){
-    const reloadProblems = useProblemStore(s => s.reload);
-    const toast = useToast()
 
-    const importer = useImport(async (res) => {
-        await reloadProblems();
-        toast({
-            message: `imported: ${res.summary.imported}, skipped: ${res.summary.skipped}, failed: ${res.summary.failed}`,
-        });
-    });
-    const backupRestoreDialog = useBackupRestoreDialog();
 
-    return (
-        <>
-            {/* ダイアログ */}
-            {importer.filesSelectElement}
-            {importer.dialogElement}
-            {backupRestoreDialog.dialogElement}
-        </>
-    )
-}
-///////////////////
