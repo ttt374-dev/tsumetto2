@@ -44,8 +44,6 @@ export default function LibraryScreen() {
             <LibraryView
                 ids={vm.ids}
                 query={vm.query}
-                actionMode={vm.mode}
-                changeActionMode={vm.changeActionMode}
                 onDelete={deleteProblems}
                 onItemClick={vm.onItemClick}
                 selection={vm.selection}

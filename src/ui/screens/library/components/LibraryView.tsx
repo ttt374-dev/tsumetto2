@@ -7,15 +7,15 @@ import SortControl from "../../../features/problem/query/SortControl"
 import { LibraryListItem } from "./LibraryListItem"
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem"
 import { LibraryCheckboxControl } from "./LibraryCheckboxControl";
-import type { LibraryActionMode, LibrarySelection } from "../hooks/useLibraryViewModel";
+import type { LibrarySelection } from "../hooks/useLibraryViewModel";
 import type { useProblemsQuery } from "@/ui/features/problem/hooks/useProblemsQuery";
 import { DefaultQueryState } from "@/domain/problem/service/query/QueryState";
-import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
 
+/*
 export type LibraryItemActions = {
     openTagEditDialog: (ids: ProblemId[]) => void
     deleteChecked: () => void
-}
+}*/
 
 type LibraryViewProps = {
     ids: ProblemId[]

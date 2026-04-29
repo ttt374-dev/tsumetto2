@@ -1,6 +1,7 @@
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem"
 import { Box, List } from "@mui/material"
 import { LibraryListItem } from "../../screens/library/components/LibraryListItem"
+import { useLibrarySelection } from "@/ui/screens/library/hooks/useLibrarySelection"
 
 
 export function ListView({ ids, onItemClick, selectedProblemId }: {
@@ -9,6 +10,8 @@ export function ListView({ ids, onItemClick, selectedProblemId }: {
     selectedProblemId?: ProblemId
 }) {
 
+    const selection = useLibrarySelection(ids)
+    
     return (
         <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto" }}>
         <List>
@@ -16,12 +19,9 @@ export function ListView({ ids, onItemClick, selectedProblemId }: {
                 <LibraryListItem
                     key={id}
                     id={id}
-                    showCheckbox={false}
-                    isChecked={false}
-                    onToggleChecked={alert}
+                    selection={selection}
                     onItemClick={()=> onItemClick?.(id)}
-                    selected={selectedProblemId === id}
-                    onChangeActionMode={alert}
+                    
                 />
             ))}
         </List>

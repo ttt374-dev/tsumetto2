@@ -4,7 +4,7 @@ import { ListView } from "./ListView";
 import { useLocation, useNavigate } from "react-router-dom";
 import { routes } from "../../App/useAppNavigation";
 import { Button } from "@mui/material";
-import { useLibrarySelection } from "@/ui/screens/library/hooks/useLibraryViewModel";
+import { useLibrarySelection } from "@/ui/screens/library/hooks/useLibrarySelection";
 
 type ViewerLocationState = {
     title: string
