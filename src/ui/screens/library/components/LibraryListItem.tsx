@@ -17,12 +17,8 @@ import { SortKeyLabel } from "@/ui/features/problem/query/SortControl";
 export const LibraryListItem = function LibraryListItem({ id, onItemClick,
     selection, selected }: {
         id: ProblemId,
-        //showCheckbox: boolean,
-        selection: LibrarySelection,
-        onItemClick: (p: Problem) => void,
-        //isChecked: boolean,
-        //onToggleChecked: (id: ProblemId) => void,        
-        //onChangeActionMode: (mode: LibraryActionMode) => void
+        selection?: LibrarySelection,
+        onItemClick: (id: ProblemId) => void,
         selected?: boolean,
     }) {
     const problem = useProblemStore(s => s.byId[id])
@@ -30,10 +26,8 @@ export const LibraryListItem = function LibraryListItem({ id, onItemClick,
 
     const { bind, isLongPressedRef } = useLongPress({
         onLongPress: () => {          
-            selection.startSelection()
-            selection.toggleChecked(id)
-            //onChangeActionMode("selection")  
-            //onToggleChecked(id)
+            selection?.startSelection()
+            selection?.toggleChecked(id)
         },
     })
     const starController = useStarToggleButton(id)
@@ -66,12 +60,12 @@ export const LibraryListItem = function LibraryListItem({ id, onItemClick,
                 disableRipple
                 onClick={() => {
                     if (isLongPressedRef.current) return
-                    onItemClick(problem)
+                    onItemClick(problem.id)
                 }}
                 selected={selected}
                 {...bind}
                 sx={{ borderBottom: 1, borderColor: "divider", px: 1, py: 0 }}>
-                {selection.isSelecting &&
+                {selection?.isSelecting &&
                     <ListItemIcon>
                         <Checkbox disableRipple onClick={(e) => e.stopPropagation()}
                             size="small" edge="start" checked={selection.isChecked(id)}

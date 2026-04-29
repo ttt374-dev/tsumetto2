@@ -27,7 +27,7 @@ export function useLibraryViewModel() {
     
     const selection = useLibrarySelection(ids)      
     const dialogs = {
-        tagEdit: useMultipleProblemsEditDialog()
+        edit: useMultipleProblemsEditDialog()
     }
     // アクションモード
     /*
@@ -39,11 +39,11 @@ export function useLibraryViewModel() {
     // アイテムクリック
     // -----------------------------
     const navigate = useNavigate()
-    const onItemClick = useCallback((p: Problem) => {        
+    const onItemClick = useCallback((id: ProblemId) => {        
         if (selection.isSelecting)        
-                selection.toggleChecked(p.id)
+                selection.toggleChecked(id)
         else 
-            navigate(routes.detail(p.id))
+            navigate(routes.detail(id))
     }, [selection.isSelecting, selection.toggleChecked])
 
     // ミッション

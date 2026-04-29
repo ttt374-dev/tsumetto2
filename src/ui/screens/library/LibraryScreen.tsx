@@ -33,9 +33,9 @@ export default function LibraryScreen() {
                 onItemClick={vm.onItemClick}
                 selection={vm.selection}
                 onFilterControlOpen={() => setIsDrawerOpen(true)}
-                onOpenEditDialog={vm.dialogs.tagEdit.openDialog}
+                onOpenEditDialog={vm.dialogs.edit.openDialog}
             />
-            {vm.dialogs.tagEdit.dialogElement}
+            {vm.dialogs.edit.dialogElement}
 
             <LibraryQueryDrawer open={isDrawerOpen} onClose={()=>setIsDrawerOpen(false)}
                 query={vm.query}   

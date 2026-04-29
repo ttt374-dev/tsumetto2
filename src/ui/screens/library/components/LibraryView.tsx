@@ -1,40 +1,29 @@
-import FilterListIcon from "@mui/icons-material/FilterList";
 import FilterListOutlinedIcon from "@mui/icons-material/FilterListOutlined";
 import { Box, IconButton, List, Stack } from "@mui/material"
 import { isEqual } from "lodash";
 
 import SortControl from "../../../features/problem/query/SortControl"
-import { LibraryListItem } from "./LibraryListItem"
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem"
 import { LibraryCheckboxControl } from "./LibraryCheckboxControl";
 import type { useProblemsQuery } from "@/ui/features/problem/hooks/useProblemsQuery";
-import { DefaultQueryState } from "@/domain/problem/service/query/QueryState";
 import type { LibrarySelection } from "@/ui/screens/library/hooks/useLibrarySelection";
-
-/*
-export type LibraryItemActions = {
-    openTagEditDialog: (ids: ProblemId[]) => void
-    deleteChecked: () => void
-}*/
+import { ListView } from "@/ui/dialogs/list/ListView";
 
 type LibraryViewProps = {
     ids: ProblemId[]
     query: ReturnType<typeof useProblemsQuery>
-    //actionMode: LibraryActionMode
-    //changeActionMode: (mode: LibraryActionMode) => void
 
     selection: LibrarySelection
-    onItemClick: (p: Problem) => void
+    onItemClick: (pid: ProblemId) => void
     onFilterControlOpen: () => void
     onDelete: (ids: ProblemId[]) => void
-    onOpenEditDialog: (ids: ProblemId[]) => void
-    
+    onOpenEditDialog: (ids: ProblemId[]) => void    
 }
 
 /////////////////////////////////////////
 export default function LibraryView({ ids, query,onDelete,
     onItemClick, selection, onFilterControlOpen, onOpenEditDialog }: LibraryViewProps) {    
-    const isFiltered = !isEqual(query, DefaultQueryState);
+    //const isFiltered = !isEqual(query, DefaultQueryState);
     
     return (
         <>
@@ -49,11 +38,7 @@ export default function LibraryView({ ids, query,onDelete,
                 <Box sx={{ flexGrow: 1 }} />
 
                 { /* 検索フィルター */}
-                <IconButton onClick={onFilterControlOpen} size="small">
-                    { isFiltered ? <FilterListIcon color="primary"/> : 
-                    
-                    <FilterListOutlinedIcon/>}
-                </IconButton>
+                <LibraryFilterIconButton onOpen={onFilterControlOpen}/>               
                 
                 {/* ソート */}
                 <SortControl
@@ -62,20 +47,13 @@ export default function LibraryView({ ids, query,onDelete,
                     onToggleOrder={query.toggleSortOrder}
                 />
             </Stack>
-
-            <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto" }}>
-                <List>
-                    {ids.map(id => (
-                        <LibraryListItem
-                            key={id}
-                            id={id}
-                            onItemClick={onItemClick}
-                            selection={selection}
-                            
-                        />
-                    ))}
-                </List>
-            </Box>            
+            <ListView ids={ids} selection={selection} onItemClick={onItemClick}/>       
         </>
     )
+}
+
+function LibraryFilterIconButton( { onOpen}: { onOpen: () => void}) {
+    return (<IconButton onClick={onOpen} size="small">    
+        <FilterListOutlinedIcon />
+    </IconButton>)
 }
