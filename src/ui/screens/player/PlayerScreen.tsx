@@ -21,6 +21,7 @@ import { useReplayStore } from "@/ui/screens/player/store/useReplayStore";
 import { useGameEventHandler, useRevealHandler } from "@/ui/screens/player/hooks/useGameEventHandler";
 import { usePromotionDialog } from "@/ui/screens/player/hooks/usePromotionDialog";
 import { reverse } from "lodash";
+import PromotionDialog from "@/ui/screens/player/dialogs/PromotionDialog";
 
 ///////////////////////////////////////////
 export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm, onAfterDelete, footerPanel }: {
@@ -44,7 +45,9 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
     const {onRevealAnswer } = useRevealHandler()
     const { element: solveDialogElement } = 
         useGameEventHandler(problem, onSolve, onSolvedConfirm)
-    const { element: promotionDialogElement } = usePromotionDialog()
+    //const { element: promotionDialogElement } = usePromotionDialog()
+    const promotionDialog = usePromotionDialog()
+
 
     const toast = useToast()
     const navigate = useNavigate()    
@@ -113,7 +116,13 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
                 </Stack>
             </Stack>
 
-            { promotionDialogElement }            
+            { promotionDialog.status === "open" &&
+            <PromotionDialog 
+                open={true}
+                pieceType={promotionDialog.pieceType}
+                onConfirm={promotionDialog.onConfirm}
+                onClose={()=>{}}
+            />}
             { solveDialogElement }
         </AppShell>
     )

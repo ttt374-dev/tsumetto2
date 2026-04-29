@@ -1,19 +1,25 @@
 import { createDecideGameEventContext, decideGameEvent } from "@/domain/game/decideGameEvent"
 import type { IntentResult } from "@/domain/game/intentResolver"
-import PromotionDialog from "@/ui/screens/player/dialogs/PromotionDialog"
+import type { PieceType } from "@/domain/kif/entity"
 import { useBoardInputStore } from "@/ui/screens/player/store/useBoardInputStore"
 import { useCurrentPosition, useGameStore } from "@/ui/screens/player/store/useGameStore"
 
-export function usePromotionDialog(){
+type PromotionDialogResult = 
+    | { status: "error"}
+    | { status: "open", pieceType: PieceType, onConfirm: (promote: boolean) => void}
+    | { status: "close", }
+
+export function usePromotionDialog(): PromotionDialogResult {
     const { pendingPromotion } = useGameStore()        
     const { dispatch, choosePromotion } = useGameStore()    
     const clearSelection = useBoardInputStore(s=>s.clear)
     const userSide = useGameStore(s=>s.userSide)
     const res = useCurrentPosition()
-    if (!res.ok) return { element: null }
+    if (!res.ok) return { status: "error" }
+
     const position = res.value
 
-    const onPromotionConfirm = (promote: boolean) => {
+    const onConfirm = (promote: boolean) => {
         const intentResult: IntentResult = { type: "move", move: choosePromotion(promote) }
         const ctx = createDecideGameEventContext()
         const isUserTurn = position.sideToMove === userSide
@@ -32,14 +38,14 @@ export function usePromotionDialog(){
                 return
         }         
     }
-    const element = pendingPromotion && 
-            <PromotionDialog 
-                open={pendingPromotion !== null}
-                pieceType={pendingPromotion.pieceType}
-                onConfirm={onPromotionConfirm}
-                onClose={() => {}}
-                >
-                </PromotionDialog>
     
-    return { element }
+    if (pendingPromotion){
+        return {
+            status: "open",            
+            pieceType: pendingPromotion.pieceType,
+            onConfirm,
+        }
+    } else {
+        return { status: "close" }
+    }    
 }
