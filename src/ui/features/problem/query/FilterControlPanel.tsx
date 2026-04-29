@@ -5,13 +5,13 @@ import { TagCheckboxFilterControl } from "./TagCheckboxFilterControl";
 import { BooleanFilterControl } from "./BooleanFilterControl";
 import { ProblemTypeFilterControl } from "./ProblemTypeFilterControl";
 import { SourceFilterControl } from "./SourceFilterControl";
-import type { useProblemsQuery } from "@/ui/features/problem/hooks/useProblemsQuery";
+import type { ProblemsQuery, useProblemsQuery } from "@/ui/features/problem/hooks/useProblemsQuery";
 import { useProblemsQueryStore } from "@/ui/features/problem/hooks/useProblemsQueryStore";
 
 //export const UNSPECIFIED = "__UNSPECIFIED__";
 
 type Props = {
-  query: ReturnType<typeof useProblemsQuery>
+  query: ProblemsQuery
   allSources: string[]
 }
 export function FilterControlPanel({query, allSources}: Props){

@@ -4,6 +4,8 @@ import type { ProblemType } from "@/domain/problem/entity/ProblemType";
 import { DefaultQueryState, type BooleanQueryKey, type MateBucket, type QueryState, type SortKey } from "@/domain/problem/service/query/QueryState";
 import { queryReducer } from "@/domain/problem/service/query/queryReducer";
 
+export type ProblemsQuery = ReturnType<typeof useProblemsQuery>
+
 export function useProblemsQuery(initial?: Partial<QueryState>) {
     const [query, dispatch] = useReducer(
         queryReducer,

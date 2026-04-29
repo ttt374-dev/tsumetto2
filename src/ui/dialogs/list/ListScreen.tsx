@@ -1,7 +1,8 @@
 import { useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Button } from "@mui/material";
+import { Button, IconButton } from "@mui/material";
 import { routes } from "@/ui/App/useAppNavigation";
+import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 
 import type { ProblemId } from "@/domain/problem/entity/Problem";
 import { AppShell } from "@/ui/common/components/layout/AppShell";
@@ -10,6 +11,7 @@ import { useLibrarySelection } from "@/ui/screens/library/hooks/useLibrarySelect
 import { LibraryCheckboxControl } from "@/ui/screens/library/components/LibraryCheckboxControl";
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
 import { useMultipleProblemsEditDialog } from "@/ui/dialogs/MultipleProblemsEditorDialog";
+import { useSessionStore } from "@/ui/screens/session/hooks/useSessionStore";
 
 type ViewerLocationState = {
     title: string
@@ -35,11 +37,21 @@ export function ListScreen() {
         else
             navigate(routes.detail(id))
     }
+    const startSession = useSessionStore(s => s.start)
+    const handleStartSession = () => {
+        startSession("library-instant-session", ids)
+        navigate(routes.sessionPlay)    
+    }
     const deleteProblems = useProblemStore(s=>s.deleteProblems)    
     const editDialog = useMultipleProblemsEditDialog()    
     
     return (
         <AppShell header={title}
+        rightActions={
+                <IconButton onClick={handleStartSession} sx={{ color: "white" }}>
+                    <PlayArrowIcon />
+                </IconButton>
+            }
             footer={<Button variant="outlined" onClick={() => navigate(routes.back)}>戻る</Button>}>
             <LibraryCheckboxControl
                 selection={selection}

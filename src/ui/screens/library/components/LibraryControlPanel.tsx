@@ -5,7 +5,7 @@ import { LibraryCheckboxControl } from "@/ui/screens/library/components/LibraryC
 import SortControl from "@/ui/features/problem/query/SortControl";
 import type { LibrarySelection } from "@/ui/screens/library/hooks/useLibrarySelection";
 import type { ProblemId } from "@/domain/problem/entity/Problem";
-import type { useProblemsQuery } from "@/ui/features/problem/hooks/useProblemsQuery";
+import type { ProblemsQuery, useProblemsQuery } from "@/ui/features/problem/hooks/useProblemsQuery";
 
 /////////////////////////////
 export function LibraryControlPanel(props: {
@@ -13,7 +13,7 @@ export function LibraryControlPanel(props: {
     onDelete: (ids: ProblemId[]) => void
     onOpenEditDialog: (ids: ProblemId[]) => void
     onFilterControlOpen: () => void
-    query: ReturnType<typeof useProblemsQuery>
+    query: ProblemsQuery
 }) {
     return (
         <Stack direction="row">

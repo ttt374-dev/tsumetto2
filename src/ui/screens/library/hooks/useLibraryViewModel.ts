@@ -11,51 +11,41 @@ import { useProblemsQueryStore } from "@/ui/features/problem/hooks/useProblemsQu
 import { useLibrarySelection } from "@/ui/screens/library/hooks/useLibrarySelection"
 import { useSessionStore } from "@/ui/screens/session/hooks/useSessionStore"
 
-//export type LibraryActionMode = "selection" | "view" 
-
-
-
 /////////////////////////////////////////////////
 export function useLibraryViewModel() {
     const query = useProblemsQueryStore()
-
     const learningRecords = useLearningRecordStore(s => s.stateRecords)
-    //const [actionMode, setActionMode] = useState<LibraryActionMode>("view")
-    
     const problems = useProblemStore(selectActiveProblems)
-    const ids = applyQuery(problems, learningRecords, query.state).map(p=>p.id)   
-    
+    const deleteProblems = useProblemStore(s=>s.deleteProblems)
+    const ids = applyQuery(problems, learningRecords, query.state).map(p=>p.id)       
     const selection = useLibrarySelection(ids)      
     const dialogs = {
         edit: useMultipleProblemsEditDialog()
     }
-    // アクションモード
-    /*
-    const changeActionMode = (mode: LibraryActionMode) => {
-        setActionMode(mode)
-        selection.clearAll()
-    }*/
-    // -----------------------------
+
     // アイテムクリック
-    // -----------------------------
     const navigate = useNavigate()
     const onItemClick = useCallback((id: ProblemId) => {        
         if (selection.isSelecting)        
-                selection.toggleChecked(id)
+            selection.toggleChecked(id)
         else 
             navigate(routes.detail(id))
     }, [selection.isSelecting, selection.toggleChecked])
 
-    // ミッション
-    //const navigate = useNavigate()    
-    
-
+    // セッション
     const startSession = useSessionStore(s => s.start)
-    const startMission = () => {
-        startSession("library-instant-session", ids)
-        navigate(routes.sessionPlay)
+    const session = {
+        start: () => {
+            startSession("library-instant-session", ids)
+            navigate(routes.sessionPlay)    
+        }
     }
-
+    // コマンド
+    const commands = {
+        delete: (ids: ProblemId[]) => {
+            deleteProblems(ids)
+        }
+    }
     
     /////////////////////////////////////////
     return {
@@ -64,6 +54,7 @@ export function useLibraryViewModel() {
         selection,        
         onItemClick,
         dialogs,
-        startMission
+        session,
+        commands,
     }
 }
