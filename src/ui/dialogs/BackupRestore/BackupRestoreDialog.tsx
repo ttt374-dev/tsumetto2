@@ -9,49 +9,17 @@ import { useToast } from "@/ui/App/providers/ToastProvider"
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore"
 import { useReviewEventStore } from "@/ui/features/learning/hooks/useReviewEventStore"
 import { useMissionStore } from "@/ui/screens/mission/hooks/useMissionStore"
+import type { useBackupRestoreController } from "@/ui/dialogs/BackupRestore/useBackupRestoreController"
 
-export function useBackupRestoreDialog(){
-    const [open, setOpen] = useState(false)
-    const toast = useToast()
-    const openDialog = () => { setOpen(true)}
-    const reloadProblems = useProblemStore(s=>s.reload)    
-    const reloadReviewEvents = useReviewEventStore(s=>s.reload)
-    const reloadMissions = useMissionStore(s=>s.reload)
-
-    const reloadStores = () => { 
-        reloadProblems()
-        reloadReviewEvents()
-        reloadMissions()
-    }
-    const dialogElement = (
-        <BackupRestoreDialog open={open}
-            onBackupFinished={(res) => {
-                if (res.ok)
-                    toast({ message: `${res.value.problemCount}件を${res.value.filename}にバックアップしました` })
-                else
-                    toast({ message: `バックアップに失敗しました：${res.error.code}`, severity: "error" })
-            }}
-            onRestoreFinished={(res) => {
-                if (res.ok) {
-                    toast({ message: `${res.value.problemCount}件をリストアしました` })
-                    reloadStores()
-                } else {
-                    toast({ message: `リストアに失敗しました：${res.error.code}`, severity: "error" })
-                }
-                
-            }}
-            onClose={() => { setOpen(false) }} />
-    )
-
-    return { openDialog, dialogElement}
-}
 
 ///////////////////////////////////////////////////
-export default function BackupRestoreDialog({ open, onClose, onBackupFinished, onRestoreFinished }: { 
+export default function BackupRestoreDialog({ open, onClose, controller, onResult }: { 
     open: boolean
     onClose: () => void
-    onBackupFinished?: (res: BackupResult) => void
-    onRestoreFinished?: (res: RestoreResult) => void
+    controller: ReturnType<typeof useBackupRestoreController>
+    onResult: (result: { type: "backup" | "restore"; data: any }) => void
+    //onBackupFinished?: (res: BackupResult) => void
+    //onRestoreFinished?: (res: RestoreResult) => void
 }) {
     const repos = useRepositoryContext()
     const usecase = useBackupRestoreUsecase(repos.problem, repos.reviewEvent, repos.mission, fileBackupWriter)
@@ -60,38 +28,23 @@ export default function BackupRestoreDialog({ open, onClose, onBackupFinished, o
     /* ===== backup ===== */   
     const handleBackup = async () => {
         const result = await usecase.backup()            
-        onBackupFinished?.(result)        
+        //onBackupFinished?.(result)        
+        onResult({type: "backup", data: result})
         if (result.ok) onClose()
     }
 
     /* ===== restore ===== */
     const handleRestoreFile = async (file: File) => {
-        let json: BackupData
+        if (!window.confirm("現在のデータは上書きされます。よろしいですか？")) return
 
-        try {
-            const text = await file.text()
-            json = JSON.parse(text)
-        } catch {
-            onRestoreFinished?.({
-                ok: false,
-                error: { code: "invalid-format"}
-            })
-            return
-        }
-        if (!window.confirm(
-            "現在の棋譜・学習履歴はすべて上書きされます。よろしいですか？"
-        )) {
-            return
-        }
-        const result = await usecase.restore(json)
+        const res = await controller.restoreFromFile(file)
+        onResult({ type: "restore", data: res })
         onClose()
-        onRestoreFinished?.(result)
     }
-    /* ==== data clear ==== */
-    const clearAllEvents = useReviewEventStore(s=>s.clearAll)
+    /* ==== data clear ==== */    
     const handleClearAllReviewEvents = () => {
         if (!window.confirm("すべての学習データを消去してよろしいですか？")) return
-        clearAllEvents()
+        controller.clearAll()
     }
     return (
         <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>

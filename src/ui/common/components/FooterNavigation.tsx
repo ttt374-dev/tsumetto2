@@ -8,7 +8,6 @@ import HistoryIcon from '@mui/icons-material/History'
 import { routes } from "@/ui/App/useAppNavigation";
 import { useNavigate } from "react-router-dom";
 import { useContext, type ReactNode } from "react";
-import { useImportController } from "@/ui/dialogs/Import/useImportController";
 import { OpenImportContext } from "@/ui/common/components/layout/AppShell";
 
 type NavItem =
@@ -16,9 +15,7 @@ type NavItem =
     | { type: "action"; label: string; onClick: () => void; icon: ReactNode }
 
 export default function FooterNavigation() {
-    //const [value, setValue] = useState(0)
     const navigate = useNavigate()
-    //const importer = useImport()
     const openImport = useContext(OpenImportContext)
 
     const navItems: NavItem[] = [
@@ -35,7 +32,6 @@ export default function FooterNavigation() {
     ]
 
     return (
-
         <BottomNavigation
             onChange={(_event, newValue) => {
                 const item = navItems.filter(i => i.type === "route").find(i => i.value === newValue)
@@ -53,6 +49,5 @@ export default function FooterNavigation() {
                 />
             ))}
         </BottomNavigation>
-
     )
 }
