@@ -7,7 +7,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 import { IconButton, Stack } from '@mui/material';
 import type { ProblemId } from "@/domain/problem/entity/Problem";
-import type { LibraryActionMode, LibrarySelection } from "../hooks/useLibraryViewModel";
+import type { LibrarySelection } from "@/ui/screens/library/hooks/useLibrarySelection";
 
 export function LibraryCheckboxControl(props: {
     selection: LibrarySelection

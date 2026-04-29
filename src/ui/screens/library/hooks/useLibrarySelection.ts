@@ -6,6 +6,9 @@ import { useLibraryCheckbox } from "@/ui/screens/library/hooks/useLibraryCheckbo
 // -----------------------------
 // 選択管理
 // -----------------------------    
+
+export type LibrarySelection = ReturnType<typeof useLibrarySelection>
+
 export function useLibrarySelection(ids: ProblemId[]){
     const [isSelecting, setIsSelecting] = useState(false)
 

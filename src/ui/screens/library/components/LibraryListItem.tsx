@@ -6,7 +6,7 @@ import { StarToggleButton } from "@/ui/common/components/StarToggleButton/StarTo
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
 import { useLearningRecordStore } from "@/ui/features/learning/hooks/useLearningRecordStore";
 import { useStarToggleButton } from '@/ui/common/components/StarToggleButton/useStarToggleButton';
-import type { LibraryActionMode, LibrarySelection } from "@/ui/screens/library/hooks/useLibraryViewModel";
+import type { LibrarySelection } from "@/ui/screens/library/hooks/useLibrarySelection";
 import { toProblemViewData } from "@/ui/features/problem/hooks/problemPresenter";
 import type { LearningState } from "@/domain/learning/entity/LearningState";
 import { toLearningStateViewData } from "@/ui/features/learning/hooks/learningPresenter";

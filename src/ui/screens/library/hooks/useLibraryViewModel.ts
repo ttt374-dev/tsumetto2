@@ -11,8 +11,8 @@ import { useProblemsQueryStore } from "@/ui/features/problem/hooks/useProblemsQu
 import { useLibrarySelection } from "@/ui/screens/library/hooks/useLibrarySelection"
 import { useSessionStore } from "@/ui/screens/session/hooks/useSessionStore"
 
-export type LibraryActionMode = "selection" | "view" 
-export type LibrarySelection = ReturnType<typeof useLibrarySelection>
+//export type LibraryActionMode = "selection" | "view" 
+
 
 
 /////////////////////////////////////////////////
@@ -20,7 +20,7 @@ export function useLibraryViewModel() {
     const query = useProblemsQueryStore()
 
     const learningRecords = useLearningRecordStore(s => s.stateRecords)
-    const [actionMode, setActionMode] = useState<LibraryActionMode>("view")
+    //const [actionMode, setActionMode] = useState<LibraryActionMode>("view")
     
     const problems = useProblemStore(selectActiveProblems)
     const ids = applyQuery(problems, learningRecords, query.state).map(p=>p.id)   
@@ -30,23 +30,21 @@ export function useLibraryViewModel() {
         tagEdit: useMultipleProblemsEditDialog()
     }
     // アクションモード
+    /*
     const changeActionMode = (mode: LibraryActionMode) => {
         setActionMode(mode)
         selection.clearAll()
-    }
+    }*/
     // -----------------------------
     // アイテムクリック
     // -----------------------------
     const navigate = useNavigate()
     const onItemClick = useCallback((p: Problem) => {        
-        switch(actionMode){
-            case "selection":
+        if (selection.isSelecting)        
                 selection.toggleChecked(p.id)
-                break;
-            case "view":
-                navigate(routes.detail(p.id))
-        }        
-    }, [actionMode, selection.toggleChecked])
+        else 
+            navigate(routes.detail(p.id))
+    }, [selection.isSelecting, selection.toggleChecked])
 
     // ミッション
     //const navigate = useNavigate()    
@@ -63,7 +61,6 @@ export function useLibraryViewModel() {
     return {
         ids,
         query,
-        mode: actionMode, changeActionMode,
         selection,        
         onItemClick,
         dialogs,

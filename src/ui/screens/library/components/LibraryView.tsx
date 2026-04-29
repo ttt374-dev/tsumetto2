@@ -7,9 +7,9 @@ import SortControl from "../../../features/problem/query/SortControl"
 import { LibraryListItem } from "./LibraryListItem"
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem"
 import { LibraryCheckboxControl } from "./LibraryCheckboxControl";
-import type { LibrarySelection } from "../hooks/useLibraryViewModel";
 import type { useProblemsQuery } from "@/ui/features/problem/hooks/useProblemsQuery";
 import { DefaultQueryState } from "@/domain/problem/service/query/QueryState";
+import type { LibrarySelection } from "@/ui/screens/library/hooks/useLibrarySelection";
 
 /*
 export type LibraryItemActions = {
@@ -70,9 +70,7 @@ export default function LibraryView({ ids, query,onDelete,
                             key={id}
                             id={id}
                             onItemClick={onItemClick}
-                            selection={selection}                                                
-                            
-                            
+                            selection={selection}
                             
                         />
                     ))}
