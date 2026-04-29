@@ -1,5 +1,5 @@
-import React from "react"
-import { Box, Button, IconButton, Stack } from "@mui/material"
+import React, { useCallback, useEffect } from "react"
+import { Box, Button, getSwitchUtilityClass, IconButton, Stack } from "@mui/material"
 import { useNavigate } from "react-router-dom";
 import ScreenRotationIcon from '@mui/icons-material/ScreenRotation';
 import SwapVertIcon from '@mui/icons-material/SwapVert';
@@ -18,58 +18,85 @@ import { useToast } from "../../App/providers/ToastProvider";
 import { useGameStore, type GameEvent } from "./store/useGameStore";
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
 import { useReplayStore } from "@/ui/screens/player/store/useReplayStore";
-import { useGameEventHandler, useRevealHandler } from "@/ui/screens/player/hooks/useGameEventHandler";
 import { usePromotionDialog } from "@/ui/screens/player/hooks/usePromotionDialog";
-import { reverse } from "lodash";
 import PromotionDialog from "@/ui/screens/player/dialogs/PromotionDialog";
-import { useDialog } from "@/ui/common/hooks/useDialog";
-import { SolvedDialog } from "@/ui/screens/player/dialogs/SolvedDialog";
+import { SolvedDialog, useSolvedDialog } from "@/ui/screens/player/dialogs/SolvedDialog";
+import { createPlayerContext } from "@/ui/screens/player/components/types/PlayerContext";
+import { useGameEventHandler, type GameUIEvent } from "@/ui/screens/player/hooks/useGameEventHandler";
 import { useLearningRecordStore } from "@/ui/features/learning/hooks/useLearningRecordStore";
+import { createRectAdjustmentFn } from "@dnd-kit/core/dist/utilities/rect/rectAdjustment";
 
+function usePlayerScreenViewModel(){
+        // reveal
+    const createRevealEvent = (): GameEvent => {
+        const ctx = createPlayerContext()      
+        return {type: "REVEAL", ...ctx}
+    }   
+
+    return { createRevealEvent}
+
+}
 ///////////////////////////////////////////
-export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm, onAfterDelete, footerPanel }: {
+export default function PlayerScreen({ problem, title, onUIEvent, footerPanel }: {
     problem: Problem
     title: React.ReactNode
-    onSolve: () => void
-    onSolvedConfirm: () => void
-    onAfterDelete?: () => void
+    //onSolve: () => void
+    onUIEvent?: (uiEvent: GameUIEvent) => void    
     footerPanel?: React.ReactNode
 }) {
-    const gameState = useGameStore(s=>s.state)      
+    const gameState = useGameStore(s=>s.state)       
     const reversed = useGameStore(s=>s.displayReversed)    
     const userSide = useGameStore(s=>s.userSide)  
+    const dispatch = useGameStore(s=>s.dispatch)
     const toggleReversed = useGameStore(s=>s.toggleReversed)
     const toggleUserSide = useGameStore(s=>s.toggleUserSide)
-    const replay = useReplayStore()        
-    const deleteProblem = useProblemStore(s=>s.deleteProblem)    
-    
-    
-    //const { isInitialized } = usePlayerInitializer(problem)
-    const {onRevealAnswer } = useRevealHandler()
-    const { solvedResultDialog } = useGameEventHandler(problem, onSolve)
-    //const { element: promotionDialogElement } = usePromotionDialog()
-    const promotionDialog = usePromotionDialog()
-    //const solvedResultDialog = useDialog()
-    //const records = useLearningRecordStore(s => s.stateRecords)
-    //const learning = records[problem.id]
-
+    const replay = useReplayStore()
+    const solvedResultDialog = useSolvedDialog()    
+    const promotionDialog = usePromotionDialog()    
 
     const toast = useToast()
-    const navigate = useNavigate()    
+    const navigate = useNavigate()
+    const vm = usePlayerScreenViewModel()
 
-    // handlers
+    ////////////////
+    // handlers    
+    const handleUIEvent = useCallback((uiEvent: GameUIEvent) => {
+        switch(uiEvent.type){
+            case "solved":                
+                solvedResultDialog.openDialog(problem.id, uiEvent.solvedResult)
+                break
+            case "mistake":
+                toast({ message: `mistake: ${uiEvent.count}` })
+                break
+            case "solvedConfirmed":
+                // Playerでは何もしない（親に委譲）
+                break
+        }
+         // ⭐ 外にも流す
+        onUIEvent?.(uiEvent)
+    }, [problem.id, toast, onUIEvent, solvedResultDialog])
+
+    useGameEventHandler(problem, handleUIEvent)
     const handleNavigateToDetail = () => {
         navigate(routes.detail(problem.id))
-    }
-    
+    }    
+    // delete
+    const deleteProblem = useProblemStore(s=>s.deleteProblem)    
     const handleDelete = (id: ProblemId) => {
         if (!window.confirm("sure to delete ? ")) return
         deleteProblem(id)
-        onAfterDelete?.()
         toast({message: `deleted: ${id}`})
-    }    
+    }
     
-    
+    // solvedconfirm
+    const handleSolvedConfirm = () => {
+        onUIEvent?.({type: "solvedConfirmed"})
+        solvedResultDialog.closeDialog()
+    }
+    const records = useLearningRecordStore(s=>s.stateRecords)
+    const learningState = records[problem.id]
+    //const learningState = solvedResultDialog.open ? records[solvedResultDialog.problemId] : undefined
+
     ////////////////////////////////////////////////////////////////////////
     return (
         <AppShell
@@ -95,11 +122,9 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
                     <Box sx={{ flex: 1, border: 1, borderColor: "divider" }}>
                         <Stack direction="row" alignItems="center">
                             <TimerControlPanel />
-
                             <IconButton onClick={toggleReversed}>
                                 <SwapVertIcon />
                             </IconButton>
-
                             <Box onClick={toggleUserSide}>
                                 {userSide === "black" ? "▲" : "△"}
                             </Box>
@@ -112,7 +137,7 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
                                 onPrev={replay.retreatPly}
                                 onNext={replay.advancePly}
                             /> : (<Stack>
-                                <Button onClick={onRevealAnswer} variant="outlined">
+                                <Button onClick={()=>dispatch(vm.createRevealEvent())} variant="outlined">
                                     手筋を表示
                                 </Button>
                             </Stack>)
@@ -121,21 +146,20 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
                 </Stack>
             </Stack>
 
-            {promotionDialog.status === "open" &&
+            {promotionDialog.open &&
                 <PromotionDialog
-                    open={true}
+                    open={promotionDialog.open}
                     pieceType={promotionDialog.pieceType}
                     onConfirm={promotionDialog.onConfirm}
-                    onClose={() => { }}
                 />}
 
-            {solvedResultDialog.solvedResult &&
+            {solvedResultDialog.open &&
                 <SolvedDialog
                     open={solvedResultDialog.open}
                     onClose={solvedResultDialog.closeDialog}
                     solvedResult={solvedResultDialog.solvedResult}
-                    learningState={solvedResultDialog.learningState}
-                    onConfirm={onSolvedConfirm}
+                    learningState={learningState}
+                    onConfirm={handleSolvedConfirm}
                 />}
         </AppShell>
     )

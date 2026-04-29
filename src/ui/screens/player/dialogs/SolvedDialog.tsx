@@ -1,28 +1,35 @@
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material"
+import { useState } from "react"
+
 import { deriveAnswerQuality } from "@/domain/learning/entity/AnswerQuality"
 import type { LearningState } from "@/domain/learning/entity/LearningState"
 import type { ProblemId } from "@/domain/problem/entity/Problem"
 import type { SolvedResult } from "@/domain/review/solvedResult"
 import { learningStateLabels, toLearningStateViewData } from "@/ui/features/learning/hooks/learningPresenter"
 import { solvedResultLabels, toSolvedResultViewData } from "@/ui/features/learning/hooks/solvedResultPresenter"
-import { useLearningRecordStore } from "@/ui/features/learning/hooks/useLearningRecordStore"
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material"
-import { useState } from "react"
 
-export function useSolvedDialog(){
-    const [open, setOpen] = useState(false)
-    const [solvedResult, setSolvedResult] = useState<SolvedResult|undefined>(undefined)
-    const [learningState, setLearningState] = useState<LearningState|undefined>(undefined)
-    const records = useLearningRecordStore(s=>s.stateRecords)
+type SolvedDialogState = 
+    | { open: false }
+    | { open: true, solvedResult: SolvedResult, problemId: ProblemId}
+
+type SolvedDialogActions = {
+    openDialog: (pid: ProblemId, solvedResult: SolvedResult) => void
+    closeDialog: () => void
+}
+export function useSolvedDialog(): SolvedDialogState & SolvedDialogActions {
+    const [state, setState] = useState<SolvedDialogState>({ open: false })    
 
     const openDialog = (pid: ProblemId, solvedResult: SolvedResult) => { 
-        setOpen(true)
-        setSolvedResult(solvedResult)
-        setLearningState(records[pid])
+        setState({
+            open: true,
+            solvedResult,
+            problemId: pid
+        })
     }
-    const closeDialog = () => { setOpen(false) }
-
-    return { open, solvedResult,
-        openDialog, closeDialog, learningState}
+    const closeDialog = () => { setState({ open: false }) }
+    
+    return { ...state,
+        openDialog, closeDialog}
 }
 
 export function SolvedDialog({ open, onClose, onConfirm, solvedResult, learningState }: {
@@ -47,7 +54,7 @@ export function SolvedDialog({ open, onClose, onConfirm, solvedResult, learningS
             </DialogTitle>
             <DialogContent>
                 { pdata.map(d=>(
-                    <Box>{ solvedResultLabels[d]}：{svd[d]}</Box>    
+                    <Box key={d}>{ solvedResultLabels[d]}：{svd[d]}</Box>    
                 ))}                
 
                 {lvd && <>
@@ -62,7 +69,7 @@ export function SolvedDialog({ open, onClose, onConfirm, solvedResult, learningS
                     閉じる
                 </Button>
                 <Button variant="contained" color="primary" 
-                    onClick={() => { onConfirm(); onClose() }}>
+                    onClick={() => { onConfirm();}}>
                     { confirmLabel}
                 </Button>
             </DialogActions>

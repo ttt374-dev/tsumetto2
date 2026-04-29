@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 
 import PlayerScreen from "@/ui/screens/player/PlayerScreen"
 import { PlayerFooterPanel } from "@/ui/screens/player/components/panels/PlayerFooterPanel"
@@ -13,12 +13,13 @@ import { useSessionCompletion } from "@/ui/screens/session/hooks/useSessionCompl
 import { useSessionPlayerTitleMaker } from "@/ui/screens/session/hooks/useSessionPlayerTitleMaker"
 import SessionProblemListDialog from "@/ui/screens/session/SessionProblemListDialog"
 import { AppShell } from "@/ui/common/components/layout/AppShell"
+import { useGameStore } from "@/ui/screens/player/store/useGameStore"
+import type { GameUIEvent } from "@/ui/screens/player/hooks/useGameEventHandler"
 
 ////////////////////////////////////////////////
 export default function SessionPlayerScreen(){    
-    const res = useSessionPlayerStatus()
-    
-    if (res.status!=="active") return <AppShell>not ready</AppShell>
+    const res = useSessionPlayerStatus()       
+    if (res.status!=="active") return <AppShell>not ready</AppShell>    
     return <SessionPlayerContent problem={res.problem} sessionId={res.sessionId}/>
 }
 function SessionPlayerContent(props: {
@@ -27,7 +28,7 @@ function SessionPlayerContent(props: {
 }){
     const [isListOpen, setIsListOpen] = useState(false)        
     
-    const { solve, goNext, skip } = useSessionCompletion(props.problem, props.sessionId)
+    const { solve, goNext } = useSessionCompletion(props.problem, props.sessionId)
     const { title } = useSessionPlayerTitleMaker(props.problem)
     const eventLog = useReviewEventStore(s=>s.eventLog)
     const solvedResultMap = getSolvedResultsBySession(eventLog, props.sessionId)
@@ -36,15 +37,37 @@ function SessionPlayerContent(props: {
         <PlayerFooterPanel
             onNext={goNext}
             onShowList={() => setIsListOpen(true)} />)
+    // game events
+    const events = useGameStore(s => s.events)
 
+    useEffect(() => {
+        const last = events.at(-1)
+        if (!last) return
+
+        if (last.type === "SOLVE") {
+            solve()
+        }
+    }, [events])
+
+    const handleUIEvent = (uiEvent: GameUIEvent) => {
+        switch(uiEvent.type){
+            case "solvedConfirmed":
+                goNext()
+                break;
+        }
+    }
+    // 消された場合
+    if (props.problem.deletedAt){
+        return <AppShell footer={footerPanel}>Deleted: { props.problem.title}</AppShell>
+    }
     return (
         <>
             <PlayerScreen
                 problem={props.problem}
                 title={title}
-                onSolve={solve}
-                onSolvedConfirm={goNext}
-                onAfterDelete={skip}
+                //onSolve={solve}
+                //onSolvedConfirm={goNext}
+                onUIEvent={handleUIEvent}
                 footerPanel={footerPanel}
             />
 
@@ -54,7 +77,6 @@ function SessionPlayerContent(props: {
                 selectedProblemId={props.problem.id}
                 solvedResultMap={solvedResultMap}
             />
-
         </>
     )
 }

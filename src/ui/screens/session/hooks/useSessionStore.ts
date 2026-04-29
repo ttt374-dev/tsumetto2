@@ -29,7 +29,7 @@ type SessionStore = {
 
 export const useSessionStore = create<SessionStore>((set, get) => ({
     // state
-    state: { type: "idle"},
+    //state: { type: "idle"},
     missionId: undefined,
     sessionId: undefined,
     problemIds: [],

@@ -5,17 +5,17 @@ import { useBoardInputStore } from "@/ui/screens/player/store/useBoardInputStore
 import { useCurrentPosition, useGameStore } from "@/ui/screens/player/store/useGameStore"
 
 type PromotionDialogResult = 
-    | { status: "error"}
-    | { status: "open", pieceType: PieceType, onConfirm: (promote: boolean) => void}
-    | { status: "close", }
+    | { open: true, pieceType: PieceType, onConfirm: (promote: boolean) => void}
+    | { open: false }
 
 export function usePromotionDialog(): PromotionDialogResult {
-    const { pendingPromotion } = useGameStore()        
-    const { dispatch, choosePromotion } = useGameStore()    
+    //const { pendingPromotion } = useGameStore()        
+    const { dispatch, choosePromotion, userSide, pendingPromotion } = useGameStore()    
+    //const userSide = useGameStore(s=>s.userSide)
     const clearSelection = useBoardInputStore(s=>s.clear)
-    const userSide = useGameStore(s=>s.userSide)
+    
     const res = useCurrentPosition()
-    if (!res.ok) return { status: "error" }
+    if (!res.ok) return { open: false }
 
     const position = res.value
 
@@ -30,7 +30,7 @@ export function usePromotionDialog(): PromotionDialogResult {
                 return
             case "promotionPending":
                 // ここに来たらバグ
-                console.error("Unexpected promotionPending after confirm")
+                throw new Error("Unexpected promotionPending after confirm")
                 return
             case "event":
                 dispatch(decision.event)
@@ -41,11 +41,11 @@ export function usePromotionDialog(): PromotionDialogResult {
     
     if (pendingPromotion){
         return {
-            status: "open",            
+            open: true,        
             pieceType: pendingPromotion.pieceType,
             onConfirm,
         }
     } else {
-        return { status: "close" }
+        return { open: false }
     }    
 }

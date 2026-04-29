@@ -12,7 +12,6 @@ import { RepositoryContext } from './providers/RepositoryProvider';
 import { ToastProvider } from './providers/ToastProvider';
 import { ListScreen } from '@/ui/dialogs/list/ListScreen.tsx';
 import StatsScreen from '@/ui/screens/stats/StatsScreen.tsx';
-import SinglePlayerScreen from '@/ui/screens/player/SinglePlayerScreen.tsx';
 import { bootstrapApp, createRepositories } from './bootstrapApp';
 import { routes } from './useAppNavigation';
 import SessionSummaryScreen from '@/ui/screens/summary/SessionSummaryScreen.tsx';
@@ -21,6 +20,7 @@ import LibraryScreen from '@/ui/screens/library/LibraryScreen.tsx';
 import SessionLayout from '@/ui/screens/session/SessionLayout.tsx';
 import SessionPlayerScreen from '@/ui/screens/session/SessionPlayerScreen.tsx';
 import HistoryScreen from '@/ui/screens/history/HistoryScreen.tsx';
+import SinglePlayerScreen from '@/ui/screens/player/SinglePlayerScreen';
 
 export const theme = createTheme({
     cssVariables: true,   // ← これ必須
