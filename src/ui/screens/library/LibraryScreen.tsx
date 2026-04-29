@@ -8,6 +8,7 @@ import FooterNavigation from "@/ui/common/components/FooterNavigation";
 import { LibraryQueryDrawer } from "@/ui/screens/library/components/LibraryQueryDrawer";
 import { LibraryListView } from "@/ui/screens/library/components/LibraryListView";
 import { LibraryControlPanel } from "@/ui/screens/library/components/LibraryControlPanel";
+import { MultipleProblemsEditorDialog } from "@/ui/dialogs/MultipleProblemsEditorDialog";
 
 //////////////////////////////////////////////////
 export default function LibraryScreen() {
@@ -35,7 +36,11 @@ export default function LibraryScreen() {
                 onItemClick={vm.onItemClick}
                 selection={vm.selection}
             />
-            {vm.dialogs.edit.dialogElement}
+            <MultipleProblemsEditorDialog 
+                open={vm.dialogs.edit.open}
+                onClose={vm.dialogs.edit.closeDialog}
+                checkedIds={vm.dialogs.edit.checkedIds}
+            />
 
             <LibraryQueryDrawer open={isDrawerOpen} onClose={()=>setIsDrawerOpen(false)}
                 query={vm.query}   

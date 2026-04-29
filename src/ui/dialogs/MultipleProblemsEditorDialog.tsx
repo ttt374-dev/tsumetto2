@@ -17,15 +17,7 @@ export function useMultipleProblemsEditDialog() {
     }
     const closeDialog = () => { setOpen(false) }
 
-    const dialogElement = (
-        checkedIds.length > 0 &&
-        <MultipleProblemsEditorDialog
-            open={open}
-            checkedIds={checkedIds}
-            onClose={closeDialog}
-        />
-    )
-    return { openDialog, dialogElement }
+    return { open, openDialog, closeDialog, checkedIds }
 }
 /////////////////////////////////////////
 function ProblemTypeSelectControl(props: {

@@ -5,11 +5,12 @@ import ClearIcon from '@mui/icons-material/Clear';
 import SortControl from "../../../features/problem/query/SortControl";
 import { useMissionEditViewModel } from "./useMissionEditViewModel";
 import { AppShell } from "../../../common/components/layout/AppShell";
-import { useListDialog } from "../../../dialogs/list/ListDialog";
+import { ListDialog } from "../../../dialogs/list/ListDialog";
 import { useNavigate } from "react-router-dom";
 import { routes } from "../../../App/useAppNavigation";
 import { FilterControlPanel } from "../../../features/problem/query/FilterControlPanel";
 import { useToast } from "@/ui/App/providers/ToastProvider";
+import { useDialog } from "@/ui/common/hooks/useDialog";
 
 export default function MissionEditScreen() {
     const toast = useToast()
@@ -19,7 +20,7 @@ export default function MissionEditScreen() {
     } = useMissionEditViewModel();
 
     const navigate = useNavigate()
-    const listDialog = useListDialog(problemIds, (id) => navigate(routes.detail(id)))
+    const listDialog = useDialog()
     const handleNavigateToList = () => {
         //console.log("nav: ids", problemIds)
         navigate(routes.list, { state: { ids: problemIds, title: `デッキ ${name}：問題リスト` } })
@@ -101,7 +102,12 @@ export default function MissionEditScreen() {
                 全{summary.problemCount}問、平均スコア {(summary.avgScore).toFixed(1)}
             </Button>
 
-            {listDialog.dialogElement}
+            <ListDialog
+                ids={problemIds}
+                open={listDialog.open}
+                onClose={listDialog.closeDialog}
+                onSelectProblem={(id) => navigate(routes.detail(id))}
+            />
         </AppShell>
     );
 }

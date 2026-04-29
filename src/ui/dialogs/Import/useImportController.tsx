@@ -37,16 +37,6 @@ export function useImportController(onAfterImported?: (result: ImportFilesResult
             cancel()
         }
     }
-    /*
-    const dialogElement = (
-        open && files &&
-        <ImportDialog
-            open={open}
-            onClose={cancel}
-            onImport={confirm}
-            filesToImport={files}
-        />
-    )*/
 
     return {
         // picker
@@ -57,9 +47,8 @@ export function useImportController(onAfterImported?: (result: ImportFilesResult
         open,
         files,
         importing,
-        //dialogElement,
         result,
-        // actions
+
         confirm,
         cancel,
         

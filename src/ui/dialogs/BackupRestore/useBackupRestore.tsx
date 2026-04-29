@@ -49,21 +49,9 @@ export function useBackupRestoreDialog() {
 
     }, [result])
 
-    /*
-
-    const dialogElement = (
-        <BackupRestoreDialog
-            open={open}
-            onClose={() => setOpen(false)}
-            controller={controller}
-            onResult={setResult}
-        />
-    )*/
-
     return {
         open, controller,
         openDialog, closeDialog,
         setResult
-        //dialogElement,
     }
 }
