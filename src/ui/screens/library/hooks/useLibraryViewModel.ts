@@ -9,6 +9,7 @@ import { applyQuery } from "@/domain/problem/service/query/applyQuery"
 import { useMultipleProblemsEditDialog } from "@/ui/dialogs/MultipleProblemsEditorDialog"
 import { useProblemsQueryStore } from "@/ui/features/problem/hooks/useProblemsQueryStore"
 import { useLibrarySelection } from "@/ui/screens/library/hooks/useLibrarySelection"
+import { useSessionStore } from "@/ui/screens/session/hooks/useSessionStore"
 
 export type LibraryActionMode = "selection" | "view" 
 export type LibrarySelection = ReturnType<typeof useLibrarySelection>
@@ -46,6 +47,17 @@ export function useLibraryViewModel() {
                 navigate(routes.detail(p.id))
         }        
     }, [actionMode, selection.toggleChecked])
+
+    // ミッション
+    //const navigate = useNavigate()    
+    
+
+    const startSession = useSessionStore(s => s.start)
+    const startMission = () => {
+        startSession("library-instant-session", ids)
+        navigate(routes.sessionPlay)
+    }
+
     
     /////////////////////////////////////////
     return {
@@ -54,6 +66,7 @@ export function useLibraryViewModel() {
         mode: actionMode, changeActionMode,
         selection,        
         onItemClick,
-        dialogs
+        dialogs,
+        startMission
     }
 }
