@@ -7,53 +7,52 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 import { IconButton, Stack } from '@mui/material';
 import type { ProblemId } from "@/domain/problem/entity/Problem";
-import type { LibraryActionMode } from "../hooks/useLibraryViewModel";
+import type { LibraryActionMode, LibrarySelection } from "../hooks/useLibraryViewModel";
 
-export function LibraryCheckboxControl({ onCheckAll, onUncheckAll, onDelete,
-    onChangeActionMode, actionMode, onOpenEditDialog, checkedIds, 
-}: {
-    onCheckAll: () => void
-    onUncheckAll: () => void
-    checkedIds: ProblemId[]
+export function LibraryCheckboxControl(props: {
+    selection: LibrarySelection
     onDelete: (ids: ProblemId[]) => void
-    actionMode: LibraryActionMode,
-    onChangeActionMode: (mode: LibraryActionMode) => void
+    //actionMode: LibraryActionMode,
+    //onChangeActionMode: (mode: LibraryActionMode) => void
     onOpenEditDialog: (ids: ProblemId[]) => void
 }) {
     const confirmFn = () => window.confirm("Are you sure to delete selected?")
-    const handleOpenEditDialog = () => onOpenEditDialog(checkedIds)
-    //const deleteProblems = useProblemStore(s=>s.deleteProblems)
+    const handleOpenEditDialog = () => props.onOpenEditDialog(props.selection.checkedIds)
     const handleDeleteChecked = () => {
-        if (checkedIds.length === 0) return
+        if (props.selection.checkedIds.length === 0) return
         if (!confirmFn()) return
-        onDelete(checkedIds)
+        props.onDelete(props.selection.checkedIds)
     }
 
     return (
         <Stack direction="row">
-            {actionMode !== "selection" &&
+            {//props.actionMode !== "selection" &&
+             !props.selection.isSelecting &&
                 <IconButton
                     value="selection"
-                    onClick={() => onChangeActionMode("selection")}                    >
+                    //onClick={() => props.onChangeActionMode("selection")}                    >
+                    onClick={props.selection.startSelection}>
                     <SelectAllIcon />
                 </IconButton>
             }
 
-            {actionMode === "selection" &&
+            {//props.actionMode === "selection" &&
+            props.selection.isSelecting &&
                 <>
                     { /* --- 全選択 --- */}
                     <IconButton
-                        onClick={onCheckAll}
+                        onClick={props.selection.selectAll}
                         color="primary">
                         <CheckBoxIcon />
                     </IconButton>
                     <IconButton
-                        onClick={onUncheckAll}
+                        onClick={props.selection.clearAll}
                         color="primary">
                         <CheckBoxOutlineBlankIcon />
                     </IconButton>
                     <IconButton
-                        onClick={() => onChangeActionMode("view")}
+                        //onClick={() => props.onChangeActionMode("view")}
+                        onClick={props.selection.endSelection}
                         color="primary">
                         <CloseIcon />
                     </IconButton>
@@ -61,13 +60,13 @@ export function LibraryCheckboxControl({ onCheckAll, onUncheckAll, onDelete,
                     { /* 編集 */}
                     <IconButton
                         onClick={handleOpenEditDialog}
-                        disabled={checkedIds.length === 0}>
+                        disabled={props.selection.checkedIds.length === 0}>
                         <EditIcon />
                     </IconButton>
                     { /* 削除ボタン */}
                     <IconButton
                         onClick={handleDeleteChecked}
-                        disabled={checkedIds.length === 0}
+                        disabled={props.selection.checkedIds.length === 0}
                     >
                         <DeleteIcon />
                     </IconButton>

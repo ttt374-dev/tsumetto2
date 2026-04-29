@@ -6,30 +6,14 @@ import { selectActiveProblems, useProblemStore } from "@/ui/features/problem/hoo
 import { useLearningRecordStore } from "@/ui/features/learning/hooks/useLearningRecordStore"
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem"
 import { applyQuery } from "@/domain/problem/service/query/applyQuery"
-import { useLibraryCheckbox } from "./useLibraryCheckbox"
 import { useMultipleProblemsEditDialog } from "@/ui/dialogs/MultipleProblemsEditorDialog"
 import { useProblemsQueryStore } from "@/ui/features/problem/hooks/useProblemsQueryStore"
+import { useLibrarySelection } from "@/ui/screens/library/hooks/useLibrarySelection"
 
 export type LibraryActionMode = "selection" | "view" 
+export type LibrarySelection = ReturnType<typeof useLibrarySelection>
 
-function useLibrarySelectionVM(ids: ProblemId[]){
-    // -----------------------------
-    // 選択管理
-    // -----------------------------    
-    const checkboxControl = useLibraryCheckbox(ids)
-    const selection = useMemo(() => ({
-        checkedIds: checkboxControl.checkedIds,
-        isChecked: checkboxControl.isChecked,
-        
-    }), [checkboxControl.checkedIds, checkboxControl.isChecked])
 
-    const actions = useMemo(()=>({
-        selectAll: checkboxControl.checkAll,
-        clearAll: checkboxControl.uncheckAll,
-        toggleChecked: checkboxControl.toggleChecked,        
-    }), [checkboxControl.checkAll, checkboxControl.uncheckAll, checkboxControl.toggleChecked])
-    return  {...selection, ...actions}
-}
 /////////////////////////////////////////////////
 export function useLibraryViewModel() {
     const query = useProblemsQueryStore()
@@ -40,7 +24,7 @@ export function useLibraryViewModel() {
     const problems = useProblemStore(selectActiveProblems)
     const ids = applyQuery(problems, learningRecords, query.state).map(p=>p.id)   
     
-    const selection = useLibrarySelectionVM(ids)      
+    const selection = useLibrarySelection(ids)      
     const dialogs = {
         tagEdit: useMultipleProblemsEditDialog()
     }

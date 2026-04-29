@@ -7,7 +7,7 @@ import SortControl from "../../../features/problem/query/SortControl"
 import { LibraryListItem } from "./LibraryListItem"
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem"
 import { LibraryCheckboxControl } from "./LibraryCheckboxControl";
-import type { LibraryActionMode } from "../hooks/useLibraryViewModel";
+import type { LibraryActionMode, LibrarySelection } from "../hooks/useLibraryViewModel";
 import type { useProblemsQuery } from "@/ui/features/problem/hooks/useProblemsQuery";
 import { DefaultQueryState } from "@/domain/problem/service/query/QueryState";
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
@@ -20,17 +20,10 @@ export type LibraryItemActions = {
 type LibraryViewProps = {
     ids: ProblemId[]
     query: ReturnType<typeof useProblemsQuery>
-    actionMode: LibraryActionMode
-    changeActionMode: (mode: LibraryActionMode) => void
+    //actionMode: LibraryActionMode
+    //changeActionMode: (mode: LibraryActionMode) => void
 
-    selection: {
-        checkedIds: ProblemId[]
-        isChecked: (id: ProblemId) => boolean
-
-        selectAll: () => void
-        clearAll: () => void
-        toggleChecked: (id: ProblemId) => void
-    }
+    selection: LibrarySelection
     onItemClick: (p: Problem) => void
     onFilterControlOpen: () => void
     onDelete: (ids: ProblemId[]) => void
@@ -39,22 +32,17 @@ type LibraryViewProps = {
 }
 
 /////////////////////////////////////////
-export default function LibraryView({ ids, query, actionMode, changeActionMode, onDelete,
+export default function LibraryView({ ids, query,onDelete,
     onItemClick, selection, onFilterControlOpen, onOpenEditDialog }: LibraryViewProps) {    
     const isFiltered = !isEqual(query, DefaultQueryState);
     
-
     return (
         <>
             <Stack direction="row">
                 { /* チェックボックス・選択操作 */ }
                 <LibraryCheckboxControl
-                    onCheckAll={selection.selectAll}
-                    onUncheckAll={selection.clearAll}
-                    onDelete={onDelete}
-                    actionMode={actionMode}
-                    checkedIds={selection.checkedIds}
-                    onChangeActionMode={changeActionMode}
+                    selection={selection}
+                    onDelete={onDelete}                    
                     onOpenEditDialog={onOpenEditDialog}
                 />
 
@@ -81,11 +69,11 @@ export default function LibraryView({ ids, query, actionMode, changeActionMode, 
                         <LibraryListItem
                             key={id}
                             id={id}
-                            showCheckbox={actionMode === "selection"}
                             onItemClick={onItemClick}
-                            isChecked={selection.isChecked(id)}                            
-                            onToggleChecked={selection.toggleChecked}
-                            onChangeActionMode={changeActionMode}
+                            selection={selection}                                                
+                            
+                            
+                            
                         />
                     ))}
                 </List>

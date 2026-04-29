@@ -6,7 +6,7 @@ import { StarToggleButton } from "@/ui/common/components/StarToggleButton/StarTo
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
 import { useLearningRecordStore } from "@/ui/features/learning/hooks/useLearningRecordStore";
 import { useStarToggleButton } from '@/ui/common/components/StarToggleButton/useStarToggleButton';
-import type { LibraryActionMode } from "@/ui/screens/library/hooks/useLibraryViewModel";
+import type { LibraryActionMode, LibrarySelection } from "@/ui/screens/library/hooks/useLibraryViewModel";
 import { toProblemViewData } from "@/ui/features/problem/hooks/problemPresenter";
 import type { LearningState } from "@/domain/learning/entity/LearningState";
 import { toLearningStateViewData } from "@/ui/features/learning/hooks/learningPresenter";
@@ -15,14 +15,14 @@ import { useProblemsQueryStore } from "@/ui/features/problem/hooks/useProblemsQu
 import { SortKeyLabel } from "@/ui/features/problem/query/SortControl";
 
 export const LibraryListItem = function LibraryListItem({ id, onItemClick,
-    showCheckbox, isChecked, onToggleChecked, onChangeActionMode,
-    selected }: {
+    selection, selected }: {
         id: ProblemId,
-        showCheckbox: boolean,
+        //showCheckbox: boolean,
+        selection: LibrarySelection,
         onItemClick: (p: Problem) => void,
-        isChecked: boolean,
-        onToggleChecked: (id: ProblemId) => void,        
-        onChangeActionMode: (mode: LibraryActionMode) => void
+        //isChecked: boolean,
+        //onToggleChecked: (id: ProblemId) => void,        
+        //onChangeActionMode: (mode: LibraryActionMode) => void
         selected?: boolean,
     }) {
     const problem = useProblemStore(s => s.byId[id])
@@ -30,8 +30,10 @@ export const LibraryListItem = function LibraryListItem({ id, onItemClick,
 
     const { bind, isLongPressedRef } = useLongPress({
         onLongPress: () => {          
-            onChangeActionMode("selection")  
-            onToggleChecked(id)
+            selection.startSelection()
+            selection.toggleChecked(id)
+            //onChangeActionMode("selection")  
+            //onToggleChecked(id)
         },
     })
     const starController = useStarToggleButton(id)
@@ -69,11 +71,11 @@ export const LibraryListItem = function LibraryListItem({ id, onItemClick,
                 selected={selected}
                 {...bind}
                 sx={{ borderBottom: 1, borderColor: "divider", px: 1, py: 0 }}>
-                {showCheckbox &&
+                {selection.isSelecting &&
                     <ListItemIcon>
                         <Checkbox disableRipple onClick={(e) => e.stopPropagation()}
-                            size="small" edge="start" checked={isChecked}
-                            onChange={() => onToggleChecked(id)} />
+                            size="small" edge="start" checked={selection.isChecked(id)}
+                            onChange={() => selection.toggleChecked(id)} />
                     </ListItemIcon>
                 }
                 <ListItemText
