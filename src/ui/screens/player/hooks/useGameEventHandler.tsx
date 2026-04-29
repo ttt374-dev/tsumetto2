@@ -11,10 +11,10 @@ import { useTimerStore } from "@/ui/screens/player/store/useTimerStore"
 import { useLearningRecordStore } from "@/ui/features/learning/hooks/useLearningRecordStore"
 import { useEffect, useState } from "react"
 import { useBoardInputStore } from "@/ui/screens/player/store/useBoardInputStore"
+import { useDialog } from "@/ui/common/hooks/useDialog"
 
-export function useGameEventHandler(problem: Problem, 
-    onSolve: () => void, onSolvedConfirm: () => void){
-    const [isSolvedDialogOpen, setIsSolvedDialogOpen] = useState(false)
+export function useGameEventHandler(problem: Problem, onSolve: () => void){
+    //const [isSolvedDialogOpen, setIsSolvedDialogOpen] = useState(false)
     const [solvedResult, setSolvedResult] = useState<SolvedResult|undefined>(undefined)
     const events = useGameStore(s=>s.events)    
     const gameState = useGameStore(s=>s.state)
@@ -22,8 +22,9 @@ export function useGameEventHandler(problem: Problem,
     const stopTimer = useTimerStore(s=>s.stop)
     const replayCtrl = useReplayController()    
     const records = useLearningRecordStore(s=>s.stateRecords)    
-    const learning = records[problem.id]
-    
+    //const learning = records[problem.id]
+    const solvedResultDialog = useDialog()
+
     const toast = useToast()
   
     // 初期化処理
@@ -53,7 +54,8 @@ export function useGameEventHandler(problem: Problem,
             case "SOLVE":        
                 replay.advancePly()
                 stopTimer()
-                setIsSolvedDialogOpen(true)
+                //setIsSolvedDialogOpen(true)
+                solvedResultDialog.openDialog()
                 setSolvedResult(deriveSolvedResultFromEvents(events))
                 onSolve?.()
                 break        
@@ -71,17 +73,8 @@ export function useGameEventHandler(problem: Problem,
                 break;
         }
     }, [events])
-
     
-    const element = solvedResult &&
-        <SolvedDialog open={isSolvedDialogOpen}
-            onClose={() => setIsSolvedDialogOpen(false)}
-            onConfirm={onSolvedConfirm}
-            solvedResult={solvedResult}
-            learning={learning}
-        />
-
-    return { element}
+    return { solvedResult, solvedResultDialog}
 }
 
 export function useRevealHandler(){

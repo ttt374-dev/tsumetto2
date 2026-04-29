@@ -22,6 +22,9 @@ import { useGameEventHandler, useRevealHandler } from "@/ui/screens/player/hooks
 import { usePromotionDialog } from "@/ui/screens/player/hooks/usePromotionDialog";
 import { reverse } from "lodash";
 import PromotionDialog from "@/ui/screens/player/dialogs/PromotionDialog";
+import { useDialog } from "@/ui/common/hooks/useDialog";
+import { SolvedDialog } from "@/ui/screens/player/dialogs/SolvedDialog";
+import { useLearningRecordStore } from "@/ui/features/learning/hooks/useLearningRecordStore";
 
 ///////////////////////////////////////////
 export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm, onAfterDelete, footerPanel }: {
@@ -43,10 +46,12 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
     
     //const { isInitialized } = usePlayerInitializer(problem)
     const {onRevealAnswer } = useRevealHandler()
-    const { element: solveDialogElement } = 
-        useGameEventHandler(problem, onSolve, onSolvedConfirm)
+    const { solvedResult, solvedResultDialog } = useGameEventHandler(problem, onSolve)
     //const { element: promotionDialogElement } = usePromotionDialog()
     const promotionDialog = usePromotionDialog()
+    //const solvedResultDialog = useDialog()
+    const records = useLearningRecordStore(s => s.stateRecords)
+    const learning = records[problem.id]
 
 
     const toast = useToast()
@@ -116,14 +121,22 @@ export default function PlayerScreen({ problem, title, onSolve, onSolvedConfirm,
                 </Stack>
             </Stack>
 
-            { promotionDialog.status === "open" &&
-            <PromotionDialog 
-                open={true}
-                pieceType={promotionDialog.pieceType}
-                onConfirm={promotionDialog.onConfirm}
-                onClose={()=>{}}
-            />}
-            { solveDialogElement }
+            {promotionDialog.status === "open" &&
+                <PromotionDialog
+                    open={true}
+                    pieceType={promotionDialog.pieceType}
+                    onConfirm={promotionDialog.onConfirm}
+                    onClose={() => { }}
+                />}
+
+            {solvedResult &&
+                <SolvedDialog
+                    open={solvedResultDialog.open}
+                    onClose={solvedResultDialog.closeDialog}
+                    onConfirm={onSolvedConfirm}
+                    solvedResult={solvedResult}
+                    learning={learning}
+                />}
         </AppShell>
     )
 }

@@ -3,7 +3,9 @@ import type { LearningState } from "@/domain/learning/entity/LearningState"
 import type { SolvedResult } from "@/domain/review/solvedResult"
 import { learningStateLabels, toLearningStateViewData } from "@/ui/features/learning/hooks/learningPresenter"
 import { solvedResultLabels, toSolvedResultViewData } from "@/ui/features/learning/hooks/solvedResultPresenter"
+import { useLearningRecordStore } from "@/ui/features/learning/hooks/useLearningRecordStore"
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material"
+
 
 export function SolvedDialog({ open, onClose, onConfirm, solvedResult, learning }: {
     open: boolean
@@ -13,11 +15,13 @@ export function SolvedDialog({ open, onClose, onConfirm, solvedResult, learning 
     learning: LearningState | undefined
     
 }) {
+
     const confirmLabel = "確認"
     const svd = toSolvedResultViewData(solvedResult)
     const lvd = learning && toLearningStateViewData(learning)
     const quality = deriveAnswerQuality(solvedResult)
-    const pdata = ["outcome", "mistakes", "isRevealed", "elapsedSec"] as const
+    const pdata = ["outcome", "mistakes", "isRevealed", "elapsedSec"] as const            
+
     return (
         <Dialog open={open} onClose={onClose} maxWidth="xl">
             <DialogTitle>
