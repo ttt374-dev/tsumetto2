@@ -1,11 +1,11 @@
 import { useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@mui/material";
+import { routes } from "@/ui/App/useAppNavigation";
 
 import type { ProblemId } from "@/domain/problem/entity/Problem";
 import { AppShell } from "@/ui/common/components/layout/AppShell";
-import { ListView } from "./ListView";
-import { routes } from "@/ui/App/useAppNavigation";
+import { LibraryListView } from "../../screens/library/components/LibraryListView";
 import { useLibrarySelection } from "@/ui/screens/library/hooks/useLibrarySelection";
 import { LibraryCheckboxControl } from "@/ui/screens/library/components/LibraryCheckboxControl";
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
@@ -46,7 +46,7 @@ export function ListScreen() {
                 onDelete={deleteProblems}
                 onOpenEditDialog={editDialog.openDialog}
             />
-            <ListView ids={visibleIds} onItemClick={handleItemClick} selection={selection} />
+            <LibraryListView ids={visibleIds} onItemClick={handleItemClick} selection={selection} />
             { editDialog.dialogElement}
         </AppShell>
     )

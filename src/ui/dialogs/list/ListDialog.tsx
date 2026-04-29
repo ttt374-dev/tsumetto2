@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react"
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material"
+
 import type { ProblemId } from "@/domain/problem/entity/Problem"
-import { ListView } from "./ListView"
+import { LibraryListView } from "@/ui/screens/library/components/LibraryListView"
 
 export function useListDialog(ids: ProblemId[], onSelectProblem: (id: ProblemId) => void) {
     const [open, setOpen] = useState(false)
@@ -34,7 +35,7 @@ export function ListDialog({ open, onClose, ids, onSelectProblem}: {
         >
             <DialogTitle>リスト一覧</DialogTitle>
             <DialogContent>
-                <ListView ids={ids} onItemClick={onSelectProblem}/>
+                <LibraryListView ids={ids} onItemClick={onSelectProblem}/>
             </DialogContent>
             <DialogActions>
                 <Button onClick={onClose}>

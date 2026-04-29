@@ -1,13 +1,14 @@
 import { useState } from "react"
-import { IconButton} from "@mui/material";
+import { Box, IconButton, Stack} from "@mui/material";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 
-import LibraryView from "./components/LibraryView";
 import { AppShell } from "@/ui/common/components/layout/AppShell";
 import { useLibraryViewModel } from "./hooks/useLibraryViewModel";
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
 import FooterNavigation from "@/ui/common/components/FooterNavigation";
 import { LibraryQueryDrawer } from "@/ui/screens/library/components/LibraryQueryDrawer";
+import { LibraryListView } from "@/ui/screens/library/components/LibraryListView";
+import { LibraryControlPanel } from "@/ui/screens/library/components/LibraryControlPanel";
 
 //////////////////////////////////////////////////
 export default function LibraryScreen() {
@@ -26,14 +27,17 @@ export default function LibraryScreen() {
             }
             footer={<FooterNavigation/>}
         >
-            <LibraryView
-                ids={vm.ids}
-                query={vm.query}
-                onDelete={deleteProblems}
-                onItemClick={vm.onItemClick}
+            <LibraryControlPanel
                 selection={vm.selection}
+                onDelete={deleteProblems}
                 onFilterControlOpen={() => setIsDrawerOpen(true)}
                 onOpenEditDialog={vm.dialogs.edit.openDialog}
+                query={vm.query}
+            />
+            <LibraryListView
+                ids={vm.ids}
+                onItemClick={vm.onItemClick}
+                selection={vm.selection}
             />
             {vm.dialogs.edit.dialogElement}
 
@@ -43,5 +47,3 @@ export default function LibraryScreen() {
         </AppShell>
     )
 }
-
-
