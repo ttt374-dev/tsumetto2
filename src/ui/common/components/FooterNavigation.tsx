@@ -12,7 +12,7 @@ export default function FooterNavigation() {
     const navigate = useNavigate()
 
     return (
-        <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0 }} elevation={3}>
+        <Paper elevation={3}>
             <BottomNavigation                
                 onChange={(_event, newValue) => navigate(newValue)}
                 showLabels

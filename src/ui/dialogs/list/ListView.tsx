@@ -3,9 +3,9 @@ import { Box, List } from "@mui/material"
 import { LibraryListItem } from "../../screens/library/components/LibraryListItem"
 
 
-export function ListView({ ids, onSelectProblem, selectedProblemId }: {
+export function ListView({ ids, onItemClick, selectedProblemId }: {
     ids: ProblemId[],
-    onSelectProblem?: (id: ProblemId) => void,
+    onItemClick?: (id: ProblemId) => void,
     selectedProblemId?: ProblemId
 }) {
 
@@ -19,7 +19,7 @@ export function ListView({ ids, onSelectProblem, selectedProblemId }: {
                     showCheckbox={false}
                     isChecked={false}
                     onToggleChecked={alert}
-                    onItemClick={()=> onSelectProblem?.(id)}
+                    onItemClick={()=> onItemClick?.(id)}
                     selected={selectedProblemId === id}
                     onChangeActionMode={alert}
                 />

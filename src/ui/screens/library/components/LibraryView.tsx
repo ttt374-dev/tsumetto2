@@ -10,6 +10,7 @@ import { LibraryCheckboxControl } from "./LibraryCheckboxControl";
 import type { LibraryActionMode } from "../hooks/useLibraryViewModel";
 import type { useProblemsQuery } from "@/ui/features/problem/hooks/useProblemsQuery";
 import { DefaultQueryState } from "@/domain/problem/service/query/QueryState";
+import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
 
 export type LibraryItemActions = {
     openTagEditDialog: (ids: ProblemId[]) => void
@@ -32,14 +33,17 @@ type LibraryViewProps = {
     }
     onItemClick: (p: Problem) => void
     onFilterControlOpen: () => void
+    onDelete: (ids: ProblemId[]) => void
     onOpenEditDialog: (ids: ProblemId[]) => void
     
 }
 
 /////////////////////////////////////////
-export default function LibraryView({ ids, query, actionMode, changeActionMode,
+export default function LibraryView({ ids, query, actionMode, changeActionMode, onDelete,
     onItemClick, selection, onFilterControlOpen, onOpenEditDialog }: LibraryViewProps) {    
     const isFiltered = !isEqual(query, DefaultQueryState);
+    
+
     return (
         <>
             <Stack direction="row">
@@ -47,6 +51,7 @@ export default function LibraryView({ ids, query, actionMode, changeActionMode,
                 <LibraryCheckboxControl
                     onCheckAll={selection.selectAll}
                     onUncheckAll={selection.clearAll}
+                    onDelete={onDelete}
                     actionMode={actionMode}
                     checkedIds={selection.checkedIds}
                     onChangeActionMode={changeActionMode}

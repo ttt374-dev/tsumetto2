@@ -7,28 +7,26 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 import { IconButton, Stack } from '@mui/material';
 import type { ProblemId } from "@/domain/problem/entity/Problem";
-import type { LibraryItemActions } from "./LibraryView";
 import type { LibraryActionMode } from "../hooks/useLibraryViewModel";
-import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
 
-export function LibraryCheckboxControl({ onCheckAll, onUncheckAll,
-    onChangeActionMode, actionMode, onOpenEditDialog, checkedIds,
+export function LibraryCheckboxControl({ onCheckAll, onUncheckAll, onDelete,
+    onChangeActionMode, actionMode, onOpenEditDialog, checkedIds, 
 }: {
-    onCheckAll: () => void,
-    onUncheckAll: () => void,
-    checkedIds: ProblemId[],
+    onCheckAll: () => void
+    onUncheckAll: () => void
+    checkedIds: ProblemId[]
+    onDelete: (ids: ProblemId[]) => void
     actionMode: LibraryActionMode,
-    //itemActions: LibraryItemActions,
     onChangeActionMode: (mode: LibraryActionMode) => void
     onOpenEditDialog: (ids: ProblemId[]) => void
 }) {
     const confirmFn = () => window.confirm("Are you sure to delete selected?")
-    const handleOpenTagEditDialog = () => onOpenEditDialog(checkedIds)
-    const deleteProblems = useProblemStore(s=>s.deleteProblems)
+    const handleOpenEditDialog = () => onOpenEditDialog(checkedIds)
+    //const deleteProblems = useProblemStore(s=>s.deleteProblems)
     const handleDeleteChecked = () => {
         if (checkedIds.length === 0) return
         if (!confirmFn()) return
-        deleteProblems(checkedIds)
+        onDelete(checkedIds)
     }
 
     return (
@@ -60,9 +58,9 @@ export function LibraryCheckboxControl({ onCheckAll, onUncheckAll,
                         <CloseIcon />
                     </IconButton>
                     
-                    { /* タグ編集 */}
+                    { /* 編集 */}
                     <IconButton
-                        onClick={handleOpenTagEditDialog}
+                        onClick={handleOpenEditDialog}
                         disabled={checkedIds.length === 0}>
                         <EditIcon />
                     </IconButton>

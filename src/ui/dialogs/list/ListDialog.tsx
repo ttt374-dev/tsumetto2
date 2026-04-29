@@ -34,7 +34,7 @@ export function ListDialog({ open, onClose, ids, onSelectProblem}: {
         >
             <DialogTitle>リスト一覧</DialogTitle>
             <DialogContent>
-                <ListView ids={ids} onSelectProblem={onSelectProblem}/>
+                <ListView ids={ids} onItemClick={onSelectProblem}/>
             </DialogContent>
             <DialogActions>
                 <Button onClick={onClose}>
