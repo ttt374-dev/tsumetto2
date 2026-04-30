@@ -1,13 +1,12 @@
 import { useMemo } from "react"
 import { v4 } from "uuid"
 
-import type { Problem } from "@/domain/problem/entity/Problem"
 import { deriveSolvedResultFromEvents } from "@/domain/review/service/solvedResultDeriver"
-import type { SessionId } from "@/domain/session/entity/Session"
 import { useGameStore, type GameEvent } from "@/ui/screens/player/store/useGameStore"
 import { useReviewEventStore } from "@/ui/features/learning/hooks/useReviewEventStore"
 import { useSessionStore } from "@/ui/screens/session/hooks/useSessionStore"
 import { createPlayerContext } from "@/ui/screens/player/components/types/PlayerContext"
+import { useSessionContext } from "@/ui/screens/session/hooks/useSessionContext"
 
 type SessionCommand =
     | { type: "SUBMIT_REVIEW" }
@@ -15,19 +14,20 @@ type SessionCommand =
     | { type: "SKIP" }
     | { type: "FLUSH" }
 
-export function useSessionCommandHandler(problem: Problem, sessionId: SessionId) {
-    const { events, dispatch, state } = useGameStore()
+export function useSessionCommandHandler() {
+    const { events, dispatch, state: gameState } = useGameStore()
     const appendReview = useReviewEventStore(s => s.appendReview)
     const reviewedEvents = useReviewEventStore(s => s.eventLog)
-    const next = useSessionStore(s => s.next)
+    const next = useSessionStore(s => s.next)    
+    const sessionContext = useSessionContext()
 
     const hasSubmitted = useMemo(() =>
         reviewedEvents.some(
             e => e.type === "reviewed"
-                && e.problemId === problem.id
-                && e.sessionId === sessionId
+                && e.problemId === sessionContext.problemId
+                && e.sessionId === sessionContext.sessionId
         ),
-        [problem.id, sessionId, reviewedEvents]
+        [sessionContext.problemId, sessionContext.sessionId, reviewedEvents]
     )
 
     const execute = (cmd: SessionCommand) => {
@@ -35,7 +35,7 @@ export function useSessionCommandHandler(problem: Problem, sessionId: SessionId)
             case "SUBMIT_REVIEW": {
                 if (hasSubmitted) return
                 const result = deriveSolvedResultFromEvents(events)
-                appendReview(problem.id, v4(), sessionId, result)
+                appendReview(sessionContext.problemId, v4(), sessionContext.sessionId, result)
                 break
             }
 
@@ -53,11 +53,12 @@ export function useSessionCommandHandler(problem: Problem, sessionId: SessionId)
             case "FLUSH": {
                 if (hasSubmitted) return
 
-                if (!state.isSolved && (state.isRevealed || state.mistakes > 0)) {
+                if (!gameState.isSolved && 
+                    (gameState.isRevealed || gameState.mistakes > 0)) {
                     const abandonEvent = createAbandonEvent()
                     const nextEvents = dispatch(abandonEvent)
                     const result = deriveSolvedResultFromEvents(nextEvents)
-                    appendReview(problem.id, v4(), sessionId, result)
+                    appendReview(sessionContext.problemId, v4(), sessionContext.sessionId, result)
                 }
                 break
             }

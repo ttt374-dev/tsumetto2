@@ -7,7 +7,7 @@ import type { ProblemId } from "@/domain/problem/entity/Problem";
 
 type SessionStore = {
     // ===== state =====
-    sessionId?: SessionId,
+    sessionId: SessionId,
     missionId?: MissionId;
     problemIds: ProblemId[];
     currentIndex: number; // ⭐ マスター
@@ -31,9 +31,9 @@ export const useSessionStore = create<SessionStore>((set, get) => ({
     // state
     //state: { type: "idle"},
     missionId: undefined,
-    sessionId: undefined,
+    sessionId: v4(),
     problemIds: [],
-    currentIndex: -1,
+    currentIndex: 0,
     //results: {},
 
     // derived
