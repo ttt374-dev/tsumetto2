@@ -65,8 +65,6 @@ function SessionPlayerContent(props: {
             <PlayerScreen
                 problem={props.problem}
                 title={title}
-                //onSolve={solve}
-                //onSolvedConfirm={goNext}
                 onUIEvent={handleUIEvent}
                 footerPanel={footerPanel}
             />

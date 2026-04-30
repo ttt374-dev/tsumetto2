@@ -1,6 +1,6 @@
 import { PieceTypeToKanjiMapping, type Hand, type PieceType, type Player } from "@/domain/kif/entity"
 import { useBoardInputStore } from "@/ui/screens/player/store/useBoardInputStore"
-import { formatPlayer } from "../../views/MovesView"
+import { formatPlayer } from "../moves/MovesView"
 import styles from "./BoardView.module.css";
 import { Box, Stack } from "@mui/material";
 import { useCurrentPosition } from "@/ui/screens/player/store/useGameStore";

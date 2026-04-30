@@ -1,6 +1,6 @@
 import { Box, Stack } from "@mui/material";
 
-import MovesView from "../views/MovesView";
+import MovesView from "./MovesView";
 import ProblemLearningInfoPanel from "@/ui/screens/player/components/panels/ProblemLearningInfoPanel";
 import type { Move } from "@/domain/kif/entity";
 import { useReplayStore } from "@/ui/screens/player/store/useReplayStore";

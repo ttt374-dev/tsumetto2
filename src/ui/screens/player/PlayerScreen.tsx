@@ -6,7 +6,7 @@ import SwapVertIcon from '@mui/icons-material/SwapVert';
 
 import PlayerRightPanel from "./components/panels/PlayerRightPanel";
 import TitlePanel from "./components/panels/TitlePanel";
-import MovesPanel from "./components/panels/MovesPanel";
+import MovesPanel from "./components/panels/moves/MovesPanel";
 import BoardPanel from "@/ui/screens/player/components/panels/board/BoardPanel"
 import TimerControlPanel from "./components/panels/TImerControlPanel";
 import PlyControlPanel from "@/ui/screens/player/components/panels/PlyControlPanel";
@@ -24,38 +24,55 @@ import { SolvedDialog, useSolvedDialog } from "@/ui/screens/player/dialogs/Solve
 import { createPlayerContext } from "@/ui/screens/player/components/types/PlayerContext";
 import { useGameEventHandler, type GameUIEvent } from "@/ui/screens/player/hooks/useGameEventHandler";
 import { useLearningRecordStore } from "@/ui/features/learning/hooks/useLearningRecordStore";
-import { createRectAdjustmentFn } from "@dnd-kit/core/dist/utilities/rect/rectAdjustment";
 
 function usePlayerScreenViewModel(){
-        // reveal
+    const toast = useToast()
+    const navigate = useNavigate()
+    const deleteProblem = useProblemStore(s => s.deleteProblem)
+
+    // reveal
     const createRevealEvent = (): GameEvent => {
         const ctx = createPlayerContext()      
         return {type: "REVEAL", ...ctx}
     }   
+    const navigateToDetail = (pid: ProblemId) => {
+        navigate(routes.detail(pid))
+    
+    }
+    const handleDelete = (pid: ProblemId) => {
+    if (!window.confirm("sure to delete ? ")) return
+        deleteProblem(pid)        
+        toast({ message: `deleted: ${pid}` })
+    }            
 
-    return { createRevealEvent}
+    return { createRevealEvent, navigateToDetail, 
+        handleDelete
+     }
 
 }
 ///////////////////////////////////////////
 export default function PlayerScreen({ problem, title, onUIEvent, footerPanel }: {
     problem: Problem
     title: React.ReactNode
-    //onSolve: () => void
     onUIEvent?: (uiEvent: GameUIEvent) => void    
     footerPanel?: React.ReactNode
 }) {
+    // store
     const gameState = useGameStore(s=>s.state)       
-    const reversed = useGameStore(s=>s.displayReversed)    
-    const userSide = useGameStore(s=>s.userSide)  
-    const dispatch = useGameStore(s=>s.dispatch)
-    const toggleReversed = useGameStore(s=>s.toggleReversed)
-    const toggleUserSide = useGameStore(s=>s.toggleUserSide)
+    const reversed = useGameStore(s=>s.displayReversed)
+    const dispatch = useGameStore(s=>s.dispatch)    
+    
     const replay = useReplayStore()
+    const records = useLearningRecordStore(s=>s.stateRecords)
+    const learningState = records[problem.id]
+
+    // dialogs
     const solvedResultDialog = useSolvedDialog()    
     const promotionDialog = usePromotionDialog()    
 
-    const toast = useToast()
-    const navigate = useNavigate()
+    const toast = useToast()    
+
+    // view model
     const vm = usePlayerScreenViewModel()
 
     ////////////////
@@ -77,26 +94,12 @@ export default function PlayerScreen({ problem, title, onUIEvent, footerPanel }:
     }, [problem.id, toast, onUIEvent, solvedResultDialog])
 
     useGameEventHandler(problem, handleUIEvent)
-    const handleNavigateToDetail = () => {
-        navigate(routes.detail(problem.id))
-    }    
-    // delete
-    const deleteProblem = useProblemStore(s=>s.deleteProblem)    
-    const handleDelete = (id: ProblemId) => {
-        if (!window.confirm("sure to delete ? ")) return
-        deleteProblem(id)
-        toast({message: `deleted: ${id}`})
-    }
     
     // solvedconfirm
     const handleSolvedConfirm = () => {
         onUIEvent?.({type: "solvedConfirmed"})
         solvedResultDialog.closeDialog()
     }
-    const records = useLearningRecordStore(s=>s.stateRecords)
-    const learningState = records[problem.id]
-    //const learningState = solvedResultDialog.open ? records[solvedResultDialog.problemId] : undefined
-
     ////////////////////////////////////////////////////////////////////////
     return (
         <AppShell
@@ -105,8 +108,8 @@ export default function PlayerScreen({ problem, title, onUIEvent, footerPanel }:
             rightActions={
                 <PlayerRightPanel
                     problemId={problem.id}
-                    onNavigateToDetail={handleNavigateToDetail}
-                    onDelete={handleDelete}
+                    onNavigateToDetail={vm.navigateToDetail}
+                    onDelete={vm.handleDelete}
                 />}
         >
             <Stack sx={{ minHeight: 0, height: "100%" }} spacing={1} > 
@@ -122,12 +125,8 @@ export default function PlayerScreen({ problem, title, onUIEvent, footerPanel }:
                     <Box sx={{ flex: 1, border: 1, borderColor: "divider" }}>
                         <Stack direction="row" alignItems="center">
                             <TimerControlPanel />
-                            <IconButton onClick={toggleReversed}>
-                                <SwapVertIcon />
-                            </IconButton>
-                            <Box onClick={toggleUserSide}>
-                                {userSide === "black" ? "▲" : "△"}
-                            </Box>
+                            <ReverseControl/>
+                            <UserSideControl/>
                         </Stack>
 
                         {gameState.isRevealed ?
@@ -162,5 +161,22 @@ export default function PlayerScreen({ problem, title, onUIEvent, footerPanel }:
                     onConfirm={handleSolvedConfirm}
                 />}
         </AppShell>
+    )
+}
+function ReverseControl(){    
+    const toggleReversed = useGameStore(s=>s.toggleReversed)
+    return (
+        <IconButton onClick={toggleReversed}>
+            <SwapVertIcon />
+        </IconButton>
+    )
+}
+function UserSideControl(){
+    const userSide = useGameStore(s=>s.userSide)  
+    const toggleUserSide = useGameStore(s=>s.toggleUserSide)
+    return (
+        <Box onClick={toggleUserSide}>
+            {userSide === "black" ? "▲" : "△"}
+        </Box>
     )
 }
