@@ -13,6 +13,7 @@ export type GameUIEvent =
     | { type: "solved", solvedResult: SolvedResult}
     | { type: "mistake", count: number }
     | { type: "solvedConfirmed"}
+//    | { type: "navigate", to: string}
 
 function useGameInitializer(problem: Problem){
     // 初期化処理
