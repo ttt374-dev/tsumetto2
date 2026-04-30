@@ -3,21 +3,22 @@ import React, { useEffect, useState } from "react"
 import PlayerScreen from "@/ui/screens/player/PlayerScreen"
 import { PlayerFooterPanel } from "@/ui/screens/player/components/panels/PlayerFooterPanel"
 import type { Problem } from "@/domain/problem/entity/Problem"
-import type { SessionId } from "@/domain/session/entity/Session"
-import { useSessionPlayerStatus } from "@/ui/screens/session/hooks/useSessionPlayerStatus"
 import { useSessionPlayerTitleMaker } from "@/ui/screens/session/hooks/useSessionPlayerTitleMaker"
 import SessionProblemListDialog from "@/ui/screens/session/SessionProblemListDialog"
 import { AppShell } from "@/ui/common/components/layout/AppShell"
 import { useGameStore, type GameEvent } from "@/ui/screens/player/store/useGameStore"
 import type { GameUIEvent } from "@/ui/screens/player/hooks/useGameEventHandler"
 import { useSessionCommandHandler } from "@/ui/screens/session/hooks/useSessionCommandHandler"
+import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore"
+import { useSessionStore } from "@/ui/screens/session/hooks/useSessionStore"
+import type { SessionId } from "@/domain/session/entity/Session"
 
-const useSessionSideEffect = (problem: Problem, sessionId: SessionId) => {
+const useSessionSideEffect = (sessionId: SessionId) => {
     const events = useGameStore(s => s.events)
-    const { execute } = useSessionCommandHandler()
+    const { execute } = useSessionCommandHandler(sessionId)
 
     useEffect(() => {
-        const event = events.at(-1)
+        const event = events[events.length - 1]
         if (!event) return
 
         if (event.type === "SOLVE") {
@@ -26,20 +27,26 @@ const useSessionSideEffect = (problem: Problem, sessionId: SessionId) => {
     }, [events])
 }
 
-////////////////////////////////////////////////
-export default function SessionPlayerScreen(){    
-    const res = useSessionPlayerStatus()
-    if (res.status!=="active") return <AppShell>not ready</AppShell>    
-    return <SessionPlayerContent problem={res.problem} sessionId={res.sessionId}/>
+function useSessionProblem(): Problem {
+    const byId = useProblemStore(s=>s.byId) 
+    const pid = useSessionStore(s=> s.problemIds[s.currentIndex])
+    return byId[pid]
 }
-function SessionPlayerContent(props: {
+////////////////////////////////////////////////
+export default function SessionPlayerScreen(){        
+    const problem = useSessionProblem()
+    if (!problem) return <AppShell>Not Available</AppShell>
+    return <SessionPlayerContent problem={problem}/>
+}
+function SessionPlayerContent({ problem }: {
     problem: Problem
-    sessionId: SessionId
 }){
-    const [isListOpen, setIsListOpen] = useState(false)        
     
-    const { execute } = useSessionCommandHandler()
-    const { title } = useSessionPlayerTitleMaker(props.problem)
+    const [isListOpen, setIsListOpen] = useState(false)            
+    
+    const { title } = useSessionPlayerTitleMaker(problem)
+    const sessionId = useSessionStore(s=>s.sessionId)
+    const { execute } = useSessionCommandHandler(sessionId)
     
     const footerPanel: React.ReactNode = (
         <PlayerFooterPanel
@@ -47,7 +54,7 @@ function SessionPlayerContent(props: {
             onShowList={() => setIsListOpen(true)} />)
 
     // game eventの処理
-    useSessionSideEffect(props.problem, props.sessionId)
+    useSessionSideEffect(sessionId)
 
     // UI event の処理
     const handleUIEvent = (uiEvent: GameUIEvent) => {
@@ -57,15 +64,11 @@ function SessionPlayerContent(props: {
                 break;
         }
     }
-    // 消された場合
-    if (props.problem.deletedAt){
-        return <AppShell footer={footerPanel}>Deleted: { props.problem.title}</AppShell>
-    }
-
+    
     return (
         <>
             <PlayerScreen
-                problem={props.problem}
+                problem={problem}
                 title={title}
                 onUIEvent={handleUIEvent}
                 footerPanel={footerPanel}
@@ -74,8 +77,8 @@ function SessionPlayerContent(props: {
             <SessionProblemListDialog
                 open={isListOpen}
                 onClose={()=>setIsListOpen(false)}
-                selectedProblemId={props.problem.id}
-                sessionId={props.sessionId}
+                selectedProblemId={problem.id}
+                sessionId={sessionId}
             />
         </>
     )

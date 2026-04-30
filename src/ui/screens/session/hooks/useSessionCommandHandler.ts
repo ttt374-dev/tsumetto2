@@ -6,7 +6,7 @@ import { useGameStore, type GameEvent } from "@/ui/screens/player/store/useGameS
 import { useReviewEventStore } from "@/ui/features/learning/hooks/useReviewEventStore"
 import { useSessionStore } from "@/ui/screens/session/hooks/useSessionStore"
 import { createPlayerContext } from "@/ui/screens/player/components/types/PlayerContext"
-import { useSessionContext } from "@/ui/screens/session/hooks/useSessionContext"
+import type { SessionId } from "@/domain/session/entity/Session"
 
 type SessionCommand =
     | { type: "SUBMIT_REVIEW" }
@@ -14,20 +14,20 @@ type SessionCommand =
     | { type: "SKIP" }
     | { type: "FLUSH" }
 
-export function useSessionCommandHandler() {
+export function useSessionCommandHandler(sessionId: SessionId) {
     const { events, dispatch, state: gameState } = useGameStore()
     const appendReview = useReviewEventStore(s => s.appendReview)
     const reviewedEvents = useReviewEventStore(s => s.eventLog)
     const next = useSessionStore(s => s.next)    
-    const sessionContext = useSessionContext()
+    const pid = useSessionStore(s=>s.problemIds[s.currentIndex])
 
-    const hasSubmitted = useMemo(() =>
+    const hasSubmitted = useMemo(() => 
         reviewedEvents.some(
             e => e.type === "reviewed"
-                && e.problemId === sessionContext.problemId
-                && e.sessionId === sessionContext.sessionId
+                && e.problemId === pid
+                && e.sessionId === sessionId
         ),
-        [sessionContext.problemId, sessionContext.sessionId, reviewedEvents]
+        [pid, sessionId, reviewedEvents]
     )
 
     const execute = (cmd: SessionCommand) => {
@@ -35,7 +35,7 @@ export function useSessionCommandHandler() {
             case "SUBMIT_REVIEW": {
                 if (hasSubmitted) return
                 const result = deriveSolvedResultFromEvents(events)
-                appendReview(sessionContext.problemId, v4(), sessionContext.sessionId, result)
+                appendReview(pid, v4(), sessionId, result)
                 break
             }
 
@@ -58,7 +58,7 @@ export function useSessionCommandHandler() {
                     const abandonEvent = createAbandonEvent()
                     const nextEvents = dispatch(abandonEvent)
                     const result = deriveSolvedResultFromEvents(nextEvents)
-                    appendReview(sessionContext.problemId, v4(), sessionContext.sessionId, result)
+                    appendReview(pid, v4(), sessionId, result)
                 }
                 break
             }
