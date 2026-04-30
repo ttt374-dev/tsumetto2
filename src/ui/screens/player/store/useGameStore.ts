@@ -2,7 +2,7 @@ import { useShallow } from "zustand/react/shallow"
 import { useMemo } from "react"
 import { create } from "zustand"
 
-import { Move, Position, Square, type PieceType, type Player } from "@/domain/kif/entity"
+import { Move, Position, Square, type PieceType, type Player, type PromotablePieceType } from "@/domain/kif/entity"
 import { buildUntilPly, type BuildPositionResult } from "@/domain/kif/service/buildUntilPly"
 import { useReplayStore } from "@/ui/screens/player/store/useReplayStore"
 import { projectGameState } from "@/domain/game/gameStateReducer"
@@ -27,7 +27,7 @@ export type GameEvent =
 export type PendingPromotion = {
     from: Square
     to: Square
-    pieceType: PieceType
+    pieceType: PromotablePieceType
 }
 export type GameContext = {
     elapsedSec: number

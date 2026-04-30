@@ -1,8 +1,25 @@
 
 
+const promotablePieces = [ "pawn", "lance", "knight", "silver", "bishop", "rook"] as const
+export type PromotablePieceType = typeof promotablePieces[number]
+const promotableSet = new Set<string>(promotablePieces)
+
+
 export type Player = "black" | "white"
 export type PieceType = "pawn" | "lance" | "knight" | "silver" | "gold" | "bishop" | "rook" | "king"
+//export type PromotablePieceType = Exclude<PieceType, "gold" | "king">
 
+
+export function isPromotablePieceType(
+  piece: string
+): piece is PromotablePieceType {
+  return promotableSet.has(piece)
+}
+export function toPromotablePieceType(pieceType: PieceType): PromotablePieceType {
+    if (isPromotablePieceType(pieceType)) return pieceType
+    else throw new Error("not promotable piece type")
+
+}
 export type PieceItem = {
     type: PieceType, promoted: boolean
 }

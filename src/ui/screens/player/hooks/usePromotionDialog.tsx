@@ -1,11 +1,11 @@
 import { createDecideGameEventContext, decideGameEvent } from "@/domain/game/decideGameEvent"
 import type { IntentResult } from "@/domain/game/intentResolver"
-import type { PieceType } from "@/domain/kif/entity"
+import type { PieceType, PromotablePieceType } from "@/domain/kif/entity"
 import { useBoardInputStore } from "@/ui/screens/player/store/useBoardInputStore"
 import { useCurrentPosition, useGameStore } from "@/ui/screens/player/store/useGameStore"
 
 type PromotionDialogResult = 
-    | { open: true, pieceType: PieceType, onConfirm: (promote: boolean) => void}
+    | { open: true, pieceType: PromotablePieceType, onConfirm: (promote: boolean) => void}
     | { open: false }
 
 export function usePromotionDialog(): PromotionDialogResult {

@@ -1,16 +1,16 @@
 import { Button, Dialog, DialogActions, DialogTitle } from "@mui/material";
-import type { PieceType } from "@/domain/kif/entity";
+import type { PieceType, PromotablePieceType } from "@/domain/kif/entity";
 
-type PromotablePieceType = Exclude<PieceType, "gold" | "king">
+//type PromotablePieceType = Exclude<PieceType, "gold" | "king">
 
 export default function PromotionDialog({ open, pieceType, onConfirm}:{
     open: boolean
     //onClose: () => void
     onConfirm: (promote: boolean) => void
-    pieceType: PieceType
+    pieceType: PromotablePieceType
 }){
 
-    const promotionKanji: Record<PieceType, string[]> = {
+    const promotionKanji: Record<PromotablePieceType, string[]> = {
         pawn: ["歩", "と"],
         lance: ["香", "杏"],
         knight: ["桂", "圭"],
@@ -18,8 +18,8 @@ export default function PromotionDialog({ open, pieceType, onConfirm}:{
         bishop: ["角", "馬"],
         rook: ["飛", "龍"],
 
-        gold: ["", "", ], // いらないんだけど
-        king: ["", "", ],
+        //gold: ["", "", ], // いらないんだけど
+        //king: ["", "", ],
 
     }
     //console.log("promotion", pieceType, promotionKanji)
