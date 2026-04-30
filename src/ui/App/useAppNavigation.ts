@@ -22,6 +22,9 @@ export const routes = {
     // detail
     detail: (id: ProblemId) => `/detail/${id}`,
 
+    // view
+    view: (id: ProblemId) => `/view/${id}`,
+
     // list
     list: "/list",
 

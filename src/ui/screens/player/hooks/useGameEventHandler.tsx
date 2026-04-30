@@ -15,30 +15,6 @@ export type GameUIEvent =
     | { type: "solvedConfirmed"}
 //    | { type: "navigate", to: string}
 
-function useGameInitializer(problem: Problem){
-    // 初期化処理
-    const [isInitialized, setIsInitialized] = useState(false)
-
-    const initializeGame = useGameStore(s=>s.initialize)
-    const initializeReplay = useReplayStore(s=>s.initialize)
-    const clearSelection = useBoardInputStore(s=>s.clear)
-    const restartTimer = useTimerStore(s=>s.restart)
-    
-    useEffect(()=>{                
-        initialize()
-    }, [problem.id])
-
-    const initialize = () => {
-        setIsInitialized(false)
-        initializeGame(problem.kifData.initialPosition, problem.kifData.moves)
-        initializeReplay(problem.kifData.moves.length)
-        clearSelection()
-        restartTimer()
-        setIsInitialized(true)
-    }
-    return { initialize, isInitialized }
-
-}
 export function useGameEventHandler(problem: Problem, onUIEvent?: (event: GameUIEvent) => void){
     const events = useGameStore(s=>s.events)    
     const gameState = useGameStore(s=>s.state)
@@ -46,11 +22,11 @@ export function useGameEventHandler(problem: Problem, onUIEvent?: (event: GameUI
     const stopTimer = useTimerStore(s=>s.stop)
     const replayCtrl = useReplayController()    
 
-    const { isInitialized } = useGameInitializer(problem)
+    //const { isInitialized } = useGameInitializer(problem)
 
     // イベント処理
     useEffect(() => {
-        if (!isInitialized) return   // 初期化前は無視
+        //if (!isInitialized) return   // 初期化前は無視
         const last = events.at(-1)
         if (!last) return
 
@@ -78,5 +54,5 @@ export function useGameEventHandler(problem: Problem, onUIEvent?: (event: GameUI
         }
     }, [events])
     
-    return { isInitialized }
+    //return { isInitialized }
 }

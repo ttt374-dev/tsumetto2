@@ -57,12 +57,10 @@ export function ProblemDetailContent( { problem }: { problem: Problem}) {
         save()
         navigate(routes.back)
     }
-    const handleSuspend = () => {
-
-    }
-    
     const onStartPlay = (id: ProblemId) => 
-        navigate(routes.player(id))
+        navigate(routes.view(id))
+        //navigate(routes.player(id))
+
 
     return (
         <AppShell 

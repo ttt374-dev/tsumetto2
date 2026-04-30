@@ -6,9 +6,9 @@ import type { Move } from "@/domain/kif/entity";
 import { useReplayStore } from "@/ui/screens/player/store/useReplayStore";
 import type { Problem } from "@/domain/problem/entity/Problem";
 
-export default function MovesPanel({moves, isMovesVisible, problem}: { 
+export default function MovesPanel({moves, isMovesVisible = true, problem}: { 
     moves: Move[]
-    isMovesVisible: boolean
+    isMovesVisible?: boolean
     problem: Problem
 }) {
     const moveTo = useReplayStore(s=>s.moveTo)

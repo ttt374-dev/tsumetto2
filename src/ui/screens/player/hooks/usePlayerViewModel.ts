@@ -1,4 +1,4 @@
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
 import { createPlayerContext } from "@/ui/screens/player/components/types/PlayerContext";
 import { useToast } from "@/ui/App/providers/ToastProvider";
@@ -8,8 +8,8 @@ import { routes } from "@/ui/App/useAppNavigation";
 import { useCallback } from "react";
 import type { GameUIEvent } from "@/ui/screens/player/hooks/useGameEventHandler";
 import { useSolvedDialog } from "@/ui/screens/player/dialogs/SolvedDialog";
-import { useLearningRecordStore } from "@/ui/features/learning/hooks/useLearningRecordStore";
 import { usePromotionDialog } from "@/ui/screens/player/hooks/usePromotionDialog";
+import { useGameInitializer } from "@/ui/screens/player/hooks/useGameInitializer";
 
 
 export function usePlayerViewModel(problem: Problem) {
@@ -17,6 +17,9 @@ export function usePlayerViewModel(problem: Problem) {
     const navigate = useNavigate()
     const deleteProblem = useProblemStore(s => s.deleteProblem)
     const dispatch = useGameStore(s => s.dispatch)
+
+    // initiallize
+    useGameInitializer(problem)
 
     // dialogs
     const dialogs = {
