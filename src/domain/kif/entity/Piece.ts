@@ -15,9 +15,8 @@ export function isPromotablePieceType(
 ): piece is PromotablePieceType {
   return promotableSet.has(piece)
 }
-export function toPromotablePieceType(pieceType: PieceType): PromotablePieceType {
-    if (isPromotablePieceType(pieceType)) return pieceType
-    else throw new Error("not promotable piece type")
+export function toPromotablePieceType(pieceType: PieceType): PromotablePieceType | undefined {
+    return (isPromotablePieceType(pieceType)) ? pieceType : undefined   
 
 }
 export type PieceItem = {

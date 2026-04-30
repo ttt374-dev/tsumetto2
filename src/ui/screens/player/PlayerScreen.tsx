@@ -9,12 +9,12 @@ import BoardPanel from "@/ui/screens/player/components/panels/board/BoardPanel"
 import TimerControlPanel from "./components/panels/TImerControlPanel";
 import PlyControlPanel from "@/ui/screens/player/components/panels/PlyControlPanel";
 
-import { Problem, type ProblemId } from "@/domain/problem/entity/Problem"
+import { Problem } from "@/domain/problem/entity/Problem"
 import { AppShell } from "../../common/components/layout/AppShell";
-import { useGameStore, type GameEvent } from "./store/useGameStore";
+import { useGameStore } from "./store/useGameStore";
 import { useReplayStore } from "@/ui/screens/player/store/useReplayStore";
 import PromotionDialog from "@/ui/screens/player/dialogs/PromotionDialog";
-import { SolvedDialog, useSolvedDialog } from "@/ui/screens/player/dialogs/SolvedDialog";
+import { SolvedDialog } from "@/ui/screens/player/dialogs/SolvedDialog";
 import { useGameEventHandler, type GameUIEvent } from "@/ui/screens/player/hooks/useGameEventHandler";
 import { useLearningRecordStore } from "@/ui/features/learning/hooks/useLearningRecordStore";
 import { usePlayerViewModel } from "@/ui/screens/player/hooks/usePlayerViewModel";

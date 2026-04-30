@@ -54,7 +54,9 @@ function resolveBoardMoveIntent(
     //let promote = piece.promoted       
     
     if (canPromote(from, to, piece)){
-        return { type: "promotionPending", pendingPromotion: { from, to, pieceType: toPromotablePieceType(piece.type)}}
+        const promotablePieceType = toPromotablePieceType(piece.type)
+        if (promotablePieceType === undefined) return { type: "invalidMove", reason: "not promotable piece type"}
+        return { type: "promotionPending", pendingPromotion: { from, to, pieceType: promotablePieceType}}
     }
     //const promote = true // TODO
     const move = new Move(from, to, piece.type, false) 
