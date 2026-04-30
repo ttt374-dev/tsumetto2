@@ -43,6 +43,9 @@ export default function PlayerScreen({ problem, title, onUIEvent, footerPanel }:
         vm.handleUIEvent(uiEvent)
         onUIEvent?.(uiEvent)
     }
+    const handleConfirmSolved = () => {
+        handleUIEvent({type: "solvedConfirmed"})
+    }
     useGameEventHandler(problem, handleUIEvent)
     
     ////////////////////////////////////////////////////////////////////////
@@ -101,7 +104,7 @@ export default function PlayerScreen({ problem, title, onUIEvent, footerPanel }:
                 <SolvedDialog
                     open={vm.dialogs.solvedResult.open}
                     onClose={vm.dialogs.solvedResult.closeDialog}
-                    onConfirm={vm.actions.confirmSolved}
+                    onConfirm={handleConfirmSolved}
                     solvedResult={vm.dialogs.solvedResult.solvedResult}
                     learningState={learningState}
 

@@ -7,13 +7,16 @@ import { routes } from "@/ui/App/useAppNavigation";
 import type { ProblemId } from "@/domain/problem/entity/Problem";
 import type { SolvedResult } from "@/domain/review/solvedResult";
 import SessionListView from "@/ui/screens/session/SessionListView";
+import type { SessionId } from "@/domain/session/entity/Session";
+import type { ReviewEvent } from "@/domain/review/ReviewEvent";
+import { useReviewEventStore } from "@/ui/features/learning/hooks/useReviewEventStore";
 
 export default function SessionProblemListDialog(props: {
     open: boolean
     onClose: () => void
     selectedProblemId: ProblemId
-    //sessionId: SessionId
-    solvedResultMap: Record<ProblemId, SolvedResult>
+    sessionId: SessionId
+    //solvedResultMap: Record<ProblemId, SolvedResult>
 
 }){    
     const moveTo = useSessionStore(s=>s.moveTo)
@@ -29,6 +32,8 @@ export default function SessionProblemListDialog(props: {
         props.onClose()
         moveTo(index)
     }
+    const events = useReviewEventStore(s=>s.eventLog)
+    const solvedResultMap = getSolvedResultsBySession(events, props.sessionId)
     
     return (
         <Dialog open={props.open} onClose={props.onClose} fullScreen
@@ -42,7 +47,7 @@ export default function SessionProblemListDialog(props: {
                 <SessionListView ids={problemIds}
                     onSelect={handleOnSelect}
                     selectedId={props.selectedProblemId}
-                    solvedResultMap={props.solvedResultMap}
+                    solvedResultMap={solvedResultMap}
                 />
             </DialogContent>
             <DialogActions sx={{ p: 0, width: "100%", display: "flex" }}>
@@ -56,4 +61,22 @@ export default function SessionProblemListDialog(props: {
         </Dialog>
     )
 
+}
+/////////
+// helper
+// domain / review
+export function getSolvedResultsBySession(
+    events: ReviewEvent[],
+    sessionId: SessionId
+): Record<ProblemId, SolvedResult> {
+    const result: Record<ProblemId, SolvedResult> = {}
+
+    for (const e of events) {
+        if (e.type !== "reviewed") continue
+        if (e.sessionId !== sessionId) continue
+
+        result[e.problemId] = e.solvedResult
+    }
+
+    return result
 }
