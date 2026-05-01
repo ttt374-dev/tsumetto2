@@ -12,5 +12,5 @@ export function useSessionPlayerTitleMaker(problem: Problem, index: number){
     const count = problemIds.length
     const title = `[${missionName} (${index + 1}/${count})]: ${problem.title}`   
     
-    return { title }
+    return title
 }
