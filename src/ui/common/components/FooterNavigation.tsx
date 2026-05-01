@@ -22,7 +22,6 @@ export default function FooterNavigation() {
         { type: "route", label: "ミッション", value: routes.mission, icon: <AssignmentIcon /> },
         { type: "route", label: "ライブラリ", value: routes.library, icon: <MenuBookIcon /> },
         { type: "route", label: "統計", value: routes.stats, icon: <BarChartIcon /> },
-        { type: "route", label: "履歴", value: routes.history, icon: <HistoryIcon /> },
         {
             type: "action",
             label: "取込",

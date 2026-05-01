@@ -1,4 +1,5 @@
 import type { ProblemId } from "@/domain/problem/entity/Problem"
+import type { SessionId } from "@/domain/session/entity/Session"
 
 export const routes = {
     home: "/",
@@ -15,8 +16,10 @@ export const routes = {
 
     // session
     session: "/session",
-    sessionPlay: "/session/play",
-    sessionSummary: "/session/summary",
+    //sessionPlay: "/session/play",
+    sessionPlay: (sessionId: SessionId, index: number = 0) => `/session/${sessionId}/play/${index}`,
+    //sessionSummary: "/session/summary",
+    sessionSummary: (sessionId: SessionId) => `/session/${sessionId}/summary`,
     //sessionList: "/session/list",
 
     // detail

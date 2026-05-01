@@ -1,6 +1,7 @@
+import { create } from "zustand"
+
 import type { MissionId } from "@/domain/mission/entity/Mission"
 import type { ProblemId } from "@/domain/problem/entity/Problem"
-import { create } from "zustand"
 
 type PlannerStore = {
     missionId?: MissionId
@@ -31,14 +32,9 @@ export const usePlannerStore = create<PlannerStore>((set, get) => ({
 
     nextChunk: () => {
         const { allIds, cursor, chunkSize } = get()
-
         if (cursor >= allIds.length) return null
-
         const chunk = allIds.slice(cursor, cursor + chunkSize)
-
-        set({
-            cursor: cursor + chunk.length
-        })
+        set({ cursor: cursor + chunk.length })
 
         return chunk
     },

@@ -10,7 +10,6 @@ import { useSessionStore } from "@/ui/screens/session/hooks/useSessionStore";
 import { ImportUI } from "@/ui/dialogs/Import/ImportUI";
 import { useBackupRestoreDialog } from "@/ui/dialogs/BackupRestore/useBackupRestore";
 import BackupRestoreDialog from "@/ui/dialogs/BackupRestore/BackupRestoreDialog";
-import { useBackupRestoreController } from "@/ui/dialogs/BackupRestore/useBackupRestoreController";
 
 interface Props {
     header?: React.ReactNode;
@@ -23,31 +22,29 @@ interface Props {
 
 export const OpenImportContext = createContext<(() => void) | null>(null)
 
-export function AppShell({ header, footer, rightActions, fab, children, navigateBack = false }: Props) {    
+export function AppShell({ header, footer, rightActions, fab, children, navigateBack = false }: Props) {
     const navigate = useNavigate()
     const toast = useToast()
-    
-    const importController = useImportController();    
-    const backupRestoreDialog = useBackupRestoreDialog()
-    //const backupRestoreDialog = useBackupRestoreDialog();
 
+    const importController = useImportController();
+    const backupRestoreDialog = useBackupRestoreDialog()
 
     // drawer
     const [drawerOpen, setDrawerOpen] = useState(false)
     const drawer = !navigateBack ? (
-                <DrawerMenu isOpen={drawerOpen} onClose={() => setDrawerOpen(false)}
-                    onNavigateToMission={() => navigate(routes.mission)}
-                    onNavigateToLibrary={() => navigate(routes.library)}
-                    onNavigateToStats={()=>navigate(routes.stats)}
-                    onNavigateToHistory={()=>navigate(routes.history)}
-                    onImport={importController.openFilesSelectDialog}
-                    onBackupRestore={backupRestoreDialog.openDialog}
-                />
-            ) : undefined
+        <DrawerMenu isOpen={drawerOpen} onClose={() => setDrawerOpen(false)}
+            onNavigateToMission={() => navigate(routes.mission)}
+            onNavigateToLibrary={() => navigate(routes.library)}
+            onNavigateToStats={() => navigate(routes.stats)}
+            onNavigateToHistory={() => navigate(routes.history)}
+            onImport={importController.openFilesSelectDialog}
+            onBackupRestore={backupRestoreDialog.openDialog}
+        />
+    ) : undefined
 
     // import
     const reload = useProblemStore(s => s.reload)
-    const startSession = useSessionStore(s=>s.start)
+    const startSession = useSessionStore(s => s.start)
     useEffect(() => {
         if (!importController.result) return
         reload()
@@ -75,9 +72,9 @@ export function AppShell({ header, footer, rightActions, fab, children, navigate
         >
 
             {children}
-            
+
             <ImportUI controller={importController} />
-            <BackupRestoreDialog 
+            <BackupRestoreDialog
                 open={backupRestoreDialog.open}
                 onClose={backupRestoreDialog.closeDialog}
                 controller={backupRestoreDialog.controller}

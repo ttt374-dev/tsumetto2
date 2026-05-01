@@ -1,48 +1,50 @@
-import { v4 } from "uuid";
-import { useNavigate } from "react-router-dom";
-import { useShallow } from "zustand/react/shallow"
+import { useNavigate, useParams } from "react-router-dom";
 import { Box, Button, Stack } from "@mui/material";
 
 import { SummaryView } from "./SummaryView";
 import { AppShell } from "@/ui/common/components/layout/AppShell";
-import { useReviewEventStore } from "../../features/learning/hooks/useReviewEventStore";
-import { routes } from "../../App/useAppNavigation";
+import { useReviewEventStore } from "@/ui/features/learning/hooks/useReviewEventStore";
+import { routes } from "@/ui/App/useAppNavigation";
 import { projectLearningState } from "@/domain/learning/service/projectLearningState";
 import { computeStatsSummary } from "@/domain/learning/service/computeLearningSummary";
-import { useSessionStore } from "@/ui/screens/session/hooks/useSessionStore";
+import { createSessionId, useSessionStore } from "@/ui/screens/session/hooks/useSessionStore";
 import { usePlannerStore } from "@/ui/screens/session/hooks/usePlannerStore";
+import type { SessionId } from "@/domain/session/entity/Session";
 
 /////////////////////////////////////////////
 export default function SessionSummaryScreen() {
-    const { sessionId, ids, reset, startSession } =
-        useSessionStore(useShallow(s => ({
-            sessionId: s.sessionId,
-            ids: s.problemIds,
-            reset: s.reset,
-            startSession: s.start
-        })))
+    const { sessionId } = useParams<{ sessionId: string }>()    
+    if (!sessionId) return <AppShell>No sessionId available</AppShell>
+    return <SessionSummaryContent sessionId={sessionId}/>
+}
+
+function SessionSummaryContent({sessionId}: { sessionId: SessionId}){
+    const ids = useSessionStore(s=>s.problemIds)
+    const startSession = useSessionStore(s=>s.start)
+    
     const planner = usePlannerStore()
     const reviewEventLog = useReviewEventStore(s => s.eventLog)
     const sessionEventLog = reviewEventLog
         .filter(e => ("sessionId" in e && e.sessionId === sessionId))
-
     const sessionLearningRecords = projectLearningState(sessionEventLog)
 
     const navigate = useNavigate()
-    const createOnetimeSessionId = () => 
-        `REVIEW-ONETIME-SESSION-${v4()}`
     const handleReview = () => {
         const failedIds = Object.keys(sessionLearningRecords).filter(k => sessionLearningRecords[k].stats.failedCount > 0)
-        startSession(createOnetimeSessionId(), failedIds)
-        navigate(routes.sessionPlay)
+        const newSessionId = createSessionId()
+        startSession(newSessionId, failedIds)
+        navigate(routes.sessionPlay(newSessionId))
     }
-    const handleRetry = () => {        
-        startSession(createOnetimeSessionId(), ids)
-        navigate(routes.sessionPlay)
+    const handleRetry = () => {    
+        const newSessionId = createSessionId()    
+        startSession(newSessionId, ids)
+        navigate(routes.sessionPlay(sessionId))
     }
     const handleNextChunk = () => {
         const chunk = planner.nextChunk()
         planner.missionId&& chunk && startSession(planner.missionId, chunk)
+        const newSessionId = createSessionId()
+        navigate(routes.sessionPlay(newSessionId))
     }
     const records = projectLearningState(sessionEventLog)
     const summary = computeStatsSummary(ids, records)
@@ -71,10 +73,9 @@ export default function SessionSummaryScreen() {
                     次のチャンクへ
                 </Button>
                 <Button variant="outlined" fullWidth onClick={() => {
-                    reset()
-                    navigate(routes.back)
+                    navigate(routes.mission)
                 }}>
-                    戻る
+                    ミッションへ
                 </Button>
             </Stack>
         </AppShell>

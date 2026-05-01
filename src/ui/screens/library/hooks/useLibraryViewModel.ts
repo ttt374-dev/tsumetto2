@@ -9,7 +9,7 @@ import { applyQuery } from "@/domain/problem/service/query/applyQuery"
 import { useMultipleProblemsEditDialog } from "@/ui/dialogs/MultipleProblemsEditorDialog"
 import { useProblemsQueryStore } from "@/ui/features/problem/hooks/useProblemsQueryStore"
 import { useLibrarySelection } from "@/ui/screens/library/hooks/useLibrarySelection"
-import { useSessionStore } from "@/ui/screens/session/hooks/useSessionStore"
+import { createSessionId, useSessionStore } from "@/ui/screens/session/hooks/useSessionStore"
 
 /////////////////////////////////////////////////
 export function useLibraryViewModel() {
@@ -34,10 +34,12 @@ export function useLibraryViewModel() {
 
     // セッション
     const startSession = useSessionStore(s => s.start)
+    const sessionId = createSessionId()
+    //const sessionId = useSessionStore(s=>s.sessionId)
     const session = {
         start: () => {
             startSession("library-instant-session", ids)
-            navigate(routes.sessionPlay)    
+            navigate(routes.sessionPlay(sessionId, 0))    
         }
     }
     // コマンド

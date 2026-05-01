@@ -11,7 +11,7 @@ export default function SinglePlayerScreen() {
     startSession(sessionId, [id])
 
     return (
-        <Navigate to={routes.sessionPlay}/>
+        <Navigate to={routes.sessionPlay(sessionId, 0)}/>
     )
 
 }

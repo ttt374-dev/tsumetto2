@@ -19,13 +19,14 @@ export default function SessionProblemListDialog(props: {
     //solvedResultMap: Record<ProblemId, SolvedResult>
 
 }){    
-    const moveTo = useSessionStore(s=>s.moveTo)
+    //const moveTo = useSessionStore(s=>s.moveTo)
+    const moveTo = (index: number) => {} // TODO
     const problemIds = useSessionStore(s => s.problemIds)
 
     const navigate = useNavigate()
 
     const navigateToSummary = () => {
-        navigate(routes.sessionSummary)
+        navigate(routes.sessionSummary(props.sessionId))
     }
 
     const handleOnSelect = (index: number) => {        
