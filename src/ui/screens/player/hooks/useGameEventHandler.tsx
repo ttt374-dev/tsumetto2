@@ -1,11 +1,10 @@
+import { useEffect, useState } from "react"
+
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem"
-import { useToast } from "@/ui/App/providers/ToastProvider"
 import { useReplayController } from "@/ui/screens/player/hooks/useReplayController"
 import { useGameStore } from "@/ui/screens/player/store/useGameStore"
 import { useReplayStore } from "@/ui/screens/player/store/useReplayStore"
 import { useTimerStore } from "@/ui/screens/player/store/useTimerStore"
-import { useEffect, useState } from "react"
-import { useBoardInputStore } from "@/ui/screens/player/store/useBoardInputStore"
 import { deriveSolvedResultFromEvents } from "@/domain/review/service/solvedResultDeriver"
 import type { SolvedResult } from "@/domain/review/solvedResult"
 
@@ -13,16 +12,14 @@ export type GameUIEvent =
     | { type: "solved", solvedResult: SolvedResult}
     | { type: "mistake", count: number }
     | { type: "solvedConfirmed"}
-//    | { type: "navigate", to: string}
 
-export function useGameEventHandler(problem: Problem, onUIEvent?: (event: GameUIEvent) => void){
+
+export function useGameEventHandler(onUIEvent?: (event: GameUIEvent) => void){
     const events = useGameStore(s=>s.events)    
     const gameState = useGameStore(s=>s.state)
     const replay = useReplayStore()
     const stopTimer = useTimerStore(s=>s.stop)
     const replayCtrl = useReplayController()    
-
-    //const { isInitialized } = useGameInitializer(problem)
 
     // イベント処理
     useEffect(() => {

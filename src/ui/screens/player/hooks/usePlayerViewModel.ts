@@ -18,9 +18,6 @@ export function usePlayerViewModel(problem: Problem) {
     const deleteProblem = useProblemStore(s => s.deleteProblem)
     const dispatch = useGameStore(s => s.dispatch)
 
-    // initiallize
-    useGameInitializer(problem)
-
     // dialogs
     const dialogs = {
         solvedResult: useSolvedDialog(),

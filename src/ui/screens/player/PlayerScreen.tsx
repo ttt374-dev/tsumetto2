@@ -18,6 +18,7 @@ import { SolvedDialog } from "@/ui/screens/player/dialogs/SolvedDialog";
 import { useGameEventHandler, type GameUIEvent } from "@/ui/screens/player/hooks/useGameEventHandler";
 import { useLearningRecordStore } from "@/ui/features/learning/hooks/useLearningRecordStore";
 import { usePlayerViewModel } from "@/ui/screens/player/hooks/usePlayerViewModel";
+import { useGameInitializer } from "@/ui/screens/player/hooks/useGameInitializer";
 
 
 ///////////////////////////////////////////
@@ -46,7 +47,11 @@ export default function PlayerScreen({ problem, title, onUIEvent, footerPanel }:
     const handleConfirmSolved = () => {
         handleUIEvent({type: "solvedConfirmed"})
     }
-    useGameEventHandler(problem, handleUIEvent)
+    useGameEventHandler(handleUIEvent)
+
+    // 初期化    
+    useGameInitializer(problem)   
+
     
     // 消された場合
         if (problem.deletedAt){

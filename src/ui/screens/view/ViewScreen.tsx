@@ -1,6 +1,4 @@
-import React, { useCallback, useEffect } from "react"
 import { Box, Button, IconButton, Stack } from "@mui/material"
-import SwapVertIcon from '@mui/icons-material/SwapVert';
 
 import BoardPanel from "@/ui/screens/player/components/panels/board/BoardPanel"
 import PlyControlPanel from "@/ui/screens/player/components/panels/PlyControlPanel";
@@ -9,15 +7,14 @@ import { Problem } from "@/domain/problem/entity/Problem"
 import { AppShell } from "../../common/components/layout/AppShell";
 import { useReplayStore } from "@/ui/screens/player/store/useReplayStore";
 import PromotionDialog from "@/ui/screens/player/dialogs/PromotionDialog";
-import { SolvedDialog } from "@/ui/screens/player/dialogs/SolvedDialog";
-import { useGameEventHandler, type GameUIEvent } from "@/ui/screens/player/hooks/useGameEventHandler";
-import { useLearningRecordStore } from "@/ui/features/learning/hooks/useLearningRecordStore";
+import { useGameEventHandler } from "@/ui/screens/player/hooks/useGameEventHandler";
 import { usePlayerViewModel } from "@/ui/screens/player/hooks/usePlayerViewModel";
 import TitlePanel from "@/ui/screens/player/components/panels/TitlePanel";
-import { problemFieldLabels } from "@/ui/features/problem/hooks/problemPresenter";
 import MovesPanel from "@/ui/screens/player/components/panels/moves/MovesPanel";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
+import { routes } from "@/ui/App/useAppNavigation";
+import { useGameInitializer } from "@/ui/screens/player/hooks/useGameInitializer";
 
 export default function ViewScreen(){
     const { id } = useParams<{ id: string }>()    
@@ -32,12 +29,17 @@ function ViewContent({ problem}: { problem: Problem}){
     const vm = usePlayerViewModel(problem)
     const replay = useReplayStore()
 
-    useGameEventHandler(problem)
+    // 初期化    
+    useGameInitializer(problem)
+
+    // イベント処理
+    useGameEventHandler()
     
     const title = problem.title
     return (
             <AppShell
                 header={"Player"}
+                footer={<FooterPanel/>}
             >
                 <Stack sx={{ minHeight: 0, height: "100%" }} spacing={1} > 
                     <TitlePanel title={title} />
@@ -71,4 +73,12 @@ function ViewContent({ problem}: { problem: Problem}){
                 
             </AppShell>
         )
+}
+function FooterPanel(){
+    const navigate = useNavigate()
+    return <>
+        <Button onClick={()=> navigate(routes.back)}>
+            戻る
+        </Button>
+    </>
 }
