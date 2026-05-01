@@ -13,6 +13,7 @@ import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore"
 import { useSessionStore } from "@/ui/screens/session/hooks/useSessionStore"
 import type { SessionId } from "@/domain/session/entity/Session"
 import { useNavigate, useParams } from "react-router-dom"
+import { routes } from "@/ui/App/useAppNavigation"
 
 const useSessionSideEffect = (sessionId: SessionId, problemId: ProblemId) => {
     const events = useGameStore(s => s.events)
@@ -56,6 +57,7 @@ function SessionPlayerContent({ problem, sessionId, currentIndex }: {
     
     const { title } = useSessionPlayerTitleMaker(problem, currentIndex)
     const { execute } = useSessionCommandHandler(sessionId)
+    const navigate = useNavigate()
     
     const footerPanel: React.ReactNode = (
         <PlayerFooterPanel
@@ -64,7 +66,8 @@ function SessionPlayerContent({ problem, sessionId, currentIndex }: {
                 execute({type: "GO_NEXT", currentIndex })
             }
             }
-            onShowList={() => setIsListOpen(true)} />)
+            //onShowList={() => setIsListOpen(true)} />)
+            onShowList={() => navigate(routes.sessionList(sessionId, currentIndex))} />)
 
     // game eventの処理
     useSessionSideEffect(sessionId, problem.id)

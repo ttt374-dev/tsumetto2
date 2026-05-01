@@ -22,6 +22,7 @@ import SessionPlayerScreen from '@/ui/screens/session/SessionPlayerScreen.tsx';
 import HistoryScreen from '@/ui/screens/history/HistoryScreen.tsx';
 import SinglePlayerScreen from '@/ui/screens/player/SinglePlayerScreen';
 import ViewScreen from '@/ui/screens/view/ViewScreen';
+import SessionListScreen from '@/ui/screens/session/SessionListScreen';
 
 export const theme = createTheme({
   cssVariables: true,   // ← これ必須
@@ -74,6 +75,7 @@ function App() {
             <Routes>
               <Route path="/session/:sessionId/play/:index" element={<SessionPlayerScreen/>} />
               <Route path="/session/:sessionId/summary" element={<SessionSummaryScreen/>} />
+              <Route path="/session/:sessionId/list/:index" element={<SessionListScreen/>} />
 { /* 
               <Route path={routes.session} element={<SessionLayout />}>
                 <Route path="play" element={<SessionPlayerScreen />} >

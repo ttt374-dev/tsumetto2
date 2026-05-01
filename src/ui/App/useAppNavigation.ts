@@ -20,7 +20,7 @@ export const routes = {
     sessionPlay: (sessionId: SessionId, index: number = 0) => `/session/${sessionId}/play/${index}`,
     //sessionSummary: "/session/summary",
     sessionSummary: (sessionId: SessionId) => `/session/${sessionId}/summary`,
-    //sessionList: "/session/list",
+    sessionList: (sessionId: SessionId, index: number = 0) => `/session/${sessionId}/list/${index}`,
 
     // detail
     detail: (id: ProblemId) => `/detail/${id}`,
