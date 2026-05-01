@@ -4,29 +4,28 @@ import PlayerScreen from "@/ui/screens/player/PlayerScreen"
 import { PlayerFooterPanel } from "@/ui/screens/player/components/panels/PlayerFooterPanel"
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem"
 import { useSessionPlayerTitleMaker } from "@/ui/screens/session/hooks/useSessionPlayerTitleMaker"
-import SessionProblemListDialog from "@/ui/screens/session/SessionProblemListDialog"
 import { AppShell } from "@/ui/common/components/layout/AppShell"
 import { useGameStore, type GameEvent } from "@/ui/screens/player/store/useGameStore"
 import type { GameUIEvent } from "@/ui/screens/player/hooks/useGameEventHandler"
-import { useSessionCommandHandler } from "@/ui/screens/session/hooks/useSessionCommandHandler"
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore"
 import { useSessionStore } from "@/ui/screens/session/hooks/useSessionStore"
 import type { SessionId } from "@/domain/session/entity/Session"
 import { useNavigate, useParams } from "react-router-dom"
 import { routes } from "@/ui/App/useAppNavigation"
+import { useSessionExecutor } from "@/ui/screens/session/hooks/useSessionExecutor"
 
-const useSessionSideEffect = (sessionId: SessionId, problemId: ProblemId) => {
+const useSessionSideEffect = (sessionId: SessionId, currentIndex: number) => {
     const events = useGameStore(s => s.events)
-    const { execute } = useSessionCommandHandler(sessionId)
+    const execute = useSessionExecutor(sessionId, currentIndex)
 
     useEffect(() => {
         const event = events[events.length - 1]
         if (!event) return
 
         if (event.type === "SOLVE") {
-            execute({ type: "SUBMIT_REVIEW", problemId })
+            execute({ type: "SUBMIT_REVIEW"})
         }
-    }, [events, sessionId, problemId])
+    }, [events, execute])
 }
 
 ////////////////////////////////////////////////
@@ -53,30 +52,29 @@ function SessionPlayerContent({ problem, sessionId, currentIndex }: {
     sessionId: SessionId
     currentIndex: number
 }){    
-    const [isListOpen, setIsListOpen] = useState(false)            
-    
     const { title } = useSessionPlayerTitleMaker(problem, currentIndex)
-    const { execute } = useSessionCommandHandler(sessionId)
     const navigate = useNavigate()
+    const execute = useSessionExecutor(sessionId, currentIndex)
     
     const footerPanel: React.ReactNode = (
         <PlayerFooterPanel
             onNext={()=> {
-                execute({type: "FLUSH", problemId: problem.id})   
-                execute({type: "GO_NEXT", currentIndex })
+                //({type: "FLUSH", problemId: problem.id})   
+                //execute({type: "FLUSH"})
+                execute({type: "GO_NEXT" })
             }
             }
             //onShowList={() => setIsListOpen(true)} />)
             onShowList={() => navigate(routes.sessionList(sessionId, currentIndex))} />)
 
     // game eventの処理
-    useSessionSideEffect(sessionId, problem.id)
+    useSessionSideEffect(sessionId, currentIndex)
 
     // UI event の処理
     const handleUIEvent = (uiEvent: GameUIEvent) => {
         switch(uiEvent.type){
             case "solvedConfirmed":
-                execute({type: "GO_NEXT", currentIndex: currentIndex})
+                execute({type: "GO_NEXT"})
                 break;
         }
     }
@@ -100,4 +98,3 @@ function SessionPlayerContent({ problem, sessionId, currentIndex }: {
         </>
     )
 }
-

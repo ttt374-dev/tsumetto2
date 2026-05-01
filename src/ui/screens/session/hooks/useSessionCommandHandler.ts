@@ -1,94 +1,94 @@
-import { useMemo } from "react"
-import { v4 } from "uuid"
-
 import { deriveSolvedResultFromEvents } from "@/domain/review/service/solvedResultDeriver"
-import { useGameStore, type GameEvent } from "@/ui/screens/player/store/useGameStore"
-import { useReviewEventStore } from "@/ui/features/learning/hooks/useReviewEventStore"
-import { useSessionStore } from "@/ui/screens/session/hooks/useSessionStore"
-import { createPlayerContext } from "@/ui/screens/player/components/types/PlayerContext"
+import { type GameEvent, type GameState } from "@/ui/screens/player/store/useGameStore"
 import type { SessionId } from "@/domain/session/entity/Session"
-import { useNavigate } from "react-router-dom"
 import { routes } from "@/ui/App/useAppNavigation"
 import type { ProblemId } from "@/domain/problem/entity/Problem"
+import type { SolvedResult } from "@/domain/review/solvedResult"
+import type { ReviewEventLog } from "@/domain/review/ReviewEvent"
 
-type SessionCommand =
-    | { type: "SUBMIT_REVIEW", problemId: ProblemId }
-    | { type: "FLUSH", problemId: ProblemId }
+export type SessionCommand =    
+    | { type: "SUBMIT_REVIEW" }
+    | { type: "FLUSH"}
     | { type: "GOTO", index: number}
-    | { type: "GO_NEXT", currentIndex: number }
-    //| { type: "SKIP", currentIndex: number }
-    
+    | { type: "GO_NEXT" }
 
-export function useSessionCommandHandler(sessionId: SessionId) {
-    const navigate = useNavigate()
-    const { events, dispatch, state: gameState } = useGameStore()
-    const appendReview = useReviewEventStore(s => s.appendReview)
-    const reviewedEvents = useReviewEventStore(s => s.eventLog)
-    //const next = useSessionStore(s => s.next)    
-    //const pid = useSessionStore(s=>s.problemIds[s.currentIndex])    
+export type SessionCommandEffect = 
+    //| { type: "NOOP"}
+    | { type: "NAVIGATE", to: string}
+    | { type: "SUBMIT_REVIEW", problemId: ProblemId, sessionId: SessionId, solvedResult: SolvedResult}
 
-    /*
-    const hasSubmitted = useMemo(() => 
-        reviewedEvents.some(
-            e => e.type === "reviewed"
-                && e.problemId === pid
-                && e.sessionId === sessionId
-        ),
-        [sessionId, reviewedEvents]
-    )*/
-    const hasSubmitted = (pid: ProblemId) => 
-        reviewedEvents.some(
-            e => e.type === "reviewed"
-                && e.problemId === pid
-                && e.sessionId === sessionId
-        )
-        
-    const execute = (cmd: SessionCommand) => {
+export type SessionCommandContext = {
+    problemIds: ProblemId[]
+    gameState: GameState
+    events: GameEvent[]
+    reviewedEvents: ReviewEventLog
+    currentIndex: number
+    playerContext: {
+        ply: number
+        elapsedSec: number
+    }
+}
+export function useSessionCommandHandler(sessionId: SessionId) {        
+    const resolveSessionCommand = (cmd: SessionCommand, ctx: SessionCommandContext): SessionCommandEffect[] => {
+        const problemId = ctx.problemIds[ctx.currentIndex]
+        if (!problemId) return []
+
         switch (cmd.type) {
             case "SUBMIT_REVIEW": {
-                if (hasSubmitted(cmd.problemId)) return
-                const result = deriveSolvedResultFromEvents(events)
-                appendReview(cmd.problemId, v4(), sessionId, result)
-                break
+                
+                if (hasSubmitted(sessionId, problemId, ctx.reviewedEvents)) return []
+                const solvedResult = deriveSolvedResultFromEvents(ctx.events)
+                return [{ type: "SUBMIT_REVIEW", problemId, sessionId, solvedResult }]
+
             }
             case "GOTO": {
-                const { problemIds } = useSessionStore.getState()
-                if (cmd.index >= problemIds.length) {
-                    navigate(routes.sessionSummary(sessionId))
-                    return
+                if (cmd.index >= ctx.problemIds.length) {
+                    return [{ type: "NAVIGATE", to: routes.sessionSummary(sessionId)}]
                 }
 
-                if (cmd.index < 0) return
-                navigate(routes.sessionPlay(sessionId, cmd.index))
-                break
+                if (cmd.index < 0) return []
+                return [{ type: "NAVIGATE", to: routes.sessionPlay(sessionId, cmd.index) }]
             }
 
             case "GO_NEXT": {
-                //execute({ type: "FLUSH", currentIndex: cmd.currentIndex})
-                //next()
-                execute({type: "GOTO", index: cmd.currentIndex+1})
-                break
-            }
-            
-            case "FLUSH": {
-                if (hasSubmitted(cmd.problemId)) return
+                const nextIndex = ctx.currentIndex + 1
 
-                if (!gameState.isSolved && 
-                    (gameState.isRevealed || gameState.mistakes > 0)) {
-                    const abandonEvent = createAbandonEvent()
-                    const nextEvents = dispatch(abandonEvent)
-                    const result = deriveSolvedResultFromEvents(nextEvents)
-                    appendReview(cmd.problemId, v4(), sessionId, result)
+                return [
+                    ...resolveSessionCommand({ type: "FLUSH" }, ctx),
+                    ...resolveSessionCommand({ type: "GOTO", index: nextIndex }, ctx)
+                ]
+            }
+
+            case "FLUSH": {
+                if (hasSubmitted(sessionId, problemId, ctx.reviewedEvents)) return []
+
+                if (shouldFlush(ctx.gameState)) {
+                    const abandonEvent = createAbandonEvent(ctx)
+                    const nextEvents = [...ctx.events, abandonEvent]
+                    const solvedResult = deriveSolvedResultFromEvents(nextEvents)
+                    return [{ type: "SUBMIT_REVIEW", problemId, sessionId, solvedResult }]
                 }
-                break
+                return []
             }
         }
     }
-
-    return { execute }
+    return { resolveSessionCommand }
 }
 
-const createAbandonEvent = (): GameEvent => {
-    const { ply, elapsedSec } = createPlayerContext()
+function createAbandonEvent(ctx: SessionCommandContext): GameEvent {
+    const { ply, elapsedSec } = ctx.playerContext
     return { type: "ABANDON", ply, elapsedSec }
-}      
+}
+
+function hasSubmitted(sessionId: SessionId, pid: ProblemId, reviewedEvents: ReviewEventLog): boolean {
+    return reviewedEvents.some(
+        e => e.type === "reviewed"
+            && e.problemId === pid
+            && e.sessionId === sessionId
+    )
+}
+function shouldFlush(gameState: GameState): boolean {
+    
+    return(!gameState.isSolved &&
+        (gameState.isRevealed || gameState.mistakes > 0))
+}
