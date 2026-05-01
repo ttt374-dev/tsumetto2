@@ -89,13 +89,14 @@ function SessionPlayerContent({ problem, sessionId, currentIndex }: {
                 onUIEvent={handleUIEvent}
                 footerPanel={footerPanel}
             />
-
+{ /* 
             <SessionProblemListDialog
                 open={isListOpen}
                 onClose={()=>setIsListOpen(false)}
                 selectedProblemId={problem.id}
                 sessionId={sessionId}
             />
+        */ }
         </>
     )
 }

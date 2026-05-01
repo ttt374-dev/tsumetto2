@@ -1,5 +1,5 @@
 import { Paper, Typography, Stack, Box} from "@mui/material"
-import { act, useMemo } from "react"
+import { useMemo } from "react"
 
 import type { ProblemId } from "@/domain/problem/entity/Problem"
 import { useLearningRecordStore } from "@/ui/features/learning/hooks/useLearningRecordStore"
@@ -82,13 +82,13 @@ export function NextReviewHistogram({data}: {
     data: HistogramItem[]
 }) {
     const filtered = data.filter(d => d.ids.length > 0).sort((a, b) => a.bin.min - b.bin.min)
+    const navigate = useNavigate()
 
     if (filtered.length === 0) {
         return <Typography>No data available</Typography>
     }
 
-    const max = Math.max(...filtered.map(d => d.ids.length), 1)
-    const navigate = useNavigate()
+    const max = Math.max(...filtered.map(d => d.ids.length), 1)    
     const handleClick = (ids: ProblemId[]) => {
         navigate(routes.list, { state: { ids: ids }})
     }
@@ -148,9 +148,9 @@ function HistogramPercentBar({ percent, overdue} : { percent: number, overdue: b
     </Box>)
 }
 export function NextReviewStats() {
-    const ids = useQueryActiveProblems({
+    const problems = useQueryActiveProblems({
         sortKey: "nextReviewedAt", sortOrder: "asc", excludeReferenceOnly: true})
-        .map(p=>p.id)
+    const ids = problems.map(p=>p.id)
     const learningRecords = useLearningRecordStore(s => s.stateRecords)    
 
     const histogram = useMemo(
