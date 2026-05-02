@@ -9,11 +9,11 @@ import { resolveSessionCommand, type SessionCommand, type SessionCommandContext,
 import { useSessionStore } from "@/ui/screens/session/hooks/useSessionStore"
 import { useCallback, useMemo } from "react"
 import { useNavigate } from "react-router-dom"
-import { v4 } from "uuid"
 
-export function createSessionCommandContext(
+export function createSessionCommandContext(  // スナップショット    
     currentIndex: number
 ): SessionCommandContext {
+    // NOTE: getState()で最新状態を取得してコマンドを解決する
     const sessionStore = useSessionStore.getState()
     const gameStore = useGameStore.getState()
     const reviewStore = useReviewEventStore.getState()
@@ -39,7 +39,7 @@ export function useSessionExecutor(sessionId: SessionId, currentIndex: number) {
         const effects = resolveSessionCommand(cmd, ctx, sessionId)
         //console.log("dispatch", effects, cmd)
         runEffects(effects, { navigate, appendReview })
-    }, [navigate, appendReview, resolveSessionCommand])
+    }, [navigate, appendReview, currentIndex, sessionId])
 
     return dispatch
 }
@@ -58,11 +58,11 @@ export function runEffects(
                 deps.navigate(effect.to)
                 break
             case "APPEND_REVIEW":
-                deps.appendReview(effect.problemId, v4(), effect.sessionId, effect.solvedResult)
+                deps.appendReview(effect.problemId, effect.reviewId, effect.sessionId, effect.solvedResult)
                 break;
             default:
                 const _exhaustive: never = effect
-                return _exhaustive            
+                throw new Error("Unknown effect")        
         }
     }
 

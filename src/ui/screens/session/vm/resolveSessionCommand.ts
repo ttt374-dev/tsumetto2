@@ -5,6 +5,7 @@ import { routes } from "@/ui/App/useAppNavigation"
 import type { ProblemId } from "@/domain/problem/entity/Problem"
 import type { SolvedResult } from "@/domain/review/solvedResult"
 import type { ReviewEventLog } from "@/domain/review/ReviewEvent"
+import { v4 } from "uuid"
 
 export type SessionCommand =    
     | { type: "SUBMIT_REVIEW" }
@@ -16,7 +17,7 @@ export type SessionCommand =
 export type SessionCommandEffect = 
     | { type: "NAVIGATE", to: string}
     //| { type: "EXECUTE", command: SessionCommand }
-    | { type: "APPEND_REVIEW", problemId: ProblemId, sessionId: SessionId, solvedResult: SolvedResult}
+    | { type: "APPEND_REVIEW", problemId: ProblemId, sessionId: SessionId, reviewId: string, solvedResult: SolvedResult}
 
 export type SessionCommandContext = {
     problemIds: ProblemId[]
@@ -29,6 +30,8 @@ export type SessionCommandContext = {
         elapsedSec: number
     }
 }
+function createReviewId() { return v4()}
+
 ////////////////////////////////////////////////////////////////////
 export function resolveSessionCommand(cmd: SessionCommand, ctx: SessionCommandContext, sessionId: SessionId): SessionCommandEffect[] {
     
@@ -40,7 +43,8 @@ export function resolveSessionCommand(cmd: SessionCommand, ctx: SessionCommandCo
         case "SUBMIT_REVIEW": {
             if (hasSubmitted(sessionId, problemId, ctx.reviewedEvents)) return []
             const solvedResult = deriveSolvedResultFromEvents(ctx.events)
-            return [{ type: "APPEND_REVIEW", problemId, sessionId, solvedResult }]
+            const reviewId = createReviewId()
+            return [{ type: "APPEND_REVIEW", problemId, sessionId, reviewId, solvedResult }]
 
         }
         case "GOTO": {
@@ -73,7 +77,8 @@ export function resolveSessionCommand(cmd: SessionCommand, ctx: SessionCommandCo
                 const abandonEvent = createAbandonEvent(ctx)
                 const nextEvents = [...ctx.events, abandonEvent]
                 const solvedResult = deriveSolvedResultFromEvents(nextEvents)
-                return [{ type: "APPEND_REVIEW", problemId, sessionId, solvedResult }]
+                const reviewId = createReviewId()
+                return [{ type: "APPEND_REVIEW", problemId, sessionId, reviewId, solvedResult }]
             }
             return []
         }
