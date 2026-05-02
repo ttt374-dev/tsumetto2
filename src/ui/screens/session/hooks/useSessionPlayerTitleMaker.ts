@@ -14,3 +14,12 @@ export function useSessionPlayerTitleMaker(problem: Problem, index: number){
     
     return title
 }
+
+export function buildSessionPlayerTitle(props: {
+    missionName: string,
+    index: number,
+    count: number,
+    problemTitle: string
+}){
+    return `[${props.missionName} (${props.index + 1}/${props.count})]: ${props.problemTitle}`   
+}

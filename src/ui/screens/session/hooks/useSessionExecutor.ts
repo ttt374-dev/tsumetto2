@@ -10,7 +10,7 @@ import { useSessionStore } from "@/ui/screens/session/hooks/useSessionStore"
 import { useCallback, useMemo } from "react"
 import { useNavigate } from "react-router-dom"
 
-export function createSessionCommandContext(  // スナップショット    
+export function createSessionCommandContextFromStores(  // スナップショット    
     currentIndex: number
 ): SessionCommandContext {
     // NOTE: getState()で最新状態を取得してコマンドを解決する
@@ -35,7 +35,7 @@ export function useSessionExecutor(sessionId: SessionId, currentIndex: number) {
 
     // create context    
     const dispatch = useCallback((cmd: SessionCommand) => {
-        const ctx = createSessionCommandContext(currentIndex)
+        const ctx = createSessionCommandContextFromStores(currentIndex)
         const effects = resolveSessionCommand(cmd, ctx, sessionId)
         //console.log("dispatch", effects, cmd)
         runEffects(effects, { navigate, appendReview })

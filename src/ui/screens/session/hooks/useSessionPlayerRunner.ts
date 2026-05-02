@@ -8,24 +8,62 @@ import type { GameUIEvent } from "@/ui/screens/player/hooks/useGameEventHandler"
 import { useGameStore, type GameEvent } from "@/ui/screens/player/store/useGameStore";
 import { useSessionExecutor } from "@/ui/screens/session/hooks/useSessionExecutor";
 import { type SessionCommand } from "@/ui/screens/session/vm/resolveSessionCommand";
+import type { Mission, MissionId } from "@/domain/mission/entity/Mission";
+import { useSessionStore } from "@/ui/screens/session/hooks/useSessionStore";
+import { useMissionStore } from "@/ui/screens/mission/hooks/useMissionStore";
+import { buildRequestInit } from "@capacitor/core";
+import { buildSessionPlayerTitle } from "@/ui/screens/session/hooks/useSessionPlayerTitleMaker";
 
+type ParseSessionParamsResult =
+    | { type: "invalid" }
+    | { type: "valid", sessionId: SessionId, index: number }
+type SessionPlayerInput = ParseSessionParamsResult & {
+    ids: ProblemId[]
+    byId: Record<ProblemId, Problem>
+
+    missionId: MissionId | undefined
+    missions: Mission[]
+}
+
+type SessionPlayerViewModel =
+    | { type: "error", message: string }
+    | {
+        type: "ready",
+        problem: Problem;
+        sessionId: SessionId;
+        currentIndex: number;
+        goNext: SessionCommand;
+        goList: SessionCommand;
+        handleUIEvent: (e: GameUIEvent) => SessionCommand | undefined
+        onGameEvent: (e: GameEvent) => SessionCommand | undefined
+        title: string
+    }
+
+/////////////////////////////////////////
 export function useSessionPlayerRunner() {
+    // パラメータを解析
     const params = useParams<{ sessionId: string, index: string }>()
     const resParsed = parseSessionParams(params)
 
+    // フックをまず取得
     const sessionId = resParsed.type === "valid" ? resParsed.sessionId : ""
     const index = resParsed.type === "valid" ? resParsed.index : -1
-
+    
     const dispatch = useSessionExecutor(sessionId, index)
     const lastEvent = useGameStore(s => s.events.at(-1))
 
+    // vm
     const ids = useProblemStore(s => s.ids)
     const byId = useProblemStore(s => s.byId)
+    const missions = useMissionStore(s=>s.missions)
+    const missionId = useSessionStore(s=>s.missionId)
     const input: SessionPlayerInput = {
         ...resParsed,
-        ids, byId
+        ids, byId, missions, missionId
     }
     const vm = buildSessionPlayerViewModel(input)
+
+    // game event 処理
     const onGameEvent = vm.type === "ready" ? vm.onGameEvent : undefined
     useEffect(() => {
         if (!lastEvent || !onGameEvent) return
@@ -33,6 +71,7 @@ export function useSessionPlayerRunner() {
         if (cmd) dispatch(cmd)
     }, [lastEvent, onGameEvent, dispatch])
 
+    // エラーなら返す
     if (vm.type === "error") return vm
 
     return {
@@ -45,9 +84,6 @@ export function useSessionPlayerRunner() {
         }
     }
 }
-type ParseSessionParamsResult =
-    | { type: "invalid" }
-    | { type: "valid", sessionId: SessionId, index: number }
 
 function parseSessionParams(input: {
     sessionId?: string
@@ -64,31 +100,10 @@ function parseSessionParams(input: {
         index
     }
 }
-type SessionPlayerInput = ParseSessionParamsResult & {
-    ids: ProblemId[]
-    byId: Record<ProblemId, Problem>
-}
-
-type SessionPlayerViewModel =
-    | { type: "error", message: string }
-    | {
-        type: "ready",
-        problem: Problem;
-        sessionId: SessionId;
-        currentIndex: number;
-        goNext: SessionCommand;
-        goList: SessionCommand;
-        handleUIEvent: (e: GameUIEvent) => SessionCommand | undefined
-        onGameEvent: (e: GameEvent) => SessionCommand | undefined
-    }
 
 function buildSessionPlayerViewModel(input: SessionPlayerInput): SessionPlayerViewModel {
     if (input.type === "invalid") return { type: "error", message: "invalid params" }
-    const { sessionId, index, ids, byId } = input
-
-    // validation
-    //if (!sessionId) return { type: "error", message: "invalid sessionId" }
-    //if (!index) return { type: "error", message: "invalid index" }
+    const { sessionId, index, ids, byId, missionId, missions } = input
 
     if (index < 0) {
         return { type: "error", message: "invalid currentIndex" }
@@ -102,6 +117,14 @@ function buildSessionPlayerViewModel(input: SessionPlayerInput): SessionPlayerVi
         return { type: "error", message: `Problem not found: ${pid}` }
     }
 
+    // title
+    const titleProps = {
+        index: index,
+        count: ids?.length ?? 0,
+        problemTitle: problem?.title,
+        missionName: missions.find(d=>d.id===missionId)?.name ?? ""
+    }
+    const title = buildSessionPlayerTitle(titleProps)
     /// navigation
     const goNext: SessionCommand = { type: "GO_NEXT" } 
     const goList: SessionCommand = { type: "GO_LIST" } 
@@ -115,6 +138,7 @@ function buildSessionPlayerViewModel(input: SessionPlayerInput): SessionPlayerVi
                 return undefined
         }
     }
+    // Game event
     const onGameEvent = (e: GameEvent): SessionCommand | undefined => {
         if (e.type === "SOLVE") {
             return { type: "SUBMIT_REVIEW" }
@@ -124,7 +148,7 @@ function buildSessionPlayerViewModel(input: SessionPlayerInput): SessionPlayerVi
 
     return {
         type: "ready",
-        problem, sessionId, currentIndex: index,
+        problem, sessionId, currentIndex: index, title,
         goNext, goList, handleUIEvent, onGameEvent,
     }
 
