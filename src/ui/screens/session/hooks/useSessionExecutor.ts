@@ -5,45 +5,47 @@ import type { SessionId } from "@/domain/session/entity/Session"
 import { useReviewEventStore } from "@/ui/features/learning/hooks/useReviewEventStore"
 import { createPlayerContext } from "@/ui/screens/player/components/types/PlayerContext"
 import { useGameStore } from "@/ui/screens/player/store/useGameStore"
-import { useSessionCommandHandler, type SessionCommand, type SessionCommandContext, type SessionCommandEffect } from "@/ui/screens/session/hooks/useSessionCommandHandler"
+import { resolveSessionCommand, type SessionCommand, type SessionCommandContext, type SessionCommandEffect } from "@/ui/screens/session/vm/resolveSessionCommand"
 import { useSessionStore } from "@/ui/screens/session/hooks/useSessionStore"
 import { useCallback, useMemo } from "react"
 import { useNavigate } from "react-router-dom"
 import { v4 } from "uuid"
 
-export function useSessionExecutor(sessionId: SessionId, currentIndex: number) {
-    // store 
-    const problemIds = useSessionStore(s => s.problemIds)
-    const gameState = useGameStore(s => s.state)
-    const events = useGameStore(s => s.events)
-    const reviewedEvents = useReviewEventStore(s => s.eventLog)
-    const { resolveSessionCommand } = useSessionCommandHandler(sessionId)
+export function createSessionCommandContext(
+    currentIndex: number
+): SessionCommandContext {
+    const sessionStore = useSessionStore.getState()
+    const gameStore = useGameStore.getState()
+    const reviewStore = useReviewEventStore.getState()
 
+    return {
+        problemIds: sessionStore.problemIds,
+        currentIndex,
+        gameState: gameStore.state,
+        events: gameStore.events,
+        reviewedEvents: reviewStore.eventLog,
+        playerContext: createPlayerContext(),
+    }
+}
+
+export function useSessionExecutor(sessionId: SessionId, currentIndex: number) {    
     // run effect deps
     const navigate = useNavigate()
-    const appendReview = useReviewEventStore(s => s.appendReview)    
+    const appendReview = useReviewEventStore(s => s.appendReview)
 
-    // create context
-    const playerContext = createPlayerContext()
-    const ctx: SessionCommandContext = useMemo(() => ({
-        problemIds,
-        currentIndex,
-        gameState,
-        events,
-        reviewedEvents,
-        playerContext
-    }), [sessionId, problemIds, currentIndex, gameState, events, reviewedEvents, playerContext])
-
-    const execute = useCallback((cmd: SessionCommand) => {
-        const effects = resolveSessionCommand(cmd, ctx)
+    // create context    
+    
+    const dispatch = useCallback((cmd: SessionCommand) => {
+        const ctx = createSessionCommandContext(currentIndex)
+        const effects = resolveSessionCommand(cmd, ctx, sessionId)
         runEffects(effects, { navigate, appendReview })
-    }, [ctx, navigate, appendReview, resolveSessionCommand])
+    }, [navigate, appendReview, resolveSessionCommand])
 
-    return execute
+    return dispatch
 }
 
 
-function runEffects(
+export function runEffects(
     effects: SessionCommandEffect[],
     deps: {
         navigate: ReturnType<typeof useNavigate>
@@ -55,7 +57,7 @@ function runEffects(
             case "NAVIGATE":
                 deps.navigate(effect.to)
                 break
-            case "SUBMIT_REVIEW":
+            case "APPEND_REVIEW":
                 deps.appendReview(effect.problemId, v4(), effect.sessionId, effect.solvedResult)
                 break;
             default:
