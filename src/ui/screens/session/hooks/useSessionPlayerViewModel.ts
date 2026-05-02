@@ -3,8 +3,6 @@ import { useCallback, useEffect, useRef } from "react"
 import { useSessionPlayerTitleMaker } from "@/ui/screens/session/hooks/useSessionPlayerTitleMaker"
 import { useGameStore, type GameEvent } from "@/ui/screens/player/store/useGameStore"
 import type { GameUIEvent } from "@/ui/screens/player/hooks/useGameEventHandler"
-import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore"
-import { useSessionStore } from "@/ui/screens/session/hooks/useSessionStore"
 import { useNavigate, useParams } from "react-router-dom"
 import { routes } from "@/ui/App/useAppNavigation"
 import { useSessionExecutor } from "@/ui/screens/session/hooks/useSessionExecutor"
@@ -12,11 +10,6 @@ import type { Problem } from "@/domain/problem/entity/Problem"
 import type { SessionId } from "@/domain/session/entity/Session"
 
 export function useSessionPlayerViewModel(problem: Problem, sessionId: SessionId, currentIndex: number) {
-    // --- store ---
-    //const problemIds = useSessionStore(s => s.problemIds)
-    //const problemId = problemIds[currentIndex]
-    //const problem = useProblemStore(s => s.byId[problemId])
-    
     // --- title ---
     const title = useSessionPlayerTitleMaker(problem, currentIndex)
 

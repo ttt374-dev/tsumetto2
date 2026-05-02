@@ -52,12 +52,11 @@ export default function PlayerScreen({ problem, title, onUIEvent, footerPanel }:
     // 初期化    
     useGameInitializer(problem)   
 
-    
     // 消された場合
-        if (problem.deletedAt){
-            return <AppShell footer={footerPanel}>Deleted: { problem.title}</AppShell>
-        }
-    
+    if (problem.deletedAt) {
+        return <AppShell footer={footerPanel}>Deleted: {problem.title}</AppShell>
+    }
+
     ////////////////////////////////////////////////////////////////////////
     return (
         <AppShell
