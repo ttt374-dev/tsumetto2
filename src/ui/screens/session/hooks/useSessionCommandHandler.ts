@@ -11,9 +11,9 @@ export type SessionCommand =
     | { type: "FLUSH"}
     | { type: "GOTO", index: number}
     | { type: "GO_NEXT" }
+    | { type: "GO_LIST"}
 
 export type SessionCommandEffect = 
-    //| { type: "NOOP"}
     | { type: "NAVIGATE", to: string}
     | { type: "SUBMIT_REVIEW", problemId: ProblemId, sessionId: SessionId, solvedResult: SolvedResult}
 
@@ -56,6 +56,11 @@ export function useSessionCommandHandler(sessionId: SessionId) {
                 return [
                     ...resolveSessionCommand({ type: "FLUSH" }, ctx),
                     ...resolveSessionCommand({ type: "GOTO", index: nextIndex }, ctx)
+                ]
+            }
+            case "GO_LIST": {
+                return [
+                    { type: "NAVIGATE", to: routes.sessionList(sessionId, ctx.currentIndex)}
                 ]
             }
 

@@ -16,16 +16,16 @@ export function useSessionPlayerViewModel(problem: Problem, sessionId: SessionId
     // --- executor ---
     const execute = useSessionExecutor(sessionId, currentIndex)
 
-    // --- navigation ---
-    const navigate = useNavigate()
+    // --- navigation ---   
 
-    const goNext = useCallback(() => {
+    const goNext = () => {
         execute({ type: "GO_NEXT" })
-    }, [execute])
+    }
 
-    const goList = useCallback(() => {
-        navigate(routes.sessionList(sessionId, currentIndex))
-    }, [navigate, sessionId, currentIndex])
+    const goList = () => {
+        //navigate(routes.sessionList(sessionId, currentIndex))
+        execute({ type: "GO_LIST"})
+    }
 
     // --- UI events ---
     const handleUIEvent = useCallback((uiEvent: GameUIEvent) => {
