@@ -3,8 +3,29 @@ import { PlayerFooterPanel } from "@/ui/screens/player/components/panels/PlayerF
 import { AppShell } from "@/ui/common/components/layout/AppShell"
 import { useSessionPlayerViewModel } from "@/ui/screens/session/hooks/useSessionPlayerViewModel"
 import { useSessionPlayerValidation } from "@/ui/screens/session/hooks/useSessionPlayerValidation"
+import { useSessionPlayerRunner } from "@/ui/screens/session/hooks/useSessionPlayerRunner"
 
 export default function SessionPlayerScreen() {
+    const vm = useSessionPlayerRunner()
+    if (vm.type === "error") return <></>
+
+    const title = vm.problem.title
+    return (
+        <PlayerScreen
+            problem={vm.problem}
+            title={title}
+            onUIEvent={vm.handleUIEvent}
+            footerPanel={
+                <PlayerFooterPanel
+                    onNext={vm.goNext}
+                    onShowList={vm.goList} />
+            }
+        />
+
+    )
+}
+
+export function SessionPlayerScreen1() {
     const res = useSessionPlayerValidation()
     if (res.type === "error") return <AppShell>{ res.message}</AppShell>    
 

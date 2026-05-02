@@ -31,7 +31,9 @@ export type SessionCommandContext = {
 }
 ////////////////////////////////////////////////////////////////////
 export function resolveSessionCommand(cmd: SessionCommand, ctx: SessionCommandContext, sessionId: SessionId): SessionCommandEffect[] {
+    
     const problemId = ctx.problemIds[ctx.currentIndex]
+    //console.log("resolved", cmd, problemId, ctx)
     if (!problemId) return []
 
     switch (cmd.type) {
@@ -52,7 +54,7 @@ export function resolveSessionCommand(cmd: SessionCommand, ctx: SessionCommandCo
 
         case "GO_NEXT": {
             const nextIndex = ctx.currentIndex + 1
-
+            console.log("GO NEXT")
             return [
                 ...resolveSessionCommand({ type: "FLUSH" }, ctx, sessionId),
                 ...resolveSessionCommand({ type: "GOTO", index: nextIndex }, ctx, sessionId)

@@ -34,10 +34,10 @@ export function useSessionExecutor(sessionId: SessionId, currentIndex: number) {
     const appendReview = useReviewEventStore(s => s.appendReview)
 
     // create context    
-    
     const dispatch = useCallback((cmd: SessionCommand) => {
         const ctx = createSessionCommandContext(currentIndex)
         const effects = resolveSessionCommand(cmd, ctx, sessionId)
+        //console.log("dispatch", effects, cmd)
         runEffects(effects, { navigate, appendReview })
     }, [navigate, appendReview, resolveSessionCommand])
 
