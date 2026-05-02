@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { useReviewEventStore } from "@/ui/features/learning/hooks/useReviewEventStore";
 import { routes } from "@/ui/App/useAppNavigation";
@@ -14,6 +14,7 @@ export function useSessionSummaryViewModel(sessionId: SessionId) {
 
     const ids = useSessionStore(s => s.problemIds)
     const startSession = useSessionStore(s => s.start)
+    const missionId = useSessionStore(s=>s.missionId)
 
     const planner = usePlannerStore()
     const reviewEventLog = useReviewEventStore(s => s.eventLog)
@@ -31,13 +32,13 @@ export function useSessionSummaryViewModel(sessionId: SessionId) {
             .filter(k => records[k].stats.failedCount > 0)
 
         const newSessionId = createSessionId()
-        startSession(newSessionId, failedIds)
+        startSession(missionId, failedIds)
         navigate(routes.sessionPlay(newSessionId))
     }
 
     const onRetry = () => {
         const newSessionId = createSessionId()
-        startSession(newSessionId, ids)
+        startSession(missionId, ids)
         navigate(routes.sessionPlay(newSessionId))
     }
 
@@ -46,7 +47,7 @@ export function useSessionSummaryViewModel(sessionId: SessionId) {
         if (!planner.missionId || !chunk) return
 
         const newSessionId = createSessionId()
-        startSession(newSessionId, chunk)
+        startSession(missionId, chunk)
         navigate(routes.sessionPlay(newSessionId))
     }
 

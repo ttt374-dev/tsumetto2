@@ -7,7 +7,7 @@ import type { ProblemId } from "@/domain/problem/entity/Problem";
 type SessionStore = {
     missionId?: MissionId;
     problemIds: ProblemId[];
-    start: (missionId: MissionId, ids: ProblemId[]) => void;
+    start: (missionId: MissionId|undefined, ids: ProblemId[]) => void;
     //reset: () => void;
 };
 
@@ -25,7 +25,6 @@ export const useSessionStore = create<SessionStore>((set, get) => ({
     start: (missionId, ids) => {
         if (ids.length === 0) return    // 空だったらスタートしない
 
-        //const sessionId = v4()
         set((_s) => {
             return {
                 missionId: missionId,
@@ -33,11 +32,5 @@ export const useSessionStore = create<SessionStore>((set, get) => ({
             }
         })
     },
-    /*
-    reset: () =>
-        set({
-            missionId: undefined,
-            problemIds: [],
-        }),
-        */
+
 }));

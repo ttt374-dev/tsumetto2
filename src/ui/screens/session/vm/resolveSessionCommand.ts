@@ -16,7 +16,6 @@ export type SessionCommand =
 
 export type SessionCommandEffect = 
     | { type: "NAVIGATE", to: string}
-    //| { type: "EXECUTE", command: SessionCommand }
     | { type: "APPEND_REVIEW", problemId: ProblemId, sessionId: SessionId, reviewId: string, solvedResult: SolvedResult}
 
 export type SessionCommandContext = {
@@ -85,7 +84,7 @@ export function resolveSessionCommand(cmd: SessionCommand, ctx: SessionCommandCo
     }
 }
 
-
+// helpers
 function createAbandonEvent(ctx: SessionCommandContext): GameEvent {
     const { ply, elapsedSec } = ctx.playerContext
     return { type: "ABANDON", ply, elapsedSec }
