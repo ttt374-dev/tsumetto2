@@ -27,7 +27,7 @@ export type SessionPlayerViewModel =
     missions: Mission[]
 }
 //////////////////////////////////////////////////////
-export function buildSessionPlayerViewModel(input: SessionPlayerInput): SessionPlayerViewModel {
+export function buildSessionPlayerVieModel(input: SessionPlayerInput): SessionPlayerViewModel {
     if (input.type === "invalid") return { type: "error", message: "invalid params" }
     const { sessionId, index, ids, byId, missionId, missions } = input
 

@@ -7,11 +7,11 @@ import { useGameStore, type GameEvent } from "@/ui/screens/player/store/useGameS
 import { useSessionExecutor } from "@/ui/screens/session/hooks/useSessionExecutor";
 import { useSessionStore } from "@/ui/screens/session/hooks/useSessionStore";
 import { useMissionStore } from "@/ui/screens/mission/hooks/useMissionStore";
-import { buildSessionPlayerViewModel, type SessionPlayerInput } from "@/ui/screens/session/vm/buildSessionPlayerViewModel";
+import { buildSessionPlayerVieModel, type SessionPlayerInput } from "@/ui/screens/session/vm/buildSessionPlayerViewModel";
 import { parseSessionParams } from "@/ui/screens/session/vm/parseSessionParams";
 
 /////////////////////////////////////////
-export function useSessionPlayerViewModel() {
+export function useSessionPlayerRunner() {
     // パラメータを解析
     const params = useParams<{ sessionId: string, index: string }>()
     const resParsed = parseSessionParams(params)
@@ -24,7 +24,7 @@ export function useSessionPlayerViewModel() {
     const lastEvent = useGameStore(s => s.events.at(-1))
 
     // vm
-    const ids = useProblemStore(s => s.ids)
+    const ids = useSessionStore(s => s.problemIds)
     const byId = useProblemStore(s => s.byId)
     const missions = useMissionStore(s=>s.missions)
     const missionId = useSessionStore(s=>s.missionId)
@@ -32,7 +32,7 @@ export function useSessionPlayerViewModel() {
         ...resParsed,
         ids, byId, missions, missionId
     }
-    const vm = buildSessionPlayerViewModel(input)
+    const vm = buildSessionPlayerVieModel(input)
 
     // game event 処理
     const onGameEvent = vm.type === "ready" ? vm.onGameEvent : undefined
