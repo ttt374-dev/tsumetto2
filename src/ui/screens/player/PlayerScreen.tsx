@@ -52,7 +52,7 @@ export default function PlayerScreen({ problem, title, onPlayerIntent, }: {
             <Stack sx={{ minHeight: 0, height: "100%" }} spacing={1} >
                 <TitlePanel title={title} />
                 { /* --- 盤面 ---*/}
-                <BoardPanel />
+                <BoardPanel reversed={vm.reversed}/>
                 <ControlSection problem={problem} vm={vm} />
 
             </Stack>

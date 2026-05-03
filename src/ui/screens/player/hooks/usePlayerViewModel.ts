@@ -98,6 +98,7 @@ export function usePlayerViewModel(
     }
     return { handleUIEvent, ...actions, 
         ...issueSessionCommand, ...issueUiEvent,
+        reversed,
         dialogs }
 
 }
