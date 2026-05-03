@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem";
 import { useToast } from "@/ui/App/providers/ToastProvider";
@@ -10,11 +11,10 @@ import { useGameInitializer } from "@/ui/screens/player/hooks/useGameInitializer
 import { usePromotionDialog } from "@/ui/screens/player/hooks/usePromotionDialog";
 import { useCurrentPosition, useGameStore } from "@/ui/screens/player/store/useGameStore";
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
-import { useNavigate } from "react-router-dom";
 import { routes } from "@/ui/App/useAppNavigation";
 import type { PlayerIntent } from "@/ui/screens/session/adaptor/buildPlayerIntentAdaptor";
-import { buildPlayerViewModel, type PlayerInput, type PlayerViewModel } from "@/ui/screens/player/vm/buildPlayerViewModel";
-import type { SolvedResult } from "@/domain/review/solvedResult";
+import { buildPlayerViewModel, decideGameEffect, decidePlayerIntent, type GameEffect, type PlayerInput, type PlayerViewModel } from "@/ui/screens/player/vm/buildPlayerViewModel";
+import { runGameEffects } from "@/ui/screens/player/runner/runGameEffects";
 
 export type MovesAction = {
     advancePly: () => void,
@@ -46,10 +46,6 @@ export type PlayerRunnerModel = {
         dialogs: DialogControllers
     }
 }
-type GameEffect =
-    | { type: "OPEN_DIALOG", dialog: "solvedResult", solvedResult: SolvedResult }
-    | { type: "CLOSE_DIALOG", dialog: "solvedResult" }
-    | { type: "TOAST", message: string }
 
 /////////////////////////////////////////
 export function usePlayerRunner(problem: Problem,
@@ -121,47 +117,4 @@ export function usePlayerRunner(problem: Problem,
 
     }
 }
-////
-function decidePlayerIntent(e: GameUIEvent): PlayerIntent | undefined {
-    switch (e.type) {
-        case "solved":
-            return { type: "PROBLEM_SOLVED" }
-        case "solvedConfirmed":
-            return { type: "NEXT_REQUESTED" }
-    }
-}
-function decideGameEffect(e: GameUIEvent): GameEffect | undefined {
-    switch (e.type) {
-        case "solved":
-            return { type: "OPEN_DIALOG", dialog: "solvedResult", solvedResult: e.solvedResult }
-        case "solvedConfirmed":
-            return { type: "CLOSE_DIALOG", dialog: "solvedResult" }
-        case "mistake":
-            return { type: "TOAST", message: `mistakes: ${e.count}` }
-    }
-}
-function runGameEffects(effects: GameEffect[], deps: {
-    dialogs: DialogControllers,
-    toast: ReturnType<typeof useToast>,
-    problemId: string
-}) {
-    for (const effect of effects) {
-        switch (effect.type) {
-            case "OPEN_DIALOG":
-                if (effect.dialog === "solvedResult") {
-                    deps.dialogs.solvedResult.openDialog(deps.problemId, effect.solvedResult)
-                }
-                break
 
-            case "CLOSE_DIALOG":
-                if (effect.dialog === "solvedResult") {
-                    deps.dialogs.solvedResult.closeDialog()
-                }
-                break
-
-            case "TOAST":
-                deps.toast({ message: effect.message })
-                break
-        }
-    }
-}

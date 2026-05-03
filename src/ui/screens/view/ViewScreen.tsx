@@ -12,7 +12,7 @@ import MovesPanel from "@/ui/screens/player/components/panels/moves/MovesPanel";
 import { useNavigate, useParams } from "react-router-dom";
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
 import { routes } from "@/ui/App/useAppNavigation";
-import { usePlayerRunner } from "@/ui/screens/player/hooks/usePlayerRunner";
+import { usePlayerRunner } from "@/ui/screens/player/runner/usePlayerRunner";
 
 export default function ViewScreen(){
     const { id } = useParams<{ id: string }>()    
