@@ -6,17 +6,13 @@ import { useSessionStore } from "@/ui/screens/session/hooks/useSessionStore";
 import { useMissionStore } from "@/ui/screens/mission/hooks/useMissionStore";
 import { buildSessionPlayerVieModel, type SessionPlayerInput } from "@/ui/screens/session/vm/buildSessionPlayerViewModel";
 import { parseSessionParams } from "@/ui/screens/session/adaptor/parseSessionParams";
-import type { PlayerIntent } from "@/ui/screens/player/hooks/usePlayerViewModel";
-import { usePlannerStore } from "@/ui/screens/session/hooks/usePlannerStore";
 import { buildPlayerIntentAdapter } from "@/ui/screens/session/adaptor/buildPlayerIntentAdaptor";
-import type { SessionCommandContext } from "@/ui/screens/session/vm/resolveSessionCommand";
 
 /////////////////////////////////////////
 export function useSessionPlayerRunner() {
     // パラメータを解析
     const params = useParams<{ sessionId: string, index: string }>()
     const resParsed = parseSessionParams(params)
-
     
     // フックをまず取得
     const sessionId = resParsed.type === "valid" ? resParsed.sessionId : ""

@@ -12,7 +12,7 @@ export type GameUIEvent =
     | { type: "mistake", count: number }
     | { type: "solvedConfirmed"}
 
-export function useGameEventHandler(onUIEvent: (event: GameUIEvent) => void, enabled: boolean ){
+export function useGameEventHandler(onUIEvent?: (event: GameUIEvent) => void, enabled: boolean = true ){
     const events = useGameStore(s=>s.events)    
     const gameState = useGameStore(s=>s.state)
     const replay = useReplayStore()
@@ -42,6 +42,9 @@ export function useGameEventHandler(onUIEvent: (event: GameUIEvent) => void, ena
                 break;
             case "ADVANCE_PLY":
                 replay.advancePly()
+                break;
+            case "RETREAT_PLY":
+                replay.retreatPly()
                 break;
             case "ADVANCE_OPPONENT_PLY":
                 replayCtrl.advanceOpponentPly()

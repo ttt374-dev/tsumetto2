@@ -3,7 +3,7 @@ import { Box, Stack } from "@mui/material";
 import styles from "./BoardView.module.css";
 import HandView from "./HandView";
 import BoardView from "./BoardView";
-import type { BoardViewModel } from "@/ui/screens/player/hooks/usePlayerViewModel";
+import type { BoardViewModel } from "@/ui/screens/player/vm/buildPlayerViewModel";
 
 export default function BoardPanel( {vm}: { vm: BoardViewModel }) {    
     if (vm.status === "error") return <>Error: invalid Position</>

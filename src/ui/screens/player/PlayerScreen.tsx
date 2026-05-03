@@ -11,14 +11,14 @@ import PlyControlPanel from "@/ui/screens/player/components/panels/PlyControlPan
 import { Problem } from "@/domain/problem/entity/Problem"
 import { AppShell } from "@/ui/common/components/layout/AppShell";
 import { useGameStore } from "./store/useGameStore";
-import { useReplayStore } from "@/ui/screens/player/store/useReplayStore";
 import PromotionDialog from "@/ui/screens/player/dialogs/PromotionDialog";
 import { SolvedDialog } from "@/ui/screens/player/dialogs/SolvedDialog";
-import { useLearningRecordStore } from "@/ui/features/learning/hooks/useLearningRecordStore";
-import { usePlayerViewModel, type MovesViewModel, type PlayerIntent } from "@/ui/screens/player/hooks/usePlayerViewModel";
 import { PlayerFooterPanel } from "@/ui/screens/player/components/panels/PlayerFooterPanel";
+import { usePlayerRunner, type MovesAction, type NavigationAction, type PlayerRunnerModel } from "@/ui/screens/player/hooks/usePlayerRunner";
+import type { MovesViewModel } from "@/ui/screens/player/vm/buildPlayerViewModel";
+import type { PlayerIntent } from "@/ui/screens/session/adaptor/buildPlayerIntentAdaptor";
 
-type PlayerViewModel = ReturnType<typeof usePlayerViewModel>
+//type PlayerViewModel = ReturnType<typeof usePlayerViewModel>
 
 ///////////////////////////////////////////
 export default function PlayerScreen({ problem, title, onPlayerIntent, }: {
@@ -28,48 +28,47 @@ export default function PlayerScreen({ problem, title, onPlayerIntent, }: {
 }) {
 
     // view model
-    const vm = usePlayerViewModel(problem,
+    const model = usePlayerRunner(problem,
         { onPlayerIntent: (e) => onPlayerIntent?.(e) })
-
 
     // 消された場合
     if (problem.deletedAt) {
-        return <AppShell footer={<FooterSection vm={vm}/>}>Deleted: {problem.title}</AppShell>
+        return <AppShell footer={<FooterSection actions={model.actions.navigation}/>}>Deleted: {problem.title}</AppShell>
     }
 
     ////////////////////////////////////////////////////////////////////////
     return (
         <AppShell
             header={"Player"}
-            footer={<FooterSection vm={vm}/>}
+            footer={<FooterSection actions={model.actions.navigation}/>}
             rightActions={
                 <PlayerRightPanel
                     problemId={problem.id}
-                    onNavigateToDetail={vm.navigateToDetail}
-                    onDelete={vm.deleteProblem}
+                    onNavigateToDetail={model.actions.navigation.navigateToDetail}
+                    onDelete={model.actions.domain.deleteProblem}
                 />}
         >
             <Stack sx={{ minHeight: 0, height: "100%" }} spacing={1} >
                 <TitlePanel title={title} />
                 { /* --- 盤面 ---*/}
-                <BoardPanel vm={vm.board}/>
-                <MovesControlSection vm={vm.moves} />
+                <BoardPanel vm={model.state.board}/>
+                <MovesControlSection 
+                    problem={problem} vm={model.state.moves} actions={model.actions.moves}/>
 
             </Stack>
 
-            <DialogSecion vm={vm} />
+            <DialogSection model={model} />
 
         </AppShell>
     )
 }
-function MovesControlSection({ vm }: { vm: MovesViewModel }) {
-    //const isRevealed = useGameStore(s => s.state.isRevealed)
-    const replay = useReplayStore()
+function MovesControlSection({ problem, vm, actions }: { 
+    problem: Problem, vm: MovesViewModel, actions: MovesAction }) {
 
     return (
         <Stack direction="row" sx={{ minHeight: 0, flexGrow: 1, p: 1 }} spacing={1}>
             <MovesPanel
-                problem={vm.problem}
+                problem={problem}
                 ply={vm.ply}
                 moves={vm.moves} isMovesVisible={vm.visible} />
             <Box sx={{ flex: 1, border: 1, borderColor: "divider" }}>
@@ -81,12 +80,12 @@ function MovesControlSection({ vm }: { vm: MovesViewModel }) {
 
                 {vm.visible ?
                     <PlyControlPanel
-                        currentPly={replay.ply}
-                        maxPly={vm.problem.kifData.moves.length}
-                        onPrev={replay.retreatPly}
-                        onNext={replay.advancePly}
+                        currentPly={vm.ply}
+                        maxPly={vm.maxPly}
+                        onPrev={actions.retreatPly}
+                        onNext={actions.advancePly}
                     /> : (<Stack>
-                        <Button onClick={vm.dispatchReveal} variant="outlined">
+                        <Button onClick={actions.reveal} variant="outlined">
                             手筋を表示
                         </Button>
                     </Stack>)
@@ -97,36 +96,34 @@ function MovesControlSection({ vm }: { vm: MovesViewModel }) {
     )
 
 }
-function FooterSection({vm}: {vm: PlayerViewModel}){
+/////////////////////////////////////////////
+function FooterSection({actions}: {actions: NavigationAction}){
     return (      
         <PlayerFooterPanel
-            onNext={vm.nextProblem}
-            onShowList={vm.showList}
+            onNext={actions.nextProblem}
+            onShowList={actions.showList}
         />
     )
 }
-function DialogSecion({ vm }: { vm: PlayerViewModel }) {
-    // store    
-    const records = useLearningRecordStore(s => s.stateRecords)
-    const learningState = records[vm.problem.id]
-
+function DialogSection({ model }: { model: PlayerRunnerModel }) {
+    const confirmSolved = () => model.handlers.handleUIEvent({type: "solvedConfirmed"})
+    
     return (
         <>
-            {vm.dialogs.promotion.open &&
+            {model.effects.dialogs.promotion.open &&
                 <PromotionDialog
-                    open={vm.dialogs.promotion.open}
-                    onConfirm={vm.dialogs.promotion.onConfirm}
-                    pieceType={vm.dialogs.promotion.pieceType}
+                    open={model.effects.dialogs.promotion.open}
+                    onConfirm={model.effects.dialogs.promotion.onConfirm}
+                    pieceType={model.effects.dialogs.promotion.pieceType}
                 />}
 
-            {vm.dialogs.solvedResult.open &&
+            {model.effects.dialogs.solvedResult.open &&
                 <SolvedDialog
-                    open={vm.dialogs.solvedResult.open}
-                    onClose={vm.dialogs.solvedResult.closeDialog}
-                    onConfirm={vm.confirmSolved}
-                    solvedResult={vm.dialogs.solvedResult.solvedResult}
-                    learningState={learningState}
-
+                    open={model.effects.dialogs.solvedResult.open}
+                    onClose={model.effects.dialogs.solvedResult.closeDialog}
+                    onConfirm={confirmSolved}
+                    solvedResult={model.effects.dialogs.solvedResult.solvedResult}
+                    learningState={model.state.dialogs.learningState}
                 />}
         </>)
 }

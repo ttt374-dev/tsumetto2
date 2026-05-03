@@ -4,17 +4,15 @@ import BoardPanel from "@/ui/screens/player/components/panels/board/BoardPanel"
 import PlyControlPanel from "@/ui/screens/player/components/panels/PlyControlPanel";
 
 import { Problem } from "@/domain/problem/entity/Problem"
-import { AppShell } from "../../common/components/layout/AppShell";
+import { AppShell } from "@/ui/common/components/layout/AppShell";
 import { useReplayStore } from "@/ui/screens/player/store/useReplayStore";
 import PromotionDialog from "@/ui/screens/player/dialogs/PromotionDialog";
-import { useGameEventHandler } from "@/ui/screens/player/hooks/useGameEventHandler";
-import { usePlayerViewModel } from "@/ui/screens/player/hooks/usePlayerViewModel";
 import TitlePanel from "@/ui/screens/player/components/panels/TitlePanel";
 import MovesPanel from "@/ui/screens/player/components/panels/moves/MovesPanel";
 import { useNavigate, useParams } from "react-router-dom";
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
 import { routes } from "@/ui/App/useAppNavigation";
-import { useGameInitializer } from "@/ui/screens/player/hooks/useGameInitializer";
+import { usePlayerRunner } from "@/ui/screens/player/hooks/usePlayerRunner";
 
 export default function ViewScreen(){
     const { id } = useParams<{ id: string }>()    
@@ -26,14 +24,8 @@ export default function ViewScreen(){
     return <ViewContent problem={problem}/>
 }
 function ViewContent({ problem}: { problem: Problem}){
-    const vm = usePlayerViewModel(problem)
+    const model = usePlayerRunner(problem)
     const replay = useReplayStore()
-
-    // 初期化    
-    useGameInitializer(problem)
-
-    // イベント処理
-    useGameEventHandler()
     
     const title = problem.title
     return (
@@ -44,11 +36,12 @@ function ViewContent({ problem}: { problem: Problem}){
                 <Stack sx={{ minHeight: 0, height: "100%" }} spacing={1} > 
                     <TitlePanel title={title} />
                     { /* --- 盤面 ---*/}
-                    <BoardPanel/>
+                    <BoardPanel vm={model.state.board}/>
     
                     <Stack direction="row" sx={{ minHeight: 0, flexGrow: 1, p: 1 }} spacing={1}>
                         <MovesPanel
                             problem={problem}
+                            ply={model.state.moves.ply}
                             moves={problem.kifData.moves} />
     
                         <Box sx={{ flex: 1, border: 1, borderColor: "divider" }}>                            
@@ -63,11 +56,11 @@ function ViewContent({ problem}: { problem: Problem}){
                     </Stack>
                 </Stack>
     
-                {vm.dialogs.promotion.open &&
+                {model.effects.dialogs.promotion.open &&
                     <PromotionDialog
-                        open={vm.dialogs.promotion.open}
-                        onConfirm={vm.dialogs.promotion.onConfirm}
-                        pieceType={vm.dialogs.promotion.pieceType}
+                        open={model.effects.dialogs.promotion.open}
+                        onConfirm={model.effects.dialogs.promotion.onConfirm}
+                        pieceType={model.effects.dialogs.promotion.pieceType}
                     />}
     
                 
