@@ -15,8 +15,8 @@ import PromotionDialog from "@/ui/screens/player/dialogs/PromotionDialog";
 import { SolvedDialog } from "@/ui/screens/player/dialogs/SolvedDialog";
 import { PlayerFooterPanel } from "@/ui/screens/player/components/panels/PlayerFooterPanel";
 import { usePlayerRunner, type MovesAction, type NavigationAction, type PlayerRunnerModel } from "@/ui/screens/player/runner/usePlayerRunner";
-import type { MovesViewModel } from "@/ui/screens/player/vm/buildPlayerViewModel";
 import type { PlayerIntent } from "@/ui/screens/session/adaptor/buildPlayerIntentAdaptor";
+import type { MovesViewModel } from "@/ui/screens/player/vm/PlayerViewModel";
 
 //type PlayerViewModel = ReturnType<typeof usePlayerViewModel>
 

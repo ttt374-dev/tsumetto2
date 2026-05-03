@@ -6,7 +6,7 @@ import { useToast } from "@/ui/App/providers/ToastProvider";
 import { useLearningRecordStore } from "@/ui/features/learning/hooks/useLearningRecordStore";
 import { createPlayerContext } from "@/ui/screens/player/components/types/PlayerContext";
 import { useSolvedDialog } from "@/ui/screens/player/dialogs/SolvedDialog";
-import { useGameEventHandler, type GameUIEvent } from "@/ui/screens/player/hooks/useGameEventHandler";
+import { useGameEventHandler, type GameFeedback } from "@/ui/screens/player/hooks/useGameEventHandler";
 import { useGameInitializer } from "@/ui/screens/player/hooks/useGameInitializer";
 import { usePromotionDialog } from "@/ui/screens/player/hooks/usePromotionDialog";
 import { useCurrentPosition, useGameStore } from "@/ui/screens/player/store/useGameStore";
@@ -41,7 +41,7 @@ export type PlayerRunnerModel = {
         }
     }
     handlers: {
-        handleUIEvent: (e: GameUIEvent) => void
+        handleUIEvent: (e: GameFeedback) => void
     }
     ui: {
         dialogs: DialogControllers
@@ -76,7 +76,7 @@ export function usePlayerRunner(problem: Problem,
     // initialize
     const isIntialized = useGameInitializer(problem)
     // handlers    
-    const handleUIEvent = useCallback((uiEvent: GameUIEvent) => {
+    const handleUIEvent = useCallback((uiEvent: GameFeedback) => {
         const intent = decidePlayerIntent(uiEvent)
         if (intent) options?.onPlayerIntent?.(intent)
         const gameEffect = decideGameEffect(uiEvent)

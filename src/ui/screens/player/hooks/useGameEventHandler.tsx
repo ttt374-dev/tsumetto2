@@ -7,12 +7,12 @@ import { useTimerStore } from "@/ui/screens/player/store/useTimerStore"
 import { deriveSolvedResultFromEvents } from "@/domain/review/service/solvedResultDeriver"
 import type { SolvedResult } from "@/domain/review/solvedResult"
 
-export type GameUIEvent = 
+export type GameFeedback = 
     | { type: "solved", solvedResult: SolvedResult}
     | { type: "mistake", count: number }
     | { type: "solvedConfirmed"}
 
-export function useGameEventHandler(onUIEvent?: (event: GameUIEvent) => void, enabled: boolean = true ){
+export function useGameEventHandler(onUIEvent?: (f: GameFeedback) => void, enabled: boolean = true ){
     const events = useGameStore(s=>s.events)    
     const gameState = useGameStore(s=>s.state)
     const replay = useReplayStore()

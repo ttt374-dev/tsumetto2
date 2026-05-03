@@ -1,4 +1,4 @@
-import type { SessionCommand } from "@/ui/screens/session/vm/resolveSessionCommand"
+import type { SessionAction } from "@/ui/screens/session/vm/resolveSessionCommand"
 
 export type PlayerIntent = 
     | { type: "NEXT_REQUESTED" }
@@ -6,7 +6,7 @@ export type PlayerIntent =
     | { type: "PROBLEM_SOLVED" }
 
 
-export function buildPlayerIntentAdapter(dispatch: (cmd: SessionCommand) => void) {
+export function buildPlayerIntentAdapter(dispatch: (cmd: SessionAction) => void) {
   const handlePlayerIntent = (intent: PlayerIntent) => {
     switch (intent.type) {
       case "NEXT_REQUESTED":
