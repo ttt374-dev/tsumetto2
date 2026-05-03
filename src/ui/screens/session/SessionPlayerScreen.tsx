@@ -1,7 +1,7 @@
 import { AppShell } from "@/ui/common/components/layout/AppShell"
 import PlayerScreen from "@/ui/screens/player/PlayerScreen"
 
-import { useSessionPlayerRunner } from "@/ui/screens/session/hooks/useSessionPlayerRunner"
+import { useSessionPlayerRunner } from "@/ui/screens/session/runner/useSessionPlayerRunner"
 
 export default function SessionPlayerScreen() {
     const vm = useSessionPlayerRunner()

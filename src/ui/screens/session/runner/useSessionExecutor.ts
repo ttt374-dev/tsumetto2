@@ -6,7 +6,7 @@ import { useReviewEventStore } from "@/ui/features/learning/hooks/useReviewEvent
 import { createPlayerContext } from "@/ui/screens/player/components/types/PlayerContext"
 import { useGameStore } from "@/ui/screens/player/store/useGameStore"
 import { resolveSessionCommand, type SessionCommand, type SessionCommandContext, type SessionCommandEffect } from "@/ui/screens/session/vm/resolveSessionCommand"
-import { useSessionStore } from "@/ui/screens/session/hooks/useSessionStore"
+import { useSessionStore } from "@/ui/screens/session/store/useSessionStore"
 import { useCallback, useMemo } from "react"
 import { useNavigate } from "react-router-dom"
 

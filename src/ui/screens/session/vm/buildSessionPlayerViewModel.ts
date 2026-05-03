@@ -1,26 +1,9 @@
-import type { Problem, ProblemId } from "@/domain/problem/entity/Problem";
-import type { SessionId } from "@/domain/session/entity/Session";
-import type { Mission, MissionId } from "@/domain/mission/entity/Mission";
-import type { ParseSessionParamsResult } from "@/ui/screens/session/adaptor/parseSessionParams";
+import type { SessionPlayerInput, SessionPlayerViewModel } from "@/ui/screens/session/vm/SessionPlayerViewModel";
 
-export type SessionPlayerViewModel =
-    | { type: "error", message: string }
-    | {
-        type: "ready",
-        problem: Problem;
-        sessionId: SessionId;
-        currentIndex: number;
-        title: string
-    }
-    export type SessionPlayerInput = ParseSessionParamsResult & {
-    ids: ProblemId[]
-    byId: Record<ProblemId, Problem>
 
-    missionId: MissionId | undefined
-    missions: Mission[]
-}
 //////////////////////////////////////////////////////
-export function buildSessionPlayerVieModel(input: SessionPlayerInput): SessionPlayerViewModel {
+export function buildSessionPlayerVieModel(input: SessionPlayerInput): 
+    SessionPlayerViewModel {
     if (input.type === "invalid") return { type: "error", message: "invalid params" }
     const { sessionId, index, ids, byId, missionId, missions } = input
 

@@ -9,9 +9,7 @@ type PromotionDialogResult =
     | { open: false }
 
 export function usePromotionDialog(): PromotionDialogResult {
-    //const { pendingPromotion } = useGameStore()        
     const { dispatch, choosePromotion, userSide, pendingPromotion } = useGameStore()    
-    //const userSide = useGameStore(s=>s.userSide)
     const clearSelection = useBoardInputStore(s=>s.clear)
     
     const res = useCurrentPosition()

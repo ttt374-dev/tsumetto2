@@ -6,7 +6,7 @@ import { useToast } from "@/ui/App/providers/ToastProvider";
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
 import { routes } from "@/ui/App/useAppNavigation";
 import { useImportController } from "../../../dialogs/Import/useImportController";
-import { useSessionStore } from "@/ui/screens/session/hooks/useSessionStore";
+import { useSessionStore } from "@/ui/screens/session/store/useSessionStore";
 import { ImportUI } from "@/ui/dialogs/Import/ImportUI";
 import { useBackupRestoreDialog } from "@/ui/dialogs/BackupRestore/useBackupRestore";
 import BackupRestoreDialog from "@/ui/dialogs/BackupRestore/BackupRestoreDialog";

@@ -13,8 +13,9 @@ import { useCurrentPosition, useGameStore } from "@/ui/screens/player/store/useG
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
 import { routes } from "@/ui/App/useAppNavigation";
 import type { PlayerIntent } from "@/ui/screens/session/adaptor/buildPlayerIntentAdaptor";
-import { buildPlayerViewModel, decideGameEffect, decidePlayerIntent, type GameEffect, type PlayerInput, type PlayerViewModel } from "@/ui/screens/player/vm/buildPlayerViewModel";
+import { buildPlayerViewModel, decideGameEffect, decidePlayerIntent } from "@/ui/screens/player/vm/buildPlayerViewModel";
 import { runGameEffects } from "@/ui/screens/player/runner/runGameEffects";
+import type { PlayerInput, PlayerViewModel } from "@/ui/screens/player/vm/PlayerViewModel";
 
 export type MovesAction = {
     advancePly: () => void,

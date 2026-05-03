@@ -4,8 +4,8 @@ import { useReviewEventStore } from "@/ui/features/learning/hooks/useReviewEvent
 import { routes } from "@/ui/App/useAppNavigation";
 import { projectLearningState } from "@/domain/learning/service/projectLearningState";
 import { computeStatsSummary } from "@/domain/learning/service/computeLearningSummary";
-import { createSessionId, useSessionStore } from "@/ui/screens/session/hooks/useSessionStore";
-import { usePlannerStore } from "@/ui/screens/session/hooks/usePlannerStore";
+import { createSessionId, useSessionStore } from "@/ui/screens/session/store/useSessionStore";
+import { usePlannerStore } from "@/ui/screens/session/store/usePlannerStore";
 import type { SessionId } from "@/domain/session/entity/Session";
 
 

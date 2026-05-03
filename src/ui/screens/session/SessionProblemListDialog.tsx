@@ -1,7 +1,7 @@
 import { Button, Dialog, DialogActions, DialogTitle, Stack } from "@mui/material";
 import { DialogContent } from "@mui/material"
 
-import { useSessionStore } from "@/ui/screens/session/hooks/useSessionStore"
+import { useSessionStore } from "@/ui/screens/session/store/useSessionStore"
 import { useNavigate } from "react-router-dom";
 import { routes } from "@/ui/App/useAppNavigation";
 import type { ProblemId } from "@/domain/problem/entity/Problem";

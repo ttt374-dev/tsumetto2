@@ -9,7 +9,7 @@ import { applyQuery } from "@/domain/problem/service/query/applyQuery"
 import { useMultipleProblemsEditDialog } from "@/ui/dialogs/MultipleProblemsEditorDialog"
 import { useProblemsQueryStore } from "@/ui/features/problem/hooks/useProblemsQueryStore"
 import { useLibrarySelection } from "@/ui/screens/library/hooks/useLibrarySelection"
-import { createSessionId, useSessionStore } from "@/ui/screens/session/hooks/useSessionStore"
+import { createSessionId, useSessionStore } from "@/ui/screens/session/store/useSessionStore"
 
 /////////////////////////////////////////////////
 export function useLibraryViewModel() {

@@ -1,12 +1,13 @@
 import { useParams } from "react-router-dom";
 
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
-import { useSessionExecutor } from "@/ui/screens/session/hooks/useSessionExecutor";
-import { useSessionStore } from "@/ui/screens/session/hooks/useSessionStore";
+import { useSessionExecutor } from "@/ui/screens/session/runner/useSessionExecutor";
+import { useSessionStore } from "@/ui/screens/session/store/useSessionStore";
 import { useMissionStore } from "@/ui/screens/mission/hooks/useMissionStore";
-import { buildSessionPlayerVieModel, type SessionPlayerInput } from "@/ui/screens/session/vm/buildSessionPlayerViewModel";
+import { buildSessionPlayerVieModel } from "@/ui/screens/session/vm/buildSessionPlayerViewModel";
 import { parseSessionParams } from "@/ui/screens/session/adaptor/parseSessionParams";
 import { buildPlayerIntentAdapter } from "@/ui/screens/session/adaptor/buildPlayerIntentAdaptor";
+import type { SessionPlayerInput } from "@/ui/screens/session/vm/SessionPlayerViewModel";
 
 /////////////////////////////////////////
 export function useSessionPlayerRunner() {

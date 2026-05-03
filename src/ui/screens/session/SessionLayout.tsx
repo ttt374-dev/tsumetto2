@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 
 import { routes } from "@/ui/App/useAppNavigation";
-import { useSessionStore } from "./hooks/useSessionStore";
+import { useSessionStore } from "./store/useSessionStore";
 
 export default function SessionLayout() {
     /*

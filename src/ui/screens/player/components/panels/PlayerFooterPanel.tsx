@@ -1,6 +1,6 @@
 import type { SolvedResult } from "@/domain/review/solvedResult"
 import { Button, Stack, type ButtonProps } from "@mui/material"
-import { useSessionStore } from "@/ui/screens/session/hooks/useSessionStore"
+import { useSessionStore } from "@/ui/screens/session/store/useSessionStore"
 
 type AnswerAction = {
     label: string

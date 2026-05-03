@@ -5,8 +5,8 @@ import { applyQuery } from "@/domain/problem/service/query/applyQuery";
 import { selectActiveProblems, useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
 import { useLearningRecordStore } from "@/ui/features/learning/hooks/useLearningRecordStore";
 import type { Mission } from "@/domain/mission/entity/Mission";
-import { createSessionId, useSessionStore } from "@/ui/screens/session/hooks/useSessionStore";
-import { usePlannerStore } from "@/ui/screens/session/hooks/usePlannerStore";
+import { createSessionId, useSessionStore } from "@/ui/screens/session/store/useSessionStore";
+import { usePlannerStore } from "@/ui/screens/session/store/usePlannerStore";
 import { v4 } from "uuid";
 
 
