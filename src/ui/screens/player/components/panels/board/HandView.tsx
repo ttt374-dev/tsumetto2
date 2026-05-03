@@ -20,12 +20,14 @@ function HandPieceView({ pieceType, selected, count, onClick }: {
 }
 
 /////////////////////////////
-export default function HandView({ hand, owner }: { hand: Hand, owner: Player }) {
+export default function HandView({ hand, owner, sideToMove }: {
+    hand: Hand, owner: Player, sideToMove: Player
+}) {
     const clickHandPiece = useBoardInputStore(s => s.clickHandPiece)
     const selection = useBoardInputStore(s=>s.selection)   
-    const res = useCurrentPosition()
-    if (!res.ok) return <>Error</>
-    const sideToMove = res.value.sideToMove
+    //const res = useCurrentPosition()
+    //if (!res.ok) return <>Error</>
+    //const sideToMove = res.value.sideToMove
     
     const handleHandpieceClick = (pieceType: PieceType) => {
         clickHandPiece(pieceType, sideToMove)

@@ -26,7 +26,6 @@ export default function BoardView({ position, reversed = false }: {
     const ranks = [...Array(9)].map((_, i) => reversed ? 9 - i : i + 1)
     const files = [...Array(9)].map((_, i) => reversed ? i + 1 : 9 - i)
 
-
     const handleSquareClick = (file: number, rank: number) => {
         const intent = clickSquare(new Square(file, rank))
         if (!intent) return

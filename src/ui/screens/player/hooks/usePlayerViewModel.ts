@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
 import { createPlayerContext } from "@/ui/screens/player/components/types/PlayerContext";
 import { useToast } from "@/ui/App/providers/ToastProvider";
-import { useGameStore, type GameEvent } from "@/ui/screens/player/store/useGameStore";
+import { useCurrentPosition, useGameStore, type GameEvent } from "@/ui/screens/player/store/useGameStore";
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem";
 import { routes } from "@/ui/App/useAppNavigation";
 import { useCallback } from "react";
@@ -12,6 +12,13 @@ import { usePromotionDialog } from "@/ui/screens/player/hooks/usePromotionDialog
 import { useGameInitializer } from "@/ui/screens/player/hooks/useGameInitializer";
 import type { SessionCommand } from "@/ui/screens/session/vm/resolveSessionCommand";
 import type { Position } from "@/domain/kif/entity";
+
+export type BoardViewModel = 
+    | { status: "ok";
+        reversed: boolean
+        position: Position }
+    | { status: "error", message?: string}
+
 
 export type PlayerIntent = 
     | { type: "NEXT_REQUESTED" }
@@ -36,7 +43,10 @@ export function usePlayerViewModel(
     // derived states
     // board
     const reversed = useGameStore(s=>s.displayReversed)
-    
+    const resPosition = useCurrentPosition()
+    const board: BoardViewModel = 
+        resPosition.ok === false ? { status: "error", message: `invalid position: ${resPosition.ply}` } :
+            { status: "ok", reversed, position: resPosition.value}
 
     // dialogs
     const dialogs = {
@@ -98,13 +108,8 @@ export function usePlayerViewModel(
     }
     return { handleUIEvent, ...actions, 
         ...issueSessionCommand, ...issueUiEvent,
-        reversed,
+        board,
         dialogs }
 
 }
 ///////////////////
-type BoardViewModel = 
-    | { status: "ok";
-        reversed: boolean
-        position: Position }
-    | { status: "error"}
