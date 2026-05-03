@@ -35,13 +35,14 @@ export function useSessionPlayerRunner() {
     const vm = buildSessionPlayerVieModel(input)
 
     // game event 処理
+    /*
     const onGameEvent = vm.type === "ready" ? vm.onGameEvent : undefined
     useEffect(() => {
         if (!lastEvent || !onGameEvent) return
         const cmd = onGameEvent(lastEvent)
         if (cmd) dispatch(cmd)
     }, [lastEvent, onGameEvent, dispatch])
-
+        */
     // エラーなら返す
     if (vm.type === "error") return vm
 
@@ -49,10 +50,11 @@ export function useSessionPlayerRunner() {
         ...vm,
         goNext: () => dispatch(vm.goNext),
         goList: () => dispatch(vm.goList),
-        handleUIEvent: (e: GameUIEvent) => {
+        /*handleUIEvent: (e: GameUIEvent) => {
             const cmd = vm.handleUIEvent(e)
             cmd && dispatch(cmd)
-        }
+        },*/
+        send: dispatch
     }
 }
 

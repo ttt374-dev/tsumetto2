@@ -10,10 +10,11 @@ import { useGameEventHandler, type GameUIEvent } from "@/ui/screens/player/hooks
 import { useSolvedDialog } from "@/ui/screens/player/dialogs/SolvedDialog";
 import { usePromotionDialog } from "@/ui/screens/player/hooks/usePromotionDialog";
 import { useGameInitializer } from "@/ui/screens/player/hooks/useGameInitializer";
+import type { SessionCommand } from "@/ui/screens/session/vm/resolveSessionCommand";
 
 export function usePlayerViewModel(
     problem: Problem,  
-    options?: { onUIEvent?: (e: GameUIEvent) => void }
+    options?: { onSessionCommand?: (e: SessionCommand) => void }
 ) {
     const toast = useToast()
     const navigate = useNavigate()
@@ -34,17 +35,19 @@ export function usePlayerViewModel(
         switch (uiEvent.type) {
             case "solved":
                 dialogs.solvedResult.openDialog(problem.id, uiEvent.solvedResult)
+                options?.onSessionCommand?.({ type: "SUBMIT_REVIEW" })
                 break
             case "mistake":
                 toast({ message: `mistake: ${uiEvent.count}` })
                 break
             case "solvedConfirmed":
                 dialogs.solvedResult.closeDialog()
+                options?.onSessionCommand?.({ type: "GO_NEXT" })
                 break
 
         }
         // ⭐ 外にも流す
-        options?.onUIEvent?.(uiEvent)
+        //options?.on/\Event?.(uiEvent)
     }, [problem.id, toast, dialogs.solvedResult])    
     useGameEventHandler(handleUIEvent, isIntialized)
 

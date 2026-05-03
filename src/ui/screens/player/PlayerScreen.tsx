@@ -19,13 +19,14 @@ import { useGameEventHandler, type GameUIEvent } from "@/ui/screens/player/hooks
 import { useLearningRecordStore } from "@/ui/features/learning/hooks/useLearningRecordStore";
 import { usePlayerViewModel } from "@/ui/screens/player/hooks/usePlayerViewModel";
 import { useGameInitializer } from "@/ui/screens/player/hooks/useGameInitializer";
+import type { SessionCommand } from "@/ui/screens/session/vm/resolveSessionCommand";
 
 
 ///////////////////////////////////////////
-export default function PlayerScreen({ problem, title, onUIEvent, footerPanel }: {
+export default function PlayerScreen({ problem, title, onSessionCommand, footerPanel }: {
     problem: Problem
     title: React.ReactNode
-    onUIEvent?: (uiEvent: GameUIEvent) => void    
+    onSessionCommand?: (cmd: SessionCommand) => void    
     footerPanel?: React.ReactNode
 }) {
     // store
@@ -36,7 +37,7 @@ export default function PlayerScreen({ problem, title, onUIEvent, footerPanel }:
     const learningState = records[problem.id]
 
     // view model
-    const vm = usePlayerViewModel(problem, { onUIEvent: (e) => onUIEvent?.(e)})
+    const vm = usePlayerViewModel(problem, { onSessionCommand: (e) => onSessionCommand?.(e)})
 
     ////////////////
     // UI Event    
