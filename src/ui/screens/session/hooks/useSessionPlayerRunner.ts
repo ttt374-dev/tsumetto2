@@ -1,14 +1,15 @@
-import { useEffect, } from "react";
 import { useParams } from "react-router-dom";
 
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
-import type { GameUIEvent } from "@/ui/screens/player/hooks/useGameEventHandler";
-import { useGameStore, type GameEvent } from "@/ui/screens/player/store/useGameStore";
 import { useSessionExecutor } from "@/ui/screens/session/hooks/useSessionExecutor";
 import { useSessionStore } from "@/ui/screens/session/hooks/useSessionStore";
 import { useMissionStore } from "@/ui/screens/mission/hooks/useMissionStore";
 import { buildSessionPlayerVieModel, type SessionPlayerInput } from "@/ui/screens/session/vm/buildSessionPlayerViewModel";
-import { parseSessionParams } from "@/ui/screens/session/vm/parseSessionParams";
+import { parseSessionParams } from "@/ui/screens/session/adaptor/parseSessionParams";
+import type { PlayerIntent } from "@/ui/screens/player/hooks/usePlayerViewModel";
+import { usePlannerStore } from "@/ui/screens/session/hooks/usePlannerStore";
+import { buildPlayerIntentAdapter } from "@/ui/screens/session/adaptor/buildPlayerIntentAdaptor";
+import type { SessionCommandContext } from "@/ui/screens/session/vm/resolveSessionCommand";
 
 /////////////////////////////////////////
 export function useSessionPlayerRunner() {
@@ -16,12 +17,12 @@ export function useSessionPlayerRunner() {
     const params = useParams<{ sessionId: string, index: string }>()
     const resParsed = parseSessionParams(params)
 
+    
     // フックをまず取得
     const sessionId = resParsed.type === "valid" ? resParsed.sessionId : ""
     const index = resParsed.type === "valid" ? resParsed.index : -1
     
     const dispatch = useSessionExecutor(sessionId, index)
-    const lastEvent = useGameStore(s => s.events.at(-1))
 
     // vm
     const ids = useSessionStore(s => s.problemIds)
@@ -34,27 +35,14 @@ export function useSessionPlayerRunner() {
     }
     const vm = buildSessionPlayerVieModel(input)
 
-    // game event 処理
-    /*
-    const onGameEvent = vm.type === "ready" ? vm.onGameEvent : undefined
-    useEffect(() => {
-        if (!lastEvent || !onGameEvent) return
-        const cmd = onGameEvent(lastEvent)
-        if (cmd) dispatch(cmd)
-    }, [lastEvent, onGameEvent, dispatch])
-        */
+    // intent
+    const handlePlayerIntent = buildPlayerIntentAdapter(dispatch)
+    
     // エラーなら返す
     if (vm.type === "error") return vm
 
     return {
-        ...vm,
-        goNext: () => dispatch(vm.goNext),
-        goList: () => dispatch(vm.goList),
-        /*handleUIEvent: (e: GameUIEvent) => {
-            const cmd = vm.handleUIEvent(e)
-            cmd && dispatch(cmd)
-        },*/
-        send: dispatch
+        ...vm, handlePlayerIntent,    
     }
 }
 

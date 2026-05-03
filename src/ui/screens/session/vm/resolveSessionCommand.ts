@@ -97,8 +97,7 @@ function hasSubmitted(sessionId: SessionId, pid: ProblemId, reviewedEvents: Revi
             && e.sessionId === sessionId
     )
 }
-function shouldFlush(gameState: GameState): boolean {
-    
+function shouldFlush(gameState: GameState): boolean {    
     return(!gameState.isSolved &&
         (gameState.isRevealed || gameState.mistakes > 0))
 }

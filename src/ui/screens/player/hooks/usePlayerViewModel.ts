@@ -11,10 +11,19 @@ import { useSolvedDialog } from "@/ui/screens/player/dialogs/SolvedDialog";
 import { usePromotionDialog } from "@/ui/screens/player/hooks/usePromotionDialog";
 import { useGameInitializer } from "@/ui/screens/player/hooks/useGameInitializer";
 import type { SessionCommand } from "@/ui/screens/session/vm/resolveSessionCommand";
+import type { Position } from "@/domain/kif/entity";
+
+export type PlayerIntent = 
+    | { type: "NEXT_REQUESTED" }
+    | { type: "LIST_REQUESTED" }
+    | { type: "PROBLEM_SOLVED" }
+
 
 export function usePlayerViewModel(
     problem: Problem,  
-    options?: { onSessionCommand?: (e: SessionCommand) => void }
+    options?: { 
+        onPlayerIntent?: (e: PlayerIntent) => void,
+        onSessionCommand?: (e: SessionCommand) => void }
 ) {
     const toast = useToast()
     const navigate = useNavigate()
@@ -23,6 +32,11 @@ export function usePlayerViewModel(
 
     // initialize
     const isIntialized = useGameInitializer(problem)   
+
+    // derived states
+    // board
+    const reversed = useGameStore(s=>s.displayReversed)
+    
 
     // dialogs
     const dialogs = {
@@ -35,16 +49,18 @@ export function usePlayerViewModel(
         switch (uiEvent.type) {
             case "solved":
                 dialogs.solvedResult.openDialog(problem.id, uiEvent.solvedResult)
-                options?.onSessionCommand?.({ type: "SUBMIT_REVIEW" })
+                options?.onPlayerIntent?.({ type: "PROBLEM_SOLVED"})
+                //options?.onSessionCommand?.({ type: "SUBMIT_REVIEW" })
+                break
+            case "solvedConfirmed":
+                dialogs.solvedResult.closeDialog()
+                //options?.onSessionCommand?.({ type: "GO_NEXT" })
+                options?.onPlayerIntent?.({type: "NEXT_REQUESTED"})
                 break
             case "mistake":
                 toast({ message: `mistake: ${uiEvent.count}` })
                 break
-            case "solvedConfirmed":
-                dialogs.solvedResult.closeDialog()
-                options?.onSessionCommand?.({ type: "GO_NEXT" })
-                break
-
+            
         }
         // ⭐ 外にも流す
         //options?.on/\Event?.(uiEvent)
@@ -64,8 +80,30 @@ export function usePlayerViewModel(
         navigateToDetail: (pid: ProblemId) => {
             navigate(routes.detail(pid))
         },
-
     }
-    return { handleUIEvent, actions, dialogs }
+    const issueSessionCommand = {
+        nextProblem: () => {
+            options?.onPlayerIntent?.({type: "NEXT_REQUESTED"})
+            //options?.onSessionCommand?.({type: "GO_NEXT"})
+        },
+        showList: () => {
+            options?.onPlayerIntent?.({type: "LIST_REQUESTED"})
+            //options?.onSessionCommand?.({type: "GO_LIST"})
+        }
+    }
+    const issueUiEvent = {
+        confirmSolved: () => {
+            handleUIEvent({type: "solvedConfirmed"})
+        }
+    }
+    return { handleUIEvent, ...actions, 
+        ...issueSessionCommand, ...issueUiEvent,
+        dialogs }
 
 }
+///////////////////
+type BoardViewModel = 
+    | { status: "ok";
+        reversed: boolean
+        position: Position }
+    | { status: "error"}
