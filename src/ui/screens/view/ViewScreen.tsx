@@ -56,11 +56,11 @@ function ViewContent({ problem}: { problem: Problem}){
                     </Stack>
                 </Stack>
     
-                {model.effects.dialogs.promotion.open &&
+                {model.ui.dialogs.promotion.open &&
                     <PromotionDialog
-                        open={model.effects.dialogs.promotion.open}
-                        onConfirm={model.effects.dialogs.promotion.onConfirm}
-                        pieceType={model.effects.dialogs.promotion.pieceType}
+                        open={model.ui.dialogs.promotion.open}
+                        onConfirm={model.ui.dialogs.promotion.onConfirm}
+                        pieceType={model.ui.dialogs.promotion.pieceType}
                     />}
     
                 

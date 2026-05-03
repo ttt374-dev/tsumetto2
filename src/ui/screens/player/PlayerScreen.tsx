@@ -110,19 +110,19 @@ function DialogSection({ model }: { model: PlayerRunnerModel }) {
     
     return (
         <>
-            {model.effects.dialogs.promotion.open &&
+            {model.ui.dialogs.promotion.open &&
                 <PromotionDialog
-                    open={model.effects.dialogs.promotion.open}
-                    onConfirm={model.effects.dialogs.promotion.onConfirm}
-                    pieceType={model.effects.dialogs.promotion.pieceType}
+                    open={model.ui.dialogs.promotion.open}
+                    onConfirm={model.ui.dialogs.promotion.onConfirm}
+                    pieceType={model.ui.dialogs.promotion.pieceType}
                 />}
 
-            {model.effects.dialogs.solvedResult.open &&
+            {model.ui.dialogs.solvedResult.open &&
                 <SolvedDialog
-                    open={model.effects.dialogs.solvedResult.open}
-                    onClose={model.effects.dialogs.solvedResult.closeDialog}
+                    open={model.ui.dialogs.solvedResult.open}
+                    onClose={model.ui.dialogs.solvedResult.closeDialog}
                     onConfirm={confirmSolved}
-                    solvedResult={model.effects.dialogs.solvedResult.solvedResult}
+                    solvedResult={model.ui.dialogs.solvedResult.solvedResult}
                     learningState={model.state.dialogs.learningState}
                 />}
         </>)

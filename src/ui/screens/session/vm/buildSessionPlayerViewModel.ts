@@ -1,8 +1,5 @@
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem";
 import type { SessionId } from "@/domain/session/entity/Session";
-import type { GameUIEvent } from "@/ui/screens/player/hooks/useGameEventHandler";
-import { type GameEvent } from "@/ui/screens/player/store/useGameStore";
-import { type SessionCommand } from "@/ui/screens/session/vm/resolveSessionCommand";
 import type { Mission, MissionId } from "@/domain/mission/entity/Mission";
 import type { ParseSessionParamsResult } from "@/ui/screens/session/adaptor/parseSessionParams";
 
@@ -13,10 +10,6 @@ export type SessionPlayerViewModel =
         problem: Problem;
         sessionId: SessionId;
         currentIndex: number;
-        //goNext: SessionCommand;
-        //goList: SessionCommand;
-        //handleUIEvent: (e: GameUIEvent) => SessionCommand | undefined
-        //onGameEvent: (e: GameEvent) => SessionCommand | undefined
         title: string
     }
     export type SessionPlayerInput = ParseSessionParamsResult & {
@@ -51,34 +44,10 @@ export function buildSessionPlayerVieModel(input: SessionPlayerInput): SessionPl
         missionName: missions.find(d=>d.id===missionId)?.name ?? ""
     }
     const title = buildSessionPlayerTitle(titleProps)
-    /// navigation
-    //const goNext: SessionCommand = { type: "GO_NEXT" } 
-    //const goList: SessionCommand = { type: "GO_LIST" } 
-
-    /*
-    // --- UI events ---
-    const handleUIEvent = (uiEvent: GameUIEvent): SessionCommand | undefined => {
-        switch (uiEvent.type) {
-            case "solvedConfirmed":
-                return { type: "GO_NEXT" }
-            default:
-                return undefined
-        }
-    }
-        */
-    // Game event
-    /*
-    const onGameEvent = (e: GameEvent): SessionCommand | undefined => {
-        if (e.type === "SOLVE") {
-            return { type: "SUBMIT_REVIEW" }
-        }
-        return undefined
-    }*/
 
     return {
         type: "ready",
         problem, sessionId, currentIndex: index, title,
-        //goNext, goList, //onGameEvent,
     }
 
 }

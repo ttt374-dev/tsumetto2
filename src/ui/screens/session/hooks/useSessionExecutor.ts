@@ -45,7 +45,7 @@ export function useSessionExecutor(sessionId: SessionId, currentIndex: number) {
 }
 
 
-export function runEffects(
+function runEffects(
     effects: SessionCommandEffect[],
     deps: {
         navigate: ReturnType<typeof useNavigate>

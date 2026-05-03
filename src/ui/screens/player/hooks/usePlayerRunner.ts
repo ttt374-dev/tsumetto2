@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 import { routes } from "@/ui/App/useAppNavigation";
 import type { PlayerIntent } from "@/ui/screens/session/adaptor/buildPlayerIntentAdaptor";
 import { buildPlayerViewModel, type PlayerInput, type PlayerViewModel } from "@/ui/screens/player/vm/buildPlayerViewModel";
+import type { SolvedResult } from "@/domain/review/solvedResult";
 
 export type MovesAction = {
     advancePly: () => void,
@@ -25,35 +26,41 @@ export type NavigationAction = {
     showList: () => void
     navigateToDetail: (pid: ProblemId) => void
 }
+export type DialogControllers = {
+   solvedResult: ReturnType<typeof useSolvedDialog>
+   promotion: ReturnType<typeof usePromotionDialog>
+}
 export type PlayerRunnerModel = {
     state: PlayerViewModel
     actions: {
-        moves: MovesAction    
+        moves: MovesAction
         navigation: NavigationAction
         domain: {
             deleteProblem: (pid: ProblemId) => void
         }
     }
     handlers: {
-        handleUIEvent: (e: GameUIEvent) => void        
+        handleUIEvent: (e: GameUIEvent) => void
     }
-    effects: {
-        dialogs: {
-            solvedResult: any
-            promotion: any
-        }
+    ui: {
+        dialogs: DialogControllers
     }
 }
+type GameEffect =
+    | { type: "OPEN_DIALOG", dialog: "solvedResult", solvedResult: SolvedResult }
+    | { type: "CLOSE_DIALOG", dialog: "solvedResult" }
+    | { type: "TOAST", message: string }
+
 /////////////////////////////////////////
 export function usePlayerRunner(problem: Problem,
-    options?: { onPlayerIntent?: (e: PlayerIntent) => void}    
+    options?: { onPlayerIntent?: (e: PlayerIntent) => void }
 ): PlayerRunnerModel {
     const resPosition = useCurrentPosition()
-    const reversed = useGameStore(s=>s.displayReversed)
-    const isRevealed = useGameStore(s=>s.state.isRevealed)
+    const reversed = useGameStore(s => s.displayReversed)
+    const isRevealed = useGameStore(s => s.state.isRevealed)
     const dispatch = useGameStore(s => s.dispatch)
     const ctx = createPlayerContext()
-    const records = useLearningRecordStore(s=>s.stateRecords)
+    const records = useLearningRecordStore(s => s.stateRecords)
     const learningState = records[problem.id]
     const deleteProblem = useProblemStore(s => s.deleteProblem)
     const toast = useToast()
@@ -73,21 +80,15 @@ export function usePlayerRunner(problem: Problem,
     const isIntialized = useGameInitializer(problem)
     // handlers    
     const handleUIEvent = useCallback((uiEvent: GameUIEvent) => {
-        switch (uiEvent.type) {
-            case "solved":
-                dialogs.solvedResult.openDialog(problem.id, uiEvent.solvedResult)
-                options?.onPlayerIntent?.({ type: "PROBLEM_SOLVED" })
-                break
-            case "solvedConfirmed":
-                dialogs.solvedResult.closeDialog()
-                options?.onPlayerIntent?.({ type: "NEXT_REQUESTED" })
-                break
-            case "mistake":
-                toast({ message: `mistake: ${uiEvent.count}` })
-                break
-
+        const intent = decidePlayerIntent(uiEvent)
+        if (intent) options?.onPlayerIntent?.(intent)
+        const gameEffect = decideGameEffect(uiEvent)
+        if (gameEffect) {
+            runGameEffects([gameEffect], {
+                dialogs, toast, problemId: problem.id
+            })
         }
-    }, [problem.id, toast, dialogs.solvedResult])
+    }, [problem.id, toast, dialogs.solvedResult, options])
     useGameEventHandler(handleUIEvent, isIntialized)
 
     return {
@@ -112,11 +113,55 @@ export function usePlayerRunner(problem: Problem,
             },
         },
         handlers: {
-            handleUIEvent, 
+            handleUIEvent,
         },
-        effects: {
+        ui: {
             dialogs,
         }
-        
+
+    }
+}
+////
+function decidePlayerIntent(e: GameUIEvent): PlayerIntent | undefined {
+    switch (e.type) {
+        case "solved":
+            return { type: "PROBLEM_SOLVED" }
+        case "solvedConfirmed":
+            return { type: "NEXT_REQUESTED" }
+    }
+}
+function decideGameEffect(e: GameUIEvent): GameEffect | undefined {
+    switch (e.type) {
+        case "solved":
+            return { type: "OPEN_DIALOG", dialog: "solvedResult", solvedResult: e.solvedResult }
+        case "solvedConfirmed":
+            return { type: "CLOSE_DIALOG", dialog: "solvedResult" }
+        case "mistake":
+            return { type: "TOAST", message: `mistakes: ${e.count}` }
+    }
+}
+function runGameEffects(effects: GameEffect[], deps: {
+    dialogs: DialogControllers,
+    toast: ReturnType<typeof useToast>,
+    problemId: string
+}) {
+    for (const effect of effects) {
+        switch (effect.type) {
+            case "OPEN_DIALOG":
+                if (effect.dialog === "solvedResult") {
+                    deps.dialogs.solvedResult.openDialog(deps.problemId, effect.solvedResult)
+                }
+                break
+
+            case "CLOSE_DIALOG":
+                if (effect.dialog === "solvedResult") {
+                    deps.dialogs.solvedResult.closeDialog()
+                }
+                break
+
+            case "TOAST":
+                deps.toast({ message: effect.message })
+                break
+        }
     }
 }

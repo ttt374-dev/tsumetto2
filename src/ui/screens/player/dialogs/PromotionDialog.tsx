@@ -1,11 +1,8 @@
 import { Button, Dialog, DialogActions, DialogTitle } from "@mui/material";
-import type { PieceType, PromotablePieceType } from "@/domain/kif/entity";
-
-//type PromotablePieceType = Exclude<PieceType, "gold" | "king">
+import type { PromotablePieceType } from "@/domain/kif/entity";
 
 export default function PromotionDialog({ open, pieceType, onConfirm}:{
     open: boolean
-    //onClose: () => void
     onConfirm: (promote: boolean) => void
     pieceType: PromotablePieceType
 }){
@@ -18,11 +15,8 @@ export default function PromotionDialog({ open, pieceType, onConfirm}:{
         bishop: ["角", "馬"],
         rook: ["飛", "龍"],
 
-        //gold: ["", "", ], // いらないんだけど
-        //king: ["", "", ],
-
     }
-    //console.log("promotion", pieceType, promotionKanji)
+
     return (
         <Dialog open={open}>
             <DialogTitle>成りますか</DialogTitle>
