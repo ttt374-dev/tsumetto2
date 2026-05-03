@@ -14,7 +14,7 @@ export type GameUIEvent =
     | { type: "solvedConfirmed"}
 
 
-export function useGameEventHandler(onUIEvent?: (event: GameUIEvent) => void){
+export function useGameEventHandler(onUIEvent: (event: GameUIEvent) => void, enabled: boolean ){
     const events = useGameStore(s=>s.events)    
     const gameState = useGameStore(s=>s.state)
     const replay = useReplayStore()
@@ -24,8 +24,11 @@ export function useGameEventHandler(onUIEvent?: (event: GameUIEvent) => void){
     // イベント処理
     useEffect(() => {
         //if (!isInitialized) return   // 初期化前は無視
+        //if (!enabled) return
         const last = events.at(-1)
         if (!last) return
+
+        console.log("event handler", last, events)
 
         switch (last.type) {
             case "SOLVE":        

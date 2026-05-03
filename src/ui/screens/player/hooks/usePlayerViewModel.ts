@@ -9,7 +9,6 @@ import { useCallback } from "react";
 import type { GameUIEvent } from "@/ui/screens/player/hooks/useGameEventHandler";
 import { useSolvedDialog } from "@/ui/screens/player/dialogs/SolvedDialog";
 import { usePromotionDialog } from "@/ui/screens/player/hooks/usePromotionDialog";
-import { useGameInitializer } from "@/ui/screens/player/hooks/useGameInitializer";
 
 
 export function usePlayerViewModel(problem: Problem) {

@@ -46,11 +46,11 @@ export default function PlayerScreen({ problem, title, onUIEvent, footerPanel }:
     }
     const handleConfirmSolved = () => {
         handleUIEvent({type: "solvedConfirmed"})
-    }
-    useGameEventHandler(handleUIEvent)
+    }   
 
     // 初期化    
-    useGameInitializer(problem)   
+    const isIntialized = useGameInitializer(problem)   
+    useGameEventHandler(handleUIEvent, isIntialized)
 
     // 消された場合
     if (problem.deletedAt) {
