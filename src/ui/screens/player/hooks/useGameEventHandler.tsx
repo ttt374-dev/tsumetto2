@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react"
 
-import type { Problem, ProblemId } from "@/domain/problem/entity/Problem"
 import { useReplayController } from "@/ui/screens/player/hooks/useReplayController"
 import { useGameStore } from "@/ui/screens/player/store/useGameStore"
 import { useReplayStore } from "@/ui/screens/player/store/useReplayStore"
@@ -13,7 +12,6 @@ export type GameUIEvent =
     | { type: "mistake", count: number }
     | { type: "solvedConfirmed"}
 
-
 export function useGameEventHandler(onUIEvent: (event: GameUIEvent) => void, enabled: boolean ){
     const events = useGameStore(s=>s.events)    
     const gameState = useGameStore(s=>s.state)
@@ -24,7 +22,7 @@ export function useGameEventHandler(onUIEvent: (event: GameUIEvent) => void, ena
     // イベント処理
     useEffect(() => {
         //if (!isInitialized) return   // 初期化前は無視
-        //if (!enabled) return
+        if (!enabled) return
         const last = events.at(-1)
         if (!last) return
 
@@ -52,7 +50,5 @@ export function useGameEventHandler(onUIEvent: (event: GameUIEvent) => void, ena
                 replayCtrl.advanceTurn()
                 break;
         }
-    }, [events])
-    
-    //return { isInitialized }
+    }, [events])    
 }

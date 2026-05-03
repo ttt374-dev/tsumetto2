@@ -6,16 +6,22 @@ import { useGameStore, type GameEvent } from "@/ui/screens/player/store/useGameS
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem";
 import { routes } from "@/ui/App/useAppNavigation";
 import { useCallback } from "react";
-import type { GameUIEvent } from "@/ui/screens/player/hooks/useGameEventHandler";
+import { useGameEventHandler, type GameUIEvent } from "@/ui/screens/player/hooks/useGameEventHandler";
 import { useSolvedDialog } from "@/ui/screens/player/dialogs/SolvedDialog";
 import { usePromotionDialog } from "@/ui/screens/player/hooks/usePromotionDialog";
+import { useGameInitializer } from "@/ui/screens/player/hooks/useGameInitializer";
 
-
-export function usePlayerViewModel(problem: Problem) {
+export function usePlayerViewModel(
+    problem: Problem,  
+    options?: { onUIEvent?: (e: GameUIEvent) => void }
+) {
     const toast = useToast()
     const navigate = useNavigate()
     const deleteProblem = useProblemStore(s => s.deleteProblem)
     const dispatch = useGameStore(s => s.dispatch)
+
+    // initialize
+    const isIntialized = useGameInitializer(problem)   
 
     // dialogs
     const dialogs = {
@@ -38,8 +44,9 @@ export function usePlayerViewModel(problem: Problem) {
 
         }
         // ⭐ 外にも流す
-        //onUIEvent?.(uiEvent)
-    }, [problem.id, toast, dialogs.solvedResult])
+        options?.onUIEvent?.(uiEvent)
+    }, [problem.id, toast, dialogs.solvedResult])    
+    useGameEventHandler(handleUIEvent, isIntialized)
 
     const actions = {
         deleteProblem: (pid: ProblemId) => {

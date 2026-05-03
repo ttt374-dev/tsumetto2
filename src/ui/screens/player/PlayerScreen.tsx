@@ -36,21 +36,13 @@ export default function PlayerScreen({ problem, title, onUIEvent, footerPanel }:
     const learningState = records[problem.id]
 
     // view model
-    const vm = usePlayerViewModel(problem)
+    const vm = usePlayerViewModel(problem, { onUIEvent: (e) => onUIEvent?.(e)})
 
     ////////////////
-    // UI Event
-    const handleUIEvent = (uiEvent: GameUIEvent) => {
-        vm.handleUIEvent(uiEvent)
-        onUIEvent?.(uiEvent)
-    }
+    // UI Event    
     const handleConfirmSolved = () => {
-        handleUIEvent({type: "solvedConfirmed"})
-    }   
-
-    // 初期化    
-    const isIntialized = useGameInitializer(problem)   
-    useGameEventHandler(handleUIEvent, isIntialized)
+        vm.handleUIEvent({type: "solvedConfirmed"})
+    }
 
     // 消された場合
     if (problem.deletedAt) {
