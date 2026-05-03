@@ -11,7 +11,10 @@ import { useSolvedDialog } from "@/ui/screens/player/dialogs/SolvedDialog";
 import { usePromotionDialog } from "@/ui/screens/player/hooks/usePromotionDialog";
 import { useGameInitializer } from "@/ui/screens/player/hooks/useGameInitializer";
 import type { SessionCommand } from "@/ui/screens/session/vm/resolveSessionCommand";
-import type { Position } from "@/domain/kif/entity";
+import type { Move, Position } from "@/domain/kif/entity";
+import { Replay } from "@mui/icons-material";
+import { useReplayController } from "@/ui/screens/player/hooks/useReplayController";
+import { useReplayStore } from "@/ui/screens/player/store/useReplayStore";
 
 export type BoardViewModel = 
     | { status: "ok";
@@ -19,7 +22,13 @@ export type BoardViewModel =
         position: Position }
     | { status: "error", message?: string}
 
-
+export type MovesViewModel = {
+    problem: Problem
+    ply: number
+    moves: Move[]
+    visible: boolean
+    dispatchReveal: () => void
+}
 export type PlayerIntent = 
     | { type: "NEXT_REQUESTED" }
     | { type: "LIST_REQUESTED" }
@@ -40,14 +49,24 @@ export function usePlayerViewModel(
     // initialize
     const isIntialized = useGameInitializer(problem)   
 
-    // derived states
+    // derived view models
     // board
     const reversed = useGameStore(s=>s.displayReversed)
     const resPosition = useCurrentPosition()
     const board: BoardViewModel = 
         resPosition.ok === false ? { status: "error", message: `invalid position: ${resPosition.ply}` } :
             { status: "ok", reversed, position: resPosition.value}
-
+    
+    // moves
+    const ply = useReplayStore(s=>s.ply)
+    const isRevealed = useGameStore(s=>s.state.isRevealed)
+    const dispatchReveal = () => {
+        const ctx = createPlayerContext()
+        dispatch({ type: "REVEAL", ...ctx })
+    }
+    const moves: MovesViewModel = {
+        problem, ply, moves: problem.kifData.moves, visible: isRevealed, dispatchReveal
+    }
     // dialogs
     const dialogs = {
         solvedResult: useSolvedDialog(),
@@ -82,11 +101,7 @@ export function usePlayerViewModel(
             if (!window.confirm("sure to delete ? ")) return
             deleteProblem(pid)
             toast({ message: `deleted: ${pid}` })
-        },
-        dispatchReveal: () => {
-            const ctx = createPlayerContext()
-            dispatch({ type: "REVEAL", ...ctx })
-        },
+        },        
         navigateToDetail: (pid: ProblemId) => {
             navigate(routes.detail(pid))
         },
@@ -106,9 +121,9 @@ export function usePlayerViewModel(
             handleUIEvent({type: "solvedConfirmed"})
         }
     }
-    return { handleUIEvent, ...actions, 
+    return { handleUIEvent, ...actions, problem,
         ...issueSessionCommand, ...issueUiEvent,
-        board,
+        board, moves,
         dialogs }
 
 }

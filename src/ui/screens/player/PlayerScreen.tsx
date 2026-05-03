@@ -15,7 +15,7 @@ import { useReplayStore } from "@/ui/screens/player/store/useReplayStore";
 import PromotionDialog from "@/ui/screens/player/dialogs/PromotionDialog";
 import { SolvedDialog } from "@/ui/screens/player/dialogs/SolvedDialog";
 import { useLearningRecordStore } from "@/ui/features/learning/hooks/useLearningRecordStore";
-import { usePlayerViewModel, type PlayerIntent } from "@/ui/screens/player/hooks/usePlayerViewModel";
+import { usePlayerViewModel, type MovesViewModel, type PlayerIntent } from "@/ui/screens/player/hooks/usePlayerViewModel";
 import { PlayerFooterPanel } from "@/ui/screens/player/components/panels/PlayerFooterPanel";
 
 type PlayerViewModel = ReturnType<typeof usePlayerViewModel>
@@ -53,24 +53,25 @@ export default function PlayerScreen({ problem, title, onPlayerIntent, }: {
                 <TitlePanel title={title} />
                 { /* --- 盤面 ---*/}
                 <BoardPanel vm={vm.board}/>
-                <ControlSection problem={problem} vm={vm} />
+                <MovesControlSection vm={vm.moves} />
 
             </Stack>
 
-            <DialogSecion problem={problem} vm={vm} />
+            <DialogSecion vm={vm} />
 
         </AppShell>
     )
 }
-function ControlSection({ problem, vm }: { problem: Problem, vm: PlayerViewModel }) {
-    const isRevealed = useGameStore(s => s.state.isRevealed)
+function MovesControlSection({ vm }: { vm: MovesViewModel }) {
+    //const isRevealed = useGameStore(s => s.state.isRevealed)
     const replay = useReplayStore()
 
     return (
         <Stack direction="row" sx={{ minHeight: 0, flexGrow: 1, p: 1 }} spacing={1}>
             <MovesPanel
-                problem={problem}
-                moves={problem.kifData.moves} isMovesVisible={isRevealed} />
+                problem={vm.problem}
+                ply={vm.ply}
+                moves={vm.moves} isMovesVisible={vm.visible} />
             <Box sx={{ flex: 1, border: 1, borderColor: "divider" }}>
                 <Stack direction="row" alignItems="center">
                     <TimerControlPanel />
@@ -78,10 +79,10 @@ function ControlSection({ problem, vm }: { problem: Problem, vm: PlayerViewModel
                     <UserSideControl />
                 </Stack>
 
-                {isRevealed ?
+                {vm.visible ?
                     <PlyControlPanel
                         currentPly={replay.ply}
-                        maxPly={problem.kifData.moves.length}
+                        maxPly={vm.problem.kifData.moves.length}
                         onPrev={replay.retreatPly}
                         onNext={replay.advancePly}
                     /> : (<Stack>
@@ -104,10 +105,10 @@ function FooterSection({vm}: {vm: PlayerViewModel}){
         />
     )
 }
-function DialogSecion({ problem, vm }: { problem: Problem, vm: PlayerViewModel }) {
+function DialogSecion({ vm }: { vm: PlayerViewModel }) {
     // store    
     const records = useLearningRecordStore(s => s.stateRecords)
-    const learningState = records[problem.id]
+    const learningState = records[vm.problem.id]
 
     return (
         <>

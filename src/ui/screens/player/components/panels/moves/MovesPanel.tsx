@@ -6,13 +6,14 @@ import type { Move } from "@/domain/kif/entity";
 import { useReplayStore } from "@/ui/screens/player/store/useReplayStore";
 import type { Problem } from "@/domain/problem/entity/Problem";
 
-export default function MovesPanel({moves, isMovesVisible = true, problem}: { 
+export default function MovesPanel({moves, ply, isMovesVisible = true, problem}: { 
+    ply: number
     moves: Move[]
     isMovesVisible?: boolean
     problem: Problem
 }) {
     const moveTo = useReplayStore(s=>s.moveTo)
-    const ply = useReplayStore(s=>s.ply)
+    //const ply = useReplayStore(s=>s.ply)
 
     return (
         <Box
