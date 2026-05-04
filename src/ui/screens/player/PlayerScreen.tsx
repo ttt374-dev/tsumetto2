@@ -138,6 +138,7 @@ function ReverseControl( {toggleReversed} : { toggleReversed: () => void}) {
     )
 }
 function UserSideControl({userSide, toggleUserSide}: { userSide: Player, toggleUserSide: ()=> void}) {
+    //console.log("userside", userSide)
     return (
         <Box onClick={toggleUserSide}>
             {userSide === "black" ? "▲" : "△"}
