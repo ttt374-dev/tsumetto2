@@ -8,6 +8,7 @@ import { createDecideGameEventContext, decideGameEvent } from "@/domain/game/dec
 import { resolveIntent } from "@/domain/game/intentResolver";
 import { SquareView } from "@/ui/screens/player/components/panels/board/SquareView";
 import { useReplayStore } from "@/ui/screens/player/store/useReplayStore";
+import { useGameUIStore } from "@/ui/screens/player/store/useGameUIStore";
 
 const fileLabels = ["９", "８", "７", "６", "５", "４", "３", "２", "１"];
 const rankLabels = ["一", "二", "三", "四", "五", "六", "七", "八", "九"];
@@ -16,7 +17,7 @@ export default function BoardView({ position, reversed = false }: {
     position: Position, reversed?: boolean }) {
 
     const selection = useBoardInputStore(s => s.selection)
-    const userSide = useGameStore(s => s.userSide)
+    const userSide = useGameUIStore(s => s.userSide)
     const dispatch = useGameStore(s => s.dispatch)
     const promotionPending = useGameStore(s => s.promotionPending)
     const clickSquare = useBoardInputStore(s => s.clickSquare)

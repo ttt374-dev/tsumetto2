@@ -41,7 +41,7 @@ export type GameStore = {
     initialPosition: Position
     moves: Move[]
     //displayReversed: boolean
-    userSide: Player
+    //userSide: Player
 
     pendingPromotion: PendingPromotion | null
     
@@ -53,7 +53,7 @@ export type GameStore = {
     dispatch: (e: GameEvent) => GameEvent[]
     //markSubmit: () => void    
     //toggleReversed: () => void,
-    toggleUserSide: () => void,
+    //toggleUserSide: () => void,
     
 }
 export function useCurrentPosition() {
@@ -98,7 +98,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
             events: [],
             state: projectGameState([]),
             //displayReversed: false,
-            userSide: "black"
+            //userSide: "black"
         })
     },
     
@@ -128,8 +128,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
     },
     //toggleReversed: () =>  
     //    set(s => ({ displayReversed: !s.displayReversed})),
-    toggleUserSide: () => 
-        set(s => ({ userSide: s.userSide === "black" ? "white" : "black"})),
+    //toggleUserSide: () => 
+    //    set(s => ({ userSide: s.userSide === "black" ? "white" : "black"})),
     
 }))
 

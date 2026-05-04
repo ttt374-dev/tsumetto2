@@ -10,12 +10,12 @@ import TimerControlPanel from "./components/panels/TImerControlPanel";
 import PlyControlPanel from "@/ui/screens/player/components/panels/PlyControlPanel";
 import { Problem } from "@/domain/problem/entity/Problem"
 import { AppShell } from "@/ui/common/components/layout/AppShell";
-import { useGameStore } from "./store/useGameStore";
 import PromotionDialog from "@/ui/screens/player/dialogs/PromotionDialog";
 import { SolvedDialog } from "@/ui/screens/player/dialogs/SolvedDialog";
 import { PlayerFooterPanel } from "@/ui/screens/player/components/panels/PlayerFooterPanel";
 import { usePlayerRunner, type MovesAction, type NavigationAction, type PlayerRunnerAction, type PlayerRunnerModel } from "@/ui/screens/player/runner/usePlayerRunner";
 import type { PlayerIntent } from "@/ui/screens/session/adaptor/buildPlayerIntentAdaptor";
+import type { Player } from "@/domain/kif/entity";
 
 ///////////////////////////////////////////
 export default function PlayerScreen({ problem, title, onPlayerIntent, }: {
@@ -55,7 +55,7 @@ export default function PlayerScreen({ problem, title, onPlayerIntent, }: {
 function MovesControlSection({ problem, model }: { 
     problem: Problem, model: PlayerRunnerModel }){
 
-    const { ply, moves, visible, maxPly } = model.state.moves
+    const { ply, moves, visible, maxPly, userSide } = model.state.moves
     const { toggleReversed, toggleUserSide } = model.actions.game
     const { advancePly, retreatPly, reveal } = model.actions.moves
 
@@ -69,7 +69,7 @@ function MovesControlSection({ problem, model }: {
                 <Stack direction="row" alignItems="center">
                     <TimerControlPanel />
                     <ReverseControl toggleReversed={toggleReversed}/>
-                    <UserSideControl toggleUserSide={toggleUserSide} />
+                    <UserSideControl userSide={userSide} toggleUserSide={toggleUserSide} />
                 </Stack>
 
                 {visible ?
@@ -131,16 +131,13 @@ function DialogSection({ model }: { model: PlayerRunnerModel }) {
         </>)
 }
 function ReverseControl( {toggleReversed} : { toggleReversed: () => void}) {
-    //const toggleReversed = useGameUIStore(s=>s.toggleReversed)
     return (
         <IconButton onClick={toggleReversed}>
             <SwapVertIcon />
         </IconButton>
     )
 }
-function UserSideControl({toggleUserSide}: { toggleUserSide: ()=> void}) {
-    const userSide = useGameStore(s => s.userSide)
-    //const toggleUserSide = useGameStore(s => s.toggleUserSide)
+function UserSideControl({userSide, toggleUserSide}: { userSide: Player, toggleUserSide: ()=> void}) {
     return (
         <Box onClick={toggleUserSide}>
             {userSide === "black" ? "▲" : "△"}

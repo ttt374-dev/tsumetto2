@@ -1,4 +1,4 @@
-import type { Move, Position } from "@/domain/kif/entity";
+import type { Move, Player, Position } from "@/domain/kif/entity";
 import type { BuildPositionResult } from "@/domain/kif/service/buildUntilPly";
 import type { LearningState } from "@/domain/learning/entity/LearningState";
 import type { Problem } from "@/domain/problem/entity/Problem";
@@ -13,6 +13,7 @@ export type PlayerInput = {
     elapsedSec: number
     learningState: LearningState
     displayReversed: boolean
+    userSide: Player
 }
 
 export type BoardViewModel = 
@@ -27,6 +28,7 @@ export type MovesViewModel = {
     maxPly: number
     moves: Move[]
     visible: boolean
+    userSide: Player
 }
 export type PlayerDialogsState = {
     learningState: LearningState

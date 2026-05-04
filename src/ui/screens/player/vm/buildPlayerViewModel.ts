@@ -7,7 +7,7 @@ import type { PlayerIntent } from "@/ui/screens/session/adaptor/buildPlayerInten
 
 //////////////////////////////////////////////
 export function buildPlayerViewModel(input: PlayerInput): PlayerViewModel {
-    const { resPosition, problem, isRevealed, ply, learningState} = input
+    const { resPosition, problem, isRevealed, ply, learningState, userSide } = input
 
     const board: BoardViewModel = resPosition.ok 
         ? { status: "ok", position: resPosition.value, reversed: input.displayReversed} 
@@ -20,7 +20,8 @@ export function buildPlayerViewModel(input: PlayerInput): PlayerViewModel {
             moves: problem.kifData.moves,
             maxPly: problem.kifData.moves.length,
             visible: isRevealed,
-            ply,
+            ply, userSide
+
         },
         dialogs: {
             learningState

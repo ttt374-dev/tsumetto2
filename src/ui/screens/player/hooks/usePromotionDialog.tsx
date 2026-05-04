@@ -3,13 +3,15 @@ import type { IntentResult } from "@/domain/game/intentResolver"
 import type { PieceType, PromotablePieceType } from "@/domain/kif/entity"
 import { useBoardInputStore } from "@/ui/screens/player/store/useBoardInputStore"
 import { useCurrentPosition, useGameStore } from "@/ui/screens/player/store/useGameStore"
+import { useGameUIStore } from "@/ui/screens/player/store/useGameUIStore"
 
 type PromotionDialogResult = 
     | { open: true, pieceType: PromotablePieceType, onConfirm: (promote: boolean) => void}
     | { open: false }
 
 export function usePromotionDialog(): PromotionDialogResult {
-    const { dispatch, choosePromotion, userSide, pendingPromotion } = useGameStore()    
+    const { dispatch, choosePromotion, pendingPromotion } = useGameStore()    
+    const userSide = useGameUIStore(s=>s.userSide)
     const clearSelection = useBoardInputStore(s=>s.clear)
     
     const res = useCurrentPosition()

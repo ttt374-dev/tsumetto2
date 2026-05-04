@@ -70,14 +70,15 @@ export function usePlayerRunner(problem: Problem,
     const toast = useToast()
     const navigate = useNavigate()
     const toggleReversed = useGameUIStore(s=>s.toggleReversed)
-    const toggleUserSide = useGameStore(s=>s.toggleUserSide)
+    const toggleUserSide = useGameUIStore(s=>s.toggleUserSide)
     const displayReversed = useGameUIStore(s=>s.reversed)
+    const userSide = useGameUIStore(s=>s.userSide)
 
     const input: PlayerInput = {
         resPosition, 
         problem, isRevealed,
         ...ctx, learningState,
-        displayReversed
+        displayReversed, userSide
     }
     const vm = buildPlayerViewModel(input)
     const dialogs = {
