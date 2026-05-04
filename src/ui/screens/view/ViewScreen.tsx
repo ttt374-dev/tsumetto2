@@ -36,7 +36,7 @@ function ViewContent({ problem}: { problem: Problem}){
                 <Stack sx={{ minHeight: 0, height: "100%" }} spacing={1} > 
                     <TitlePanel title={title} />
                     { /* --- 盤面 ---*/}
-                    <BoardPanel vm={model.state.board}/>
+                    <BoardPanel boardModel={model.state.board}/>
     
                     <Stack direction="row" sx={{ minHeight: 0, flexGrow: 1, p: 1 }} spacing={1}>
                         <MovesPanel

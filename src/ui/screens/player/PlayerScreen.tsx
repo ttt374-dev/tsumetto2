@@ -1,4 +1,4 @@
-import React from "react"
+import React, { act } from "react"
 import { Box, Button, IconButton, Stack } from "@mui/material"
 import SwapVertIcon from '@mui/icons-material/SwapVert';
 
@@ -14,11 +14,9 @@ import { useGameStore } from "./store/useGameStore";
 import PromotionDialog from "@/ui/screens/player/dialogs/PromotionDialog";
 import { SolvedDialog } from "@/ui/screens/player/dialogs/SolvedDialog";
 import { PlayerFooterPanel } from "@/ui/screens/player/components/panels/PlayerFooterPanel";
-import { usePlayerRunner, type MovesAction, type NavigationAction, type PlayerRunnerModel } from "@/ui/screens/player/runner/usePlayerRunner";
+import { usePlayerRunner, type MovesAction, type NavigationAction, type PlayerRunnerAction, type PlayerRunnerModel } from "@/ui/screens/player/runner/usePlayerRunner";
 import type { PlayerIntent } from "@/ui/screens/session/adaptor/buildPlayerIntentAdaptor";
-import type { MovesViewModel } from "@/ui/screens/player/vm/PlayerViewModel";
 
-//type PlayerViewModel = ReturnType<typeof usePlayerViewModel>
 
 ///////////////////////////////////////////
 export default function PlayerScreen({ problem, title, onPlayerIntent, }: {
@@ -41,20 +39,13 @@ export default function PlayerScreen({ problem, title, onPlayerIntent, }: {
         <AppShell
             header={"Player"}
             footer={<FooterSection actions={model.actions.navigation}/>}
-            rightActions={
-                <PlayerRightPanel
-                    problemId={problem.id}
-                    onNavigateToDetail={model.actions.navigation.navigateToDetail}
-                    onDelete={model.actions.domain.deleteProblem}
-                />}
+            rightActions={<HeaderRightSection problem={problem} model={model}/>}
         >
             <Stack sx={{ minHeight: 0, height: "100%" }} spacing={1} >
                 <TitlePanel title={title} />
-                { /* --- 盤面 ---*/}
-                <BoardPanel vm={model.state.board}/>
+                <BoardPanel boardModel={model.state.board}/>
                 <MovesControlSection 
-                    problem={problem} vm={model.state.moves} actions={model.actions.moves}/>
-
+                    problem={problem} model={model}/>
             </Stack>
 
             <DialogSection model={model} />
@@ -62,30 +53,34 @@ export default function PlayerScreen({ problem, title, onPlayerIntent, }: {
         </AppShell>
     )
 }
-function MovesControlSection({ problem, vm, actions }: { 
-    problem: Problem, vm: MovesViewModel, actions: MovesAction }) {
+function MovesControlSection({ problem, model }: { 
+    problem: Problem, model: PlayerRunnerModel }){
+
+    const { ply, moves, visible, maxPly } = model.state.moves
+    const { toggleReversed, toggleUserSide } = model.actions.game
+    const { advancePly, retreatPly, reveal } = model.actions.moves
 
     return (
         <Stack direction="row" sx={{ minHeight: 0, flexGrow: 1, p: 1 }} spacing={1}>
             <MovesPanel
                 problem={problem}
-                ply={vm.ply}
-                moves={vm.moves} isMovesVisible={vm.visible} />
+                ply={ply}
+                moves={moves} isMovesVisible={visible} />
             <Box sx={{ flex: 1, border: 1, borderColor: "divider" }}>
                 <Stack direction="row" alignItems="center">
                     <TimerControlPanel />
-                    <ReverseControl />
-                    <UserSideControl />
+                    <ReverseControl toggleReversed={toggleReversed}/>
+                    <UserSideControl toggleUserSide={toggleUserSide} />
                 </Stack>
 
-                {vm.visible ?
+                {visible ?
                     <PlyControlPanel
-                        currentPly={vm.ply}
-                        maxPly={vm.maxPly}
-                        onPrev={actions.retreatPly}
-                        onNext={actions.advancePly}
+                        currentPly={ply}
+                        maxPly={maxPly}
+                        onPrev={retreatPly}
+                        onNext={advancePly}
                     /> : (<Stack>
-                        <Button onClick={actions.reveal} variant="outlined">
+                        <Button onClick={reveal} variant="outlined">
                             手筋を表示
                         </Button>
                     </Stack>)
@@ -97,6 +92,15 @@ function MovesControlSection({ problem, vm, actions }: {
 
 }
 /////////////////////////////////////////////
+function HeaderRightSection({problem, model}: { problem: Problem, model: PlayerRunnerModel}){
+    return (
+        <PlayerRightPanel
+            problemId={problem.id}
+            onNavigateToDetail={model.actions.navigation.navigateToDetail}
+            onDelete={model.actions.domain.deleteProblem}
+        />
+    )
+}
 function FooterSection({actions}: {actions: NavigationAction}){
     return (      
         <PlayerFooterPanel
@@ -127,17 +131,16 @@ function DialogSection({ model }: { model: PlayerRunnerModel }) {
                 />}
         </>)
 }
-function ReverseControl() {
-    const toggleReversed = useGameStore(s => s.toggleReversed)
+function ReverseControl({toggleReversed}: { toggleReversed: () => void}) {
     return (
         <IconButton onClick={toggleReversed}>
             <SwapVertIcon />
         </IconButton>
     )
 }
-function UserSideControl() {
+function UserSideControl({toggleUserSide}: { toggleUserSide: ()=> void}) {
     const userSide = useGameStore(s => s.userSide)
-    const toggleUserSide = useGameStore(s => s.toggleUserSide)
+    //const toggleUserSide = useGameStore(s => s.toggleUserSide)
     return (
         <Box onClick={toggleUserSide}>
             {userSide === "black" ? "▲" : "△"}

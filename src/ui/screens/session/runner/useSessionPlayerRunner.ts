@@ -6,10 +6,18 @@ import { useSessionStore } from "@/ui/screens/session/store/useSessionStore";
 import { useMissionStore } from "@/ui/screens/mission/hooks/useMissionStore";
 import { buildSessionPlayerVieModel } from "@/ui/screens/session/vm/buildSessionPlayerViewModel";
 import { parseSessionParams } from "@/ui/screens/session/adaptor/parseSessionParams";
-import type { SessionPlayerInput } from "@/ui/screens/session/vm/SessionPlayerViewModel";
+import type { SessionPlayerInput, SessionPlayerViewModel } from "@/ui/screens/session/vm/SessionPlayerViewModel";
 import { interpretPlayerIntent, type PlayerIntent } from "@/ui/screens/session/adaptor/buildPlayerIntentAdaptor";
 
 /////////////////////////////////////////
+
+type SessionPlayerRunnerModel = 
+    | { status: "ok", state: SessionPlayerViewModel, 
+        handlers: {
+            handlePlayerIntent: (intent: PlayerIntent) => void
+        }}
+    | { status: "error", message?: string}
+
 export function useSessionPlayerRunner() {
     // パラメータを解析
     const params = useParams<{ sessionId: string, index: string }>()
@@ -36,10 +44,14 @@ export function useSessionPlayerRunner() {
     const handlePlayerIntent = (intent: PlayerIntent) => execute(interpretPlayerIntent(intent))
     
     // エラーなら返す
-    if (vm.type === "error") return vm
+    if (vm.type === "error") return vm // { status: "error", message: vm.message}
+    
 
     return {
-        ...vm, handlePlayerIntent,    
+        ...vm,
+        handlers: { 
+            handlePlayerIntent,    
+        }
     }
 }
 

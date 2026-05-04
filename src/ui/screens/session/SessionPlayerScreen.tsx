@@ -4,13 +4,13 @@ import PlayerScreen from "@/ui/screens/player/PlayerScreen"
 import { useSessionPlayerRunner } from "@/ui/screens/session/runner/useSessionPlayerRunner"
 
 export default function SessionPlayerScreen() {
-    const vm = useSessionPlayerRunner()
-    if (vm.type === "error") return <AppShell>Error: {vm.message}</AppShell>
+    const model = useSessionPlayerRunner()
+    if (model.type === "error") return <AppShell>Error: {model.message}</AppShell>
     return (
         <PlayerScreen
-            problem={vm.problem}
-            title={vm.title}
-            onPlayerIntent={vm.handlePlayerIntent}
+            problem={model.problem}
+            title={model.title}
+            onPlayerIntent={model.handlers.handlePlayerIntent}
         />
 
     )

@@ -17,6 +17,14 @@ import { buildPlayerViewModel, decideGameEffect, decidePlayerIntent } from "@/ui
 import { runGameEffects } from "@/ui/screens/player/runner/runGameEffects";
 import type { PlayerInput, PlayerViewModel } from "@/ui/screens/player/vm/PlayerViewModel";
 
+export type PlayerRunnerAction = {
+    moves: MovesAction
+    navigation: NavigationAction
+    game: GameAction
+    domain: {
+        deleteProblem: (pid: ProblemId) => void
+    }
+}
 export type MovesAction = {
     advancePly: () => void,
     retreatPly: () => void,
@@ -27,19 +35,18 @@ export type NavigationAction = {
     showList: () => void
     navigateToDetail: (pid: ProblemId) => void
 }
+
+type GameAction = {
+    toggleReversed: () => void
+    toggleUserSide: () => void
+}
 export type DialogControllers = {
    solvedResult: ReturnType<typeof useSolvedDialog>
    promotion: ReturnType<typeof usePromotionDialog>
 }
 export type PlayerRunnerModel = {
     state: PlayerViewModel
-    actions: {
-        moves: MovesAction
-        navigation: NavigationAction
-        domain: {
-            deleteProblem: (pid: ProblemId) => void
-        }
-    }
+    actions: PlayerRunnerAction
     handlers: {
         handleUIEvent: (e: GameFeedback) => void
     }
@@ -62,6 +69,8 @@ export function usePlayerRunner(problem: Problem,
     const deleteProblem = useProblemStore(s => s.deleteProblem)
     const toast = useToast()
     const navigate = useNavigate()
+    const toggleReversed = useGameStore(s=>s.toggleReversed)
+    const toggleUserSide = useGameStore(s=>s.toggleUserSide)
 
     const input: PlayerInput = {
         resPosition, reversed,
@@ -100,6 +109,9 @@ export function usePlayerRunner(problem: Problem,
                 nextProblem: () => options?.onPlayerIntent?.({ type: "NEXT_REQUESTED" }),
                 showList: () => options?.onPlayerIntent?.({ type: "LIST_REQUESTED" }),
                 navigateToDetail: (pid: ProblemId) => navigate(routes.detail(pid)),
+            },
+            game: {
+                toggleReversed, toggleUserSide,
             },
             domain: {
                 deleteProblem: (pid: ProblemId) => {
