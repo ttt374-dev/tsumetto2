@@ -1,8 +1,7 @@
 import { createDecideGameEventContext, decideGameEvent } from "@/domain/game/decideGameEvent"
-import { resolveIntent, type Intent } from "@/domain/game/intentResolver"
-import type { Player, Position, Square } from "@/domain/kif/entity"
+import { resolveIntent } from "@/domain/game/intentResolver"
+import type { Square } from "@/domain/kif/entity"
 import type { BoardAction } from "@/ui/screens/player/runner/usePlayerRunner"
-import type { GameEvent, PendingPromotion } from "@/ui/screens/player/store/useGameStore"
 import type { BoardOKViewModel } from "@/ui/screens/player/vm/PlayerViewModel"
 
 export class BoardInteractor {

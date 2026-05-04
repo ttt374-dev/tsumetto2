@@ -1,22 +1,24 @@
 
 
-const promotablePieces = [ "pawn", "lance", "knight", "silver", "bishop", "rook"] as const
+const promotablePieces = ["pawn", "lance", "knight", "silver", "bishop", "rook"] as const
 export type PromotablePieceType = typeof promotablePieces[number]
 const promotableSet = new Set<string>(promotablePieces)
 
+export const pieceTypes = ["pawn", "lance", "knight", "silver", "gold", "bishop", "rook", "king"] as const
+export type PieceType = typeof pieceTypes[number]
 
-export type Player = "black" | "white"
-export type PieceType = "pawn" | "lance" | "knight" | "silver" | "gold" | "bishop" | "rook" | "king"
+//export type PieceType = "pawn" | "lance" | "knight" | "silver" | "gold" | "bishop" | "rook" | "king"
 //export type PromotablePieceType = Exclude<PieceType, "gold" | "king">
 
+export type Player = "black" | "white"
 
 export function isPromotablePieceType(
-  piece: string
+    piece: string
 ): piece is PromotablePieceType {
-  return promotableSet.has(piece)
+    return promotableSet.has(piece)
 }
 export function toPromotablePieceType(pieceType: PieceType): PromotablePieceType | undefined {
-    return (isPromotablePieceType(pieceType)) ? pieceType : undefined   
+    return (isPromotablePieceType(pieceType)) ? pieceType : undefined
 
 }
 export type PieceItem = {
@@ -51,7 +53,7 @@ export const PieceTypeToKanjiMapping: Record<BasePromoted, Record<PieceType, str
         pawn: "歩", lance: "香", knight: "桂", silver: "銀", gold: "金", bishop: "角", rook: "飛", king: "玉"
     },
     'promoted': {
-        pawn: "と", lance: "杏", knight: "圭", silver: "全", gold: "金", bishop: "馬", rook: "龍", king: "玉"    
+        pawn: "と", lance: "杏", knight: "圭", silver: "全", gold: "金", bishop: "馬", rook: "龍", king: "玉"
     }
 }
 
@@ -70,8 +72,8 @@ export class Piece {
         const promotedMapping = {
             pawn: "と", lance: "杏", knight: "圭", silver: "全", gold: "金", bishop: "馬", rook: "龍", king: "玉"
         }*/
-       const basePromoted: BasePromoted = this.promoted ? 'promoted' : 'base'
-       return PieceTypeToKanjiMapping[basePromoted][this.type]
+        const basePromoted: BasePromoted = this.promoted ? 'promoted' : 'base'
+        return PieceTypeToKanjiMapping[basePromoted][this.type]
     }
 
     demote(): Piece {

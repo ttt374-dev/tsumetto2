@@ -4,7 +4,7 @@ import { Board, type Move, type Piece, type Square } from "@/domain/kif/entity"
 import styles from "./BoardView.module.css";
 import type { BoardOKViewModel } from "@/ui/screens/player/vm/PlayerViewModel";
 
-type SquareViewModel = {
+type SquareUIModel = {
     square: Square
     piece: Piece | null
     isSelected: boolean
@@ -13,7 +13,7 @@ type SquareViewModel = {
     rotated: boolean
 }
 
-export function buildSquareModel(square: Square, boardModel: BoardOKViewModel): SquareViewModel {
+export function buildSquareModel(square: Square, boardModel: BoardOKViewModel): SquareUIModel {
     const { selection, ply, moves, reversed, position: { board} } = boardModel
     const lastMove = ply > 0 ? moves[ply - 1] : undefined
     const isLastFrom = lastMove !== undefined && lastMove.from !== null && square.equals(lastMove.from)
@@ -34,7 +34,7 @@ export function buildSquareModel(square: Square, boardModel: BoardOKViewModel): 
 }
 
 export function SquareView({squareModel, onClick} : {     
-    squareModel: SquareViewModel
+    squareModel: SquareUIModel
     onClick: () => void
 }){
     

@@ -5,7 +5,7 @@ import { Square } from "@/domain/kif/entity";
 import { buildSquareModel, SquareView } from "@/ui/screens/player/components/panels/board/SquareView";
 import type { BoardOKViewModel} from "@/ui/screens/player/vm/PlayerViewModel";
 import type { BoardAction } from "@/ui/screens/player/runner/usePlayerRunner";
-import { BoardInteractor } from "@/ui/screens/player/components/panels/board/BoardInteractor";
+import { BoardInteractor } from "@/application/board/BoardInteractor";
 import { useMemo } from "react";
 
 const fileLabels = ["９", "８", "７", "６", "５", "４", "３", "２", "１"];
