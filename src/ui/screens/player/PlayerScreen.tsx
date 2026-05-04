@@ -62,9 +62,9 @@ function MovesControlSection({ problem, model }: {
     return (
         <Stack direction="row" sx={{ minHeight: 0, flexGrow: 1, p: 1 }} spacing={1}>
             <MovesPanel
-                problem={problem}
-                ply={ply}
-                moves={moves} isMovesVisible={visible} />
+                problem={problem} movesModel={model.state.moves}
+                onMoveToPly={model.actions.moves.moveTo}
+                 />
             <Box sx={{ flex: 1, border: 1, borderColor: "divider" }}>
                 <Stack direction="row" alignItems="center">
                     <TimerControlPanel />

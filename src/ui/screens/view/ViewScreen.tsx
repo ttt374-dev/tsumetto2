@@ -41,8 +41,8 @@ function ViewContent({ problem}: { problem: Problem}){
                     <Stack direction="row" sx={{ minHeight: 0, flexGrow: 1, p: 1 }} spacing={1}>
                         <MovesPanel
                             problem={problem}
-                            ply={model.state.moves.ply}
-                            moves={problem.kifData.moves} />
+                            movesModel={model.state.moves}
+                            onMoveToPly={model.actions.moves.moveTo} />
     
                         <Box sx={{ flex: 1, border: 1, borderColor: "divider" }}>                            
                                 <PlyControlPanel

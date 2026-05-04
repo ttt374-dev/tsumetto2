@@ -26,7 +26,7 @@ export function buildPlayerViewModel(input: PlayerInput): PlayerViewModel {
             moves: problem.kifData.moves,
             maxPly: problem.kifData.moves.length,
             visible: isRevealed,
-            ply, userSide
+            ply, userSide, learningState
 
         },
         dialogs: {

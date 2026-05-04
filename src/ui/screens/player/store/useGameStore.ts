@@ -22,6 +22,7 @@ export type GameEvent =
     | ({ type: "ABANDON" } & BaseEvent)
     | ({type: "ADVANCE_PLY"} & BaseEvent )
     | ({type: "RETREAT_PLY"} & BaseEvent)
+    | ({type: "MOVETO_PLY", to: number} & BaseEvent)
     | ({type: "ADVANCE_OPPONENT_PLY"} & BaseEvent )
     | ({type: "ADVANCE_TURN"} & BaseEvent )
     

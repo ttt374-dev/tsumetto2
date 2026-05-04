@@ -30,6 +30,7 @@ export type MovesAction = {
     advancePly: () => void,
     retreatPly: () => void,
     reveal: () => void,
+    moveTo: (ply: number) => void,
 }
 export type NavigationAction = {
     nextProblem: () => void
@@ -107,6 +108,7 @@ export function usePlayerRunner(problem: Problem,
                 advancePly: () => dispatch({ type: "ADVANCE_PLY", ...ctx }),
                 retreatPly: () => dispatch({ type: "RETREAT_PLY", ...ctx }),
                 reveal: () => dispatch({ type: "REVEAL", ...ctx }),
+                moveTo: (to: number) => dispatch({type: "MOVETO_PLY", to, ...ctx })
             },
             navigation: {
                 nextProblem: () => options?.onPlayerIntent?.({ type: "NEXT_REQUESTED" }),

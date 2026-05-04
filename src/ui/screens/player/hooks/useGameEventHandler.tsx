@@ -46,6 +46,9 @@ export function useGameEventHandler(onUIEvent?: (f: GameFeedback) => void, enabl
             case "RETREAT_PLY":
                 replay.retreatPly()
                 break;
+            case "MOVETO_PLY":
+                replay.moveTo(last.to)
+                break
             case "ADVANCE_OPPONENT_PLY":
                 replayCtrl.advanceOpponentPly()
                 break
