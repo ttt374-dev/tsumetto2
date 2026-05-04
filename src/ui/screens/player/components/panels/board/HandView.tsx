@@ -1,9 +1,8 @@
 import { pieceTypes, PieceTypeToKanjiMapping, type Hand, type PieceType, type Player } from "@/domain/kif/entity"
-import { useBoardInputStore, type Selection } from "@/ui/screens/player/store/useBoardInputStore"
+import { type Selection } from "@/ui/screens/player/store/useBoardInputStore"
 import { formatPlayer } from "../moves/MovesView"
 import styles from "./BoardView.module.css";
 import { Box, Stack } from "@mui/material";
-import { useGameUIStore } from "@/ui/screens/player/store/useGameUIStore";
 
 type HandPieceUIModel = {
     pieceType: PieceType
@@ -32,9 +31,8 @@ export default function HandView({ hand, owner, sideToMove, selection, userSide,
     onClickHandPiece: (pieceType: PieceType, owner: Player) => void
 }
 ) {
-    const handleHandpieceClick = (pieceType: PieceType) => {
-        
-        onClickHandPiece(pieceType, sideToMove)
+    const handleHandpieceClick = (pieceType: PieceType) => {        
+        onClickHandPiece(pieceType, owner)
     }
     const models = buildHandPieceUIModels(hand, owner, selection, sideToMove).filter(m => m.count > 0)
     
@@ -50,7 +48,8 @@ export default function HandView({ hand, owner, sideToMove, selection, userSide,
                         pieceType={m.pieceType}
                         count={m.count}
                         selected={m.isSelected}
-                        onClick={() => owner === sideToMove && sideToMove === userSide && handleHandpieceClick(m.pieceType)}
+                        onClick={() => owner === sideToMove && sideToMove === userSide 
+                            && handleHandpieceClick(m.pieceType)}
                     />
                 ))
             }

@@ -36,8 +36,7 @@ export function buildSquareModel(square: Square, boardModel: BoardOKViewModel): 
 export function SquareView({squareModel, onClick} : {     
     squareModel: SquareUIModel
     onClick: () => void
-}){
-    
+}){    
     const [flash, setFlash] = useState(false)
     const { square, isSelected, isLastTo, isLastFrom, rotated, piece } = squareModel
 
@@ -48,7 +47,6 @@ export function SquareView({squareModel, onClick} : {
         setTimeout(() => setFlash(false), 120)
         onClick()
     }    
-
 
     return (
         <div
