@@ -2,15 +2,15 @@ import { Box, Stack } from "@mui/material";
 
 import MovesView from "./MovesView";
 import ProblemLearningInfoPanel from "@/ui/screens/player/components/panels/ProblemLearningInfoPanel";
-import { useReplayStore } from "@/ui/screens/player/store/useReplayStore";
 import type { Problem } from "@/domain/problem/entity/Problem";
 import type { MovesViewModel } from "@/ui/screens/player/vm/PlayerViewModel";
+import type { MovesAction } from "@/ui/screens/player/runner/usePlayerRunner";
 
-export default function MovesPanel({problem, movesModel, onMoveToPly}: { 
-    problem: Problem, movesModel: MovesViewModel, onMoveToPly: (to: number)=> void
+export default function MovesPanel({problem, movesModel, actions}: { 
+    problem: Problem, movesModel: MovesViewModel, actions: MovesAction    
 }) {
     const { moves, ply, visible, } = movesModel
-    //const moveTo = useReplayStore(s=>s.moveTo)
+    const { moveToPly } = actions
     return (
         <Box
             flex={1}
@@ -28,7 +28,7 @@ export default function MovesPanel({problem, movesModel, onMoveToPly}: {
             }
         >
             {visible ?
-                <MovesView moves={moves} currentPlyIndex={ply} onMoveToPly={onMoveToPly} />
+                <MovesView moves={moves} currentPlyIndex={ply} onMoveToPly={moveToPly} />
                 : (<Stack>
                     <ProblemLearningInfoPanel problem={problem} />
                 </Stack>)

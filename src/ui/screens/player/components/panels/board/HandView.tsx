@@ -22,9 +22,7 @@ function HandPieceView({ pieceType, selected, count, onClick }: {
 export default function HandView({ hand, owner, sideToMove, selection, onClickHandPiece }: {
     hand: Hand, owner: Player, sideToMove: Player, selection: Selection
     onClickHandPiece: (pieceType: PieceType, owner: Player) => void}
-) {
-    //const clickHandPiece = useBoardInputStore(s => s.clickHandPiece)
-    
+) {    
     const handleHandpieceClick = (pieceType: PieceType) => {
         onClickHandPiece(pieceType, sideToMove)
     }

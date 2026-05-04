@@ -9,7 +9,7 @@ import { useSolvedDialog } from "@/ui/screens/player/dialogs/SolvedDialog";
 import { useGameEventHandler, type GameFeedback } from "@/ui/screens/player/hooks/useGameEventHandler";
 import { useGameInitializer } from "@/ui/screens/player/hooks/useGameInitializer";
 import { usePromotionDialog } from "@/ui/screens/player/hooks/usePromotionDialog";
-import { useCurrentPosition, useGameStore } from "@/ui/screens/player/store/useGameStore";
+import { useCurrentPosition, useGameStore, type GameEvent, type PendingPromotion } from "@/ui/screens/player/store/useGameStore";
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
 import { routes } from "@/ui/App/useAppNavigation";
 import type { PlayerIntent } from "@/ui/screens/session/adaptor/buildPlayerIntentAdaptor";
@@ -17,8 +17,12 @@ import { buildPlayerViewModel, decideGameEffect, decidePlayerIntent } from "@/ui
 import { runGameEffects } from "@/ui/screens/player/runner/runGameEffects";
 import type { PlayerInput, PlayerViewModel } from "@/ui/screens/player/vm/PlayerViewModel";
 import { useGameUIStore } from "@/ui/screens/player/store/useGameUIStore";
+import { useBoardInputStore } from "@/ui/screens/player/store/useBoardInputStore";
+import type { PieceType, Player, Square } from "@/domain/kif/entity";
+import type { Intent } from "@/domain/game/intentResolver";
 
 export type PlayerRunnerAction = {
+    board: BoardAction
     moves: MovesAction
     navigation: NavigationAction
     game: GameAction
@@ -26,11 +30,18 @@ export type PlayerRunnerAction = {
         deleteProblem: (pid: ProblemId) => void
     }
 }
+export type BoardAction = {
+    dispatchGameEvent: (e: GameEvent) => void
+    promotionPending: (p: PendingPromotion) => void
+    clickSquare: (sq: Square) => Intent | null
+    clickHandPiece: (pieceType: PieceType, owner: Player) => void
+    clearSelection: () => void
+}
 export type MovesAction = {
     advancePly: () => void,
     retreatPly: () => void,
     reveal: () => void,
-    moveTo: (ply: number) => void,
+    moveToPly: (ply: number) => void,
 }
 export type NavigationAction = {
     nextProblem: () => void
@@ -74,12 +85,20 @@ export function usePlayerRunner(problem: Problem,
     const toggleUserSide = useGameUIStore(s=>s.toggleUserSide)
     const displayReversed = useGameUIStore(s=>s.reversed)
     const userSide = useGameUIStore(s=>s.userSide)
+    const selection = useBoardInputStore(s=>s.selection)
+    const dispatchGameEvent = useGameStore(s => s.dispatch)
+    const promotionPending = useGameStore(s => s.promotionPending)
+    const clickSquare = useBoardInputStore(s => s.clickSquare)
+    const clickHandPiece = useBoardInputStore(s => s.clickHandPiece)
+    const clearSelection = useBoardInputStore(s => s.clear)
 
     const input: PlayerInput = {
         resPosition, 
         problem, isRevealed,
         ...ctx, learningState,
-        displayReversed, userSide
+        displayReversed, userSide,
+        selection, moves: problem.kifData.moves,       
+
     }
     const vm = buildPlayerViewModel(input)
     const dialogs = {
@@ -104,11 +123,14 @@ export function usePlayerRunner(problem: Problem,
     return {
         state: vm,
         actions: {
+            board: {
+                dispatchGameEvent, promotionPending, clickSquare, clearSelection, clickHandPiece,
+            },
             moves: {
                 advancePly: () => dispatch({ type: "ADVANCE_PLY", ...ctx }),
                 retreatPly: () => dispatch({ type: "RETREAT_PLY", ...ctx }),
                 reveal: () => dispatch({ type: "REVEAL", ...ctx }),
-                moveTo: (to: number) => dispatch({type: "MOVETO_PLY", to, ...ctx })
+                moveToPly: (to: number) => dispatch({type: "MOVETO_PLY", to, ...ctx })
             },
             navigation: {
                 nextProblem: () => options?.onPlayerIntent?.({ type: "NEXT_REQUESTED" }),

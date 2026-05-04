@@ -42,7 +42,7 @@ function ViewContent({ problem}: { problem: Problem}){
                         <MovesPanel
                             problem={problem}
                             movesModel={model.state.moves}
-                            onMoveToPly={model.actions.moves.moveTo} />
+                            onMoveToPly={model.actions.moves.moveToPly} />
     
                         <Box sx={{ flex: 1, border: 1, borderColor: "divider" }}>                            
                                 <PlyControlPanel

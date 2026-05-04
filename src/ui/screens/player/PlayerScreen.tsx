@@ -1,4 +1,4 @@
-import React, { act } from "react"
+import React from "react"
 import { Box, Button, IconButton, Stack } from "@mui/material"
 import SwapVertIcon from '@mui/icons-material/SwapVert';
 
@@ -13,7 +13,7 @@ import { AppShell } from "@/ui/common/components/layout/AppShell";
 import PromotionDialog from "@/ui/screens/player/dialogs/PromotionDialog";
 import { SolvedDialog } from "@/ui/screens/player/dialogs/SolvedDialog";
 import { PlayerFooterPanel } from "@/ui/screens/player/components/panels/PlayerFooterPanel";
-import { usePlayerRunner, type MovesAction, type NavigationAction, type PlayerRunnerAction, type PlayerRunnerModel } from "@/ui/screens/player/runner/usePlayerRunner";
+import { usePlayerRunner, type NavigationAction, type PlayerRunnerModel } from "@/ui/screens/player/runner/usePlayerRunner";
 import type { PlayerIntent } from "@/ui/screens/session/adaptor/buildPlayerIntentAdaptor";
 import type { Player } from "@/domain/kif/entity";
 
@@ -23,7 +23,6 @@ export default function PlayerScreen({ problem, title, onPlayerIntent, }: {
     title: React.ReactNode
     onPlayerIntent?: (e: PlayerIntent) => void
 }) {
-
     // view model
     const model = usePlayerRunner(problem,
         { onPlayerIntent: (e) => onPlayerIntent?.(e) })
@@ -42,7 +41,7 @@ export default function PlayerScreen({ problem, title, onPlayerIntent, }: {
         >
             <Stack sx={{ minHeight: 0, height: "100%" }} spacing={1} >
                 <TitlePanel title={title} />
-                <BoardPanel boardModel={model.state.board}/>
+                <BoardPanel boardModel={model.state.board} actions={model.actions.board}/>
                 <MovesControlSection 
                     problem={problem} model={model}/>
             </Stack>
@@ -55,15 +54,16 @@ export default function PlayerScreen({ problem, title, onPlayerIntent, }: {
 function MovesControlSection({ problem, model }: { 
     problem: Problem, model: PlayerRunnerModel }){
 
-    const { ply, moves, visible, maxPly, userSide } = model.state.moves
-    const { toggleReversed, toggleUserSide } = model.actions.game
-    const { advancePly, retreatPly, reveal } = model.actions.moves
+    const { moves: { ply, visible, maxPly, userSide }} = model.state
+    const { 
+        game: { toggleReversed, toggleUserSide},
+        moves: { advancePly, retreatPly, reveal }} = model.actions    
 
     return (
         <Stack direction="row" sx={{ minHeight: 0, flexGrow: 1, p: 1 }} spacing={1}>
             <MovesPanel
                 problem={problem} movesModel={model.state.moves}
-                onMoveToPly={model.actions.moves.moveTo}
+                actions={model.actions.moves}
                  />
             <Box sx={{ flex: 1, border: 1, borderColor: "divider" }}>
                 <Stack direction="row" alignItems="center">
@@ -78,14 +78,14 @@ function MovesControlSection({ problem, model }: {
                         maxPly={maxPly}
                         onPrev={retreatPly}
                         onNext={advancePly}
-                    /> : (<Stack>
+                    />
+                    : (<Stack>
                         <Button onClick={reveal} variant="outlined">
                             手筋を表示
                         </Button>
                     </Stack>)
                 }
             </Box>
-
         </Stack>
     )
 

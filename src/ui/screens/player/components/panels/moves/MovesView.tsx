@@ -20,6 +20,7 @@ export function formatMove(move: Move, index: number, player: Player): string {
 }
 const getPlayerFromPly = (plyIndex: number) => plyIndex % 2 ? "black" : "white"
 
+//////////////////////////////////////////////
 export default function MovesView({ moves: moves, currentPlyIndex, onMoveToPly }: Props) {
     const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
     const theme = useTheme()

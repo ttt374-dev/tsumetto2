@@ -2,6 +2,7 @@ import type { Move, Player, Position } from "@/domain/kif/entity";
 import type { BuildPositionResult } from "@/domain/kif/service/buildUntilPly";
 import type { LearningState } from "@/domain/learning/entity/LearningState";
 import type { Problem } from "@/domain/problem/entity/Problem";
+import type { Selection } from "@/ui/screens/player/store/useBoardInputStore";
 
 export type PlayerInput = {
     resPosition: BuildPositionResult
@@ -14,6 +15,8 @@ export type PlayerInput = {
     learningState: LearningState
     displayReversed: boolean
     userSide: Player
+    moves: Move[]
+    selection: Selection
 }
 
 export type BoardViewModel = 
@@ -24,7 +27,11 @@ export type BoardOKViewModel = {
     status: "ok";
     position: Position
     reversed: boolean
-    userSide: Player    
+    userSide: Player  
+    
+    selection: Selection
+    ply: number
+    moves: Move[]
 
 }
 export type MovesViewModel = {

@@ -1,32 +1,23 @@
 import { Box } from "@mui/material"
 
 import styles from "./BoardView.module.css";
-import { useGameStore } from "@/ui/screens/player/store/useGameStore";
-import { useBoardInputStore } from "@/ui/screens/player/store/useBoardInputStore";
-import { Board,  Position, Square } from "@/domain/kif/entity";
+import { Board, Square } from "@/domain/kif/entity";
 import { createDecideGameEventContext, decideGameEvent } from "@/domain/game/decideGameEvent";
 import { resolveIntent } from "@/domain/game/intentResolver";
 import { SquareView } from "@/ui/screens/player/components/panels/board/SquareView";
-import { useReplayStore } from "@/ui/screens/player/store/useReplayStore";
-import type { BoardOKViewModel, BoardViewModel } from "@/ui/screens/player/vm/PlayerViewModel";
+import type { BoardOKViewModel} from "@/ui/screens/player/vm/PlayerViewModel";
+import type { BoardAction } from "@/ui/screens/player/runner/usePlayerRunner";
 
 const fileLabels = ["９", "８", "７", "６", "５", "４", "３", "２", "１"];
 const rankLabels = ["一", "二", "三", "四", "五", "六", "七", "八", "九"];
 
-
-export default function BoardView({ model }: { 
-    model: BoardOKViewModel}) {
+export default function BoardView({ boardModel, actions }: { 
+    boardModel: BoardOKViewModel, actions: BoardAction}) {
     
-    const selection = useBoardInputStore(s => s.selection)    
-    const moves = useGameStore(s => s.moves)
-    const ply = useReplayStore(s=>s.ply)    
-
-    const dispatch = useGameStore(s => s.dispatch)
-    const promotionPending = useGameStore(s => s.promotionPending)
-    const clickSquare = useBoardInputStore(s => s.clickSquare)
-    const clear = useBoardInputStore(s => s.clear)
+    const { selection, moves, ply } = boardModel
+    const { dispatchGameEvent, promotionPending, clickSquare, clearSelection} = actions
     
-    const { position, reversed, userSide } = model
+    const { position, reversed, userSide } = boardModel
     const { board, sideToMove } = position
     
     const ranks = [...Array(9)].map((_, i) => reversed ? 9 - i : i + 1)
@@ -48,8 +39,8 @@ export default function BoardView({ model }: {
                 promotionPending(decision.pendingPromotion)
                 return
             case "event":
-                dispatch(decision.event)
-                clear()
+                dispatchGameEvent(decision.event)
+                clearSelection()
                 return
         }
     }
