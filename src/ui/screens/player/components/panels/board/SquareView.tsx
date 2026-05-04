@@ -1,6 +1,8 @@
+import { useState } from "react";
+
 import type { Piece } from "@/domain/kif/entity"
 import styles from "./BoardView.module.css";
-import { useState } from "react";
+
 
 export function SquareView({ piece, selected, onClick, reversed, lastTo, lastFrom }: {
     piece: Piece | null

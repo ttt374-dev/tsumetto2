@@ -1,9 +1,8 @@
 import { PieceTypeToKanjiMapping, type Hand, type PieceType, type Player } from "@/domain/kif/entity"
-import { useBoardInputStore } from "@/ui/screens/player/store/useBoardInputStore"
+import { useBoardInputStore, type Selection } from "@/ui/screens/player/store/useBoardInputStore"
 import { formatPlayer } from "../moves/MovesView"
 import styles from "./BoardView.module.css";
 import { Box, Stack } from "@mui/material";
-import { useCurrentPosition } from "@/ui/screens/player/store/useGameStore";
 
 function HandPieceView({ pieceType, selected, count, onClick }: { 
     pieceType: PieceType
@@ -20,17 +19,14 @@ function HandPieceView({ pieceType, selected, count, onClick }: {
 }
 
 /////////////////////////////
-export default function HandView({ hand, owner, sideToMove }: {
-    hand: Hand, owner: Player, sideToMove: Player
-}) {
-    const clickHandPiece = useBoardInputStore(s => s.clickHandPiece)
-    const selection = useBoardInputStore(s=>s.selection)   
-    //const res = useCurrentPosition()
-    //if (!res.ok) return <>Error</>
-    //const sideToMove = res.value.sideToMove
+export default function HandView({ hand, owner, sideToMove, selection, onClickHandPiece }: {
+    hand: Hand, owner: Player, sideToMove: Player, selection: Selection
+    onClickHandPiece: (pieceType: PieceType, owner: Player) => void}
+) {
+    //const clickHandPiece = useBoardInputStore(s => s.clickHandPiece)
     
     const handleHandpieceClick = (pieceType: PieceType) => {
-        clickHandPiece(pieceType, sideToMove)
+        onClickHandPiece(pieceType, sideToMove)
     }
     const isSelected = (pieceType: PieceType, owner: Player) => {
         return selection.type === "hand" &&
