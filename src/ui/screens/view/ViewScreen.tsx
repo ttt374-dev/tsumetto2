@@ -36,13 +36,13 @@ function ViewContent({ problem}: { problem: Problem}){
                 <Stack sx={{ minHeight: 0, height: "100%" }} spacing={1} > 
                     <TitlePanel title={title} />
                     { /* --- 盤面 ---*/}
-                    <BoardPanel boardModel={model.state.board}/>
+                    <BoardPanel boardModel={model.state.board} actions={model.actions.board}/>
     
                     <Stack direction="row" sx={{ minHeight: 0, flexGrow: 1, p: 1 }} spacing={1}>
                         <MovesPanel
                             problem={problem}
                             movesModel={model.state.moves}
-                            onMoveToPly={model.actions.moves.moveToPly} />
+                            actions={model.actions.moves} />
     
                         <Box sx={{ flex: 1, border: 1, borderColor: "divider" }}>                            
                                 <PlyControlPanel

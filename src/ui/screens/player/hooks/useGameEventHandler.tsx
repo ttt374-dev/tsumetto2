@@ -11,7 +11,7 @@ import type { SolvedResult } from "@/domain/review/solvedResult"
 type GameAction = 
   | { type: "REPLAY_PLY", direction: "FORWARD" | "BACKWARD"}
   | { type: "REPLAY_MOVE_TO"; to: number }
-  | { type: "REPLAY_ADVANCE_OPPONENT" }
+//  | { type: "REPLAY_ADVANCE_OPPONENT" }
   | { type: "REPLAY_ADVANCE_TURN" }
   | { type: "STOP_TIMER" }
 
@@ -66,8 +66,8 @@ function interpretGameEvent(e: GameEvent,
             return [{ type: "REPLAY_PLY", direction: "BACKWARD" }]
         case "MOVETO_PLY":
             return [{ type: "REPLAY_MOVE_TO", to: e.to }]
-        case "ADVANCE_OPPONENT_PLY":
-            return [{ type: "REPLAY_ADVANCE_OPPONENT" }]
+        //case "ADVANCE_OPPONENT_PLY":
+        //    return [{ type: "REPLAY_ADVANCE_OPPONENT" }]
         case "ADVANCE_TURN":
             return [{ type: "REPLAY_ADVANCE_TURN" }]
         default:
@@ -95,9 +95,9 @@ function executeGameActions(
         ctx.replay.moveTo(action.to)
         break
 
-      case "REPLAY_ADVANCE_OPPONENT":
-        ctx.replayCtrl.advanceOpponentPly()
-        break
+      //case "REPLAY_ADVANCE_OPPONENT":
+      //  ctx.replayCtrl.advanceOpponentPly()
+      //  break
 
       case "REPLAY_ADVANCE_TURN":
         ctx.replayCtrl.advanceTurn()

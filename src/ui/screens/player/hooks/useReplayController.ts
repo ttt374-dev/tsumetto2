@@ -3,14 +3,14 @@ import { useRef } from "react"
 import { useReplayStore } from "@/ui/screens/player/store/useReplayStore"
 
 export type ReplayController = {
-    advanceOpponentPly: () => void
+    //advanceOpponentPly: () => void
     advanceTurn: () => void
 }
 
 export function useReplayController(): ReplayController {
     const replay = useReplayStore()
     const turnIdRef = useRef(0)
-
+/*
     const advanceOpponentPly = () => {
         replay.startAnimation()
         const currentId = ++turnIdRef.current
@@ -21,10 +21,28 @@ export function useReplayController(): ReplayController {
             replay.endAnimation()
         }, 500)
     }
-    const advanceTurn = () => {
+        */
+    const advanceTurn = async () => {
         replay.advancePly()
-        advanceOpponentPly()
+        //advanceOpponentPly()
+
+        replay.startAnimation()
+        
+        await new Promise(res => setTimeout(res, 500))
+        const currentId = ++turnIdRef.current
+        if (currentId !== turnIdRef.current) return
+        //const replay = useReplayStore.getState()
+        replay.advancePly()
+        replay.endAnimation()
+        /*
+        setTimeout(() => {
+            if (currentId !== turnIdRef.current) return
+            const replay = useReplayStore.getState()
+            replay.advancePly()
+            replay.endAnimation()
+        }, 500)
+        */
     }
 
-    return { advanceTurn, advanceOpponentPly }
+    return { advanceTurn }
 }
