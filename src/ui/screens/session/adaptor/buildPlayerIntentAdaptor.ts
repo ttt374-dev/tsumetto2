@@ -1,4 +1,4 @@
-import type { SessionAction } from "@/ui/screens/session/vm/resolveSessionCommand"
+import type { SessionCommand } from "@/ui/screens/session/vm/resolveSessionCommand"
 
 export type PlayerIntent = 
     | { type: "NEXT_REQUESTED" }
@@ -6,22 +6,17 @@ export type PlayerIntent =
     | { type: "PROBLEM_SOLVED" }
 
 
-export function buildPlayerIntentAdapter(dispatch: (cmd: SessionAction) => void) {
-  const handlePlayerIntent = (intent: PlayerIntent) => {
+export function interpretPlayerIntent(intent: PlayerIntent): SessionCommand {
+  
     switch (intent.type) {
       case "NEXT_REQUESTED":
-        dispatch({ type: "GO_NEXT" })
-        break
-
+        return { type: "GO_NEXT" }
+        
       case "LIST_REQUESTED":
-        dispatch({ type: "GO_LIST" })
-        break
-
+        return { type: "GO_LIST" }
+        
       case "PROBLEM_SOLVED":
-        dispatch({ type: "SUBMIT_REVIEW" })
-        break
-    }
+        return { type: "SUBMIT_REVIEW" }        
+  
   }
-
-  return handlePlayerIntent
 }

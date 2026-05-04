@@ -7,7 +7,7 @@ import type { SolvedResult } from "@/domain/review/solvedResult"
 import type { ReviewEventLog } from "@/domain/review/ReviewEvent"
 import { v4 } from "uuid"
 
-export type SessionAction =    
+export type SessionCommand =    
     | { type: "SUBMIT_REVIEW" }
     | { type: "FLUSH"}
     | { type: "GOTO", index: number}
@@ -32,7 +32,7 @@ export type SessionCommandContext = {
 function createReviewId() { return v4()}
 
 ////////////////////////////////////////////////////////////////////
-export function resolveSessionCommand(cmd: SessionAction, ctx: SessionCommandContext, sessionId: SessionId): SessionEffect[] {
+export function resolveSessionCommand(cmd: SessionCommand, ctx: SessionCommandContext, sessionId: SessionId): SessionEffect[] {
     
     const problemId = ctx.problemIds[ctx.currentIndex]
     //console.log("resolved", cmd, problemId, ctx)

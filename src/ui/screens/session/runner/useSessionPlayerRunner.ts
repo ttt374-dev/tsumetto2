@@ -6,8 +6,8 @@ import { useSessionStore } from "@/ui/screens/session/store/useSessionStore";
 import { useMissionStore } from "@/ui/screens/mission/hooks/useMissionStore";
 import { buildSessionPlayerVieModel } from "@/ui/screens/session/vm/buildSessionPlayerViewModel";
 import { parseSessionParams } from "@/ui/screens/session/adaptor/parseSessionParams";
-import { buildPlayerIntentAdapter } from "@/ui/screens/session/adaptor/buildPlayerIntentAdaptor";
 import type { SessionPlayerInput } from "@/ui/screens/session/vm/SessionPlayerViewModel";
+import { interpretPlayerIntent, type PlayerIntent } from "@/ui/screens/session/adaptor/buildPlayerIntentAdaptor";
 
 /////////////////////////////////////////
 export function useSessionPlayerRunner() {
@@ -19,7 +19,7 @@ export function useSessionPlayerRunner() {
     const sessionId = resParsed.type === "valid" ? resParsed.sessionId : ""
     const index = resParsed.type === "valid" ? resParsed.index : -1
     
-    const dispatch = useSessionExecutor(sessionId, index)
+    const execute = useSessionExecutor(sessionId, index)
 
     // vm
     const ids = useSessionStore(s => s.problemIds)
@@ -33,7 +33,7 @@ export function useSessionPlayerRunner() {
     const vm = buildSessionPlayerVieModel(input)
 
     // intent
-    const handlePlayerIntent = buildPlayerIntentAdapter(dispatch)
+    const handlePlayerIntent = (intent: PlayerIntent) => execute(interpretPlayerIntent(intent))
     
     // エラーなら返す
     if (vm.type === "error") return vm
