@@ -1,12 +1,12 @@
 import { Box } from "@mui/material"
 
 import styles from "./BoardView.module.css";
-import { Board, Square } from "@/domain/kif/entity";
-import { createDecideGameEventContext, decideGameEvent } from "@/domain/game/decideGameEvent";
-import { resolveIntent } from "@/domain/game/intentResolver";
-import { SquareView } from "@/ui/screens/player/components/panels/board/SquareView";
+import { Square } from "@/domain/kif/entity";
+import { buildSquareModel, SquareView } from "@/ui/screens/player/components/panels/board/SquareView";
 import type { BoardOKViewModel} from "@/ui/screens/player/vm/PlayerViewModel";
 import type { BoardAction } from "@/ui/screens/player/runner/usePlayerRunner";
+import { BoardInteractor } from "@/ui/screens/player/components/panels/board/BoardInteractor";
+import { useMemo } from "react";
 
 const fileLabels = ["９", "８", "７", "６", "５", "４", "３", "２", "１"];
 const rankLabels = ["一", "二", "三", "四", "五", "六", "七", "八", "九"];
@@ -14,78 +14,33 @@ const rankLabels = ["一", "二", "三", "四", "五", "六", "七", "八", "九
 export default function BoardView({ boardModel, actions }: { 
     boardModel: BoardOKViewModel, actions: BoardAction}) {
     
-    const { selection, moves, ply } = boardModel
-    const { dispatchGameEvent, promotionPending, clickSquare, clearSelection} = actions
-    
-    const { position, reversed, userSide } = boardModel
-    const { board, sideToMove } = position
+    const { reversed } = boardModel    
     
     const ranks = [...Array(9)].map((_, i) => reversed ? 9 - i : i + 1)
     const files = [...Array(9)].map((_, i) => reversed ? i + 1 : 9 - i)
 
-    const handleSquareClick = (file: number, rank: number) => {
-        const intent = clickSquare(new Square(file, rank))
-        if (!intent) return
-        const intentResult = resolveIntent(position, intent)
-
-        const isUserTurn = sideToMove === userSide
-        const ctx = createDecideGameEventContext()
-
-        const decision = decideGameEvent({ intentResult, isUserTurn, ...ctx })
-        switch (decision.type) {
-            case "invalidMove":
-                return
-            case "promotionPending":
-                promotionPending(decision.pendingPromotion)
-                return
-            case "event":
-                dispatchGameEvent(decision.event)
-                clearSelection()
-                return
-        }
-    }
-    const isSelected = (sq: Square): boolean => {
-        return selection.type === "board" &&
-            selection.square.file === sq.file &&
-            selection.square.rank === sq.rank
-    }
-    const lastMove = ply > 0 ? moves[ply - 1] : null
-    const isLastMoveTo = (sq: Square) =>
-        !lastMove ? false :
-        lastMove.to &&
-        lastMove.to.file === sq.file &&
-        lastMove.to.rank === sq.rank
-    
-    const isLastMoveFrom = (sq: Square) =>
-        !lastMove ? false :
-        lastMove.from !== null &&
-        lastMove.from.file === sq.file &&
-        lastMove.from.rank === sq.rank
-
+    const interactor = useMemo(
+        () => new BoardInteractor({ boardModel, actions }),
+        [boardModel, actions]
+    )
     return (
         <Box className={styles.board}>
             <FileLabels location="top" reversed={reversed} />
             {/* 盤面 + 左側の段表示 */}
             {ranks.flatMap(rank => {
-                const cells = files.map(file => {
+                const cells = files.map(file => {                    
                     const sq = new Square(file, rank)
-                    const piece = board.get(sq)
+                    const squareModel = buildSquareModel(sq, boardModel)
+                    //const piece = board.get(sq)
                     return (
-                        <SquareView
-                            key={Board.squareKey(new Square(file, rank))}
-                            piece={piece}
-                            selected={isSelected(sq)}
-                            reversed={reversed}
-                            lastTo={isLastMoveTo(sq)}
-                            lastFrom={isLastMoveFrom(sq)}
-                            onClick={() => handleSquareClick(file, rank)}
+                        <SquareView                            
+                            squareModel={squareModel}
+                            onClick={() => interactor.handleSquareClick(sq)}
                         />
                     )
                 })
-                const empty = <div key={`empty-${rank}`}></div>
-                const rankLabel = <div className={styles.rankLabel} key={`ranklabel-${rank}`}>
-                    {rankLabels[rank - 1]}
-                </div>
+                const empty = <EmptyRow rank={rank}/>
+                const rankLabel = <RankLabel rank={rank}/>
                 return !reversed ? [empty, ...cells, rankLabel,] : [rankLabel, ...cells, empty]
             })}
             <FileLabels location="bottom" reversed={reversed} />
@@ -93,7 +48,14 @@ export default function BoardView({ boardModel, actions }: {
     )
 
 }
-
+function EmptyRow({rank}: {rank: number}){
+    return <div key={`empty-${rank}`}/>
+}
+function RankLabel({ rank }: { rank: number }) {
+    return <div className={styles.rankLabel} key={`ranklabel-${rank}`}>
+        {rankLabels[rank - 1]}
+    </div>
+}
 type FileLabelLocation = "top" | "bottom"
 function FileLabels(props: {
     reversed: boolean
