@@ -5,13 +5,14 @@ import type { Problem } from "@/domain/problem/entity/Problem";
 
 export type PlayerInput = {
     resPosition: BuildPositionResult
-    reversed: boolean
+    //reversed: boolean
 
     problem: Problem
     isRevealed: boolean
     ply: number
     elapsedSec: number
     learningState: LearningState
+    displayReversed: boolean
 }
 
 export type BoardViewModel = 

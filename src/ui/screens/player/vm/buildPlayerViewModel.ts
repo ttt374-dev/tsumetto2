@@ -7,9 +7,11 @@ import type { PlayerIntent } from "@/ui/screens/session/adaptor/buildPlayerInten
 
 //////////////////////////////////////////////
 export function buildPlayerViewModel(input: PlayerInput): PlayerViewModel {
-    const { resPosition, reversed, problem, isRevealed, ply, learningState} = input
+    const { resPosition, problem, isRevealed, ply, learningState} = input
 
-    const board: BoardViewModel = resPosition.ok ? { status: "ok", position: resPosition.value, reversed} : { status: "error"}
+    const board: BoardViewModel = resPosition.ok 
+        ? { status: "ok", position: resPosition.value, reversed: input.displayReversed} 
+        : { status: "error"}
     return {
         board,
 

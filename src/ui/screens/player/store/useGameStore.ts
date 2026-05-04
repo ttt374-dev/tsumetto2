@@ -40,7 +40,7 @@ export type GameStore = {
     state: GameState       // キャッシュ。events から derived
     initialPosition: Position
     moves: Move[]
-    displayReversed: boolean
+    //displayReversed: boolean
     userSide: Player
 
     pendingPromotion: PendingPromotion | null
@@ -52,7 +52,7 @@ export type GameStore = {
     
     dispatch: (e: GameEvent) => GameEvent[]
     //markSubmit: () => void    
-    toggleReversed: () => void,
+    //toggleReversed: () => void,
     toggleUserSide: () => void,
     
 }
@@ -86,7 +86,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     pendingPromotion: null,
     events: [],
     hasSubmitted: false,
-    displayReversed: false,
+    //displayReversed: false,
     userSide: "black",
     //userSide: "white",
 
@@ -97,7 +97,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
             pendingPromotion: null,
             events: [],
             state: projectGameState([]),
-            displayReversed: false,
+            //displayReversed: false,
             userSide: "black"
         })
     },
@@ -126,8 +126,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
         //return nextEvents
         return nextEvents
     },
-    toggleReversed: () =>  
-        set(s => ({ displayReversed: !s.displayReversed})),
+    //toggleReversed: () =>  
+    //    set(s => ({ displayReversed: !s.displayReversed})),
     toggleUserSide: () => 
         set(s => ({ userSide: s.userSide === "black" ? "white" : "black"})),
     

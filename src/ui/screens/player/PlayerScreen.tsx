@@ -17,7 +17,6 @@ import { PlayerFooterPanel } from "@/ui/screens/player/components/panels/PlayerF
 import { usePlayerRunner, type MovesAction, type NavigationAction, type PlayerRunnerAction, type PlayerRunnerModel } from "@/ui/screens/player/runner/usePlayerRunner";
 import type { PlayerIntent } from "@/ui/screens/session/adaptor/buildPlayerIntentAdaptor";
 
-
 ///////////////////////////////////////////
 export default function PlayerScreen({ problem, title, onPlayerIntent, }: {
     problem: Problem
@@ -131,7 +130,8 @@ function DialogSection({ model }: { model: PlayerRunnerModel }) {
                 />}
         </>)
 }
-function ReverseControl({toggleReversed}: { toggleReversed: () => void}) {
+function ReverseControl( {toggleReversed} : { toggleReversed: () => void}) {
+    //const toggleReversed = useGameUIStore(s=>s.toggleReversed)
     return (
         <IconButton onClick={toggleReversed}>
             <SwapVertIcon />

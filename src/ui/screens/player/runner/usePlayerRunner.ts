@@ -16,6 +16,7 @@ import type { PlayerIntent } from "@/ui/screens/session/adaptor/buildPlayerInten
 import { buildPlayerViewModel, decideGameEffect, decidePlayerIntent } from "@/ui/screens/player/vm/buildPlayerViewModel";
 import { runGameEffects } from "@/ui/screens/player/runner/runGameEffects";
 import type { PlayerInput, PlayerViewModel } from "@/ui/screens/player/vm/PlayerViewModel";
+import { useGameUIStore } from "@/ui/screens/player/store/useGameUIStore";
 
 export type PlayerRunnerAction = {
     moves: MovesAction
@@ -59,8 +60,7 @@ export type PlayerRunnerModel = {
 export function usePlayerRunner(problem: Problem,
     options?: { onPlayerIntent?: (e: PlayerIntent) => void }
 ): PlayerRunnerModel {
-    const resPosition = useCurrentPosition()
-    const reversed = useGameStore(s => s.displayReversed)
+    const resPosition = useCurrentPosition()    
     const isRevealed = useGameStore(s => s.state.isRevealed)
     const dispatch = useGameStore(s => s.dispatch)
     const ctx = createPlayerContext()
@@ -69,13 +69,15 @@ export function usePlayerRunner(problem: Problem,
     const deleteProblem = useProblemStore(s => s.deleteProblem)
     const toast = useToast()
     const navigate = useNavigate()
-    const toggleReversed = useGameStore(s=>s.toggleReversed)
+    const toggleReversed = useGameUIStore(s=>s.toggleReversed)
     const toggleUserSide = useGameStore(s=>s.toggleUserSide)
+    const displayReversed = useGameUIStore(s=>s.reversed)
 
     const input: PlayerInput = {
-        resPosition, reversed,
+        resPosition, 
         problem, isRevealed,
         ...ctx, learningState,
+        displayReversed
     }
     const vm = buildPlayerViewModel(input)
     const dialogs = {
@@ -111,7 +113,7 @@ export function usePlayerRunner(problem: Problem,
                 navigateToDetail: (pid: ProblemId) => navigate(routes.detail(pid)),
             },
             game: {
-                toggleReversed, toggleUserSide,
+                toggleUserSide, toggleReversed,
             },
             domain: {
                 deleteProblem: (pid: ProblemId) => {
