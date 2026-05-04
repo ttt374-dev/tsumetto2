@@ -2,7 +2,12 @@ import { useRef } from "react"
 
 import { useReplayStore } from "@/ui/screens/player/store/useReplayStore"
 
-export function useReplayController() {
+export type ReplayController = {
+    advanceOpponentPly: () => void
+    advanceTurn: () => void
+}
+
+export function useReplayController(): ReplayController {
     const replay = useReplayStore()
     const turnIdRef = useRef(0)
 

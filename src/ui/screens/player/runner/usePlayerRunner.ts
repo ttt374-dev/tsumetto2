@@ -6,7 +6,7 @@ import { useToast } from "@/ui/App/providers/ToastProvider";
 import { useLearningRecordStore } from "@/ui/features/learning/hooks/useLearningRecordStore";
 import { createPlayerContext } from "@/ui/screens/player/components/types/PlayerContext";
 import { useSolvedDialog } from "@/ui/screens/player/dialogs/SolvedDialog";
-import { useGameEventHandler, type GameFeedback } from "@/ui/screens/player/hooks/useGameEventHandler";
+import { useGameEventHandler } from "@/ui/screens/player/hooks/useGameEventHandler";
 import { useGameInitializer } from "@/ui/screens/player/hooks/useGameInitializer";
 import { usePromotionDialog } from "@/ui/screens/player/hooks/usePromotionDialog";
 import { useCurrentPosition, useGameStore, type GameEvent, type PendingPromotion } from "@/ui/screens/player/store/useGameStore";
@@ -20,6 +20,7 @@ import { useGameUIStore } from "@/ui/screens/player/store/useGameUIStore";
 import { useBoardInputStore } from "@/ui/screens/player/store/useBoardInputStore";
 import type { PieceType, Player, Square } from "@/domain/kif/entity";
 import type { Intent } from "@/domain/game/intentResolver";
+import type { GameUIEvent } from "@/ui/screens/player/components/types/GameUIEvent";
 
 export type PlayerRunnerAction = {
     board: BoardAction
@@ -61,7 +62,7 @@ export type PlayerRunnerModel = {
     state: PlayerViewModel
     actions: PlayerRunnerAction
     handlers: {
-        handleUIEvent: (e: GameFeedback) => void
+        handleUIEvent: (e: GameUIEvent) => void
     }
     ui: {
         dialogs: DialogControllers
@@ -108,7 +109,7 @@ export function usePlayerRunner(problem: Problem,
     // initialize
     const isIntialized = useGameInitializer(problem)
     // handlers    
-    const handleUIEvent = useCallback((uiEvent: GameFeedback) => {
+    const handleUIEvent = useCallback((uiEvent: GameUIEvent) => {
         const intent = decidePlayerIntent(uiEvent)
         if (intent) options?.onPlayerIntent?.(intent)
         const gameEffect = decideGameEffect(uiEvent)

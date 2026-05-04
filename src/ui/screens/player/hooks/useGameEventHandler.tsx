@@ -1,18 +1,25 @@
 import { useEffect } from "react"
 
-import { useReplayController } from "@/ui/screens/player/hooks/useReplayController"
+import { useReplayController, type ReplayController } from "@/ui/screens/player/hooks/useReplayController"
 import { useGameStore, type GameEvent } from "@/ui/screens/player/store/useGameStore"
 import { useReplayStore, type ReplayStore } from "@/ui/screens/player/store/useReplayStore"
 import { useTimerStore } from "@/ui/screens/player/store/useTimerStore"
 import { deriveSolvedResultFromEvents } from "@/domain/review/service/solvedResultDeriver"
+import type { GameUIEvent } from "@/ui/screens/player/components/types/GameUIEvent"
 import type { SolvedResult } from "@/domain/review/solvedResult"
 
-export type GameFeedback = 
-    | { type: "solved", solvedResult: SolvedResult}
-    | { type: "mistake", count: number }
-    | { type: "solvedConfirmed"}
+type GameAction = 
+  | { type: "REPLAY_PLY", direction: "FORWARD" | "BACKWARD"}
+  | { type: "REPLAY_MOVE_TO"; to: number }
+  | { type: "REPLAY_ADVANCE_OPPONENT" }
+  | { type: "REPLAY_ADVANCE_TURN" }
+  | { type: "STOP_TIMER" }
 
-export function useGameEventHandler(onUIEvent?: (f: GameFeedback) => void, enabled: boolean = true ){
+  | { type: "GAME_SOLVED", solvedResult: SolvedResult}
+  | { type: "GAME_MISTAKE", count: number}
+
+
+export function useGameEventHandler(onUIEvent?: (f: GameUIEvent) => void, enabled: boolean = true ){
     const events = useGameStore(s=>s.events)    
     const mistakes = useGameStore(s=>s.state.mistakes)
     const replay = useReplayStore()
@@ -25,51 +32,106 @@ export function useGameEventHandler(onUIEvent?: (f: GameFeedback) => void, enabl
         const last = events.at(-1)
         if (!last) return
 
-        console.log("event handler", last, events)
-
-        handleGameEvent(last, {
-            replay, replayCtrl, stopTimer, events, onUIEvent,
-            mistakes
+        //console.log("event handler", last, events)
+        const actions = interpretGameEvent(last, {
+            events,
+            mistakes,
         })
+
+        executeGameActions(actions, {
+            replay,
+            replayCtrl,
+            stopTimer,
+            //onUIEvent,
+        })
+        // ② UI変換（副作用なし）
+        emitUIEvents(actions, onUIEvent)
     }, [events])    
 }
-function handleGameEvent(e: GameEvent, ctx: {
-    replay: ReplayStore
-    replayCtrl: ReturnType<typeof useReplayController>
-    stopTimer: () => void
-    events: GameEvent[]
-    mistakes: number
-    onUIEvent?: (f: GameFeedback) => void
-
-}) {
-    const { replay, replayCtrl, stopTimer, events, mistakes, onUIEvent } = ctx
-
+function interpretGameEvent(e: GameEvent, 
+      ctx: { events: GameEvent[]; mistakes: number }
+): GameAction[]{
     switch (e.type) {
         case "SOLVE":
-            replay.advancePly()
-            stopTimer()
-            //onSolve?.()
-            const solvedResult = deriveSolvedResultFromEvents(events)
-            onUIEvent?.({ type: "solved", solvedResult: solvedResult })
-            break;
+            return [
+                { type: "REPLAY_PLY", direction: "FORWARD" },
+                { type: "STOP_TIMER" },
+                { type: "GAME_SOLVED", solvedResult: deriveSolvedResultFromEvents(ctx.events)},
+            ]
         case "MISTAKE":
-            onUIEvent?.({ type: "mistake", count: mistakes })
-            break;
+            return [{ type: "GAME_MISTAKE", count: ctx.mistakes,}]
         case "ADVANCE_PLY":
-            replay.advancePly()
-            break;
+            return [{ type: "REPLAY_PLY", direction: "FORWARD" }]
         case "RETREAT_PLY":
-            replay.retreatPly()
-            break;
+            return [{ type: "REPLAY_PLY", direction: "BACKWARD" }]
         case "MOVETO_PLY":
-            replay.moveTo(e.to)
-            break
+            return [{ type: "REPLAY_MOVE_TO", to: e.to }]
         case "ADVANCE_OPPONENT_PLY":
-            replayCtrl.advanceOpponentPly()
-            break
+            return [{ type: "REPLAY_ADVANCE_OPPONENT" }]
         case "ADVANCE_TURN":
-            replayCtrl.advanceTurn()
-            break;
+            return [{ type: "REPLAY_ADVANCE_TURN" }]
+        default:
+            return []    
     }
+}
 
+function executeGameActions(
+  actions: GameAction[],
+  ctx: {
+    replay: ReplayStore
+    replayCtrl: ReplayController
+    stopTimer: () => void
+    //onUIEvent?: (f: GameUIEvent) => void
+  }
+) {
+  for (const action of actions) {
+    switch (action.type) {
+      case "REPLAY_PLY":
+        if (action.direction === "FORWARD") ctx.replay.advancePly()
+        else ctx.replay.retreatPly()
+        break
+
+      case "REPLAY_MOVE_TO":
+        ctx.replay.moveTo(action.to)
+        break
+
+      case "REPLAY_ADVANCE_OPPONENT":
+        ctx.replayCtrl.advanceOpponentPly()
+        break
+
+      case "REPLAY_ADVANCE_TURN":
+        ctx.replayCtrl.advanceTurn()
+        break
+
+      case "STOP_TIMER":
+        ctx.stopTimer()
+        break
+
+      //case "EMIT_UI":
+      //  ctx.onUIEvent?.(action.payload)
+      //  break
+    }
+  }
+}
+
+function mapGameActionToUIEvent(action: GameAction): GameUIEvent | null {
+  switch (action.type) {
+    case "GAME_SOLVED":
+      return { type: "solved", solvedResult: action.solvedResult }
+    case "GAME_MISTAKE":
+      return { type: "mistake", count: action.count }
+
+    default:
+      return null
+  }
+}
+
+function emitUIEvents(
+    actions: GameAction[],
+    onUIEvent?: (f: GameUIEvent) => void
+) {
+    for (const action of actions) {
+        const uiEvent = mapGameActionToUIEvent(action)
+        if (uiEvent) onUIEvent?.(uiEvent)
+    }
 }

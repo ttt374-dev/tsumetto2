@@ -19,13 +19,11 @@ export function runGameEffects(effects: GameEffect[], deps: {
                     deps.dialogs.solvedResult.openDialog(deps.problemId, effect.solvedResult)
                 }
                 break
-
             case "CLOSE_DIALOG":
                 if (effect.dialog === "solvedResult") {
                     deps.dialogs.solvedResult.closeDialog()
                 }
                 break
-
             case "TOAST":
                 deps.toast({ message: effect.message })
                 break

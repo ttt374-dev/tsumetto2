@@ -1,5 +1,5 @@
 
-import type { GameFeedback } from "@/ui/screens/player/hooks/useGameEventHandler";
+import type { GameUIEvent } from "@/ui/screens/player/components/types/GameUIEvent";
 import type { GameEffect } from "@/ui/screens/player/runner/runGameEffects";
 import type { BoardViewModel, PlayerInput, PlayerViewModel } from "@/ui/screens/player/vm/PlayerViewModel";
 import type { PlayerIntent } from "@/ui/screens/session/adaptor/buildPlayerIntentAdaptor";
@@ -37,7 +37,7 @@ export function buildPlayerViewModel(input: PlayerInput): PlayerViewModel {
     }
 }
 ////
-export function decidePlayerIntent(e: GameFeedback): PlayerIntent | undefined {
+export function decidePlayerIntent(e: GameUIEvent): PlayerIntent | undefined {
     switch (e.type) {
         case "solved":
             return { type: "PROBLEM_SOLVED" }
@@ -45,7 +45,7 @@ export function decidePlayerIntent(e: GameFeedback): PlayerIntent | undefined {
             return { type: "NEXT_REQUESTED" }
     }
 }
-export function decideGameEffect(e: GameFeedback): GameEffect | undefined {
+export function decideGameEffect(e: GameUIEvent): GameEffect | undefined {
     switch (e.type) {
         case "solved":
             return { type: "OPEN_DIALOG", dialog: "solvedResult", solvedResult: e.solvedResult }
