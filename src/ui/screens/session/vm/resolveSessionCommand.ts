@@ -57,11 +57,11 @@ export function resolveSessionCommand(cmd: SessionCommand, ctx: SessionCommandCo
 
         case "GO_NEXT": {
             const nextIndex = ctx.currentIndex + 1
-            console.log("GO NEXT")
-            return [
-                ...resolveSessionCommand({ type: "FLUSH" }, ctx, sessionId),
-                ...resolveSessionCommand({ type: "GOTO", index: nextIndex }, ctx, sessionId)
-            ]
+            return resolveAllSessionCommands([{type: "FLUSH"}, { type: "GOTO", index: nextIndex }], ctx, sessionId)
+            //return [
+            //    ...resolveSessionCommand({ type: "FLUSH" }, ctx, sessionId),
+            //    ...resolveSessionCommand({ type: "GOTO", index: nextIndex }, ctx, sessionId)
+            //]
         }
         case "GO_LIST": {
             return [
@@ -82,6 +82,9 @@ export function resolveSessionCommand(cmd: SessionCommand, ctx: SessionCommandCo
             return []
         }
     }
+}
+function resolveAllSessionCommands(commands: SessionCommand[], ctx: SessionCommandContext, sessionId: SessionId): SessionEffect[] {
+    return commands.flatMap(cmd => resolveSessionCommand(cmd, ctx, sessionId))
 }
 
 // helpers
