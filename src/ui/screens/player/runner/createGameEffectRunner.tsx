@@ -1,5 +1,9 @@
+import type { ProblemId } from "@/domain/problem/entity/Problem";
 import type { SolvedResult } from "@/domain/review/solvedResult";
 import { useToast } from "@/ui/App/providers/ToastProvider";
+import { useSolvedDialog } from "@/ui/screens/player/dialogs/SolvedDialog";
+import { usePromotionDialog } from "@/ui/screens/player/hooks/usePromotionDialog";
+import type { DialogControllers } from "@/ui/screens/player/runner/usePlayerRunner";
 import { useReplayStore } from "@/ui/screens/player/store/useReplayStore";
 import { useTimerStore } from "@/ui/screens/player/store/useTimerStore";
 
@@ -10,22 +14,24 @@ export type GameEffect =
     | { type: "END_ANIMATION" }
     | { type: "WAIT"; ms: number }
     | { type: "STOP_TIMER" }
-    | { type: "GAME_SOLVED"; solvedResult: SolvedResult }
-    | { type: "GAME_MISTAKE"; count: number }
 
-    | { type: "OPEN_DIALOG", dialog: "solvedResult", solvedResult: SolvedResult }
+    | { type: "OPEN_DIALOG", dialog: "solvedResult", payload: SolvedResult }
     | { type: "CLOSE_DIALOG", dialog: "solvedResult" }
     | { type: "TOAST", message: string }
 
-export function createGameEffectRunner() {
-    const toast = useToast()
-    
-    const deps = {
-            toast, 
-        }
+    | { type: "EMIT_EVENT", event: any} // TODO
+
+export type EffectRunnerDeps = {
+    toast: ReturnType<typeof useToast>
+    dialogs: DialogControllers
+    problemId: ProblemId
+
+}
+export function createGameEffectRunner(deps: EffectRunnerDeps ) {
+
     let currentId = 0
 
-    const run = async (effects: GameEffect[]) => {
+    const run = async (effects: GameEffect[]) => {        
         const id = ++currentId
                
         for (const effect of effects) {
@@ -58,33 +64,36 @@ export function createGameEffectRunner() {
                     timer.stop()
                     break
 
-                case "GAME_SOLVED":
-                    //useGameStore.getState().setSolved(effect.solvedResult)
-                    break
-
-                case "GAME_MISTAKE":
-                    deps.toast({message: `mistake: ${effect.count}`})
-                    break
-
                 case "WAIT":
                     await new Promise(res => setTimeout(res, effect.ms))
                     break
 
                 case "OPEN_DIALOG":
                     if (effect.dialog === "solvedResult") {
-                        //deps.dialogs.solvedResult.openDialog(deps.problemId, effect.solvedResult)
+                        deps.dialogs.solvedResult.openDialog(deps.problemId, effect.payload)
                     }
                     break
                 case "CLOSE_DIALOG":
                     if (effect.dialog === "solvedResult") {
-                        //deps.dialogs.solvedResult.closeDialog()
+                        deps.dialogs.solvedResult.closeDialog()
                     }
-                    break
+                    break               
+
+                case "EMIT_EVENT":
+                    console.log("EMIT EVENT")
+                    break;
                 
+                case "TOAST":
+                    deps.toast({message: effect.message})
 
             }
         }
     }
+    const cancel = () => {
+        // 以降のループが止まる
+        currentId++
+    }
 
-    return { run }
+
+    return { run, cancel }
 }

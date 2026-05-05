@@ -8,8 +8,12 @@ import { deriveSolvedResultFromEvents } from "@/domain/review/service/solvedResu
 import type { GameUIEvent } from "@/ui/screens/player/components/types/GameUIEvent"
 import type { SolvedResult } from "@/domain/review/solvedResult"
 //import type { GameEffect } from "@/ui/screens/player/runner/runGameEffects"
-import { createGameEffectRunner, type GameEffect } from "@/ui/screens/player/hooks/createGameEffectRunner"
-
+import { createGameEffectRunner, type EffectRunnerDeps, type GameEffect } from "@/ui/screens/player/runner/createGameEffectRunner"
+import { useToast } from "@/ui/App/providers/ToastProvider"
+import { useSolvedDialog } from "@/ui/screens/player/dialogs/SolvedDialog"
+import { usePromotionDialog } from "@/ui/screens/player/hooks/usePromotionDialog"
+import type { DialogControllers } from "@/ui/screens/player/runner/usePlayerRunner"
+/*
 type GameAction = 
   | { type: "REPLAY_PLY", direction: "FORWARD" | "BACKWARD"}
   | { type: "REPLAY_MOVE_TO"; to: number }
@@ -19,16 +23,17 @@ type GameAction =
 
   | { type: "GAME_SOLVED", solvedResult: SolvedResult}
   | { type: "GAME_MISTAKE", count: number}
-
-export function useGameEventHandler(onUIEvent?: (f: GameUIEvent) => void, enabled: boolean = true ){
-    const events = useGameStore(s=>s.events)    
-    const mistakes = useGameStore(s=>s.state.mistakes)
+*/
+export function useGameEventHandler(deps: EffectRunnerDeps, enabled: boolean = true) {
+//export function useGameEventHandler(onUIEvent?: (f: GameUIEvent) => void, enabled: boolean = true) {
+    const events = useGameStore(s => s.events)
+    const mistakes = useGameStore(s => s.state.mistakes)
     const replay = useReplayStore()
-    const stopTimer = useTimerStore(s=>s.stop)
-    const replayCtrl = useReplayController()        
+    const stopTimer = useTimerStore(s => s.stop)
+    const replayCtrl = useReplayController()
 
-    const runner = useMemo(()=> {
-      return createGameEffectRunner()
+    const runner = useMemo(() => {
+        return createGameEffectRunner(deps)
     }, [])
 
 
@@ -37,28 +42,36 @@ export function useGameEventHandler(onUIEvent?: (f: GameUIEvent) => void, enable
         if (!enabled) return
         const last = events.at(-1)
         if (!last) return
-        
+
         //console.log("event handler", last, events)
         const effects = interpretGameEvent(last, {
             events,
             mistakes,
         })
         runner.run(effects)
-        
-    }, [events])    
+
+    }, [events])
 }
-function interpretGameEvent(e: GameEvent, 
-      ctx: { events: GameEvent[]; mistakes: number }
-): GameEffect[]{
+function interpretGameEvent(e: GameEvent,
+    ctx: { events: GameEvent[]; mistakes: number }
+): GameEffect[] {
+    const solvedResult = deriveSolvedResultFromEvents(ctx.events)
     switch (e.type) {
         case "SOLVE":
             return [
                 { type: "ADVANCE_PLY", direction: "FORWARD" },
                 { type: "STOP_TIMER" },
-                { type: "GAME_SOLVED", solvedResult: deriveSolvedResultFromEvents(ctx.events)},
+                //{ type: "GAME_SOLVED", solvedResult: deriveSolvedResultFromEvents(ctx.events)},
+                {
+                    type: "EMIT_EVENT", event: {
+                        type: "PROBLEM_SOLVED",
+                        solvedResult: solvedResult
+                    }
+                },
+                { type: "OPEN_DIALOG", dialog: "solvedResult", payload: solvedResult },
             ]
         case "MISTAKE":
-            return [{ type: "GAME_MISTAKE", count: ctx.mistakes,}]
+            return [{ type: "TOAST", message: `mistake: ${ctx.mistakes}` }]
         case "ADVANCE_PLY":
             return [{ type: "ADVANCE_PLY", direction: "FORWARD" }]
         case "RETREAT_PLY":
@@ -69,14 +82,14 @@ function interpretGameEvent(e: GameEvent,
         //    return [{ type: "REPLAY_ADVANCE_OPPONENT" }]
         case "ADVANCE_TURN":
             return [
-              { type: "ADVANCE_PLY", direction: "FORWARD" },
-              { type: "START_ANIMATION" },
-              { type: "WAIT", ms: 500},
-              { type: "ADVANCE_PLY", direction: "FORWARD"},
-              { type: "END_ANIMATION"}
+                { type: "ADVANCE_PLY", direction: "FORWARD" },
+                { type: "START_ANIMATION" },
+                { type: "WAIT", ms: 500 },
+                { type: "ADVANCE_PLY", direction: "FORWARD" },
+                { type: "END_ANIMATION" }
             ]
         default:
-            return []    
+            return []
     }
 }
 

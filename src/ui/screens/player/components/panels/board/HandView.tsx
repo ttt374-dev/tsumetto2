@@ -37,7 +37,7 @@ export default function HandView({ hand, owner, sideToMove, selection, userSide,
     const models = buildHandPieceUIModels(hand, owner, selection, sideToMove).filter(m => m.count > 0)
     
     //const userSide = useGameUIStore(s=>s.userSide)
-    console.log("userside", userSide, owner, sideToMove)
+    //console.log("userside", userSide, owner, sideToMove)
     return (
         <Stack direction="row" justifyContent={"center"} >
             {formatPlayer(owner)}

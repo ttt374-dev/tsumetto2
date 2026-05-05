@@ -21,6 +21,7 @@ import { useBoardInputStore } from "@/ui/screens/player/store/useBoardInputStore
 import type { PieceType, Player, Square } from "@/domain/kif/entity";
 import type { Intent } from "@/domain/game/intentResolver";
 import type { GameUIEvent } from "@/ui/screens/player/components/types/GameUIEvent";
+import { DepartureBoardSharp } from "@mui/icons-material";
 
 export type PlayerRunnerAction = {
     board: BoardAction
@@ -120,7 +121,13 @@ export function usePlayerRunner(problem: Problem,
             })
         }*/
     }, [problem.id, toast, dialogs.solvedResult, options])
-    useGameEventHandler(handleUIEvent, isIntialized)
+    //const toast = useToast()
+
+    const deps = {
+        dialogs, toast, problemId: problem.id
+    }
+    useGameEventHandler(deps, isIntialized)
+    
 
     return {
         state: vm,
