@@ -1,11 +1,12 @@
 import { deriveSolvedResultFromEvents } from "@/domain/review/service/solvedResultDeriver"
-import { type GameEvent, type GameState } from "@/ui/screens/player/store/useGameStore"
+import { type GameState } from "@/ui/screens/player/store/useGameStore"
 import type { SessionId } from "@/domain/session/entity/Session"
 import { routes } from "@/ui/App/useAppNavigation"
 import type { ProblemId } from "@/domain/problem/entity/Problem"
 import type { SolvedResult } from "@/domain/review/solvedResult"
 import type { ReviewEventLog } from "@/domain/review/ReviewEvent"
 import { ConstructionOutlined } from "@mui/icons-material"
+import type { GameEvent } from "@/domain/game/types/GameEvent"
 
 export type SessionCommand =    
     | { type: "SUBMIT_REVIEW" }

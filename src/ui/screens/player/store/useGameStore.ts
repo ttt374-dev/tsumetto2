@@ -6,31 +6,11 @@ import { Move, Position, Square, type PieceType, type Player, type PromotablePie
 import { buildUntilPly, type BuildPositionResult } from "@/domain/kif/service/buildUntilPly"
 import { useReplayStore } from "@/ui/screens/player/store/useReplayStore"
 import { projectGameState } from "@/domain/game/gameStateReducer"
+import type { GameEvent, PendingPromotion } from "@/domain/game/types/GameEvent"
 
 export type GameState =  { mistakes: number, isRevealed: boolean, isSolved: boolean }    
 
-type BaseEvent = {
-    ply: number
-    elapsedSec: number
-}
 
-export type GameEvent =
-    | ({ type: "SOLVE" } & BaseEvent)
-    | ({ type: "CORRECT" } & BaseEvent)
-    | ({ type: "MISTAKE" } & BaseEvent)
-    | ({ type: "REVEAL" } & BaseEvent)
-    | ({ type: "ABANDON" } & BaseEvent)
-    | ({type: "ADVANCE_PLY"} & BaseEvent )
-    | ({type: "RETREAT_PLY"} & BaseEvent)
-    | ({type: "MOVETO_PLY", to: number} & BaseEvent)
-    //| ({type: "ADVANCE_OPPONENT_PLY"} & BaseEvent )
-    | ({type: "ADVANCE_TURN"} & BaseEvent )
-    
-export type PendingPromotion = {
-    from: Square
-    to: Square
-    pieceType: PromotablePieceType
-}
 export type GameContext = {
     elapsedSec: number
     ply: number
@@ -41,9 +21,7 @@ export type GameStore = {
     state: GameState       // キャッシュ。events から derived
     initialPosition: Position
     moves: Move[]
-    //displayReversed: boolean
-    //userSide: Player
-
+    
     pendingPromotion: PendingPromotion | null
     
     initialize: (pos: Position, moves: Move[]) => void    

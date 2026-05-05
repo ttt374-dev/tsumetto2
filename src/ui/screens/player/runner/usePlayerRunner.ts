@@ -8,7 +8,7 @@ import { useSolvedDialog } from "@/ui/screens/player/dialogs/SolvedDialog";
 import { useGameEventHandler } from "@/ui/screens/player/hooks/useGameEventHandler";
 import { useGameInitializer } from "@/ui/screens/player/hooks/useGameInitializer";
 import { usePromotionDialog } from "@/ui/screens/player/hooks/usePromotionDialog";
-import { useCurrentPosition, useGameStore, type GameEvent, type PendingPromotion } from "@/ui/screens/player/store/useGameStore";
+import { useCurrentPosition, useGameStore } from "@/ui/screens/player/store/useGameStore";
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
 import { routes } from "@/ui/App/useAppNavigation";
 import type { PlayerIntent } from "@/ui/screens/session/adaptor/interpretPlayerIntent";
@@ -19,6 +19,7 @@ import { useBoardInputStore } from "@/ui/screens/player/store/useBoardInputStore
 import type { PieceType, Player, Square } from "@/domain/kif/entity";
 import type { Intent } from "@/domain/game/intentResolver";
 import type { DomainEvent, EffectRunnerDeps } from "@/ui/screens/player/runner/runGameEffects";
+import type { GameEvent, PendingPromotion } from "@/domain/game/types/GameEvent";
 
 export type PlayerRunnerAction = {
     board: BoardAction

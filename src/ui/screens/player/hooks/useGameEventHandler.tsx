@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useRef } from "react"
 
-import { useGameStore, type GameEvent } from "@/ui/screens/player/store/useGameStore"
+import { useGameStore } from "@/ui/screens/player/store/useGameStore"
 import { deriveSolvedResultFromEvents } from "@/domain/review/service/solvedResultDeriver"
 import { createRunControl, runGameEffects, type EffectRunnerDeps, type GameEffect } from "@/ui/screens/player/runner/runGameEffects"
+import type { GameEvent } from "@/domain/game/types/GameEvent"
 
 export function useGameEventHandler(deps: EffectRunnerDeps, enabled: boolean = true) {
     const events = useGameStore(s => s.events)
