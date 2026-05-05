@@ -12,16 +12,16 @@ import { usePromotionDialog } from "@/ui/screens/player/hooks/usePromotionDialog
 import { useCurrentPosition, useGameStore, type GameEvent, type PendingPromotion } from "@/ui/screens/player/store/useGameStore";
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
 import { routes } from "@/ui/App/useAppNavigation";
-import type { PlayerIntent } from "@/ui/screens/session/adaptor/buildPlayerIntentAdaptor";
-import { buildPlayerViewModel, decideGameEffect, decidePlayerIntent } from "@/ui/screens/player/vm/buildPlayerViewModel";
+import type { PlayerIntent } from "@/ui/screens/session/adaptor/interpretPlayerIntent";
+import { buildPlayerViewModel, } from "@/ui/screens/player/vm/buildPlayerViewModel";
 //import { runGameEffects } from "@/ui/screens/player/runner/runGameEffects";
 import type { PlayerInput, PlayerViewModel } from "@/ui/screens/player/vm/PlayerViewModel";
 import { useGameUIStore } from "@/ui/screens/player/store/useGameUIStore";
 import { useBoardInputStore } from "@/ui/screens/player/store/useBoardInputStore";
 import type { PieceType, Player, Square } from "@/domain/kif/entity";
 import type { Intent } from "@/domain/game/intentResolver";
-import type { GameUIEvent } from "@/ui/screens/player/components/types/GameUIEvent";
-import { DepartureBoardSharp } from "@mui/icons-material";
+//import type { GameUIEvent } from "@/ui/screens/player/components/types/GameUIEvent";
+import type { DomainEvent, EffectRunnerDeps } from "@/ui/screens/player/runner/createGameEffectRunner";
 
 export type PlayerRunnerAction = {
     board: BoardAction
@@ -62,9 +62,9 @@ export type DialogControllers = {
 export type PlayerRunnerModel = {
     state: PlayerViewModel
     actions: PlayerRunnerAction
-    handlers: {
-        handleUIEvent: (e: GameUIEvent) => void
-    }
+    //handlers: {
+    //    handleUIEvent: (e: GameUIEvent) => void
+    //}
     ui: {
         dialogs: DialogControllers
     }
@@ -72,7 +72,9 @@ export type PlayerRunnerModel = {
 
 /////////////////////////////////////////
 export function usePlayerRunner(problem: Problem,
-    options?: { onPlayerIntent?: (e: PlayerIntent) => void }
+    options?: { 
+        onDomainEvent?: (e: DomainEvent) => void,
+        onPlayerIntent?: (e: PlayerIntent) => void }
 ): PlayerRunnerModel {
     const resPosition = useCurrentPosition()    
     const isRevealed = useGameStore(s => s.state.isRevealed)
@@ -110,24 +112,29 @@ export function usePlayerRunner(problem: Problem,
     // initialize
     const isIntialized = useGameInitializer(problem)
     // handlers    
+    /*
     const handleUIEvent = useCallback((uiEvent: GameUIEvent) => {
-        const intent = decidePlayerIntent(uiEvent)
-        if (intent) options?.onPlayerIntent?.(intent)
-        /*
+        //const intent = decidePlayerIntent(uiEvent)
+        //if (intent) options?.onPlayerIntent?.(intent)
+        
         const gameEffect = decideGameEffect(uiEvent)
         if (gameEffect) {
             runGameEffects([gameEffect], {
                 dialogs, toast, problemId: problem.id
             })
-        }*/
-    }, [problem.id, toast, dialogs.solvedResult, options])
-    //const toast = useToast()
-
-    const deps = {
-        dialogs, toast, problemId: problem.id
+        }
+    }, [problem.id, toast, dialogs.solvedResult, options])    
+*/
+    const deps: EffectRunnerDeps = {
+        dialogs, toast, problemId: problem.id,
+        event: {
+            emit: (e: DomainEvent) => {
+                //alert(e)
+                options?.onDomainEvent?.(e)
+            }
+        }
     }
-    useGameEventHandler(deps, isIntialized)
-    
+    useGameEventHandler(deps, isIntialized)    
 
     return {
         state: vm,
@@ -157,9 +164,9 @@ export function usePlayerRunner(problem: Problem,
                 },
             },
         },
-        handlers: {
-            handleUIEvent,
-        },
+        //handlers: {
+            //handleUIEvent,
+        //},
         ui: {
             dialogs,
         }

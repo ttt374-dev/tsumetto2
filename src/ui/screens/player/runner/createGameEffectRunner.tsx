@@ -19,12 +19,18 @@ export type GameEffect =
     | { type: "CLOSE_DIALOG", dialog: "solvedResult" }
     | { type: "TOAST", message: string }
 
-    | { type: "EMIT_EVENT", event: any} // TODO
+    | { type: "EMIT_EVENT", event: DomainEvent}
+
+export type DomainEvent = 
+    | { type: "PROBLEM_SOLVED"; solvedResult: SolvedResult }
 
 export type EffectRunnerDeps = {
     toast: ReturnType<typeof useToast>
     dialogs: DialogControllers
     problemId: ProblemId
+    event: {
+        emit: (e: DomainEvent) => void
+    }
 
 }
 export function createGameEffectRunner(deps: EffectRunnerDeps ) {
@@ -80,7 +86,8 @@ export function createGameEffectRunner(deps: EffectRunnerDeps ) {
                     break               
 
                 case "EMIT_EVENT":
-                    console.log("EMIT EVENT")
+                    deps.event.emit(effect.event)
+                    //console.log("EMIT EVENT")
                     break;
                 
                 case "TOAST":

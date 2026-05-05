@@ -7,7 +7,10 @@ import { useMissionStore } from "@/ui/screens/mission/hooks/useMissionStore";
 import { buildSessionPlayerVieModel } from "@/ui/screens/session/vm/buildSessionPlayerViewModel";
 import { parseSessionParams } from "@/ui/screens/session/adaptor/parseSessionParams";
 import type { SessionPlayerInput, SessionPlayerViewModel } from "@/ui/screens/session/vm/SessionPlayerViewModel";
-import { interpretPlayerIntent, type PlayerIntent } from "@/ui/screens/session/adaptor/buildPlayerIntentAdaptor";
+import { interpretPlayerIntent, type PlayerIntent } from "@/ui/screens/session/adaptor/interpretPlayerIntent";
+import type { DomainEvent } from "@/ui/screens/player/runner/createGameEffectRunner";
+import type { SessionCommand } from "@/ui/screens/session/vm/resolveSessionCommand";
+import { interpretDomainEvent } from "@/ui/screens/session/adaptor/interpretDomainEvent";
 
 /////////////////////////////////////////
 
@@ -41,8 +44,13 @@ export function useSessionPlayerRunner() {
     const vm = buildSessionPlayerVieModel(input)
 
     // intent
-    const handlePlayerIntent = (intent: PlayerIntent) => execute(interpretPlayerIntent(intent))
+    const handlePlayerIntent = (intent: PlayerIntent) => 
+        execute(interpretPlayerIntent(intent))
     
+    // domain event
+    const handleDomainEvent = (e: DomainEvent) => 
+        execute(interpretDomainEvent(e))
+
     // エラーなら返す
     if (vm.type === "error") return vm // { status: "error", message: vm.message}
     
@@ -51,6 +59,7 @@ export function useSessionPlayerRunner() {
         ...vm,
         handlers: { 
             handlePlayerIntent,    
+            handleDomainEvent,
         }
     }
 }

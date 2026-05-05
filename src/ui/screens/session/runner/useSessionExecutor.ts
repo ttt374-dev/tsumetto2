@@ -38,14 +38,14 @@ export function useSessionExecutor(sessionId: SessionId, currentIndex: number) {
         const ctx = createSessionCommandContextFromStores(currentIndex)
         const effects = resolveSessionCommand(cmd, ctx, sessionId)
         //console.log("dispatch", effects, cmd)
-        runEffects(effects, { navigate, appendReview })
+        runSessionEffects(effects, { navigate, appendReview })
     }, [navigate, appendReview, currentIndex, sessionId])
 
     return execute
 }
 
 
-function runEffects(
+export function runSessionEffects(
     effects: SessionEffect[],
     deps: {
         navigate: ReturnType<typeof useNavigate>

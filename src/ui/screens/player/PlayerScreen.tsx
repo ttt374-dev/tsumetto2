@@ -14,18 +14,24 @@ import PromotionDialog from "@/ui/screens/player/dialogs/PromotionDialog";
 import { SolvedDialog } from "@/ui/screens/player/dialogs/SolvedDialog";
 import { PlayerFooterPanel } from "@/ui/screens/player/components/panels/PlayerFooterPanel";
 import { usePlayerRunner, type NavigationAction, type PlayerRunnerModel } from "@/ui/screens/player/runner/usePlayerRunner";
-import type { PlayerIntent } from "@/ui/screens/session/adaptor/buildPlayerIntentAdaptor";
+import type { PlayerIntent } from "@/ui/screens/session/adaptor/interpretPlayerIntent";
 import type { Player } from "@/domain/kif/entity";
+import _ from "lodash";
+import type { DomainEvent } from "@/ui/screens/player/runner/createGameEffectRunner";
 
 ///////////////////////////////////////////
-export default function PlayerScreen({ problem, title, onPlayerIntent, }: {
+export default function PlayerScreen({ problem, title, onPlayerIntent, onDomainEvent }: {
     problem: Problem
     title: React.ReactNode
+    onDomainEvent?: (e: DomainEvent) => void
     onPlayerIntent?: (e: PlayerIntent) => void
 }) {
     // view model
     const model = usePlayerRunner(problem,
-        { onPlayerIntent: (e) => onPlayerIntent?.(e) })
+        {
+            onDomainEvent: (e) => onDomainEvent?.(e),
+            onPlayerIntent: (e) => onPlayerIntent?.(e)
+        })
 
     // 消された場合
     if (problem.deletedAt) {
@@ -109,7 +115,8 @@ function FooterSection({actions}: {actions: NavigationAction}){
     )
 }
 function DialogSection({ model }: { model: PlayerRunnerModel }) {
-    const confirmSolved = () => model.handlers.handleUIEvent({type: "solvedConfirmed"})
+    //const confirmSolved = () => model.handlers.handleUIEvent({type: "solvedConfirmed"})
+    const confirmSolved = () => {model.actions.navigation.nextProblem() }
     
     return (
         <>
@@ -124,7 +131,11 @@ function DialogSection({ model }: { model: PlayerRunnerModel }) {
                 <SolvedDialog
                     open={model.ui.dialogs.solvedResult.open}
                     onClose={model.ui.dialogs.solvedResult.closeDialog}
-                    onConfirm={confirmSolved}
+                    onConfirm={()=> {                        
+                        confirmSolved()
+                        model.ui.dialogs.solvedResult.closeDialog()
+                    }
+                    }
                     solvedResult={model.ui.dialogs.solvedResult.solvedResult}
                     learningState={model.state.dialogs.learningState}
                 />}

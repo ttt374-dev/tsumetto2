@@ -5,7 +5,7 @@ import { useGameStore, type GameEvent } from "@/ui/screens/player/store/useGameS
 import { useReplayStore, type ReplayStore } from "@/ui/screens/player/store/useReplayStore"
 import { useTimerStore } from "@/ui/screens/player/store/useTimerStore"
 import { deriveSolvedResultFromEvents } from "@/domain/review/service/solvedResultDeriver"
-import type { GameUIEvent } from "@/ui/screens/player/components/types/GameUIEvent"
+//import type { GameUIEvent } from "@/ui/screens/player/components/types/GameUIEvent"
 import type { SolvedResult } from "@/domain/review/solvedResult"
 //import type { GameEffect } from "@/ui/screens/player/runner/runGameEffects"
 import { createGameEffectRunner, type EffectRunnerDeps, type GameEffect } from "@/ui/screens/player/runner/createGameEffectRunner"
