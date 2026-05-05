@@ -1,6 +1,7 @@
 import { projectGameState } from "@/domain/game/gameStateReducer"
+import type { GameEvent } from "@/domain/game/types/GameEvent"
 import type { SolvedOutcome, SolvedResult } from "@/domain/review/solvedResult"
-import type { GameEvent, GameState } from "@/ui/screens/player/store/useGameStore"
+import type { GameState } from "@/ui/screens/player/store/useGameStore"
 
 export function deriveOutcome(solvedResult: SolvedResult): SolvedOutcome{
     let outcome: SolvedOutcome

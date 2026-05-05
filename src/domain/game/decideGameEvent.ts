@@ -1,12 +1,13 @@
 import { type IntentResult } from "@/domain/game/intentResolver"
+import type { GameEvent, PendingPromotion } from "@/domain/game/types/GameEvent";
 import { Move, type Player } from "@/domain/kif/entity"
-import { useGameStore, type GameEvent, type PendingPromotion } from "@/ui/screens/player/store/useGameStore"
+import { useGameStore,  } from "@/ui/screens/player/store/useGameStore"
 import { useReplayStore } from "@/ui/screens/player/store/useReplayStore";
 import { useTimerStore } from "@/ui/screens/player/store/useTimerStore";
 
 type GameDecision =
   | { type: "invalidMove", reason?: string }
-  | { type: "promotionPending"; pendingPromotion: PendingPromotion }
+  | { type: "promotionPending"; pendingPromotion: PendingPromotion}
   | { type: "event"; event: GameEvent }
 
 //////////////////////////////////

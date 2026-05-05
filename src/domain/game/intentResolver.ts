@@ -1,7 +1,7 @@
 import { Move, Piece, Square, toPromotablePieceType, type PieceType, type Position } from "@/domain/kif/entity";
-import type { PendingPromotion } from "@/ui/screens/player/store/useGameStore";
 import { canPromote } from "../kif/rules/promotion";
 import { generateValidMovesFrom } from "../kif/rules/validMoveGenerator";
+import type { PendingPromotion } from "@/domain/game/types/GameEvent";
 
 //////////
 export type Intent =    // ユーザのアクション
