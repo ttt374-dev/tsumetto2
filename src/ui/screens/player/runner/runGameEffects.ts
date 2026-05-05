@@ -2,11 +2,11 @@ import type { SolvedResult } from "@/domain/review/solvedResult"
 import type { useToast } from "@/ui/App/providers/ToastProvider"
 import type { DialogControllers } from "@/ui/screens/player/runner/usePlayerRunner"
 
-export type GameEffect =
-    | { type: "OPEN_DIALOG", dialog: "solvedResult", solvedResult: SolvedResult }
-    | { type: "CLOSE_DIALOG", dialog: "solvedResult" }
-    | { type: "TOAST", message: string }
-
+//export type GameEffect =
+//    | { type: "OPEN_DIALOG", dialog: "solvedResult", solvedResult: SolvedResult }
+//    | { type: "CLOSE_DIALOG", dialog: "solvedResult" }
+//    | { type: "TOAST", message: string }
+/*
 export function runGameEffects(effects: GameEffect[], deps: {
     dialogs: DialogControllers,
     toast: ReturnType<typeof useToast>,
@@ -29,4 +29,4 @@ export function runGameEffects(effects: GameEffect[], deps: {
                 break
         }
     }
-}
+}*/

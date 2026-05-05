@@ -19,7 +19,7 @@ export function useGameInitializer(problem: Problem) {
         clearSelection()
         restartTimer()
         setIsInitialized(true)
-        console.log("initialize")
+        //console.log("initialize")
     }, [problem.id])
 
     return isInitialized

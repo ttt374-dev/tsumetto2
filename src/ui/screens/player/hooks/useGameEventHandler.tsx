@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { useEffect, useMemo } from "react"
 
 import { useReplayController, type ReplayController } from "@/ui/screens/player/hooks/useReplayController"
 import { useGameStore, type GameEvent } from "@/ui/screens/player/store/useGameStore"
@@ -7,6 +7,8 @@ import { useTimerStore } from "@/ui/screens/player/store/useTimerStore"
 import { deriveSolvedResultFromEvents } from "@/domain/review/service/solvedResultDeriver"
 import type { GameUIEvent } from "@/ui/screens/player/components/types/GameUIEvent"
 import type { SolvedResult } from "@/domain/review/solvedResult"
+//import type { GameEffect } from "@/ui/screens/player/runner/runGameEffects"
+import { createGameEffectRunner, type GameEffect } from "@/ui/screens/player/hooks/createGameEffectRunner"
 
 type GameAction = 
   | { type: "REPLAY_PLY", direction: "FORWARD" | "BACKWARD"}
@@ -18,63 +20,67 @@ type GameAction =
   | { type: "GAME_SOLVED", solvedResult: SolvedResult}
   | { type: "GAME_MISTAKE", count: number}
 
-
 export function useGameEventHandler(onUIEvent?: (f: GameUIEvent) => void, enabled: boolean = true ){
     const events = useGameStore(s=>s.events)    
     const mistakes = useGameStore(s=>s.state.mistakes)
     const replay = useReplayStore()
     const stopTimer = useTimerStore(s=>s.stop)
-    const replayCtrl = useReplayController()    
+    const replayCtrl = useReplayController()        
+
+    const runner = useMemo(()=> {
+      return createGameEffectRunner()
+    }, [])
+
 
     // イベント処理
     useEffect(() => {
         if (!enabled) return
         const last = events.at(-1)
         if (!last) return
-
+        
         //console.log("event handler", last, events)
-        const actions = interpretGameEvent(last, {
+        const effects = interpretGameEvent(last, {
             events,
             mistakes,
         })
-
-        executeGameActions(actions, {
-            replay,
-            replayCtrl,
-            stopTimer,
-            //onUIEvent,
-        })
-        // ② UI変換（副作用なし）
-        emitUIEvents(actions, onUIEvent)
+        runner.run(effects)
+        
     }, [events])    
 }
 function interpretGameEvent(e: GameEvent, 
       ctx: { events: GameEvent[]; mistakes: number }
-): GameAction[]{
+): GameEffect[]{
     switch (e.type) {
         case "SOLVE":
             return [
-                { type: "REPLAY_PLY", direction: "FORWARD" },
+                { type: "ADVANCE_PLY", direction: "FORWARD" },
                 { type: "STOP_TIMER" },
                 { type: "GAME_SOLVED", solvedResult: deriveSolvedResultFromEvents(ctx.events)},
             ]
         case "MISTAKE":
             return [{ type: "GAME_MISTAKE", count: ctx.mistakes,}]
         case "ADVANCE_PLY":
-            return [{ type: "REPLAY_PLY", direction: "FORWARD" }]
+            return [{ type: "ADVANCE_PLY", direction: "FORWARD" }]
         case "RETREAT_PLY":
-            return [{ type: "REPLAY_PLY", direction: "BACKWARD" }]
+            return [{ type: "ADVANCE_PLY", direction: "BACKWARD" }]
         case "MOVETO_PLY":
-            return [{ type: "REPLAY_MOVE_TO", to: e.to }]
+            return [{ type: "MOVE_TO", to: e.to }]
         //case "ADVANCE_OPPONENT_PLY":
         //    return [{ type: "REPLAY_ADVANCE_OPPONENT" }]
         case "ADVANCE_TURN":
-            return [{ type: "REPLAY_ADVANCE_TURN" }]
+            return [
+              { type: "ADVANCE_PLY", direction: "FORWARD" },
+              { type: "START_ANIMATION" },
+              { type: "WAIT", ms: 500},
+              { type: "ADVANCE_PLY", direction: "FORWARD"},
+              { type: "END_ANIMATION"}
+            ]
         default:
             return []    
     }
 }
 
+/*
 function executeGameActions(
   actions: GameAction[],
   ctx: {
@@ -135,3 +141,4 @@ function emitUIEvents(
         if (uiEvent) onUIEvent?.(uiEvent)
     }
 }
+        */

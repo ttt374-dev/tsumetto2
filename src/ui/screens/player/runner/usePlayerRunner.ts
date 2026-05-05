@@ -14,7 +14,7 @@ import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
 import { routes } from "@/ui/App/useAppNavigation";
 import type { PlayerIntent } from "@/ui/screens/session/adaptor/buildPlayerIntentAdaptor";
 import { buildPlayerViewModel, decideGameEffect, decidePlayerIntent } from "@/ui/screens/player/vm/buildPlayerViewModel";
-import { runGameEffects } from "@/ui/screens/player/runner/runGameEffects";
+//import { runGameEffects } from "@/ui/screens/player/runner/runGameEffects";
 import type { PlayerInput, PlayerViewModel } from "@/ui/screens/player/vm/PlayerViewModel";
 import { useGameUIStore } from "@/ui/screens/player/store/useGameUIStore";
 import { useBoardInputStore } from "@/ui/screens/player/store/useBoardInputStore";
@@ -112,12 +112,13 @@ export function usePlayerRunner(problem: Problem,
     const handleUIEvent = useCallback((uiEvent: GameUIEvent) => {
         const intent = decidePlayerIntent(uiEvent)
         if (intent) options?.onPlayerIntent?.(intent)
+        /*
         const gameEffect = decideGameEffect(uiEvent)
         if (gameEffect) {
             runGameEffects([gameEffect], {
                 dialogs, toast, problemId: problem.id
             })
-        }
+        }*/
     }, [problem.id, toast, dialogs.solvedResult, options])
     useGameEventHandler(handleUIEvent, isIntialized)
 
