@@ -7,7 +7,7 @@ import { createPlayerContext } from "@/ui/screens/player/components/types/Player
 import { useGameStore } from "@/ui/screens/player/store/useGameStore"
 import { resolveSessionCommand, type SessionCommand, type SessionCommandContext, type SessionEffect } from "@/ui/screens/session/vm/resolveSessionCommand"
 import { useSessionStore } from "@/ui/screens/session/store/useSessionStore"
-import { useCallback, useMemo } from "react"
+import { useCallback, useEffect, useMemo } from "react"
 import { useNavigate } from "react-router-dom"
 
 export function createSessionCommandContextFromStores(  // スナップショット    
@@ -32,14 +32,19 @@ export function useSessionExecutor(sessionId: SessionId, currentIndex: number) {
     // run effect deps
     const navigate = useNavigate()
     const appendReview = useReviewEventStore(s => s.appendReview)
-
+    console.log("session exec: curentindex", currentIndex)
     // create context    
-    const execute = useCallback((cmd: SessionCommand) => {
+        
+    
+    const execute = (cmd: SessionCommand) => {        
+        alert(currentIndex)
         const ctx = createSessionCommandContextFromStores(currentIndex)
+        console.log("exec: curentindex ctx", currentIndex, ctx.currentIndex)
+    
         const effects = resolveSessionCommand(cmd, ctx, sessionId)
         //console.log("dispatch", effects, cmd)
         runSessionEffects(effects, { navigate, appendReview })
-    }, [navigate, appendReview, currentIndex, sessionId])
+    }
 
     return execute
 }
@@ -49,7 +54,7 @@ export function runSessionEffects(
     effects: SessionEffect[],
     deps: {
         navigate: ReturnType<typeof useNavigate>
-        appendReview: (problemId: ProblemId, reviewId: ReviewEventId, sessionId: SessionId, quality: SolvedResult) => void
+        appendReview: (problemId: ProblemId, sessionId: SessionId, quality: SolvedResult) => void
     }
 ) {
     for (const effect of effects) {
@@ -58,7 +63,7 @@ export function runSessionEffects(
                 deps.navigate(effect.to)
                 break
             case "APPEND_REVIEW":
-                deps.appendReview(effect.problemId, effect.reviewId, effect.sessionId, effect.solvedResult)
+                deps.appendReview(effect.problemId,effect.sessionId, effect.solvedResult)
                 break;
             default:
                 const _exhaustive: never = effect

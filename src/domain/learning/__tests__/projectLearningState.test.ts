@@ -15,7 +15,7 @@ describe("projectLearningState", () => {
         const e1: ReviewReviewedEvent = {
             type: "reviewed",
             id: "e1",
-            reviewId: "r1",
+            //reviewId: "r1",
             problemId: p1.id,
             sessionId: "session",
             solvedResult: createDefaultSolvedResult({isSolved: true}),
@@ -28,7 +28,7 @@ describe("projectLearningState", () => {
         const e2: ReviewReviewedEvent = {
             type: "reviewed",
             id: "e2",
-            reviewId: "r1",
+            //reviewId: "r1",
             problemId: p1.id,
             sessionId: "session",
             solvedResult: createDefaultSolvedResult({isSolved: true}),
@@ -51,7 +51,7 @@ describe("projectLearningState", () => {
         const e3: ReviewReviewedEvent = {
             type: "reviewed",
             id: "e3",
-            reviewId: "r1",
+            //reviewId: "r1",
             problemId: p1.id,
             sessionId: "session",
             solvedResult: createDefaultSolvedResult({isSolved: true}),
@@ -66,7 +66,7 @@ describe("projectLearningState", () => {
         const e4: ReviewReviewedEvent = {
             type: "reviewed",
             id: "e4",
-            reviewId: "r1",
+            //reviewId: "r1",
             problemId: p1.id,
             sessionId: "session",
             solvedResult: createDefaultSolvedResult({isSolved: false}),

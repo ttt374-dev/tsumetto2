@@ -1,13 +1,10 @@
 import { useEffect, useMemo } from "react"
 
-import { useReplayController, type ReplayController } from "@/ui/screens/player/hooks/useReplayController"
 import { useGameStore, type GameEvent } from "@/ui/screens/player/store/useGameStore"
 import { useReplayStore, type ReplayStore } from "@/ui/screens/player/store/useReplayStore"
 import { useTimerStore } from "@/ui/screens/player/store/useTimerStore"
 import { deriveSolvedResultFromEvents } from "@/domain/review/service/solvedResultDeriver"
-//import type { GameUIEvent } from "@/ui/screens/player/components/types/GameUIEvent"
 import type { SolvedResult } from "@/domain/review/solvedResult"
-//import type { GameEffect } from "@/ui/screens/player/runner/runGameEffects"
 import { createGameEffectRunner, type EffectRunnerDeps, type GameEffect } from "@/ui/screens/player/runner/createGameEffectRunner"
 import { useToast } from "@/ui/App/providers/ToastProvider"
 import { useSolvedDialog } from "@/ui/screens/player/dialogs/SolvedDialog"
@@ -25,16 +22,12 @@ type GameAction =
   | { type: "GAME_MISTAKE", count: number}
 */
 export function useGameEventHandler(deps: EffectRunnerDeps, enabled: boolean = true) {
-//export function useGameEventHandler(onUIEvent?: (f: GameUIEvent) => void, enabled: boolean = true) {
     const events = useGameStore(s => s.events)
     const mistakes = useGameStore(s => s.state.mistakes)
-    const replay = useReplayStore()
-    const stopTimer = useTimerStore(s => s.stop)
-    const replayCtrl = useReplayController()
-
+    
     const runner = useMemo(() => {
         return createGameEffectRunner(deps)
-    }, [])
+    }, [deps])
 
 
     // イベント処理

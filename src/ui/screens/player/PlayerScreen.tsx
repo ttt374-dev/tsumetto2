@@ -30,7 +30,7 @@ export default function PlayerScreen({ problem, title, onPlayerIntent, onDomainE
     const model = usePlayerRunner(problem,
         {
             onDomainEvent: (e) => onDomainEvent?.(e),
-            onPlayerIntent: (e) => onPlayerIntent?.(e)
+            onPlayerIntent: (int) => onPlayerIntent?.(int)
         })
 
     // 消された場合

@@ -17,7 +17,7 @@ export type NewReviewEvent =
 type NewReviewReviewedEvent =
     {
         type: "reviewed"
-        reviewId: string
+        //reviewId: string
         problemId: ProblemId
         sessionId: SessionId
         solvedResult: SolvedResult

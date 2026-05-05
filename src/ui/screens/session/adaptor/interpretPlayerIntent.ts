@@ -3,20 +3,20 @@ import type { SessionCommand } from "@/ui/screens/session/vm/resolveSessionComma
 export type PlayerIntent = 
     | { type: "NEXT_REQUESTED" }
     | { type: "LIST_REQUESTED" }
-    | { type: "PROBLEM_SOLVED" }
+//    | { type: "PROBLEM_SOLVED" }
 
 
 export function interpretPlayerIntent(intent: PlayerIntent): SessionCommand {
   
     switch (intent.type) {
       case "NEXT_REQUESTED":
-        return { type: "GO_NEXT" }
+        return { type: "ADVANCE_PROBLEM" }
         
       case "LIST_REQUESTED":
-        return { type: "GO_LIST" }
+        return { type: "OPEN_SESSION_LIST" }
         
-      case "PROBLEM_SOLVED":
-        return { type: "SUBMIT_REVIEW" }        
+      //case "PROBLEM_SOLVED":
+      //  return { type: "SUBMIT_REVIEW" }        
   
   }
 }

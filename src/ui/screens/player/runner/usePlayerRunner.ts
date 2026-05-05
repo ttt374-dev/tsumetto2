@@ -129,7 +129,6 @@ export function usePlayerRunner(problem: Problem,
         dialogs, toast, problemId: problem.id,
         event: {
             emit: (e: DomainEvent) => {
-                //alert(e)
                 options?.onDomainEvent?.(e)
             }
         }

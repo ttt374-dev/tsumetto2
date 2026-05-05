@@ -11,6 +11,7 @@ import { interpretPlayerIntent, type PlayerIntent } from "@/ui/screens/session/a
 import type { DomainEvent } from "@/ui/screens/player/runner/createGameEffectRunner";
 import type { SessionCommand } from "@/ui/screens/session/vm/resolveSessionCommand";
 import { interpretDomainEvent } from "@/ui/screens/session/adaptor/interpretDomainEvent";
+import { useCallback, useEffect, useRef } from "react";
 
 /////////////////////////////////////////
 
@@ -30,7 +31,14 @@ export function useSessionPlayerRunner() {
     const sessionId = resParsed.type === "valid" ? resParsed.sessionId : ""
     const index = resParsed.type === "valid" ? resParsed.index : -1
     
-    const execute = useSessionExecutor(sessionId, index)
+    const execute = useSessionExecutor(sessionId, index)    
+
+    const executeRef = useRef(execute)
+
+    useEffect(() => {
+        executeRef.current = execute
+    }, [execute])
+
 
     // vm
     const ids = useSessionStore(s => s.problemIds)
@@ -44,13 +52,15 @@ export function useSessionPlayerRunner() {
     const vm = buildSessionPlayerVieModel(input)
 
     // intent
-    const handlePlayerIntent = (intent: PlayerIntent) => 
-        execute(interpretPlayerIntent(intent))
+    const handlePlayerIntent = useCallback(((intent: PlayerIntent) => 
+        execute(interpretPlayerIntent(intent))), [execute])
     
     // domain event
-    const handleDomainEvent = (e: DomainEvent) => 
+    const handleDomainEvent = useCallback(((e: DomainEvent) => {
+        console.log("domain event", e)
         execute(interpretDomainEvent(e))
-
+    }),[execute])
+    
     // エラーなら返す
     if (vm.type === "error") return vm // { status: "error", message: vm.message}
     
@@ -59,7 +69,7 @@ export function useSessionPlayerRunner() {
         ...vm,
         handlers: { 
             handlePlayerIntent,    
-            handleDomainEvent,
+            handleDomainEvent,    
         }
     }
 }
