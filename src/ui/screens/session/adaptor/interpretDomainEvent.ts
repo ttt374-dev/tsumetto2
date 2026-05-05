@@ -1,4 +1,4 @@
-import type { DomainEvent } from "@/ui/screens/player/runner/createGameEffectRunner";
+import type { DomainEvent } from "@/ui/screens/player/runner/runGameEffects";
 import type { SessionCommand } from "@/ui/screens/session/vm/resolveSessionCommand";
 
 export function interpretDomainEvent(e: DomainEvent): SessionCommand {

@@ -17,7 +17,7 @@ import { usePlayerRunner, type NavigationAction, type PlayerRunnerModel } from "
 import type { PlayerIntent } from "@/ui/screens/session/adaptor/interpretPlayerIntent";
 import type { Player } from "@/domain/kif/entity";
 import _ from "lodash";
-import type { DomainEvent } from "@/ui/screens/player/runner/createGameEffectRunner";
+import type { DomainEvent } from "@/ui/screens/player/runner/runGameEffects";
 
 ///////////////////////////////////////////
 export default function PlayerScreen({ problem, title, onPlayerIntent, onDomainEvent }: {

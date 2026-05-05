@@ -8,20 +8,20 @@ import { buildSessionPlayerVieModel } from "@/ui/screens/session/vm/buildSession
 import { parseSessionParams } from "@/ui/screens/session/adaptor/parseSessionParams";
 import type { SessionPlayerInput, SessionPlayerViewModel } from "@/ui/screens/session/vm/SessionPlayerViewModel";
 import { interpretPlayerIntent, type PlayerIntent } from "@/ui/screens/session/adaptor/interpretPlayerIntent";
-import type { DomainEvent } from "@/ui/screens/player/runner/createGameEffectRunner";
+import type { DomainEvent } from "@/ui/screens/player/runner/runGameEffects";
 import type { SessionCommand } from "@/ui/screens/session/vm/resolveSessionCommand";
 import { interpretDomainEvent } from "@/ui/screens/session/adaptor/interpretDomainEvent";
 import { useCallback, useEffect, useRef } from "react";
 
 /////////////////////////////////////////
-
+/*
 type SessionPlayerRunnerModel = 
     | { status: "ok", state: SessionPlayerViewModel, 
         handlers: {
             handlePlayerIntent: (intent: PlayerIntent) => void
         }}
     | { status: "error", message?: string}
-
+*/
 export function useSessionPlayerRunner() {
     // パラメータを解析
     const params = useParams<{ sessionId: string, index: string }>()
@@ -33,12 +33,11 @@ export function useSessionPlayerRunner() {
     
     const execute = useSessionExecutor(sessionId, index)    
 
-    const executeRef = useRef(execute)
+    //const executeRef = useRef(execute)
 
-    useEffect(() => {
-        executeRef.current = execute
-    }, [execute])
-
+    //useEffect(() => {
+    //    executeRef.current = execute
+    //}, [execute])
 
     // vm
     const ids = useSessionStore(s => s.problemIds)

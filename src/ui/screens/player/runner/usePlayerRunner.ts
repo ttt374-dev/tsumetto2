@@ -1,4 +1,3 @@
-import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem";
@@ -14,14 +13,12 @@ import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
 import { routes } from "@/ui/App/useAppNavigation";
 import type { PlayerIntent } from "@/ui/screens/session/adaptor/interpretPlayerIntent";
 import { buildPlayerViewModel, } from "@/ui/screens/player/vm/buildPlayerViewModel";
-//import { runGameEffects } from "@/ui/screens/player/runner/runGameEffects";
 import type { PlayerInput, PlayerViewModel } from "@/ui/screens/player/vm/PlayerViewModel";
 import { useGameUIStore } from "@/ui/screens/player/store/useGameUIStore";
 import { useBoardInputStore } from "@/ui/screens/player/store/useBoardInputStore";
 import type { PieceType, Player, Square } from "@/domain/kif/entity";
 import type { Intent } from "@/domain/game/intentResolver";
-//import type { GameUIEvent } from "@/ui/screens/player/components/types/GameUIEvent";
-import type { DomainEvent, EffectRunnerDeps } from "@/ui/screens/player/runner/createGameEffectRunner";
+import type { DomainEvent, EffectRunnerDeps } from "@/ui/screens/player/runner/runGameEffects";
 
 export type PlayerRunnerAction = {
     board: BoardAction
