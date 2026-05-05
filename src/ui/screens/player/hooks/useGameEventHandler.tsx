@@ -1,35 +1,18 @@
-import { useEffect, useMemo } from "react"
+import { useEffect, useMemo, useRef } from "react"
 
 import { useGameStore, type GameEvent } from "@/ui/screens/player/store/useGameStore"
-import { useReplayStore, type ReplayStore } from "@/ui/screens/player/store/useReplayStore"
-import { useTimerStore } from "@/ui/screens/player/store/useTimerStore"
 import { deriveSolvedResultFromEvents } from "@/domain/review/service/solvedResultDeriver"
-import type { SolvedResult } from "@/domain/review/solvedResult"
-import { createGameEffectRunner, type EffectRunnerDeps, type GameEffect } from "@/ui/screens/player/runner/createGameEffectRunner"
-import { useToast } from "@/ui/App/providers/ToastProvider"
-import { useSolvedDialog } from "@/ui/screens/player/dialogs/SolvedDialog"
-import { usePromotionDialog } from "@/ui/screens/player/hooks/usePromotionDialog"
-import type { DialogControllers } from "@/ui/screens/player/runner/usePlayerRunner"
-/*
-type GameAction = 
-  | { type: "REPLAY_PLY", direction: "FORWARD" | "BACKWARD"}
-  | { type: "REPLAY_MOVE_TO"; to: number }
-//  | { type: "REPLAY_ADVANCE_OPPONENT" }
-  | { type: "REPLAY_ADVANCE_TURN" }
-  | { type: "STOP_TIMER" }
+import { createRunControl, runGameEffects, type EffectRunnerDeps, type GameEffect } from "@/ui/screens/player/runner/createGameEffectRunner"
 
-  | { type: "GAME_SOLVED", solvedResult: SolvedResult}
-  | { type: "GAME_MISTAKE", count: number}
-*/
 export function useGameEventHandler(deps: EffectRunnerDeps, enabled: boolean = true) {
     const events = useGameStore(s => s.events)
     const mistakes = useGameStore(s => s.state.mistakes)
+
+    //const runner = useMemo(() => {
+    //    return createGameEffectRunner(deps)
+    //}, [deps])
     
-    const runner = useMemo(() => {
-        return createGameEffectRunner(deps)
-    }, [deps])
-
-
+    const controlRef = useRef(createRunControl())
     // イベント処理
     useEffect(() => {
         if (!enabled) return
@@ -41,7 +24,8 @@ export function useGameEventHandler(deps: EffectRunnerDeps, enabled: boolean = t
             events,
             mistakes,
         })
-        runner.run(effects)
+        //runner.run(effects)
+        runGameEffects(effects, deps, controlRef.current)
 
     }, [events])
 }

@@ -52,19 +52,18 @@ export function useSessionPlayerRunner() {
     const vm = buildSessionPlayerVieModel(input)
 
     // intent
-    const handlePlayerIntent = useCallback(((intent: PlayerIntent) => 
-        execute(interpretPlayerIntent(intent))), [execute])
+    const handlePlayerIntent = (intent: PlayerIntent) => 
+        execute(interpretPlayerIntent(intent))
     
     // domain event
-    const handleDomainEvent = useCallback(((e: DomainEvent) => {
+    const handleDomainEvent = (e: DomainEvent) => {
         console.log("domain event", e)
         execute(interpretDomainEvent(e))
-    }),[execute])
+    }
     
     // エラーなら返す
     if (vm.type === "error") return vm // { status: "error", message: vm.message}
     
-
     return {
         ...vm,
         handlers: { 

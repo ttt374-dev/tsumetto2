@@ -32,14 +32,13 @@ export function useSessionExecutor(sessionId: SessionId, currentIndex: number) {
     // run effect deps
     const navigate = useNavigate()
     const appendReview = useReviewEventStore(s => s.appendReview)
-    console.log("session exec: curentindex", currentIndex)
-    // create context    
-        
+    //console.log("session exec: curentindex", currentIndex)
+            
     
     const execute = (cmd: SessionCommand) => {        
-        alert(currentIndex)
+        //alert(currentIndex)
         const ctx = createSessionCommandContextFromStores(currentIndex)
-        console.log("exec: curentindex ctx", currentIndex, ctx.currentIndex)
+        //console.log("exec: curentindex ctx", currentIndex, ctx.currentIndex)
     
         const effects = resolveSessionCommand(cmd, ctx, sessionId)
         //console.log("dispatch", effects, cmd)
