@@ -14,35 +14,37 @@ import PromotionDialog from "@/ui/screens/player/dialogs/PromotionDialog";
 import { SolvedDialog } from "@/ui/screens/player/dialogs/SolvedDialog";
 import { PlayerFooterPanel } from "@/ui/screens/player/components/panels/PlayerFooterPanel";
 import { usePlayerRunner, type NavigationAction, type PlayerRunnerModel } from "@/ui/screens/player/runner/usePlayerRunner";
-import type { PlayerIntent } from "@/ui/screens/session/adaptor/interpretPlayerIntent";
+import type { PlayerIntent } from "@/application/session/interpretor/interpretPlayerIntent";
 import type { Player } from "@/domain/kif/entity";
 import _ from "lodash";
-import type { DomainEvent } from "@/ui/screens/player/runner/runGameEffects";
+import type { SessionEvent } from "@/application/session/SessionEvent";
+import type { GameEvent } from "@/domain/game/types/GameEvent";
 
 ///////////////////////////////////////////
-export default function PlayerScreen({ problem, title, onPlayerIntent, onDomainEvent }: {
+export default function PlayerScreen({ problem, title, footer, onPlayerIntent, onGameEvent, onSessionEvent }: {
     problem: Problem
     title: React.ReactNode
-    onDomainEvent?: (e: DomainEvent) => void
+    footer?: React.ReactNode
+    onGameEvent?: (e: GameEvent) => void
+    onSessionEvent?: (e: SessionEvent) => void
     onPlayerIntent?: (e: PlayerIntent) => void
 }) {
     // view model
-    const model = usePlayerRunner(problem,
-        {
-            onDomainEvent: (e) => onDomainEvent?.(e),
-            onPlayerIntent: (int) => onPlayerIntent?.(int)
-        })
+    const model = usePlayerRunner(problem, {
+        onPlayerIntent: onPlayerIntent,
+        onGameEvent: onGameEvent
+    })
 
     // 消された場合
     if (problem.deletedAt) {
-        return <AppShell footer={<FooterSection actions={model.actions.navigation}/>}>Deleted: {problem.title}</AppShell>
+        return <AppShell>Deleted: {problem.title}</AppShell>
     }
 
     ////////////////////////////////////////////////////////////////////////
     return (
         <AppShell
             header={"Player"}
-            footer={<FooterSection actions={model.actions.navigation}/>}
+            footer={footer}
             rightActions={<HeaderRightSection problem={problem} model={model}/>}
         >
             <Stack sx={{ minHeight: 0, height: "100%" }} spacing={1} >
@@ -106,17 +108,10 @@ function HeaderRightSection({problem, model}: { problem: Problem, model: PlayerR
         />
     )
 }
-function FooterSection({actions}: {actions: NavigationAction}){
-    return (      
-        <PlayerFooterPanel
-            onNext={actions.nextProblem}
-            onShowList={actions.showList}
-        />
-    )
-}
+
 function DialogSection({ model }: { model: PlayerRunnerModel }) {
     //const confirmSolved = () => model.handlers.handleUIEvent({type: "solvedConfirmed"})
-    const confirmSolved = () => {model.actions.navigation.nextProblem() }
+    const confirmSolved = () => { model.actions.navigation.nextProblem() }
     
     return (
         <>

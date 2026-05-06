@@ -1,7 +1,7 @@
 import type { Mission, MissionId } from "@/domain/mission/entity/Mission";
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem";
 import type { SessionId } from "@/domain/session/entity/Session";
-import type { ParseSessionParamsResult } from "@/ui/screens/session/adaptor/parseSessionParams";
+import type { ParseSessionParamsResult } from "@/ui/screens/session/vm/parseSessionParams";
 
 export type SessionPlayerViewModel =
     | { type: "error", message: string }

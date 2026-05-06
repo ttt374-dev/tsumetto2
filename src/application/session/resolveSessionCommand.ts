@@ -5,7 +5,6 @@ import { routes } from "@/ui/App/useAppNavigation"
 import type { ProblemId } from "@/domain/problem/entity/Problem"
 import type { SolvedResult } from "@/domain/review/solvedResult"
 import type { ReviewEventLog } from "@/domain/review/ReviewEvent"
-import { ConstructionOutlined } from "@mui/icons-material"
 import type { GameEvent } from "@/domain/game/types/GameEvent"
 
 export type SessionCommand =    

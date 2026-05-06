@@ -5,23 +5,13 @@ import { useSessionExecutor } from "@/ui/screens/session/runner/useSessionExecut
 import { useSessionStore } from "@/ui/screens/session/store/useSessionStore";
 import { useMissionStore } from "@/ui/screens/mission/hooks/useMissionStore";
 import { buildSessionPlayerVieModel } from "@/ui/screens/session/vm/buildSessionPlayerViewModel";
-import { parseSessionParams } from "@/ui/screens/session/adaptor/parseSessionParams";
-import type { SessionPlayerInput, SessionPlayerViewModel } from "@/ui/screens/session/vm/SessionPlayerViewModel";
-import { interpretPlayerIntent, type PlayerIntent } from "@/ui/screens/session/adaptor/interpretPlayerIntent";
-import type { DomainEvent } from "@/ui/screens/player/runner/runGameEffects";
-import type { SessionCommand } from "@/ui/screens/session/vm/resolveSessionCommand";
-import { interpretDomainEvent } from "@/ui/screens/session/adaptor/interpretDomainEvent";
-import { useCallback, useEffect, useRef } from "react";
+import { parseSessionParams } from "@/ui/screens/session/vm/parseSessionParams";
+import type { SessionPlayerInput } from "@/ui/screens/session/vm/SessionPlayerViewModel";
+import { interpretPlayerIntent, type PlayerIntent } from "@/application/session/interpretor/interpretPlayerIntent";
+import { interpretSessionEvent } from "@/application/session/interpretor/interpretSessionEvent";
+import type { SessionEvent } from "@/application/session/SessionEvent";
+import type { GameEvent } from "@/domain/game/types/GameEvent";
 
-/////////////////////////////////////////
-/*
-type SessionPlayerRunnerModel = 
-    | { status: "ok", state: SessionPlayerViewModel, 
-        handlers: {
-            handlePlayerIntent: (intent: PlayerIntent) => void
-        }}
-    | { status: "error", message?: string}
-*/
 export function useSessionPlayerRunner() {
     // パラメータを解析
     const params = useParams<{ sessionId: string, index: string }>()
@@ -32,12 +22,6 @@ export function useSessionPlayerRunner() {
     const index = resParsed.type === "valid" ? resParsed.index : -1
     
     const execute = useSessionExecutor(sessionId, index)    
-
-    //const executeRef = useRef(execute)
-
-    //useEffect(() => {
-    //    executeRef.current = execute
-    //}, [execute])
 
     // vm
     const ids = useSessionStore(s => s.problemIds)
@@ -51,23 +35,38 @@ export function useSessionPlayerRunner() {
     const vm = buildSessionPlayerVieModel(input)
 
     // intent
-    const handlePlayerIntent = (intent: PlayerIntent) => 
+    const handlePlayerIntent = (intent: PlayerIntent) => {
         execute(interpretPlayerIntent(intent))
+    }
     
     // domain event
-    const handleDomainEvent = (e: DomainEvent) => {
+    const handleDomainEvent = (e: SessionEvent) => {
         console.log("domain event", e)
-        execute(interpretDomainEvent(e))
+        execute(interpretSessionEvent(e))
+    }
+
+    const handleGameEvent = (e: GameEvent) => {
+        if (e.type === "SOLVE") {
+            execute({type: "SUBMIT_REVIEW"})
+        }
+    }
+
+    const openSessionList = () => {
+        execute({ type: "OPEN_SESSION_LIST"})
+    }
+    const advanceProblem = () => {
+        execute( {type: "ADVANCE_PROBLEM"})
     }
     
     // エラーなら返す
     if (vm.type === "error") return vm // { status: "error", message: vm.message}
     
     return {
-        ...vm,
+        ...vm, openSessionList, advanceProblem,
         handlers: { 
             handlePlayerIntent,    
             handleDomainEvent,    
+            handleGameEvent,
         }
     }
 }

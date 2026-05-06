@@ -1,3 +1,5 @@
+import type { GameEffect } from "@/application/game/GameEffect";
+import type { SessionEvent } from "@/application/session/SessionEvent";
 import type { ProblemId } from "@/domain/problem/entity/Problem";
 import type { SolvedResult } from "@/domain/review/solvedResult";
 import { useToast } from "@/ui/App/providers/ToastProvider";
@@ -5,30 +7,12 @@ import type { DialogControllers } from "@/ui/screens/player/runner/usePlayerRunn
 import { useReplayStore } from "@/ui/screens/player/store/useReplayStore";
 import { useTimerStore } from "@/ui/screens/player/store/useTimerStore";
 
-export type GameEffect =
-    | { type: "ADVANCE_PLY"; direction: "FORWARD" | "BACKWARD" }
-    | { type: "MOVE_TO"; to: number }
-    | { type: "START_ANIMATION" }
-    | { type: "END_ANIMATION" }
-    | { type: "WAIT"; ms: number }
-    | { type: "STOP_TIMER" }
 
-    | { type: "OPEN_DIALOG", dialog: "solvedResult", payload: SolvedResult }
-    | { type: "CLOSE_DIALOG", dialog: "solvedResult" }
-    | { type: "TOAST", message: string }
-
-    | { type: "EMIT_EVENT", event: DomainEvent}
-
-export type DomainEvent = 
-    | { type: "PROBLEM_SOLVED"; solvedResult: SolvedResult }
 
 export type EffectRunnerDeps = {
     toast: ReturnType<typeof useToast>
     dialogs: DialogControllers
-    problemId: ProblemId
-    event: {
-        emit: (e: DomainEvent) => void
-    }
+    problemId: ProblemId   
 
 }
 export async function runGameEffects(effects: GameEffect[], deps: EffectRunnerDeps, control: RunControl) {
@@ -79,11 +63,11 @@ export async function runGameEffects(effects: GameEffect[], deps: EffectRunnerDe
                 }
                 break
 
-            case "EMIT_EVENT":
+            /*case "EMIT_EVENT":
                 deps.event.emit(effect.event)
                 //console.log("EMIT EVENT")
                 break;
-
+*/
             case "TOAST":
                 deps.toast({ message: effect.message })
 

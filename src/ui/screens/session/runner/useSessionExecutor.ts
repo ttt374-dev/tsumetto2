@@ -3,12 +3,13 @@ import type { ReviewEventId } from "@/domain/review/ReviewEvent"
 import type { SolvedResult } from "@/domain/review/solvedResult"
 import type { SessionId } from "@/domain/session/entity/Session"
 import { useReviewEventStore } from "@/ui/features/learning/hooks/useReviewEventStore"
-import { createPlayerContext } from "@/ui/screens/player/components/types/PlayerContext"
+import { createPlayerContext } from "@/ui/screens/player/runner/createPlayerContext"
 import { useGameStore } from "@/ui/screens/player/store/useGameStore"
-import { resolveSessionCommand, type SessionCommand, type SessionCommandContext, type SessionEffect } from "@/ui/screens/session/vm/resolveSessionCommand"
+import { resolveSessionCommand, type SessionCommand, type SessionCommandContext, type SessionEffect } from "@/application/session/resolveSessionCommand"
 import { useSessionStore } from "@/ui/screens/session/store/useSessionStore"
 import { useCallback, useEffect, useMemo } from "react"
 import { useNavigate } from "react-router-dom"
+import { runSessionEffects } from "@/ui/screens/session/vm/runSessionEffects"
 
 export function createSessionCommandContextFromStores(  // スナップショット    
     currentIndex: number
@@ -46,29 +47,5 @@ export function useSessionExecutor(sessionId: SessionId, currentIndex: number) {
     }
 
     return execute
-}
-
-
-export function runSessionEffects(
-    effects: SessionEffect[],
-    deps: {
-        navigate: ReturnType<typeof useNavigate>
-        appendReview: (problemId: ProblemId, sessionId: SessionId, quality: SolvedResult) => void
-    }
-) {
-    for (const effect of effects) {
-        switch (effect.type) {
-            case "NAVIGATE":
-                deps.navigate(effect.to)
-                break
-            case "APPEND_REVIEW":
-                deps.appendReview(effect.problemId,effect.sessionId, effect.solvedResult)
-                break;
-            default:
-                const _exhaustive: never = effect
-                throw new Error("Unknown effect")        
-        }
-    }
-
 }
 

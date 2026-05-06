@@ -10,12 +10,6 @@ import type { GameEvent, PendingPromotion } from "@/domain/game/types/GameEvent"
 
 export type GameState =  { mistakes: number, isRevealed: boolean, isSolved: boolean }    
 
-
-export type GameContext = {
-    elapsedSec: number
-    ply: number
-}
-    
 export type GameStore = {
     events: GameEvent[]    // SoT
     state: GameState       // キャッシュ。events から derived
@@ -30,9 +24,6 @@ export type GameStore = {
     promotionPending: (p: PendingPromotion) => void
     
     dispatch: (e: GameEvent) => GameEvent[]
-    //markSubmit: () => void    
-    //toggleReversed: () => void,
-    //toggleUserSide: () => void,
     
 }
 export function useCurrentPosition() {

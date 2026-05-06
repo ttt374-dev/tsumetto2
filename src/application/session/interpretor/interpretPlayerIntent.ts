@@ -1,4 +1,4 @@
-import type { SessionCommand } from "@/ui/screens/session/vm/resolveSessionCommand"
+import type { SessionCommand } from "@/application/session/resolveSessionCommand"
 
 export type PlayerIntent = 
     | { type: "NEXT_REQUESTED" }

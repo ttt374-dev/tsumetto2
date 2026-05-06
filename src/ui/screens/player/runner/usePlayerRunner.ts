@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem";
 import { useToast } from "@/ui/App/providers/ToastProvider";
 import { useLearningRecordStore } from "@/ui/features/learning/hooks/useLearningRecordStore";
-import { createPlayerContext } from "@/ui/screens/player/components/types/PlayerContext";
+import { createPlayerContext } from "@/ui/screens/player/runner/createPlayerContext";
 import { useSolvedDialog } from "@/ui/screens/player/dialogs/SolvedDialog";
 import { useGameEventHandler } from "@/ui/screens/player/hooks/useGameEventHandler";
 import { useGameInitializer } from "@/ui/screens/player/hooks/useGameInitializer";
@@ -11,14 +11,14 @@ import { usePromotionDialog } from "@/ui/screens/player/hooks/usePromotionDialog
 import { useCurrentPosition, useGameStore } from "@/ui/screens/player/store/useGameStore";
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
 import { routes } from "@/ui/App/useAppNavigation";
-import type { PlayerIntent } from "@/ui/screens/session/adaptor/interpretPlayerIntent";
+import type { PlayerIntent } from "@/application/session/interpretor/interpretPlayerIntent";
 import { buildPlayerViewModel, } from "@/ui/screens/player/vm/buildPlayerViewModel";
 import type { PlayerInput, PlayerViewModel } from "@/ui/screens/player/vm/PlayerViewModel";
 import { useGameUIStore } from "@/ui/screens/player/store/useGameUIStore";
 import { useBoardInputStore } from "@/ui/screens/player/store/useBoardInputStore";
 import type { PieceType, Player, Square } from "@/domain/kif/entity";
 import type { Intent } from "@/domain/game/intentResolver";
-import type { DomainEvent, EffectRunnerDeps } from "@/ui/screens/player/runner/runGameEffects";
+import type { EffectRunnerDeps } from "@/ui/screens/player/runner/runGameEffects";
 import type { GameEvent, PendingPromotion } from "@/domain/game/types/GameEvent";
 
 export type PlayerRunnerAction = {
@@ -71,7 +71,8 @@ export type PlayerRunnerModel = {
 /////////////////////////////////////////
 export function usePlayerRunner(problem: Problem,
     options?: { 
-        onDomainEvent?: (e: DomainEvent) => void,
+        //onDomainEvent?: (e: SessionEvent) => void,
+        onGameEvent?: (e: GameEvent) => void,
         onPlayerIntent?: (e: PlayerIntent) => void }
 ): PlayerRunnerModel {
     const resPosition = useCurrentPosition()    
@@ -124,14 +125,9 @@ export function usePlayerRunner(problem: Problem,
     }, [problem.id, toast, dialogs.solvedResult, options])    
 */
     const deps: EffectRunnerDeps = {
-        dialogs, toast, problemId: problem.id,
-        event: {
-            emit: (e: DomainEvent) => {
-                options?.onDomainEvent?.(e)
-            }
-        }
+        dialogs, toast, problemId: problem.id,        
     }
-    useGameEventHandler(deps, isIntialized)    
+    useGameEventHandler(deps, isIntialized, options?.onGameEvent)    
 
     return {
         state: vm,
