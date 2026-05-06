@@ -7,7 +7,7 @@ import { toLearningStateViewData } from "@/ui/features/learning/hooks/learningPr
 import type { LearningState } from "@/domain/learning/entity/LearningState"
 
 export default function ProblemLearningInfoPanel(props: {
-    problem: Problem, learningState?: LearningState
+    problem: Problem, learningState: LearningState| undefined
 }) {
     const { problem } = props
     //const learningState = useLearningRecordStore(s => s.getState(problem.id))

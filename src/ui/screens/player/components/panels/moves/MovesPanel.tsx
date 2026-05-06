@@ -9,7 +9,7 @@ import type { MovesAction } from "@/ui/screens/player/runner/usePlayerRunner";
 export default function MovesPanel({problem, movesModel, actions}: { 
     problem: Problem, movesModel: MovesViewModel, actions: MovesAction    
 }) {
-    const { moves, ply, visible, } = movesModel
+    const { moves, ply, visible, learningState} = movesModel
     const { moveToPly } = actions
     return (
         <Box
@@ -30,7 +30,7 @@ export default function MovesPanel({problem, movesModel, actions}: {
             {visible ?
                 <MovesView moves={moves} currentPlyIndex={ply} onMoveToPly={moveToPly} />
                 : (<Stack>
-                    <ProblemLearningInfoPanel problem={problem} />
+                    <ProblemLearningInfoPanel problem={problem} learningState={learningState} />
                 </Stack>)
             }
         </Box>

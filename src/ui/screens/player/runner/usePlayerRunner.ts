@@ -44,8 +44,8 @@ export type MovesAction = {
     moveToPly: (ply: number) => void,
 }
 export type NavigationAction = {
-    nextProblem: () => void
-    showList: () => void
+    //nextProblem: () => void
+    //showList: () => void
     navigateToDetail: (pid: ProblemId) => void
 }
 
@@ -60,9 +60,10 @@ export type DialogControllers = {
 export type PlayerRunnerModel = {
     state: PlayerViewModel
     actions: PlayerRunnerAction
-    //handlers: {
+    handlers: {
+        handlePlayerIntent: (intent: PlayerIntent) => void,
     //    handleUIEvent: (e: GameUIEvent) => void
-    //}
+    }
     ui: {
         dialogs: DialogControllers
     }
@@ -123,7 +124,10 @@ export function usePlayerRunner(problem: Problem,
             })
         }
     }, [problem.id, toast, dialogs.solvedResult, options])    
-*/
+*/  
+    const handlePlayerIntent = (intent: PlayerIntent) => {
+        options?.onPlayerIntent?.(intent)
+    }
     const deps: EffectRunnerDeps = {
         dialogs, toast, problemId: problem.id,        
     }
@@ -133,7 +137,8 @@ export function usePlayerRunner(problem: Problem,
         state: vm,
         actions: {
             board: {
-                dispatchGameEvent, promotionPending, clickSquare, clearSelection, clickHandPiece,
+                dispatchGameEvent, promotionPending, clickSquare, 
+                clearSelection, clickHandPiece,
             },
             moves: {
                 advancePly: () => dispatch({ type: "ADVANCE_PLY", ...ctx }),
@@ -142,8 +147,9 @@ export function usePlayerRunner(problem: Problem,
                 moveToPly: (to: number) => dispatch({type: "MOVETO_PLY", to, ...ctx })
             },
             navigation: {
-                nextProblem: () => options?.onPlayerIntent?.({ type: "NEXT_REQUESTED" }),
-                showList: () => options?.onPlayerIntent?.({ type: "LIST_REQUESTED" }),
+                //problemConfirmed: () => options?.onPlayerIntent?.({type: "PROBLEM_CONFIRMED"}),
+                //nextProblem: () => options?.onPlayerIntent?.({ type: "NEXT_REQUESTED" }),
+                //showList: () => options?.onPlayerIntent?.({ type: "LIST_REQUESTED" }),
                 navigateToDetail: (pid: ProblemId) => navigate(routes.detail(pid)),
             },
             game: {
@@ -157,9 +163,10 @@ export function usePlayerRunner(problem: Problem,
                 },
             },
         },
-        //handlers: {
+        handlers: {
             //handleUIEvent,
-        //},
+            handlePlayerIntent,
+        },
         ui: {
             dialogs,
         }

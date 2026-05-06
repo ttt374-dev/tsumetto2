@@ -21,12 +21,11 @@ import type { SessionEvent } from "@/application/session/SessionEvent";
 import type { GameEvent } from "@/domain/game/types/GameEvent";
 
 ///////////////////////////////////////////
-export default function PlayerScreen({ problem, title, footer, onPlayerIntent, onGameEvent, onSessionEvent }: {
+export default function PlayerScreen({ problem, title, footer, onPlayerIntent, onGameEvent, }: {
     problem: Problem
     title: React.ReactNode
     footer?: React.ReactNode
     onGameEvent?: (e: GameEvent) => void
-    onSessionEvent?: (e: SessionEvent) => void
     onPlayerIntent?: (e: PlayerIntent) => void
 }) {
     // view model
@@ -111,7 +110,8 @@ function HeaderRightSection({problem, model}: { problem: Problem, model: PlayerR
 
 function DialogSection({ model }: { model: PlayerRunnerModel }) {
     //const confirmSolved = () => model.handlers.handleUIEvent({type: "solvedConfirmed"})
-    const confirmSolved = () => { model.actions.navigation.nextProblem() }
+    //const confirmSolved = () => { model.actions.navigation.nextProblem() }
+    const confirmSolved = () => { model.handlers.handlePlayerIntent({type: "PROBLEM_CONFIRMED"})}
     
     return (
         <>

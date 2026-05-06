@@ -3,7 +3,7 @@ import type { SessionCommand } from "@/application/session/resolveSessionCommand
 export type PlayerIntent = 
     | { type: "NEXT_REQUESTED" }
     | { type: "LIST_REQUESTED" }
-//    | { type: "PROBLEM_SOLVED" }
+    | { type: "PROBLEM_CONFIRMED"}
 
 
 export function interpretPlayerIntent(intent: PlayerIntent): SessionCommand {
@@ -15,8 +15,8 @@ export function interpretPlayerIntent(intent: PlayerIntent): SessionCommand {
       case "LIST_REQUESTED":
         return { type: "OPEN_SESSION_LIST" }
         
-      //case "PROBLEM_SOLVED":
-      //  return { type: "SUBMIT_REVIEW" }        
+      case "PROBLEM_CONFIRMED":
+        return { type: "ADVANCE_PROBLEM"}
   
   }
 }

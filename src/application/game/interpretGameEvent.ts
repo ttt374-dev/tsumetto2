@@ -11,9 +11,7 @@ export function interpretGameEvent(e: GameEvent,
             return [
                 { type: "ADVANCE_PLY", direction: "FORWARD" },
                 { type: "STOP_TIMER" },
-                //{ type: "GAME_SOLVED", solvedResult: deriveSolvedResultFromEvents(ctx.events)},
-                {
-                    type: "EMIT_EVENT", event: {
+                { type: "EMIT_EVENT", event: {
                         type: "PROBLEM_SOLVED",
                         solvedResult: solvedResult
                     }
