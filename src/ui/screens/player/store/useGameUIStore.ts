@@ -1,4 +1,5 @@
 import type { Player } from "@/domain/kif/entity"
+import type { initial } from "lodash"
 import { create } from "zustand"
 
 type GameUIState = {
@@ -6,6 +7,7 @@ type GameUIState = {
     userSide: Player
     isMovesVisible: boolean
 
+    initialize: () => void
     toggleReversed: () => void
     toggleUserSide: () => void
     setReversed: (value: boolean) => void
@@ -17,6 +19,9 @@ export const useGameUIStore = create<GameUIState>((set, get) => ({
     userSide: "black",
     isMovesVisible: false,
 
+    initialize: () => {
+        set({ isReversed: false, userSide: "black", isMovesVisible: false})
+    },
     toggleReversed: () => {
         set({ isReversed: !get().isReversed })
     },
