@@ -2,7 +2,7 @@
 import type { GameEvent } from "@/domain/game/types/GameEvent"
 import { routes } from "@/ui/App/useAppNavigation"
 import { AppShell } from "@/ui/common/components/layout/AppShell"
-import { PlayerFooterPanel } from "@/ui/screens/player/components/panels/PlayerFooterPanel"
+import { PlayerFooterPanel } from "@/ui/screens/session/PlayerFooterPanel"
 import PlayerScreen from "@/ui/screens/player/PlayerScreen"
 import { useSessionPlayerRunner } from "@/ui/screens/session/runner/useSessionPlayerRunner"
 import { useNavigate } from "react-router-dom"
@@ -19,6 +19,7 @@ export default function SessionPlayerScreen() {
             title={model.title}
             footer={<PlayerFooterPanel 
                 onNext={model.advanceProblem} 
+                onPrev={model.retreatProblem}
                 onShowList={model.openSessionList} />}
             onPlayerIntent={model.handlers.handlePlayerIntent}
             onGameEvent={model.handlers.handleGameEvent}

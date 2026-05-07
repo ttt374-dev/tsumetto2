@@ -1,59 +1,16 @@
-import { useNavigate } from "react-router-dom";
-
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem";
 import { useToast } from "@/ui/App/providers/ToastProvider";
-import { useLearningRecordStore } from "@/ui/features/learning/hooks/useLearningRecordStore";
-import { createPlayerContext } from "@/ui/screens/player/runner/createPlayerContext";
 import { useSolvedDialog } from "@/ui/screens/player/dialogs/SolvedDialog";
 import { useGameEventHandler } from "@/ui/screens/player/hooks/useGameEventHandler";
 import { useGameInitializer } from "@/ui/screens/player/hooks/useGameInitializer";
 import { usePromotionDialog } from "@/ui/screens/player/hooks/usePromotionDialog";
-import { useCurrentPosition, useGameStore } from "@/ui/screens/player/store/useGameStore";
-import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
-import { routes } from "@/ui/App/useAppNavigation";
 import type { PlayerIntent } from "@/application/session/interpretor/interpretPlayerIntent";
-import { buildPlayerViewModel, } from "@/ui/screens/player/vm/buildPlayerViewModel";
 import type { PlayerInput, PlayerViewModel } from "@/ui/screens/player/vm/PlayerViewModel";
-import { useGameUIStore } from "@/ui/screens/player/store/useGameUIStore";
-import { useBoardInputStore } from "@/ui/screens/player/store/useBoardInputStore";
-import type { PieceType, Player, Square } from "@/domain/kif/entity";
-import type { Intent } from "@/domain/game/intentResolver";
 import type { EffectRunnerDeps } from "@/ui/screens/player/runner/runGameEffects";
 import type { GameEvent, PendingPromotion } from "@/domain/game/types/GameEvent";
+import { usePlayerViewModel } from "@/ui/screens/player/hooks/usePlayerViewModel";
+import { usePlayerActions, type PlayerRunnerAction } from "@/ui/screens/player/hooks/usePlayerActions";
 
-export type PlayerRunnerAction = {
-    board: BoardAction
-    moves: MovesAction
-    navigation: NavigationAction
-    game: GameAction
-    domain: {
-        deleteProblem: (pid: ProblemId) => void
-    }
-}
-export type BoardAction = {
-    dispatchGameEvent: (e: GameEvent) => void
-    promotionPending: (p: PendingPromotion) => void
-    clickSquare: (sq: Square) => Intent | null
-    clickHandPiece: (pieceType: PieceType, owner: Player) => void
-    clearSelection: () => void
-}
-export type MovesAction = {
-    advancePly: () => void,
-    retreatPly: () => void,
-    reveal: () => void,
-    moveToPly: (ply: number) => void,
-    setMovesVisible: (value: boolean) => void
-}
-export type NavigationAction = {
-    //nextProblem: () => void
-    //showList: () => void
-    navigateToDetail: (pid: ProblemId) => void
-}
-
-type GameAction = {
-    toggleReversed: () => void
-    toggleUserSide: () => void
-}
 export type DialogControllers = {
    solvedResult: ReturnType<typeof useSolvedDialog>
    promotion: ReturnType<typeof usePromotionDialog>
@@ -76,102 +33,29 @@ export function usePlayerRunner(problem: Problem,
         //onDomainEvent?: (e: SessionEvent) => void,
         onGameEvent?: (e: GameEvent) => void,
         onPlayerIntent?: (e: PlayerIntent) => void }
-): PlayerRunnerModel {
-    const resPosition = useCurrentPosition()    
-    const isRevealed = useGameStore(s => s.state.isRevealed)
-    const dispatch = useGameStore(s => s.dispatch)
-    const ctx = createPlayerContext()
-    const records = useLearningRecordStore(s => s.stateRecords)
-    const learningState = records[problem.id]
-    const deleteProblem = useProblemStore(s => s.deleteProblem)
+): PlayerRunnerModel {    
     const toast = useToast()
-    const navigate = useNavigate()
-    const toggleReversed = useGameUIStore(s=>s.toggleReversed)
-    const toggleUserSide = useGameUIStore(s=>s.toggleUserSide)
-    const displayReversed = useGameUIStore(s=>s.isReversed)
-    const userSide = useGameUIStore(s=>s.userSide)
-    const selection = useBoardInputStore(s=>s.selection)
-    const dispatchGameEvent = useGameStore(s => s.dispatch)
-    const promotionPending = useGameStore(s => s.promotionPending)
-    const clickSquare = useBoardInputStore(s => s.clickSquare)
-    const clickHandPiece = useBoardInputStore(s => s.clickHandPiece)
-    const clearSelection = useBoardInputStore(s => s.clear)
-    const isMovesVisible = useGameUIStore(s=>s.isMovesVisible)
-    const setMovesVisible = useGameUIStore(s=>s.setMovesVisible)
-    //const isRevealed = useGameStore(s=>s.isR)
-
-    const input: PlayerInput = {
-        resPosition, 
-        problem, isRevealed,
-        ...ctx, learningState,
-        displayReversed, userSide,
-        selection, moves: problem.kifData.moves,      
-        isMovesVisible
-
-    }
-    const vm = buildPlayerViewModel(input)
+    //const vm = buildPlayerViewModel(input)
+    const vm = usePlayerViewModel(problem)
+    const actions = usePlayerActions()
     const dialogs = {
         solvedResult: useSolvedDialog(),
         promotion: usePromotionDialog(),
     }
     // initialize
-    const isIntialized = useGameInitializer(problem)
-    // handlers    
-    /*
-    const handleUIEvent = useCallback((uiEvent: GameUIEvent) => {
-        //const intent = decidePlayerIntent(uiEvent)
-        //if (intent) options?.onPlayerIntent?.(intent)
-        
-        const gameEffect = decideGameEffect(uiEvent)
-        if (gameEffect) {
-            runGameEffects([gameEffect], {
-                dialogs, toast, problemId: problem.id
-            })
-        }
-    }, [problem.id, toast, dialogs.solvedResult, options])    
-*/  
-    const handlePlayerIntent = (intent: PlayerIntent) => {
-        options?.onPlayerIntent?.(intent)
-    }
+    const isIntialized = useGameInitializer(problem) 
     const deps: EffectRunnerDeps = {
         dialogs, toast, problemId: problem.id,        
     }
+    
     useGameEventHandler(deps, isIntialized, options?.onGameEvent)    
-
+    const handlePlayerIntent = (intent: PlayerIntent) => {
+        options?.onPlayerIntent?.(intent)
+    }
+    
     return {
         state: vm,
-        actions: {
-            board: {
-                dispatchGameEvent, promotionPending, clickSquare, 
-                clearSelection, clickHandPiece,
-            },
-            moves: {
-                advancePly: () => dispatch({ type: "ADVANCE_PLY", ...ctx }),
-                retreatPly: () => dispatch({ type: "RETREAT_PLY", ...ctx }),
-                reveal: () => {
-                    dispatch({ type: "REVEAL", ...ctx })
-                    setMovesVisible(true)
-                },
-                moveToPly: (to: number) => dispatch({type: "MOVETO_PLY", to, ...ctx }),
-                setMovesVisible: (value: boolean) => setMovesVisible(value)
-            },
-            navigation: {
-                //problemConfirmed: () => options?.onPlayerIntent?.({type: "PROBLEM_CONFIRMED"}),
-                //nextProblem: () => options?.onPlayerIntent?.({ type: "NEXT_REQUESTED" }),
-                //showList: () => options?.onPlayerIntent?.({ type: "LIST_REQUESTED" }),
-                navigateToDetail: (pid: ProblemId) => navigate(routes.detail(pid)),
-            },
-            game: {
-                toggleUserSide, toggleReversed,
-            },
-            domain: {
-                deleteProblem: (pid: ProblemId) => {
-                    if (!window.confirm("sure to delete ? ")) return
-                    deleteProblem(pid)
-                    toast({ message: `deleted: ${pid}` })
-                },
-            },
-        },
+        actions,
         handlers: {
             //handleUIEvent,
             handlePlayerIntent,

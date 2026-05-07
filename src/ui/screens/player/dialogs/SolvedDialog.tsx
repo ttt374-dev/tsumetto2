@@ -46,23 +46,25 @@ export function SolvedDialog({ open, onClose, onConfirm, solvedResult, learningS
     const lvd = learningState && toLearningStateViewData(learningState)
     const quality = deriveAnswerQuality(solvedResult)
     const pdata = ["outcome", "mistakes", "isRevealed", "elapsedSec"] as const            
+    const text = formatSolvedResult(solvedResult)
+    const learningtext = learningState ? formatLearningState(learningState) : ""
 
     return (
-        <Dialog open={open} onClose={onClose} maxWidth="xl">
+        <Dialog open={open} onClose={onClose} maxWidth="xl" 
+           sx={{
+            mt: 24,
+    /*"& .MuiDialog-container": {
+      alignItems: "flex-end",
+      paddingBottom: "96px",
+    },*/
+  }}
+        >
             <DialogTitle>
                 詰みました
             </DialogTitle>
             <DialogContent>
-                { pdata.map(d=>(
-                    <Box key={d}>{ solvedResultLabels[d]}：{svd[d]}</Box>    
-                ))}                
-
-                {lvd && <>
-                    <Box>平均スコア：{lvd.score}</Box>
-                    <Box>{ learningStateLabels["nextReviewedAt"]}：{lvd.nextReviewedIn}</Box>
-                    <Box>Answer Quality：{quality}</Box>
-                </>
-                }
+                <Box>{ text }</Box>
+                <Box>{ learningtext }</Box>                
             </DialogContent>
             <DialogActions>
                 <Button variant="outlined" color="info" onClick={() => { onClose() }}>
@@ -76,4 +78,14 @@ export function SolvedDialog({ open, onClose, onConfirm, solvedResult, learningS
         </Dialog>
     )
 }
+function formatSolvedResult(res: SolvedResult): string {
+    const quality = deriveAnswerQuality(res)
+    const vd = toSolvedResultViewData(res)
+    return `${vd.outcome} (${quality}: ${vd.mistakes}, ${vd.isRevealed}, ${vd.elapsedSec})`
+}
+function formatLearningState(state: LearningState){
+    const vd = toLearningStateViewData(state)
+    return `平均スコア: ${vd.score}, 次回レビュー：${vd.nextReviewedIn}`
+}
+
 

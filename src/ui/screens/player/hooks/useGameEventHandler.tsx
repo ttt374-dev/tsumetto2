@@ -1,7 +1,6 @@
-import { useEffect, useMemo, useRef } from "react"
+import { useEffect, useRef } from "react"
 
 import { useGameStore } from "@/ui/screens/player/store/useGameStore"
-import { deriveSolvedResultFromEvents } from "@/domain/review/service/solvedResultDeriver"
 import { createRunControl, runGameEffects, type EffectRunnerDeps } from "@/ui/screens/player/runner/runGameEffects"
 import type { GameEvent } from "@/domain/game/types/GameEvent"
 import { interpretGameEvent } from "@/application/game/interpretGameEvent"

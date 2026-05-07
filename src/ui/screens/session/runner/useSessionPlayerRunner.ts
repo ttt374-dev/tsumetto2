@@ -57,12 +57,15 @@ export function useSessionPlayerRunner() {
     const advanceProblem = () => {
         execute( {type: "ADVANCE_PROBLEM"})
     }
+    const retreatProblem = () => {
+        execute( {type: "RETREAT_PROBLEM"})
+    }
     
     // エラーなら返す
     if (vm.type === "error") return vm // { status: "error", message: vm.message}
     
     return {
-        ...vm, openSessionList, advanceProblem,
+        ...vm, openSessionList, advanceProblem, retreatProblem,
         handlers: { 
             handlePlayerIntent,    
             handleDomainEvent,    

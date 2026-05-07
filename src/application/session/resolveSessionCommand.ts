@@ -14,6 +14,7 @@ export type SessionCommand =
     | { type: "OPEN_SESSION_LIST" }
     | { type: "GOTO_PROBLEM", index: number}
     | { type: "ADVANCE_PROBLEM"}
+    | { type: "RETREAT_PROBLEM"}
 
 export type SessionEffect = 
     | { type: "NAVIGATE", to: string}
@@ -63,6 +64,13 @@ export function resolveSessionCommand(
                 { type: "FLUSH"}, 
                 { type: "GOTO_PROBLEM", index: nextIndex }], ctx, sessionId)            
         }
+        case "RETREAT_PROBLEM": {
+            const nextIndex = ctx.currentIndex - 1
+            return resolveAllSessionCommands([
+                //{ type: "FLUSH"}, 
+                { type: "GOTO_PROBLEM", index: nextIndex }], ctx, sessionId)            
+        }
+
         case "OPEN_SESSION_LIST": {
             return [
                 { type: "NAVIGATE", to: routes.sessionList(sessionId, ctx.currentIndex) }

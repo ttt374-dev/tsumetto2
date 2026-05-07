@@ -69,7 +69,7 @@ export async function runGameEffects(effects: GameEffect[], deps: EffectRunnerDe
                 break;
 */
             case "TOAST":
-                deps.toast({ message: effect.message })
+                deps.toast({ message: effect.message, severity: effect.severity ?? "info" })
 
         }
     }

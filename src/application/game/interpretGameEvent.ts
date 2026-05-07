@@ -16,11 +16,11 @@ export function interpretGameEvent(e: GameEvent,
                         solvedResult: solvedResult
                     }
                 },*/
-                { type: "TOAST", message: "solved"}
-                //{ type: "OPEN_DIALOG", dialog: "solvedResult", payload: solvedResult },
+                //{ type: "TOAST", message: "solved", severity: "success"},
+                { type: "OPEN_DIALOG", dialog: "solvedResult", payload: solvedResult },
             ]
         case "MISTAKE":
-            return [{ type: "TOAST", message: `mistake: ${ctx.mistakes}` }]
+            return [{ type: "TOAST", message: `mistake: ${ctx.mistakes}`, severity: "error" } ]
         case "ADVANCE_PLY":
             return [{ type: "ADVANCE_PLY", direction: "FORWARD" }]
         case "RETREAT_PLY":

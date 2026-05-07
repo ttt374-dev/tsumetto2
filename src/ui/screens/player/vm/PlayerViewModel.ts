@@ -10,6 +10,7 @@ export type PlayerInput = {
 
     problem: Problem
     isRevealed: boolean
+    isSolved: boolean
     ply: number
     elapsedSec: number
     learningState: LearningState
@@ -44,6 +45,7 @@ export type MovesViewModel = {
     userSide: Player
     learningState: LearningState
     isRevealed: boolean
+    isSolved: boolean
 }
 export type PlayerDialogsState = {
     learningState: LearningState
