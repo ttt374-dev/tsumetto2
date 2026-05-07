@@ -9,7 +9,7 @@ import type { BoardViewModel, PlayerInput, PlayerViewModel } from "@/ui/screens/
 export function buildPlayerViewModel(input: PlayerInput): PlayerViewModel {
     const { resPosition, problem, isRevealed, ply, learningState, 
         displayReversed, userSide,
-        selection, moves, 
+        selection, moves, isMovesVisible,
      } = input
 
     const board: BoardViewModel = resPosition.ok 
@@ -27,8 +27,10 @@ export function buildPlayerViewModel(input: PlayerInput): PlayerViewModel {
             //problem, 
             moves: problem.kifData.moves,
             maxPly: problem.kifData.moves.length,
-            visible: isRevealed,
-            ply, userSide, learningState
+            visible: isMovesVisible,
+            ply, userSide, learningState,
+            isRevealed
+
 
         },
         dialogs: {

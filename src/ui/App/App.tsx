@@ -48,7 +48,7 @@ export const theme = createTheme({
     MuiSnackbar: {
       styleOverrides: {
         root: {
-          bottom: `calc(16px + env(safe-area-inset-bottom))`
+          bottom: `calc(48px + env(safe-area-inset-bottom))`
         }
       }
     }

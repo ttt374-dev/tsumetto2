@@ -42,6 +42,7 @@ export type MovesAction = {
     retreatPly: () => void,
     reveal: () => void,
     moveToPly: (ply: number) => void,
+    setMovesVisible: (value: boolean) => void
 }
 export type NavigationAction = {
     //nextProblem: () => void
@@ -87,7 +88,7 @@ export function usePlayerRunner(problem: Problem,
     const navigate = useNavigate()
     const toggleReversed = useGameUIStore(s=>s.toggleReversed)
     const toggleUserSide = useGameUIStore(s=>s.toggleUserSide)
-    const displayReversed = useGameUIStore(s=>s.reversed)
+    const displayReversed = useGameUIStore(s=>s.isReversed)
     const userSide = useGameUIStore(s=>s.userSide)
     const selection = useBoardInputStore(s=>s.selection)
     const dispatchGameEvent = useGameStore(s => s.dispatch)
@@ -95,13 +96,17 @@ export function usePlayerRunner(problem: Problem,
     const clickSquare = useBoardInputStore(s => s.clickSquare)
     const clickHandPiece = useBoardInputStore(s => s.clickHandPiece)
     const clearSelection = useBoardInputStore(s => s.clear)
+    const isMovesVisible = useGameUIStore(s=>s.isMovesVisible)
+    const setMovesVisible = useGameUIStore(s=>s.setMovesVisible)
+    //const isRevealed = useGameStore(s=>s.isR)
 
     const input: PlayerInput = {
         resPosition, 
         problem, isRevealed,
         ...ctx, learningState,
         displayReversed, userSide,
-        selection, moves: problem.kifData.moves,       
+        selection, moves: problem.kifData.moves,      
+        isMovesVisible
 
     }
     const vm = buildPlayerViewModel(input)
@@ -143,8 +148,12 @@ export function usePlayerRunner(problem: Problem,
             moves: {
                 advancePly: () => dispatch({ type: "ADVANCE_PLY", ...ctx }),
                 retreatPly: () => dispatch({ type: "RETREAT_PLY", ...ctx }),
-                reveal: () => dispatch({ type: "REVEAL", ...ctx }),
-                moveToPly: (to: number) => dispatch({type: "MOVETO_PLY", to, ...ctx })
+                reveal: () => {
+                    dispatch({ type: "REVEAL", ...ctx })
+                    setMovesVisible(true)
+                },
+                moveToPly: (to: number) => dispatch({type: "MOVETO_PLY", to, ...ctx }),
+                setMovesVisible: (value: boolean) => setMovesVisible(value)
             },
             navigation: {
                 //problemConfirmed: () => options?.onPlayerIntent?.({type: "PROBLEM_CONFIRMED"}),

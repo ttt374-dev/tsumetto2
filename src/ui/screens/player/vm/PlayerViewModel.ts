@@ -17,6 +17,7 @@ export type PlayerInput = {
     userSide: Player
     moves: Move[]
     selection: Selection
+    isMovesVisible: boolean    
 }
 
 export type BoardViewModel = 
@@ -42,6 +43,7 @@ export type MovesViewModel = {
     visible: boolean
     userSide: Player
     learningState: LearningState
+    isRevealed: boolean
 }
 export type PlayerDialogsState = {
     learningState: LearningState

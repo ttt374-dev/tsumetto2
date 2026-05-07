@@ -11,12 +11,13 @@ export function interpretGameEvent(e: GameEvent,
             return [
                 { type: "ADVANCE_PLY", direction: "FORWARD" },
                 { type: "STOP_TIMER" },
-                { type: "EMIT_EVENT", event: {
+                /*{ type: "EMIT_EVENT", event: {
                         type: "PROBLEM_SOLVED",
                         solvedResult: solvedResult
                     }
-                },
-                { type: "OPEN_DIALOG", dialog: "solvedResult", payload: solvedResult },
+                },*/
+                { type: "TOAST", message: "solved"}
+                //{ type: "OPEN_DIALOG", dialog: "solvedResult", payload: solvedResult },
             ]
         case "MISTAKE":
             return [{ type: "TOAST", message: `mistake: ${ctx.mistakes}` }]

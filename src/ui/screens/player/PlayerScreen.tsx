@@ -12,12 +12,10 @@ import { Problem } from "@/domain/problem/entity/Problem"
 import { AppShell } from "@/ui/common/components/layout/AppShell";
 import PromotionDialog from "@/ui/screens/player/dialogs/PromotionDialog";
 import { SolvedDialog } from "@/ui/screens/player/dialogs/SolvedDialog";
-import { PlayerFooterPanel } from "@/ui/screens/player/components/panels/PlayerFooterPanel";
 import { usePlayerRunner, type NavigationAction, type PlayerRunnerModel } from "@/ui/screens/player/runner/usePlayerRunner";
 import type { PlayerIntent } from "@/application/session/interpretor/interpretPlayerIntent";
 import type { Player } from "@/domain/kif/entity";
 import _ from "lodash";
-import type { SessionEvent } from "@/application/session/SessionEvent";
 import type { GameEvent } from "@/domain/game/types/GameEvent";
 
 ///////////////////////////////////////////
@@ -61,10 +59,11 @@ export default function PlayerScreen({ problem, title, footer, onPlayerIntent, o
 function MovesControlSection({ problem, model }: { 
     problem: Problem, model: PlayerRunnerModel }){
 
-    const { moves: { ply, visible, maxPly, userSide }} = model.state
+    const { moves: { ply, visible, maxPly, userSide, isRevealed }} = model.state
     const { 
         game: { toggleReversed, toggleUserSide},
-        moves: { advancePly, retreatPly, reveal }} = model.actions    
+        moves: { advancePly, retreatPly, reveal, setMovesVisible }} = model.actions    
+    
 
     return (
         <Stack direction="row" sx={{ minHeight: 0, flexGrow: 1, p: 1 }} spacing={1}>
@@ -78,20 +77,23 @@ function MovesControlSection({ problem, model }: {
                     <ReverseControl toggleReversed={toggleReversed}/>
                     <UserSideControl userSide={userSide} toggleUserSide={toggleUserSide} />
                 </Stack>
-
-                {visible ?
+                {visible &&
                     <PlyControlPanel
                         currentPly={ply}
                         maxPly={maxPly}
                         onPrev={retreatPly}
                         onNext={advancePly}
-                    />
-                    : (<Stack>
-                        <Button onClick={reveal} variant="outlined">
-                            手筋を表示
-                        </Button>
-                    </Stack>)
-                }
+                    />}
+                {!isRevealed ?
+                    <Button onClick={reveal} variant="outlined">
+                        手筋を表示
+                    </Button>
+                    : <Button onClick={() => setMovesVisible(!visible)} variant="outlined">toggle visible</Button>}
+
+
+
+                    
+                
             </Box>
         </Stack>
     )
