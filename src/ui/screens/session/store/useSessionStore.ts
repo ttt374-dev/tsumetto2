@@ -27,7 +27,7 @@ export const useSessionStore = create<SessionStore>((set, get) => ({
     // ======================
     start: (sessionId, ids, missionId) => {
         if (sessionId === undefined || ids.length === 0) return    // 空だったらスタートしない
-        alert(sessionId)
+        //alert(sessionId)
         set((_s) => {
             return {
                 activeSessionId: sessionId,                
