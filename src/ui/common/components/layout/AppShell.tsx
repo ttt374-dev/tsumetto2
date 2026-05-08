@@ -5,7 +5,7 @@ import { DrawerMenu } from "./DrawerMenu";
 import { useToast } from "@/ui/App/providers/ToastProvider";
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
 import { routes } from "@/ui/App/useAppNavigation";
-import { useImportController } from "../../../dialogs/Import/useImportController";
+import { useImportController } from "@/ui/dialogs/Import/useImportController";
 import { createSessionId, useSessionStore } from "@/ui/screens/session/store/useSessionStore";
 import { ImportUI } from "@/ui/dialogs/Import/ImportUI";
 import { useBackupRestoreDialog } from "@/ui/dialogs/BackupRestore/useBackupRestoreDIalog";

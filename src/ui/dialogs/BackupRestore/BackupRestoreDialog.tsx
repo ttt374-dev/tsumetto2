@@ -5,46 +5,32 @@ import { Dialog, DialogTitle, DialogContent, DialogActions,
 import { useBackupRestoreUsecase, type BackupData, type BackupResult, type RestoreResult } from "@/application/usecase/problem/backup/BackupRestoreUsecase"
 import { fileBackupWriter } from "@/infrastructure/fileBackupWriter"
 import { useRepositoryContext } from "@/ui/App/providers/RepositoryProvider"
-import type { useBackupRestoreController } from "@/ui/dialogs/BackupRestore/useBackupRestoreController"
-
 
 ///////////////////////////////////////////////////
 export default function BackupRestoreDialog({ open, onClose, onBackup, onRestore}: { 
     open: boolean
     onClose: () => void
-    onBackup: () => void
-    onRestore: (file: File) => void
-    //controller: ReturnType<typeof useBackupRestoreController>
-    //onResult: (result: { type: "backup" | "restore"; data: any }) => void
+    onBackup: () => Promise<BackupResult>
+    onRestore: (file: File) => Promise<RestoreResult>
 }) {
     const repos = useRepositoryContext()
-    const usecase = useBackupRestoreUsecase(repos.problem, repos.reviewEvent, repos.mission, fileBackupWriter)
+    //const usecase = useBackupRestoreUsecase(repos.problem, repos.reviewEvent, repos.mission, fileBackupWriter)
     const fileInputRef = useRef<HTMLInputElement>(null)
 
     /* ===== backup ===== */   
-    /*
+   
     const handleBackup = async () => {
-        const result = await usecase.backup()            
-        //onBackupFinished?.(result)        
-        onResult({type: "backup", data: result})
-        if (result.ok) onClose()
-    }*/
+        const res = await onBackup()       
+        if (res.ok) onClose()
+    }
 
     /* ===== restore ===== */
     const handleRestoreFile = async (file: File) => {
         if (!window.confirm("現在のデータは上書きされます。よろしいですか？")) return
-        onRestore(file)
-
-        //const res = await controller.restoreFromFile(file)
-        //onResult({ type: "restore", data: res })
-        //onClose()
+        const res = await onRestore(file)
+        if (res.ok) onClose()
     }
-    /* ==== data clear ==== */    
-    const handleClearAllReviewEvents = () => {
-        if (!window.confirm("すべての学習データを消去してよろしいですか？")) return
-        //controller.clearAll()
-        alert("TODO")
-    }
+    
     return (
         <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
             <DialogTitle>バックアップ / 復元</DialogTitle>
@@ -56,7 +42,7 @@ export default function BackupRestoreDialog({ open, onClose, onBackup, onRestore
                     <Typography variant="body2" color="text.secondary" mb={1}>
                         棋譜ライブラリと学習履歴を JSON ファイルとして保存します。
                     </Typography>
-                    <Button variant="contained" onClick={onBackup}>
+                    <Button variant="contained" onClick={handleBackup}>
                         バックアップを保存
                     </Button>
                 </Box>
@@ -93,17 +79,6 @@ export default function BackupRestoreDialog({ open, onClose, onBackup, onRestore
 
                 <Divider />
 
-                { /* データクリア */ }
-                <Box my={3}>
-                    <Typography variant="h6">データクリア</Typography>
-                    <Typography variant="body2" color="text.secondary" mb={1}>
-                        すべての学習データログが削除されます。
-                    </Typography>
-                    <Button onClick={handleClearAllReviewEvents} 
-                        color="error" variant="outlined">
-                        全学習データ消去
-                    </Button>
-                </Box>
             </DialogContent>
 
             <DialogActions>

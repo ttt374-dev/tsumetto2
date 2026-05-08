@@ -3,7 +3,6 @@ import { useToast } from "@/ui/App/providers/ToastProvider"
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore"
 import { useReviewEventStore } from "@/ui/features/learning/hooks/useReviewEventStore"
 import { useMissionStore } from "@/ui/screens/mission/hooks/useMissionStore"
-import { useBackupRestoreController } from "@/ui/dialogs/BackupRestore/useBackupRestoreController"
 import { fileBackupWriter } from "@/infrastructure/fileBackupWriter"
 import { useRepositoryContext } from "@/ui/App/providers/RepositoryProvider"
 import { useBackupRestoreUsecase, type RestoreResult } from "@/application/usecase/problem/backup/BackupRestoreUsecase"
@@ -20,8 +19,6 @@ export function useBackupRestoreDialog() {
     const reloadProblems = useProblemStore(s => s.reload)
     const reloadReviewEvents = useReviewEventStore(s => s.reload)
     const reloadMissions = useMissionStore(s => s.reload)
-
-    const controller = useBackupRestoreController()
 
     const openDialog = () => setOpen(true)
     const closeDialog = () => setOpen(false)
@@ -51,7 +48,7 @@ export function useBackupRestoreDialog() {
 
     }, [result])
 
-     const repos = useRepositoryContext()
+    const repos = useRepositoryContext()
     const usecase = useBackupRestoreUsecase(repos.problem, repos.reviewEvent, repos.mission, fileBackupWriter)
     const backup = async () => {
         //alert("backup")
@@ -60,6 +57,8 @@ export function useBackupRestoreDialog() {
             toast({ message: `${result.value.problemCount}件バックアップしました` })
         else
             toast({ message: "バックアップ失敗", severity: "error" })  
+
+        return result
 
     }
     const restore = async (file: File) => {
@@ -72,7 +71,7 @@ export function useBackupRestoreDialog() {
         } else {
             toast({ message: "リストア失敗", severity: "error" })
         }
-
+        return result
     }
 
     const restoreFromFile = async (file: File): Promise<RestoreResult> => {
@@ -85,7 +84,7 @@ export function useBackupRestoreDialog() {
         }
     }
     return {
-        open, controller,
+        open, 
         openDialog, closeDialog,
         backup, restore,
         setResult
