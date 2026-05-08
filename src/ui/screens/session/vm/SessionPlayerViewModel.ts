@@ -18,4 +18,5 @@ export type SessionPlayerViewModel =
 
     missionId: MissionId | undefined
     missions: Mission[]
+    activeSessionId: SessionId | undefined
 }

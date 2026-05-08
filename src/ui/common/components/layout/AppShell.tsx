@@ -6,7 +6,7 @@ import { useToast } from "@/ui/App/providers/ToastProvider";
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
 import { routes } from "@/ui/App/useAppNavigation";
 import { useImportController } from "../../../dialogs/Import/useImportController";
-import { useSessionStore } from "@/ui/screens/session/store/useSessionStore";
+import { createSessionId, useSessionStore } from "@/ui/screens/session/store/useSessionStore";
 import { ImportUI } from "@/ui/dialogs/Import/ImportUI";
 import { useBackupRestoreDialog } from "@/ui/dialogs/BackupRestore/useBackupRestore";
 import BackupRestoreDialog from "@/ui/dialogs/BackupRestore/BackupRestoreDialog";
@@ -53,7 +53,7 @@ export function AppShell({ header, footer, rightActions, fab, children, navigate
         });
 
         const ids = importController.result.results.filter(r => r.status === "imported").map(r => r.problemId)
-        startSession("IMPORTED-KIF", ids)
+        startSession(createSessionId(), ids)
         navigate(routes.list, { state: { title: "imported kif files", ids: ids } })
     }, [importController.result])
 

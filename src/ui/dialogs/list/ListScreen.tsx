@@ -27,7 +27,7 @@ export function ListScreen(){
     }
 
     const handleStartSession = () => {
-        startSession(undefined, ids)
+        startSession(createSessionId(), ids)
         navigate(routes.sessionPlay(createSessionId()))
     }
     return (

@@ -5,7 +5,7 @@ import type { SessionPlayerInput, SessionPlayerViewModel } from "@/ui/screens/se
 export function buildSessionPlayerVieModel(input: SessionPlayerInput): 
     SessionPlayerViewModel {
     if (input.type === "invalid") return { type: "error", message: "invalid params" }
-    const { sessionId, index, ids, byId, missionId, missions } = input
+    const { sessionId, index, ids, byId, missionId, missions, activeSessionId } = input
 
     if (index < 0) {
         return { type: "error", message: "invalid currentIndex" }
@@ -17,6 +17,9 @@ export function buildSessionPlayerVieModel(input: SessionPlayerInput):
     const problem = pid ? byId[pid] : undefined
     if (!problem) {
         return { type: "error", message: `Problem not found: ${pid}` }
+    }
+    if (activeSessionId !== sessionId){
+        return { type: "error", message: `current sessoin Id is not active: ${sessionId} vs active of ${activeSessionId}` }
     }
 
     // title

@@ -5,33 +5,34 @@ import { SummaryView } from "./SummaryView";
 import { AppShell } from "@/ui/common/components/layout/AppShell";
 import { useSessionSummaryViewModel } from "@/ui/screens/summary/hooks/SessionSummaryViewModel";
 import { useSessionSummaryActions } from "@/ui/screens/summary/hooks/SessionSummaryActions";
-import { useSessionRouteContext } from "@/ui/screens/session/hooks/useSessionRouteContext";
+import type { SessionId } from "@/domain/session/entity/Session";
 
-function useSessionIdContext(){
+export type SessionIdContext = {
+    result: SessionIdResult        
+    sessionId: SessionId
+}
+type SessionIdResult = 
+    | { type: "valid", sessionId: SessionId}
+    | { type: "invalid", message?: string}
+
+function useSessionIdContext(): SessionIdContext {
     const { sessionId: rawSessionId } = useParams<{ sessionId: string }>()    
 
-    const sessionId = rawSessionId === undefined ? "" : rawSessionId
-    const result = rawSessionId === undefined ? 
-        { type: "invalid"} :
-        { type: "valid", sessionid: sessionId}
+    const sessionId: SessionId = rawSessionId === undefined ? "" : rawSessionId
+    const result: SessionIdResult = rawSessionId === undefined ? 
+        { type: "invalid", message: "invalid session Id"} :
+        { type: "valid", sessionId}
     
     return { result, sessionId}
 
 }
 /////////////////////////////////////////////
-export default function SessionSummaryScreen() {
-    //const route = useSessionRouteContext()
+export default function SessionSummaryScreen() {    
     const route = useSessionIdContext()
-    //const { sessionId: rawSessionId } = useParams<{ sessionId: string }>()    
+    const vm = useSessionSummaryViewModel(route)   
+    const { navigation } = useSessionSummaryActions(route.sessionId)        
 
-    //const sessionId = rawSessionId === undefined ? "" : rawSessionId
-    //if (!sessionId) return <AppShell>No sessionId available</AppShell>
-    //const { sessionId, result } = useSessionRouteContext()
-    const vm = useSessionSummaryViewModel(route.sessionId)   
-    const { navigation } = useSessionSummaryActions(route.sessionId)
-    //console.log("route", route)
-
-    if (route.result.type === "invalid") return <AppShell>invalid sessionId</AppShell>
+    if (vm.type === "error") return <AppShell>Error: { vm.message }</AppShell>
 
     return (
         <AppShell header={"Summary"}>

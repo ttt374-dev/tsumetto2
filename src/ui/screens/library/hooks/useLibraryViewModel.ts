@@ -38,7 +38,7 @@ export function useLibraryViewModel() {
     //const sessionId = useSessionStore(s=>s.sessionId)
     const session = {
         start: () => {
-            startSession("library-instant-session", ids)
+            startSession(createSessionId(), ids)
             navigate(routes.sessionPlay(sessionId, 0))    
         }
     }

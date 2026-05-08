@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { useReviewEventStore } from "@/ui/features/learning/hooks/useReviewEventStore";
 import { routes } from "@/ui/App/useAppNavigation";
 import { projectLearningState } from "@/domain/learning/service/projectLearningState";
-import { computeStatsSummary } from "@/domain/learning/service/computeLearningSummary";
 import { createSessionId, useSessionStore } from "@/ui/screens/session/store/useSessionStore";
 import { usePlannerStore } from "@/ui/screens/session/store/usePlannerStore";
 import type { SessionId } from "@/domain/session/entity/Session";
@@ -30,13 +29,13 @@ export function useSessionSummaryActions(sessionId: SessionId) {
             .filter(k => records[k].stats.failedCount > 0)
 
         const newSessionId = createSessionId()
-        startSession(missionId, failedIds)
+        startSession(sessionId, failedIds, missionId, )
         navigate(routes.sessionPlay(newSessionId))
     }
 
     const retry = () => {
         const newSessionId = createSessionId()
-        startSession(missionId, ids)
+        startSession(sessionId, ids, missionId)
         navigate(routes.sessionPlay(newSessionId))
     }
 
@@ -45,7 +44,7 @@ export function useSessionSummaryActions(sessionId: SessionId) {
         if (!planner.missionId || !chunk) return
 
         const newSessionId = createSessionId()
-        startSession(missionId, chunk)
+        startSession(sessionId, chunk, missionId)
         navigate(routes.sessionPlay(newSessionId))
     }
 

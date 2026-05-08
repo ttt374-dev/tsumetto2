@@ -16,7 +16,6 @@ export function useMissionStarter(){
     const navigate = useNavigate()
     const planner = usePlannerStore()    
     const start = useSessionStore(s => s.start);    
-    //const sessionId = useSessionStore(s=>s.sessionId)
     const sessionId = createSessionId()
 
     const startMission = (mission: Mission) => {       
@@ -27,7 +26,7 @@ export function useMissionStarter(){
 
         planner.create(mission.id, ids, 5)
         const chunk = planner.nextChunk()
-        chunk && start(mission.id, chunk);  // TODO: chunk が空の時の処理
+        chunk && start(sessionId, chunk, mission.id);  // TODO: chunk が空の時の処理
         console.log("start mission", routes.sessionPlay(sessionId))
         navigate(routes.sessionPlay(sessionId, 0));
     };

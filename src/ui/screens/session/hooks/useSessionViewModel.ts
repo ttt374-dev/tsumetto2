@@ -11,11 +11,14 @@ export function useSessionPlayerViewModel(route: SessionRouteContext) {
 
     const ids = useSessionStore(s => s.problemIds)
     const byId = useProblemStore(s => s.byId)
-    const missions = useMissionStore(s => s.missions)
+    const activeSessionId = useSessionStore(s=>s.activeSessionId)    
     const missionId = useSessionStore(s => s.missionId)
+
+    const missions = useMissionStore(s => s.missions)
+    
     const input: SessionPlayerInput = {
         ...route.result,
-        ids, byId, missions, missionId
+        ids, byId, missions, missionId, activeSessionId,
     }
 
     return buildSessionPlayerVieModel(input)
