@@ -9,14 +9,13 @@ import type { useBackupRestoreController } from "@/ui/dialogs/BackupRestore/useB
 
 
 ///////////////////////////////////////////////////
-export default function BackupRestoreDialog({ open, onClose, onBackup, // onRestore,
-     controller, onResult }: { 
+export default function BackupRestoreDialog({ open, onClose, onBackup, onRestore}: { 
     open: boolean
     onClose: () => void
     onBackup: () => void
-    //onRestore: () => void
-    controller: ReturnType<typeof useBackupRestoreController>
-    onResult: (result: { type: "backup" | "restore"; data: any }) => void
+    onRestore: (file: File) => void
+    //controller: ReturnType<typeof useBackupRestoreController>
+    //onResult: (result: { type: "backup" | "restore"; data: any }) => void
 }) {
     const repos = useRepositoryContext()
     const usecase = useBackupRestoreUsecase(repos.problem, repos.reviewEvent, repos.mission, fileBackupWriter)
@@ -34,15 +33,17 @@ export default function BackupRestoreDialog({ open, onClose, onBackup, // onRest
     /* ===== restore ===== */
     const handleRestoreFile = async (file: File) => {
         if (!window.confirm("現在のデータは上書きされます。よろしいですか？")) return
+        onRestore(file)
 
-        const res = await controller.restoreFromFile(file)
-        onResult({ type: "restore", data: res })
-        onClose()
+        //const res = await controller.restoreFromFile(file)
+        //onResult({ type: "restore", data: res })
+        //onClose()
     }
     /* ==== data clear ==== */    
     const handleClearAllReviewEvents = () => {
         if (!window.confirm("すべての学習データを消去してよろしいですか？")) return
-        controller.clearAll()
+        //controller.clearAll()
+        alert("TODO")
     }
     return (
         <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>

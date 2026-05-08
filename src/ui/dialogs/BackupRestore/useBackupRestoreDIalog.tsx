@@ -6,7 +6,7 @@ import { useMissionStore } from "@/ui/screens/mission/hooks/useMissionStore"
 import { useBackupRestoreController } from "@/ui/dialogs/BackupRestore/useBackupRestoreController"
 import { fileBackupWriter } from "@/infrastructure/fileBackupWriter"
 import { useRepositoryContext } from "@/ui/App/providers/RepositoryProvider"
-import { useBackupRestoreUsecase } from "@/application/usecase/problem/backup/BackupRestoreUsecase"
+import { useBackupRestoreUsecase, type RestoreResult } from "@/application/usecase/problem/backup/BackupRestoreUsecase"
 
 export function useBackupRestoreDialog() {
     const [open, setOpen] = useState(false)
@@ -59,14 +59,35 @@ export function useBackupRestoreDialog() {
         if (result.ok)            
             toast({ message: `${result.value.problemCount}件バックアップしました` })
         else
-            toast({ message: "バックアップ失敗", severity: "error" })
-   
+            toast({ message: "バックアップ失敗", severity: "error" })  
 
+    }
+    const restore = async (file: File) => {
+        const result = await restoreFromFile(file)
+        if (result.ok) {
+            toast({ message: `${result.value.problemCount}件リストアしました` })
+            reloadProblems()
+            reloadReviewEvents()
+            reloadMissions()
+        } else {
+            toast({ message: "リストア失敗", severity: "error" })
+        }
+
+    }
+
+    const restoreFromFile = async (file: File): Promise<RestoreResult> => {
+        try {
+            const text = await file.text()
+            const json = JSON.parse(text)
+            return await usecase.restore(json)
+        } catch {
+            return { ok: false, error: { code: "invalid-format" } } as const
+        }
     }
     return {
         open, controller,
         openDialog, closeDialog,
-        backup,
+        backup, restore,
         setResult
     }
 }

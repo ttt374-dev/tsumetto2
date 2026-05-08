@@ -78,9 +78,7 @@ export function AppShell({ header, footer, rightActions, fab, children, navigate
                 open={backupRestoreDialog.open}
                 onClose={backupRestoreDialog.closeDialog}
                 onBackup={backupRestoreDialog.backup}
-                //onRestore={backupRestoreDialog.restore}
-                controller={backupRestoreDialog.controller}
-                onResult={backupRestoreDialog.setResult}
+                onRestore={backupRestoreDialog.restore}
             />
         </AppLayout>
 
