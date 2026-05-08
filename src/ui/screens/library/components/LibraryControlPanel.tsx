@@ -2,7 +2,7 @@ import { Box, IconButton, Stack} from "@mui/material";
 import FilterListOutlinedIcon from "@mui/icons-material/FilterListOutlined";
 
 import { LibraryCheckboxControl } from "@/ui/screens/library/components/LibraryCheckboxControl";
-import SortControl from "@/ui/features/problem/query/SortControl";
+import SortControl from "@/ui/features/problem/query/components/SortControl";
 import type { LibrarySelection } from "@/ui/screens/library/hooks/useLibrarySelection";
 import type { ProblemId } from "@/domain/problem/entity/Problem";
 import type { ProblemsQuery, useProblemsQuery } from "@/ui/features/problem/hooks/useProblemsQuery";

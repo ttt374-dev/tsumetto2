@@ -5,17 +5,9 @@ import { useProblemStore } from '@/ui/features/problem/hooks/useProblemStore';
 import { useLearningRecordStore } from '@/ui/features/learning/hooks/useLearningRecordStore';
 import { useReviewEventStore } from '@/ui/features/learning/hooks/useReviewEventStore';
 import type { ProblemType } from "@/domain/problem/entity/ProblemType";
-import { isRegExp } from 'lodash';
+import type { ProblemEditDraft } from '@/ui/screens/detail/hooks/useProblemEditDraft';
 
-type ProblemEditDraft = {
-    title: string
-    tags: string[]
-    starred: boolean
-    isReferenceOnly: boolean
-    type: ProblemType
-    source: string
-    comment: string
-}
+
 function toEditDraft(problem: Problem): ProblemEditDraft {
     return {
         title: problem.title,

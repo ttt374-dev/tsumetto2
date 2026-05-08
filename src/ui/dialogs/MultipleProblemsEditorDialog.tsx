@@ -4,7 +4,7 @@ import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
 import { Autocomplete, Box, Button, Checkbox, Chip, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, FormGroup, FormLabel, InputLabel, List, ListItem, ListItemIcon, ListItemText, MenuItem, Select, Stack, TextField } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import type { ProblemType } from "@/domain/problem/entity/ProblemType";
-import { ProblemTypeFilterControl } from "@/ui/features/problem/query/ProblemTypeFilterControl";
+import { ProblemTypeFilterControl } from "@/ui/features/problem/query/components/ProblemTypeFilterControl";
 import { problemFieldLabels } from "@/ui/features/problem/hooks/problemPresenter";
 
 export function useMultipleProblemsEditDialog() {

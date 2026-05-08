@@ -12,7 +12,7 @@ import type { LearningState } from "@/domain/learning/entity/LearningState";
 import { toLearningStateViewData } from "@/ui/features/learning/hooks/learningPresenter";
 import type { SortKey } from "@/domain/problem/service/query/QueryState";
 import { useProblemsQueryStore } from "@/ui/features/problem/hooks/useProblemsQueryStore";
-import { SortKeyLabel } from "@/ui/features/problem/query/SortControl";
+import { SortKeyLabel } from "@/ui/features/problem/query/components/SortControl";
 
 export const LibraryListItem = function LibraryListItem({ id, onItemClick,
     selection, selected }: {

@@ -1,6 +1,6 @@
 import type { useProblemsQuery } from "@/ui/features/problem/hooks/useProblemsQuery"
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore"
-import { FilterControlPanel } from "@/ui/features/problem/query/FilterControlPanel"
+import { FilterControlPanel } from "@/ui/features/problem/query/components/FilterControlPanel"
 import { SaveAsMissionDialog } from "@/ui/screens/library/dialogs/SaveAsMissionDialog"
 import { useMissionStore } from "@/ui/screens/mission/hooks/useMissionStore"
 import { Button, Drawer, Stack } from "@mui/material"

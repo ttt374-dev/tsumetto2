@@ -15,7 +15,7 @@ import { StarToggleButton } from "../../common/components/StarToggleButton/StarT
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem";
 import { ProblemInfoPanel } from "../../features/problem/components/ProblemInfoPanel";
 import { LearningDetailPanel } from "../../features/learning/components/LearningDetailPanel";
-import { ProblemTypeFilterControl } from "@/ui/features/problem/query/ProblemTypeFilterControl";
+import { ProblemTypeFilterControl } from "@/ui/features/problem/query/components/ProblemTypeFilterControl";
 import { useReviewEventStore } from "@/ui/features/learning/hooks/useReviewEventStore";
 import { projectLearningState } from "@/domain/learning/service/projectLearningState";
 import { problemFieldLabels } from "@/ui/features/problem/hooks/problemPresenter";

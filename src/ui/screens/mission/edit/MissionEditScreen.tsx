@@ -2,13 +2,13 @@ import { Box, Button, FormControl, FormControlLabel, Grid, IconButton, InputAdor
 import DeleteIcon from '@mui/icons-material/Delete';
 import ClearIcon from '@mui/icons-material/Clear';
 
-import SortControl from "../../../features/problem/query/SortControl";
+import SortControl from "../../../features/problem/query/components/SortControl";
 import { useMissionEditViewModel } from "./useMissionEditViewModel";
 import { AppShell } from "../../../common/components/layout/AppShell";
 import { ListDialog } from "../../../dialogs/list/ListDialog";
 import { useNavigate } from "react-router-dom";
 import { routes } from "../../../App/useAppNavigation";
-import { FilterControlPanel } from "../../../features/problem/query/FilterControlPanel";
+import { FilterControlPanel } from "../../../features/problem/query/components/FilterControlPanel";
 import { useToast } from "@/ui/App/providers/ToastProvider";
 import { useDialog } from "@/ui/common/hooks/useDialog";
 
