@@ -17,7 +17,6 @@ import { routes } from './useAppNavigation';
 import SessionSummaryScreen from '@/ui/screens/summary/SessionSummaryScreen.tsx';
 import ProblemDetailScreen from '@/ui/screens/detail/ProblemDetailScreen.tsx';
 import LibraryScreen from '@/ui/screens/library/LibraryScreen.tsx';
-import SessionLayout from '@/ui/screens/session/SessionLayout.tsx';
 import SessionPlayerScreen from '@/ui/screens/session/SessionPlayerScreen.tsx';
 import HistoryScreen from '@/ui/screens/history/HistoryScreen.tsx';
 import SinglePlayerScreen from '@/ui/screens/player/SinglePlayerScreen';
@@ -76,14 +75,7 @@ function App() {
               <Route path="/session/:sessionId/play/:index" element={<SessionPlayerScreen/>} />
               <Route path="/session/:sessionId/summary" element={<SessionSummaryScreen/>} />
               <Route path="/session/:sessionId/list/:index" element={<SessionListScreen/>} />
-{ /* 
-              <Route path={routes.session} element={<SessionLayout />}>
-                <Route path="play" element={<SessionPlayerScreen />} >
-   
-                </Route>
-                <Route path="summary" element={<SessionSummaryScreen />} />
-              </Route>
-*/}
+              
               <Route path={routes.mission} element={<MissionScreen />} />
               <Route path={`${routes.mission}/:id`} element={<MissionEditScreen />} />
 
