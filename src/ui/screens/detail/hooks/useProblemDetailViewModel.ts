@@ -27,15 +27,11 @@ export function useProblemDetailViewModel(problemId: ProblemId) {
     useInitializeProblemDraft(problem)
     const view = draft ?? createEditDraft()
     const actions = useProblemEditActions(problem, draft)
+    const updateFields = useProblemEditFields()
     return {
         problem, learningState, allSources, allTags,
         ...view, ...actions,
-        
-        setTitle: (v: string) => updateField("title", v),
-        setSource: (v: string) => updateField("source", v),
-        setType: (v: ProblemType) => updateField("type", v),
-        setTags: (v: string[]) => updateField("tags", v),
-        setComment: (v: string) => updateField("comment", v),        
+        ...updateFields,        
     }
 }
 //////////////
@@ -56,7 +52,7 @@ function useProblemEditActions(problem: Problem, draft: ProblemEditDraft | null)
     const appendReset = useReviewEventStore(s => s.appendReset)
     const updateProblem = useProblemStore(s => s.updateProblem)
     const toggleStar = useProblemEditStore(s => s.toggleStar)
-    const toggleReferenceOnly = useProblemEditStore(s=>s.toggleReferenceOnly)
+    const toggleReferenceOnly = useProblemEditStore(s => s.toggleReferenceOnly)
 
     // 学習データリセット
     const resetLearning = () => {
@@ -75,4 +71,16 @@ function useProblemEditActions(problem: Problem, draft: ProblemEditDraft | null)
         remove, save, resetLearning,
         toggleStar, toggleReferenceOnly,
     }
-}   
+}
+
+export function useProblemEditFields() {
+    const updateField = useProblemEditStore(s => s.updateField)
+
+    return {
+        setTitle: (v: string) => updateField("title", v),
+        setSource: (v: string) => updateField("source", v),
+        setType: (v: ProblemType) => updateField("type", v),
+        setTags: (v: string[]) => updateField("tags", v),
+        setComment: (v: string) => updateField("comment", v),
+    }
+}
