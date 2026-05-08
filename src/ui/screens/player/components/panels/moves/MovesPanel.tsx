@@ -4,10 +4,10 @@ import MovesView from "./MovesView";
 import ProblemLearningInfoPanel from "@/ui/screens/player/components/panels/ProblemLearningInfoPanel";
 import type { Problem } from "@/domain/problem/entity/Problem";
 import type { MovesViewModel } from "@/ui/screens/player/vm/PlayerViewModel";
-import type { MovesAction } from "@/ui/screens/player/runner/usePlayerRunner";
+import type { MovesActions } from "@/ui/screens/player/hooks/usePlayerActions";
 
 export default function MovesPanel({problem, movesModel, actions}: { 
-    problem: Problem, movesModel: MovesViewModel, actions: MovesAction    
+    problem: Problem, movesModel: MovesViewModel, actions: MovesActions
 }) {
     const { moves, ply, visible, learningState} = movesModel
     const { moveToPly } = actions

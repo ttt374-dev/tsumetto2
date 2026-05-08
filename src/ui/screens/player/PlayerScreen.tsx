@@ -12,14 +12,20 @@ import PlyControlPanel from "@/ui/screens/player/components/panels/PlyControlPan
 import { Problem } from "@/domain/problem/entity/Problem"
 import { AppShell } from "@/ui/common/components/layout/AppShell";
 import PromotionDialog from "@/ui/screens/player/dialogs/PromotionDialog";
-import { SolvedDialog } from "@/ui/screens/player/dialogs/SolvedDialog";
-import { usePlayerRunner, type PlayerRunnerModel } from "@/ui/screens/player/runner/usePlayerRunner";
+import { SolvedDialog, useSolvedDialog } from "@/ui/screens/player/dialogs/SolvedDialog";
 import type { PlayerIntent } from "@/application/session/interpretor/interpretPlayerIntent";
 import type { Player } from "@/domain/kif/entity";
 import _ from "lodash";
 import type { GameEvent } from "@/domain/game/types/GameEvent";
 import { deriveSolvedResultFromEvents } from "@/domain/review/service/solvedResultDeriver";
 import { useGameStore } from "@/ui/screens/player/store/useGameStore";
+import { usePlayerViewModel } from "@/ui/screens/player/hooks/usePlayerViewModel";
+import { usePlayerActions, type PlayerActions } from "@/ui/screens/player/hooks/usePlayerActions";
+import type { PlayerViewModel } from "@/ui/screens/player/vm/PlayerViewModel";
+import { usePlayerPresentation, type PlayerPresentation } from "@/ui/screens/player/hooks/usePlayerPresentation";
+import { usePlayerRunner, type PlayerRunnerModel } from "@/ui/screens/player/runner/usePlayerRunner";
+import { usePromotionDialog } from "@/ui/screens/player/hooks/usePromotionDialog";
+
 
 ///////////////////////////////////////////
 export default function PlayerScreen({ problem, title, footer, onPlayerIntent, onGameEvent, }: {
@@ -29,11 +35,14 @@ export default function PlayerScreen({ problem, title, footer, onPlayerIntent, o
     onGameEvent?: (e: GameEvent) => void
     onPlayerIntent?: (e: PlayerIntent) => void
 }) {
+
     // view model
-    const model = usePlayerRunner(problem, {
+    const model = usePlayerPresentation(problem)
+    const runner = usePlayerRunner(problem, model.ui.dialogs, {
         onPlayerIntent: onPlayerIntent,
         onGameEvent: onGameEvent
     })
+    
 
     // 消された場合
     if (problem.deletedAt) {
@@ -54,13 +63,13 @@ export default function PlayerScreen({ problem, title, footer, onPlayerIntent, o
                     problem={problem} model={model} />
             </Stack>
 
-            <DialogSection model={model} />
+            <DialogSection model={model} runner={runner} />
 
         </AppShell>
     )
 }
 function MovesControlSection({ problem, model }: {
-    problem: Problem, model: PlayerRunnerModel
+    problem: Problem, model: PlayerPresentation
 }) {
 
     const { moves: { ply, visible, maxPly, userSide, isRevealed, isSolved } } = model.state
@@ -70,7 +79,7 @@ function MovesControlSection({ problem, model }: {
 
 
     const events = useGameStore(s => s.events)
-    const solvedResult = deriveSolvedResultFromEvents(events)
+    //const solvedResult = deriveSolvedResultFromEvents(events)
     return (
         <Stack direction="row" sx={{ minHeight: 0, flexGrow: 1, p: 1 }} spacing={1}>
             <MovesPanel
@@ -102,7 +111,7 @@ function MovesControlSection({ problem, model }: {
 
 }
 /////////////////////////////////////////////
-function HeaderRightSection({ problem, model }: { problem: Problem, model: PlayerRunnerModel }) {
+function HeaderRightSection({ problem, model }: { problem: Problem, model: PlayerPresentation }) {
     return (
         <PlayerRightPanel
             problemId={problem.id}
@@ -112,9 +121,9 @@ function HeaderRightSection({ problem, model }: { problem: Problem, model: Playe
     )
 }
 
-function DialogSection({ model }: { model: PlayerRunnerModel }) {
+function DialogSection({ model, runner }: { model: PlayerPresentation, runner: PlayerRunnerModel  }) {
     const confirmSolved = () => { 
-        model.handlers.handlePlayerIntent({ type: "PROBLEM_CONFIRMED" }) 
+        runner.handlers.handlePlayerIntent({ type: "PROBLEM_CONFIRMED" }) 
     }
 
     return (

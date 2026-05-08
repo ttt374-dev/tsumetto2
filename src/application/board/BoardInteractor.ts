@@ -1,13 +1,13 @@
 import { createDecideGameEventContext, decideGameEvent } from "@/domain/game/decideGameEvent"
 import { resolveIntent } from "@/domain/game/intentResolver"
 import type { Square } from "@/domain/kif/entity"
-import type { BoardAction } from "@/ui/screens/player/runner/usePlayerRunner"
+import type { BoardActions } from "@/ui/screens/player/hooks/usePlayerActions"
 import type { BoardOKViewModel } from "@/ui/screens/player/vm/PlayerViewModel"
 
 export class BoardInteractor {
     constructor(private deps: {
         boardModel: BoardOKViewModel
-        actions: BoardAction
+        actions: BoardActions
     }) { }
 
     handleSquareClick(square: Square) {

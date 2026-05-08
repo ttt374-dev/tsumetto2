@@ -4,15 +4,15 @@ import styles from "./BoardView.module.css";
 import { Square } from "@/domain/kif/entity";
 import { buildSquareModel, SquareView } from "@/ui/screens/player/components/panels/board/SquareView";
 import type { BoardOKViewModel} from "@/ui/screens/player/vm/PlayerViewModel";
-import type { BoardAction } from "@/ui/screens/player/runner/usePlayerRunner";
 import { BoardInteractor } from "@/application/board/BoardInteractor";
 import { useMemo } from "react";
+import type { BoardActions } from "@/ui/screens/player/hooks/usePlayerActions";
 
 const fileLabels = ["９", "８", "７", "６", "５", "４", "３", "２", "１"];
 const rankLabels = ["一", "二", "三", "四", "五", "六", "七", "八", "九"];
 
 export default function BoardView({ boardModel, actions }: { 
-    boardModel: BoardOKViewModel, actions: BoardAction}) {
+    boardModel: BoardOKViewModel, actions: BoardActions}) {
     
     const { reversed } = boardModel    
     

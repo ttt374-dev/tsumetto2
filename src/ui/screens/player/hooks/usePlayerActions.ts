@@ -12,23 +12,23 @@ import type { PieceType, Player, Square } from "@/domain/kif/entity";
 import type { Intent } from "@/domain/game/intentResolver";
 import type { GameEvent, PendingPromotion } from "@/domain/game/types/GameEvent";
 
-export type PlayerRunnerAction = {
-    board: BoardAction
-    moves: MovesAction
-    navigation: NavigationAction
-    game: GameAction
+export type PlayerActions = {
+    board: BoardActions
+    moves: MovesActions
+    navigation: NavigationActions
+    game: GameActions
     domain: {
         deleteProblem: (pid: ProblemId) => void
     }
 }
-export type BoardAction = {
+export type BoardActions = {
     dispatchGameEvent: (e: GameEvent) => void
     promotionPending: (p: PendingPromotion) => void
     clickSquare: (sq: Square) => Intent | null
     clickHandPiece: (pieceType: PieceType, owner: Player) => void
     clearSelection: () => void
 }
-export type MovesAction = {
+export type MovesActions = {
     advancePly: () => void,
     retreatPly: () => void,
     reveal: () => void,
@@ -36,18 +36,18 @@ export type MovesAction = {
     setMovesVisible: (value: boolean) => void
     toggleMovesVisible: () => void
 }
-export type NavigationAction = {
+export type NavigationActions = {
     //nextProblem: () => void
     //showList: () => void
     navigateToDetail: (pid: ProblemId) => void
 }
 
-type GameAction = {
+type GameActions = {
     toggleReversed: () => void
     toggleUserSide: () => void
 }
 ///////////////////////////////////////
-export function usePlayerActions(): PlayerRunnerAction {
+export function usePlayerActions(): PlayerActions {
 
     const dispatch = useGameStore(s => s.dispatch)
 

@@ -9,26 +9,27 @@ import type { PlayerInput, PlayerViewModel } from "@/ui/screens/player/vm/Player
 import type { EffectRunnerDeps } from "@/ui/screens/player/runner/runGameEffects";
 import type { GameEvent, PendingPromotion } from "@/domain/game/types/GameEvent";
 import { usePlayerViewModel } from "@/ui/screens/player/hooks/usePlayerViewModel";
-import { usePlayerActions, type PlayerRunnerAction } from "@/ui/screens/player/hooks/usePlayerActions";
+import { usePlayerActions, type PlayerActions } from "@/ui/screens/player/hooks/usePlayerActions";
 
 export type DialogControllers = {
    solvedResult: ReturnType<typeof useSolvedDialog>
    promotion: ReturnType<typeof usePromotionDialog>
 }
+
 export type PlayerRunnerModel = {
-    state: PlayerViewModel
-    actions: PlayerRunnerAction
+    //state: PlayerViewModel
+    //actions: PlayerAction
     handlers: {
         handlePlayerIntent: (intent: PlayerIntent) => void,
     //    handleUIEvent: (e: GameUIEvent) => void
     }
-    ui: {
-        dialogs: DialogControllers
-    }
+    //ui: {
+    //    dialogs: DialogControllers
+    //}
 }
 
 /////////////////////////////////////////
-export function usePlayerRunner(problem: Problem,
+export function usePlayerRunner(problem: Problem, dialogs: DialogControllers,
     options?: { 
         //onDomainEvent?: (e: SessionEvent) => void,
         onGameEvent?: (e: GameEvent) => void,
@@ -36,12 +37,8 @@ export function usePlayerRunner(problem: Problem,
 ): PlayerRunnerModel {    
     const toast = useToast()
     //const vm = buildPlayerViewModel(input)
-    const vm = usePlayerViewModel(problem)
-    const actions = usePlayerActions()
-    const dialogs = {
-        solvedResult: useSolvedDialog(),
-        promotion: usePromotionDialog(),
-    }
+    //const vm = usePlayerViewModel(problem)
+    //const actions = usePlayerActions()
     // initialize
     const isIntialized = useGameInitializer(problem) 
     const deps: EffectRunnerDeps = {
@@ -54,15 +51,15 @@ export function usePlayerRunner(problem: Problem,
     }
     
     return {
-        state: vm,
-        actions,
+        //state: vm,
+        //actions,
         handlers: {
             //handleUIEvent,
             handlePlayerIntent,
         },
-        ui: {
-            dialogs,
-        }
+        //ui: {
+        //    dialogs,
+        //}
 
     }
 }

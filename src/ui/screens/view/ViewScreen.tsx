@@ -12,6 +12,7 @@ import MovesPanel from "@/ui/screens/player/components/panels/moves/MovesPanel";
 import { useNavigate, useParams } from "react-router-dom";
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
 import { routes } from "@/ui/App/useAppNavigation";
+import { usePlayerPresentation } from "@/ui/screens/player/hooks/usePlayerPresentation";
 import { usePlayerRunner } from "@/ui/screens/player/runner/usePlayerRunner";
 
 export default function ViewScreen(){
@@ -24,8 +25,9 @@ export default function ViewScreen(){
     return <ViewContent problem={problem}/>
 }
 function ViewContent({ problem}: { problem: Problem}){
-    const model = usePlayerRunner(problem)
-    const replay = useReplayStore()
+    const model = usePlayerPresentation(problem)
+    usePlayerRunner(problem, model.ui.dialogs)
+    //const replay = useReplayStore()
     
     const title = problem.title
     return (
@@ -46,10 +48,10 @@ function ViewContent({ problem}: { problem: Problem}){
     
                         <Box sx={{ flex: 1, border: 1, borderColor: "divider" }}>                            
                                 <PlyControlPanel
-                                    currentPly={replay.ply}
+                                    currentPly={model.state.moves.ply}
                                     maxPly={problem.kifData.moves.length}
-                                    onPrev={replay.retreatPly}
-                                    onNext={replay.advancePly}
+                                    onPrev={model.actions.moves.retreatPly}
+                                    onNext={model.actions.moves.advancePly}
                                 /> 
                                 
                         </Box>
