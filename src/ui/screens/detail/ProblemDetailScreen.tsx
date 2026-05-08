@@ -1,6 +1,5 @@
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import DeleteIcon from '@mui/icons-material/Delete';
-import PauseIcon from "@mui/icons-material/Pause"
 import { Box, Button, Checkbox, Divider, FormControlLabel, IconButton, Stack, TextField } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -20,7 +19,6 @@ import { useReviewEventStore } from "@/ui/features/learning/hooks/useReviewEvent
 import { projectLearningState } from "@/domain/learning/service/projectLearningState";
 import { problemFieldLabels } from "@/ui/features/problem/hooks/problemPresenter";
 
-
 export default function ProblemDetailScreen(){
     const { id } = useParams<{ id: string }>()
     const problem = useProblemStore(s => id ? s.byId[id] : undefined)
@@ -34,7 +32,7 @@ export function ProblemDetailContent( { problem }: { problem: Problem}) {
             title, tags, starred, source, type, allSources, comment, isReferenceOnly,
             setTitle, setTags, toggleStar, setType, setSource, remove, setComment,
             save, resetLearning, toggleReferenceOnly,
-        } = useProblemDetailViewModel(problem.id, true)
+        } = useProblemDetailViewModel(problem.id)
         
     const events = useReviewEventStore(s=>s.eventLog).filter(s=>s.problemId===problem.id)
     const records = projectLearningState(events)
@@ -49,8 +47,6 @@ export function ProblemDetailContent( { problem }: { problem: Problem}) {
         const handleDeleteClick = () => {
         if(!window.confirm("Are you sure to delete?")) return
         remove()
-        //onAfterDeleteProblem?.()  
-        //onClose()
         navigate(routes.back)
     }
     const handleConfirm = () => {
@@ -59,8 +55,6 @@ export function ProblemDetailContent( { problem }: { problem: Problem}) {
     }
     const onStartPlay = (id: ProblemId) => 
         navigate(routes.view(id))
-        //navigate(routes.player(id))
-
 
     return (
         <AppShell 
@@ -72,11 +66,11 @@ export function ProblemDetailContent( { problem }: { problem: Problem}) {
                          sx={{color: "white"}}
                     />
 
-                    {onStartPlay &&
+                    
                         <IconButton onClick={() => onStartPlay(problem.id)}
                          sx={{color: "white"}}>
                             <PlayArrowIcon />
-                        </IconButton>}
+                        </IconButton>
                     
                     <IconButton onClick={handleDeleteClick}  sx={{color: "white"}}>
                         <DeleteIcon />
