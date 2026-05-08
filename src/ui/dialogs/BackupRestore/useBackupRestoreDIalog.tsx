@@ -4,7 +4,9 @@ import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore"
 import { useReviewEventStore } from "@/ui/features/learning/hooks/useReviewEventStore"
 import { useMissionStore } from "@/ui/screens/mission/hooks/useMissionStore"
 import { useBackupRestoreController } from "@/ui/dialogs/BackupRestore/useBackupRestoreController"
-import BackupRestoreDialog from "@/ui/dialogs/BackupRestore/BackupRestoreDialog"
+import { fileBackupWriter } from "@/infrastructure/fileBackupWriter"
+import { useRepositoryContext } from "@/ui/App/providers/RepositoryProvider"
+import { useBackupRestoreUsecase } from "@/application/usecase/problem/backup/BackupRestoreUsecase"
 
 export function useBackupRestoreDialog() {
     const [open, setOpen] = useState(false)
@@ -49,9 +51,22 @@ export function useBackupRestoreDialog() {
 
     }, [result])
 
+     const repos = useRepositoryContext()
+    const usecase = useBackupRestoreUsecase(repos.problem, repos.reviewEvent, repos.mission, fileBackupWriter)
+    const backup = async () => {
+        //alert("backup")
+        const result = await usecase.backup()
+        if (result.ok)            
+            toast({ message: `${result.value.problemCount}件バックアップしました` })
+        else
+            toast({ message: "バックアップ失敗", severity: "error" })
+   
+
+    }
     return {
         open, controller,
         openDialog, closeDialog,
+        backup,
         setResult
     }
 }

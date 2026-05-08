@@ -8,7 +8,7 @@ import { routes } from "@/ui/App/useAppNavigation";
 import { useImportController } from "../../../dialogs/Import/useImportController";
 import { createSessionId, useSessionStore } from "@/ui/screens/session/store/useSessionStore";
 import { ImportUI } from "@/ui/dialogs/Import/ImportUI";
-import { useBackupRestoreDialog } from "@/ui/dialogs/BackupRestore/useBackupRestore";
+import { useBackupRestoreDialog } from "@/ui/dialogs/BackupRestore/useBackupRestoreDIalog";
 import BackupRestoreDialog from "@/ui/dialogs/BackupRestore/BackupRestoreDialog";
 
 interface Props {
@@ -77,6 +77,8 @@ export function AppShell({ header, footer, rightActions, fab, children, navigate
             <BackupRestoreDialog
                 open={backupRestoreDialog.open}
                 onClose={backupRestoreDialog.closeDialog}
+                onBackup={backupRestoreDialog.backup}
+                //onRestore={backupRestoreDialog.restore}
                 controller={backupRestoreDialog.controller}
                 onResult={backupRestoreDialog.setResult}
             />

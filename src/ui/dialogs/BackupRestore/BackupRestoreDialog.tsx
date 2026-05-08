@@ -5,33 +5,31 @@ import { Dialog, DialogTitle, DialogContent, DialogActions,
 import { useBackupRestoreUsecase, type BackupData, type BackupResult, type RestoreResult } from "@/application/usecase/problem/backup/BackupRestoreUsecase"
 import { fileBackupWriter } from "@/infrastructure/fileBackupWriter"
 import { useRepositoryContext } from "@/ui/App/providers/RepositoryProvider"
-import { useToast } from "@/ui/App/providers/ToastProvider"
-import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore"
-import { useReviewEventStore } from "@/ui/features/learning/hooks/useReviewEventStore"
-import { useMissionStore } from "@/ui/screens/mission/hooks/useMissionStore"
 import type { useBackupRestoreController } from "@/ui/dialogs/BackupRestore/useBackupRestoreController"
 
 
 ///////////////////////////////////////////////////
-export default function BackupRestoreDialog({ open, onClose, controller, onResult }: { 
+export default function BackupRestoreDialog({ open, onClose, onBackup, // onRestore,
+     controller, onResult }: { 
     open: boolean
     onClose: () => void
+    onBackup: () => void
+    //onRestore: () => void
     controller: ReturnType<typeof useBackupRestoreController>
     onResult: (result: { type: "backup" | "restore"; data: any }) => void
-    //onBackupFinished?: (res: BackupResult) => void
-    //onRestoreFinished?: (res: RestoreResult) => void
 }) {
     const repos = useRepositoryContext()
     const usecase = useBackupRestoreUsecase(repos.problem, repos.reviewEvent, repos.mission, fileBackupWriter)
     const fileInputRef = useRef<HTMLInputElement>(null)
 
     /* ===== backup ===== */   
+    /*
     const handleBackup = async () => {
         const result = await usecase.backup()            
         //onBackupFinished?.(result)        
         onResult({type: "backup", data: result})
         if (result.ok) onClose()
-    }
+    }*/
 
     /* ===== restore ===== */
     const handleRestoreFile = async (file: File) => {
@@ -57,7 +55,7 @@ export default function BackupRestoreDialog({ open, onClose, controller, onResul
                     <Typography variant="body2" color="text.secondary" mb={1}>
                         棋譜ライブラリと学習履歴を JSON ファイルとして保存します。
                     </Typography>
-                    <Button variant="contained" onClick={handleBackup}>
+                    <Button variant="contained" onClick={onBackup}>
                         バックアップを保存
                     </Button>
                 </Box>
