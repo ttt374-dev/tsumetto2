@@ -2,10 +2,9 @@ import { useState } from "react"
 
 import { useRepositoryContext } from "@/ui/App/providers/RepositoryProvider"
 import { useImportProblemsUsecase, type ImportFilesResult, type ImportOptions } from "@/application/usecase/problem/import/ImportProblemsUsecase"
-import { ImportDialog } from "./ImportDialog"
 import { useFileSelector } from "@/ui/shared/hooks/useFileSelector"
 
-export function useImportController(onAfterImported?: (result: ImportFilesResult) => void){
+export function useImportController(){
     const repos = useRepositoryContext()
     const [files, setFiles] = useState<File[] | null>(null)
     const [open, setOpen] = useState(false)

@@ -1,12 +1,12 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { Problem, type ProblemId } from "@/domain/problem/entity/Problem";
 import { useProblemStore } from '@/ui/features/problem/hooks/useProblemStore';
-import { useLearningRecordStore } from '@/ui/features/learning/hooks/useLearningRecordStore';
 import { useReviewEventStore } from '@/ui/features/learning/hooks/useReviewEventStore';
 import type { ProblemType } from "@/domain/problem/entity/ProblemType";
 import { applyDraftToProblem, createEditDraft, toEditDraft, type ProblemEditDraft } from '@/ui/screens/detail/hooks/useProblemEditDraft';
 import { useProblemEditStore } from '@/ui/screens/detail/hooks/useProblemEditStore';
+import { projectLearningState } from '@/domain/learning/service/projectLearningState';
 
 export type SourceOption = {
     id: string
@@ -14,25 +14,69 @@ export type SourceOption = {
 }
 
 export function useProblemDetailViewModel(problem: Problem) {
-    // problem store
-    //const problem = useProblemStore(s => s.byId[problemId])
     const allTags = useProblemStore(s => s.allTags)
     const allSources = useProblemStore(s => s.allSources)
-    const updateField = useProblemEditStore(s => s.updateField)
-    
-    // learning store    
-    //const learningState = useLearningRecordStore(s=>s.getState(problem.id))
     const draft = useProblemEditStore(s=>s.draft)
+    const updateProblem = useProblemStore(s => s.updateProblem)
+    const eventLog = useReviewEventStore(s => s.eventLog)
 
+    const learningState = useMemo(() => {
+        const events = eventLog.filter(s => s.problemId === problem.id)
+
+        const records =
+            projectLearningState(events)
+
+        return records[problem.id]
+    }, [eventLog, problem.id])
+    
+    const save = async () => {
+        if (!draft) return
+        updateProblem(problem.id, prev => applyDraftToProblem(prev, draft))
+    }
     useInitializeProblemDraft(problem)
-    const view = draft ?? createEditDraft()
-    const actions = useProblemEditActions(problem.id, draft)
-    const updateFields = useProblemEditFields()
-    const toggleStar = useProblemEditStore(s => s.toggleStar)
-    const toggleReferenceOnly = useProblemEditStore(s => s.toggleReferenceOnly)
+    
+    return {
+        save,
+        allSources, allTags,
+        learningState,
+        fields: useProblemEditFields(draft)
+    }
+}
+//////////////
+function useInitializeProblemDraft(problem: Problem){
+    // open 時に初期値セット
+    useEffect(() => {
+        useProblemEditStore
+            .getState()
+            .setDraft(toEditDraft(problem))
 
-            
-    const fields = {
+
+    }, [problem.id])
+}
+
+export function useProblemEditActions(pid: ProblemId) {
+    const deleteProblems = useProblemStore(s => s.deleteProblems)
+    const appendReset = useReviewEventStore(s => s.appendReset)    
+    
+    // 学習データリセット
+    const resetLearning = () => {
+        appendReset(pid)
+    }
+    const remove = () => {
+        deleteProblems([pid])
+    }
+
+    return {
+        remove, resetLearning,        
+    }
+}
+
+function useProblemEditFields(draft: ProblemEditDraft | null){
+    const { updateField, toggleStar, toggleReferenceOnly} = useProblemEditStore()    
+    const view = draft ?? createEditDraft()
+
+    return useMemo(()=>({
+        // problem
         title: { 
             value: view.title,
             set: (v: string) => updateField("title", v)
@@ -53,68 +97,14 @@ export function useProblemDetailViewModel(problem: Problem) {
             value: view.comment,
             set: (v: string) => updateField("comment", v)
         },
-
         starred: {
             value: view.starred,
             toggle: toggleStar
         },
-        isReferenceOnly: {
+        // learning
+        referenceOnly: {
             value: view.isReferenceOnly,
-            toggle: toggleReferenceOnly,
+            toggle: toggleReferenceOnly
         }
-    }
-    return {
-        draft, allSources, allTags,
-        ...view, ...actions,
-        ...updateFields, 
-        toggleStar, toggleReferenceOnly,
-        fields,       
-    }
-}
-//////////////
-function useInitializeProblemDraft(problem: Problem){
-    // open 時に初期値セット
-    useEffect(() => {
-        if (problem) {
-            useProblemEditStore
-                .getState()
-                .setDraft(toEditDraft(problem))
-        }
-
-    }, [open, problem])
-}
-
-export function useProblemEditActions(pid: ProblemId, draft: ProblemEditDraft | null) {
-    const deleteProblems = useProblemStore(s => s.deleteProblems)
-    const appendReset = useReviewEventStore(s => s.appendReset)
-    const updateProblem = useProblemStore(s => s.updateProblem)
-    
-    // 学習データリセット
-    const resetLearning = () => {
-        appendReset(pid)
-    }
-    const remove = () => {
-        deleteProblems([pid])
-    }
-    const save = async () => {
-        if (!draft) return
-        updateProblem(pid, prev => applyDraftToProblem(prev, draft))
-    }
-    return {
-        remove, save, resetLearning,
-        
-    }
-}
-
-export function useProblemEditFields() {
-    const updateField = useProblemEditStore(s => s.updateField)
-
-    return {
-        setTitle: (v: string) => updateField("title", v),
-        setSource: (v: string) => updateField("source", v),
-        setType: (v: ProblemType) => updateField("type", v),
-        setTags: (v: string[]) => updateField("tags", v),
-        setComment: (v: string) => updateField("comment", v),
-        
-    }
+    }),[view, updateField, toggleStar, toggleReferenceOnly])
 }

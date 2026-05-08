@@ -3,11 +3,11 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { Box, Button, Checkbox, Divider, FormControlLabel, IconButton, Stack, TextField } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { AppShell } from "../../common/components/layout/AppShell";
-import { CancelableTextField } from "../../shared/components/CancelableTextfield";
-import { ProblemTagEditor } from "../../common/components/ProblemTagEditor";
-import { FreeSoloAutocomplete } from "../../shared/components/FreeSoloAutocomplete";
-import { useProblemStore } from "../../features/problem/hooks/useProblemStore";
+import { AppShell } from "@/ui/common/components/layout/AppShell";
+import { CancelableTextField } from "@/ui/shared/components/CancelableTextfield";
+import { ProblemTagEditor } from "@/ui/common/components/ProblemTagEditor";
+import { FreeSoloAutocomplete } from "@/ui/shared/components/FreeSoloAutocomplete";
+import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
 import { routes } from "../../App/useAppNavigation";
 import { useProblemDetailViewModel, useProblemEditActions } from "./hooks/useProblemDetailViewModel";
 import { StarToggleButton } from "../../common/components/StarToggleButton/StarToggleButton";
@@ -15,8 +15,6 @@ import type { Problem, ProblemId } from "@/domain/problem/entity/Problem";
 import { ProblemInfoPanel } from "../../features/problem/components/ProblemInfoPanel";
 import { LearningDetailPanel } from "../../features/learning/components/LearningDetailPanel";
 import { ProblemTypeFilterControl } from "@/ui/features/problem/query/components/ProblemTypeFilterControl";
-import { useReviewEventStore } from "@/ui/features/learning/hooks/useReviewEventStore";
-import { projectLearningState } from "@/domain/learning/service/projectLearningState";
 import { problemFieldLabels } from "@/ui/features/problem/hooks/problemPresenter";
 
 export default function ProblemDetailScreen(){
@@ -28,19 +26,13 @@ export default function ProblemDetailScreen(){
 }
 
 export function ProblemDetailContent( { problem }: { problem: Problem}) {
-        const {
-            draft, allSources,
-            title, tags, starred, source, type,  comment, isReferenceOnly,
-            toggleStar, toggleReferenceOnly,
-            setTitle, setTags, setType, setSource, setComment,
-        } = useProblemDetailViewModel(problem)
-        
-    const { save, resetLearning,  remove,} 
-        = useProblemEditActions(problem.id, draft)
-    
-    const events = useReviewEventStore(s=>s.eventLog).filter(s=>s.problemId===problem.id)
-    const records = projectLearningState(events)
-    const learningState = records[problem.id]    
+    const {
+        allSources,save,
+        fields, learningState,
+    } = useProblemDetailViewModel(problem)
+
+    const { resetLearning,  remove,} 
+        = useProblemEditActions(problem.id)
     
     const handleLearningReset = () => {
         if (!window.confirm("学習データをクリアしますか？")) return
@@ -65,11 +57,10 @@ export function ProblemDetailContent( { problem }: { problem: Problem}) {
             header="棋譜エントリの詳細"
             rightActions={
                 <Stack direction="row" justifyContent="flex-end">
-                    <StarToggleButton starred={starred}
-                        onToggle={() => toggleStar()}
+                    <StarToggleButton starred={fields.starred.value}
+                        onToggle={fields.starred.toggle}
                          sx={{color: "white"}}
                     />
-
                     
                         <IconButton onClick={() => onStartPlay(problem.id)}
                          sx={{color: "white"}}>
@@ -107,25 +98,25 @@ export function ProblemDetailContent( { problem }: { problem: Problem}) {
                     
                 }}>
                 {/* タイトル編集 */}
-                <CancelableTextField label="タイトル" value={title} onCommit={title => setTitle(title)} />
+                <CancelableTextField label="タイトル" value={fields.title.value} onCommit={fields.title.set} />
                 <ProblemTypeFilterControl
-                    problemType={type}
-                    onChange={v => setType(v)}
+                    problemType={fields.type.value}
+                    onChange={fields.type.set}
                     allowUnspecified={false}
                 />
                 <FormControlLabel
                     label="閲覧のみ"
                     control={
-                    <Checkbox checked={isReferenceOnly} onChange={toggleReferenceOnly}/>}/>
+                    <Checkbox checked={fields.referenceOnly.value} onChange={fields.referenceOnly.toggle}/>}/>
                 <FreeSoloAutocomplete
                     label={problemFieldLabels["source"]}
-                    value={source}
+                    value={fields.source.value}
                     options={allSources}
-                    onChange={v => setSource(v ?? "")}
+                    onChange={v => fields.source.set(v ?? "")}
                 />
                 <ProblemTagEditor
-                    value={tags}
-                    onChange={tags => setTags(tags)}
+                    value={fields.tags.value}
+                    onChange={fields.tags.set}
                 />
 
                 <ProblemInfoPanel problem={problem} />
@@ -139,8 +130,8 @@ export function ProblemDetailContent( { problem }: { problem: Problem}) {
                     multiline
                     minRows={3}
                     fullWidth
-                    value={comment}
-                    onChange={e => setComment(e.target.value)}
+                    value={fields.comment.value}
+                    onChange={e => fields.comment.set(e.target.value)}
                 />
             </Stack>
             </Box>

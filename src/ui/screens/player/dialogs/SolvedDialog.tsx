@@ -42,10 +42,6 @@ export function SolvedDialog({ open, onClose, onConfirm, solvedResult, learningS
 }) {
 
     const confirmLabel = "確認"
-    const svd = toSolvedResultViewData(solvedResult)
-    const lvd = learningState && toLearningStateViewData(learningState)
-    const quality = deriveAnswerQuality(solvedResult)
-    const pdata = ["outcome", "mistakes", "isRevealed", "elapsedSec"] as const            
     const text = formatSolvedResult(solvedResult)
     const learningtext = learningState ? formatLearningState(learningState) : ""
 

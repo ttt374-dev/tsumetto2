@@ -1,6 +1,5 @@
 import type { Problem } from "@/domain/problem/entity/Problem"
 import type { ProblemType } from "@/domain/problem/entity/ProblemType"
-import { isRegExp } from "lodash"
 
 export type ProblemEditDraft = {
     title: string
