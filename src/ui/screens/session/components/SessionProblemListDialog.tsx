@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { routes } from "@/ui/App/useAppNavigation";
 import type { ProblemId } from "@/domain/problem/entity/Problem";
 import type { SolvedResult } from "@/domain/review/solvedResult";
-import SessionListView from "@/ui/screens/session/SessionListView";
+import SessionListView from "@/ui/screens/session/components/SessionListView";
 import type { SessionId } from "@/domain/session/entity/Session";
 import type { ReviewEvent } from "@/domain/review/ReviewEvent";
 import { useReviewEventStore } from "@/ui/features/learning/hooks/useReviewEventStore";

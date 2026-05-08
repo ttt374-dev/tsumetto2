@@ -22,7 +22,7 @@ import SessionPlayerScreen from '@/ui/screens/session/SessionPlayerScreen.tsx';
 import HistoryScreen from '@/ui/screens/history/HistoryScreen.tsx';
 import SinglePlayerScreen from '@/ui/screens/player/SinglePlayerScreen';
 import ViewScreen from '@/ui/screens/view/ViewScreen';
-import SessionListScreen from '@/ui/screens/session/SessionListScreen';
+import SessionListScreen from '@/ui/screens/session/components/SessionListScreen';
 
 export const theme = createTheme({
   cssVariables: true,   // ← これ必須

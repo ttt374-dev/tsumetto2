@@ -1,29 +1,33 @@
 //import { AppShell } from "@/ui/common/components/layout/AppShell"
-import type { GameEvent } from "@/domain/game/types/GameEvent"
-import { routes } from "@/ui/App/useAppNavigation"
 import { AppShell } from "@/ui/common/components/layout/AppShell"
-import { PlayerFooterPanel } from "@/ui/screens/session/PlayerFooterPanel"
+import { PlayerFooterPanel } from "@/ui/screens/session/components/PlayerFooterPanel"
 import PlayerScreen from "@/ui/screens/player/PlayerScreen"
-import { useSessionPlayerRunner } from "@/ui/screens/session/runner/useSessionPlayerRunner"
-import { useNavigate } from "react-router-dom"
+import { useSessionPlayerViewModel } from "@/ui/screens/session/hooks/useSessionViewModel"
+import { useSessionExecutor } from "@/ui/screens/session/runner/useSessionExecutor"
+import { useSessionRouteContext } from "@/ui/screens/session/hooks/useSessionRouteContext"
+import { createSessionBridge } from "@/ui/screens/session/runner/createSessionBridge"
+import { useSessionActions } from "@/ui/screens/session/hooks/useSessionActions"
 
 export default function SessionPlayerScreen() {
-    const model = useSessionPlayerRunner()
+    const route = useSessionRouteContext()
+    const vm = useSessionPlayerViewModel(route) 
 
-    if (model.type === "error") return <AppShell>Error: {model.message}</AppShell>
+    const execute = useSessionExecutor(route.sessionId, route.index)
+    const actions = useSessionActions(execute)
+    const bridge = createSessionBridge(execute)
 
+    if (vm.type === "error") return <AppShell>Error: {vm.message}</AppShell>
 
     return (
         <PlayerScreen
-            problem={model.problem}
-            title={model.title}
+            problem={vm.problem}
+            title={vm.title}
             footer={<PlayerFooterPanel 
-                onNext={model.advanceProblem} 
-                onPrev={model.retreatProblem}
-                onShowList={model.openSessionList} />}
-            onPlayerIntent={model.handlers.handlePlayerIntent}
-            onGameEvent={model.handlers.handleGameEvent}
-            //onSessionEvent={model.handlers.handleDomainEvent}
+                onNext={actions.navigation.advanceProblem} 
+                onPrev={actions.navigation.retreatProblem}
+                onShowList={actions.navigation.openSessionList} />}
+            onPlayerIntent={bridge.player.handleIntent}
+            onGameEvent={bridge.game.handleEvent}
         />
     )
 }

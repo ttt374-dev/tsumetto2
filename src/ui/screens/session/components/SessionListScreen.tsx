@@ -3,13 +3,16 @@ import { routes } from "@/ui/App/useAppNavigation"
 import { AppShell } from "@/ui/common/components/layout/AppShell"
 import { useReviewEventStore } from "@/ui/features/learning/hooks/useReviewEventStore"
 import { useSessionStore } from "@/ui/screens/session/store/useSessionStore"
-import SessionListView from "@/ui/screens/session/SessionListView"
-import { getSolvedResultsBySession } from "@/ui/screens/session/SessionProblemListDialog"
+import SessionListView from "@/ui/screens/session/components/SessionListView"
+import { getSolvedResultsBySession } from "@/ui/screens/session/components/SessionProblemListDialog"
 import { Button, Stack } from "@mui/material"
 import { useLocation, useNavigate, useParams } from "react-router-dom"
+import { useSessionRouteContext } from "@/ui/screens/session/hooks/useSessionRouteContext"
 
 
 export default function SessionListScreen() {
+    const route = useSessionRouteContext()
+    
     const { sessionId, index } = useParams<{ sessionId: string, index: string }>()
     const currentIndex = Number(index??0)
     if (!sessionId) throw new Error("invalid sessionId")
