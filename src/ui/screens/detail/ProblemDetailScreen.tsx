@@ -9,7 +9,7 @@ import { ProblemTagEditor } from "../../common/components/ProblemTagEditor";
 import { FreeSoloAutocomplete } from "../../shared/components/FreeSoloAutocomplete";
 import { useProblemStore } from "../../features/problem/hooks/useProblemStore";
 import { routes } from "../../App/useAppNavigation";
-import { useProblemDetailViewModel } from "./hooks/useProblemDetailViewModel";
+import { useProblemDetailViewModel, useProblemEditActions } from "./hooks/useProblemDetailViewModel";
 import { StarToggleButton } from "../../common/components/StarToggleButton/StarToggleButton";
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem";
 import { ProblemInfoPanel } from "../../features/problem/components/ProblemInfoPanel";
@@ -29,14 +29,18 @@ export default function ProblemDetailScreen(){
 
 export function ProblemDetailContent( { problem }: { problem: Problem}) {
         const {
-            title, tags, starred, source, type, allSources, comment, isReferenceOnly,
-            setTitle, setTags, toggleStar, setType, setSource, remove, setComment,
-            save, resetLearning, toggleReferenceOnly,
-        } = useProblemDetailViewModel(problem.id)
+            draft, allSources,
+            title, tags, starred, source, type,  comment, isReferenceOnly,
+            toggleStar, toggleReferenceOnly,
+            setTitle, setTags, setType, setSource, setComment,
+        } = useProblemDetailViewModel(problem)
         
+    const { save, resetLearning,  remove,} 
+        = useProblemEditActions(problem.id, draft)
+    
     const events = useReviewEventStore(s=>s.eventLog).filter(s=>s.problemId===problem.id)
     const records = projectLearningState(events)
-    const learningState = records[problem.id]
+    const learningState = records[problem.id]    
     
     const handleLearningReset = () => {
         if (!window.confirm("学習データをクリアしますか？")) return

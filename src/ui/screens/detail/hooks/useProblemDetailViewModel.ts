@@ -13,25 +13,62 @@ export type SourceOption = {
     label: string
 }
 
-export function useProblemDetailViewModel(problemId: ProblemId) {
+export function useProblemDetailViewModel(problem: Problem) {
     // problem store
-    const problem = useProblemStore(s => s.byId[problemId])
+    //const problem = useProblemStore(s => s.byId[problemId])
     const allTags = useProblemStore(s => s.allTags)
     const allSources = useProblemStore(s => s.allSources)
     const updateField = useProblemEditStore(s => s.updateField)
     
     // learning store    
-    const learningState = useLearningRecordStore(s=>s.getState(problem.id))
+    //const learningState = useLearningRecordStore(s=>s.getState(problem.id))
     const draft = useProblemEditStore(s=>s.draft)
 
     useInitializeProblemDraft(problem)
     const view = draft ?? createEditDraft()
-    const actions = useProblemEditActions(problem, draft)
+    const actions = useProblemEditActions(problem.id, draft)
     const updateFields = useProblemEditFields()
+    const toggleStar = useProblemEditStore(s => s.toggleStar)
+    const toggleReferenceOnly = useProblemEditStore(s => s.toggleReferenceOnly)
+
+            
+    const fields = {
+        title: { 
+            value: view.title,
+            set: (v: string) => updateField("title", v)
+        },
+        source: {
+            value: view.source,
+            set: (v: string) => updateField("source", v)
+        },
+        type: {
+            value: view.type,
+            set: (v: ProblemType) => updateField("type", v),
+        },
+        tags: {
+            value: view.tags,
+            set: (v: string[]) => updateField("tags", v)
+        },
+        comment: {
+            value: view.comment,
+            set: (v: string) => updateField("comment", v)
+        },
+
+        starred: {
+            value: view.starred,
+            toggle: toggleStar
+        },
+        isReferenceOnly: {
+            value: view.isReferenceOnly,
+            toggle: toggleReferenceOnly,
+        }
+    }
     return {
-        problem, learningState, allSources, allTags,
+        draft, allSources, allTags,
         ...view, ...actions,
-        ...updateFields,        
+        ...updateFields, 
+        toggleStar, toggleReferenceOnly,
+        fields,       
     }
 }
 //////////////
@@ -47,29 +84,25 @@ function useInitializeProblemDraft(problem: Problem){
     }, [open, problem])
 }
 
-function useProblemEditActions(problem: Problem, draft: ProblemEditDraft | null) {
+export function useProblemEditActions(pid: ProblemId, draft: ProblemEditDraft | null) {
     const deleteProblems = useProblemStore(s => s.deleteProblems)
     const appendReset = useReviewEventStore(s => s.appendReset)
     const updateProblem = useProblemStore(s => s.updateProblem)
-    const toggleStar = useProblemEditStore(s => s.toggleStar)
-    const toggleReferenceOnly = useProblemEditStore(s => s.toggleReferenceOnly)
-
+    
     // 学習データリセット
     const resetLearning = () => {
-        appendReset(problem.id)
+        appendReset(pid)
     }
     const remove = () => {
-        if (!problem) return
-        deleteProblems([problem.id])
+        deleteProblems([pid])
     }
     const save = async () => {
-        if (!problem || !draft) return
-        console.log("save problem", draft)
-        updateProblem(problem.id, prev => applyDraftToProblem(prev, draft))
+        if (!draft) return
+        updateProblem(pid, prev => applyDraftToProblem(prev, draft))
     }
     return {
         remove, save, resetLearning,
-        toggleStar, toggleReferenceOnly,
+        
     }
 }
 
@@ -82,5 +115,6 @@ export function useProblemEditFields() {
         setType: (v: ProblemType) => updateField("type", v),
         setTags: (v: string[]) => updateField("tags", v),
         setComment: (v: string) => updateField("comment", v),
+        
     }
 }
