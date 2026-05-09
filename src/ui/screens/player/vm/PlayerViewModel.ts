@@ -6,7 +6,6 @@ import type { Selection } from "@/ui/screens/player/store/useBoardInputStore";
 
 export type PlayerInput = {
     resPosition: BuildPositionResult
-    //reversed: boolean
 
     problem: Problem
     isRevealed: boolean
@@ -21,19 +20,22 @@ export type PlayerInput = {
     isMovesVisible: boolean    
 }
 
-export type BoardViewModel = 
-    | BoardOKViewModel
-    | { status: "error", message?: string}
-
-export type BoardOKViewModel = {
-    status: "ok";
+//export type BoardViewModel = 
+//    | BoardOKViewModel
+//    | { status: "error", message?: string}
+//export type BoardViewModel = 
+export type BoardViewModel = {
+    //status: "ok";
     position: Position
     reversed: boolean
     userSide: Player  
     
     selection: Selection
-    ply: number
-    moves: Move[]
+    lastMove: Move | undefined
+    //ply: number
+    //moves: Move[]
+
+    buildPositionResult: BuildPositionResult
 
 }
 export type MovesViewModel = {

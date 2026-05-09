@@ -48,7 +48,7 @@ export function SolvedDialog({ open, onClose, onConfirm, solvedResult, learningS
     return (
         <Dialog open={open} onClose={onClose} maxWidth="xl" 
            sx={{
-            mt: 24,
+    //            mt: 24,
     /*"& .MuiDialog-container": {
       alignItems: "flex-end",
       paddingBottom: "96px",

@@ -8,12 +8,14 @@ import type { BoardActions } from "@/ui/screens/player/hooks/usePlayerActions";
 
 export default function BoardPanel( {boardModel, actions}: { 
     boardModel: BoardViewModel, actions: BoardActions }) {    
-    if (boardModel.status === "error") return <>Error: invalid Position</>
-    const { reversed, userSide, position: { hands, sideToMove}} = boardModel
+    //if (boardModel.status === "error") return <>Error: invalid Position</>
+    const { reversed, userSide, position: { hands, sideToMove}, buildPositionResult, selection }
+        = boardModel    
     const upperPlayer = reversed ? "black" : "white"
     const bottomPlayer = reversed ? "white" : "black"
 
-    const { selection } = boardModel
+    //if (buildPositionResult.ok === false) return <>Invalid Position</>
+    //actions.dispatchGameEvent({type: "MISTAKE", ply: 1, elapsedSec: 10 })
     const { clickHandPiece } = actions
     return (
         <Stack justifyContent="center" alignContent={"center"}  direction="row" >

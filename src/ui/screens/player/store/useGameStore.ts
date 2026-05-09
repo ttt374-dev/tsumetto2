@@ -43,6 +43,8 @@ export function useCurrentPosition() {
 export function getCurrentPosition (): BuildPositionResult {
   const { initialPosition, moves } = useGameStore.getState()
   const ply = useReplayStore.getState().ply
+  //const res = buildUntilPly(initialPosition, moves, ply)
+
   return buildUntilPly(initialPosition, moves, ply)
 }
 

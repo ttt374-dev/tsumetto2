@@ -2,7 +2,7 @@ import type { ApplyMoveError, Move, Position } from "../entity";
 
 export type BuildPositionResult =
     | { ok: true; value: Position }
-    | { ok: false; error: ApplyMoveError; ply: number; move: Move }
+    | { ok: false; error: ApplyMoveError; ply: number; move: Move, value: Position }
 
 export function buildUntilPly(
     initialPosition: Position,
@@ -21,6 +21,7 @@ export function buildUntilPly(
                 error: res.error,
                 ply: i + 1,
                 move,
+                value: state
             }
         }
 

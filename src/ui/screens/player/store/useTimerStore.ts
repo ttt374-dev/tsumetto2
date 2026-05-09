@@ -1,4 +1,3 @@
-import { ResetTv } from "@mui/icons-material";
 import { create } from "zustand";
 
 type TimerStore = {

@@ -7,10 +7,13 @@ import { buildPlayerViewModel, } from "@/ui/screens/player/vm/buildPlayerViewMod
 import type { PlayerInput, PlayerViewModel } from "@/ui/screens/player/vm/PlayerViewModel";
 import { useGameUIStore } from "@/ui/screens/player/store/useGameUIStore";
 import { useBoardInputStore } from "@/ui/screens/player/store/useBoardInputStore";
+import { useToast } from "@/ui/App/providers/ToastProvider";
+import { useEffect } from "react";
 
 export function usePlayerViewModel(problem: Problem): PlayerViewModel {
-    const resPosition = useCurrentPosition()
+    const toast = useToast()
 
+    const resPosition = useCurrentPosition()
     const isRevealed = useGameStore(s => s.state.isRevealed)
     const isSolved = useGameStore(s=>s.state.isSolved)
 
@@ -23,6 +26,12 @@ export function usePlayerViewModel(problem: Problem): PlayerViewModel {
     const selection = useBoardInputStore(s => s.selection)
     const isMovesVisible = useGameUIStore(s=>s.isMovesVisible)
     const ctx = createPlayerContext()
+
+    useEffect(()=>{
+        if (resPosition.ok === false){
+            toast({message: `Build position error: ${resPosition.error.code} at ${resPosition.move.rawtext} ply of ${resPosition.ply}`, severity: "error"})
+        }
+    }, [resPosition.ok])
 
     const input: PlayerInput = {
         resPosition,
