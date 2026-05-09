@@ -6,9 +6,11 @@ import { useMissionStore } from "@/ui/screens/mission/hooks/useMissionStore"
 import { fileBackupWriter } from "@/infrastructure/fileBackupWriter"
 import { useRepositoryContext } from "@/ui/App/providers/RepositoryProvider"
 import { useBackupRestoreUsecase, type RestoreResult } from "@/application/usecase/problem/backup/BackupRestoreUsecase"
+import { useDialogState } from "@/ui/common/hooks/useDialogState"
 
-export function useBackupRestoreDialog() {
-    const [open, setOpen] = useState(false)
+export function useBackupRestoreDialogController() {
+    const dialog = useDialogState()
+    //const [open, setOpen] = useState(false)
     const [result, setResult] = useState<{
         type: "backup" | "restore"
         data: any
@@ -20,8 +22,8 @@ export function useBackupRestoreDialog() {
     const reloadReviewEvents = useReviewEventStore(s => s.reload)
     const reloadMissions = useMissionStore(s => s.reload)
 
-    const openDialog = () => setOpen(true)
-    const closeDialog = () => setOpen(false)
+    //const openDialog = () => setOpen(true)
+    //const closeDialog = () => setOpen(false)
 
     useEffect(() => {
         if (!result) return
@@ -84,9 +86,11 @@ export function useBackupRestoreDialog() {
         }
     }
     return {
-        open, 
-        openDialog, closeDialog,
+        ...dialog,
+        //open, 
+        //openDialog, closeDialog,
         backup, restore,
-        setResult
+        setResult,
+        //openDialog: () => alert("open")
     }
 }

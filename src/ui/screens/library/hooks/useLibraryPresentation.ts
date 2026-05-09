@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-import { useMultipleProblemsEditDialog } from "@/ui/dialogs/MultipleProblemsEditorDialog";
+import { useMultipleProblemsEditDialogController } from "@/ui/dialogs/MultipleProblemsEditorDialog";
 import { useLibraryActions } from "@/ui/screens/library/hooks/useLibraryActions";
 import { useLibraryViewModel } from "@/ui/screens/library/hooks/useLibraryViewModel";
 
@@ -19,7 +19,7 @@ export function useLibraryPresentation(){
 //////////
 function useLibraryDialogs(){
     return {
-        edit: useMultipleProblemsEditDialog()
+        edit: useMultipleProblemsEditDialogController()
     }
 }
 function useLibraryDrawer() {

@@ -5,8 +5,8 @@ import { deriveAnswerQuality } from "@/domain/learning/entity/AnswerQuality"
 import type { LearningState } from "@/domain/learning/entity/LearningState"
 import type { ProblemId } from "@/domain/problem/entity/Problem"
 import type { SolvedResult } from "@/domain/review/solvedResult"
-import { learningStateLabels, toLearningStateViewData } from "@/ui/features/learning/hooks/learningPresenter"
-import { solvedResultLabels, toSolvedResultViewData } from "@/ui/features/learning/hooks/solvedResultPresenter"
+import { toSolvedResultViewData } from "@/ui/features/learning/hooks/solvedResultPresenter"
+import { toLearningStateViewData } from "@/ui/features/learning/hooks/learningPresenter"
 
 type SolvedDialogState = 
     | { open: false }
@@ -16,7 +16,7 @@ type SolvedDialogActions = {
     openDialog: (pid: ProblemId, solvedResult: SolvedResult) => void
     closeDialog: () => void
 }
-export function useSolvedDialog(): SolvedDialogState & SolvedDialogActions {
+export function useSolvedDialogController(): SolvedDialogState & SolvedDialogActions {
     const [state, setState] = useState<SolvedDialogState>({ open: false })    
 
     const openDialog = (pid: ProblemId, solvedResult: SolvedResult) => { 

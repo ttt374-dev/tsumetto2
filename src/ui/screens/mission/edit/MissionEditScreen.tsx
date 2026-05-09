@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { routes } from "../../../App/useAppNavigation";
 import { FilterControlPanel } from "../../../features/problem/query/components/FilterControlPanel";
 import { useToast } from "@/ui/App/providers/ToastProvider";
-import { useDialog } from "@/ui/common/hooks/useDialog";
+import { useDialogState } from "@/ui/common/hooks/useDialogState";
 
 export default function MissionEditScreen() {
     const toast = useToast()
@@ -20,7 +20,7 @@ export default function MissionEditScreen() {
     } = useMissionEditViewModel();
 
     const navigate = useNavigate()
-    const listDialog = useDialog()
+    const listDialog = useDialogState()
     const handleNavigateToList = () => {
         //console.log("nav: ids", problemIds)
         navigate(routes.list, { state: { ids: problemIds, title: `デッキ ${name}：問題リスト` } })

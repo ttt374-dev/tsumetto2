@@ -1,46 +1,41 @@
 import styles from "./AppLayout.module.css";
 import { Box, Divider, Drawer, List, ListItemButton, ListItemText } from "@mui/material";
 
-export function DrawerMenu({ isOpen, onClose,
-    onNavigateToMission, onNavigateToLibrary, onNavigateToStats, onNavigateToHistory,
-     onImport, onBackupRestore }: {
-        isOpen: boolean,
-        onClose: () => void,
-        onNavigateToMission: () => void
-        onNavigateToLibrary: () => void
-        onNavigateToStats: () => void
-        onNavigateToHistory: () => void
-        onBackupRestore: () => void
-        onImport: () => void
-    }) {
+///////
+
+//////////////////////////////
+export type DrawerMenuItem =
+    | { type: "item", label: string, action: () => void }
+    | { type: "divider" }
+
+export function DrawerMenu({ open, menuItems }: {
+    open: boolean,
+    menuItems: DrawerMenuItem[]
+}) {
+
     return (
-        <Drawer anchor="left" open={isOpen} onClose={onClose} >
+        <Drawer anchor="left" open={open} >
             <Box width={250} mt={3} role="presentation" className={styles.header}>
                 <List>
-                    <ListItemButton onClick={() => onNavigateToMission()}>
-                        <ListItemText primary="ミッション" />
-                    </ListItemButton>
-                    <ListItemButton onClick={() => onNavigateToLibrary()}>
-                        <ListItemText primary="ライブラリ" />
-                    </ListItemButton>
-                    <ListItemButton onClick={() => onNavigateToStats()}>
-                        <ListItemText primary="統計" />
-                    </ListItemButton>
-                    <ListItemButton onClick={() => onNavigateToHistory()}>
-                        <ListItemText primary="履歴" />
-                    </ListItemButton>                    
-
-                    <Divider />
-
-                    <ListItemButton onClick={() => { onImport(); onClose() }}>
-                        <ListItemText primary="棋譜の取り込み" />
-                    </ListItemButton>
-                    <ListItemButton onClick={() => { onBackupRestore(); onClose() }}>
-                        <ListItemText primary="バックアップ・復旧" />
-                    </ListItemButton>
+                    {
+                        menuItems.map((item, i) => (
+                            <DrawerItem item={item} key={i}/>
+                        ))
+                    }
 
                 </List>
             </Box>
         </Drawer>
     )
+}
+function DrawerItem({ item }: { item: DrawerMenuItem }) {
+    switch (item.type) {
+        case "item":
+            return <ListItemButton onClick={item.action}>
+                <ListItemText primary={item.label} />
+            </ListItemButton>
+        case "divider":
+            return <Divider />
+
+    }
 }

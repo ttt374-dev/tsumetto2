@@ -12,7 +12,7 @@ import PlyControlPanel from "@/ui/screens/player/components/panels/PlyControlPan
 import { Problem } from "@/domain/problem/entity/Problem"
 import { AppShell } from "@/ui/common/components/layout/AppShell";
 import PromotionDialog from "@/ui/screens/player/dialogs/PromotionDialog";
-import { SolvedDialog, useSolvedDialog } from "@/ui/screens/player/dialogs/SolvedDialog";
+import { SolvedDialog, useSolvedDialogController } from "@/ui/screens/player/dialogs/SolvedDialog";
 import type { PlayerIntent } from "@/application/session/interpretor/interpretPlayerIntent";
 import type { Player } from "@/domain/kif/entity";
 import _ from "lodash";

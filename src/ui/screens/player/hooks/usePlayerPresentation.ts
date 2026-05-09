@@ -1,5 +1,5 @@
 import type { Problem } from "@/domain/problem/entity/Problem"
-import { useSolvedDialog } from "@/ui/screens/player/dialogs/SolvedDialog"
+import { useSolvedDialogController } from "@/ui/screens/player/dialogs/SolvedDialog"
 import { usePlayerActions, type PlayerActions } from "@/ui/screens/player/hooks/usePlayerActions"
 import { usePlayerViewModel } from "@/ui/screens/player/hooks/usePlayerViewModel"
 import { usePromotionDialog } from "@/ui/screens/player/hooks/usePromotionDialog"
@@ -15,7 +15,7 @@ export type PlayerPresentation = {
 }
 export function usePlayerPresentation(problem: Problem): PlayerPresentation {
     const dialogs = {
-        solvedResult: useSolvedDialog(),
+        solvedResult: useSolvedDialogController(),
         promotion: usePromotionDialog(),
     }
     return {

@@ -6,18 +6,21 @@ import { useEffect, useMemo, useState } from "react";
 import type { ProblemType } from "@/domain/problem/entity/ProblemType";
 import { ProblemTypeFilterControl } from "@/ui/features/problem/query/components/ProblemTypeFilterControl";
 import { problemFieldLabels } from "@/ui/features/problem/hooks/problemPresenter";
+import { useDialogState } from "@/ui/common/hooks/useDialogState";
 
-export function useMultipleProblemsEditDialog() {
-    const [open, setOpen] = useState(false)
+export function useMultipleProblemsEditDialogController() {
+    const dialog = useDialogState()
+    //const [open, setOpen] = useState(false)
     const [checkedIds, setCheckedIds] = useState<ProblemId[]>([])
 
-    const openDialog = (ids: ProblemId[]) => {
+    const openDialog = (ids: ProblemId[]) => {  // override dialog.openDialog
         setCheckedIds(ids)
-        setOpen(true)
+        //setOpen(true)
+        dialog.openDialog()
     }
-    const closeDialog = () => { setOpen(false) }
+    //const closeDialog = () => { setOpen(false) }
 
-    return { open, openDialog, closeDialog, checkedIds }
+    return { ...dialog, openDialog, checkedIds }
 }
 /////////////////////////////////////////
 function ProblemTypeSelectControl(props: {

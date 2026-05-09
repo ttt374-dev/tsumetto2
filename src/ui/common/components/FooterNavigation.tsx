@@ -3,8 +3,6 @@ import BarChartIcon from '@mui/icons-material/BarChart'
 import MenuBookIcon from '@mui/icons-material/MenuBook'
 import AssignmentIcon from '@mui/icons-material/Assignment'
 import FileDownloadIcon from "@mui/icons-material/FileDownload"
-import SettingsIcon from '@mui/icons-material/Settings'
-import HistoryIcon from '@mui/icons-material/History'
 import { routes } from "@/ui/App/useAppNavigation";
 import { useNavigate } from "react-router-dom";
 import { useContext, type ReactNode } from "react";

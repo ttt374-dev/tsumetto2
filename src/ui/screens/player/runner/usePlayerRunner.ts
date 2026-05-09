@@ -1,6 +1,6 @@
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem";
 import { useToast } from "@/ui/App/providers/ToastProvider";
-import { useSolvedDialog } from "@/ui/screens/player/dialogs/SolvedDialog";
+import { useSolvedDialogController } from "@/ui/screens/player/dialogs/SolvedDialog";
 import { useGameEventHandler } from "@/ui/screens/player/hooks/useGameEventHandler";
 import { useGameInitializer } from "@/ui/screens/player/hooks/useGameInitializer";
 import { usePromotionDialog } from "@/ui/screens/player/hooks/usePromotionDialog";
@@ -12,7 +12,7 @@ import { usePlayerViewModel } from "@/ui/screens/player/hooks/usePlayerViewModel
 import { usePlayerActions, type PlayerActions } from "@/ui/screens/player/hooks/usePlayerActions";
 
 export type DialogControllers = {
-   solvedResult: ReturnType<typeof useSolvedDialog>
+   solvedResult: ReturnType<typeof useSolvedDialogController>
    promotion: ReturnType<typeof usePromotionDialog>
 }
 
