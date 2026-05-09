@@ -2,13 +2,13 @@ import { createContext, useEffect, useState, type ReactNode } from "react"
 import { useNavigate } from "react-router-dom"
 
 import { routes } from "@/ui/App/useAppNavigation";
-import { useImportController } from "@/ui/dialogs/Import/useImportController";
-import { useBackupRestoreDialogController } from "@/ui/dialogs/BackupRestore/useBackupRestoreDIalogController";
+import { useImportController, type ImportController } from "@/ui/dialogs/Import/useImportController";
+import { useBackupRestoreDialogController, type BackupRestoreController } from "@/ui/dialogs/BackupRestore/useBackupRestoreDIalogController";
 import type { DrawerMenuItem } from "@/ui/common/components/layout/DrawerMenu";
 
 export function useAppDrawerMenu(
-    importController: ReturnType<typeof useImportController>,
-    backupRestoreController: ReturnType<typeof useBackupRestoreDialogController>
+    importController: ImportController,
+    backupRestoreController: BackupRestoreController
  ) {
     const drawer = useDrawerState()
     const navigate = useNavigate()

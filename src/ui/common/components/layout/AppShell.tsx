@@ -44,6 +44,7 @@ function createAppActions(dialogs: GlobalDialogControllers): AppActions {
         openBackupRestore: dialogs.backupRestore.openDialog
     }
 }
+//////////////////////////////////////////////
 export function AppShell({ header, footer, rightActions, fab, children, navigateBack = false }: Props) {
     
     const { drawerController, dialogs } = useAppControllers()
