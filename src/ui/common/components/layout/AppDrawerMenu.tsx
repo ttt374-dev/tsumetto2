@@ -51,7 +51,7 @@ export function AppDrawerMenu({ open, dialogs }: {
     />
 }
 
-export function executeDrawerCommand(command: DrawerCommand, deps: DrawerCommandDeps) {
+function executeDrawerCommand(command: DrawerCommand, deps: DrawerCommandDeps) {
     switch (command.type) {
         case "NAVIGATE":
             deps.navigate(command.to)

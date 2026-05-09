@@ -1,10 +1,6 @@
-import { useNavigate } from "react-router-dom";
 import styles from "./AppLayout.module.css";
 import { Box, Divider, Drawer, List, ListItemButton, ListItemText } from "@mui/material";
 
-///////
-
-//////////////////////////////
 export type DrawerMenuItem =
     | { type: "item", label: string, command: DrawerCommand }
     | { type: "divider" }
@@ -12,7 +8,7 @@ export type DrawerMenuItem =
 export type DrawerCommand = 
     | { type: "NAVIGATE", to: string }
     | { type: "OPEN_DIALOG", dialog: "import" | "backupRestore" }
-
+//////////////////////////////
 export function DrawerMenu({ open, menuItems, onCommand }: {
     open: boolean,
     menuItems: DrawerMenuItem[]

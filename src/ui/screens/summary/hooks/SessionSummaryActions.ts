@@ -6,9 +6,10 @@ import { projectLearningState } from "@/domain/learning/service/projectLearningS
 import { createSessionId, useSessionStore } from "@/ui/screens/session/store/useSessionStore";
 import { usePlannerStore } from "@/ui/screens/session/store/usePlannerStore";
 import type { SessionId } from "@/domain/session/entity/Session";
+import type { ProblemId } from "@/domain/problem/entity/Problem";
 
 export function useSessionSummaryActions(sessionId: SessionId) {
-    const ids = useSessionStore(s => s.problemIds)
+    const problemIds = useSessionStore(s => s.problemIds)
     const startSession = useSessionStore(s => s.start)
     const missionId = useSessionStore(s=>s.missionId)
 
@@ -20,36 +21,33 @@ export function useSessionSummaryActions(sessionId: SessionId) {
         .filter(e => ("sessionId" in e && e.sessionId === sessionId))
 
     const records = projectLearningState(sessionEventLog)
-    //const summary = computeStatsSummary(ids, records)
     const navigate = useNavigate()
     
     // --- actions ---
     const review = () => {
         const failedIds = Object.keys(records)
             .filter(k => records[k].stats.failedCount > 0)
-
-        const newSessionId = createSessionId()
-        startSession(sessionId, failedIds, missionId, )
-        navigate(routes.sessionPlay(newSessionId))
+        goSession(failedIds)        
     }
 
     const retry = () => {
-        const newSessionId = createSessionId()
-        startSession(sessionId, ids, missionId)
-        navigate(routes.sessionPlay(newSessionId))
+        goSession(problemIds)        
     }
 
     const nextChunk = () => {
         const chunk = planner.nextChunk()
         if (!planner.missionId || !chunk) return
-
-        const newSessionId = createSessionId()
-        startSession(sessionId, chunk, missionId)
-        navigate(routes.sessionPlay(newSessionId))
+        goSession(chunk)        
     }
 
     const backToMission = () => {
         navigate(routes.mission)
+    }
+    
+    function goSession(ids: ProblemId[]){
+        const newSessionId = createSessionId()
+        startSession(newSessionId, ids, missionId)
+        navigate(routes.sessionPlay(newSessionId))
     }
     return {
         navigation: {

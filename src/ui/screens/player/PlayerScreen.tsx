@@ -17,15 +17,9 @@ import type { PlayerIntent } from "@/application/session/interpretor/interpretPl
 import type { Player } from "@/domain/kif/entity";
 import _ from "lodash";
 import type { GameEvent } from "@/domain/game/types/GameEvent";
-import { deriveSolvedResultFromEvents } from "@/domain/review/service/solvedResultDeriver";
 import { useGameStore } from "@/ui/screens/player/store/useGameStore";
-import { usePlayerViewModel } from "@/ui/screens/player/hooks/usePlayerViewModel";
-import { usePlayerActions, type PlayerActions } from "@/ui/screens/player/hooks/usePlayerActions";
-import type { PlayerViewModel } from "@/ui/screens/player/vm/PlayerViewModel";
 import { usePlayerPresentation, type PlayerPresentation } from "@/ui/screens/player/hooks/usePlayerPresentation";
 import { usePlayerRunner, type PlayerRunnerModel } from "@/ui/screens/player/runner/usePlayerRunner";
-import { usePromotionDialog } from "@/ui/screens/player/hooks/usePromotionDialog";
-
 
 ///////////////////////////////////////////
 export default function PlayerScreen({ problem, title, footer, onPlayerIntent, onGameEvent, }: {
@@ -41,8 +35,7 @@ export default function PlayerScreen({ problem, title, footer, onPlayerIntent, o
     const runner = usePlayerRunner(problem, model.ui.dialogs, {
         onPlayerIntent: onPlayerIntent,
         onGameEvent: onGameEvent
-    })
-    
+    })    
 
     // 消された場合
     if (problem.deletedAt) {
