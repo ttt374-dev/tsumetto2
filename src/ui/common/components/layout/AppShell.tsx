@@ -1,11 +1,12 @@
 import { createContext } from "react"
 
 import { AppLayout } from "./AppLayout"
-import { useBackupRestoreDialogController } from "@/ui/dialogs/BackupRestore/useBackupRestoreDIalogController";
+import { useBackupRestoreDialogController, type BackupRestoreController } from "@/ui/dialogs/BackupRestore/useBackupRestoreDIalogController";
 import { useImportWorkflow } from "@/ui/common/components/layout/useImportWorkflow";
-import { GlobalDialogs } from "@/ui/common/components/layout/GlobalDialogs";
 import { useAppDrawerMenu } from "@/ui/common/components/layout/useAppDrawerMenu";
 import { DrawerMenu } from "@/ui/common/components/layout/DrawerMenu";
+import type { ImportController } from "@/ui/dialogs/Import/useImportController";
+import { GlobalDialogs } from "@/ui/common/components/layout/GlobalDialogs";
 
 
 interface Props {
@@ -21,39 +22,41 @@ type AppActions = {
     openImport: () => void
     openBackupRestore: () => void
 }
+export type GlobalDialogControllers = {
+    import: ImportController
+    backupRestore: BackupRestoreController
+}
 
 //export const OpenImportContext = createContext<(() => void) | null>(null)
-export const AppActinosContext = createContext<AppActions | null>(null)
+export const AppActionsContext = createContext<AppActions | null>(null)
 
 function useAppControllers() {
-    const importController = useImportWorkflow()
-    const backupRestoreDialog = useBackupRestoreDialogController()
-    //console.log("backupres", backupRestoreDialogController.open)
-    // drawer
-    const drawerController = useAppDrawerMenu(
-        importController,
-        backupRestoreDialog
-    )
-
-
-    return { importController, backupRestoreDialog, drawerController }
+    const dialogs = {
+        import: useImportWorkflow(),
+        backupRestore: useBackupRestoreDialogController(),
+    }
+    const drawerController = useAppDrawerMenu(dialogs.import, dialogs.backupRestore)
+    return { dialogs, drawerController }
+}
+function createAppActions(dialogs: GlobalDialogControllers): AppActions {
+    return {
+        openImport: dialogs.import.openFilesSelectDialog,
+        openBackupRestore: dialogs.backupRestore.openDialog
+    }
 }
 export function AppShell({ header, footer, rightActions, fab, children, navigateBack = false }: Props) {
-    const { importController, backupRestoreDialog, drawerController } = useAppControllers()
+    
+    const { drawerController, dialogs } = useAppControllers()
     const drawer = !navigateBack ? (
         <DrawerMenu open={drawerController.open} menuItems={drawerController.menuItems} />
     ) : undefined
-
-    const appActions: AppActions = {
-        openImport: importController.openFilesSelectDialog,
-        openBackupRestore: backupRestoreDialog.openDialog
-    }
+    const appActions = createAppActions(dialogs)
     // footer
     // 下部メニューで import を呼ぶため
     const resolvedFooter = footer &&
-        <AppActinosContext.Provider value={appActions}>
+        <AppActionsContext.Provider value={appActions}>
             {footer}            
-        </AppActinosContext.Provider>
+        </AppActionsContext.Provider>
     
     return (
         <>
@@ -67,9 +70,7 @@ export function AppShell({ header, footer, rightActions, fab, children, navigate
             >
                 {children}
             </AppLayout>
-            <GlobalDialogs
-                importController={importController}
-                backupRestoreController={backupRestoreDialog} />
+            <GlobalDialogs dialogs={dialogs}/>
         </>
     )
 }

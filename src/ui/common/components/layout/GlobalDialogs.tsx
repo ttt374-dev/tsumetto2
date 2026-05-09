@@ -1,29 +1,26 @@
+import type { GlobalDialogControllers } from "@/ui/common/components/layout/AppShell";
 import BackupRestoreDialog from "@/ui/dialogs/BackupRestore/BackupRestoreDialog";
-import { useBackupRestoreDialogController } from "@/ui/dialogs/BackupRestore/useBackupRestoreDIalogController";
 import { ImportDialog } from "@/ui/dialogs/Import/ImportDialog";
-import { ImportUI } from "@/ui/dialogs/Import/ImportUI";
-import type { useImportController } from "@/ui/dialogs/Import/useImportController";
 
 
-export function GlobalDialogs({ importController, backupRestoreController }: {
-    importController: ReturnType<typeof useImportController>
-    backupRestoreController: ReturnType<typeof useBackupRestoreDialogController>
+export function GlobalDialogs({ dialogs }: {
+    dialogs: GlobalDialogControllers    
 }) {
     return <>
-        {importController.filesSelectElement}
+        {dialogs.import.filesSelectElement}
 
-        {importController.files &&
+        {dialogs.import.files &&
             <ImportDialog
-                open={importController.open}
-                onClose={importController.cancel}
-                onImport={importController.confirm}
-                filesToImport={importController.files}
+                open={dialogs.import.open}
+                onClose={dialogs.import.cancel}
+                onImport={dialogs.import.confirm}
+                filesToImport={dialogs.import.files}
             />}
 
         <BackupRestoreDialog
-            open={backupRestoreController.open}
-            onClose={backupRestoreController.closeDialog}
-            onBackup={backupRestoreController.backup}
-            onRestore={backupRestoreController.restore}
+            open={dialogs.backupRestore.open}
+            onClose={dialogs.backupRestore.closeDialog}
+            onBackup={dialogs.backupRestore.backup}
+            onRestore={dialogs.backupRestore.restore}
         /></>
 }

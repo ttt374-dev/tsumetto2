@@ -5,25 +5,32 @@ import { useReviewEventStore } from "@/ui/features/learning/hooks/useReviewEvent
 import { useMissionStore } from "@/ui/screens/mission/hooks/useMissionStore"
 import { fileBackupWriter } from "@/infrastructure/fileBackupWriter"
 import { useRepositoryContext } from "@/ui/App/providers/RepositoryProvider"
-import { useBackupRestoreUsecase, type RestoreResult } from "@/application/usecase/problem/backup/BackupRestoreUsecase"
-import { useDialogState } from "@/ui/common/hooks/useDialogState"
+import { useBackupRestoreUsecase, type BackupResult, type RestoreResult } from "@/application/usecase/problem/backup/BackupRestoreUsecase"
+import { useDialogState, type DialogState } from "@/ui/common/hooks/useDialogState"
 
-export function useBackupRestoreDialogController() {
-    const dialog = useDialogState()
-    //const [open, setOpen] = useState(false)
+export type BackupRestoreController = DialogState & {
+    backup: () => Promise<BackupResult>
+    restore: (file: File) => Promise<RestoreResult>
+    //setResult: () => void
+}
+
+export function useBackupRestoreDialogController(): BackupRestoreController {
+    const dialog = useDialogState()  
+    const toast = useToast()
+    const reloadProblems = useProblemStore(s => s.reload)
+    const reloadReviewEvents = useReviewEventStore(s => s.reload)
+    const reloadMissions = useMissionStore(s => s.reload)
+    const repos = useRepositoryContext()
+    const usecase = useBackupRestoreUsecase(repos.problem, repos.reviewEvent, repos.mission, fileBackupWriter)
+
+
+    //const openDialog = () => setOpen(true)
+    //const closeDialog = () => setOpen(false)
+    /*
     const [result, setResult] = useState<{
         type: "backup" | "restore"
         data: any
     } | null>(null)
-
-    const toast = useToast()
-
-    const reloadProblems = useProblemStore(s => s.reload)
-    const reloadReviewEvents = useReviewEventStore(s => s.reload)
-    const reloadMissions = useMissionStore(s => s.reload)
-
-    //const openDialog = () => setOpen(true)
-    //const closeDialog = () => setOpen(false)
 
     useEffect(() => {
         if (!result) return
@@ -48,10 +55,8 @@ export function useBackupRestoreDialogController() {
             }
         }
 
-    }, [result])
+    }, [result])*/
 
-    const repos = useRepositoryContext()
-    const usecase = useBackupRestoreUsecase(repos.problem, repos.reviewEvent, repos.mission, fileBackupWriter)
     const backup = async () => {
         //alert("backup")
         const result = await usecase.backup()
@@ -90,7 +95,7 @@ export function useBackupRestoreDialogController() {
         //open, 
         //openDialog, closeDialog,
         backup, restore,
-        setResult,
+        //setResult,
         //openDialog: () => alert("open")
     }
 }
