@@ -1,11 +1,29 @@
-import { useState } from "react"
+import React, { useState, type ReactNode } from "react"
 
 import { useRepositoryContext } from "@/ui/App/providers/RepositoryProvider"
 import { useImportProblemsUsecase, type ImportFilesResult, type ImportOptions } from "@/application/usecase/problem/import/ImportProblemsUsecase"
 import { useFileSelector } from "@/ui/shared/hooks/useFileSelector"
 import { useDialogState } from "@/ui/common/hooks/useDialogState"
 
-export function useImportController(){
+export type ImportController = {
+    // state
+    open: boolean
+    files: File[] | null
+    importing: boolean
+    result: ImportFilesResult | null    
+
+    // actions
+    confirm: (options: ImportOptions) => Promise<void>
+    cancel: () => void
+
+    openFilesSelectDialog: () => void
+
+    // elements
+    filesSelectElement: React.ReactNode
+    
+}
+
+export function useImportController(): ImportController {
     const dialog = useDialogState()
     const repos = useRepositoryContext()
     const [files, setFiles] = useState<File[] | null>(null)

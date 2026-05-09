@@ -17,27 +17,44 @@ interface Props {
     navigateBack?: boolean
 }
 
-export const OpenImportContext = createContext<(() => void) | null>(null)
+type AppActions = {
+    openImport: () => void
+    openBackupRestore: () => void
+}
 
-export function AppShell({ header, footer, rightActions, fab, children, navigateBack = false }: Props) {
-    // dialog controllers
+//export const OpenImportContext = createContext<(() => void) | null>(null)
+export const AppActinosContext = createContext<AppActions | null>(null)
+
+function useAppControllers() {
     const importController = useImportWorkflow()
-    const backupRestoreDialogController = useBackupRestoreDialogController()
+    const backupRestoreDialog = useBackupRestoreDialogController()
     //console.log("backupres", backupRestoreDialogController.open)
     // drawer
     const drawerController = useAppDrawerMenu(
         importController,
-        backupRestoreDialogController
+        backupRestoreDialog
     )
+
+
+    return { importController, backupRestoreDialog, drawerController }
+}
+export function AppShell({ header, footer, rightActions, fab, children, navigateBack = false }: Props) {
+    const { importController, backupRestoreDialog, drawerController } = useAppControllers()
     const drawer = !navigateBack ? (
         <DrawerMenu open={drawerController.open} menuItems={drawerController.menuItems} />
     ) : undefined
 
+    const appActions: AppActions = {
+        openImport: importController.openFilesSelectDialog,
+        openBackupRestore: backupRestoreDialog.openDialog
+    }
     // footer
+    // 下部メニューで import を呼ぶため
     const resolvedFooter = footer &&
-        <OpenImportContext.Provider value={importController.openFilesSelectDialog}>
-            {footer}
-        </OpenImportContext.Provider>
+        <AppActinosContext.Provider value={appActions}>
+            {footer}            
+        </AppActinosContext.Provider>
+    
     return (
         <>
             <AppLayout
@@ -49,11 +66,10 @@ export function AppShell({ header, footer, rightActions, fab, children, navigate
                 drawer={drawer}
             >
                 {children}
-
-
             </AppLayout>
-            <GlobalDialogs importController={importController} backupRestoreController={backupRestoreDialogController} />
+            <GlobalDialogs
+                importController={importController}
+                backupRestoreController={backupRestoreDialog} />
         </>
     )
 }
-

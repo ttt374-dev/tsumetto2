@@ -6,7 +6,7 @@ import FileDownloadIcon from "@mui/icons-material/FileDownload"
 import { routes } from "@/ui/App/useAppNavigation";
 import { useNavigate } from "react-router-dom";
 import { useContext, type ReactNode } from "react";
-import { OpenImportContext } from "@/ui/common/components/layout/AppShell";
+import { AppActinosContext } from "@/ui/common/components/layout/AppShell";
 
 type NavItem =
     | { type: "route"; label: string; value: string; icon: ReactNode }
@@ -14,7 +14,8 @@ type NavItem =
 
 export default function FooterNavigation() {
     const navigate = useNavigate()
-    const openImport = useContext(OpenImportContext)
+    //const openImport = useContext(OpenImportContext)
+    const openImport = useContext(AppActinosContext)?.openImport
 
     const navItems: NavItem[] = [
         { type: "route", label: "ミッション", value: routes.mission, icon: <AssignmentIcon /> },
