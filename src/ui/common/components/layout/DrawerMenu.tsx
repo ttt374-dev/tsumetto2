@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import styles from "./AppLayout.module.css";
 import { Box, Divider, Drawer, List, ListItemButton, ListItemText } from "@mui/material";
 
@@ -5,21 +6,29 @@ import { Box, Divider, Drawer, List, ListItemButton, ListItemText } from "@mui/m
 
 //////////////////////////////
 export type DrawerMenuItem =
-    | { type: "item", label: string, action: () => void }
+    | { type: "item", label: string, command: DrawerCommand }
     | { type: "divider" }
 
-export function DrawerMenu({ open, menuItems }: {
+export type DrawerCommand = 
+    | { type: "NAVIGATE", to: string }
+    | { type: "OPEN_DIALOG", dialog: "import" | "backupRestore" }
+
+export function DrawerMenu({ open, menuItems, onCommand }: {
     open: boolean,
     menuItems: DrawerMenuItem[]
+    onCommand: (command: DrawerCommand) => void
 }) {
-
+    const handleClick = (item: DrawerMenuItem) => {
+        if (item.type !== "item") return
+        onCommand(item.command)
+    }
     return (
         <Drawer anchor="left" open={open} >
             <Box width={250} mt={3} role="presentation" className={styles.header}>
                 <List>
                     {
                         menuItems.map((item, i) => (
-                            <DrawerItem item={item} key={i}/>
+                            <DrawerItem item={item} key={i} onClick={() => handleClick(item)}/>
                         ))
                     }
 
@@ -28,10 +37,10 @@ export function DrawerMenu({ open, menuItems }: {
         </Drawer>
     )
 }
-function DrawerItem({ item }: { item: DrawerMenuItem }) {
+function DrawerItem({ item, onClick }: { item: DrawerMenuItem, onClick: () => void }) {
     switch (item.type) {
         case "item":
-            return <ListItemButton onClick={item.action}>
+            return <ListItemButton onClick={onClick}>
                 <ListItemText primary={item.label} />
             </ListItemButton>
         case "divider":
