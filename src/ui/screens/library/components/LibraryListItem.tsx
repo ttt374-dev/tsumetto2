@@ -5,7 +5,7 @@ import { useLongPress } from "@/ui/common/hooks/useLongPress";
 import { StarToggleButton } from "@/ui/common/components/StarToggleButton/StarToggleButton";
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
 import { useLearningRecordStore } from "@/ui/features/learning/hooks/useLearningRecordStore";
-import { useStarToggleButton } from '@/ui/common/components/StarToggleButton/useStarToggleButton';
+import { useStarToggleController } from '@/ui/common/components/StarToggleButton/useStarToggleController';
 import type { LibrarySelection } from "@/ui/screens/library/hooks/useLibrarySelection";
 import { toProblemViewData } from "@/ui/features/problem/hooks/problemPresenter";
 import type { LearningState } from "@/domain/learning/entity/LearningState";
@@ -30,7 +30,7 @@ export const LibraryListItem = function LibraryListItem({ id, onItemClick,
             selection?.toggleChecked(id)
         },
     })
-    const starController = useStarToggleButton(id)
+    const starController = useStarToggleController(id)
     const vdProblem = toProblemViewData(problem)    
     const sortKey = useProblemsQueryStore(s=>s.state.sortKey)
     const getSortKeyText = (sortKey: SortKey) => {

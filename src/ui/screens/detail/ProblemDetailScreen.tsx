@@ -16,6 +16,7 @@ import { ProblemInfoPanel } from "../../features/problem/components/ProblemInfoP
 import { LearningDetailPanel } from "../../features/learning/components/LearningDetailPanel";
 import { ProblemTypeFilterControl } from "@/ui/features/problem/query/components/ProblemTypeFilterControl";
 import { problemFieldLabels } from "@/ui/features/problem/hooks/problemPresenter";
+import { useStarToggleController, type StarToggleController } from "@/ui/common/components/StarToggleButton/useStarToggleController";
 
 export default function ProblemDetailScreen(){
     const { id } = useParams<{ id: string }>()
@@ -24,71 +25,24 @@ export default function ProblemDetailScreen(){
 
     return (<ProblemDetailContent problem={problem}/>)
 }
-
+////////////////////////////
 export function ProblemDetailContent( { problem }: { problem: Problem}) {
     const {
-        allSources,save,
-        fields, learningState,
+        allSources, fields, learningState,
     } = useProblemDetailViewModel(problem)
 
-    const { resetLearning,  remove,} 
-        = useProblemEditActions(problem.id)
-    
-    const handleLearningReset = () => {
-        if (!window.confirm("学習データをクリアしますか？")) return
-        resetLearning()
-    }   
-    const height="64px"
-    const navigate = useNavigate()
-        const handleDeleteClick = () => {
-        if(!window.confirm("Are you sure to delete?")) return
-        remove()
-        navigate(routes.back)
-    }
-    const handleConfirm = () => {
-        save()
-        navigate(routes.back)
-    }
-    const onStartPlay = (id: ProblemId) => 
-        navigate(routes.view(id))
-
+    const { resetLearning, deleteProblem, startPlay, confirm} 
+        = useProblemEditActions(problem.id)        
+    const starController = useStarToggleController(problem.id)
     return (
         <AppShell 
             header="棋譜エントリの詳細"
             rightActions={
-                <Stack direction="row" justifyContent="flex-end">
-                    <StarToggleButton starred={fields.starred.value}
-                        onToggle={fields.starred.toggle}
-                         sx={{color: "white"}}
-                    />
-                    
-                        <IconButton onClick={() => onStartPlay(problem.id)}
-                         sx={{color: "white"}}>
-                            <PlayArrowIcon />
-                        </IconButton>
-                    
-                    <IconButton onClick={handleDeleteClick}  sx={{color: "white"}}>
-                        <DeleteIcon />
-                    </IconButton>
-                </Stack>
+                <RightActions 
+                    starController={starController}
+                    onStartPlay={startPlay} onDeleteProblem={deleteProblem}/>
             }
-            footer={
-                <Stack direction="row">
-                    <Button fullWidth
-                        onClick={() => navigate(routes.back)}
-                        variant="outlined">
-                        キャンセル
-                    </Button>
-                    <Button
-                       fullWidth          
-                        variant="contained"
-                        onClick={handleConfirm}
-                        sx={{ height: height }}
-                    >
-                        確認
-                    </Button>    
-                </Stack>
-            }
+            footer={<Footer onConfirm={confirm}/>}
         >
             <Box sx={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }}>
             <Stack spacing={1} p={1} sx={{
@@ -123,7 +77,7 @@ export function ProblemDetailContent( { problem }: { problem: Problem}) {
                 <Divider />
 
                 {learningState &&
-                    <LearningDetailPanel learningState={learningState} onResetLearning={handleLearningReset} />
+                    <LearningDetailPanel learningState={learningState} onResetLearning={resetLearning} />
                 }
                 <TextField
                     label="コメント"
@@ -136,5 +90,52 @@ export function ProblemDetailContent( { problem }: { problem: Problem}) {
             </Stack>
             </Box>
         </AppShell>
+    )
+}
+
+function RightActions(props: {
+    starController: StarToggleController
+    onStartPlay: () => void
+    onDeleteProblem: () => void
+}) {
+    const { starController, onStartPlay, onDeleteProblem} = props
+
+    return <Stack direction="row" justifyContent="flex-end">
+        <StarToggleButton starred={starController.starred}
+            onToggle={starController.toggleStar}
+            sx={{ color: "white" }}
+        />
+
+        <IconButton onClick={() => onStartPlay()}
+            sx={{ color: "white" }}>
+            <PlayArrowIcon />
+        </IconButton>
+
+        <IconButton onClick={onDeleteProblem} sx={{ color: "white" }}>
+            <DeleteIcon />
+        </IconButton>
+    </Stack>
+}
+
+function Footer({ onConfirm}: { onConfirm: () => void}) {
+    const height="64px"
+    const navigate = useNavigate()       
+
+    return (
+        <Stack direction="row">
+            <Button fullWidth
+                onClick={() => navigate(routes.back)}
+                variant="outlined">
+                キャンセル
+            </Button>
+            <Button
+                fullWidth
+                variant="contained"
+                onClick={onConfirm}
+                sx={{ height: height }}
+            >
+                確認
+            </Button>
+        </Stack>
     )
 }
