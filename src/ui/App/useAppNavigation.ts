@@ -36,6 +36,9 @@ export const routes = {
 
     // history,
     history: "/history",
+
+    // settings
+    settings: "/settings",
     
     // back
     back: -1

@@ -15,8 +15,9 @@ type DrawerCommandDeps = {
     }
 }
 ////////////////////////////////
-export function AppDrawerMenu({ open, dialogs }: {
+export function AppDrawerMenu({ open, onClose, dialogs }: {
     open: boolean
+    onClose: () => void
     dialogs: GlobalDialogControllers
 }) {
     const navigate = useNavigate()
@@ -41,13 +42,15 @@ export function AppDrawerMenu({ open, dialogs }: {
         { type: "item", label: "履歴", command: { type: "NAVIGATE", to: routes.history } },
         { type: "divider" },
         { type: "item", label: "棋譜の取り込み", command: { type: "OPEN_DIALOG", dialog: "import" }, },
-        { type: "item", label: "バックアップ・復旧", command: { type: "OPEN_DIALOG", dialog: "backupRestore" }, }
+        { type: "item", label: "バックアップ・復旧", command: { type: "OPEN_DIALOG", dialog: "backupRestore" } },
+        { type: "item", label: "設定", command: { type: "NAVIGATE", to: routes.settings}},
     ]
 
     return <DrawerMenu
         open={open}
+        onClose={onClose}
         menuItems={menuItems}
-        onCommand={handleDrawerCommand}
+        onCommand={(cmd) => { handleDrawerCommand(cmd); onClose() }}
     />
 }
 
@@ -62,4 +65,5 @@ function executeDrawerCommand(command: DrawerCommand, deps: DrawerCommandDeps) {
         default:
             break
     }
+    
 }

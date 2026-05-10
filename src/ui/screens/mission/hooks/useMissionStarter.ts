@@ -17,7 +17,7 @@ export function useMissionStarter(){
     const planner = usePlannerStore()    
     const start = useSessionStore(s => s.start);    
     const sessionId = createSessionId()
-    const chunkSize = 5 // useUiSettingsStore(s=>s.settings.chunkSize)
+    const chunkSize = useUiSettingsStore(s=>s.settings.chunkSize)
 
     const startMission = (mission: Mission) => {       
         const ids = applyQuery(

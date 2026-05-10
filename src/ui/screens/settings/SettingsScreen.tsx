@@ -1,17 +1,8 @@
-import {
-    Box,
-    Divider,
-    MenuItem,
-    Select,
-    Stack,
-    Switch,
-    TextField,
-    Typography,
-} from "@mui/material"
+import { Box, Divider, MenuItem, Select, Stack, Switch, TextField, Typography} from "@mui/material"
 
 import { AppShell } from "@/ui/common/components/layout/AppShell"
 import { useUiSettingsStore } from "@/ui/screens/settings/useUiSettingsStore"
-
+import FooterNavigation from "@/ui/common/components/FooterNavigation"
 
 type SettingItem =
     | {
@@ -53,27 +44,21 @@ export function SettingsScreen() {
     const setSettings = useUiSettingsStore(s => s.setSettings)
 
     const sections: SettingSection[] = [
-
         {
-            title: "General",
-
+            title: "Mission",
             items: [
-
-                {
+                  {
                     kind: "number",
-                    key: "pageSize",
-                    label: "Page Size",
+                    key: "chunkSize",
+                    label: "Chunk Size",
 
-                    description:
-                        "Number of items per page",
-
-                    value: settings.pageSize,
+                    value: settings.chunkSize,
 
                     onChange: value =>
                         setSettings({
-                            pageSize: value,
+                            chunkSize: value,
                         }),
-                },
+                },             
 
                 {
                     kind: "boolean",
@@ -111,72 +96,20 @@ export function SettingsScreen() {
                 },
             ],
         },
-
-        {
-            title: "Mission",
-
-            items: [
-
-                {
-                    kind: "select",
-                    key: "missionExecutionMode",
-                    label: "Mission Execution Mode",
-
-                    value: settings.missionExecutionMode,
-
-                    options: [
-                        "full",
-                        "partial",
-                    ],
-
-                    onChange: value =>
-                        setSettings({
-                            missionExecutionMode:
-                                value as typeof settings.missionExecutionMode,
-                        }),
-                },
-
-                {
-                    kind: "number",
-                    key: "missionPartialLimit",
-                    label: "Mission Partial Limit",
-
-                    value: settings.missionPartialLimit,
-
-                    onChange: value =>
-                        setSettings({
-                            missionPartialLimit: value,
-                        }),
-                },
-
-                {
-                    kind: "number",
-                    key: "chunkSize",
-                    label: "Chunk Size",
-
-                    value: settings.chunkSize,
-
-                    onChange: value =>
-                        setSettings({
-                            chunkSize: value,
-                        }),
-                },
-            ],
-        },
+     
     ]
 
     return (
-        <AppShell>
-
+        <AppShell
+            header="設定"
+            footer={<FooterNavigation/>}
+        >
             <Stack
                 sx={{
                     height: "100%",
                     overflow: "hidden",
                 }}
             >
-
-                
-
                 <Box
                     sx={{
                         flex: 1,
@@ -184,13 +117,9 @@ export function SettingsScreen() {
                         p: 2,
                     }}
                 >
-
                     <Stack spacing={3}>
-
                         {sections.map(section => (
-
                             <Box key={section.title}>
-
                                 <Typography
                                     variant="h6"
                                     sx={{ mb: 2 }}
@@ -199,37 +128,26 @@ export function SettingsScreen() {
                                 </Typography>
 
                                 <Stack spacing={2}>
-
                                     {section.items.map(item => (
                                         <SettingField
                                             key={item.key}
                                             item={item}
                                         />
                                     ))}
-
                                 </Stack>
-
                                 <Divider sx={{ mt: 3 }} />
-
                             </Box>
                         ))}
-
                     </Stack>
-
                 </Box>
-
             </Stack>
-
         </AppShell>
     )
 }
 
-function SettingField({
-    item,
-}: {
+function SettingField({ item }: {
     item: SettingItem
 }) {
-
     switch (item.kind) {
 
         case "number":
@@ -255,7 +173,6 @@ function SettingField({
                         justifyContent="space-between"
                         alignItems="center"
                     >
-
                         <Box>
 
                             <Typography>
