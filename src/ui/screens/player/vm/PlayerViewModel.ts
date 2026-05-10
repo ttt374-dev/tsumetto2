@@ -5,7 +5,8 @@ import type { Problem } from "@/domain/problem/entity/Problem";
 import type { Selection } from "@/ui/screens/player/store/useBoardInputStore";
 
 export type PlayerInput = {
-    resPosition: BuildPositionResult
+    //resPosition: BuildPositionResult
+    position: Position
 
     problem: Problem
     isRevealed: boolean
@@ -35,7 +36,7 @@ export type BoardViewModel = {
     //ply: number
     //moves: Move[]
 
-    buildPositionResult: BuildPositionResult
+    //buildPositionResult: BuildPositionResult
 
 }
 export type MovesViewModel = {

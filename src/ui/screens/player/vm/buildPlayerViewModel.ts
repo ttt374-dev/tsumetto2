@@ -3,7 +3,7 @@ import type { BoardViewModel, PlayerInput, PlayerViewModel } from "@/ui/screens/
 
 //////////////////////////////////////////////
 export function buildPlayerViewModel(input: PlayerInput): PlayerViewModel {
-    const { resPosition, problem, isRevealed, ply, learningState, isSolved,
+    const { position, problem, isRevealed, ply, learningState, isSolved,
         displayReversed, userSide, moves,
         selection, isMovesVisible,
      } = input
@@ -12,11 +12,11 @@ export function buildPlayerViewModel(input: PlayerInput): PlayerViewModel {
     return {
         //board,
         board: {
-            position: resPosition.value,
+            position,
             reversed: displayReversed,
             userSide, lastMove: moves[ply-1],
             selection, 
-            buildPositionResult: resPosition, 
+            
         },        
 
         moves: {

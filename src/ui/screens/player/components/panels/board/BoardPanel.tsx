@@ -9,7 +9,7 @@ import type { BoardActions } from "@/ui/screens/player/hooks/usePlayerActions";
 export default function BoardPanel( {boardModel, actions}: { 
     boardModel: BoardViewModel, actions: BoardActions }) {    
     //if (boardModel.status === "error") return <>Error: invalid Position</>
-    const { reversed, userSide, position: { hands, sideToMove}, buildPositionResult, selection }
+    const { reversed, userSide, position: { hands, sideToMove}, selection }
         = boardModel    
     const upperPlayer = reversed ? "black" : "white"
     const bottomPlayer = reversed ? "white" : "black"
