@@ -4,7 +4,7 @@ import { persist } from "zustand/middleware"
 
 type UiSettings = {
     pageSize: number
-    showSeconds: boolean
+    showElapsedSec: boolean
     listDensity: "compact" | "comfortable"
     missionExecutionMode: MissionExecutionMode
     missionPartialLimit: number
@@ -21,7 +21,7 @@ export const useUiSettingsStore = create<UiSettingsState>()(
         (set) => ({
             settings: {
                 pageSize: 20,
-                showSeconds: false,
+                showElapsedSec: true,
                 listDensity: "comfortable",
                 missionExecutionMode: "full",
                 missionPartialLimit: 10,

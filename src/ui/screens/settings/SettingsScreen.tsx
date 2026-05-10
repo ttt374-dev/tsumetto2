@@ -45,12 +45,12 @@ export function SettingsScreen() {
 
     const sections: SettingSection[] = [
         {
-            title: "Mission",
+            title: "General",
             items: [
                   {
                     kind: "number",
                     key: "chunkSize",
-                    label: "Chunk Size",
+                    label: "Session Chunk Size",
 
                     value: settings.chunkSize,
 
@@ -62,20 +62,20 @@ export function SettingsScreen() {
 
                 {
                     kind: "boolean",
-                    key: "showSeconds",
+                    key: "showElapsedSec",
                     label: "Show Seconds",
 
                     description:
                         "Display seconds in timestamps",
 
-                    value: settings.showSeconds,
+                    value: settings.showElapsedSec,
 
                     onChange: value =>
                         setSettings({
-                            showSeconds: value,
+                            showElapsedSec: value,
                         }),
                 },
-
+/*
                 {
                     kind: "select",
                     key: "listDensity",
@@ -94,6 +94,7 @@ export function SettingsScreen() {
                                 value as typeof settings.listDensity,
                         }),
                 },
+                */
             ],
         },
      

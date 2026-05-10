@@ -33,7 +33,8 @@ export function AppDrawerMenu({ open, onClose, dialogs }: {
         }
     }
     const handleDrawerCommand = (cmd: DrawerCommand) => {
-        executeDrawerCommand(cmd, deps)
+        onClose()
+        executeDrawerCommand(cmd, deps)        
     }
     const menuItems: DrawerMenuItem[] = [
         { type: "item", label: "ミッション", command: { type: "NAVIGATE", to: routes.mission }, },
@@ -50,7 +51,7 @@ export function AppDrawerMenu({ open, onClose, dialogs }: {
         open={open}
         onClose={onClose}
         menuItems={menuItems}
-        onCommand={(cmd) => { handleDrawerCommand(cmd); onClose() }}
+        onCommand={handleDrawerCommand}
     />
 }
 

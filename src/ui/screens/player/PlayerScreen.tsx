@@ -20,6 +20,7 @@ import type { GameEvent } from "@/domain/game/types/GameEvent";
 import { useGameStore } from "@/ui/screens/player/store/useGameStore";
 import { usePlayerPresentation, type PlayerPresentation } from "@/ui/screens/player/hooks/usePlayerPresentation";
 import { usePlayerRunner, type PlayerRunnerModel } from "@/ui/screens/player/runner/usePlayerRunner";
+import { useUiSettingsStore } from "@/ui/screens/settings/useUiSettingsStore";
 
 ///////////////////////////////////////////
 export default function PlayerScreen({ problem, title, footer, onPlayerIntent, onGameEvent, }: {
@@ -69,9 +70,9 @@ function MovesControlSection({ problem, model }: {
     const {
         game: { toggleReversed, toggleUserSide },
         moves: { advancePly, retreatPly, reveal, toggleMovesVisible } } = model.actions
-
-
-    const events = useGameStore(s => s.events)
+    
+    const showElapsedSec = useUiSettingsStore(s=>s.settings.showElapsedSec)
+    //const events = useGameStore(s => s.events)
     //const solvedResult = deriveSolvedResultFromEvents(events)
     return (
         <Stack direction="row" sx={{ minHeight: 0, flexGrow: 1, p: 1 }} spacing={1}>
@@ -81,7 +82,7 @@ function MovesControlSection({ problem, model }: {
             />
             <Box sx={{ flex: 1, border: 1, borderColor: "divider" }}>
                 <Stack direction="row" alignItems="center">
-                    <TimerControlPanel />
+                    { showElapsedSec && <TimerControlPanel /> }
                     <ReverseControl toggleReversed={toggleReversed} />
                     <UserSideControl userSide={userSide} toggleUserSide={toggleUserSide} />
                     <ToggleMovesVisible onToggleMovesVisible={toggleMovesVisible} disabled={!isRevealed} />
