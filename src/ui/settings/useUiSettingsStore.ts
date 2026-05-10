@@ -8,6 +8,7 @@ type UiSettings = {
     listDensity: "compact" | "comfortable"
     missionExecutionMode: MissionExecutionMode
     missionPartialLimit: number
+    chunkSize: number
 }
 
 type UiSettingsState = {
@@ -24,6 +25,7 @@ export const useUiSettingsStore = create<UiSettingsState>()(
                 listDensity: "comfortable",
                 missionExecutionMode: "full",
                 missionPartialLimit: 10,
+                chunkSize: 5,
             },
             setSettings: (partial) =>
                 set((s) => ({
