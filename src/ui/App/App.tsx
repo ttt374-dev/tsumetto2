@@ -22,6 +22,7 @@ import HistoryScreen from '@/ui/screens/history/HistoryScreen.tsx';
 import SinglePlayerScreen from '@/ui/screens/player/SinglePlayerScreen';
 import ViewScreen from '@/ui/screens/view/ViewScreen';
 import SessionListScreen from '@/ui/screens/session/components/SessionListScreen';
+import { SettingsScreen } from '@/ui/screens/settings/SettingsScreen';
 
 export const theme = createTheme({
   cssVariables: true,   // ← これ必須
@@ -88,7 +89,7 @@ function App() {
 
               <Route path={routes.stats} element={<StatsScreen />} />
               <Route path={routes.history} element={<HistoryScreen />} />
-
+              <Route path="/settings" element={<SettingsScreen/>}/>
               <Route path="/" element={<Navigate to={routes.mission} />} />
             </Routes>
           </BrowserRouter>

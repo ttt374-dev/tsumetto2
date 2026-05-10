@@ -7,7 +7,7 @@ import { useLearningRecordStore } from "@/ui/features/learning/hooks/useLearning
 import type { Mission } from "@/domain/mission/entity/Mission";
 import { createSessionId, useSessionStore } from "@/ui/screens/session/store/useSessionStore";
 import { usePlannerStore } from "@/ui/screens/session/store/usePlannerStore";
-import { useUiSettingsStore } from "@/ui/settings/useUiSettingsStore";
+import { useUiSettingsStore } from "@/ui/screens/settings/useUiSettingsStore";
 
 
 export function useMissionStarter(){
@@ -17,7 +17,7 @@ export function useMissionStarter(){
     const planner = usePlannerStore()    
     const start = useSessionStore(s => s.start);    
     const sessionId = createSessionId()
-    const chunkSize = useUiSettingsStore(s=>s.settings.chunkSize)
+    const chunkSize = 5 // useUiSettingsStore(s=>s.settings.chunkSize)
 
     const startMission = (mission: Mission) => {       
         const ids = applyQuery(
