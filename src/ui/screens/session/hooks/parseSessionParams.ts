@@ -1,7 +1,7 @@
 import type { SessionId } from "@/domain/session/entity/Session"
 
 export type ParseSessionParamsResult =
-    | { type: "invalid" }
+    | { type: "invalid", message?: string }
     | { type: "valid", sessionId: SessionId, index: number }
 
 
@@ -9,10 +9,10 @@ export function parseSessionParams(input: {
     sessionId?: string
     index?: string
 }): ParseSessionParamsResult {
-    if (!input.sessionId) return { type: "invalid" }
+    if (!input.sessionId) return { type: "invalid", message: "invalid SessionID" }
 
     const index = Number(input.index)
-    if (Number.isNaN(index)) return { type: "invalid" }
+    if (Number.isNaN(index)) return { type: "invalid", message: "invalied index" }
 
     return {
         type: "valid",
@@ -20,3 +20,4 @@ export function parseSessionParams(input: {
         index
     }
 }
+    

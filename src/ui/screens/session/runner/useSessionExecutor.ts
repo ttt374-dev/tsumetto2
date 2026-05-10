@@ -9,7 +9,7 @@ import { resolveSessionCommand, type SessionCommand, type SessionCommandContext,
 import { useSessionStore } from "@/ui/screens/session/store/useSessionStore"
 import { useCallback, useEffect, useMemo } from "react"
 import { useNavigate } from "react-router-dom"
-import { runSessionEffects } from "@/ui/screens/session/vm/runSessionEffects"
+import { runSessionEffects } from "@/ui/screens/session/runner/runSessionEffects"
 
 export function createSessionCommandContextFromStores(  // スナップショット    
     currentIndex: number
