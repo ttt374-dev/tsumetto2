@@ -1,20 +1,27 @@
-import { type MissionExecutionMode } from "@/ui/screens/mission/components/MissionExecutionModeControl"
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
 
 type UiSettings = {
-    pageSize: number
-    showElapsedSec: boolean
-    listDensity: "compact" | "comfortable"
-    missionExecutionMode: MissionExecutionMode
-    missionPartialLimit: number
-    chunkSize: number
-}
 
+    
+    chunkSize: number
+    showElapsedSec: boolean
+    //pageSize: number
+    //listDensity: "compact" | "comfortable"
+    //missionExecutionMode: MissionExecutionMode
+    //missionPartialLimit: number
+}
 type UiSettingsState = {
     settings: UiSettings
     setSettings: (partial: Partial<UiSettings>) => void
 }
+
+
+const defaultUiSettings: UiSettings = {
+  chunkSize: 5,
+  showElapsedSec: true,
+}
+
 
 export const useUiSettingsStore = create<UiSettingsState>()(
     persist(
