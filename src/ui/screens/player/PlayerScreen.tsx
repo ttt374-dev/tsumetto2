@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect } from "react"
 import { Box, Button, IconButton, Stack } from "@mui/material"
 import SwapVertIcon from '@mui/icons-material/SwapVert';
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -42,7 +42,6 @@ export default function PlayerScreen({ problem, title, footer, onPlayerIntent, o
     if (problem.deletedAt) {
         return <AppShell>Deleted: {problem.title}</AppShell>
     }
-
     ////////////////////////////////////////////////////////////////////////
     return (
         <AppShell
@@ -50,8 +49,9 @@ export default function PlayerScreen({ problem, title, footer, onPlayerIntent, o
             footer={footer}
             rightActions={<HeaderRightSection problem={problem} model={model} />}
         >
-            <Stack sx={{ minHeight: 0, height: "100%" }} spacing={1} >
-                <TitlePanel title={title} />
+            <Stack sx={{ minHeight: 0, height: "100%", flexGrow: 1, p: 1,
+                overflow: "hidden" }} spacing={1} >
+                <TitlePanel title={title} />                
                 <BoardPanel boardModel={model.state.board} actions={model.actions.board} />
                 <MovesControlSection
                     problem={problem} model={model} />
@@ -75,7 +75,9 @@ function MovesControlSection({ problem, model }: {
     //const events = useGameStore(s => s.events)
     //const solvedResult = deriveSolvedResultFromEvents(events)
     return (
-        <Stack direction="row" sx={{ minHeight: 0, flexGrow: 1, p: 1 }} spacing={1}>
+        <Stack direction="row" sx={{ 
+            minHeight: 0, flexGrow: 1, p: 1, overflow: "hidden",
+        }} spacing={1}>
             <MovesPanel
                 problem={problem} movesModel={model.state.moves}
                 actions={model.actions.moves}

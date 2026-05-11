@@ -3,6 +3,7 @@ import { Box, Divider, MenuItem, Select, Stack, Switch, TextField, Typography} f
 import { AppShell } from "@/ui/common/components/layout/AppShell"
 import { useUiSettingsStore } from "@/ui/screens/settings/useUiSettingsStore"
 import FooterNavigation from "@/ui/common/components/FooterNavigation"
+import { NumberStepper } from "@/ui/screens/settings/NumberStepper"
 
 type SettingItem =
     | {
@@ -39,7 +40,6 @@ type SettingSection = {
 }
 
 export function SettingsScreen() {
-
     const settings = useUiSettingsStore(s => s.settings)
     const setSettings = useUiSettingsStore(s => s.setSettings)
 
@@ -50,7 +50,8 @@ export function SettingsScreen() {
                   {
                     kind: "number",
                     key: "chunkSize",
-                    label: "Session Chunk Size",
+                    label: "セッションチャンクサイズ",
+                    description: "ミッション実行時のセッションあたりの問題数",
 
                     value: settings.chunkSize,
 
@@ -63,10 +64,9 @@ export function SettingsScreen() {
                 {
                     kind: "boolean",
                     key: "showElapsedSec",
-                    label: "Show Seconds",
-
+                    label: "経過秒数を表示",
                     description:
-                        "Display seconds in timestamps",
+                        "解答時間を表示するか",
 
                     value: settings.showElapsedSec,
 
@@ -75,26 +75,7 @@ export function SettingsScreen() {
                             showElapsedSec: value,
                         }),
                 },
-/*
-                {
-                    kind: "select",
-                    key: "listDensity",
-                    label: "List Density",
 
-                    value: settings.listDensity,
-
-                    options: [
-                        "compact",
-                        "comfortable",
-                    ],
-
-                    onChange: value =>
-                        setSettings({
-                            listDensity:
-                                value as typeof settings.listDensity,
-                        }),
-                },
-                */
             ],
         },
      
@@ -153,15 +134,12 @@ function SettingField({ item }: {
 
         case "number":
             return (
-                <TextField
+                <NumberStepper
                     label={item.label}
-                    helperText={item.description}
-                    type="number"
                     value={item.value}
-                    onChange={e =>
-                        item.onChange(Number(e.target.value))
-                    }
-                    fullWidth
+                    min={1}
+                    max={20}
+                    onChange={item.onChange}
                 />
             )
 

@@ -19,11 +19,14 @@ export default function MovesPanel({problem, movesModel, actions}: {
             sx={
                 {
                     display: "flex",
-                    justifyContent: "center",
+                    //justifyContent: "center",
                     overflowY: "auto",
                     //flexGrow: 1,
                     gap: 2,
                     p: 1,
+
+                    minWidth: 0,
+                    minHeight: 0,
                 }
             }
         >
