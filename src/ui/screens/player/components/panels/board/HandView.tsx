@@ -41,7 +41,7 @@ export default function HandView({ hand, owner, sideToMove, selection, userSide,
     return (
         <Stack direction="row" justifyContent={"center"} >
             {formatPlayer(owner)}
-            {hand.isEmpty() && "なし"}
+            <span className={styles.handpiece}>{hand.isEmpty() && "なし"}</span>
             {
                 models.map(m => (
                     <HandPieceView

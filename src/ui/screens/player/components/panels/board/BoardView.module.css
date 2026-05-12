@@ -60,5 +60,13 @@
 }
 
 .handpiece {
-    /* font-size: 20px; */
+    font-size: 20px; 
+}
+
+.flashBoard {
+    background-color: "error.main";
+    opacity: 0.2;
+    transition: "opacity 150ms ease";
+    pointer-events: "none";
+
 }

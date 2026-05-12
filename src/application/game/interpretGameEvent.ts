@@ -20,7 +20,9 @@ export function interpretGameEvent(e: GameEvent,
                 { type: "OPEN_DIALOG", dialog: "solvedResult", payload: solvedResult },
             ]
         case "MISTAKE":
-            return [{ type: "TOAST", message: `mistake: ${ctx.mistakes}`, severity: "error" } ]
+            return [{ type: "FLASH_BOARD"}]
+            //return [{ type: "TOAST", message: `mistake: ${ctx.mistakes}`, severity: "error" } ]
+            //return [{ type: "T", message: `mistake: ${ctx.mistakes}`, severity: "error" } ]
         case "ADVANCE_PLY":
             return [{ type: "ADVANCE_PLY", direction: "FORWARD" }]
         case "RETREAT_PLY":

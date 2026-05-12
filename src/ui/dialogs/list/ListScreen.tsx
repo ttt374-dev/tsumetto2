@@ -14,11 +14,12 @@ type ViewerLocationState = {
 }
 
 export function ListScreen(){
-    const location = useLocation()
-    const navigate = useNavigate()
+    const location = useLocation()    
     const state = (location.state as ViewerLocationState | null)
     const ids = state?.ids ?? []
     const title = state?.title ?? "List"
+
+    const navigate = useNavigate()
     const startSession = useSessionStore(s=>s.start)
     
     const handleItemClick = (id: ProblemId) => {
@@ -27,22 +28,23 @@ export function ListScreen(){
     }
 
     const handleStartSession = () => {
-        startSession(createSessionId(), ids)
-        navigate(routes.sessionPlay(createSessionId()))
+        const sessionId = createSessionId()
+        startSession(sessionId, ids)
+        navigate(routes.sessionPlay(sessionId))
     }
     return (
         <AppShell 
             header={ title }
-            rightActions={<RightActionPanel onClick={handleStartSession}/>}
+            rightActions={<RightActionPanel onStartSession={handleStartSession}/>}
             footer={<Button variant="outlined" onClick={()=>navigate(routes.back)}>戻る</Button>}>            
             <LibraryListView ids={ids} onItemClick={handleItemClick}/>                        
         </AppShell>
     )
 }
 
-function RightActionPanel({onClick}: {onClick: () => void}){
+function RightActionPanel({onStartSession}: {onStartSession: () => void}){
     return (<>
-        <IconButton onClick={onClick}>
+        <IconButton onClick={onStartSession}>
             <PlayArrowIcon sx={{color: "white"}} />
         </IconButton>
     </>)

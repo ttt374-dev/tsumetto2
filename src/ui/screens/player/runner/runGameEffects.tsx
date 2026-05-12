@@ -2,6 +2,7 @@ import type { GameEffect } from "@/application/game/GameEffect";
 import type { ProblemId } from "@/domain/problem/entity/Problem";
 import { useToast } from "@/ui/App/providers/ToastProvider";
 import type { DialogControllers } from "@/ui/screens/player/runner/usePlayerRunner";
+import { useGameUIStore } from "@/ui/screens/player/store/useGameUIStore";
 import { useReplayStore } from "@/ui/screens/player/store/useReplayStore";
 import { useTimerStore } from "@/ui/screens/player/store/useTimerStore";
 
@@ -21,6 +22,7 @@ export async function runGameEffects(effects: GameEffect[], deps: EffectRunnerDe
 
         const replay = useReplayStore.getState()
         const timer = useTimerStore.getState()
+        const flashBoard = useGameUIStore.getState().flashBoard
 
         switch (effect.type) {
             case "ADVANCE_PLY":
@@ -68,6 +70,11 @@ export async function runGameEffects(effects: GameEffect[], deps: EffectRunnerDe
 */
             case "TOAST":
                 deps.toast({ message: effect.message, severity: effect.severity ?? "info" })
+                break;
+            case "FLASH_BOARD":
+                flashBoard(true)
+                break;
+
 
         }
     }
