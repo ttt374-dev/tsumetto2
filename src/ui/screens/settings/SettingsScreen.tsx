@@ -59,8 +59,7 @@ export function SettingsScreen() {
                         setSettings({
                             chunkSize: value,
                         }),
-                },             
-
+                },
                 {
                     kind: "boolean",
                     key: "showElapsedSec",
@@ -73,6 +72,17 @@ export function SettingsScreen() {
                     onChange: value =>
                         setSettings({
                             showElapsedSec: value,
+                        }),
+                },
+                {
+                    kind: "boolean",
+                    key: "soundEffect",
+                    label: "サウンドエフェクト",                    
+                    value: settings.soundEffect,
+
+                    onChange: value =>
+                        setSettings({
+                            soundEffect: value,
                         }),
                 },
 

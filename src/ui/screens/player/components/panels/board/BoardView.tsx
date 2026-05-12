@@ -3,11 +3,10 @@ import { Box } from "@mui/material"
 import styles from "./BoardView.module.css";
 import { Square } from "@/domain/kif/entity";
 import { buildSquareModel, SquareView } from "@/ui/screens/player/components/panels/board/SquareView";
-import type { BoardViewModel} from "@/ui/screens/player/vm/PlayerViewModel";
 import { BoardInteractor } from "@/application/board/BoardInteractor";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import type { BoardActions } from "@/ui/screens/player/hooks/usePlayerActions";
-import { useGameUIStore } from "@/ui/screens/player/store/useGameUIStore";
+import type { BoardViewModel } from "@/ui/screens/player/hooks/usePlayerViewModel";
 
 const fileLabels = ["９", "８", "７", "６", "５", "４", "３", "２", "１"];
 const rankLabels = ["一", "二", "三", "四", "五", "六", "七", "八", "九"];
@@ -24,41 +23,20 @@ export default function BoardView({ boardModel, actions }: {
         () => new BoardInteractor({ boardModel, actions }),
         [boardModel, actions]
     )
-    const flashBoard = useGameUIStore(s=>s.flashBoard)
-    const boardFlash = useGameUIStore(s=>s.boardFlash)
-    
-    //const [flash, setFlash] = useState(false)
-    useEffect(() => {
-        if (!boardFlash) return
 
-        const id = setTimeout(() => {
-            //clearFlash()
-            //setFlash(false)
-            flashBoard(false)
-        }, 150)
-
-        return () => clearTimeout(id)
-    }, [boardFlash])
-
-    const handleSquareClick = (sq: Square) => {
-        //flashBoard(true)
-        interactor.handleSquareClick(sq)
-    }
     return (
         <Box className={`${styles.board}
-        ${boardFlash && styles.flashBoard}`}>
+        ${boardModel.boardFlash && styles.flashBoard}`}>
             <FileLabels location="top" reversed={reversed} />
             {/* 盤面 + 左側の段表示 */}
             {ranks.flatMap(rank => {
                 const cells = files.map(file => {                    
                     const sq = new Square(file, rank)
                     const squareModel = buildSquareModel(sq, boardModel)
-                    //const piece = board.get(sq)
                     return (
                         <SquareView                            
                             squareModel={squareModel}
-                            //onClick={() => interactor.handleSquareClick(sq)}
-                            onClick={() => handleSquareClick(sq)}
+                            onClick={() => interactor.handleSquareClick(sq)}
                         />
                     )
                 })

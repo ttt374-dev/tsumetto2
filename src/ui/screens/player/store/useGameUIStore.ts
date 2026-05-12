@@ -15,6 +15,7 @@ type GameUIState = {
     toggleMovesVisible: () => void    
     flashBoard: (flag: boolean) => void
 }
+const BoardFlashMs = 100
 
 export const useGameUIStore = create<GameUIState>((set, get) => ({
     isReversed: false,
@@ -40,8 +41,18 @@ export const useGameUIStore = create<GameUIState>((set, get) => ({
     toggleMovesVisible: () => {
         set({ isMovesVisible: !get().isMovesVisible})
     },
-    flashBoard: (flag: boolean) => {
-        set({boardFlash: flag})
+    flashBoard: (flag) => {
+        set({
+            boardFlash: flag
+        })
+
+        setTimeout(() => {
+            if (get().boardFlash === true) {
+                set({
+                    boardFlash: false
+                })
+            }
+        }, BoardFlashMs)
     }
     
 }))

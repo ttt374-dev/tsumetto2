@@ -2,7 +2,8 @@ import { useState } from "react";
 
 import { Board, type Piece, type Square } from "@/domain/kif/entity"
 import styles from "./BoardView.module.css";
-import type { BoardViewModel } from "@/ui/screens/player/vm/PlayerViewModel";
+import type { BoardViewModel } from "@/ui/screens/player/hooks/usePlayerViewModel";
+
 
 type SquareUIModel = {
     square: Square

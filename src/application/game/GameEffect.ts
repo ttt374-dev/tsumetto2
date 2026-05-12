@@ -14,5 +14,6 @@ export type GameEffect =
     | { type: "CLOSE_DIALOG", dialog: "solvedResult" }
     | { type: "TOAST", message: string, severity?:  AlertColor }
     | { type: "FLASH_BOARD"}
+    | { type: "PLAY_SOUND"}
 
     //| { type: "EMIT_EVENT", event: SessionEvent}

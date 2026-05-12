@@ -5,6 +5,7 @@ import type { DialogControllers } from "@/ui/screens/player/runner/usePlayerRunn
 import { useGameUIStore } from "@/ui/screens/player/store/useGameUIStore";
 import { useReplayStore } from "@/ui/screens/player/store/useReplayStore";
 import { useTimerStore } from "@/ui/screens/player/store/useTimerStore";
+import { playBeep } from "@/ui/shared/effect/sounceEffect";
 
 
 
@@ -31,27 +32,21 @@ export async function runGameEffects(effects: GameEffect[], deps: EffectRunnerDe
                 else
                     replay.retreatPly()
                 break
-
             case "MOVE_TO":
                 replay.moveTo(effect.to)
                 break
-
             case "START_ANIMATION":
                 replay.startAnimation()
                 break
-
             case "END_ANIMATION":
                 replay.endAnimation()
                 break
-
             case "STOP_TIMER":
                 timer.stop()
                 break
-
             case "WAIT":
                 await new Promise(res => setTimeout(res, effect.ms))
                 break
-
             case "OPEN_DIALOG":
                 if (effect.dialog === "solvedResult") {
                     deps.dialogs.solvedResult.openDialog(deps.problemId, effect.payload)
@@ -62,7 +57,6 @@ export async function runGameEffects(effects: GameEffect[], deps: EffectRunnerDe
                     deps.dialogs.solvedResult.closeDialog()
                 }
                 break
-
             /*case "EMIT_EVENT":
                 deps.event.emit(effect.event)
                 //console.log("EMIT EVENT")
@@ -74,8 +68,9 @@ export async function runGameEffects(effects: GameEffect[], deps: EffectRunnerDe
             case "FLASH_BOARD":
                 flashBoard(true)
                 break;
-
-
+            case "PLAY_SOUND":
+                playBeep()
+                break
         }
     }
 }
