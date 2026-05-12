@@ -50,7 +50,7 @@ export function SettingsScreen() {
                   {
                     kind: "number",
                     key: "chunkSize",
-                    label: "セッションチャンクサイズ",
+                    label: "チャンクサイズ",
                     description: "ミッション実行時のセッションあたりの問題数",
 
                     value: settings.chunkSize,
@@ -149,6 +149,7 @@ function SettingField({ item }: {
                     value={item.value}
                     min={1}
                     max={20}
+                    description={item.description}
                     onChange={item.onChange}
                 />
             )

@@ -1,16 +1,15 @@
 import type { GameEffect } from "@/application/game/GameEffect";
 import type { ProblemId } from "@/domain/problem/entity/Problem";
-import { useToast } from "@/ui/App/providers/ToastProvider";
+import { useToast, type Toast } from "@/ui/App/providers/ToastProvider";
 import type { DialogControllers } from "@/ui/screens/player/runner/usePlayerRunner";
 import { useGameUIStore } from "@/ui/screens/player/store/useGameUIStore";
 import { useReplayStore } from "@/ui/screens/player/store/useReplayStore";
 import { useTimerStore } from "@/ui/screens/player/store/useTimerStore";
-import { playBeep } from "@/ui/shared/effect/sounceEffect";
-
-
+import { playBeep, playPingPong } from "@/ui/shared/effect/soundEffect";
 
 export type EffectRunnerDeps = {
-    toast: ReturnType<typeof useToast>
+    //toast: ReturnType<typeof useToast>
+    toast: (toast: Toast) => void
     dialogs: DialogControllers
     problemId: ProblemId   
 
@@ -69,8 +68,15 @@ export async function runGameEffects(effects: GameEffect[], deps: EffectRunnerDe
                 flashBoard(true)
                 break;
             case "PLAY_SOUND":
-                playBeep()
-                break
+                switch (effect.kind){
+                    case "solved":
+                        playPingPong()
+                        break;
+                    case "mistake":
+                        //playPingPong()
+                        playBeep()                   
+                        break
+                }                
         }
     }
 }

@@ -18,9 +18,10 @@ export function interpretGameEvent(e: GameEvent,
                 },*/
                 //{ type: "TOAST", message: "solved", severity: "success"},
                 { type: "OPEN_DIALOG", dialog: "solvedResult", payload: solvedResult },
+                { type: "PLAY_SOUND", kind: "solved"}
             ]
         case "MISTAKE":
-            return [{ type: "FLASH_BOARD"}, { type: "PLAY_SOUND"}]
+            return [{ type: "FLASH_BOARD"}, { type: "PLAY_SOUND", kind: "mistake"}]
             //return [{ type: "TOAST", message: `mistake: ${ctx.mistakes}`, severity: "error" } ]
         case "ADVANCE_PLY":
             return [{ type: "ADVANCE_PLY", direction: "FORWARD" }]
