@@ -63,14 +63,15 @@ function generateSlidingMoves(
     for (const dir of directions) {
         let x = from.file + dir.x;
         let y = from.rank + dir.y;
-        const sq = Square.create(x, y)
+        //const sq = Square.create(x, y)
+        while (true) {
+            const to = Square.tryCreate(x, y);
+            if (!to) break;
 
-        while (isInside(Square.create(x, y))) {
-            const to = Square.create(x, y)
             const target = position.board.get(to);
-
             if (target && target.owner === piece.owner) break;
             moves.push(...createMovesWithPromotion(piece, from, to, position));
+
             if (target) break; // 相手駒で止まる
             x += dir.x;
             y += dir.y;
@@ -235,9 +236,10 @@ function createMovesWithPromotion(
         new Move(from, to, piece.type, false),
     ];
 }
+/*
 function isInside(square: Square): boolean {
   return (
     square.file >= 1 && square.file <= 9 &&
     square.rank >= 1 && square.rank <= 9
   );
-}
+}*/
