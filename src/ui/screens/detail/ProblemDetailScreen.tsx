@@ -16,7 +16,7 @@ import { ProblemInfoPanel } from "../../features/problem/components/ProblemInfoP
 import { LearningDetailPanel } from "../../features/learning/components/LearningDetailPanel";
 import { ProblemTypeFilterControl } from "@/ui/features/problem/query/components/ProblemTypeFilterControl";
 import { problemFieldLabels } from "@/ui/features/problem/hooks/problemPresenter";
-import { useStarToggleController, type StarToggleController } from "@/ui/common/components/StarToggleButton/useStarToggleController";
+import { useProblemStar, type StarToggleController } from "@/ui/common/components/StarToggleButton/useProblemStar";
 
 export default function ProblemDetailScreen(){
     const { id } = useParams<{ id: string }>()
@@ -33,7 +33,7 @@ export function ProblemDetailContent( { problem }: { problem: Problem}) {
 
     const { resetLearning, deleteProblem, startPlay, confirm} 
         = useProblemEditActions(problem.id)        
-    const starController = useStarToggleController(problem.id)
+    const starController = useProblemStar(problem.id)
     return (
         <AppShell 
             header="棋譜エントリの詳細"
@@ -62,6 +62,7 @@ export function ProblemDetailContent( { problem }: { problem: Problem}) {
                     label="閲覧のみ"
                     control={
                     <Checkbox checked={fields.referenceOnly.value} onChange={fields.referenceOnly.toggle}/>}/>
+                <SideSelector value={fields.userSide.value} onChange={fields.userSide.set}/>
                 <FreeSoloAutocomplete
                     label={problemFieldLabels["source"]}
                     value={fields.source.value}
@@ -137,5 +138,34 @@ function Footer({ onConfirm}: { onConfirm: () => void}) {
                 確認
             </Button>
         </Stack>
+    )
+}
+
+import { ToggleButton, ToggleButtonGroup } from "@mui/material"
+
+export function SideSelector({
+    value,
+    onChange,
+}: {
+    value: "black" | "white"
+    onChange: (v: "black" | "white") => void
+}) {
+    return (
+        <ToggleButtonGroup
+            exclusive
+            value={value}
+            onChange={(_, v) => {
+                if (v) onChange(v)
+            }}
+            size="small"
+        >
+            <ToggleButton value="black">
+                先手
+            </ToggleButton>
+
+            <ToggleButton value="white">
+                後手
+            </ToggleButton>
+        </ToggleButtonGroup>
     )
 }

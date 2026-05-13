@@ -14,6 +14,8 @@ export function useGameInitializer(problem: Problem) {
     const initializeReplay = useReplayStore(s => s.initialize)
     const clearSelection = useBoardInputStore(s => s.clear)
     const restartTimer = useTimerStore(s => s.restart)
+    const setUserSide = useGameUIStore(s=>s.setUserSide)
+    const setReversed = useGameUIStore(s=>s.setReversed)
 
     useEffect(() => {
         initializeGame(problem.kifData.initialPosition, problem.kifData.moves)
@@ -22,6 +24,11 @@ export function useGameInitializer(problem: Problem) {
         clearSelection()
         restartTimer()
         setIsInitialized(true)
+        if (problem.userSide === "white"){
+            setUserSide("white")
+            setReversed(true)
+        }
+
         //console.log("initialize")
     }, [problem.id])
 

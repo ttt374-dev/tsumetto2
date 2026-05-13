@@ -9,6 +9,7 @@ import { useProblemEditStore } from '@/ui/screens/detail/hooks/useProblemEditSto
 import { projectLearningState } from '@/domain/learning/service/projectLearningState';
 import { useNavigate } from 'react-router-dom';
 import { routes } from '@/ui/App/useAppNavigation';
+import type { Player } from '@/domain/kif/entity';
 
 export type SourceOption = {
     id: string
@@ -117,6 +118,10 @@ function useProblemEditFields(draft: ProblemEditDraft | null){
         referenceOnly: {
             value: view.isReferenceOnly,
             toggle: toggleReferenceOnly
+        },
+        userSide: {
+            value: view.userSide ?? "black",
+            set: (v: Player) => updateField("userSide", v)
         }
     }),[view, updateField, toggleStar, toggleReferenceOnly])
 }

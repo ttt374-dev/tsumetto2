@@ -17,7 +17,6 @@ import type { PlayerIntent } from "@/application/session/interpretor/interpretPl
 import type { Player } from "@/domain/kif/entity";
 import _ from "lodash";
 import type { GameEvent } from "@/domain/game/types/GameEvent";
-import { useGameStore } from "@/ui/screens/player/store/useGameStore";
 import { usePlayerPresentation, type PlayerPresentation } from "@/ui/screens/player/hooks/usePlayerPresentation";
 import { usePlayerRunner, type PlayerRunnerModel } from "@/ui/screens/player/runner/usePlayerRunner";
 import { useUiSettingsStore } from "@/ui/screens/settings/useUiSettingsStore";

@@ -1,5 +1,5 @@
 import { v4 } from 'uuid'
-import { KifData, type KifDataDTO } from '../../kif/entity'
+import { KifData, type KifDataDTO, type Player } from '../../kif/entity'
 import { parseKif } from '@/domain/kif/service/parser/parseKif'
 import type { ProblemType } from '@/domain/problem/entity/ProblemType'
 
@@ -14,6 +14,7 @@ export type ProblemData = {
     source: string
     tags: string[]
     comment: string,
+    userSide: Player,
 
     isStarred: boolean
     isReferecenOnly: boolean
@@ -32,6 +33,7 @@ function createDefaultValues(): ProblemData {
         source: "",
         tags: [],
         comment: "",
+        userSide: "black",
 
         isStarred: false,
         isReferecenOnly: false,
@@ -54,6 +56,7 @@ export class Problem {
         readonly source: string,
         readonly tags: Tags,
         readonly comment: string,
+        readonly userSide: Player,
 
         readonly isStarred: boolean,
         readonly isReferenceOnly: boolean,
@@ -79,6 +82,7 @@ export class Problem {
             source: this.source,
             tags: [...this.tags],
             comment: this.comment,
+            userSide: this.userSide,
 
             isStarred: this.isStarred,
             isReferecenOnly: this.isReferenceOnly,
@@ -90,7 +94,7 @@ export class Problem {
 
     static fromDTO(dto: ProblemDTO): Problem {
         return new Problem(dto.id, dto.title, KifData.fromDTO(dto.kifData),            
-            dto.type, dto.source, dto.tags, dto.comment,
+            dto.type, dto.source, dto.tags, dto.comment, dto.userSide,
             dto.isStarred, dto.isReferecenOnly,
             dto.createdAt, dto.updatedAt, dto.deletedAt)
     }
@@ -169,7 +173,12 @@ export class Problem {
             comment,
         })
     }
-    
+    setUserSide(userSide: Player): Problem {
+        return Problem.fromDTO({
+            ...this.toDTO(),
+            userSide,
+        })
+    }
     get isDelete(): boolean {
         return !!this.deletedAt
     }

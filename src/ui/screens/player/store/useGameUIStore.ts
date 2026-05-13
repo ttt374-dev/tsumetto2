@@ -10,10 +10,12 @@ type GameUIState = {
     initialize: () => void
     toggleReversed: () => void
     toggleUserSide: () => void
+    setUserSide: (player: Player) => void
     setReversed: (value: boolean) => void
     setMovesVisible: (value: boolean) => void
     toggleMovesVisible: () => void    
     flashBoard: (flag: boolean) => void
+    
 }
 const BoardFlashMs = 100
 
@@ -32,7 +34,9 @@ export const useGameUIStore = create<GameUIState>((set, get) => ({
     toggleUserSide: () => {
         set({ userSide: get().userSide === "black" ? "white" : "black"})
     },
-
+    setUserSide: (user: Player) => {
+        set({userSide: user})
+    },
     setReversed: (value) => {
         set({ isReversed: value })
     },
