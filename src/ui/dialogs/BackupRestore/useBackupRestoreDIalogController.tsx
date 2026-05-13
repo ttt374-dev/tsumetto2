@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react"
 import { useToast } from "@/ui/App/providers/ToastProvider"
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore"
 import { useReviewEventStore } from "@/ui/features/learning/hooks/useReviewEventStore"
@@ -11,54 +10,16 @@ import { useDialogState, type DialogState } from "@/ui/common/hooks/useDialogSta
 export type BackupRestoreController = DialogState & {
     backup: () => Promise<BackupResult>
     restore: (file: File) => Promise<RestoreResult>
-    //setResult: () => void
 }
 
 export function useBackupRestoreDialogController(): BackupRestoreController {
     const dialog = useDialogState()  
     const toast = useToast()
-    const reloadProblems = useProblemStore(s => s.reload)
-    const reloadReviewEvents = useReviewEventStore(s => s.reload)
-    const reloadMissions = useMissionStore(s => s.reload)
     const repos = useRepositoryContext()
     const usecase = useBackupRestoreUsecase(repos.problem, repos.reviewEvent, repos.mission, fileBackupWriter)
-
-
-    //const openDialog = () => setOpen(true)
-    //const closeDialog = () => setOpen(false)
-    /*
-    const [result, setResult] = useState<{
-        type: "backup" | "restore"
-        data: any
-    } | null>(null)
-
-    useEffect(() => {
-        if (!result) return
-
-        if (result.type === "backup") {
-            const res = result.data
-            if (res.ok)
-                toast({ message: `${res.value.problemCount}件バックアップしました` })
-            else
-                toast({ message: "バックアップ失敗", severity: "error" })
-        }
-
-        if (result.type === "restore") {
-            const res = result.data
-            if (res.ok) {
-                toast({ message: `${res.value.problemCount}件リストアしました` })
-                reloadProblems()
-                reloadReviewEvents()
-                reloadMissions()
-            } else {
-                toast({ message: "リストア失敗", severity: "error" })
-            }
-        }
-
-    }, [result])*/
+    const reloadStores = useStoresReloader()
 
     const backup = async () => {
-        //alert("backup")
         const result = await usecase.backup()
         if (result.ok)            
             toast({ message: `${result.value.problemCount}件バックアップしました` })
@@ -72,9 +33,9 @@ export function useBackupRestoreDialogController(): BackupRestoreController {
         const result = await restoreFromFile(file)
         if (result.ok) {
             toast({ message: `${result.value.problemCount}件リストアしました` })
-            reloadProblems()
-            reloadReviewEvents()
-            reloadMissions()
+            //reloadRelevantStores()
+            reloadStores()
+            
         } else {
             toast({ message: "リストア失敗", severity: "error" })
         }
@@ -83,19 +44,34 @@ export function useBackupRestoreDialogController(): BackupRestoreController {
 
     const restoreFromFile = async (file: File): Promise<RestoreResult> => {
         try {
-            const text = await file.text()
-            const json = JSON.parse(text)
+            const json = await parseBackupFile(file)
             return await usecase.restore(json)
         } catch {
-            return { ok: false, error: { code: "invalid-format" } } as const
+            return { ok: false, error: { code: "invalid-format" } } satisfies RestoreResult
         }
     }
+
     return {
         ...dialog,
-        //open, 
-        //openDialog, closeDialog,
         backup, restore,
-        //setResult,
-        //openDialog: () => alert("open")
     }
+}
+// infra
+async function parseBackupFile(file: File){
+    const text = await file.text()
+    const json = JSON.parse(text)
+    return json
+}
+function useStoresReloader() {
+    const reloadProblems = useProblemStore(s => s.reload)
+    const reloadReviewEvents = useReviewEventStore(s => s.reload)
+    const reloadMissions = useMissionStore(s => s.reload)
+
+    const reloadStores = () => {
+        reloadProblems()
+        reloadReviewEvents()
+        reloadMissions()
+    }
+
+    return reloadStores
 }
