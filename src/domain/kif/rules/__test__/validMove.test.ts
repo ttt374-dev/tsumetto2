@@ -8,58 +8,58 @@ import { generateValidMovesFrom } from "../validMoveGenerator";
 
 describe("valid-mode", ()=>{
     it("pawn", ()=>{
-        const sq = new Square(5, 7)
-        const piece = new Piece("pawn", "black")
+        const sq = Square.create(5, 7)
+        const piece = Piece.create("pawn", "black")
         const board = Board.empty().set(sq, piece)
         const position = new Position(board, Hands.empty(), "black")        
 
         const moves = generateValidMovesFrom(position, sq)
-        const expectedMove = new Move(new Square(5, 7), new Square(5, 6), "pawn", false)
+        const expectedMove = new Move(Square.create(5, 7), Square.create(5, 6), "pawn", false)
         expect(moves).toContainEqual(expectedMove)
         
     })
     it("と金", ()=>{
-        const sq = new Square(5, 7)
-        const piece = new Piece("pawn", "black", true)
+        const sq = Square.create(5, 7)
+        const piece = Piece.create("pawn", "black", true)
         const board = Board.empty().set(sq, piece)
         const position = new Position(board, Hands.empty(), "black")        
 
         const moves = generateValidMovesFrom(position, sq)
-        const expectedMove = new Move(new Square(5, 7), new Square(4, 7), "pawn", false)
+        const expectedMove = new Move(Square.create(5, 7), Square.create(4, 7), "pawn", false)
         expect(moves).toContainEqual(expectedMove)
         
     })
 
     it("桂馬", ()=>{
-        const sq = new Square(5, 7)
-        const piece = new Piece("knight", "black")
+        const sq = Square.create(5, 7)
+        const piece = Piece.create("knight", "black")
         const board = Board.empty().set(sq, piece)
         const position = new Position(board, Hands.empty(), "black")        
 
         const moves = generateValidMovesFrom(position, sq)
-        const expectedMove = new Move(new Square(5, 7), new Square(4, 5), "knight", false)
+        const expectedMove = new Move(Square.create(5, 7), Square.create(4, 5), "knight", false)
         expect(moves).toContainEqual(expectedMove)        
     })
     
     it("成桂", ()=>{
-        const sq = new Square(5, 7)
-        const piece = new Piece("knight", "black", true)
+        const sq = Square.create(5, 7)
+        const piece = Piece.create("knight", "black", true)
         const board = Board.empty().set(sq, piece)
         const position = new Position(board, Hands.empty(), "black")        
 
         const moves = generateValidMovesFrom(position, sq)
-        const expectedMove = new Move(new Square(5, 7), new Square(4, 7), "knight", false)
+        const expectedMove = new Move(Square.create(5, 7), Square.create(4, 7), "knight", false)
         expect(moves).toContainEqual(expectedMove)        
     })
 
     it("飛車", ()=>{
-        const sq = new Square(5, 7)
-        const piece = new Piece("knight", "black", true)
+        const sq = Square.create(5, 7)
+        const piece = Piece.create("knight", "black", true)
         const board = Board.empty().set(sq, piece)
         const position = new Position(board, Hands.empty(), "black")        
 
         const moves = generateValidMovesFrom(position, sq)
-        const expectedMove = new Move(new Square(5, 7), new Square(4, 7), "knight", false)
+        const expectedMove = new Move(Square.create(5, 7), Square.create(4, 7), "knight", false)
         expect(moves).toContainEqual(expectedMove)        
     })
 })

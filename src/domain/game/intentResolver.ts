@@ -40,7 +40,7 @@ function resolveBoardMoveIntent(
     if (piece.owner !== position.sideToMove) return { type: "invalidMove", reason: "not own turn"}
 
     // 行き先に自分の駒
-    const target = position.board.get(new Square(to.file, to.rank))
+    const target = position.board.get(Square.create(to.file, to.rank))
     if (target && target.owner === piece.owner) return { type: "invalidMove", reason: "own piece on destination"}
 
     // 駒の移動ルール

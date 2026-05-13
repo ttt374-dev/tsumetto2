@@ -36,7 +36,7 @@ export class Board {
     dump() {
         for (let rank = 1; rank <= 9; rank++) {
             for (let file = 1; file <= 9; file++) {
-                const piece = this.get(new Square(file, rank))
+                const piece = this.get(Square.create(file, rank))
                 if (!piece) continue
                 console.log(`${file},${rank}: ${piece?.type} (${piece?.owner})`)
             }

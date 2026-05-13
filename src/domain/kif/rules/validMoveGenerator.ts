@@ -41,11 +41,9 @@ function generateStepMoves(
 ): Move[] {
     const moves: Move[] = [];
 
-    for (const d of deltas) {
-        const to = new Square(from.file + d.x, from.rank + d.y)
-
-        if (!isInside(to)) continue;
-
+    for (const d of deltas) {        
+        const to = Square.tryCreate(from.file + d.x, from.rank + d.y)        
+        if (!to) continue
         const target = position.board.get(to);
         if (target && target.owner === piece.owner) continue;
 
@@ -65,10 +63,10 @@ function generateSlidingMoves(
     for (const dir of directions) {
         let x = from.file + dir.x;
         let y = from.rank + dir.y;
-        const sq = new Square(x, y)
+        const sq = Square.create(x, y)
 
-        while (isInside(new Square(x, y))) {
-            const to = new Square(x, y)
+        while (isInside(Square.create(x, y))) {
+            const to = Square.create(x, y)
             const target = position.board.get(to);
 
             if (target && target.owner === piece.owner) break;

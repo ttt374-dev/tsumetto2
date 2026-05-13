@@ -18,77 +18,83 @@ import { ProblemTypeFilterControl } from "@/ui/features/problem/query/components
 import { problemFieldLabels } from "@/ui/features/problem/hooks/problemPresenter";
 import { useProblemStar, type StarToggleController } from "@/ui/common/components/StarToggleButton/useProblemStar";
 
-export default function ProblemDetailScreen(){
+export default function ProblemDetailScreen() {
     const { id } = useParams<{ id: string }>()
     const problem = useProblemStore(s => id ? s.byId[id] : undefined)
     if (!problem) return <div>Not found</div>
 
-    return (<ProblemDetailContent problem={problem}/>)
+    return (<ProblemDetailContent problem={problem} />)
 }
 ////////////////////////////
-export function ProblemDetailContent( { problem }: { problem: Problem}) {
+export function ProblemDetailContent({ problem }: { problem: Problem }) {
     const {
         allSources, fields, learningState,
     } = useProblemDetailViewModel(problem)
 
-    const { resetLearning, deleteProblem, startPlay, confirm} 
-        = useProblemEditActions(problem.id)        
+    const { resetLearning, deleteProblem, startPlay, confirm }
+        = useProblemEditActions(problem.id)
     const starController = useProblemStar(problem.id)
     return (
-        <AppShell 
+        <AppShell
             header="棋譜エントリの詳細"
             rightActions={
-                <RightActions 
+                <RightActions
                     starController={starController}
-                    onStartPlay={startPlay} onDeleteProblem={deleteProblem}/>
+                    onStartPlay={startPlay} onDeleteProblem={deleteProblem} />
             }
-            footer={<Footer onConfirm={confirm}/>}
+            footer={<Footer onConfirm={confirm} />}
         >
             <Box sx={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }}>
-            <Stack spacing={1} p={1} sx={{
+                <Stack spacing={1} p={1} sx={{
                     flex: 1,
                     overflowY: "auto",
                     minHeight: 0,
-                    
+
                 }}>
-                {/* タイトル編集 */}
-                <CancelableTextField label="タイトル" value={fields.title.value} onCommit={fields.title.set} />
-                <ProblemTypeFilterControl
-                    problemType={fields.type.value}
-                    onChange={fields.type.set}
-                    allowUnspecified={false}
-                />
-                <FormControlLabel
-                    label="閲覧のみ"
-                    control={
-                    <Checkbox checked={fields.referenceOnly.value} onChange={fields.referenceOnly.toggle}/>}/>
-                <SideSelector value={fields.userSide.value} onChange={fields.userSide.set}/>
-                <FreeSoloAutocomplete
-                    label={problemFieldLabels["source"]}
-                    value={fields.source.value}
-                    options={allSources}
-                    onChange={v => fields.source.set(v ?? "")}
-                />
-                <ProblemTagEditor
-                    value={fields.tags.value}
-                    onChange={fields.tags.set}
-                />
+                    {/* タイトル編集 */}
+                    <CancelableTextField label="タイトル" value={fields.title.value} onCommit={fields.title.set} />
+                    <Stack direction="row" spacing={1}>
+                        <ProblemTypeFilterControl
+                            problemType={fields.type.value}
+                            onChange={fields.type.set}
+                            allowUnspecified={false}
+                        />
+                        <FreeSoloAutocomplete
+                            label={problemFieldLabels["source"]}
+                            value={fields.source.value}
+                            options={allSources}
+                            onChange={v => fields.source.set(v ?? "")}
+                        />
+                    </Stack>
+                    <Stack direction="row">
+                        <FormControlLabel
+                            label="閲覧のみ"
+                            control={
+                                <Checkbox checked={fields.referenceOnly.value} onChange={fields.referenceOnly.toggle} />} />
+                        <SideSelector value={fields.userSide.value} onChange={fields.userSide.set} />
+                    </Stack>
 
-                <ProblemInfoPanel problem={problem} />
-                <Divider />
+                    
+                    <ProblemTagEditor
+                        value={fields.tags.value}
+                        onChange={fields.tags.set}
+                    />
 
-                {learningState &&
-                    <LearningDetailPanel learningState={learningState} onResetLearning={resetLearning} />
-                }
-                <TextField
-                    label="コメント"
-                    multiline
-                    minRows={3}
-                    fullWidth
-                    value={fields.comment.value}
-                    onChange={e => fields.comment.set(e.target.value)}
-                />
-            </Stack>
+                    <ProblemInfoPanel problem={problem} />
+                    <Divider />
+
+                    {learningState &&
+                        <LearningDetailPanel learningState={learningState} onResetLearning={resetLearning} />
+                    }
+                    <TextField
+                        label="コメント"
+                        multiline
+                        minRows={3}
+                        fullWidth
+                        value={fields.comment.value}
+                        onChange={e => fields.comment.set(e.target.value)}
+                    />
+                </Stack>
             </Box>
         </AppShell>
     )
@@ -99,7 +105,7 @@ function RightActions(props: {
     onStartPlay: () => void
     onDeleteProblem: () => void
 }) {
-    const { starController, onStartPlay, onDeleteProblem} = props
+    const { starController, onStartPlay, onDeleteProblem } = props
 
     return <Stack direction="row" justifyContent="flex-end">
         <StarToggleButton starred={starController.starred}
@@ -118,9 +124,9 @@ function RightActions(props: {
     </Stack>
 }
 
-function Footer({ onConfirm}: { onConfirm: () => void}) {
-    const height="64px"
-    const navigate = useNavigate()       
+function Footer({ onConfirm }: { onConfirm: () => void }) {
+    const height = "64px"
+    const navigate = useNavigate()
 
     return (
         <Stack direction="row">

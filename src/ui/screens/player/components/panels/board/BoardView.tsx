@@ -31,7 +31,7 @@ export default function BoardView({ boardModel, actions }: {
             {/* 盤面 + 左側の段表示 */}
             {ranks.flatMap(rank => {
                 const cells = files.map(file => {                    
-                    const sq = new Square(file, rank)
+                    const sq = Square.create(file, rank)
                     const squareModel = buildSquareModel(sq, boardModel)
                     return (
                         <SquareView                            

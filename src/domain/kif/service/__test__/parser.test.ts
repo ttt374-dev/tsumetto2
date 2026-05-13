@@ -79,7 +79,7 @@ describe("parse moves", () => {
         resPosition = res.value.move.apply(state)
         if (!resPosition.ok) throw new Error
         state = resPosition.value
-        const sq = new Square(5, 5)
+        const sq = Square.create(5, 5)
         expect(state.board.get(sq)?.promoted).toBeTruthy
         expect(state.board.get(sq)?.type).toEqual("knight")
 
@@ -177,7 +177,7 @@ describe("parse board", () => {
         expect(r.ok).toBeTruthy
         if (r.ok) {
             const board = r.value.initialPosition.board
-            expect(board.get(new Square(1, 3))?.type).toEqual('pawn')
+            expect(board.get(Square.create(1, 3))?.type).toEqual('pawn')
         }
     })
     it("持ち駒", () => {
@@ -217,7 +217,7 @@ describe("実録parse", () => {
             //const history = { initial: Position.create(), moves: moves }
             const resPosition = buildUntilPly(Position.create(), moves, 11)
             if (!resPosition.ok) throw new Error
-            expect(resPosition.value.board.get(new Square(4, 8))?.type).toEqual("king")
+            expect(resPosition.value.board.get(Square.create(4, 8))?.type).toEqual("king")
         }
     })
 

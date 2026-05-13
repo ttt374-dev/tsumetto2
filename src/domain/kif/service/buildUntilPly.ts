@@ -13,8 +13,8 @@ export function buildUntilPly(
 
     for (let i = 0; i < ply; i++) {
         const move = moves[i]
-        const res = move.apply(state)
-
+        //const res = move.apply(state)
+        const res = state.applyMove(move)
         if (!res.ok) {
             return {
                 ok: false,
