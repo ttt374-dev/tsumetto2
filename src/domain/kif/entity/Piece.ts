@@ -1,3 +1,4 @@
+import { TwentyFourMpRounded } from "@mui/icons-material"
 
 
 const promotablePieces = ["pawn", "lance", "knight", "silver", "bishop", "rook"] as const
@@ -6,9 +7,6 @@ const promotableSet = new Set<string>(promotablePieces)
 
 export const pieceTypes = ["pawn", "lance", "knight", "silver", "gold", "bishop", "rook", "king"] as const
 export type PieceType = typeof pieceTypes[number]
-
-//export type PieceType = "pawn" | "lance" | "knight" | "silver" | "gold" | "bishop" | "rook" | "king"
-//export type PromotablePieceType = Exclude<PieceType, "gold" | "king">
 
 export type Player = "black" | "white"
 
@@ -58,30 +56,26 @@ export const PieceTypeToKanjiMapping: Record<BasePromoted, Record<PieceType, str
 }
 
 export class Piece {
-    constructor(
+    private constructor(
         readonly type: PieceType,
         readonly owner: Player,
         readonly promoted: boolean = false
     ) { }
-
+    static create(type: PieceType, owner: Player, promoted: boolean = false): Piece {
+        const resolvedPromoted = isPromotablePieceType(type) ? promoted : false
+        return new Piece(type, owner, resolvedPromoted)
+    }
     format(): string {
-        /*
-        const baseMapping = {
-            pawn: "歩", lance: "香", knight: "桂", silver: "銀", gold: "金", bishop: "角", rook: "飛", king: "玉"
-        }
-        const promotedMapping = {
-            pawn: "と", lance: "杏", knight: "圭", silver: "全", gold: "金", bishop: "馬", rook: "龍", king: "玉"
-        }*/
         const basePromoted: BasePromoted = this.promoted ? 'promoted' : 'base'
         return PieceTypeToKanjiMapping[basePromoted][this.type]
     }
 
     demote(): Piece {
-        return new Piece(this.type, this.owner, false)
+        return Piece.create(this.type, this.owner, false)
     }
 
     promote(): Piece {
-        return new Piece(this.type, this.owner, true)
+        return Piece.create(this.type, this.owner, true)
     }
     ///////////////////////////////
     // seiralize
@@ -97,11 +91,8 @@ export class Piece {
     ////////////////////
     // static
     static fromDTO(dto: PieceDTO): Piece {
-        return new Piece(dto.type, dto.owner, dto.promoted)
+        return Piece.create(dto.type, dto.owner, dto.promoted)
     }
-    //static isPromotablePiece(type: PieceType): type is PromotablePieceType {
-    //    return PromotablePieceType.has(type)
-    //}
 }
 
 export type PieceDTO = {

@@ -64,27 +64,27 @@ export class Board {
 
         // upper rank
         for (let i = 1; i <= 9; i++) {
-            squares.set(`${i},${u}`, new Piece("pawn", player))
+            squares.set(`${i},${u}`, Piece.create("pawn", player))
         }
         // middle rank        
         if (player === "black"){
-            squares.set(`8,8`, new Piece("bishop", player))
-            squares.set(`2,8`, new Piece("rook", player))
+            squares.set(`8,8`, Piece.create("bishop", player))
+            squares.set(`2,8`, Piece.create("rook", player))
         } else {
-            squares.set(`2,2`, new Piece("bishop", player))
-            squares.set(`8,2`, new Piece("rook", player))
+            squares.set(`2,2`, Piece.create("bishop", player))
+            squares.set(`8,2`, Piece.create("rook", player))
         }
 
         // bottom rank
-        squares.set(`1,${b}`, new Piece("lance", player))
-        squares.set(`2,${b}`, new Piece("knight", player))
-        squares.set(`3,${b}`, new Piece("silver", player))
-        squares.set(`4,${b}`, new Piece("gold", player))
-        squares.set(`5,${b}`, new Piece("king", player))
-        squares.set(`6,${b}`, new Piece("gold", player))
-        squares.set(`7,${b}`, new Piece("silver", player))
-        squares.set(`8,${b}`, new Piece("knight", player))
-        squares.set(`9,${b}`, new Piece("lance", player))
+        squares.set(`1,${b}`, Piece.create("lance", player))
+        squares.set(`2,${b}`, Piece.create("knight", player))
+        squares.set(`3,${b}`, Piece.create("silver", player))
+        squares.set(`4,${b}`, Piece.create("gold", player))
+        squares.set(`5,${b}`, Piece.create("king", player))
+        squares.set(`6,${b}`, Piece.create("gold", player))
+        squares.set(`7,${b}`, Piece.create("silver", player))
+        squares.set(`8,${b}`, Piece.create("knight", player))
+        squares.set(`9,${b}`, Piece.create("lance", player))
     }
     static squareKey(sq: Square): string {
         return `${sq.file},${sq.rank}`

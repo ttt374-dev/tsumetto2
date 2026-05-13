@@ -26,9 +26,9 @@ export class Hand {
     isEmpty(): boolean {
         return Object.values(this.counts).every(v => v === 0)
     }
-    dump() {
-        this.counts
-    }
+    //dump() {
+    //    this.counts
+    //}
     // 指定した駒の枚数を返す
     count(pieceType: PieceType): number {
         return this.counts[pieceType]
@@ -69,7 +69,8 @@ export class Hand {
 }
 
 
-export type HandDTO = Partial<Record<PieceType, number>>
+//export type HandDTO = Partial<Record<PieceType, number>>
+export type HandDTO = Record<PieceType, number>
 
 //////////////////////////////////////////
 export class Hands {
