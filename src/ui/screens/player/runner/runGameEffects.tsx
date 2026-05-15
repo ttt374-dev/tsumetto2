@@ -26,10 +26,10 @@ export async function runGameEffects(effects: GameEffect[], deps: EffectRunnerDe
 
         switch (effect.type) {
             case "ADVANCE_PLY":
-                if (effect.direction === "FORWARD")
-                    replay.advancePly()
-                else
-                    replay.retreatPly()
+                replay.advancePly()
+                break;
+            case "RETREAT_PLY":
+                replay.retreatPly()
                 break
             case "MOVE_TO":
                 replay.moveTo(effect.to)

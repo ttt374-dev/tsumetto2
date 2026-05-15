@@ -43,7 +43,6 @@ export class Position {
             const resHands = hands.add(this.sideToMove, target.type)
             if(!resHands.ok) return resHands
             hands = resHands.value
-
         }
 
         // promote

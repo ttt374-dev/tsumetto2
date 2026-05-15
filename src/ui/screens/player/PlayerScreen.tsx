@@ -15,7 +15,6 @@ import PromotionDialog from "@/ui/screens/player/dialogs/PromotionDialog";
 import { SolvedDialog, useSolvedDialogController } from "@/ui/screens/player/dialogs/SolvedDialog";
 import type { PlayerIntent } from "@/application/session/interpretor/interpretPlayerIntent";
 import type { Player } from "@/domain/kif/entity";
-import _ from "lodash";
 import type { GameEvent } from "@/domain/game/types/GameEvent";
 import { usePlayerPresentation, type PlayerPresentation } from "@/ui/screens/player/hooks/usePlayerPresentation";
 import { usePlayerRunner, type PlayerRunnerModel } from "@/ui/screens/player/runner/usePlayerRunner";

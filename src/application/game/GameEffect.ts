@@ -1,9 +1,9 @@
-import type { SessionEvent } from "@/application/session/SessionEvent";
 import type { SolvedResult } from "@/domain/review/solvedResult";
 import type { AlertColor } from "@mui/material";
 
 export type GameEffect =
-    | { type: "ADVANCE_PLY"; direction: "FORWARD" | "BACKWARD" }
+    | { type: "ADVANCE_PLY"}
+    | { type: "RETREAT_PLY"}
     | { type: "MOVE_TO"; to: number }
     | { type: "START_ANIMATION" }
     | { type: "END_ANIMATION" }
@@ -16,4 +16,3 @@ export type GameEffect =
     | { type: "FLASH_BOARD"}
     | { type: "PLAY_SOUND", kind: "mistake" | "solved"}
 
-    //| { type: "EMIT_EVENT", event: SessionEvent}

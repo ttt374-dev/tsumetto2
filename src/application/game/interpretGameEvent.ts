@@ -9,7 +9,7 @@ export function interpretGameEvent(e: GameEvent,
     switch (e.type) {
         case "SOLVE":
             return [
-                { type: "ADVANCE_PLY", direction: "FORWARD" },
+                { type: "ADVANCE_PLY" },
                 { type: "STOP_TIMER" },
                 /*{ type: "EMIT_EVENT", event: {
                         type: "PROBLEM_SOLVED",
@@ -24,19 +24,19 @@ export function interpretGameEvent(e: GameEvent,
             return [{ type: "FLASH_BOARD"}, { type: "PLAY_SOUND", kind: "mistake"}]
             //return [{ type: "TOAST", message: `mistake: ${ctx.mistakes}`, severity: "error" } ]
         case "ADVANCE_PLY":
-            return [{ type: "ADVANCE_PLY", direction: "FORWARD" }]
+            return [{ type: "ADVANCE_PLY"}]
         case "RETREAT_PLY":
-            return [{ type: "ADVANCE_PLY", direction: "BACKWARD" }]
+            return [{ type: "RETREAT_PLY"}]
         case "MOVETO_PLY":
             return [{ type: "MOVE_TO", to: e.to }]
         //case "ADVANCE_OPPONENT_PLY":
         //    return [{ type: "REPLAY_ADVANCE_OPPONENT" }]
         case "ADVANCE_TURN":
             return [
-                { type: "ADVANCE_PLY", direction: "FORWARD" },
+                { type: "ADVANCE_PLY" },
                 { type: "START_ANIMATION" },
                 { type: "WAIT", ms: 500 },
-                { type: "ADVANCE_PLY", direction: "FORWARD" },
+                { type: "ADVANCE_PLY" },
                 { type: "END_ANIMATION" }
             ]
         default:
