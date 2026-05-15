@@ -14,7 +14,7 @@ export type EffectRunnerDeps = {
     problemId: ProblemId
 
 }
-type EffectContext = {
+export type EffectContext = {
     advancePly: () => void
     retreatPly: () => void
     moveTo: (i: number) => void
