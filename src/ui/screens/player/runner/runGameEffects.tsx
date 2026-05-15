@@ -1,6 +1,7 @@
-import type { EffectDialogKind, GameEffect } from "@/application/game/GameEffect";
+import type { GameEffect, EffectSoundKind } from "@/application/game/GameEffect";
 import type { ProblemId } from "@/domain/problem/entity/Problem";
-import { useToast, type Toast } from "@/ui/App/providers/ToastProvider";
+import type { SolvedResult } from "@/domain/review/solvedResult";
+import { type Toast } from "@/ui/App/providers/ToastProvider";
 import type { DialogControllers } from "@/ui/screens/player/runner/usePlayerRunner";
 import { useGameUIStore } from "@/ui/screens/player/store/useGameUIStore";
 import { useReplayStore } from "@/ui/screens/player/store/useReplayStore";
@@ -21,22 +22,25 @@ type EffectContext = {
     endAnimation: () => void
     stopTimer: () => void
     flashBoard: () => void
-    playSound: (kind: SoundKind) => void
+    playSound: (kind: EffectSoundKind) => void
+    openSolvedResultDialog: (res: SolvedResult) => void
+    closeSolvedResultDialog: () => void
+    toast: (t: Toast) => void
 }
-type SoundKind = "solved" | "mistake"
 
-export async function runGameEffects(effects: GameEffect[], deps: EffectRunnerDeps, control: RunControl) {
-    const ctx = createEffectContext()
+
+export async function runGameEffects(effects: GameEffect[], ctx: EffectContext, control: RunControl) {
+    //const ctx = createEffectContext(deps)
     const id = control.next()
     for (const effect of effects) {
         // 👉 キャンセルチェック
         if (!control.isActive(id)) return
-        await runGameEffect(effect, deps, ctx)
+        await runGameEffect(effect, ctx)
     }
 }
-function createEffectContext(): EffectContext{
+export function createEffectContext(deps: EffectRunnerDeps): EffectContext{
     const { advancePly, retreatPly, moveTo, startAnimation, endAnimation } = useReplayStore.getState()
-    const playSound = (kind: SoundKind) => {
+    const playSound = (kind: EffectSoundKind) => {
         switch (kind) {
             case "solved":
                 playPingPong()
@@ -46,17 +50,22 @@ function createEffectContext(): EffectContext{
                 break
         }
     }
-    const openSolvedResultDialog = () => {
-
+    const openSolvedResultDialog = (solvedResult: SolvedResult) => {
+        deps.dialogs.solvedResult.openDialog(deps.problemId, solvedResult)
     }
+    const closeSolvedResultDialog = () => deps.dialogs.solvedResult.closeDialog()
     return {
         advancePly, retreatPly, moveTo, startAnimation, endAnimation,
         stopTimer: useTimerStore.getState().stop,
         flashBoard: useGameUIStore.getState().flashBoard,
         playSound,
+        openSolvedResultDialog,
+        closeSolvedResultDialog,
+        toast: deps.toast,
+        
     }
 }
-export async function runGameEffect(effect: GameEffect, deps: EffectRunnerDeps, ctx: EffectContext) {    
+export async function runGameEffect(effect: GameEffect,  ctx: EffectContext) {    
     switch (effect.type) {
         case "ADVANCE_PLY":
             ctx.advancePly()
@@ -80,13 +89,15 @@ export async function runGameEffect(effect: GameEffect, deps: EffectRunnerDeps, 
             await delay(effect.ms)
             break
         case "OPEN_SOLVED_RESULT_DIALOG":
-            deps.dialogs.solvedResult.openDialog(deps.problemId, effect.payload)
+            //deps.dialogs.solvedResult.openDialog(deps.problemId, effect.payload)
+            ctx.openSolvedResultDialog(effect.solvedResult)
             break
         case "CLOSE_SOLVED_RESULT_DIALOG":
-            deps.dialogs.solvedResult.closeDialog()
+            //deps.dialogs.solvedResult.closeDialog()
+            ctx.closeSolvedResultDialog()
             break  
         case "TOAST":
-            deps.toast({ message: effect.message, severity: effect.severity ?? "info" })
+            ctx.toast({ message: effect.message, severity: effect.severity ?? "info" })
             break;
         case "FLASH_BOARD":
             ctx.flashBoard()

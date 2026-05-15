@@ -17,7 +17,7 @@ export function interpretGameEvent(e: GameEvent,
                     }
                 },*/
                 //{ type: "TOAST", message: "solved", severity: "success"},
-                { type: "OPEN_SOLVED_RESULT_DIALOG", payload: solvedResult },
+                { type: "OPEN_SOLVED_RESULT_DIALOG", solvedResult: solvedResult },
                 { type: "PLAY_SOUND", kind: "solved"}
             ]
         case "MISTAKE":

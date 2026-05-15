@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react"
 
 import { useGameStore } from "@/ui/screens/player/store/useGameStore"
-import { createRunControl, runGameEffects, type EffectRunnerDeps } from "@/ui/screens/player/runner/runGameEffects"
+import { createEffectContext, createRunControl, runGameEffects, type EffectRunnerDeps } from "@/ui/screens/player/runner/runGameEffects"
 import type { GameEvent } from "@/domain/game/types/GameEvent"
 import { interpretGameEvent } from "@/application/game/interpretGameEvent"
 
@@ -20,7 +20,7 @@ export function useGameEventHandler(deps: EffectRunnerDeps, enabled: boolean = t
             events,
             mistakes,
         })
-        runGameEffects(effects, deps, controlRef.current)
+        runGameEffects(effects, createEffectContext(deps), controlRef.current)
         onGameEvent?.(last)
     }, [events])
 }

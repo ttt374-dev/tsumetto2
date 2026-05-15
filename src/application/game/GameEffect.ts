@@ -1,9 +1,7 @@
 import type { SolvedResult } from "@/domain/review/solvedResult";
 import type { AlertColor } from "@mui/material";
 
-
-export type EffectDialogKind = "solvedResult" | "promotion"
-
+export type EffectSoundKind = "solved" | "mistake"
 export type GameEffect =
     | { type: "ADVANCE_PLY"}
     | { type: "RETREAT_PLY"}
@@ -13,7 +11,7 @@ export type GameEffect =
     | { type: "WAIT"; ms: number }
     | { type: "STOP_TIMER" }
 
-    | { type: "OPEN_SOLVED_RESULT_DIALOG", payload: SolvedResult }
+    | { type: "OPEN_SOLVED_RESULT_DIALOG", solvedResult: SolvedResult }
     | { type: "CLOSE_SOLVED_RESULT_DIALOG"}
     | { type: "TOAST", message: string, severity?:  AlertColor }
     | { type: "FLASH_BOARD"}
