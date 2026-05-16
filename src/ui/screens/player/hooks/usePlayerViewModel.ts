@@ -18,6 +18,7 @@ export type BoardViewModel = {
     
     selection: Selection
     lastMove: Move | undefined
+    nextMove: Move | undefined
     boardFlash: boolean
 }
 export type MovesViewModel = {
@@ -69,6 +70,7 @@ export function usePlayerViewModel(problem: Problem): PlayerViewModel {
             position: resPosition.value,
             reversed: displayReversed,
             userSide, lastMove: moves[ply-1],
+            nextMove: moves[ply],
             selection, boardFlash,            
         },        
 
