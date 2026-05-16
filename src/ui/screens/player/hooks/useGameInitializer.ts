@@ -5,6 +5,7 @@ import { useTimerStore } from "@/ui/screens/player/store/useTimerStore"
 import { useEffect, useState } from "react"
 import { useBoardInputStore } from "@/ui/screens/player/store/useBoardInputStore"
 import { useGameUIStore } from "@/ui/screens/player/store/useGameUIStore"
+import { useHintStore } from "@/application/hint/useHintStore"
 
 export function useGameInitializer(problem: Problem) {
     const [isInitialized, setIsInitialized] = useState(false)
@@ -12,6 +13,7 @@ export function useGameInitializer(problem: Problem) {
     const initializeGame = useGameStore(s => s.initialize)
     const initializeGameUI = useGameUIStore(s=>s.initialize)
     const initializeReplay = useReplayStore(s => s.initialize)
+    const initializeHint = useHintStore(s=>s.initialize)
     const clearSelection = useBoardInputStore(s => s.clear)
     const restartTimer = useTimerStore(s => s.restart)
     const setUserSide = useGameUIStore(s=>s.setUserSide)
@@ -21,6 +23,7 @@ export function useGameInitializer(problem: Problem) {
         initializeGame(problem.kifData.initialPosition, problem.kifData.moves)
         initializeGameUI()
         initializeReplay(problem.kifData.moves.length)
+        initializeHint()
         clearSelection()
         restartTimer()
         setIsInitialized(true)

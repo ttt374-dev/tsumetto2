@@ -14,6 +14,7 @@ export type ProblemData = {
     source: string
     tags: string[]
     comment: string,
+    hint: string,
     userSide: Player,
 
     isStarred: boolean
@@ -34,6 +35,7 @@ function createDefaultValues(): ProblemData {
         source: "",
         tags: [],
         comment: "",
+        hint: "",
         userSide: "black",
 
         isStarred: false,
@@ -57,6 +59,7 @@ export class Problem {
         readonly source: string,
         readonly tags: Tags,
         readonly comment: string,
+        readonly hint: string,
         readonly userSide: Player,
 
         readonly isStarred: boolean,
@@ -83,6 +86,7 @@ export class Problem {
             source: this.source,
             tags: [...this.tags],
             comment: this.comment,
+            hint: this.hint,
             userSide: this.userSide,
 
             isStarred: this.isStarred,
@@ -95,7 +99,7 @@ export class Problem {
 
     static fromDTO(dto: ProblemDTO): Problem {
         return new Problem(dto.id, dto.title, KifData.fromDTO(dto.kifData),            
-            dto.type, dto.source, dto.tags, dto.comment, dto.userSide,
+            dto.type, dto.source, dto.tags, dto.comment, dto.hint, dto.userSide,
             dto.isStarred, dto.isReferecenOnly,
             dto.createdAt, dto.updatedAt, dto.deletedAt)
     }
@@ -172,6 +176,12 @@ export class Problem {
         return Problem.fromDTO({
             ...this.toDTO(),
             comment,
+        })
+    }
+    setHint(hint: string): Problem {
+        return Problem.fromDTO({
+            ...this.toDTO(),
+            hint,
         })
     }
     setUserSide(userSide: Player): Problem {

@@ -34,6 +34,7 @@ export function ProblemDetailContent({ problem }: { problem: Problem }) {
     const { resetLearning, deleteProblem, startPlay, confirm }
         = useProblemEditActions(problem.id)
     const starController = useProblemStar(problem.id)
+    console.log("problem details", problem, fields)
     return (
         <AppShell
             header="棋譜エントリの詳細"
@@ -73,7 +74,6 @@ export function ProblemDetailContent({ problem }: { problem: Problem }) {
                                 <Checkbox checked={fields.referenceOnly.value} onChange={fields.referenceOnly.toggle} />} />
                         <SideSelector value={fields.userSide.value} onChange={fields.userSide.set} />
                     </Stack>
-
                     
                     <ProblemTagEditor
                         value={fields.tags.value}
@@ -93,6 +93,14 @@ export function ProblemDetailContent({ problem }: { problem: Problem }) {
                         fullWidth
                         value={fields.comment.value}
                         onChange={e => fields.comment.set(e.target.value)}
+                    />
+                    <TextField
+                        label="ヒント"
+                        multiline
+                        minRows={1}
+                        fullWidth
+                        value={fields.hint.value}
+                        onChange={e => fields.hint.set(e.target.value)}
                     />
                 </Stack>
             </Box>

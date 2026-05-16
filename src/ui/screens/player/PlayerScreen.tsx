@@ -23,6 +23,8 @@ import { useUiSettingsStore } from "@/ui/screens/settings/useUiSettingsStore";
 import { useGameStore } from "@/ui/screens/player/store/useGameStore";
 import { createPlayerContext } from "@/ui/screens/player/runner/createPlayerContext";
 import { useHintStore } from "@/application/hint/useHintStore";
+import { useToast } from "@/ui/App/providers/ToastProvider";
+import { ProductionQuantityLimitsRounded } from "@mui/icons-material";
 
 ///////////////////////////////////////////
 export default function PlayerScreen({ problem, title, footer, onPlayerIntent, onGameEvent, }: {
@@ -68,17 +70,22 @@ function MovesControlSection({ problem, model }: {
     const { moves: { ply, visible, maxPly, userSide, isRevealed, isSolved } } = model.state
     const {
         game: { toggleReversed, toggleUserSide },
-        moves: { advancePly, retreatPly, reveal, toggleMovesVisible } } = model.actions
+        moves: { advancePly, retreatPly, reveal, toggleMovesVisible, },
+        hint: { reveal: revealHint }
+     } = model.actions
     
     const showElapsedSec = useUiSettingsStore(s=>s.settings.showElapsedSec)
-    const toggleHint = useHintStore(s=>s.toggleEnabled)
-    const dispatch = useGameStore(s=>s.dispatch)
+    //const toggleHint = useHintStore(s=>s.toggleEnabled)
+    //const dispatch = useGameStore(s=>s.dispatch)
+    //const toast = useToast()
     
-    const handleEnableHint = () => {
-        toggleHint()
-        const ctx = createPlayerContext()
-        dispatch({type: "REVEAL_HINT", ...ctx})
+    
+    const handleEnableHint = () => {        
+        revealHint(problem.hint)
+
+        //if (problem.hint) toast({message: problem.hint})
     }
+    console.log("problem", problem)
 
     return (
         <Stack direction="row" sx={{ 

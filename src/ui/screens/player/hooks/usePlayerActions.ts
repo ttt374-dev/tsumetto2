@@ -11,6 +11,7 @@ import { useBoardInputStore } from "@/ui/screens/player/store/useBoardInputStore
 import type { PieceType, Player, Square } from "@/domain/kif/entity";
 import type { Intent } from "@/domain/game/intentResolver";
 import type { GameEvent, PendingPromotion } from "@/domain/game/types/GameEvent";
+import { useHintStore } from "@/application/hint/useHintStore";
 
 export type PlayerActions = {
     board: BoardActions
@@ -19,6 +20,9 @@ export type PlayerActions = {
     game: GameActions
     domain: {
         deleteProblem: (pid: ProblemId) => void
+    }
+    hint: {
+        reveal: (hint: string) => void
     }
 }
 export type BoardActions = {
@@ -35,6 +39,7 @@ export type MovesActions = {
     moveToPly: (ply: number) => void,
     setMovesVisible: (value: boolean) => void
     toggleMovesVisible: () => void
+    //toggleHint: () => void
 }
 export type NavigationActions = {
     //nextProblem: () => void
@@ -63,6 +68,11 @@ export function usePlayerActions(): PlayerActions {
     const clickHandPiece = useBoardInputStore(s => s.clickHandPiece)
     const clearSelection = useBoardInputStore(s => s.clear)
 
+    const toggleHint = useHintStore(s=>s.toggleEnabled)
+    const revealHint = (hint: string) => {
+        toggleHint()         
+        dispatch({type: "REVEAL_HINT", hint, ...ctx})
+    }
     const deleteProblem = useProblemStore(s => s.deleteProblem)
 
     const toast = useToast()
@@ -98,6 +108,10 @@ export function usePlayerActions(): PlayerActions {
         game: {
             toggleUserSide,
             toggleReversed,
+        },
+
+        hint: {
+            reveal: revealHint,
         },
 
         domain: {

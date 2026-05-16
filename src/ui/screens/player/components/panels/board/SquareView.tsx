@@ -5,7 +5,6 @@ import styles from "./BoardView.module.css";
 import type { BoardViewModel } from "@/ui/screens/player/hooks/usePlayerViewModel";
 import { useHintStore } from "@/application/hint/useHintStore";
 
-
 type SquareUIModel = {
     square: Square
     piece: Piece | null

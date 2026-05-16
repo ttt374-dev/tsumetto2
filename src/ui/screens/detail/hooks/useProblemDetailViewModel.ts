@@ -34,8 +34,7 @@ export function useProblemDetailViewModel(problem: Problem) {
     
     useInitializeProblemDraft(problem)
     
-    return {
-        
+    return {        
         allSources, allTags,
         learningState,
         fields: useProblemEditFields(draft)
@@ -109,6 +108,10 @@ function useProblemEditFields(draft: ProblemEditDraft | null){
         comment: {
             value: view.comment,
             set: (v: string) => updateField("comment", v)
+        },
+        hint: {
+            value: view.hint,
+            set: (v: string) => updateField("hint", v)
         },
         //starred: {
         //    value: view.starred,
