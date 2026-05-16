@@ -17,7 +17,7 @@ import type { PlayerIntent } from "@/application/session/interpretor/interpretPl
 import type { Player } from "@/domain/kif/entity";
 import type { GameEvent } from "@/domain/game/types/GameEvent";
 import { usePlayerPresentation, type PlayerPresentation } from "@/ui/screens/player/hooks/usePlayerPresentation";
-import { usePlayerRunner, type PlayerRunnerModel } from "@/ui/screens/player/runner/usePlayerRunner";
+import { usePlayerRunner } from "@/ui/screens/player/runner/usePlayerRunner";
 import { useUiSettingsStore } from "@/ui/screens/settings/useUiSettingsStore";
 
 ///////////////////////////////////////////
@@ -32,7 +32,7 @@ export default function PlayerScreen({ problem, title, footer, onPlayerIntent, o
     // view model
     const model = usePlayerPresentation(problem)
     const runner = usePlayerRunner(problem, model.ui.dialogs, {
-        onPlayerIntent: onPlayerIntent,
+        //onPlayerIntent: onPlayerIntent,
         onGameEvent: onGameEvent
     })    
 
@@ -55,7 +55,7 @@ export default function PlayerScreen({ problem, title, footer, onPlayerIntent, o
                     problem={problem} model={model} />
             </Stack>
 
-            <DialogSection model={model} runner={runner} />
+            <DialogSection model={model} onPlayerIntent={onPlayerIntent} />
 
         </AppShell>
     )
@@ -115,9 +115,12 @@ function HeaderRightSection({ problem, model }: { problem: Problem, model: Playe
     )
 }
 
-function DialogSection({ model, runner }: { model: PlayerPresentation, runner: PlayerRunnerModel  }) {
+function DialogSection({ model, onPlayerIntent}: { 
+    model: PlayerPresentation,
+    onPlayerIntent?: (int: PlayerIntent) => void}) {
+
     const confirmSolved = () => { 
-        runner.handlers.handlePlayerIntent({ type: "PROBLEM_CONFIRMED" }) 
+        onPlayerIntent?.({ type: "PROBLEM_CONFIRMED" }) 
     }
 
     return (

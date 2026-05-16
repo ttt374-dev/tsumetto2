@@ -13,18 +13,13 @@ export type DialogControllers = {
    promotion: ReturnType<typeof usePromotionDialog>
 }
 
-export type PlayerRunnerModel = {
-    handlers: {
-        handlePlayerIntent: (intent: PlayerIntent) => void,    
-    }    
-}
-
 /////////////////////////////////////////
 export function usePlayerRunner(problem: Problem, dialogs: DialogControllers,
     options?: {         
         onGameEvent?: (e: GameEvent) => void,
-        onPlayerIntent?: (e: PlayerIntent) => void }
-): PlayerRunnerModel {    
+        //onPlayerIntent?: (e: PlayerIntent) => void 
+        }
+) {    
     const toast = useToast()
     const isIntialized = useGameInitializer(problem) 
     const deps: EffectRunnerDeps = {
@@ -32,14 +27,10 @@ export function usePlayerRunner(problem: Problem, dialogs: DialogControllers,
     }
     
     useGameEventHandler(createEffectContext(deps), isIntialized, options?.onGameEvent)    
-    const handlePlayerIntent = (intent: PlayerIntent) => {
-        options?.onPlayerIntent?.(intent)
-    }
+    //const handlePlayerIntent = (intent: PlayerIntent) => {
+    //    options?.onPlayerIntent?.(intent)
+    //}
     
-    return {
-        handlers: {
-            handlePlayerIntent,
-        },
-    }
+    
 }
 
