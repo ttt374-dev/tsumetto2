@@ -27,7 +27,7 @@ export default function ViewScreen(){
 }
 function ViewContent({ problem}: { problem: Problem}){
     const model = usePlayerPresentation(problem)
-    usePlayerRunner(problem, model.ui.dialogs)
+    usePlayerRunner({problem, dialogs: model.ui.dialogs})
     //const replay = useReplayStore()
     useEffect(()=>{
         model.actions.moves.setMovesVisible(true)
