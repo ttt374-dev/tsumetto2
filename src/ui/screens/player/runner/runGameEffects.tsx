@@ -3,10 +3,7 @@ import type { ProblemId } from "@/domain/problem/entity/Problem";
 import type { SolvedResult } from "@/domain/review/solvedResult";
 import { type Toast } from "@/ui/App/providers/ToastProvider";
 import type { DialogControllers } from "@/ui/screens/player/runner/usePlayerRunner";
-import { useGameUIStore } from "@/ui/screens/player/store/useGameUIStore";
-import { useReplayStore } from "@/ui/screens/player/store/useReplayStore";
-import { useTimerStore } from "@/ui/screens/player/store/useTimerStore";
-import { playBeep, playPingPong } from "@/ui/shared/effect/soundEffect";
+
 
 export type EffectRunnerDeps = {
     toast: (toast: Toast) => void
@@ -38,33 +35,7 @@ export async function runGameEffects(effects: GameEffect[], ctx: EffectContext, 
         await runGameEffect(effect, ctx)
     }
 }
-export function createEffectContext(deps: EffectRunnerDeps): EffectContext{
-    const { advancePly, retreatPly, moveTo, startAnimation, endAnimation } = useReplayStore.getState()
-    const playSound = (kind: EffectSoundKind) => {
-        switch (kind) {
-            case "solved":
-                playPingPong()
-                break;
-            case "mistake":
-                playBeep()
-                break
-        }
-    }
-    const openSolvedResultDialog = (solvedResult: SolvedResult) => {
-        deps.dialogs.solvedResult.openDialog(deps.problemId, solvedResult)
-    }
-    const closeSolvedResultDialog = () => deps.dialogs.solvedResult.closeDialog()
-    return {
-        advancePly, retreatPly, moveTo, startAnimation, endAnimation,
-        stopTimer: useTimerStore.getState().stop,
-        flashBoard: useGameUIStore.getState().flashBoard,
-        playSound,
-        openSolvedResultDialog,
-        closeSolvedResultDialog,
-        toast: deps.toast,
-        
-    }
-}
+
 export async function runGameEffect(effect: GameEffect,  ctx: EffectContext) {    
     switch (effect.type) {
         case "ADVANCE_PLY":

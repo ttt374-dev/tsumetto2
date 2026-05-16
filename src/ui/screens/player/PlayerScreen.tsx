@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import React from "react"
 import { Box, Button, IconButton, Stack } from "@mui/material"
 import SwapVertIcon from '@mui/icons-material/SwapVert';
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -12,7 +12,7 @@ import PlyControlPanel from "@/ui/screens/player/components/panels/PlyControlPan
 import { Problem } from "@/domain/problem/entity/Problem"
 import { AppShell } from "@/ui/common/components/layout/AppShell";
 import PromotionDialog from "@/ui/screens/player/dialogs/PromotionDialog";
-import { SolvedDialog, useSolvedDialogController } from "@/ui/screens/player/dialogs/SolvedDialog";
+import { SolvedDialog } from "@/ui/screens/player/dialogs/SolvedDialog";
 import type { PlayerIntent } from "@/application/session/interpretor/interpretPlayerIntent";
 import type { Player } from "@/domain/kif/entity";
 import type { GameEvent } from "@/domain/game/types/GameEvent";

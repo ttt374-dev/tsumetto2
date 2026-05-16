@@ -4,9 +4,8 @@ import { useSolvedDialogController } from "@/ui/screens/player/dialogs/SolvedDia
 import { useGameEventHandler } from "@/ui/screens/player/hooks/useGameEventHandler";
 import { useGameInitializer } from "@/ui/screens/player/hooks/useGameInitializer";
 import { usePromotionDialog } from "@/ui/screens/player/hooks/usePromotionDialog";
-import type { PlayerIntent } from "@/application/session/interpretor/interpretPlayerIntent";
-import { createEffectContext, type EffectRunnerDeps } from "@/ui/screens/player/runner/runGameEffects";
 import type { GameEvent } from "@/domain/game/types/GameEvent";
+import { createEffectContext } from "@/ui/screens/player/runner/createEffectContext";
 
 export type DialogControllers = {
    solvedResult: ReturnType<typeof useSolvedDialogController>
@@ -22,11 +21,14 @@ export function usePlayerRunner(problem: Problem, dialogs: DialogControllers,
 ) {    
     const toast = useToast()
     const isIntialized = useGameInitializer(problem) 
-    const deps: EffectRunnerDeps = {
-        dialogs, toast, problemId: problem.id,        
-    }
+    //const deps: EffectRunnerDeps = {
+    //    dialogs, toast, problemId: problem.id,        
+    //}
+    const ctx = createEffectContext({
+        problemId: problem.id, dialogs, toast
+    })
     
-    useGameEventHandler(createEffectContext(deps), isIntialized, options?.onGameEvent)    
+    useGameEventHandler(ctx, isIntialized, options?.onGameEvent)    
     //const handlePlayerIntent = (intent: PlayerIntent) => {
     //    options?.onPlayerIntent?.(intent)
     //}
