@@ -5,12 +5,6 @@ import { type Toast } from "@/ui/App/providers/ToastProvider";
 import type { DialogControllers } from "@/ui/screens/player/runner/usePlayerRunner";
 
 
-export type EffectRunnerDeps = {
-    toast: (toast: Toast) => void
-    dialogs: DialogControllers
-    problemId: ProblemId
-
-}
 export type EffectContext = {
     advancePly: () => void
     retreatPly: () => void
@@ -24,10 +18,24 @@ export type EffectContext = {
     closeSolvedResultDialog: () => void
     toast: (t: Toast) => void
 }
+export type EffectRunner = (effects: GameEffect[]) => Promise<void>
 
+export function createEffectRunner(ctx: EffectContext): EffectRunner {
+    const runner = async (effects: GameEffect[]) => {
+        const control = createRunControl()
+        const id = control.next()
+        for (const effect of effects) {
+            // 👉 キャンセルチェック
+            if (!control.isActive(id)) return
+            await runGameEffect(effect, ctx)
+        }
+    }
+    return runner
+}
 
-export async function runGameEffects(effects: GameEffect[], ctx: EffectContext, control: RunControl) {
+export async function runGameEffects(effects: GameEffect[], ctx: EffectContext) {
     //const ctx = createEffectContext(deps)
+    const control = createRunControl()
     const id = control.next()
     for (const effect of effects) {
         // 👉 キャンセルチェック

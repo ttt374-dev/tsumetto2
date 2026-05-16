@@ -28,13 +28,9 @@ export default function PlayerScreen({ problem, title, footer, onPlayerIntent, o
     onGameEvent?: (e: GameEvent) => void
     onPlayerIntent?: (e: PlayerIntent) => void
 }) {
-
     // view model
     const model = usePlayerPresentation(problem)
-    const runner = usePlayerRunner(problem, model.ui.dialogs, {
-        //onPlayerIntent: onPlayerIntent,
-        onGameEvent: onGameEvent
-    })    
+    usePlayerRunner({problem, dialogs: model.ui.dialogs, onGameEvent: onGameEvent})    
 
     // 消された場合
     if (problem.deletedAt) {
@@ -70,8 +66,6 @@ function MovesControlSection({ problem, model }: {
         moves: { advancePly, retreatPly, reveal, toggleMovesVisible } } = model.actions
     
     const showElapsedSec = useUiSettingsStore(s=>s.settings.showElapsedSec)
-    //const events = useGameStore(s => s.events)
-    //const solvedResult = deriveSolvedResultFromEvents(events)
     return (
         <Stack direction="row" sx={{ 
             minHeight: 0, flexGrow: 1, p: 1, overflow: "hidden",
