@@ -24,6 +24,7 @@ export type ProblemData = {
     deletedAt?: number
 }
 function createDefaultValues(): ProblemData {
+    const now = Date.now()
     return {
         id: v4(),
         title: "untitled",
@@ -37,8 +38,8 @@ function createDefaultValues(): ProblemData {
 
         isStarred: false,
         isReferecenOnly: false,
-        createdAt: Date.now(),
-        updatedAt: Date.now(),
+        createdAt: now,
+        updatedAt: now,
         deletedAt: undefined
     }
 }
@@ -211,7 +212,7 @@ export class Problem {
                 changed = true
             }
         }
-        console.log("remove tags", tagsToRemove, changed, newTags)
+        //console.log("remove tags", tagsToRemove, changed, newTags)
         if (!changed) return this
         return Problem.fromDTO({
             ...this.toDTO(),

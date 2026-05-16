@@ -2,6 +2,7 @@ import React from "react"
 import { Box, Button, IconButton, Stack } from "@mui/material"
 import SwapVertIcon from '@mui/icons-material/SwapVert';
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import LightbulbOutlinedIcon from '@mui/icons-material/LightbulbOutlined';
 
 import PlayerRightPanel from "./components/panels/PlayerRightPanel";
 import TitlePanel from "./components/panels/TitlePanel";
@@ -19,6 +20,9 @@ import type { GameEvent } from "@/domain/game/types/GameEvent";
 import { usePlayerPresentation, type PlayerPresentation } from "@/ui/screens/player/hooks/usePlayerPresentation";
 import { usePlayerRunner } from "@/ui/screens/player/runner/usePlayerRunner";
 import { useUiSettingsStore } from "@/ui/screens/settings/useUiSettingsStore";
+import { useGameUIStore } from "@/ui/screens/player/store/useGameUIStore";
+import { useGameStore } from "@/ui/screens/player/store/useGameStore";
+import { createPlayerContext } from "@/ui/screens/player/runner/createPlayerContext";
 
 ///////////////////////////////////////////
 export default function PlayerScreen({ problem, title, footer, onPlayerIntent, onGameEvent, }: {
@@ -32,6 +36,7 @@ export default function PlayerScreen({ problem, title, footer, onPlayerIntent, o
     const model = usePlayerPresentation(problem)
     usePlayerRunner({problem, dialogs: model.ui.dialogs, onGameEvent: onGameEvent})    
 
+   
     // 消された場合
     if (problem.deletedAt) {
         return <AppShell>Deleted: {problem.title}</AppShell>
@@ -66,6 +71,15 @@ function MovesControlSection({ problem, model }: {
         moves: { advancePly, retreatPly, reveal, toggleMovesVisible } } = model.actions
     
     const showElapsedSec = useUiSettingsStore(s=>s.settings.showElapsedSec)
+    const toggleHint = useGameUIStore(s=>s.toggleHint)
+    const dispatch = useGameStore(s=>s.dispatch)
+    
+    const handleEnableHint = () => {
+        toggleHint()
+        const ctx = createPlayerContext()
+        dispatch({type: "REVEAL_HINT", ...ctx})
+    }
+
     return (
         <Stack direction="row" sx={{ 
             minHeight: 0, flexGrow: 1, p: 1, overflow: "hidden",
@@ -80,6 +94,9 @@ function MovesControlSection({ problem, model }: {
                     <ReverseControl toggleReversed={toggleReversed} />
                     <UserSideControl userSide={userSide} toggleUserSide={toggleUserSide} />
                     <ToggleMovesVisible onToggleMovesVisible={toggleMovesVisible} disabled={!isRevealed} />
+                    <IconButton onClick={handleEnableHint}>
+                        <LightbulbOutlinedIcon/>
+                    </IconButton>
                 </Stack>
                 {visible &&
                     <PlyControlPanel

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Board, type Piece, type Square } from "@/domain/kif/entity"
 import styles from "./BoardView.module.css";
 import type { BoardViewModel } from "@/ui/screens/player/hooks/usePlayerViewModel";
+import { useGameUIStore } from "@/ui/screens/player/store/useGameUIStore";
 
 
 type SquareUIModel = {
@@ -17,10 +18,11 @@ type SquareUIModel = {
 
 export function buildSquareModel(square: Square, boardModel: BoardViewModel): SquareUIModel {
     const { selection, lastMove, nextMove, reversed, position: { board} } = boardModel
+    const hintEnabled = useGameUIStore(s=>s.hintEnabled)
     //const lastMove = ply > 0 ? moves[ply - 1] : undefined
     const isLastFrom = lastMove !== undefined && lastMove.from !== null && square.equals(lastMove.from)
     const isLastTo = lastMove !== undefined && square.equals(lastMove.to)
-    const isNext = nextMove ? square.equals(nextMove.to) : false
+    const isNext = hintEnabled && nextMove ? square.equals(nextMove.to) : false
     const piece = board.get(square)
     const rotated =
         !!piece &&
@@ -28,7 +30,7 @@ export function buildSquareModel(square: Square, boardModel: BoardViewModel): Sq
             (piece.owner === "white" && !reversed) ||
             (piece.owner === "black" && reversed)
         )
-    console.log("nextmove", nextMove, isNext)
+    //console.log("nextmove", nextMove, isNext)
     return {
         square, 
         isSelected: selection.type == "board" && square.equals(selection.square),

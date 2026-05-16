@@ -8,7 +8,12 @@ import { useReplayStore } from "@/ui/screens/player/store/useReplayStore"
 import { projectGameState } from "@/domain/game/gameStateReducer"
 import type { GameEvent, PendingPromotion } from "@/domain/game/types/GameEvent"
 
-export type GameState =  { mistakes: number, isRevealed: boolean, isSolved: boolean }    
+export type GameState =  { 
+    mistakes: number 
+    isRevealed: boolean 
+    hint: boolean
+    isSolved: boolean 
+}    
 
 export type GameStore = {
     events: GameEvent[]    // SoT

@@ -34,6 +34,7 @@ const DefaultGameState: GameState = {
     mistakes: 0,
     isRevealed: false,
     isSolved: false,
+    hint: false,
 }
 
 export function projectGameState(events: GameEvent[]): GameState {
