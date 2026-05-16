@@ -20,9 +20,9 @@ import type { GameEvent } from "@/domain/game/types/GameEvent";
 import { usePlayerPresentation, type PlayerPresentation } from "@/ui/screens/player/hooks/usePlayerPresentation";
 import { usePlayerRunner } from "@/ui/screens/player/runner/usePlayerRunner";
 import { useUiSettingsStore } from "@/ui/screens/settings/useUiSettingsStore";
-import { useGameUIStore } from "@/ui/screens/player/store/useGameUIStore";
 import { useGameStore } from "@/ui/screens/player/store/useGameStore";
 import { createPlayerContext } from "@/ui/screens/player/runner/createPlayerContext";
+import { useHintStore } from "@/application/hint/useHintStore";
 
 ///////////////////////////////////////////
 export default function PlayerScreen({ problem, title, footer, onPlayerIntent, onGameEvent, }: {
@@ -71,7 +71,7 @@ function MovesControlSection({ problem, model }: {
         moves: { advancePly, retreatPly, reveal, toggleMovesVisible } } = model.actions
     
     const showElapsedSec = useUiSettingsStore(s=>s.settings.showElapsedSec)
-    const toggleHint = useGameUIStore(s=>s.toggleHint)
+    const toggleHint = useHintStore(s=>s.toggleEnabled)
     const dispatch = useGameStore(s=>s.dispatch)
     
     const handleEnableHint = () => {
