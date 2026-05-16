@@ -1,9 +1,6 @@
 import type { GameEffect, EffectSoundKind } from "@/application/game/GameEffect";
-import type { ProblemId } from "@/domain/problem/entity/Problem";
 import type { SolvedResult } from "@/domain/review/solvedResult";
 import { type Toast } from "@/ui/App/providers/ToastProvider";
-import type { DialogControllers } from "@/ui/screens/player/runner/usePlayerRunner";
-
 
 export type EffectContext = {
     advancePly: () => void
@@ -18,29 +15,28 @@ export type EffectContext = {
     closeSolvedResultDialog: () => void
     toast: (t: Toast) => void
 }
-export type EffectRunner = (effects: GameEffect[]) => Promise<void>
-
-export function createEffectRunner(ctx: EffectContext): EffectRunner {
-    const runner = async (effects: GameEffect[]) => {
-        const control = createRunControl()
-        const id = control.next()
-        for (const effect of effects) {
-            // 👉 キャンセルチェック
-            if (!control.isActive(id)) return
-            await runGameEffect(effect, ctx)
-        }
-    }
-    return runner
+export type EffectRunner = {
+    run: (effects: GameEffect[]) => Promise<void>
+    cancel: () => void
 }
 
-export async function runGameEffects(effects: GameEffect[], ctx: EffectContext) {
-    //const ctx = createEffectContext(deps)
+export function createEffectRunner(ctx: EffectContext): EffectRunner {
     const control = createRunControl()
-    const id = control.next()
-    for (const effect of effects) {
-        // 👉 キャンセルチェック
-        if (!control.isActive(id)) return
-        await runGameEffect(effect, ctx)
+
+    return {
+        async run(effects) {
+            const id = control.next()
+
+            for (const effect of effects) {
+                if (!control.isActive(id)) return
+
+                await runGameEffect(effect, ctx)
+            }
+        },
+
+        cancel() {
+            control.cancel()
+        }
     }
 }
 
