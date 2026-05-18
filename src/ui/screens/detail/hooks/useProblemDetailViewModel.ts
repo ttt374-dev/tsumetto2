@@ -66,7 +66,8 @@ export function useProblemEditActions(pid: ProblemId) {
     }
     
     const startPlay = () => {
-        navigate(routes.view(pid))
+        //navigate(routes.view(pid))
+        navigate(routes.player(pid))
     }
     const deleteProblem = () => {
         if(!window.confirm("Are you sure to delete?")) return
