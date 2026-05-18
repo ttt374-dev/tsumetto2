@@ -14,7 +14,6 @@ type NavItem =
 
 export default function FooterNavigation() {
     const navigate = useNavigate()
-    //const openImport = useContext(OpenImportContext)
     const openImport = useContext(AppActionsContext)?.openImport
 
     const navItems: NavItem[] = [
@@ -23,7 +22,7 @@ export default function FooterNavigation() {
         { type: "route", label: "統計", value: routes.stats, icon: <BarChartIcon /> },
         {
             type: "action",
-            label: "取込",
+            label: "棋譜取込",
             icon: <FileDownloadIcon />,
             onClick: () => openImport?.()
         },
