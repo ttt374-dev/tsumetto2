@@ -11,7 +11,7 @@ import type { GameEvent, PendingPromotion } from "@/domain/game/types/GameEvent"
 export type GameState =  { 
     mistakes: number 
     isRevealed: boolean 
-    hint: boolean
+    isHinted: boolean
     isSolved: boolean 
 }    
 
@@ -103,10 +103,6 @@ export const useGameStore = create<GameStore>((set, get) => ({
         //return nextEvents
         return nextEvents
     },
-    //toggleReversed: () =>  
-    //    set(s => ({ displayReversed: !s.displayReversed})),
-    //toggleUserSide: () => 
-    //    set(s => ({ userSide: s.userSide === "black" ? "white" : "black"})),
     
 }))
 

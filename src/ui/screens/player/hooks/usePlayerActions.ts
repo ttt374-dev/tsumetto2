@@ -1,9 +1,9 @@
 import { useNavigate } from "react-router-dom";
 
-import type { Problem, ProblemId } from "@/domain/problem/entity/Problem";
+import type { ProblemId } from "@/domain/problem/entity/Problem";
 import { useToast } from "@/ui/App/providers/ToastProvider";
 import { createPlayerContext } from "@/ui/screens/player/runner/createPlayerContext";
-import { useCurrentPosition, useGameStore } from "@/ui/screens/player/store/useGameStore";
+import { useGameStore } from "@/ui/screens/player/store/useGameStore";
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
 import { routes } from "@/ui/App/useAppNavigation";
 import { useGameUIStore } from "@/ui/screens/player/store/useGameUIStore";
@@ -22,7 +22,7 @@ export type PlayerActions = {
         deleteProblem: (pid: ProblemId) => void
     }
     hint: {
-        reveal: (hint: string) => void
+        revealHint: (hint: string) => void
     }
 }
 export type BoardActions = {
@@ -39,11 +39,9 @@ export type MovesActions = {
     moveToPly: (ply: number) => void,
     setMovesVisible: (value: boolean) => void
     toggleMovesVisible: () => void
-    //toggleHint: () => void
 }
 export type NavigationActions = {
-    //nextProblem: () => void
-    //showList: () => void
+
     navigateToDetail: (pid: ProblemId) => void
 }
 
@@ -68,7 +66,7 @@ export function usePlayerActions(): PlayerActions {
     const clickHandPiece = useBoardInputStore(s => s.clickHandPiece)
     const clearSelection = useBoardInputStore(s => s.clear)
 
-    const toggleHint = useHintStore(s=>s.toggleEnabled)
+    const toggleHint = useHintStore(s=>s.toggleCandidateVisible)
     const revealHint = (hint: string) => {
         toggleHint()         
         dispatch({type: "REVEAL_HINT", hint, ...ctx})
@@ -111,7 +109,7 @@ export function usePlayerActions(): PlayerActions {
         },
 
         hint: {
-            reveal: revealHint,
+            revealHint,
         },
 
         domain: {

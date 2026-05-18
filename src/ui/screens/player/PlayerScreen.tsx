@@ -20,11 +20,6 @@ import type { GameEvent } from "@/domain/game/types/GameEvent";
 import { usePlayerPresentation, type PlayerPresentation } from "@/ui/screens/player/hooks/usePlayerPresentation";
 import { usePlayerRunner } from "@/ui/screens/player/runner/usePlayerRunner";
 import { useUiSettingsStore } from "@/ui/screens/settings/useUiSettingsStore";
-import { useGameStore } from "@/ui/screens/player/store/useGameStore";
-import { createPlayerContext } from "@/ui/screens/player/runner/createPlayerContext";
-import { useHintStore } from "@/application/hint/useHintStore";
-import { useToast } from "@/ui/App/providers/ToastProvider";
-import { ProductionQuantityLimitsRounded } from "@mui/icons-material";
 
 ///////////////////////////////////////////
 export default function PlayerScreen({ problem, title, footer, onPlayerIntent, onGameEvent, }: {
@@ -71,21 +66,14 @@ function MovesControlSection({ problem, model }: {
     const {
         game: { toggleReversed, toggleUserSide },
         moves: { advancePly, retreatPly, reveal, toggleMovesVisible, },
-        hint: { reveal: revealHint }
+        hint: { revealHint }
      } = model.actions
     
-    const showElapsedSec = useUiSettingsStore(s=>s.settings.showElapsedSec)
-    //const toggleHint = useHintStore(s=>s.toggleEnabled)
-    //const dispatch = useGameStore(s=>s.dispatch)
-    //const toast = useToast()
-    
-    
-    const handleEnableHint = () => {        
+    const showElapsedSec = useUiSettingsStore(s=>s.settings.showElapsedSec)    
+    const handleRevealHint = () => {        
         revealHint(problem.hint)
-
-        //if (problem.hint) toast({message: problem.hint})
     }
-    console.log("problem", problem)
+    //console.log("problem", problem)
 
     return (
         <Stack direction="row" sx={{ 
@@ -101,7 +89,7 @@ function MovesControlSection({ problem, model }: {
                     <ReverseControl toggleReversed={toggleReversed} />
                     <UserSideControl userSide={userSide} toggleUserSide={toggleUserSide} />
                     <ToggleMovesVisible onToggleMovesVisible={toggleMovesVisible} disabled={!isRevealed} />
-                    <IconButton onClick={handleEnableHint}>
+                    <IconButton onClick={handleRevealHint}>
                         <LightbulbOutlinedIcon/>
                     </IconButton>
                 </Stack>

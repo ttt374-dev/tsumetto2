@@ -1,20 +1,27 @@
 import { create } from "zustand";
 
 export type HintStore = {
-    enabled: boolean
+    hintCommentVisible: boolean
+    candidateVisible: boolean
+    //enabled: boolean
 
     initialize: () => void
-    toggleEnabled: () => void
+    //toggleEnabled: () => void
+    toggleCandidateVisible: () => void
+
 }
 
 export const useHintStore = create<HintStore>((set, get) => ({
-    enabled: false,
+    hintCommentVisible: false,
+    candidateVisible: false,
+    //enabled: false,
 
     initialize: () => {
-        set({enabled: false})
+        set({candidateVisible: false})
     },
-    toggleEnabled: () => {
-        set(s=>({enabled: !s.enabled}))
-    }
 
+    toggleCandidateVisible: () => {
+        set(s=>({candidateVisible: !s.candidateVisible}))
+    }
+    
 }))

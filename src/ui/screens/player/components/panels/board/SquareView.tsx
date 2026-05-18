@@ -17,11 +17,12 @@ type SquareUIModel = {
 
 export function buildSquareModel(square: Square, boardModel: BoardViewModel): SquareUIModel {
     const { selection, lastMove, nextMove, reversed, position: { board} } = boardModel
-    const hintEnabled = useHintStore(s=>s.enabled)
+    const hintEnabled = useHintStore(s=>s.candidateVisible)
     //const lastMove = ply > 0 ? moves[ply - 1] : undefined
     const isLastFrom = lastMove !== undefined && lastMove.from !== null && square.equals(lastMove.from)
     const isLastTo = lastMove !== undefined && square.equals(lastMove.to)
     const isNext = hintEnabled && nextMove ? square.equals(nextMove.to) : false
+    //console.log("isNext", isNext, hintEnabled, nextMove, nextMove && square.equals(nextMove.to))
     const piece = board.get(square)
     const rotated =
         !!piece &&
