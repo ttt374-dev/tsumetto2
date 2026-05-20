@@ -6,13 +6,12 @@ import { interpretGameEvent } from "@/application/game/interpretGameEvent"
 import type { EffectRunner } from "@/ui/screens/player/runner/runGameEffects"
 
 
-export function useGameEventHandler(effectRunner: EffectRunner, enabled: boolean = true, onGameEvent?: (e: GameEvent) => void, ) {
+export function useGameEventHandler(effectRunner: EffectRunner, onGameEvent?: (e: GameEvent) => void, ) {
     const events = useGameStore(s => s.events)
     const mistakes = useGameStore(s => s.state.mistakes)
     
     // イベント処理
     useEffect(() => {
-        if (!enabled) return
         const last = events.at(-1)
         if (!last) return
 
