@@ -17,7 +17,7 @@ export function useEnsureProblemLoaded(problem: Problem) {
     const restartTimer = useTimerStore(s => s.restart)
     const setUserSide = useGameUIStore(s => s.setUserSide)
     const setReversed = useGameUIStore(s => s.setReversed)
-    const isReversed = useGameUIStore(s=>s.isReversed)
+    //acconst isReversed = useGameUIStore(s=>s.isReversed)
 
     return useCallback(() => {
         if (loadedProblemId === problem.id) return
