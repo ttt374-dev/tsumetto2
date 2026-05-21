@@ -17,6 +17,7 @@ export function useEnsureProblemLoaded(problem: Problem) {
     const restartTimer = useTimerStore(s => s.restart)
     const setUserSide = useGameUIStore(s => s.setUserSide)
     const setReversed = useGameUIStore(s => s.setReversed)
+    const isReversed = useGameUIStore(s=>s.isReversed)
 
     return useCallback(() => {
         if (loadedProblemId === problem.id) return
@@ -27,6 +28,7 @@ export function useEnsureProblemLoaded(problem: Problem) {
         restartTimer()
         setUserSide(problem.userSide)
         setReversed(problem.userSide === "white")
+        //console.log("reversed", isReversed, problem.userSide)
     }
         , [loadedProblemId,
             problem,

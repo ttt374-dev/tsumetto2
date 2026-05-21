@@ -37,7 +37,7 @@ export function resolveSessionCommand(
     cmd: SessionCommand, ctx: SessionCommandContext, 
     sessionId: SessionId): SessionEffect[] {
     const problemId = ctx.problemIds[ctx.currentIndex]
-    console.log("resolve session", cmd, ctx.currentIndex, problemId, ctx)
+    //console.log("resolve session", cmd, ctx.currentIndex, problemId, ctx)
     if (!problemId) return []
 
     switch (cmd.type) {
