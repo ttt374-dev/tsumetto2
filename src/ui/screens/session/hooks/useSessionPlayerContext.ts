@@ -3,8 +3,7 @@ import { useParams } from "react-router-dom"
 
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
 import { useSessionStore } from "@/ui/screens/session/store/useSessionStore";
-import { useMissionStore } from "@/ui/screens/mission/hooks/useMissionStore";
-import type { Problem, ProblemId } from "@/domain/problem/entity/Problem";
+import type { Problem } from "@/domain/problem/entity/Problem";
 
 export type SessionPlayerContext = 
     | { type: "ready", sessionId: string, index: number, problem: Problem}
@@ -17,7 +16,6 @@ export function useSessionPlayerContext(): SessionPlayerContext {
     const ids = useSessionStore(s => s.problemIds)
     const byId = useProblemStore(s => s.byId)
     const activeSessionId = useSessionStore(s => s.activeSessionId)  
-
 
     // validation
     if (resParams.type === "invalid")

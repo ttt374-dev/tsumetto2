@@ -16,6 +16,7 @@ export type GameEvent =
     | ({type: "MOVETO_PLY", to: number} & BaseEvent)
     //| ({type: "ADVANCE_OPPONENT_PLY"} & BaseEvent )
     | ({type: "ADVANCE_TURN"} & BaseEvent )
+    | ({type: "REVEAL_HINT", hint: string} & BaseEvent)
     
 export type PendingPromotion = {
     from: Square

@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Board, type Piece, type Square } from "@/domain/kif/entity"
 import styles from "./BoardView.module.css";
 import type { BoardViewModel } from "@/ui/screens/player/hooks/usePlayerViewModel";
-
+import { useHintStore } from "@/application/hint/useHintStore";
 
 type SquareUIModel = {
     square: Square
@@ -11,14 +11,18 @@ type SquareUIModel = {
     isSelected: boolean
     isLastFrom: boolean
     isLastTo: boolean
+    isNext: boolean
     rotated: boolean
 }
 
 export function buildSquareModel(square: Square, boardModel: BoardViewModel): SquareUIModel {
-    const { selection, lastMove, reversed, position: { board} } = boardModel
+    const { selection, lastMove, nextMove, reversed, position: { board} } = boardModel
+    const hintEnabled = useHintStore(s=>s.candidateVisible)
     //const lastMove = ply > 0 ? moves[ply - 1] : undefined
     const isLastFrom = lastMove !== undefined && lastMove.from !== null && square.equals(lastMove.from)
     const isLastTo = lastMove !== undefined && square.equals(lastMove.to)
+    const isNext = hintEnabled && nextMove ? square.equals(nextMove.to) : false
+    //console.log("isNext", isNext, hintEnabled, nextMove, nextMove && square.equals(nextMove.to))
     const piece = board.get(square)
     const rotated =
         !!piece &&
@@ -26,11 +30,12 @@ export function buildSquareModel(square: Square, boardModel: BoardViewModel): Sq
             (piece.owner === "white" && !reversed) ||
             (piece.owner === "black" && reversed)
         )
+    //console.log("nextmove", nextMove, isNext)
     return {
         square, 
         isSelected: selection.type == "board" && square.equals(selection.square),
         piece,
-        isLastFrom, isLastTo, rotated,
+        isLastFrom, isLastTo, rotated, isNext,
     }
 }
 
@@ -39,7 +44,7 @@ export function SquareView({squareModel, onClick} : {
     onClick: () => void
 }){    
     const [flash, setFlash] = useState(false)
-    const { square, isSelected, isLastTo, isLastFrom, rotated, piece } = squareModel
+    const { square, isSelected, isLastTo, isLastFrom, isNext, rotated, piece } = squareModel
 
     const handleClick = () => {
         setFlash(true)
@@ -54,6 +59,7 @@ export function SquareView({squareModel, onClick} : {
             key={Board.squareKey(square)}
             className={`${styles.cell}  
             ${isSelected && styles.selected}
+            ${isNext && styles.nextMove}
             ${flash && styles.flash}
             ${isLastTo && styles.lastTo}
             ${isLastFrom && styles.lastFrom}

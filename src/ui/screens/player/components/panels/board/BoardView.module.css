@@ -45,7 +45,10 @@
     outline: 2px solid rgba(255, 80, 80, 0.4);
     outline-offset: -2px;
 }
-
+.nextMove {
+    outline: 2px solid rgba(80, 255, 80, 0.4);
+    outline-offset: -2px;    
+}
 /*  label */
 .fileLabel {
     display: grid;

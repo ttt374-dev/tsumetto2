@@ -10,6 +10,7 @@ export type ProblemEditDraft = {
     type: ProblemType
     source: string
     comment: string
+    hint: string
     userSide: Player
 }
 
@@ -22,13 +23,14 @@ export function toEditDraft(problem: Problem): ProblemEditDraft {
         type: problem.type ?? "standard",
         source: problem.source ?? "",
         comment: problem.comment,
+        hint: problem.hint,
         userSide: problem.userSide,
     }
 }
 export function createEditDraft(): ProblemEditDraft {
     return {
         title: "", tags: [], starred: false, isReferenceOnly: false,
-        type: "standard", source: "", comment: "", userSide: "black",
+        type: "standard", source: "", comment: "", hint: "", userSide: "black",
     }
 }
 export function applyDraftToProblem(
@@ -43,6 +45,7 @@ export function applyDraftToProblem(
         .setReferenceOnly(draft.isReferenceOnly)
         .setType(draft.type)
         .setComment(draft.comment)
+        .setHint(draft.hint)
         .setUserSide(draft.userSide)
 }
 

@@ -14,6 +14,7 @@ export type ProblemData = {
     source: string
     tags: string[]
     comment: string,
+    hint: string,
     userSide: Player,
 
     isStarred: boolean
@@ -24,6 +25,7 @@ export type ProblemData = {
     deletedAt?: number
 }
 function createDefaultValues(): ProblemData {
+    const now = Date.now()
     return {
         id: v4(),
         title: "untitled",
@@ -33,6 +35,7 @@ function createDefaultValues(): ProblemData {
         source: "",
         tags: [],
         comment: "",
+        hint: "",
         userSide: "black",
 
         isStarred: false,
@@ -56,6 +59,7 @@ export class Problem {
         readonly source: string,
         readonly tags: Tags,
         readonly comment: string,
+        readonly hint: string,
         readonly userSide: Player,
 
         readonly isStarred: boolean,
@@ -82,6 +86,7 @@ export class Problem {
             source: this.source,
             tags: [...this.tags],
             comment: this.comment,
+            hint: this.hint,
             userSide: this.userSide,
 
             isStarred: this.isStarred,
@@ -97,7 +102,7 @@ export class Problem {
     static fromDTO(dto: ProblemDTO): Problem {
         const d = normalizeProblemDTO(dto)
         return new Problem(d.id, d.title, KifData.fromDTO(d.kifData),            
-            d.type, d.source, d.tags, d.comment, d.userSide,
+            d.type, d.source, d.tags, d.comment, d.hint, d.userSide,
             d.isStarred, d.isReferenceOnly,
             d.createdAt, d.updatedAt, d.deletedAt)
     }
@@ -176,6 +181,12 @@ export class Problem {
             comment,
         })
     }
+    setHint(hint: string): Problem {
+        return Problem.fromDTO({
+            ...this.toDTO(),
+            hint,
+        })
+    }
     setUserSide(userSide: Player): Problem {
         return Problem.fromDTO({
             ...this.toDTO(),
@@ -214,7 +225,7 @@ export class Problem {
                 changed = true
             }
         }
-        console.log("remove tags", tagsToRemove, changed, newTags)
+        //console.log("remove tags", tagsToRemove, changed, newTags)
         if (!changed) return this
         return Problem.fromDTO({
             ...this.toDTO(),
@@ -242,6 +253,7 @@ function normalizeProblemDTO(dto: Partial<ProblemDTO>): ProblemDTO {
         source: dto.source ?? defaults.source,
         tags: Array.isArray(dto.tags) ? dto.tags : [],
         comment: dto.comment ?? defaults.comment,
+        hint: dto.hint ?? defaults.hint,
         userSide:  isPlayer(dto.userSide) ? dto.userSide : defaults.userSide,
 
         isStarred: dto.isStarred ?? defaults.isStarred,

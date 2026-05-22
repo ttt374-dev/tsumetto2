@@ -1,9 +1,9 @@
 import { useNavigate } from "react-router-dom";
 
-import type { Problem, ProblemId } from "@/domain/problem/entity/Problem";
+import type { ProblemId } from "@/domain/problem/entity/Problem";
 import { useToast } from "@/ui/App/providers/ToastProvider";
 import { createPlayerContext } from "@/ui/screens/player/runner/createPlayerContext";
-import { useCurrentPosition, useGameStore } from "@/ui/screens/player/store/useGameStore";
+import { useGameStore } from "@/ui/screens/player/store/useGameStore";
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
 import { routes } from "@/ui/App/useAppNavigation";
 import { useGameUIStore } from "@/ui/screens/player/store/useGameUIStore";
@@ -11,6 +11,7 @@ import { useBoardInputStore } from "@/ui/screens/player/store/useBoardInputStore
 import type { PieceType, Player, Square } from "@/domain/kif/entity";
 import type { Intent } from "@/domain/game/intentResolver";
 import type { GameEvent, PendingPromotion } from "@/domain/game/types/GameEvent";
+import { useHintStore } from "@/application/hint/useHintStore";
 
 export type PlayerActions = {
     board: BoardActions
@@ -19,6 +20,9 @@ export type PlayerActions = {
     game: GameActions
     domain: {
         deleteProblem: (pid: ProblemId) => void
+    }
+    hint: {
+        revealHint: (hint: string) => void
     }
 }
 export type BoardActions = {
@@ -37,8 +41,7 @@ export type MovesActions = {
     toggleMovesVisible: () => void
 }
 export type NavigationActions = {
-    //nextProblem: () => void
-    //showList: () => void
+
     navigateToDetail: (pid: ProblemId) => void
 }
 
@@ -63,6 +66,11 @@ export function usePlayerActions(): PlayerActions {
     const clickHandPiece = useBoardInputStore(s => s.clickHandPiece)
     const clearSelection = useBoardInputStore(s => s.clear)
 
+    const toggleHint = useHintStore(s=>s.toggleCandidateVisible)
+    const revealHint = (hint: string) => {
+        toggleHint()         
+        dispatch({type: "REVEAL_HINT", hint, ...ctx})
+    }
     const deleteProblem = useProblemStore(s => s.deleteProblem)
 
     const toast = useToast()
@@ -98,6 +106,10 @@ export function usePlayerActions(): PlayerActions {
         game: {
             toggleUserSide,
             toggleReversed,
+        },
+
+        hint: {
+            revealHint,
         },
 
         domain: {

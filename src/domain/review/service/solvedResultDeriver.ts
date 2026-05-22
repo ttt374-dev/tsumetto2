@@ -18,6 +18,7 @@ export function deriveSolvedResult(gameState: GameState, elapsedSec: number): So
         mistakes: gameState.mistakes,
         isRevealed: gameState.isRevealed,
         isSolved: gameState.isSolved,
+        isHinted: false,  // TODO
         elapsedSec,
     }
 }

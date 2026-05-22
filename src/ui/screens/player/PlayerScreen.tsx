@@ -2,6 +2,7 @@ import React from "react"
 import { Box, Button, IconButton, Stack } from "@mui/material"
 import SwapVertIcon from '@mui/icons-material/SwapVert';
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import LightbulbOutlinedIcon from '@mui/icons-material/LightbulbOutlined';
 
 import PlayerRightPanel from "./components/panels/PlayerRightPanel";
 import TitlePanel from "./components/panels/TitlePanel";
@@ -23,19 +24,21 @@ import { useUiSettingsStore } from "@/ui/screens/settings/useUiSettingsStore";
 ///////////////////////////////////////////
 export default function PlayerScreen({ problem, title, footer, onPlayerIntent, onGameEvent, }: {
     problem: Problem
-    title: React.ReactNode
+    title?: React.ReactNode
     footer?: React.ReactNode
     onGameEvent?: (e: GameEvent) => void
     onPlayerIntent?: (e: PlayerIntent) => void
 }) {
     // view model
     const model = usePlayerPresentation(problem)
-    usePlayerRunner({problem, dialogs: model.ui.dialogs, onGameEvent: onGameEvent})    
-
+    usePlayerRunner({problem, dialogs: model.ui.dialogs, onGameEvent: onGameEvent})
+   
     // 消された場合
     if (problem.deletedAt) {
         return <AppShell>Deleted: {problem.title}</AppShell>
     }
+    //console.log("model", model)
+    const resolvedTitle = title ?? problem.title
     ////////////////////////////////////////////////////////////////////////
     return (
         <AppShell
@@ -45,7 +48,7 @@ export default function PlayerScreen({ problem, title, footer, onPlayerIntent, o
         >
             <Stack sx={{ minHeight: 0, height: "100%", flexGrow: 1, p: 1,
                 overflow: "hidden" }} spacing={1} >
-                <TitlePanel title={title} />                
+                <TitlePanel title={resolvedTitle} />                
                 <BoardPanel boardModel={model.state.board} actions={model.actions.board} />
                 <MovesControlSection
                     problem={problem} model={model} />
@@ -63,9 +66,16 @@ function MovesControlSection({ problem, model }: {
     const { moves: { ply, visible, maxPly, userSide, isRevealed, isSolved } } = model.state
     const {
         game: { toggleReversed, toggleUserSide },
-        moves: { advancePly, retreatPly, reveal, toggleMovesVisible } } = model.actions
+        moves: { advancePly, retreatPly, reveal, toggleMovesVisible, },
+        hint: { revealHint }
+     } = model.actions
     
-    const showElapsedSec = useUiSettingsStore(s=>s.settings.showElapsedSec)
+    const showElapsedSec = useUiSettingsStore(s=>s.settings.showElapsedSec)    
+    const handleRevealHint = () => {        
+        revealHint(problem.hint)
+    }
+    //console.log("problem", problem)
+
     return (
         <Stack direction="row" sx={{ 
             minHeight: 0, flexGrow: 1, p: 1, overflow: "hidden",
@@ -80,6 +90,9 @@ function MovesControlSection({ problem, model }: {
                     <ReverseControl toggleReversed={toggleReversed} />
                     <UserSideControl userSide={userSide} toggleUserSide={toggleUserSide} />
                     <ToggleMovesVisible onToggleMovesVisible={toggleMovesVisible} disabled={!isRevealed} />
+                    <IconButton onClick={handleRevealHint}>
+                        <LightbulbOutlinedIcon/>
+                    </IconButton>
                 </Stack>
                 {visible &&
                     <PlyControlPanel
