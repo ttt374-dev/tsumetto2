@@ -24,20 +24,21 @@ import { useUiSettingsStore } from "@/ui/screens/settings/useUiSettingsStore";
 ///////////////////////////////////////////
 export default function PlayerScreen({ problem, title, footer, onPlayerIntent, onGameEvent, }: {
     problem: Problem
-    title: React.ReactNode
+    title?: React.ReactNode
     footer?: React.ReactNode
     onGameEvent?: (e: GameEvent) => void
     onPlayerIntent?: (e: PlayerIntent) => void
 }) {
     // view model
     const model = usePlayerPresentation(problem)
-    usePlayerRunner({problem, dialogs: model.ui.dialogs, onGameEvent: onGameEvent})    
-
+    usePlayerRunner({problem, dialogs: model.ui.dialogs, onGameEvent: onGameEvent})
    
     // 消された場合
     if (problem.deletedAt) {
         return <AppShell>Deleted: {problem.title}</AppShell>
     }
+    //console.log("model", model)
+    const resolvedTitle = title ?? problem.title
     ////////////////////////////////////////////////////////////////////////
     return (
         <AppShell
@@ -47,7 +48,7 @@ export default function PlayerScreen({ problem, title, footer, onPlayerIntent, o
         >
             <Stack sx={{ minHeight: 0, height: "100%", flexGrow: 1, p: 1,
                 overflow: "hidden" }} spacing={1} >
-                <TitlePanel title={title} />                
+                <TitlePanel title={resolvedTitle} />                
                 <BoardPanel boardModel={model.state.board} actions={model.actions.board} />
                 <MovesControlSection
                     problem={problem} model={model} />

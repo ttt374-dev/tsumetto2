@@ -33,8 +33,9 @@ export default function SinglePlayerScreen() {
         }
     }
     return (
-        <PlayerScreen problem={problem} title={problem.title}
-            footer={(<Footer onBack={navigateBack} />)} onGameEvent={bridge.game.handleEvent}
+        <PlayerScreen problem={problem}
+            footer={(<Footer onBack={navigateBack} />)} 
+            onGameEvent={bridge.game.handleEvent}
             onPlayerIntent={handlePlayerIntent}
         />
     )
