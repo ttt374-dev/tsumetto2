@@ -1,4 +1,4 @@
-import { NumericInput } from "@/ui/shared/components/NumericInput"
+import { NumericInput } from "@/shared/components/NumericInput"
 import { Box, Checkbox, FormControlLabel, TextField } from "@mui/material"
 
 export type MissionExecutionMode = "full" | "partial"

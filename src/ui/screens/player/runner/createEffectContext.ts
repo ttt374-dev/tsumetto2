@@ -7,7 +7,7 @@ import type { DialogControllers } from "@/ui/screens/player/runner/usePlayerRunn
 import { useGameUIStore } from "@/ui/screens/player/store/useGameUIStore";
 import { useReplayStore } from "@/ui/screens/player/store/useReplayStore";
 import { useTimerStore } from "@/ui/screens/player/store/useTimerStore";
-import { playBeep, playPingPong } from "@/ui/shared/effect/soundEffect";
+import { playBeep, playPingPong } from "@/shared/effect/soundEffect";
 
 export function createEffectContext(props: {
     problemId: ProblemId, dialogs: DialogControllers, toast: (t: Toast) => void

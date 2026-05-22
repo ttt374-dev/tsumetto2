@@ -4,9 +4,9 @@ import { Box, Button, Checkbox, Divider, FormControlLabel, IconButton, Stack, Te
 import { useNavigate, useParams } from "react-router-dom";
 
 import { AppShell } from "@/ui/common/components/layout/AppShell";
-import { CancelableTextField } from "@/ui/shared/components/CancelableTextfield";
+import { CancelableTextField } from "@/shared/components/CancelableTextfield";
 import { ProblemTagEditor } from "@/ui/common/components/ProblemTagEditor";
-import { FreeSoloAutocomplete } from "@/ui/shared/components/FreeSoloAutocomplete";
+import { FreeSoloAutocomplete } from "@/shared/components/FreeSoloAutocomplete";
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
 import { routes } from "../../App/useAppNavigation";
 import { useProblemDetailViewModel, useProblemEditActions } from "./hooks/useProblemDetailViewModel";
