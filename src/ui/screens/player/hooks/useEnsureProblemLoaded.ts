@@ -6,6 +6,7 @@ import { useReplayStore } from "@/ui/screens/player/store/useReplayStore"
 import { useTimerStore } from "@/ui/screens/player/store/useTimerStore"
 import { useBoardInputStore } from "@/ui/screens/player/store/useBoardInputStore"
 import { useGameUIStore } from "@/ui/screens/player/store/useGameUIStore"
+import { useHintStore } from "@/application/hint/useHintStore"
 
 export function useEnsureProblemLoaded(problem: Problem) {
     // 初期化処理
@@ -13,6 +14,7 @@ export function useEnsureProblemLoaded(problem: Problem) {
     const loadProblem = useGameStore(s => s.loadProblem)
     const initializeGameUI = useGameUIStore(s => s.initialize)
     const initializeReplay = useReplayStore(s => s.initialize)
+    const initializeHint = useHintStore(s=>s.initialize)
     const clearSelection = useBoardInputStore(s => s.clear)
     const restartTimer = useTimerStore(s => s.restart)
     const setUserSide = useGameUIStore(s => s.setUserSide)
@@ -24,6 +26,7 @@ export function useEnsureProblemLoaded(problem: Problem) {
         loadProblem(problem)
         initializeGameUI()
         initializeReplay(problem.kifData.moves.length)
+        initializeHint()
         clearSelection()
         restartTimer()
         setUserSide(problem.userSide)
