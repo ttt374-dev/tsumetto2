@@ -12,18 +12,8 @@ import { initializeAppUsecase } from '@/application/usecase/initializeApp/useIni
 import { ReviewSyncService } from '@/application/reviewSyncService';
 import { LocalfileReviewEventDataSource } from '@/infrastructure/review/LocalfileReviewEventDatasource';
 
-export function createRepositories() {
-    return {
-        problem: new ProblemRepository(new LocalStrorageProblemPersistence()),
-        reviewEvent: new ReviewEventRepository(new LocalfileReviewEventDataSource()),
-        mission: new MissionRepository(new LocalStorageMissionPersistence()),
-    }
-}
-export function bootstrapApp(repos: RepositoryContextValue){
-    useEffect(() => {
-        const syncService = new ReviewSyncService()
-        syncService.start()
-    }, [])
+
+export function useBootstrapStores(repos: RepositoryContextValue){   
 
     useEffect(() => {
         const missionRepo = repos.mission
