@@ -60,7 +60,7 @@ export function useBackupRestoreUsecase(
 
             try {
                 problems = await problemRepo.load()
-                reviewEvents = await reviewRepo.load()
+                reviewEvents = await reviewRepo.list()
                 missions = await missionRepo.findAll()
             } catch (e) {
                 if (e instanceof Error) {

@@ -37,7 +37,7 @@ export const useReviewEventStore = create<ReviewEventStoreState>((set, get) => (
             const repo = get().repo
             if (!repo) throw new Error("Repository not initialized")
 
-            const data = await repo.load();
+            const data = await repo.list();
             set({ eventLog: data });
         } catch(e) {
             console.error(e)
