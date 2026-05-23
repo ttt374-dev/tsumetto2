@@ -1,24 +1,30 @@
-import { Filesystem, Directory, Encoding } from "@capacitor/filesystem";
 import type { ReviewEvent, ReviewEventLog } from "../ReviewEvent";
+import type { ReviewEventDatasource } from "@/infrastructure/review/ReviewEventDatasource";
 
 export class ReviewEventRepository {
     constructor(
-        private readonly store: ReviewEventPersistence
+        private readonly dataSource: ReviewEventDatasource
     ) {}
-    static create(store: ReviewEventPersistence){
-        return new ReviewEventRepository(store)
+
+    static create(dataSource: ReviewEventDatasource) {
+        return new ReviewEventRepository(dataSource)
     }
-    async load(){ return this.store.load()}
+
+    async load() {
+        return this.dataSource.list()
+    }
+
     async append(event: ReviewEvent) {
-        const log = await this.store.load()
-        const nextLog = [...log, event]
-        await this.store.save(nextLog)
+        await this.dataSource.append(event)
     }
+
     async replaceAll(events: ReviewEventLog) {
-        await this.store.save(events)
-    }
+        await this.dataSource.replaceAll(events)
+    }   
+    
 }
 ////////////////////////////////////
+/*
 const REVIEW_EVENT_LOG_FILE = "learning_event_log.json";
 
 export interface ReviewEventPersistence {
@@ -63,3 +69,4 @@ export class LocalStorageReviewEventPersistence implements ReviewEventPersistenc
         }
     }
 }
+*/

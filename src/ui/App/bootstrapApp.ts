@@ -4,17 +4,18 @@ import { useEffect } from 'react';
 import { useProblemStore } from '@/ui/features/problem/hooks/useProblemStore';
 import { MissionRepository, LocalStorageMissionPersistence } from '@/domain/mission/repository/MissionRepository';
 import { useMissionStore } from '@/ui/screens/mission/hooks/useMissionStore';
-import { LocalStorageReviewEventPersistence, ReviewEventRepository } from '@/domain/review/repository/ReviewEventRepository';
+import { ReviewEventRepository } from '@/domain/review/repository/ReviewEventRepository';
 import { useReviewEventStore } from '@/ui/features/learning/hooks/useReviewEventStore';
 import { type RepositoryContextValue } from './providers/RepositoryProvider';
 import { LocalStrorageProblemPersistence, ProblemRepository } from '@/domain/problem/repository/ProblemRepository';
 import { initializeAppUsecase } from '@/application/usecase/initializeApp/useInitializeAppUsecase';
 import { ReviewSyncService } from '@/application/reviewSyncService';
+import { LocalfileReviewEventDataSource } from '@/infrastructure/review/LocalfileReviewEventDatasource';
 
 export function createRepositories() {
     return {
         problem: new ProblemRepository(new LocalStrorageProblemPersistence()),
-        reviewEvent: new ReviewEventRepository(new LocalStorageReviewEventPersistence()),
+        reviewEvent: new ReviewEventRepository(new LocalfileReviewEventDataSource()),
         mission: new MissionRepository(new LocalStorageMissionPersistence()),
     }
 }
