@@ -14,21 +14,31 @@ export function projectLearningState(events: ReviewEvent[]): Record<ProblemId, L
     const sorted = [...events].sort((a, b) => a.at - b.at)
     for (const event of sorted) {
         const pid = event.problemId
-        switch (event.type) {
-            case "reviewed": {
-                const prev = records[pid] ?? createDefaultLearningState()                 
-                records[pid] = applyReviewedEvent(prev, event)
-                break
-            }
-            case "reset": {
-                // 👇 その problem だけ初期化
-                records[pid] = createDefaultLearningState()
-                break;
-            }
-        }
+        records[pid] = reduceLearningState(records[pid], event)
     }
     return records
 }
+
+export function reduceLearningState(prev: LearningState | undefined, event: ReviewEvent): LearningState {
+    const current = prev ?? createDefaultLearningState()
+
+    switch (event.type) {
+        case "reviewed":
+            return applyReviewedEvent(
+                current,
+                event
+            )
+
+        case "reset":
+            return createDefaultLearningState()
+
+        default: {
+            const exhaustiveCheck: never = event
+            return current
+        }
+    }
+}
+
 ///////////////////////////////////////////////
 
 function applyReviewedEvent(prev: LearningState, lastEvent: ReviewReviewedEvent): LearningState {   
