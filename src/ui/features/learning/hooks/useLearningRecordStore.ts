@@ -27,8 +27,34 @@ export const useLearningRecordStore = create<LearningRecordStoreState>((set, get
     },
 }));
 
+// learningRecordSync.ts
+let unsubscribe: (() => void) | undefined
+
+export function initializeLearningRecordSync() {
+    if (unsubscribe) return
+
+    unsubscribe = useReviewEventStore.subscribe((state) => {
+        useLearningRecordStore
+            .getState()
+            .updateFromEventLog(state.eventLog)
+    })
+
+    // 初回同期
+    useLearningRecordStore
+        .getState()
+        .updateFromEventLog(
+            useReviewEventStore.getState().eventLog
+        )
+}
+
+export function disposeLearningRecordSync() {
+    unsubscribe?.()
+    unsubscribe = undefined
+}
+/*
 // --- 自動同期用のサブスクライバ ---
 useReviewEventStore.subscribe((state) => {
     // state は store 全体
     useLearningRecordStore.getState().updateFromEventLog(state.eventLog);
 });
+*/

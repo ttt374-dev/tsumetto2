@@ -2,19 +2,11 @@
 import { useEffect } from 'react';
 
 import { useProblemStore } from '@/ui/features/problem/hooks/useProblemStore';
-import { MissionRepository, LocalStorageMissionPersistence } from '@/domain/mission/repository/MissionRepository';
 import { useMissionStore } from '@/ui/screens/mission/hooks/useMissionStore';
-import { ReviewEventRepository } from '@/domain/review/repository/ReviewEventRepository';
 import { useReviewEventStore } from '@/ui/features/learning/hooks/useReviewEventStore';
 import { type RepositoryContextValue } from './providers/RepositoryProvider';
-import { LocalStrorageProblemPersistence, ProblemRepository } from '@/domain/problem/repository/ProblemRepository';
-import { initializeAppUsecase } from '@/application/usecase/initializeApp/useInitializeAppUsecase';
-import { ReviewSyncService } from '@/application/reviewSyncService';
-import { LocalfileReviewEventDataSource } from '@/infrastructure/review/LocalfileReviewEventDatasource';
 
-
-export function useBootstrapStores(repos: RepositoryContextValue){   
-
+export function useBootstrapStores(repos: RepositoryContextValue) {
     useEffect(() => {
         const missionRepo = repos.mission
         const reviewEventRepo = repos.reviewEvent
@@ -26,18 +18,18 @@ export function useBootstrapStores(repos: RepositoryContextValue){
         useProblemStore.getState().setRepository(problemRepo)
 
         // 初期化フラグ
-        let isInitializing = true        
+        //let isInitializing = true
         // bootstrap 本体
-        const bootstrap = async () => {
-            await initializeAppUsecase(missionRepo)
-            await useMissionStore.getState().reload()
-            await useProblemStore.getState().reload()
-            await useReviewEventStore.getState().reload()
 
-            // 初期化完了
-            isInitializing = false
-        }
-        bootstrap()
+        reloadStores()
     }, [repos])
-    
+    const reloadStores = async () => {
+        //await initializeAppUsecase(missionRepo)
+        await useMissionStore.getState().reload()
+        await useProblemStore.getState().reload()
+        await useReviewEventStore.getState().reload()
+
+        // 初期化完了
+        //isInitializing = false
+    }
 }
