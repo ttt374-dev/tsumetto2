@@ -1,8 +1,8 @@
 import { create } from "zustand";
 
-import type { ReviewEventLog } from "@/domain/review/ReviewEvent";
+import type { ReviewEvent, ReviewEventLog } from "@/domain/review/ReviewEvent";
 import type { ProblemId } from "@/domain/problem/entity/Problem";
-import { projectLearningState } from "@/domain/learning/service/projectLearningState";
+import { projectLearningState, reduceLearningState } from "@/domain/learning/service/projectLearningState";
 import type { LearningState } from "@/domain/learning/entity/LearningState";
 import { useReviewEventStore } from "@/ui/features/learning/hooks/useReviewEventStore";
 
@@ -11,7 +11,9 @@ type LearningRecordStoreState = {
     //records: LearningRecord;
     stateRecords: Record<ProblemId, LearningState>
     //getState: (id: ProblemId) => LearningState
-    updateFromEventLog: (eventLog: ReviewEventLog) => void;
+    
+    build: (eventLog: ReviewEventLog) => void;
+    apply: (event: ReviewEvent) => void
 };
 
 export const useLearningRecordStore = create<LearningRecordStoreState>((set, get) => ({
@@ -19,12 +21,33 @@ export const useLearningRecordStore = create<LearningRecordStoreState>((set, get
     stateRecords: {},
     //getState: (id: ProblemId) => get().stateRecords[id],
 
-    updateFromEventLog: (eventLog) => {
+    build: (eventLog) => {
         set({
             //records: projectLearning(eventLog),
             stateRecords: projectLearningState(eventLog),
         });
     },
+    apply: (event) => {
+    set(state => {
+        const next = { ...state.stateRecords }
+
+        switch(event.type) {
+            case "reviewed":
+                next[event.problemId] =
+                    reduceLearningState(
+                        next[event.problemId],
+                        event
+                    )
+                break
+
+            case "reset":
+                delete next[event.problemId]
+                break
+        }
+
+        return { stateRecords: next }
+    })
+}
 }));
 
 // learningRecordSync.ts
@@ -36,13 +59,13 @@ export function initializeLearningRecordSync() {
     unsubscribe = useReviewEventStore.subscribe((state) => {
         useLearningRecordStore
             .getState()
-            .updateFromEventLog(state.eventLog)
+            .build(state.eventLog)
     })
 
     // 初回同期
     useLearningRecordStore
         .getState()
-        .updateFromEventLog(
+        .build(
             useReviewEventStore.getState().eventLog
         )
 }
