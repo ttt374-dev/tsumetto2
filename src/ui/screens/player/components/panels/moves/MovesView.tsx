@@ -14,8 +14,9 @@ interface Props {
 export function formatPlayer(player: Player): string {
     return player === 'black' ? '▲' : '△'
 }
-export function formatMove(move: Move, index: number, player: Player): string {
-    return `${index}: ` + formatPlayer(player) + move.rawtext
+export function formatMove(move: Move, ply: number): string {
+    const player = getPlayerFromPly(ply)
+    return `${ply}: ` + formatPlayer(player) + move.rawtext
 
 }
 const getPlayerFromPly = (plyIndex: number) => plyIndex % 2 ? "black" : "white"
@@ -66,7 +67,7 @@ export default function MovesView({ moves: moves, currentPlyIndex, onMoveToPly }
                             }}
                             onClick={() => onMoveToPly(ply)}
                             style={itemStyles(ply)}>
-                            {formatMove(m, ply, getPlayerFromPly(ply))}
+                            {formatMove(m, ply)}
                         </div>)
                 })
             }
