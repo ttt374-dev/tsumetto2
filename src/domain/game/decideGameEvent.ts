@@ -2,6 +2,7 @@ import { type IntentResult } from "@/domain/game/intentResolver"
 import type { GameEvent, GameEventBaseScope, PendingPromotion } from "@/domain/game/types/GameEvent";
 import { Move, type Player } from "@/domain/kif/entity"
 import { useGameStore,  } from "@/ui/screens/player/store/useGameStore"
+import { useGameUIStore } from "@/ui/screens/player/store/useGameUIStore";
 import { useReplayStore } from "@/ui/screens/player/store/useReplayStore";
 import { useTimerStore } from "@/ui/screens/player/store/useTimerStore";
 
@@ -13,7 +14,7 @@ type GameDecision =
 //////////////////////////////////
 export function decideGameEvent(props: { 
     intentResult: IntentResult, 
-    isUserTurn: boolean,
+    //isUserTurn: boolean,
     scope: DecideGameEventScope
  }
 ): GameDecision {
@@ -28,13 +29,13 @@ export function decideGameEvent(props: {
             pendingPromotion: props.intentResult.pendingPromotion
         }
     }    
-    const event = deriveGameEvent(props.intentResult.move, props.isUserTurn, props.scope)
+    const event = deriveGameEvent(props.intentResult.move, props.scope)
     return { type: "event", event}
 }
 
-function deriveGameEvent(move: Move, isUserTurn: boolean, scope: DecideGameEventScope): GameEvent {
+function deriveGameEvent(move: Move, scope: DecideGameEventScope): GameEvent {
     //console.log("is userturn", isUserTurn)
-    const { nextMove, isLastMove, ...baseScope} = scope
+    const { nextMove, isLastMove, isUserTurn, ...baseScope} = scope
     if (!move.equals(scope.nextMove)){
         return { type: "MISTAKE", ...baseScope}
     }
@@ -54,6 +55,7 @@ function deriveGameEvent(move: Move, isUserTurn: boolean, scope: DecideGameEvent
 export type DecideGameEventScope = GameEventBaseScope & {
     nextMove: Move
     isLastMove: boolean
+    isUserTurn: boolean
 }
 export function createGameEventBaseScope(): GameEventBaseScope {
     const elapsedSec = useTimerStore.getState().elapsedSec
@@ -62,12 +64,13 @@ export function createGameEventBaseScope(): GameEventBaseScope {
     
     return { elapsedSec, ply, sessionId}
 }
-export function createDecideGameEventScope(): DecideGameEventScope {
+export function createDecideGameEventScope(sideToMove: Player): DecideGameEventScope {
     const moves = useGameStore.getState().moves
     const { ply, elapsedSec, sessionId} = createGameEventBaseScope()
-
+    const userSide = useGameUIStore(s=>s.userSide)
+    const isUserTurn = sideToMove === userSide
     const nextMove = moves[ply]
     const isLastMove = ply + 1 >= moves.length
 
-    return { nextMove, isLastMove, ply, elapsedSec, sessionId}
+    return { nextMove, isLastMove, isUserTurn, ply, elapsedSec, sessionId}
 }

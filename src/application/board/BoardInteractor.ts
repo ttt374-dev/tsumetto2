@@ -11,7 +11,7 @@ export class BoardInteractor {
     }) { }
 
     handleSquareClick(square: Square) {
-        const { position, userSide } = this.deps.boardModel
+        const { position } = this.deps.boardModel
         const { sideToMove } = position
 
         const { clickSquare, promotionPending, clearSelection, dispatchGameEvent } =
@@ -21,11 +21,10 @@ export class BoardInteractor {
         if (!intent) return
 
         const intentResult = resolveIntent(position, intent)
-        const isUserTurn = sideToMove === userSide
-        const scope = createDecideGameEventScope()
+        //const isUserTurn = sideToMove === userSide
+        const scope = createDecideGameEventScope(sideToMove)
         const decision = decideGameEvent({
-            intentResult,
-            isUserTurn,
+            intentResult,            
             scope,
         })
 

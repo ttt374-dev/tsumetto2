@@ -28,6 +28,7 @@ export type GameStore = {
     pendingPromotion: PendingPromotion | null
     
     initialize: (pos: Position, moves: Move[], sessionId?: SessionId) => void    
+    startSession: (sessionId: SessionId) => void
     loadProblem: (problem: Problem) => void
 
     choosePromotion: (promote: boolean) => Move
@@ -78,6 +79,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
             events: [],
             state: projectGameState([]),
         })
+    },
+    startSession: (sessionId) => {
+        set({ sessionId, loadedProblemId: undefined})
     },
     loadProblem: (problem) => {
         if (get().loadedProblemId === problem.id) return

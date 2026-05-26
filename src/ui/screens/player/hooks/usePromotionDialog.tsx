@@ -21,9 +21,9 @@ export function usePromotionDialog(): PromotionDialogResult {
 
     const onConfirm = (promote: boolean) => {
         const intentResult: IntentResult = { type: "move", move: choosePromotion(promote) }
-        const scope = createDecideGameEventScope()
-        const isUserTurn = position.sideToMove === userSide
-        const decision = decideGameEvent({ intentResult, isUserTurn, scope })
+        const scope = createDecideGameEventScope(position.sideToMove)
+        //const isUserTurn = position.sideToMove === userSide
+        const decision = decideGameEvent({ intentResult, scope })
 
         switch (decision.type) {
             case "invalidMove":
@@ -31,7 +31,6 @@ export function usePromotionDialog(): PromotionDialogResult {
             case "promotionPending":
                 // ここに来たらバグ
                 throw new Error("Unexpected promotionPending after confirm")
-                return
             case "event":
                 dispatch(decision.event)
                 clearSelection()

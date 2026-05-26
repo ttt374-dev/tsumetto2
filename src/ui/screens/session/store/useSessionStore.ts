@@ -41,7 +41,7 @@ export const useSessionStore = create<SessionStore>()(
                     missionId,
                     problemIds: ids,
                 })
-                useGameStore.setState({sessionId})
+                useGameStore.getState().startSession(sessionId)
             },
 
             reset: () => {
