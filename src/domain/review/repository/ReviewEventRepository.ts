@@ -1,5 +1,5 @@
-import type { ReviewEvent, ReviewEventLog } from "../ReviewEvent";
-import type { ReviewEventDatasource } from "@/infrastructure/review/ReviewEventDatasource";
+import type { ReviewEvent, ReviewEventLog } from "../types/ReviewEvent";
+import type { ReviewEventDatasource } from "@/domain/review/datasource/ReviewEventDatasource";
 
 export class ReviewEventRepository {
     constructor(

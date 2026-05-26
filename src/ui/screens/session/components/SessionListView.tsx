@@ -2,7 +2,7 @@ import { Box, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Stack 
 
 import type { ProblemId } from "@/domain/problem/entity/Problem"
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore"
-import type { SolvedResult } from "@/domain/review/solvedResult"
+import type { SolvedResult } from "@/domain/review/types/solvedResult"
 import { toSolvedResultViewData } from "@/ui/features/learning/hooks/solvedResultPresenter"
 
 export default function SessionListView(props: {

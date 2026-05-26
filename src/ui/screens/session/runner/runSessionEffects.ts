@@ -2,7 +2,7 @@ import type { NavigateFunction} from "react-router-dom"
 
 import type { SessionEffect } from "@/application/session/resolveSessionCommand"
 import type { ProblemId } from "@/domain/problem/entity/Problem"
-import type { SolvedResult } from "@/domain/review/solvedResult"
+import type { SolvedResult } from "@/domain/review/types/solvedResult"
 import type { SessionId } from "@/domain/session/entity/Session"
 
 

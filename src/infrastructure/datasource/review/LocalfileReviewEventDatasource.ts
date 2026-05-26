@@ -1,7 +1,7 @@
 import { Filesystem, Directory, Encoding } from "@capacitor/filesystem";
 
-import type { ReviewEvent, ReviewEventLog } from "../../domain/review/ReviewEvent"
-import type { ReviewEventDatasource } from "./ReviewEventDatasource";
+import type { ReviewEvent, ReviewEventLog } from "../../../domain/review/types/ReviewEvent"
+import type { ReviewEventDatasource } from "../../../domain/review/datasource/ReviewEventDatasource";
 
 const REVIEW_EVENT_LOG_FILE = "learning_event_log.json";
 

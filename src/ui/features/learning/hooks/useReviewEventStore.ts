@@ -3,8 +3,8 @@ import { v4 } from "uuid";
 
 import type { ReviewEventRepository } from "@/domain/review/repository/ReviewEventRepository";
 import type { ProblemId } from "@/domain/problem/entity/Problem";
-import type { ReviewEvent, ReviewEventLog, NewReviewEvent } from "@/domain/review/ReviewEvent";
-import type { SolvedResult } from "@/domain/review/solvedResult"
+import type { ReviewEvent, ReviewEventLog, NewReviewEvent } from "@/domain/review/types/ReviewEvent";
+import type { SolvedResult } from "@/domain/review/types/solvedResult"
 import type { SessionId } from "@/domain/session/entity/Session";
 import { useLearningRecordStore } from "@/ui/features/learning/hooks/useLearningRecordStore";
 

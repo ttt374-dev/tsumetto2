@@ -1,7 +1,7 @@
 import { Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 
 import { useReviewEventStore } from "@/ui/features/learning/hooks/useReviewEventStore"
-import type { ReviewEvent } from "@/domain/review/ReviewEvent";
+import type { ReviewEvent } from "@/domain/review/types/ReviewEvent";
 import { projectLearningState } from "@/domain/learning/service/projectLearningState";
 
 function calcAverageScore(events: ReviewEvent[]): number { 

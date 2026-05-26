@@ -7,7 +7,7 @@ import App from './ui/App/App.tsx'
 import { MissionRepository, LocalStorageMissionPersistence } from '@/domain/mission/repository/MissionRepository';
 import { ReviewEventRepository } from '@/domain/review/repository/ReviewEventRepository';
 import { LocalStrorageProblemPersistence, ProblemRepository } from '@/domain/problem/repository/ProblemRepository';
-import { LocalfileReviewEventDataSource } from '@/infrastructure/review/LocalfileReviewEventDatasource';
+import { LocalfileReviewEventDataSource } from '@/infrastructure/datasource/review/LocalfileReviewEventDatasource.ts';
 import { createDefaultMission } from '@/domain/mission/entity/createDefaultMission.ts'
 
 async function main() {

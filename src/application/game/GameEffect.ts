@@ -1,4 +1,4 @@
-import type { SolvedResult } from "@/domain/review/solvedResult";
+import type { SolvedResult } from "@/domain/review/types/solvedResult";
 import type { AlertColor } from "@mui/material";
 
 export type EffectSoundKind = "solved" | "mistake"

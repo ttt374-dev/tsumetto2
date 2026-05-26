@@ -1,4 +1,4 @@
-import type { ReviewEvent, ReviewEventLog } from "@/domain/review/ReviewEvent"
+import type { ReviewEvent, ReviewEventLog } from "@/domain/review/types/ReviewEvent"
 
 export interface ReviewEventDatasource {
     list(): Promise<ReviewEventLog>

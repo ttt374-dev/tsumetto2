@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest"
 import { projectLearningState } from "@/domain/learning/service/projectLearningState"
 import { Problem } from "@/domain/problem/entity/Problem"
-import type { ReviewReviewedEvent } from "@/domain/review/ReviewEvent"
-import { createDefaultSolvedResult } from "@/domain/review/solvedResult"
+import type { ReviewReviewedEvent } from "@/domain/review/types/ReviewEvent"
+import { createDefaultSolvedResult } from "@/domain/review/types/solvedResult"
 
 describe("projectLearningState", () => {
     const date = Date.now()

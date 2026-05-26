@@ -1,4 +1,4 @@
-import type { SolvedResult } from "@/domain/review/solvedResult";
+import type { SolvedResult } from "@/domain/review/types/solvedResult";
 
 export function calculateScore(res: SolvedResult): number{
     let score: number = 100
