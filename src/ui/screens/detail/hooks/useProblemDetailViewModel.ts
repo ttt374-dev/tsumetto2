@@ -10,6 +10,7 @@ import { projectLearningState } from '@/domain/learning/service/projectLearningS
 import { useNavigate } from 'react-router-dom';
 import { routes } from '@/ui/App/useAppNavigation';
 import type { Player } from '@/domain/kif/entity';
+import { useLearningRecordStore } from '@/ui/features/learning/hooks/useLearningRecordStore';
 
 export type SourceOption = {
     id: string
@@ -20,8 +21,10 @@ export function useProblemDetailViewModel(problem: Problem) {
     const allTags = useProblemStore(s => s.allTags)
     const allSources = useProblemStore(s => s.allSources)
     const draft = useProblemEditStore(s=>s.draft)
-    const eventLog = useReviewEventStore(s => s.eventLog)
+    const learningState = useLearningRecordStore(s=>s.stateRecords)[problem.id]
+    //const eventLog = useReviewEventStore(s => s.eventLog)
 
+    /*
     const learningState = useMemo(() => {
         const events = eventLog.filter(s => s.problemId === problem.id)
 
@@ -30,7 +33,7 @@ export function useProblemDetailViewModel(problem: Problem) {
 
         return records[problem.id]
     }, [eventLog, problem.id])
-    
+    */
     
     useInitializeProblemDraft(problem)
     
