@@ -12,6 +12,7 @@ import type { PieceType, Player, Square } from "@/domain/kif/entity";
 import type { Intent } from "@/domain/game/intentResolver";
 import type { GameEvent, PendingPromotion } from "@/domain/game/types/GameEvent";
 import { useHintStore } from "@/application/hint/useHintStore";
+import { createGameEventBaseScope } from "@/domain/game/decideGameEvent";
 
 export type PlayerActions = {
     board: BoardActions
@@ -69,14 +70,14 @@ export function usePlayerActions(): PlayerActions {
     const toggleHint = useHintStore(s=>s.toggleCandidateVisible)
     const revealHint = (hint: string) => {
         toggleHint()         
-        dispatch({type: "REVEAL_HINT", hint, ...ctx})
+        dispatch({type: "REVEAL_HINT", hint, ...scope})
     }
     const deleteProblem = useProblemStore(s => s.deleteProblem)
 
     const toast = useToast()
     const navigate = useNavigate()
 
-    const ctx = createPlayerContext()
+    const scope = createGameEventBaseScope()
 
     return {
         board: {
@@ -88,13 +89,13 @@ export function usePlayerActions(): PlayerActions {
         },
 
         moves: {
-            advancePly: () => dispatch({ type: "ADVANCE_PLY", ...ctx }),
-            retreatPly: () => dispatch({ type: "RETREAT_PLY", ...ctx }),
+            advancePly: () => dispatch({ type: "ADVANCE_PLY", ...scope }),
+            retreatPly: () => dispatch({ type: "RETREAT_PLY", ...scope }),
             reveal: () => {
-                dispatch({ type: "REVEAL", ...ctx })
+                dispatch({ type: "REVEAL", ...scope })
                 setMovesVisible(true)
             },
-            moveToPly: (to: number) => dispatch({ type: "MOVETO_PLY", to, ...ctx }),
+            moveToPly: (to: number) => dispatch({ type: "MOVETO_PLY", to, ...scope }),
             setMovesVisible, toggleMovesVisible,
         },
 

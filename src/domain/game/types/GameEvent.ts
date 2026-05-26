@@ -1,22 +1,24 @@
 import type { PromotablePieceType, Square } from "@/domain/kif/entity"
+import type { SessionId } from "@/domain/session/entity/Session"
 
-type BaseEvent = {
+export type GameEventBaseScope = {
     ply: number
     elapsedSec: number
+    sessionId: SessionId | undefined
 }
 
 export type GameEvent =
-    | ({ type: "SOLVE" } & BaseEvent)
-    | ({ type: "CORRECT" } & BaseEvent)
-    | ({ type: "MISTAKE" } & BaseEvent)
-    | ({ type: "REVEAL" } & BaseEvent)
-    | ({ type: "ABANDON" } & BaseEvent)
-    | ({type: "ADVANCE_PLY"} & BaseEvent )
-    | ({type: "RETREAT_PLY"} & BaseEvent)
-    | ({type: "MOVETO_PLY", to: number} & BaseEvent)
+    | ({ type: "SOLVE" } & GameEventBaseScope)
+    | ({ type: "CORRECT" } & GameEventBaseScope)
+    | ({ type: "MISTAKE" } & GameEventBaseScope)
+    | ({ type: "REVEAL" } & GameEventBaseScope)
+    | ({ type: "ABANDON" } & GameEventBaseScope)
+    | ({type: "ADVANCE_PLY"} & GameEventBaseScope )
+    | ({type: "RETREAT_PLY"} & GameEventBaseScope)
+    | ({type: "MOVETO_PLY", to: number} & GameEventBaseScope)
     //| ({type: "ADVANCE_OPPONENT_PLY"} & BaseEvent )
-    | ({type: "ADVANCE_TURN"} & BaseEvent )
-    | ({type: "REVEAL_HINT", hint: string} & BaseEvent)
+    | ({type: "ADVANCE_TURN"} & GameEventBaseScope )
+    | ({type: "REVEAL_HINT", hint: string} & GameEventBaseScope)
     
 export type PendingPromotion = {
     from: Square

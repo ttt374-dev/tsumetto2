@@ -5,7 +5,8 @@ import { routes } from "@/ui/App/useAppNavigation"
 import type { ProblemId } from "@/domain/problem/entity/Problem"
 import type { SolvedResult } from "@/domain/review/solvedResult"
 import type { ReviewEventLog } from "@/domain/review/ReviewEvent"
-import type { GameEvent } from "@/domain/game/types/GameEvent"
+import type { GameEvent, GameEventBaseScope } from "@/domain/game/types/GameEvent"
+import { createGameEventBaseScope } from "@/domain/game/decideGameEvent"
 
 export type SessionCommand =    
     | { type: "SUBMIT_REVIEW" }
@@ -26,10 +27,11 @@ export type SessionCommandContext = {
     events: GameEvent[]
     reviewedEvents: ReviewEventLog
     currentIndex: number
-    playerContext: {
-        ply: number
-        elapsedSec: number
-    }
+    gameEventBaseScope: GameEventBaseScope
+    //playerContext: {
+    //    ply: number
+    //    elapsedSec: number
+    //}
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -97,8 +99,8 @@ function resolveAllSessionCommands(commands: SessionCommand[], ctx: SessionComma
 
 // helpers
 function createAbandonEvent(ctx: SessionCommandContext): GameEvent {
-    const { ply, elapsedSec } = ctx.playerContext
-    return { type: "ABANDON", ply, elapsedSec }
+    const baseScope = createGameEventBaseScope()
+    return { type: "ABANDON", ...baseScope }
 }
 
 function hasSubmitted(sessionId: SessionId, pid: ProblemId, reviewedEvents: ReviewEventLog): boolean {

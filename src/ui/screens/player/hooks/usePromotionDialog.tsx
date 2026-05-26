@@ -1,4 +1,4 @@
-import { createDecideGameEventContext, decideGameEvent } from "@/domain/game/decideGameEvent"
+import { createDecideGameEventScope, decideGameEvent } from "@/domain/game/decideGameEvent"
 import type { IntentResult } from "@/domain/game/intentResolver"
 import type { PieceType, PromotablePieceType } from "@/domain/kif/entity"
 import { useBoardInputStore } from "@/ui/screens/player/store/useBoardInputStore"
@@ -21,9 +21,9 @@ export function usePromotionDialog(): PromotionDialogResult {
 
     const onConfirm = (promote: boolean) => {
         const intentResult: IntentResult = { type: "move", move: choosePromotion(promote) }
-        const ctx = createDecideGameEventContext()
-        const isUserTurn = position.sideToMove === userSide
-        const decision = decideGameEvent({ intentResult, isUserTurn, ...ctx })
+        const scope = createDecideGameEventScope(position.sideToMove)
+        //const isUserTurn = position.sideToMove === userSide
+        const decision = decideGameEvent({ intentResult, scope })
 
         switch (decision.type) {
             case "invalidMove":
@@ -31,7 +31,6 @@ export function usePromotionDialog(): PromotionDialogResult {
             case "promotionPending":
                 // ここに来たらバグ
                 throw new Error("Unexpected promotionPending after confirm")
-                return
             case "event":
                 dispatch(decision.event)
                 clearSelection()
