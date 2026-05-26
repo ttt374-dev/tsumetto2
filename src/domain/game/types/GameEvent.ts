@@ -1,8 +1,10 @@
 import type { PromotablePieceType, Square } from "@/domain/kif/entity"
+import type { SessionId } from "@/domain/session/entity/Session"
 
 export type GameEventBaseScope = {
     ply: number
     elapsedSec: number
+    sessionId: SessionId | undefined
 }
 
 export type GameEvent =

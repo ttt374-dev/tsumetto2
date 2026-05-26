@@ -5,6 +5,7 @@ import { persist, createJSONStorage } from "zustand/middleware";
 import type { MissionId } from "@/domain/mission/entity/Mission";
 import type { ProblemId } from "@/domain/problem/entity/Problem";
 import type { SessionId } from "@/domain/session/entity/Session";
+import { useGameStore } from "@/ui/screens/player/store/useGameStore";
 
 type SessionStore = {
     activeSessionId?: SessionId
@@ -40,6 +41,7 @@ export const useSessionStore = create<SessionStore>()(
                     missionId,
                     problemIds: ids,
                 })
+                useGameStore.setState({sessionId})
             },
 
             reset: () => {

@@ -8,6 +8,7 @@ import { useReplayStore } from "@/ui/screens/player/store/useReplayStore"
 import { projectGameState } from "@/domain/game/gameStateReducer"
 import type { GameEvent, PendingPromotion } from "@/domain/game/types/GameEvent"
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem"
+import type { SessionId } from "@/domain/session/entity/Session"
 
 export type GameState =  { 
     mistakes: number 
@@ -17,6 +18,7 @@ export type GameState =  {
 }    
 
 export type GameStore = {
+    sessionId: SessionId | undefined,
     loadedProblemId: ProblemId | undefined,
     events: GameEvent[]    // SoT
     state: GameState       // キャッシュ。events から derived
@@ -25,7 +27,7 @@ export type GameStore = {
     
     pendingPromotion: PendingPromotion | null
     
-    initialize: (pos: Position, moves: Move[]) => void    
+    initialize: (pos: Position, moves: Move[], sessionId?: SessionId) => void    
     loadProblem: (problem: Problem) => void
 
     choosePromotion: (promote: boolean) => Move
@@ -59,6 +61,7 @@ export function getCurrentPosition (): BuildPositionResult {
 ////////////////////////////////////
 export const useGameStore = create<GameStore>((set, get) => ({
     state: projectGameState([]),
+    sessionId: undefined,
     loadedProblemId: undefined,
     initialPosition: Position.empty(),
     moves: [],

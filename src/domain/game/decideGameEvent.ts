@@ -1,7 +1,6 @@
 import { type IntentResult } from "@/domain/game/intentResolver"
 import type { GameEvent, GameEventBaseScope, PendingPromotion } from "@/domain/game/types/GameEvent";
 import { Move, type Player } from "@/domain/kif/entity"
-import { createPlayerContext } from "@/ui/screens/player/runner/createPlayerContext";
 import { useGameStore,  } from "@/ui/screens/player/store/useGameStore"
 import { useReplayStore } from "@/ui/screens/player/store/useReplayStore";
 import { useTimerStore } from "@/ui/screens/player/store/useTimerStore";
@@ -55,15 +54,20 @@ function deriveGameEvent(move: Move, isUserTurn: boolean, scope: DecideGameEvent
 export type DecideGameEventScope = GameEventBaseScope & {
     nextMove: Move
     isLastMove: boolean
-
 }
-export function createDecideGameEventScope(): DecideGameEventScope{   
-    const moves = useGameStore.getState().moves
-    const ply = useReplayStore.getState().ply
+export function createGameEventBaseScope(): GameEventBaseScope {
     const elapsedSec = useTimerStore.getState().elapsedSec
+    const ply = useReplayStore.getState().ply
+    const sessionId = useGameStore.getState().sessionId
+    
+    return { elapsedSec, ply, sessionId}
+}
+export function createDecideGameEventScope(): DecideGameEventScope {
+    const moves = useGameStore.getState().moves
+    const { ply, elapsedSec, sessionId} = createGameEventBaseScope()
 
     const nextMove = moves[ply]
     const isLastMove = ply + 1 >= moves.length
 
-    return { nextMove, isLastMove, ply, elapsedSec}
+    return { nextMove, isLastMove, ply, elapsedSec, sessionId}
 }
