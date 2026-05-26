@@ -9,7 +9,6 @@ import { createSessionId, useSessionStore } from "@/ui/screens/session/store/use
 import { usePlannerStore } from "@/ui/screens/session/store/usePlannerStore";
 import { useUiSettingsStore } from "@/ui/screens/settings/useUiSettingsStore";
 
-
 export function useMissionStarter(){
     const problems = useProblemStore(selectActiveProblems);
     const learningRecords = useLearningRecordStore(s => s.stateRecords);

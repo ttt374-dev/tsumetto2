@@ -6,6 +6,7 @@ import type { ProblemId } from "@/domain/problem/entity/Problem";
 import type { ReviewEvent, ReviewEventLog, NewReviewEvent } from "@/domain/review/ReviewEvent";
 import type { SolvedResult } from "@/domain/review/solvedResult"
 import type { SessionId } from "@/domain/session/entity/Session";
+import { useLearningRecordStore } from "@/ui/features/learning/hooks/useLearningRecordStore";
 
 
 type ReviewEventStoreState = {
@@ -51,10 +52,11 @@ export const useReviewEventStore = create<ReviewEventStoreState>((set, get) => (
     append: (newevent: NewReviewEvent): ReviewEvent => {
         const event: ReviewEvent = { ...newevent, id: createReviewEventId(), at: Date.now() }        
         set(state => ({
-            isDirty: true,
+            //isDirty: true,
             eventLog: [...state.eventLog, event]
         }))
-        //get().save()
+        get().save()
+        useLearningRecordStore.getState().apply(event)  // learnig store も更新する
 
         return event
     },

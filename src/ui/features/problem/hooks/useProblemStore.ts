@@ -214,27 +214,3 @@ export const useProblemStore = create<ProblemState>((set, get) => ({
     ,
 
 }))
-
-/*
-/////////////////////////////////////////////////////////
-export const initProblemStore = (repo: ProblemRepository) => {
-    repository = repo
-
-    const saveRepo = debounce(async (problems: Problem[]) => {
-        try {
-            await repository.replaceAll(problems)
-        } catch (e) {
-            console.error("Failed to save problems", e)
-        }
-    }, 1000) // 1秒ごとにまとめて書き出し
-
-
-    let isInitializing = true
-    useProblemStore.subscribe(state => {
-        if (isInitializing) return
-        const allProblems = Object.values(state.byId)
-        saveRepo(allProblems)
-    })
-    // 初期ロード完了後にフラグを解除
-    isInitializing = false
-}*/
