@@ -6,6 +6,7 @@ import type { ProblemId } from "@/domain/problem/entity/Problem";
 import type { ReviewEvent, ReviewEventLog, NewReviewEvent } from "@/domain/review/ReviewEvent";
 import type { SolvedResult } from "@/domain/review/solvedResult"
 import type { SessionId } from "@/domain/session/entity/Session";
+import { useLearningRecordStore } from "@/ui/features/learning/hooks/useLearningRecordStore";
 
 
 type ReviewEventStoreState = {
@@ -55,6 +56,7 @@ export const useReviewEventStore = create<ReviewEventStoreState>((set, get) => (
             eventLog: [...state.eventLog, event]
         }))
         //get().save()
+        //useLearningRecordStore.getState().apply(event)
 
         return event
     },

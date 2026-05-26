@@ -42,7 +42,7 @@ export function useBootstrapStores(
             // projection rebuild
             useLearningRecordStore
                 .getState()
-                .updateFromEventLog(
+                .build(
                     useReviewEventStore
                         .getState()
                         .eventLog

@@ -11,7 +11,7 @@ type LearningRecordStoreState = {
     //records: LearningRecord;
     stateRecords: Record<ProblemId, LearningState>
     //getState: (id: ProblemId) => LearningState
-    
+
     build: (eventLog: ReviewEventLog) => void;
     apply: (event: ReviewEvent) => void
 };
@@ -28,26 +28,26 @@ export const useLearningRecordStore = create<LearningRecordStoreState>((set, get
         });
     },
     apply: (event) => {
-    set(state => {
-        const next = { ...state.stateRecords }
+        set(state => {
+            const next = { ...state.stateRecords }
 
-        switch(event.type) {
-            case "reviewed":
-                next[event.problemId] =
-                    reduceLearningState(
-                        next[event.problemId],
-                        event
-                    )
-                break
+            switch (event.type) {
+                case "reviewed":
+                    next[event.problemId] =
+                        reduceLearningState(
+                            next[event.problemId],
+                            event
+                        )
+                    break
 
-            case "reset":
-                delete next[event.problemId]
-                break
-        }
+                case "reset":
+                    delete next[event.problemId]
+                    break
+            }
 
-        return { stateRecords: next }
-    })
-}
+            return { stateRecords: next }
+        })
+    }
 }));
 
 // learningRecordSync.ts
