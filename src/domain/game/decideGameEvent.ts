@@ -67,7 +67,7 @@ export function createGameEventBaseScope(): GameEventBaseScope {
 export function createDecideGameEventScope(sideToMove: Player): DecideGameEventScope {
     const moves = useGameStore.getState().moves
     const { ply, elapsedSec, sessionId} = createGameEventBaseScope()
-    const userSide = useGameUIStore(s=>s.userSide)
+    const userSide = useGameUIStore.getState().userSide
     const isUserTurn = sideToMove === userSide
     const nextMove = moves[ply]
     const isLastMove = ply + 1 >= moves.length
