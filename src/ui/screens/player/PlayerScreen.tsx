@@ -4,7 +4,7 @@ import SwapVertIcon from '@mui/icons-material/SwapVert';
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import LightbulbOutlinedIcon from '@mui/icons-material/LightbulbOutlined';
 
-import PlayerRightPanel from "./components/panels/PlayerRightPanel";
+import PlayerRightHeaderPanel from "./components/panels/PlayerRightHeaderPanel";
 import TitlePanel from "./components/panels/TitlePanel";
 import MovesPanel from "./components/panels/moves/MovesPanel";
 import BoardPanel from "@/ui/screens/player/components/panels/board/BoardPanel"
@@ -114,7 +114,7 @@ function MovesControlSection({ problem, model }: {
 /////////////////////////////////////////////
 function HeaderRightSection({ problem, model }: { problem: Problem, model: PlayerPresentation }) {
     return (
-        <PlayerRightPanel
+        <PlayerRightHeaderPanel
             problemId={problem.id}
             onNavigateToDetail={model.actions.navigation.navigateToDetail}
             onDelete={model.actions.domain.deleteProblem}

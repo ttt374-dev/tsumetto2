@@ -16,7 +16,8 @@ export default function PlyControlPanel({
     //onReset,
 }: PlyControlPanelProps) {
     return (
-        <Box sx={{ border: 1, borderColor: "divider" }}>
+        <Box sx={{             
+            border: 1, borderColor: "divider" }}>
             <Stack direction="column" p={1} spacing={1}>
                 <Button
                     variant="outlined"
