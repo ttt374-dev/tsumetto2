@@ -7,9 +7,25 @@
     grid-template-columns: 20px repeat(9, 35px) 20px;
     grid-template-rows: 12px repeat(9, 35px) 12px;
     font-size: 28px;
-
+    position: relative;
 }
+.board::after {
+    content: "";
+    position: absolute;
 
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #333;
+
+    left: calc(20px + 35px * 3 - 3px);
+    top: calc(12px + 35px * 3 - 3px);
+
+    box-shadow:
+        0 calc(35px * 3) #333,
+        calc(35px * 3) 0 #333,
+        calc(35px * 3) calc(35px * 3) #333;
+}
 /* ** cell ** */
 .cell {
     border: 1px solid #aaa;
