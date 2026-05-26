@@ -27,12 +27,12 @@ export type MovesViewModel = {
     moves: Move[]
     visible: boolean
     userSide: Player
-    learningState: LearningState
+    learningState: LearningState | undefined
     isRevealed: boolean
     isSolved: boolean
 }
 export type PlayerDialogsState = {
-    learningState: LearningState
+    learningState: LearningState | undefined
 }
 export type PlayerViewModel = {
     board: BoardViewModel
@@ -47,8 +47,7 @@ export function usePlayerViewModel(problem: Problem): PlayerViewModel {
     const isRevealed = useGameStore(s => s.state.isRevealed)
     const isSolved = useGameStore(s=>s.state.isSolved)
 
-    const records = useLearningRecordStore(s => s.stateRecords)
-    const learningState = records[problem.id]
+    const learningState = useLearningRecordStore(s=>s.getLearningState(problem.id))
 
     const displayReversed = useGameUIStore(s => s.isReversed)
     const userSide = useGameUIStore(s => s.userSide)

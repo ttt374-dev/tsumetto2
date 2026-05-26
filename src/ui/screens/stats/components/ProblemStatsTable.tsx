@@ -25,8 +25,7 @@ export function ProblemStatsTable() {
         "全問題": activeProblems,
         //"未完了": unanswered,
         "レビュー対象": dueForReviewOnly,
-    }
-    
+    }    
 
     // 出典
     const allSources = useProblemStore(s=>s.allSources)

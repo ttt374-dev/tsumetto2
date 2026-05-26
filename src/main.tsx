@@ -32,7 +32,7 @@ async function bootstrap(){
         await repos.mission.replaceAll([createDefaultMission()])
     }
        
-    initializeLearningRecordSync()
+    //initializeLearningRecordSync()
     return { repos }
 
 }

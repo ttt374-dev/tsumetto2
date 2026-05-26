@@ -56,7 +56,7 @@ export const useReviewEventStore = create<ReviewEventStoreState>((set, get) => (
             eventLog: [...state.eventLog, event]
         }))
         //get().save()
-        //useLearningRecordStore.getState().apply(event)
+        useLearningRecordStore.getState().apply(event)  // learnig store も更新する
 
         return event
     },

@@ -6,7 +6,6 @@ import { projectLearningState, reduceLearningState } from "@/domain/learning/ser
 import type { LearningState } from "@/domain/learning/entity/LearningState";
 import { useReviewEventStore } from "@/ui/features/learning/hooks/useReviewEventStore";
 
-
 type LearningRecordStoreState = {
     //records: LearningRecord;
     stateRecords: Record<ProblemId, LearningState>
@@ -14,6 +13,7 @@ type LearningRecordStoreState = {
 
     build: (eventLog: ReviewEventLog) => void;
     apply: (event: ReviewEvent) => void
+    getLearningState: (problemId: ProblemId) => LearningState | undefined
 };
 
 export const useLearningRecordStore = create<LearningRecordStoreState>((set, get) => ({
@@ -47,10 +47,14 @@ export const useLearningRecordStore = create<LearningRecordStoreState>((set, get
 
             return { stateRecords: next }
         })
+    },
+    getLearningState: (pid) => {
+        return get().stateRecords[pid]
     }
 }));
 
-// learningRecordSync.ts
+// review event append で learning store を apply で更新するようにしたので、
+// 下記 subscription は不要
 let unsubscribe: (() => void) | undefined
 
 export function initializeLearningRecordSync() {
