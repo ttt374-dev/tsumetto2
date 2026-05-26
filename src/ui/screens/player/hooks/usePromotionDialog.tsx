@@ -1,4 +1,4 @@
-import { createDecideGameEventContext, decideGameEvent } from "@/domain/game/decideGameEvent"
+import { createDecideGameEventScope, decideGameEvent } from "@/domain/game/decideGameEvent"
 import type { IntentResult } from "@/domain/game/intentResolver"
 import type { PieceType, PromotablePieceType } from "@/domain/kif/entity"
 import { useBoardInputStore } from "@/ui/screens/player/store/useBoardInputStore"
@@ -21,9 +21,9 @@ export function usePromotionDialog(): PromotionDialogResult {
 
     const onConfirm = (promote: boolean) => {
         const intentResult: IntentResult = { type: "move", move: choosePromotion(promote) }
-        const ctx = createDecideGameEventContext()
+        const scope = createDecideGameEventScope()
         const isUserTurn = position.sideToMove === userSide
-        const decision = decideGameEvent({ intentResult, isUserTurn, ...ctx })
+        const decision = decideGameEvent({ intentResult, isUserTurn, scope })
 
         switch (decision.type) {
             case "invalidMove":
