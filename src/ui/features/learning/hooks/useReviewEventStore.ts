@@ -52,10 +52,10 @@ export const useReviewEventStore = create<ReviewEventStoreState>((set, get) => (
     append: (newevent: NewReviewEvent): ReviewEvent => {
         const event: ReviewEvent = { ...newevent, id: createReviewEventId(), at: Date.now() }        
         set(state => ({
-            isDirty: true,
+            //isDirty: true,
             eventLog: [...state.eventLog, event]
         }))
-        //get().save()
+        get().save()
         useLearningRecordStore.getState().apply(event)  // learnig store も更新する
 
         return event
