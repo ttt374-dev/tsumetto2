@@ -56,7 +56,7 @@ abstract class ImportError extends Error {
 
 export async function getExsitingTitle(repo: ProblemRepository): Promise<Set<string>> {
     //const store = useProblemStore(repo)
-    const problems = await repo.load()
+    const problems = await repo.findAll()
     return new Set(problems.filter(p => p.isActive).map(p => p.title))
 }
 function resolveTitle(title: string, existing: Set<string>) {

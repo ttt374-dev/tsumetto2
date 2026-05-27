@@ -10,8 +10,8 @@ export class ReviewEventRepository {
         return new ReviewEventRepository(dataSource)
     }
 
-    async list() {
-        return this.dataSource.list()
+    async findAll() {
+        return this.dataSource.findAll()
     }
 
     async append(event: ReviewEvent) {

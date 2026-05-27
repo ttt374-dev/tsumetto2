@@ -114,7 +114,7 @@ export const useProblemStore = create<ProblemState>((set, get) => ({
         const repo = get().repo
         if (!repo) throw new Error("Repository not initialized")
 
-        const data = await repo.load()
+        const data = await repo.findAll()
         const byId: Record<ProblemId, Problem> = {}
 
         data.forEach(p => {

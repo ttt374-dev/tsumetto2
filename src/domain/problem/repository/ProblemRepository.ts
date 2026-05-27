@@ -1,7 +1,49 @@
 import { Filesystem, Directory, Encoding } from "@capacitor/filesystem";
-import { Problem, type ProblemDTO } from "../entity/Problem";
+import { Problem, type ProblemDTO, type ProblemId } from "../entity/Problem";
+import type { ProblemDatasource } from "@/domain/problem/datasource/ProbleDatasource";
 
 export class ProblemRepository {
+    constructor(
+        private readonly ds: ProblemDatasource
+    ){}
+    async findAll(){ 
+        const dtos = await this.ds.findAll()
+        return dtos.map(Problem.fromDTO)
+    }
+    async findById(id: ProblemId){ 
+        const dto = await this.ds.findById(id)
+        return dto ? Problem.fromDTO(dto) : undefined
+    }
+    async findByTitle(title: string){
+        const dto = await this.ds.findByTitle(title)
+        return dto ? Problem.fromDTO(dto) : undefined
+    }
+    async add(problem: Problem){ 
+        await this.ds.insert(problem.toDTO())
+    }
+    async addMany(problems: Problem[]){
+        problems.map(this.add)
+    }
+    async update(problem: Problem){
+        await this.ds.update(problem.toDTO())
+    }
+    async updateMany(problems: Problem[]){
+        problems.map(this.update)
+    }
+    async remove(pid: ProblemId){
+        await this.ds.delete(pid)
+    }
+    async removeMany(ids: ProblemId[]){
+        ids.map(this.remove)
+    }
+    async replaceAll(problems: Problem[]){ // TODO: transaction
+        const all = await this.findAll()
+        this.removeMany(all.map(p=>p.id))
+        this.addMany(problems)
+    }
+}
+///////////////////////////////////////////////////////
+export class ProblemRepositoryOrig {
     constructor(
         private readonly persist: ProblemPersistence
     ){}

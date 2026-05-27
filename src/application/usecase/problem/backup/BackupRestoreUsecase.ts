@@ -59,8 +59,8 @@ export function useBackupRestoreUsecase(
             let json: string
 
             try {
-                problems = await problemRepo.load()
-                reviewEvents = await reviewRepo.list()
+                problems = await problemRepo.findAll()
+                reviewEvents = await reviewRepo.findAll()
                 missions = await missionRepo.findAll()
             } catch (e) {
                 if (e instanceof Error) {
