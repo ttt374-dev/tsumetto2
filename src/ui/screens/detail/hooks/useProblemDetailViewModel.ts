@@ -11,6 +11,7 @@ import { routes } from '@/ui/App/useAppNavigation';
 import type { Player } from '@/domain/kif/entity';
 import { useLearningRecordStore } from '@/ui/features/learning/hooks/useLearningRecordStore';
 import { useProblemMutation } from '@/ui/features/problem/hooks/useProblemMutation';
+import { useReviewEventCommitter } from '@/ui/features/learning/hooks/useReviewEventCommitter';
 
 export type SourceOption = {
     id: string
@@ -43,7 +44,7 @@ function useInitializeProblemDraft(problem: Problem){
 
 export function useProblemEditActions(pid: ProblemId) {
     const { deleteProblems, updateProblem } = useProblemMutation()
-    const appendReset = useReviewEventStore(s => s.appendReset)    
+    const { appendReset } = useReviewEventCommitter()
     const navigate = useNavigate()
     const draft = useProblemEditStore(s=>s.draft)
     //const updateProblem = useProblemStore(s => s.updateProblem)
