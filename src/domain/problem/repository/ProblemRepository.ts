@@ -1,5 +1,4 @@
-import { Filesystem, Directory, Encoding } from "@capacitor/filesystem";
-import { Problem, type ProblemDTO, type ProblemId } from "../entity/Problem";
+import { Problem, type ProblemId } from "../entity/Problem";
 import type { ProblemDatasource } from "@/domain/problem/datasource/ProbleDatasource";
 
 export class ProblemRepository {
@@ -42,6 +41,7 @@ export class ProblemRepository {
         this.addMany(problems)
     }
 }
+/*
 ///////////////////////////////////////////////////////
 export class ProblemRepositoryOrig {
     constructor(
@@ -176,4 +176,4 @@ export class LocalStrorageProblemPersistence implements ProblemPersistence {
             throw e
         }
     }
-}
+}*/
