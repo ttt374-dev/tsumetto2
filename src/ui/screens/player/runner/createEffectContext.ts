@@ -1,6 +1,6 @@
 import type { EffectSoundKind } from "@/application/game/GameEffect";
 import type { ProblemId } from "@/domain/problem/entity/Problem";
-import type { SolvedResult } from "@/domain/review/solvedResult";
+import type { SolvedResult } from "@/domain/review/types/solvedResult";
 import type { Toast } from "@/ui/App/providers/ToastProvider";
 import type { EffectContext } from "@/ui/screens/player/runner/runGameEffects";
 import type { DialogControllers } from "@/ui/screens/player/runner/usePlayerRunner";

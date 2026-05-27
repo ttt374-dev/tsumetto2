@@ -1,6 +1,6 @@
 import type { LearningStateSnapshotRepository } from "@/domain/learning/repository/LearningStateSnapshotRepository"
 import { reduceLearningState } from "@/domain/learning/service/projectLearningState"
-import type { ReviewEvent } from "@/domain/review/ReviewEvent"
+import type { ReviewEvent } from "@/domain/review/types/ReviewEvent"
 
 export class LearningStateProjector {
     constructor(

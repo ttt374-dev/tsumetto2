@@ -1,5 +1,5 @@
 import { Box, List, ListItem, ListItemText } from "@mui/material"
-import type { ReviewEvent } from "@/domain/review/ReviewEvent";
+import type { ReviewEvent } from "@/domain/review/types/ReviewEvent";
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
 import { useReviewEventStore } from "@/ui/features/learning/hooks/useReviewEventStore";
 import { calculateScore } from "@/domain/learning/service/calculateScore";

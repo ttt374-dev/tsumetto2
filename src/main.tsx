@@ -7,8 +7,9 @@ import App from './ui/App/App.tsx'
 import { MissionRepository, LocalStorageMissionPersistence } from '@/domain/mission/repository/MissionRepository';
 import { ReviewEventRepository } from '@/domain/review/repository/ReviewEventRepository';
 import { LocalStrorageProblemPersistence, ProblemRepository } from '@/domain/problem/repository/ProblemRepository';
-import { LocalfileReviewEventDataSource } from '@/infrastructure/review/LocalfileReviewEventDatasource';
+import { LocalfileReviewEventDataSource } from '@/infrastructure/datasource/review/LocalfileReviewEventDatasource.ts';
 import { createDefaultMission } from '@/domain/mission/entity/createDefaultMission.ts'
+import { LocalFileProblemDatasource } from '@/infrastructure/datasource/problem/LocalfileProblemDatasource.ts';
 
 async function main() {
     const repos = createRepositories()
@@ -22,7 +23,7 @@ async function main() {
 }
 function createRepositories() {
     return {
-        problem: new ProblemRepository(new LocalStrorageProblemPersistence()),
+        problem: new ProblemRepository(new LocalFileProblemDatasource()),
         reviewEvent: new ReviewEventRepository(new LocalfileReviewEventDataSource()),
         mission: new MissionRepository(new LocalStorageMissionPersistence()),
     }

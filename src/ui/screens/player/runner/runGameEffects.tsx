@@ -1,5 +1,5 @@
 import type { GameEffect, EffectSoundKind } from "@/application/game/GameEffect";
-import type { SolvedResult } from "@/domain/review/solvedResult";
+import type { SolvedResult } from "@/domain/review/types/solvedResult";
 import { type Toast } from "@/ui/App/providers/ToastProvider";
 
 export type EffectContext = {

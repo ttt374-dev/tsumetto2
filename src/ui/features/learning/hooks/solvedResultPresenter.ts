@@ -1,5 +1,5 @@
 import { deriveOutcome } from "@/domain/review/service/solvedResultDeriver";
-import type { SolvedResult } from "@/domain/review/solvedResult";
+import type { SolvedResult } from "@/domain/review/types/solvedResult";
 
 export const solvedResultLabels = {
     outcome: "結果",

@@ -1,5 +1,5 @@
 import { deriveOutcome } from "@/domain/review/service/solvedResultDeriver"
-import type { SolvedResult } from "@/domain/review/solvedResult"
+import type { SolvedResult } from "@/domain/review/types/solvedResult"
 
 type AnswerQuality = 0 | 1 | 2 | 3 | 4 | 5
 // 正解評価

@@ -7,7 +7,7 @@ import type { SessionId } from "@/domain/session/entity/Session";
 import type { StatsSummary } from "@/domain/learning/entity/StatsSummary";
 import type { SessionIdContext as SessionIdRouteContext } from "@/ui/screens/summary/SessionSummaryScreen";
 import type { ProblemId } from "@/domain/problem/entity/Problem";
-import type { ReviewEventLog } from "@/domain/review/ReviewEvent";
+import type { ReviewEventLog } from "@/domain/review/types/ReviewEvent";
 
 export type SessionSummaryViewModel = 
     | { type: "error", message: string}

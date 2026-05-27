@@ -1,6 +1,6 @@
 import type { LearningState } from "@/domain/learning/entity/LearningState"
 import type { ProblemId } from "@/domain/problem/entity/Problem"
-import type { LearningStateDatasource } from "@/infrastructure/learningState/LearningStateDatasource"
+import type { LearningStateDatasource } from "@/infrastructure/datasource/learningState/LearningStateDatasource"
 
 export class LearningStateSnapshotRepository {
     constructor(

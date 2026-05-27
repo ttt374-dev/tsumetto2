@@ -2,9 +2,9 @@ import { deriveAnswerQuality } from "@/domain/learning/entity/AnswerQuality"
 import { createDefaultLearningState, type LearningState, type LearningStats, type SchedulingState } from "@/domain/learning/entity/LearningState"
 import { calculateScore } from "@/domain/learning/service/calculateScore"
 import type { ProblemId } from "@/domain/problem/entity/Problem"
-import type { ReviewEvent, ReviewReviewedEvent } from "@/domain/review/ReviewEvent"
+import type { ReviewEvent, ReviewReviewedEvent } from "@/domain/review/types/ReviewEvent"
 import { deriveOutcome } from "@/domain/review/service/solvedResultDeriver"
-import type { SolvedResult } from "@/domain/review/solvedResult"
+import type { SolvedResult } from "@/domain/review/types/solvedResult"
 
 const LearningStep = [10, 60, 60*12]
 const MAX_INTERVAL_DAYS = 60

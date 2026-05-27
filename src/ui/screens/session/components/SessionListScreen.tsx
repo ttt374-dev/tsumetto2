@@ -7,8 +7,8 @@ import SessionListView from "@/ui/screens/session/components/SessionListView"
 import { Button, Stack } from "@mui/material"
 import { useLocation, useNavigate, useParams } from "react-router-dom"
 import type { ProblemId } from "@/domain/problem/entity/Problem"
-import type { SolvedResult } from "@/domain/review/solvedResult"
-import type { ReviewEvent } from "@/domain/review/ReviewEvent"
+import type { SolvedResult } from "@/domain/review/types/solvedResult"
+import type { ReviewEvent } from "@/domain/review/types/ReviewEvent"
 import { useSessionRouteContext } from "@/ui/screens/session/hooks/useSessionRouteContext"
 
 

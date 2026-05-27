@@ -1,5 +1,5 @@
 import type { ProblemId } from "@/domain/problem/entity/Problem"
-import type { ReviewReviewedEvent } from "@/domain/review/ReviewEvent"
+import type { ReviewReviewedEvent } from "@/domain/review/types/ReviewEvent"
 
 export const MasteryStatuses = [
   "unlearned",

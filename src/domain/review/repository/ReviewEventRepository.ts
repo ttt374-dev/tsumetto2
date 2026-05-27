@@ -1,5 +1,5 @@
-import type { ReviewEvent, ReviewEventLog } from "../ReviewEvent";
-import type { ReviewEventDatasource } from "@/infrastructure/review/ReviewEventDatasource";
+import type { ReviewEvent, ReviewEventLog } from "../types/ReviewEvent";
+import type { ReviewEventDatasource } from "@/domain/review/datasource/ReviewEventDatasource";
 
 export class ReviewEventRepository {
     constructor(
@@ -10,8 +10,8 @@ export class ReviewEventRepository {
         return new ReviewEventRepository(dataSource)
     }
 
-    async list() {
-        return this.dataSource.list()
+    async findAll() {
+        return this.dataSource.findAll()
     }
 
     async append(event: ReviewEvent) {
