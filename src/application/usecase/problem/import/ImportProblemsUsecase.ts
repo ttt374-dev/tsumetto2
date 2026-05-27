@@ -16,10 +16,11 @@ export const DefaultImportOptions: ImportOptions = {
     duplicateTitleStrategy: "skip"
 }
 
-export type ImportStatus =
-    | "imported"   // 正常に追加 or 上書き
-    | "skipped"    // 同名などで取り込まなかった
-    | "failed"     // 技術的・業務的エラー
+
+//export type ImportStatus =
+//    | "imported"   // 正常に追加 or 上書き
+//    | "skipped"    // 同名などで取り込まなかった
+//    | "failed"     // 技術的・業務的エラー
 
 export type ImportResult =
     | {
