@@ -7,6 +7,7 @@ import type { ProblemType } from "@/domain/problem/entity/ProblemType";
 import { ProblemTypeFilterControl } from "@/ui/features/problem/query/components/ProblemTypeFilterControl";
 import { problemFieldLabels } from "@/ui/features/problem/hooks/problemPresenter";
 import { useDialogState } from "@/ui/common/hooks/useDialogState";
+import { useProblemMutation } from "@/ui/features/problem/hooks/useProblemMutation";
 
 export function useMultipleProblemsEditDialogController() {
     const dialog = useDialogState()
@@ -125,7 +126,7 @@ export function MultipleProblemsEditorDialog(props: {
     const [tagsToDelete, setTagsToDelete] = useState<string[]>([])
     const [tagsToAdd, setTagsToAdd] = useState<string[]>([])
 
-    const updateProblems = useProblemStore(s => s.updateProblems)
+    const { updateProblems } = useProblemMutation()
     const handleConfirm = () => {
         updateProblems(props.checkedIds, (p) => {
             let next = p

@@ -6,6 +6,7 @@ import { useSessionStore } from "@/ui/screens/session/store/useSessionStore"
 import { useNavigate } from "react-router-dom"
 import { runSessionEffects } from "@/ui/screens/session/runner/runSessionEffects"
 import { createGameEventBaseScope } from "@/domain/game/decideGameEvent"
+import { useReviewEventCommitter } from "@/ui/features/learning/hooks/useReviewEventCommitter"
 
 export function createSessionCommandContextFromStores(  // スナップショット    
     currentIndex: number
@@ -29,7 +30,7 @@ export function createSessionCommandContextFromStores(  // スナップショッ
 export function useSessionExecutor(sessionId: SessionId, currentIndex: number) {    
     // run effect deps
     const navigate = useNavigate()
-    const appendReview = useReviewEventStore(s => s.appendReview)
+    const { appendReview } = useReviewEventCommitter()
     //console.log("session exec: curentindex", currentIndex)
             
     

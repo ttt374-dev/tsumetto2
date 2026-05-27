@@ -13,6 +13,7 @@ import type { Intent } from "@/domain/game/intentResolver";
 import type { GameEvent, PendingPromotion } from "@/domain/game/types/GameEvent";
 import { useHintStore } from "@/application/hint/useHintStore";
 import { createGameEventBaseScope } from "@/domain/game/decideGameEvent";
+import { useProblemMutation } from "@/ui/features/problem/hooks/useProblemMutation";
 
 export type PlayerActions = {
     board: BoardActions
@@ -72,7 +73,7 @@ export function usePlayerActions(): PlayerActions {
         toggleHint()         
         dispatch({type: "REVEAL_HINT", hint, ...scope})
     }
-    const deleteProblem = useProblemStore(s => s.deleteProblem)
+    const { deleteProblem } = useProblemMutation()
 
     const toast = useToast()
     const navigate = useNavigate()

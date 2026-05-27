@@ -3,22 +3,13 @@ import FooterNavigation from "@/ui/common/components/FooterNavigation";
 import { AppShell } from "@/ui/common/components/layout/AppShell";
 import { ReviewEventHistory } from "@/ui/screens/history/ReviewEventHistory";
 import { IconButton } from "@mui/material";
-import { useReviewEventStore } from '@/ui/features/learning/hooks/useReviewEventStore';
-
-
-function useHistoryActions(){
-    const clearAllEvents = useReviewEventStore(s => s.clearAll)
-    return {
-        clear: clearAllEvents
-    }
-}
 
 export default function HistoryScreen(){
-    const actions = useHistoryActions()
-    
+   
     const handleClearAllReviewEvents = () => {
-        if (!window.confirm("すべての学習データを消去してよろしいですか？")) return
-        actions.clear()
+        if (!window.confirm("すべての学習データをリセットしますか？")) return
+        //actions.clear()
+        alert("TODO")
     }
 
     return (<AppShell        

@@ -10,6 +10,8 @@ import { useNavigate } from 'react-router-dom';
 import { routes } from '@/ui/App/useAppNavigation';
 import type { Player } from '@/domain/kif/entity';
 import { useLearningRecordStore } from '@/ui/features/learning/hooks/useLearningRecordStore';
+import { useProblemMutation } from '@/ui/features/problem/hooks/useProblemMutation';
+import { useReviewEventCommitter } from '@/ui/features/learning/hooks/useReviewEventCommitter';
 
 export type SourceOption = {
     id: string
@@ -37,17 +39,15 @@ function useInitializeProblemDraft(problem: Problem){
         useProblemEditStore
             .getState()
             .setDraft(toEditDraft(problem))
-
-
     }, [problem.id])
 }
 
 export function useProblemEditActions(pid: ProblemId) {
-    const deleteProblems = useProblemStore(s => s.deleteProblems)
-    const appendReset = useReviewEventStore(s => s.appendReset)    
+    const { deleteProblems, updateProblem } = useProblemMutation()
+    const { appendReset } = useReviewEventCommitter()
     const navigate = useNavigate()
     const draft = useProblemEditStore(s=>s.draft)
-    const updateProblem = useProblemStore(s => s.updateProblem)
+    //const updateProblem = useProblemStore(s => s.updateProblem)
     
     // 学習データリセット
     const resetLearning = () => {
