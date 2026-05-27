@@ -111,9 +111,7 @@ export const useProblemStore = create<ProblemState>((set, get) => ({
     allSources: [],
 
     reload: async () => {
-        const repo = get().repo
-        if (!repo) throw new Error("Repository not initialized")
-
+        const repo = ensureRepo(get().repo)
         const data = await repo.findAll()
         const byId: Record<ProblemId, Problem> = {}
 
@@ -121,96 +119,90 @@ export const useProblemStore = create<ProblemState>((set, get) => ({
             byId[p.id] = p
         })
         set(reduceById(byId))
-
     },
     save: async () => {
-        const { repo, byId } = get()
-        if (!repo) throw new Error("Repository not initialized")
-        await repo.replaceAll(Object.values(byId))
+        const repo = ensureRepo(get().repo)
+        await repo.replaceAll(Object.values(get().byId))
     },
-    updateProblem: (id, updater) => {
-        get().updateProblems([id], updater)
-    },
-    updateProblems: (ids, updater) => {
+    updateProblem: async (id, updater) => {
+        const repo = ensureRepo(get().repo)
         const state = get()
+        const current = state.byId[id]
+        if (!current) return
 
-        //const updated: Problem[] = []
-        let changed = false
-        const newById = { ...state.byId }
+        const next = updater(current)
+        if (next === current) return
 
-        for (const id of ids) {
-            const current = newById[id]
-            if (!current) continue
+        // optimistic update
+        set(state => reduceById({
+            ...state.byId,
+            [id]: next
+        }))
 
-            //const next = current.withUpdated(updater)
-            const next = updater(current)
-            if (next !== current) {
-                newById[id] = next
-                changed = true
-                //updated.push(next)
-            }
+        try {
+            await repo.update(next)
+        } catch (e) {
+            console.error(e)
+            // rollback
+            set(state)
+            throw e
         }
-
-        //if (updated.length === 0) return
-        if (!changed) return
-
-        // ① all を再構築
-        //const newAll = state.all.map(p =>
-        //    newById[p.id] ?? p
-        //)
-
-        // ② 楽観的更新
-        //const prevState = state.byId
-        set(reduceById(newById))
-        state.save()
     },
-
+    updateProblems: async (ids, updater) => {
+        for (const id of ids) {
+            get().updateProblem(id, updater)
+        }
+    },
     toggleStar: (id: ProblemId) => {
         get().updateProblem(id, prev => prev.toggleStar())
     },
-    deleteProblem: (id: ProblemId) => {
-        get().deleteProblems([id])
-    },
-
-    deleteProblems: (idsToDelete) => {
+    deleteProblem: async (id: ProblemId) => {
+        const repo = ensureRepo(get().repo)
         const state = get()
-        const newById = { ...state.byId }
+        const current = state.byId[id]
+        if (!current) return
+        const next = current.softDelete()
 
-        const updated: Problem[] = []
+        // no-op
+        if (next === current) return
 
-        for (const id of idsToDelete) {
-            const current = newById[id]
-            if (!current) continue
+        // optimistic update
+        set(reduceById({
+            ...state.byId,
+            [id]: next,
+        }))
 
-            const next = current.softDelete()
-            newById[id] = next
-            updated.push(next)
+        try {
+            await repo.update(next)
+        } catch (e) {
+            console.error(e)
+            // rollback
+            set(reduceById(state.byId))
+            throw e
         }
-
-        if (updated.length === 0) return
-        set(reduceById(newById))
-        state.save()
     },
-
-    deleteAll: () => {
-        const state = get()
-        const newById = { ...state.byId }
-        const updated: Problem[] = []
-
-        for (const id in newById) {
-            const current = newById[id]
-            if (current.deletedAt) continue
-
-            const next = current.softDelete()
-            newById[id] = next
-            updated.push(next)
+    deleteProblems: async (ids: ProblemId[]) => {
+        for (const id of ids) {
+            get().deleteProblem(id)
         }
+    },
+    deleteAll: async () => {
+        const state = get()
+        const ids = Object.values(state.byId)
+            .filter(p => !p.deletedAt)
+            .map(p => p.id)
 
-        if (updated.length === 0) return
-
-        set(reduceById(newById))
-        state.save()
-    }
-    ,
+        get().deleteProblems(ids)
+    },
 
 }))
+/////////////////////
+function ensureRepo(repo: ProblemRepository | undefined): ProblemRepository {
+    if (!repo) {
+        throw new Error(
+            "ProblemRepository not initialized"
+        )
+    }
+
+    return repo
+}
