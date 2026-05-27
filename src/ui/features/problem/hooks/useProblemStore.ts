@@ -57,11 +57,15 @@ export type ProblemState = {
 
     reload: () => Promise<void>
     //save: () => Promise<void>
-    updateProblem: (id: ProblemId, updater: (p: Problem) => Problem) => Promise<void>
-    updateProblems: (ids: string[], updater: (p: Problem) => Problem) => Promise<void>
-    deleteProblem: (id: ProblemId) => Promise<void>
-    deleteProblems: (ids: ProblemId[]) => Promise<void>
-    toggleStar: (id: ProblemId) => Promise<void>
+
+    replaceAll: (problems: Problem[]) => void
+    patchProblem: (id: ProblemId, next: Problem) => void
+
+    //updateProblem: (id: ProblemId, updater: (p: Problem) => Problem) => Promise<void>
+    //updateProblems: (ids: string[], updater: (p: Problem) => Problem) => Promise<void>
+    //deleteProblem: (id: ProblemId) => Promise<void>
+    //deleteProblems: (ids: ProblemId[]) => Promise<void>
+    //toggleStar: (id: ProblemId) => Promise<void>
 }
 
 export function extractTags(problems: Problem[]): string[] {
@@ -125,6 +129,31 @@ export const useProblemStore = create<ProblemState>((set, get) => ({
         const repo = ensureRepo(get().repo)
         await repo.replaceAll(Object.values(get().byId))
     },*/
+     replaceAll: (problems) => {
+
+        const byId: Record<
+            ProblemId,
+            Problem
+        > = {}
+
+        for (const p of problems) {
+            byId[p.id] = p
+        }
+
+        set(reduceById(byId))
+    },
+
+    patchProblem: (id, next) => {
+
+        set(state =>
+            reduceById({
+                ...state.byId,
+                [id]: next
+            })
+        )
+    },
+    
+    /*
     updateProblem: async (id, updater) => {
         const repo = ensureRepo(get().repo)
         const state = get()
@@ -188,6 +217,7 @@ export const useProblemStore = create<ProblemState>((set, get) => ({
             await get().deleteProblem(id)
         }
     },    
+    */
 
 }))
 /////////////////////
