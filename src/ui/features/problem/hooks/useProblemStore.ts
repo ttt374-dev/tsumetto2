@@ -22,6 +22,7 @@ export const selectActiveProblemIdSet = createSelector(
         return set
     }
 )
+/*
 export const selectAllTags = (s: ProblemState): string[] => {
     const set = new Set<string>()
     Object.values(s.byId).forEach(p => {
@@ -41,7 +42,7 @@ export const selectAllSources = (s: ProblemState): string[] => {
     return Array.from(set)
 }
 
-
+*/
 /////////////////////////
 export type ProblemState = {
     repo?: ProblemRepository
@@ -55,13 +56,12 @@ export type ProblemState = {
     activeProblems: Problem[]
 
     reload: () => Promise<void>
-    save: () => Promise<void>
-    updateProblem: (id: ProblemId, updater: (p: Problem) => Problem) => void
-    updateProblems: (ids: string[], updater: (p: Problem) => Problem) => void
-    deleteProblem: (id: ProblemId) => void
-    deleteProblems: (ids: ProblemId[]) => void
-    toggleStar: (id: ProblemId) => void
-    deleteAll: () => void
+    //save: () => Promise<void>
+    updateProblem: (id: ProblemId, updater: (p: Problem) => Problem) => Promise<void>
+    updateProblems: (ids: string[], updater: (p: Problem) => Problem) => Promise<void>
+    deleteProblem: (id: ProblemId) => Promise<void>
+    deleteProblems: (ids: ProblemId[]) => Promise<void>
+    toggleStar: (id: ProblemId) => Promise<void>
 }
 
 export function extractTags(problems: Problem[]): string[] {
@@ -120,10 +120,11 @@ export const useProblemStore = create<ProblemState>((set, get) => ({
         })
         set(reduceById(byId))
     },
+    /*
     save: async () => {
         const repo = ensureRepo(get().repo)
         await repo.replaceAll(Object.values(get().byId))
-    },
+    },*/
     updateProblem: async (id, updater) => {
         const repo = ensureRepo(get().repo)
         const state = get()
@@ -144,17 +145,18 @@ export const useProblemStore = create<ProblemState>((set, get) => ({
         } catch (e) {
             console.error(e)
             // rollback
-            set(state)
+            //set(state)
+            set(reduceById(state.byId))
             throw e
         }
     },
     updateProblems: async (ids, updater) => {
         for (const id of ids) {
-            get().updateProblem(id, updater)
+            await get().updateProblem(id, updater)
         }
     },
-    toggleStar: (id: ProblemId) => {
-        get().updateProblem(id, prev => prev.toggleStar())
+    toggleStar: async (id: ProblemId) => {
+        await get().updateProblem(id, prev => prev.toggleStar())
     },
     deleteProblem: async (id: ProblemId) => {
         const repo = ensureRepo(get().repo)
@@ -183,17 +185,9 @@ export const useProblemStore = create<ProblemState>((set, get) => ({
     },
     deleteProblems: async (ids: ProblemId[]) => {
         for (const id of ids) {
-            get().deleteProblem(id)
+            await get().deleteProblem(id)
         }
-    },
-    deleteAll: async () => {
-        const state = get()
-        const ids = Object.values(state.byId)
-            .filter(p => !p.deletedAt)
-            .map(p => p.id)
-
-        get().deleteProblems(ids)
-    },
+    },    
 
 }))
 /////////////////////
