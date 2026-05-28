@@ -163,7 +163,7 @@ function ReverseControl({ toggleReversed }: { toggleReversed: () => void }) {
 function UserSideControl({ userSide, toggleUserSide }: { userSide: Player, toggleUserSide: () => void }) {
     //console.log("userside", userSide)
     return (
-        <Box onClick={toggleUserSide}>
+        <Box onClick={toggleUserSide} sx={{cursor: 'pointer'}}>
             {userSide === "black" ? "▲" : "△"}
         </Box>
     )
