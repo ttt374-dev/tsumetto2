@@ -5,22 +5,34 @@ type GameUIState = {
     isReversed: boolean
     userSide: Player
     isMovesVisible: boolean
+    boardFlash: boolean
+    //hintEnabled: boolean
 
     initialize: () => void
     toggleReversed: () => void
     toggleUserSide: () => void
+    setUserSide: (player: Player) => void
     setReversed: (value: boolean) => void
     setMovesVisible: (value: boolean) => void
-    toggleMovesVisible: () => void
+    toggleMovesVisible: () => void    
+    flashBoard: () => void
+    //enableHint: () => void
+    //toggleHint: () => void
+    
 }
+const BoardFlashMs = 100
 
 export const useGameUIStore = create<GameUIState>((set, get) => ({
     isReversed: false,
     userSide: "black",
     isMovesVisible: false,
+    boardFlash: false,
+    hintEnabled: false,
 
     initialize: () => {
-        set({ isReversed: false, userSide: "black", isMovesVisible: false})
+        set({ isReversed: false, userSide: "black", isMovesVisible: false,
+            //hintEnabled: false,
+        })
     },
     toggleReversed: () => {
         set({ isReversed: !get().isReversed })
@@ -28,7 +40,9 @@ export const useGameUIStore = create<GameUIState>((set, get) => ({
     toggleUserSide: () => {
         set({ userSide: get().userSide === "black" ? "white" : "black"})
     },
-
+    setUserSide: (user: Player) => {
+        set({userSide: user})
+    },
     setReversed: (value) => {
         set({ isReversed: value })
     },
@@ -36,6 +50,18 @@ export const useGameUIStore = create<GameUIState>((set, get) => ({
         set({ isMovesVisible: value}),
     toggleMovesVisible: () => {
         set({ isMovesVisible: !get().isMovesVisible})
-    }
-    
+    },
+    flashBoard: () => {
+        set({
+            boardFlash: true
+        })
+
+        setTimeout(() => {
+            if (get().boardFlash === true) {
+                set({
+                    boardFlash: false
+                })
+            }
+        }, BoardFlashMs)
+    },  
 }))

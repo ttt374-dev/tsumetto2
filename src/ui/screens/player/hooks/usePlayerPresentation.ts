@@ -4,7 +4,7 @@ import { usePlayerActions, type PlayerActions } from "@/ui/screens/player/hooks/
 import { usePlayerViewModel } from "@/ui/screens/player/hooks/usePlayerViewModel"
 import { usePromotionDialog } from "@/ui/screens/player/hooks/usePromotionDialog"
 import type { DialogControllers } from "@/ui/screens/player/runner/usePlayerRunner"
-import type { PlayerViewModel } from "@/ui/screens/player/vm/PlayerViewModel"
+import type { PlayerViewModel } from "@/ui/screens/player/hooks/usePlayerViewModel";
 
 export type PlayerPresentation = {
     state: PlayerViewModel

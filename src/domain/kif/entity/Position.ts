@@ -43,7 +43,6 @@ export class Position {
             const resHands = hands.add(this.sideToMove, target.type)
             if(!resHands.ok) return resHands
             hands = resHands.value
-
         }
 
         // promote
@@ -65,8 +64,8 @@ export class Position {
     }
     private applyDrop(move: Move): Result<Position, ApplyMoveError> {
         //console.log("apply drop", move, this.sideToMove, this.hands.toDTO())
-        const piece = new Piece(move.pieceType, this.sideToMove)
-        
+        const piece = Piece.create(move.pieceType, this.sideToMove)
+                
 
         const nextBoard = this.board.set(move.to, piece)
         //const nextHands = this.hands.remove(this.sideToMove, move.pieceType)

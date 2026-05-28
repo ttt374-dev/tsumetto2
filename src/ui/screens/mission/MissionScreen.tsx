@@ -1,4 +1,4 @@
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import EditIcon from '@mui/icons-material/Edit';
 import { IconButton } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add'
@@ -29,8 +29,6 @@ function MissionEditModeControl(){
 }
 ///////////////////
 export default function MissionScreen() {
-    //const editMode = useMissionModeStore(s=>s.editMode)
-
     return (
         <AppShell
             header="Missions"
@@ -39,10 +37,7 @@ export default function MissionScreen() {
             //fab={!editMode && <MissionFabMenu onCreateNewMission={()=>navigate(routes.newMission)} />}
             footer={<FooterNavigation/>}
         >
-
-            <MissionList/>           
-            
-            
+            <MissionList/>
         </AppShell>
     );
 }

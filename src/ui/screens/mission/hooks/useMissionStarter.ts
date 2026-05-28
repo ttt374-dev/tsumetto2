@@ -7,8 +7,7 @@ import { useLearningRecordStore } from "@/ui/features/learning/hooks/useLearning
 import type { Mission } from "@/domain/mission/entity/Mission";
 import { createSessionId, useSessionStore } from "@/ui/screens/session/store/useSessionStore";
 import { usePlannerStore } from "@/ui/screens/session/store/usePlannerStore";
-import { v4 } from "uuid";
-
+import { useUiSettingsStore } from "@/ui/screens/settings/useUiSettingsStore";
 
 export function useMissionStarter(){
     const problems = useProblemStore(selectActiveProblems);
@@ -17,6 +16,7 @@ export function useMissionStarter(){
     const planner = usePlannerStore()    
     const start = useSessionStore(s => s.start);    
     const sessionId = createSessionId()
+    const chunkSize = useUiSettingsStore(s=>s.settings.chunkSize)
 
     const startMission = (mission: Mission) => {       
         const ids = applyQuery(
@@ -24,11 +24,11 @@ export function useMissionStarter(){
             learningRecords,
             mission.queryState).map(p=>p.id)
 
-        planner.create(mission.id, ids, 5)
+        planner.create(mission.id, ids, chunkSize)
         const chunk = planner.nextChunk()
-        chunk && start(sessionId, chunk, mission.id);  // TODO: chunk が空の時の処理
-        console.log("start mission", routes.sessionPlay(sessionId))
-        navigate(routes.sessionPlay(sessionId, 0));
+        if (!chunk) return
+        start(sessionId, chunk, mission.id)
+        navigate(routes.sessionPlay(sessionId))
     };
 
     return { startMission }

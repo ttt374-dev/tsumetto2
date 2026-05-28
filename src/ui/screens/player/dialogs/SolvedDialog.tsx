@@ -4,7 +4,7 @@ import { useState } from "react"
 import { deriveAnswerQuality } from "@/domain/learning/entity/AnswerQuality"
 import type { LearningState } from "@/domain/learning/entity/LearningState"
 import type { ProblemId } from "@/domain/problem/entity/Problem"
-import type { SolvedResult } from "@/domain/review/solvedResult"
+import type { SolvedResult } from "@/domain/review/types/solvedResult"
 import { toSolvedResultViewData } from "@/ui/features/learning/hooks/solvedResultPresenter"
 import { toLearningStateViewData } from "@/ui/features/learning/hooks/learningPresenter"
 
@@ -48,7 +48,7 @@ export function SolvedDialog({ open, onClose, onConfirm, solvedResult, learningS
     return (
         <Dialog open={open} onClose={onClose} maxWidth="xl" 
            sx={{
-            mt: 24,
+    //            mt: 24,
     /*"& .MuiDialog-container": {
       alignItems: "flex-end",
       paddingBottom: "96px",

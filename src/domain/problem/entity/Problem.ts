@@ -1,5 +1,5 @@
 import { v4 } from 'uuid'
-import { KifData, type KifDataDTO } from '../../kif/entity'
+import { KifData, type KifDataDTO, type Player } from '../../kif/entity'
 import { parseKif } from '@/domain/kif/service/parser/parseKif'
 import type { ProblemType } from '@/domain/problem/entity/ProblemType'
 
@@ -14,15 +14,18 @@ export type ProblemData = {
     source: string
     tags: string[]
     comment: string,
+    hint: string,
+    userSide: Player,
 
     isStarred: boolean
-    isReferecenOnly: boolean
+    isReferenceOnly: boolean
     
     createdAt: number
     updatedAt: number
     deletedAt?: number
 }
 function createDefaultValues(): ProblemData {
+    const now = Date.now()
     return {
         id: v4(),
         title: "untitled",
@@ -32,9 +35,11 @@ function createDefaultValues(): ProblemData {
         source: "",
         tags: [],
         comment: "",
+        hint: "",
+        userSide: "black",
 
         isStarred: false,
-        isReferecenOnly: false,
+        isReferenceOnly: false,
         createdAt: Date.now(),
         updatedAt: Date.now(),
         deletedAt: undefined
@@ -54,6 +59,8 @@ export class Problem {
         readonly source: string,
         readonly tags: Tags,
         readonly comment: string,
+        readonly hint: string,
+        readonly userSide: Player,
 
         readonly isStarred: boolean,
         readonly isReferenceOnly: boolean,
@@ -79,20 +86,25 @@ export class Problem {
             source: this.source,
             tags: [...this.tags],
             comment: this.comment,
+            hint: this.hint,
+            userSide: this.userSide,
 
             isStarred: this.isStarred,
-            isReferecenOnly: this.isReferenceOnly,
+            isReferenceOnly: this.isReferenceOnly,
             createdAt: this.createdAt,
             updatedAt: this.updatedAt,            
             deletedAt: this.deletedAt
         }
     }
 
+    
+
     static fromDTO(dto: ProblemDTO): Problem {
-        return new Problem(dto.id, dto.title, KifData.fromDTO(dto.kifData),            
-            dto.type, dto.source, dto.tags, dto.comment,
-            dto.isStarred, dto.isReferecenOnly,
-            dto.createdAt, dto.updatedAt, dto.deletedAt)
+        const d = normalizeProblemDTO(dto)
+        return new Problem(d.id, d.title, KifData.fromDTO(d.kifData),            
+            d.type, d.source, d.tags, d.comment, d.hint, d.userSide,
+            d.isStarred, d.isReferenceOnly,
+            d.createdAt, d.updatedAt, d.deletedAt)
     }
     static createFromText(text: string, title: string): Problem | null{
         const r = parseKif(text)
@@ -135,7 +147,7 @@ export class Problem {
     setReferenceOnly(isReferecenOnly: boolean): Problem {
         return Problem.fromDTO({
             ...this.toDTO(),
-            isReferecenOnly
+            isReferenceOnly: isReferecenOnly
         })
     }
     setTitle(title: string): Problem {
@@ -169,7 +181,18 @@ export class Problem {
             comment,
         })
     }
-    
+    setHint(hint: string): Problem {
+        return Problem.fromDTO({
+            ...this.toDTO(),
+            hint,
+        })
+    }
+    setUserSide(userSide: Player): Problem {
+        return Problem.fromDTO({
+            ...this.toDTO(),
+            userSide,
+        })
+    }
     get isDelete(): boolean {
         return !!this.deletedAt
     }
@@ -202,7 +225,7 @@ export class Problem {
                 changed = true
             }
         }
-        console.log("remove tags", tagsToRemove, changed, newTags)
+        //console.log("remove tags", tagsToRemove, changed, newTags)
         if (!changed) return this
         return Problem.fromDTO({
             ...this.toDTO(),
@@ -215,4 +238,33 @@ export class Problem {
             deletedAt: Date.now()
         })
     }
+}
+
+// normalizer
+function normalizeProblemDTO(dto: Partial<ProblemDTO>): ProblemDTO {
+    const defaults = createDefaultValues()
+
+    return {
+        id: dto.id ?? defaults.id,
+        title: dto.title ?? defaults.title,
+        kifData: dto.kifData ?? defaults.kifData,
+
+        type: dto.type ?? defaults.type,
+        source: dto.source ?? defaults.source,
+        tags: Array.isArray(dto.tags) ? dto.tags : [],
+        comment: dto.comment ?? defaults.comment,
+        hint: dto.hint ?? defaults.hint,
+        userSide:  isPlayer(dto.userSide) ? dto.userSide : defaults.userSide,
+
+        isStarred: dto.isStarred ?? defaults.isStarred,
+        isReferenceOnly: dto.isReferenceOnly ?? defaults.isReferenceOnly,
+
+        createdAt: dto.createdAt ?? Date.now(),
+        updatedAt: dto.updatedAt ?? Date.now(),
+        deletedAt: dto.deletedAt,
+    }
+}
+
+function isPlayer(v: unknown): v is Player {
+    return v === "black" || v === "white"
 }

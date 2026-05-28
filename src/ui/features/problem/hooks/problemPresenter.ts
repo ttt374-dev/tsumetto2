@@ -32,6 +32,7 @@ export const problemTypeLabels: Record<ProblemType, string> = {
     realistic: "実践",
     hisshi: "必死",
     tesuji: "手筋",
+    yose: "寄せ",
     wholegame: "ゲーム全体"
 }
 

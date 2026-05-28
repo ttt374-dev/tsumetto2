@@ -1,94 +1,109 @@
-import type { GameEffect } from "@/application/game/GameEffect";
-import type { ProblemId } from "@/domain/problem/entity/Problem";
-import { useToast } from "@/ui/App/providers/ToastProvider";
-import type { DialogControllers } from "@/ui/screens/player/runner/usePlayerRunner";
-import { useReplayStore } from "@/ui/screens/player/store/useReplayStore";
-import { useTimerStore } from "@/ui/screens/player/store/useTimerStore";
+import type { GameEffect, EffectSoundKind } from "@/application/game/GameEffect";
+import type { SolvedResult } from "@/domain/review/types/solvedResult";
+import { type Toast } from "@/ui/App/providers/ToastProvider";
 
-
-
-export type EffectRunnerDeps = {
-    toast: ReturnType<typeof useToast>
-    dialogs: DialogControllers
-    problemId: ProblemId   
-
+export type EffectContext = {
+    advancePly: () => void
+    retreatPly: () => void
+    moveTo: (i: number) => void
+    startAnimation: () => void
+    endAnimation: () => void
+    stopTimer: () => void
+    flashBoard: () => void
+    playSound: (kind: EffectSoundKind) => void
+    openSolvedResultDialog: (res: SolvedResult) => void
+    closeSolvedResultDialog: () => void
+    toast: (t: Toast) => void
 }
-export async function runGameEffects(effects: GameEffect[], deps: EffectRunnerDeps, control: RunControl) {
-    const id = control.next()
-    for (const effect of effects) {
-        // 👉 キャンセルチェック
-        if (!control.isActive(id)) return
+export type EffectRunner = {
+    run: (effects: GameEffect[]) => Promise<void>
+    cancel: () => void
+}
 
-        const replay = useReplayStore.getState()
-        const timer = useTimerStore.getState()
+export function createEffectRunner(ctx: EffectContext): EffectRunner {
+    const control = createRunControl()
 
-        switch (effect.type) {
-            case "ADVANCE_PLY":
-                if (effect.direction === "FORWARD")
-                    replay.advancePly()
-                else
-                    replay.retreatPly()
-                break
+    return {
+        async run(effects) {
+            const id = control.next()
 
-            case "MOVE_TO":
-                replay.moveTo(effect.to)
-                break
+            for (const effect of effects) {
+                if (!control.isActive(id)) return
 
-            case "START_ANIMATION":
-                replay.startAnimation()
-                break
+                await runGameEffect(effect, ctx)
+            }
+        },
 
-            case "END_ANIMATION":
-                replay.endAnimation()
-                break
-
-            case "STOP_TIMER":
-                timer.stop()
-                break
-
-            case "WAIT":
-                await new Promise(res => setTimeout(res, effect.ms))
-                break
-
-            case "OPEN_DIALOG":
-                if (effect.dialog === "solvedResult") {
-                    deps.dialogs.solvedResult.openDialog(deps.problemId, effect.payload)
-                }
-                break
-            case "CLOSE_DIALOG":
-                if (effect.dialog === "solvedResult") {
-                    deps.dialogs.solvedResult.closeDialog()
-                }
-                break
-
-            /*case "EMIT_EVENT":
-                deps.event.emit(effect.event)
-                //console.log("EMIT EVENT")
-                break;
-*/
-            case "TOAST":
-                deps.toast({ message: effect.message, severity: effect.severity ?? "info" })
-
+        cancel() {
+            control.cancel()
         }
     }
 }
-type RunControl = {
+
+export async function runGameEffect(effect: GameEffect,  ctx: EffectContext) {    
+    switch (effect.type) {
+        case "ADVANCE_PLY":
+            ctx.advancePly()
+            break;
+        case "RETREAT_PLY":
+            ctx.retreatPly()
+            break
+        case "MOVE_TO":
+            ctx.moveTo(effect.to)
+            break
+        case "START_ANIMATION":
+            ctx.startAnimation()
+            break
+        case "END_ANIMATION":
+            ctx.endAnimation()
+            break
+        case "STOP_TIMER":
+            ctx.stopTimer()
+            break
+        case "WAIT":
+            await delay(effect.ms)
+            break
+        case "OPEN_SOLVED_RESULT_DIALOG":
+            //deps.dialogs.solvedResult.openDialog(deps.problemId, effect.payload)
+            ctx.openSolvedResultDialog(effect.solvedResult)
+            break
+        case "CLOSE_SOLVED_RESULT_DIALOG":
+            //deps.dialogs.solvedResult.closeDialog()
+            ctx.closeSolvedResultDialog()
+            break  
+        case "TOAST":
+            ctx.toast({ message: effect.message, severity: effect.severity ?? "info" })
+            break;
+        case "FLASH_BOARD":
+            ctx.flashBoard()
+            break;
+        case "PLAY_SOUND":
+            ctx.playSound(effect.kind)
+            break;
+    }
+
+}
+async function delay(ms: number){
+    await new Promise(res => setTimeout(res, ms))
+}
+/////////////////////////////////////
+export type RunControl = {
     next: () => number
     isActive: (id: number) => boolean
     cancel: () => void
 }
 export function createRunControl(): RunControl {
-  let currentId = 0
+    let currentId = 0
 
-  return {
-    next() {
-      return ++currentId
-    },
-    isActive(id: number) {
-      return id === currentId
-    },
-    cancel() {
-      currentId++
+    return {
+        next() {
+            return ++currentId
+        },
+        isActive(id: number) {
+            return id === currentId
+        },
+        cancel() {
+            currentId++
+        }
     }
-  }
 }

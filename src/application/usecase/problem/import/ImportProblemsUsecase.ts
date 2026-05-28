@@ -16,10 +16,11 @@ export const DefaultImportOptions: ImportOptions = {
     duplicateTitleStrategy: "skip"
 }
 
-export type ImportStatus =
-    | "imported"   // 正常に追加 or 上書き
-    | "skipped"    // 同名などで取り込まなかった
-    | "failed"     // 技術的・業務的エラー
+
+//export type ImportStatus =
+//    | "imported"   // 正常に追加 or 上書き
+//    | "skipped"    // 同名などで取り込まなかった
+//    | "failed"     // 技術的・業務的エラー
 
 export type ImportResult =
     | {
@@ -56,7 +57,7 @@ abstract class ImportError extends Error {
 
 export async function getExsitingTitle(repo: ProblemRepository): Promise<Set<string>> {
     //const store = useProblemStore(repo)
-    const problems = await repo.load()
+    const problems = await repo.findAll()
     return new Set(problems.filter(p => p.isActive).map(p => p.title))
 }
 function resolveTitle(title: string, existing: Set<string>) {

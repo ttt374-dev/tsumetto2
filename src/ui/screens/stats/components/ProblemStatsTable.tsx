@@ -15,18 +15,15 @@ export function ProblemStatsTable() {
 
     const queryState = { ...DefaultQueryState, dueForReviewOnly: true}
     const dueForReviewOnly = applyFilter(activeProblems, learningRecords, queryState)
-    //console.log("due review", dueForReviewOnly)
 
     // 総合
-    //const answered = activeProblems.filter(p => learningRecords[p.id] !== undefined)    
     const idsMap: Record<string, Record<string, Problem[]>> = {}
 
     idsMap["general"] =  {
         "全問題": activeProblems,
         //"未完了": unanswered,
         "レビュー対象": dueForReviewOnly,
-    }
-    
+    }    
 
     // 出典
     const allSources = useProblemStore(s=>s.allSources)

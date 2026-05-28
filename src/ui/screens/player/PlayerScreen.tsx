@@ -2,8 +2,9 @@ import React from "react"
 import { Box, Button, IconButton, Stack } from "@mui/material"
 import SwapVertIcon from '@mui/icons-material/SwapVert';
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import LightbulbOutlinedIcon from '@mui/icons-material/LightbulbOutlined';
 
-import PlayerRightPanel from "./components/panels/PlayerRightPanel";
+import PlayerRightHeaderPanel from "./components/panels/PlayerRightHeaderPanel";
 import TitlePanel from "./components/panels/TitlePanel";
 import MovesPanel from "./components/panels/moves/MovesPanel";
 import BoardPanel from "@/ui/screens/player/components/panels/board/BoardPanel"
@@ -12,36 +13,32 @@ import PlyControlPanel from "@/ui/screens/player/components/panels/PlyControlPan
 import { Problem } from "@/domain/problem/entity/Problem"
 import { AppShell } from "@/ui/common/components/layout/AppShell";
 import PromotionDialog from "@/ui/screens/player/dialogs/PromotionDialog";
-import { SolvedDialog, useSolvedDialogController } from "@/ui/screens/player/dialogs/SolvedDialog";
+import { SolvedDialog } from "@/ui/screens/player/dialogs/SolvedDialog";
 import type { PlayerIntent } from "@/application/session/interpretor/interpretPlayerIntent";
 import type { Player } from "@/domain/kif/entity";
-import _ from "lodash";
 import type { GameEvent } from "@/domain/game/types/GameEvent";
-import { useGameStore } from "@/ui/screens/player/store/useGameStore";
 import { usePlayerPresentation, type PlayerPresentation } from "@/ui/screens/player/hooks/usePlayerPresentation";
-import { usePlayerRunner, type PlayerRunnerModel } from "@/ui/screens/player/runner/usePlayerRunner";
+import { usePlayerRunner } from "@/ui/screens/player/runner/usePlayerRunner";
+import { useUiSettingsStore } from "@/ui/screens/settings/useUiSettingsStore";
 
 ///////////////////////////////////////////
 export default function PlayerScreen({ problem, title, footer, onPlayerIntent, onGameEvent, }: {
     problem: Problem
-    title: React.ReactNode
+    title?: React.ReactNode
     footer?: React.ReactNode
     onGameEvent?: (e: GameEvent) => void
     onPlayerIntent?: (e: PlayerIntent) => void
 }) {
-
     // view model
     const model = usePlayerPresentation(problem)
-    const runner = usePlayerRunner(problem, model.ui.dialogs, {
-        onPlayerIntent: onPlayerIntent,
-        onGameEvent: onGameEvent
-    })    
-
+    usePlayerRunner({problem, dialogs: model.ui.dialogs, onGameEvent: onGameEvent})
+   
     // 消された場合
     if (problem.deletedAt) {
         return <AppShell>Deleted: {problem.title}</AppShell>
     }
-
+    //console.log("model", model)
+    const resolvedTitle = title ?? problem.title
     ////////////////////////////////////////////////////////////////////////
     return (
         <AppShell
@@ -49,14 +46,15 @@ export default function PlayerScreen({ problem, title, footer, onPlayerIntent, o
             footer={footer}
             rightActions={<HeaderRightSection problem={problem} model={model} />}
         >
-            <Stack sx={{ minHeight: 0, height: "100%" }} spacing={1} >
-                <TitlePanel title={title} />
+            <Stack sx={{ minHeight: 0, height: "100%", flexGrow: 1, p: 1,
+                overflow: "hidden" }} spacing={1} >
+                <TitlePanel title={resolvedTitle} />                
                 <BoardPanel boardModel={model.state.board} actions={model.actions.board} />
                 <MovesControlSection
                     problem={problem} model={model} />
             </Stack>
 
-            <DialogSection model={model} runner={runner} />
+            <DialogSection model={model} onPlayerIntent={onPlayerIntent} />
 
         </AppShell>
     )
@@ -68,23 +66,33 @@ function MovesControlSection({ problem, model }: {
     const { moves: { ply, visible, maxPly, userSide, isRevealed, isSolved } } = model.state
     const {
         game: { toggleReversed, toggleUserSide },
-        moves: { advancePly, retreatPly, reveal, toggleMovesVisible } } = model.actions
+        moves: { advancePly, retreatPly, reveal, toggleMovesVisible, },
+        hint: { revealHint }
+     } = model.actions
+    
+    const showElapsedSec = useUiSettingsStore(s=>s.settings.showElapsedSec)    
+    const handleRevealHint = () => {        
+        revealHint(problem.hint)
+    }
+    //console.log("problem", problem)
 
-
-    const events = useGameStore(s => s.events)
-    //const solvedResult = deriveSolvedResultFromEvents(events)
     return (
-        <Stack direction="row" sx={{ minHeight: 0, flexGrow: 1, p: 1 }} spacing={1}>
+        <Stack direction="row" sx={{ 
+            minHeight: 0, flexGrow: 1, p: 1, overflow: "hidden",
+        }} spacing={1}>
             <MovesPanel
                 problem={problem} movesModel={model.state.moves}
                 actions={model.actions.moves}
             />
             <Box sx={{ flex: 1, border: 1, borderColor: "divider" }}>
                 <Stack direction="row" alignItems="center">
-                    <TimerControlPanel />
+                    { showElapsedSec && <TimerControlPanel /> }
                     <ReverseControl toggleReversed={toggleReversed} />
                     <UserSideControl userSide={userSide} toggleUserSide={toggleUserSide} />
                     <ToggleMovesVisible onToggleMovesVisible={toggleMovesVisible} disabled={!isRevealed} />
+                    <IconButton onClick={handleRevealHint}>
+                        <LightbulbOutlinedIcon/>
+                    </IconButton>
                 </Stack>
                 {visible &&
                     <PlyControlPanel
@@ -106,7 +114,7 @@ function MovesControlSection({ problem, model }: {
 /////////////////////////////////////////////
 function HeaderRightSection({ problem, model }: { problem: Problem, model: PlayerPresentation }) {
     return (
-        <PlayerRightPanel
+        <PlayerRightHeaderPanel
             problemId={problem.id}
             onNavigateToDetail={model.actions.navigation.navigateToDetail}
             onDelete={model.actions.domain.deleteProblem}
@@ -114,9 +122,12 @@ function HeaderRightSection({ problem, model }: { problem: Problem, model: Playe
     )
 }
 
-function DialogSection({ model, runner }: { model: PlayerPresentation, runner: PlayerRunnerModel  }) {
+function DialogSection({ model, onPlayerIntent}: { 
+    model: PlayerPresentation,
+    onPlayerIntent?: (int: PlayerIntent) => void}) {
+
     const confirmSolved = () => { 
-        runner.handlers.handlePlayerIntent({ type: "PROBLEM_CONFIRMED" }) 
+        onPlayerIntent?.({ type: "PROBLEM_CONFIRMED" }) 
     }
 
     return (
@@ -152,7 +163,7 @@ function ReverseControl({ toggleReversed }: { toggleReversed: () => void }) {
 function UserSideControl({ userSide, toggleUserSide }: { userSide: Player, toggleUserSide: () => void }) {
     //console.log("userside", userSide)
     return (
-        <Box onClick={toggleUserSide}>
+        <Box onClick={toggleUserSide} sx={{cursor: 'pointer'}}>
             {userSide === "black" ? "▲" : "△"}
         </Box>
     )

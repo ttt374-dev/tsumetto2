@@ -6,16 +6,33 @@
     display: grid;
     grid-template-columns: 20px repeat(9, 35px) 20px;
     grid-template-rows: 12px repeat(9, 35px) 12px;
-
+    font-size: 28px;
+    position: relative;
 }
+.board::after {
+    content: "";
+    position: absolute;
 
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #666;
+
+    left: calc(20px + 35px * 3 - 3px);
+    top: calc(12px + 35px * 3 - 3px);
+
+    box-shadow:
+        0 calc(35px * 3) #666,
+        calc(35px * 3) 0 #666,
+        calc(35px * 3) calc(35px * 3) #666;
+}
 /* ** cell ** */
 .cell {
     border: 1px solid #aaa;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 28px;
+    
     background: var(--mui-palette-board-bg);
     cursor: default;
     /* background: #f8f4e6;*/
@@ -44,7 +61,10 @@
     outline: 2px solid rgba(255, 80, 80, 0.4);
     outline-offset: -2px;
 }
-
+.nextMove {
+    outline: 2px solid rgba(80, 255, 80, 0.4);
+    outline-offset: -2px;    
+}
 /*  label */
 .fileLabel {
     display: grid;
@@ -60,5 +80,13 @@
 }
 
 .handpiece {
-    font-size: 20px;
+    font-size: 20px; 
+}
+
+.flashBoard {
+    background-color: "error.main";
+    opacity: 0.2;
+    transition: "opacity 150ms ease";
+    pointer-events: "none";
+
 }

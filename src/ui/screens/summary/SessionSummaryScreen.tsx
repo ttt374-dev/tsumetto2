@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { Box, Button, Stack } from "@mui/material";
 
 import { SummaryView } from "./SummaryView";
@@ -26,6 +26,12 @@ function useSessionIdContext(): SessionIdContext {
     return { result, sessionId}
 
 }
+type ButtonItem = {
+    label: string
+    onClick: () => void
+    variant: "outlined" | "contained"
+    disabled?: boolean
+}
 /////////////////////////////////////////////
 export default function SessionSummaryScreen() {    
     const route = useSessionIdContext()
@@ -33,6 +39,16 @@ export default function SessionSummaryScreen() {
     const { navigation } = useSessionSummaryActions(route.sessionId)        
 
     if (vm.type === "error") return <AppShell>Error: { vm.message }</AppShell>
+    const items: ButtonItem[] = [
+        { label: "再挑戦", onClick: navigation.retry, variant:"outlined"},
+        { label: "間違い復習", onClick: navigation.review, variant:"outlined",
+            disabled: vm.disableReview
+        },
+        { label: "次のチャンクへ", onClick: navigation.nextChunk, variant:"contained",
+            disabled: vm.disableNextChunk
+        },
+        { label: "ミッションへ", onClick: navigation.backToMission, variant:"outlined"},
+    ]
 
     return (
         <AppShell header={"Summary"}>
@@ -42,24 +58,12 @@ export default function SessionSummaryScreen() {
             <SummaryView summary={vm.summary} />
 
             <Stack direction="row" spacing={1}>
-                <Button variant="outlined" onClick={navigation.retry} fullWidth>
-                    再挑戦
-                </Button>
-                
-                <Button variant="outlined" onClick={navigation.review} fullWidth
-                    disabled={vm.disableReview}
-                >
-                    間違い復習
-                </Button>
+                { items.map((item)=> (
+                    <Button variant={item.variant} onClick={item.onClick} disabled={item.disabled} fullWidth>
+                        { item.label}
+                    </Button>
 
-                <Button variant="contained" onClick={navigation.nextChunk} fullWidth
-                    disabled={vm.disableNextChunk}
-                >
-                    次のチャンクへ
-                </Button>
-                <Button variant="outlined" fullWidth onClick={navigation.backToMission}>
-                    ミッションへ
-                </Button>
+                ))}                
             </Stack>
         </AppShell>
     )

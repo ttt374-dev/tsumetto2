@@ -4,15 +4,15 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import type { ProblemId } from "@/domain/problem/entity/Problem"
 import { StarToggleButton } from "@/ui/common/components/StarToggleButton/StarToggleButton"
 import { IconButton, Stack } from "@mui/material"
-import { useStarToggleButton } from '@/ui/common/components/StarToggleButton/useStarToggleButton';
+import { useProblemStar } from '@/ui/common/components/StarToggleButton/useProblemStar';
 
-export default function PlayerRightPanel(props: {
+export default function PlayerRightHeaderPanel(props: {
     problemId: ProblemId
     onNavigateToDetail: (id: ProblemId) => void
     onUndoLastAnswer?: () => void
     onDelete: (id: ProblemId) => void
 }){
-    const starController = useStarToggleButton(props.problemId)
+    const starController = useProblemStar(props.problemId)
     
     return (
         <Stack direction="row">

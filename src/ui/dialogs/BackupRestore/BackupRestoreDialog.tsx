@@ -2,8 +2,7 @@ import { useRef, useState } from "react"
 import { Dialog, DialogTitle, DialogContent, DialogActions,
     Button, Box, Typography, Divider } from "@mui/material"
 
-import { useBackupRestoreUsecase, type BackupData, type BackupResult, type RestoreResult } from "@/application/usecase/problem/backup/BackupRestoreUsecase"
-import { fileBackupWriter } from "@/infrastructure/fileBackupWriter"
+import { type BackupResult, type RestoreResult } from "@/application/usecase/problem/backup/BackupRestoreUsecase"
 import { useRepositoryContext } from "@/ui/App/providers/RepositoryProvider"
 
 ///////////////////////////////////////////////////
@@ -17,8 +16,7 @@ export default function BackupRestoreDialog({ open, onClose, onBackup, onRestore
     //const usecase = useBackupRestoreUsecase(repos.problem, repos.reviewEvent, repos.mission, fileBackupWriter)
     const fileInputRef = useRef<HTMLInputElement>(null)
 
-    /* ===== backup ===== */   
-   
+    /* ===== backup ===== */
     const handleBackup = async () => {
         const res = await onBackup()       
         if (res.ok) onClose()

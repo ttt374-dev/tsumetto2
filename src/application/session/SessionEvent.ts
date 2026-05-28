@@ -1,4 +1,4 @@
-import type { SolvedResult } from "@/domain/review/solvedResult";
+import type { SolvedResult } from "@/domain/review/types/solvedResult";
 
 export type SessionEvent = 
     | { type: "PROBLEM_SOLVED"; solvedResult: SolvedResult }

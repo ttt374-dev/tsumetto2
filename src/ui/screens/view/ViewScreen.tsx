@@ -14,6 +14,7 @@ import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
 import { routes } from "@/ui/App/useAppNavigation";
 import { usePlayerPresentation } from "@/ui/screens/player/hooks/usePlayerPresentation";
 import { usePlayerRunner } from "@/ui/screens/player/runner/usePlayerRunner";
+import { useEffect } from "react";
 
 export default function ViewScreen(){
     const { id } = useParams<{ id: string }>()    
@@ -26,8 +27,11 @@ export default function ViewScreen(){
 }
 function ViewContent({ problem}: { problem: Problem}){
     const model = usePlayerPresentation(problem)
-    usePlayerRunner(problem, model.ui.dialogs)
+    usePlayerRunner({problem, dialogs: model.ui.dialogs})
     //const replay = useReplayStore()
+    useEffect(()=>{
+        model.actions.moves.setMovesVisible(true)
+    }, [problem.id])
     
     const title = problem.title
     return (

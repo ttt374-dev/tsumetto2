@@ -38,6 +38,12 @@ export function ProblemTypeFilterControl( props: Props){
         
     return (
         <TextField select value={uiValue} fullWidth
+          sx={{
+        '& .MuiSelect-select': {
+            py: 0.9,
+            minHeight: 'unset',
+        },
+    }}
             label="問題タイプ"
             onChange={(e) => {
                 const value = e.target.value
@@ -54,7 +60,7 @@ export function ProblemTypeFilterControl( props: Props){
             }}
         >
             { options.map(h=>(
-                <MenuItem key={h.value} value={h.value}>{h.label}</MenuItem>
+                <MenuItem dense key={h.value} value={h.value}>{h.label}</MenuItem>
             )) }
 
         </TextField>

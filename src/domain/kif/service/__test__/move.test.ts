@@ -10,7 +10,7 @@ describe("kif", ()=>{
     //initialPosition.board.dump()
 
     it("piece", ()=>{        
-        const piece = new Piece("pawn", "black")
+        const piece = Piece.create("pawn", "black")
         const promoted = piece.promote()
         expect(promoted.promoted).toBeTruthy
 
@@ -22,8 +22,8 @@ describe("kif", ()=>{
         const res = move.apply(state)
         if (!res.ok) throw new Error
         state = res.value
-        expect(state.board.get(new Square(1, 4))?.type).toEqual("pawn")
-        expect(state.board.get(new Square(1, 4))).toBeNull
+        expect(state.board.get(Square.create(1, 4))?.type).toEqual("pawn")
+        expect(state.board.get(Square.create(1, 4))).toBeNull
     })
 
     it("drop", () => {
@@ -31,13 +31,13 @@ describe("kif", ()=>{
         const hands = Hands.create(blackHand, Hand.empty())
         let state = new Position(Board.create(), hands)
 
-        //const piece = new Piece("pawn")
+        //const piece = Piece.create("pawn")
         const move = new Move(null, Square.create(1, 1), "pawn")   
         expect(move.isDrop).toBeTruthy     
         const res = move.apply(state)
         if (!res.ok) throw new Error
         state = res.value
-        expect(state.board.get(new Square(1, 1))?.type).toEqual("pawn")
+        expect(state.board.get(Square.create(1, 1))?.type).toEqual("pawn")
         expect(state.hands.get("black").count("pawn")).toEqual(0)
 
     })
@@ -47,18 +47,18 @@ describe("kif", ()=>{
         const res = move.apply(state)
         if (!res.ok) throw new Error
         state = res.value
-        expect(state.board.get(new Square(1, 4))?.promoted).toBeTruthy       
+        expect(state.board.get(Square.create(1, 4))?.promoted).toBeTruthy       
     })
     it("capture", () => {
         let state = initialPosition
         const move = new Move(Square.create(8, 8), Square.create(1, 3), "bishop")
-        expect(state.board.get(new Square(1, 3))?.owner).toEqual("white")
+        expect(state.board.get(Square.create(1, 3))?.owner).toEqual("white")
         const res = move.apply(state)
         if (!res.ok) throw new Error
         state = res.value
         expect(state.hands.get("black").count('pawn')).toEqual(1)
-        expect(state.board.get(new Square(1, 3))?.owner).toEqual("black")
-        expect(state.board.get(new Square(1, 3))?.type).toEqual("bishop")
+        expect(state.board.get(Square.create(1, 3))?.owner).toEqual("black")
+        expect(state.board.get(Square.create(1, 3))?.type).toEqual("bishop")
         
     })
     

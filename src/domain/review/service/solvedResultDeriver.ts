@@ -1,6 +1,6 @@
 import { projectGameState } from "@/domain/game/gameStateReducer"
 import type { GameEvent } from "@/domain/game/types/GameEvent"
-import type { SolvedOutcome, SolvedResult } from "@/domain/review/solvedResult"
+import type { SolvedOutcome, SolvedResult } from "@/domain/review/types/solvedResult"
 import type { GameState } from "@/ui/screens/player/store/useGameStore"
 
 export function deriveOutcome(solvedResult: SolvedResult): SolvedOutcome{
@@ -18,6 +18,7 @@ export function deriveSolvedResult(gameState: GameState, elapsedSec: number): So
         mistakes: gameState.mistakes,
         isRevealed: gameState.isRevealed,
         isSolved: gameState.isSolved,
+        isHinted: false,  // TODO
         elapsedSec,
     }
 }

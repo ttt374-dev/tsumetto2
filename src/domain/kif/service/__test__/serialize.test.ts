@@ -6,11 +6,11 @@ import { parseKif } from "../parser/parseKif";
 
 describe("serialize", ()=>{
     it("piece", ()=>{
-        const piece = new Piece("bishop", "black")
+        const piece = Piece.create("bishop", "black")
         expect(Piece.fromDTO(piece.toDTO())).toEqual(piece)
 
         const serialized = piece.toDTO()
-        expect(serialized).toEqual(new Piece("bishop", "black", false))           
+        expect(serialized).toEqual(Piece.create("bishop", "black", false))           
        
     })
 

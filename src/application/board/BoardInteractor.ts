@@ -1,17 +1,17 @@
-import { createDecideGameEventContext, decideGameEvent } from "@/domain/game/decideGameEvent"
+import { createDecideGameEventScope, decideGameEvent } from "@/domain/game/decideGameEvent"
 import { resolveIntent } from "@/domain/game/intentResolver"
 import type { Square } from "@/domain/kif/entity"
 import type { BoardActions } from "@/ui/screens/player/hooks/usePlayerActions"
-import type { BoardOKViewModel } from "@/ui/screens/player/vm/PlayerViewModel"
+import type { BoardViewModel } from "@/ui/screens/player/hooks/usePlayerViewModel"
 
 export class BoardInteractor {
     constructor(private deps: {
-        boardModel: BoardOKViewModel
+        boardModel: BoardViewModel
         actions: BoardActions
     }) { }
 
     handleSquareClick(square: Square) {
-        const { position, userSide } = this.deps.boardModel
+        const { position } = this.deps.boardModel
         const { sideToMove } = position
 
         const { clickSquare, promotionPending, clearSelection, dispatchGameEvent } =
@@ -21,12 +21,11 @@ export class BoardInteractor {
         if (!intent) return
 
         const intentResult = resolveIntent(position, intent)
-        const isUserTurn = sideToMove === userSide
-
+        //const isUserTurn = sideToMove === userSide
+        const scope = createDecideGameEventScope(sideToMove)
         const decision = decideGameEvent({
-            intentResult,
-            isUserTurn,
-            ...createDecideGameEventContext()
+            intentResult,            
+            scope,
         })
 
         switch (decision.type) {

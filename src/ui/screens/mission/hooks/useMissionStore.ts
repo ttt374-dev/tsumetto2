@@ -8,9 +8,14 @@ type MissionStoreState = {
     setRepository: (repo: MissionRepository) => void
     missions: Mission[]
     reload: () => Promise<void>
+    patchMission: (mission: Mission) => void
+    removeMission: (id: MissionId) => void
+    /*
     save: () => Promise<void>
     saveMission: (mission: Mission) => void    
     deleteMission: (id: MissionId) => void
+    
+*/
     replaceAll: (missions: Mission[]) => void
 }
 
@@ -26,6 +31,36 @@ export const useMissionStore = create<MissionStoreState>((set, get) => ({
         console.log("load", list)
         set({ missions: list })
     },
+     patchMission: (mission) => {
+        set(state => {
+            const index = state.missions.findIndex(m => m.id === mission.id)
+
+            // insert
+            if (index === -1) {
+                return {
+                    missions: [
+                        ...state.missions,
+                        mission,
+                    ]
+                }
+            }
+
+            // update
+            const next = [...state.missions]
+            next[index] = mission
+
+            return { missions: next }
+        })
+    },
+    removeMission: (id) => {
+        set(state => ({
+            missions:
+                state.missions.filter(
+                    m => m.id !== id
+                )
+        }))
+    },
+/*
     saveMission: async (mission: Mission) => {
         console.log("save", mission)
         set(state => {
@@ -50,9 +85,9 @@ export const useMissionStore = create<MissionStoreState>((set, get) => ({
         set(state => ({ missions: state.missions.filter(d => d.id !== id) }))
         get().save()  
     },
-
+*/
     replaceAll: (missions: Mission[]) => {
         set({ missions })
-        get().save()  
+        //get().save()  
     },
 }))

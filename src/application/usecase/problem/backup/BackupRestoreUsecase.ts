@@ -2,7 +2,7 @@ import type { Result } from "@/shared/result"
 import type { MissionRepository } from "@/domain/mission/repository/MissionRepository"
 import type { ReviewEventRepository } from "@/domain/review/repository/ReviewEventRepository"
 import { Problem, type ProblemDTO } from "@/domain/problem/entity/Problem"
-import type { ReviewEventLog } from "@/domain/review/ReviewEvent"
+import type { ReviewEvent, ReviewEventLog } from "@/domain/review/types/ReviewEvent"
 import type { Mission } from "@/domain/mission/entity/Mission"
 import type { ProblemRepository } from "@/domain/problem/repository/ProblemRepository"
 import { useMissionStore } from "@/ui/screens/mission/hooks/useMissionStore"
@@ -47,7 +47,7 @@ export function useBackupRestoreUsecase(
 ): BackupRestoreUsecase { 
     const reloadProblems = useProblemStore(s=>s.reload)
     const reloadMissions = useMissionStore(s=>s.reload)
-    // TODO: error check
+    
     return {
         async backup(): Promise<BackupResult> {
             const filename = `kif-backup-${Date.now()}.json`
@@ -59,8 +59,8 @@ export function useBackupRestoreUsecase(
             let json: string
 
             try {
-                problems = await problemRepo.load()
-                reviewEvents = await reviewRepo.load()
+                problems = await problemRepo.findAll()
+                reviewEvents = await reviewRepo.findAll()
                 missions = await missionRepo.findAll()
             } catch (e) {
                 if (e instanceof Error) {
@@ -140,3 +140,6 @@ export interface BackupWriter {
     //revoke?(fileUrl: string): void
 }
 
+function restoreReviewEvent(events: ReviewEvent[]){
+
+}

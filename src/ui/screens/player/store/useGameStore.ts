@@ -2,15 +2,24 @@ import { useShallow } from "zustand/react/shallow"
 import { useMemo } from "react"
 import { create } from "zustand"
 
-import { Move, Position, Square, type PieceType, type Player, type PromotablePieceType } from "@/domain/kif/entity"
+import { Move, Position} from "@/domain/kif/entity"
 import { buildUntilPly, type BuildPositionResult } from "@/domain/kif/service/buildUntilPly"
 import { useReplayStore } from "@/ui/screens/player/store/useReplayStore"
 import { projectGameState } from "@/domain/game/gameStateReducer"
 import type { GameEvent, PendingPromotion } from "@/domain/game/types/GameEvent"
+import type { Problem, ProblemId } from "@/domain/problem/entity/Problem"
+import type { SessionId } from "@/domain/session/entity/Session"
 
-export type GameState =  { mistakes: number, isRevealed: boolean, isSolved: boolean }    
+export type GameState =  { 
+    mistakes: number 
+    isRevealed: boolean 
+    isHinted: boolean
+    isSolved: boolean 
+}    
 
 export type GameStore = {
+    sessionId: SessionId | undefined,
+    loadedProblemId: ProblemId | undefined,
     events: GameEvent[]    // SoT
     state: GameState       // キャッシュ。events から derived
     initialPosition: Position
@@ -18,7 +27,9 @@ export type GameStore = {
     
     pendingPromotion: PendingPromotion | null
     
-    initialize: (pos: Position, moves: Move[]) => void    
+    initialize: (pos: Position, moves: Move[], sessionId?: SessionId) => void    
+    startSession: (sessionId: SessionId) => void
+    loadProblem: (problem: Problem) => void
 
     choosePromotion: (promote: boolean) => Move
     promotionPending: (p: PendingPromotion) => void
@@ -51,27 +62,34 @@ export function getCurrentPosition (): BuildPositionResult {
 ////////////////////////////////////
 export const useGameStore = create<GameStore>((set, get) => ({
     state: projectGameState([]),
+    sessionId: undefined,
+    loadedProblemId: undefined,
     initialPosition: Position.empty(),
     moves: [],
     pendingPromotion: null,
     events: [],
     hasSubmitted: false,
-    //displayReversed: false,
     userSide: "black",
-    //userSide: "white",
 
-    initialize: (pos, moves) => {
+    initialize: (pos, moves) => {        
         set({
             initialPosition: pos,
             moves,
             pendingPromotion: null,
             events: [],
             state: projectGameState([]),
-            //displayReversed: false,
-            //userSide: "black"
         })
     },
-    
+    startSession: (sessionId) => {
+        set({ sessionId, loadedProblemId: undefined})
+    },
+    loadProblem: (problem) => {
+        if (get().loadedProblemId === problem.id) return
+        get().initialize(problem.kifData.initialPosition, problem.kifData.moves)
+        set({loadedProblemId: problem.id})
+    },
+
+
     promotionPending: (p: PendingPromotion) => {
         set({ pendingPromotion: p })
     },
@@ -95,17 +113,11 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
         //return nextEvents
         return nextEvents
-    },
-    //toggleReversed: () =>  
-    //    set(s => ({ displayReversed: !s.displayReversed})),
-    //toggleUserSide: () => 
-    //    set(s => ({ userSide: s.userSide === "black" ? "white" : "black"})),
-    
+    },    
 }))
 
 //////////////
 // pure helpers
-
 function createMoveFromPendingPromotion(pendingPromotion: PendingPromotion, promote: boolean) {
     return new Move(
         pendingPromotion.from,

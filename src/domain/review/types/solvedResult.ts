@@ -4,6 +4,7 @@ export type SolvedResult = {
     //outcome: SolvedOutcome
     mistakes: number
     isRevealed: boolean
+    isHinted: boolean
     isSolved: boolean
     elapsedSec: number
 }
@@ -14,7 +15,9 @@ export function createDefaultSolvedResult( partial: Partial<SolvedResult> = {}):
         mistakes: 0,
         isRevealed: false,
         isSolved: false,
+        isHinted: false,
         elapsedSec: 10,
         ...partial
     }
 }
+export type AssistLevel = "none" | "hint" | "movesRevealed"

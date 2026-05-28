@@ -1,4 +1,5 @@
-import type { ReviewReviewedEvent } from "@/domain/review/ReviewEvent"
+import type { ProblemId } from "@/domain/problem/entity/Problem"
+import type { ReviewReviewedEvent } from "@/domain/review/types/ReviewEvent"
 
 export const MasteryStatuses = [
   "unlearned",
@@ -31,6 +32,13 @@ export type LearningState = {
     score: number,
 
     lastEvent?: ReviewReviewedEvent
+}
+
+export type LearningStateSnapshot = {
+    problemId: ProblemId
+    state: LearningState
+    lastEventAt: number
+    updatedAt: number
 }
 //////////////////////////////////////
 export function createDefaultLearningState(now: number = Date.now()): LearningState {

@@ -7,21 +7,15 @@ import { interpretSessionEvent } from "@/application/session/interpretor/interpr
 import type { GameEvent } from "@/domain/game/types/GameEvent"
 import type { SessionCommand } from "@/application/session/resolveSessionCommand"
 
-export type SessionExecutor = (
-    command: SessionCommand
-) => void
+export type SessionExecutor = (command: SessionCommand) => void
 
 export type SessionBridge = {
     player: {
-        handleIntent: (
-            intent: PlayerIntent
-        ) => void
+        handleIntent: (intent: PlayerIntent) => void
     }
 
     session: {
-        handleEvent: (
-            event: SessionEvent
-        ) => void
+        handleEvent: (event: SessionEvent) => void
     }
 
     game: {
@@ -35,52 +29,31 @@ export function createSessionBridge(
     execute: SessionExecutor
 ): SessionBridge {
 
-    const handlePlayerIntent = (
-        intent: PlayerIntent
-    ) => {
-
-        const command =
-            interpretPlayerIntent(intent)
-
+    const handlePlayerIntent = (intent: PlayerIntent) => {
+        const command = interpretPlayerIntent(intent)
         execute(command)
     }
 
-    const handleSessionEvent = (
-        event: SessionEvent
-    ) => {
-
-        const command =
-            interpretSessionEvent(event)
-
+    const handleSessionEvent = (event: SessionEvent) => {
+        const command = interpretSessionEvent(event)
         execute(command)
     }
 
-    const handleGameEvent = (
-        event: GameEvent
-    ) => {
-
+    const handleGameEvent = (event: GameEvent) => {
         switch (event.type) {
-
             case "SOLVE":
-
-                execute({
-                    type: "SUBMIT_REVIEW",
-                })
-
+                execute({type: "SUBMIT_REVIEW",})
                 break
         }
     }
 
     return {
-
         player: {
             handleIntent: handlePlayerIntent,
         },
-
         session: {
             handleEvent: handleSessionEvent,
         },
-
         game: {
             handleEvent: handleGameEvent,
         },

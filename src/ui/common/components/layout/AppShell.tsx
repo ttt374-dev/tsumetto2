@@ -66,7 +66,7 @@ export function AppShell({ header, footer, rightActions, fab, children, navigate
                 fab={fab}
                 onMenuClick={drawer.openDrawer}
                 drawer={!navigateBack && 
-                    <AppDrawerMenu open={drawer.open} dialogs={dialogs}/>}
+                    <AppDrawerMenu open={drawer.open} onClose={drawer.closeDrawer} dialogs={dialogs}/>}
             >
                 {children}
             </AppLayout>

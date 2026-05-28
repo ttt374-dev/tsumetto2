@@ -6,6 +6,7 @@ export const PROBLEM_TYPES = [
   "realistic",
   "hisshi",
   "tesuji",
+  "yose",
   "wholegame",
 ] as const
 

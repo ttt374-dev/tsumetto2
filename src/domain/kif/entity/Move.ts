@@ -65,9 +65,9 @@ export type MoveDTO = {
     rawtext: string
 }
 ///////////////////////////////////
-
+/*
 export type KifHistory = { 
     initial: Position
     moves: Move[]
 }
-    
+  */  

@@ -9,8 +9,9 @@ export type DrawerCommand =
     | { type: "NAVIGATE", to: string }
     | { type: "OPEN_DIALOG", dialog: "import" | "backupRestore" }
 //////////////////////////////
-export function DrawerMenu({ open, menuItems, onCommand }: {
+export function DrawerMenu({ open, onClose, menuItems, onCommand }: {
     open: boolean,
+    onClose: () => void
     menuItems: DrawerMenuItem[]
     onCommand: (command: DrawerCommand) => void
 }) {
@@ -19,7 +20,7 @@ export function DrawerMenu({ open, menuItems, onCommand }: {
         onCommand(item.command)
     }
     return (
-        <Drawer anchor="left" open={open} >
+        <Drawer anchor="left" open={open} onClose={onClose} variant="temporary" >
             <Box width={250} mt={3} role="presentation" className={styles.header}>
                 <List>
                     {

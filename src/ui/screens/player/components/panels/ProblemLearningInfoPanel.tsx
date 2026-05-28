@@ -1,4 +1,4 @@
-import { Box } from "@mui/material"
+import { Box, Stack } from "@mui/material"
 
 import type { Problem } from "@/domain/problem/entity/Problem"
 import { toProblemViewData } from "@/ui/features/problem/hooks/problemPresenter"
@@ -10,11 +10,16 @@ export default function ProblemLearningInfoPanel(props: {
 }) {
     const { problem, learningState } = props
     return (
-        <>
+        <Stack direction="column"
+            sx={{
+                display: "flex",
+                overflowY: "auto",
+            }}
+        >
             <ProblemInfoPanel problem={problem} />
             {learningState && <LearningInfoPanel learningState={learningState} />}
 
-        </>)
+        </Stack>)
 }
 function ProblemInfoPanel({ problem }: { problem: Problem }) {
     const problemVd = toProblemViewData(problem)

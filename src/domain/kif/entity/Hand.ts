@@ -26,9 +26,9 @@ export class Hand {
     isEmpty(): boolean {
         return Object.values(this.counts).every(v => v === 0)
     }
-    dump() {
-        this.counts
-    }
+    //dump() {
+    //    this.counts
+    //}
     // 指定した駒の枚数を返す
     count(pieceType: PieceType): number {
         return this.counts[pieceType]
@@ -46,6 +46,7 @@ export class Hand {
     remove(pieceType: PieceType, n: number = 1): Result<Hand, ApplyMoveError> {        
         const current = this.count(pieceType)
         //if (current < n) throw new Error(`Not enough pieces: ${pieceType}`)
+        //console.log("remove", pieceType, current, n)
         if (current < n) return { ok: false, error: { code: "not-enough-piece", pieceType} }
         return { ok: true, value: new Hand({
             ...this.counts,
@@ -69,7 +70,8 @@ export class Hand {
 }
 
 
-export type HandDTO = Partial<Record<PieceType, number>>
+//export type HandDTO = Partial<Record<PieceType, number>>
+export type HandDTO = Record<PieceType, number>
 
 //////////////////////////////////////////
 export class Hands {
@@ -103,6 +105,10 @@ export class Hands {
     }
 
     remove(player: Player, pieceType: PieceType): Result<Hands, ApplyMoveError> {
+        const hand = this.byPlayer[player]
+        //console.log("remove hands", player, pieceType, hand.toDTO())
+        
+        
         const res = this.byPlayer[player].remove(pieceType)
         if (!res.ok) return res
         return { ok: true, value: new Hands({

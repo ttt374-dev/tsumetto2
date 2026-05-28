@@ -1,7 +1,7 @@
 import { createContext, useContext, useState } from "react";
 import { Snackbar, Alert, type AlertColor, } from "@mui/material";
 
-type Toast = {
+export type Toast = {
     message: string;
     severity?: AlertColor;
 };
