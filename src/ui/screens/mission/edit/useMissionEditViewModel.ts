@@ -8,6 +8,7 @@ import { useProblemsQuery } from "@/ui/features/problem/hooks/useProblemsQuery"
 import { DefaultQueryState, type QueryState } from "@/domain/problem/service/query/QueryState"
 import { useMissionEditorStore } from "@/ui/screens/mission/edit/useMissionEditorStore"
 import { computeStatsSummary } from "@/domain/learning/service/computeLearningSummary"
+import { useMissionMutation } from "@/ui/screens/mission/hooks/useMissionMutation"
 
 const ID_NEW = "new"
 
@@ -31,7 +32,7 @@ function useMissionEditorInitializer(id: string | undefined) {
 function useMissionEditorActions(id: string | undefined, queryState: QueryState) {    
     const draft = useMissionEditorStore(s => s.draft)
     const reset = useMissionEditorStore(s => s.reset)
-    const { saveMission, deleteMission } = useMissionStore()
+    const { saveMission, deleteMission } = useMissionMutation()
 
     const save = useCallback(async () => {
         if (!draft) return     
