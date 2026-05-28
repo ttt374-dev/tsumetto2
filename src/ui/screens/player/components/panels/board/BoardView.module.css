@@ -16,15 +16,15 @@
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background: #333;
+    background: #666;
 
     left: calc(20px + 35px * 3 - 3px);
     top: calc(12px + 35px * 3 - 3px);
 
     box-shadow:
-        0 calc(35px * 3) #333,
-        calc(35px * 3) 0 #333,
-        calc(35px * 3) calc(35px * 3) #333;
+        0 calc(35px * 3) #666,
+        calc(35px * 3) 0 #666,
+        calc(35px * 3) calc(35px * 3) #666;
 }
 /* ** cell ** */
 .cell {
