@@ -8,12 +8,10 @@ export function useMissionMutation() {
 
     const replaceAll = useMissionStore(s => s.replaceAll)
     const patchMissionLocal = useMissionStore(s => s.patchMission)    
-    const removeMissionLocal = useMissionStore(s => s.removeMission)
-    
+    const removeMissionLocal = useMissionStore(s => s.removeMission)    
 
     /////////////////////////
     // save
-
     const saveMission = async (mission: Mission) => {
         const prev = missions
 
@@ -27,11 +25,8 @@ export function useMissionMutation() {
             throw e
         }
     }
-
-
     /////////////////////////
     // delete
-
     const deleteMission = async (id: MissionId) => {
         const prev = missions
 
@@ -40,17 +35,13 @@ export function useMissionMutation() {
 
         try {
             await repos.mission.delete(id)
-
         } catch (e) {
             replaceAll(prev)
             throw e
         }
-    }
-
-    
+    }    
     /////////////////////////
     // replace all
-
     const replaceAllMissions = async (next: Mission[]) => {
         const prev = missions
 
@@ -60,9 +51,7 @@ export function useMissionMutation() {
         try {
             await repos.mission.replaceAll(next)
         } catch (e) {
-
             replaceAll(prev)
-
             throw e
         }
     }
