@@ -22,6 +22,7 @@ export const LibraryListItem = function LibraryListItem({ id, onItemClick,
         selected?: boolean,
     }) {
     const problem = useProblemStore(s => s.byId[id])
+
     const learning = useLearningRecordStore(s => s.stateRecords[id])
 
     const { bind, isLongPressedRef } = useLongPress({
@@ -31,8 +32,12 @@ export const LibraryListItem = function LibraryListItem({ id, onItemClick,
         },
     })
     const starController = useProblemStar(id)
-    const vdProblem = toProblemViewData(problem)    
     const sortKey = useProblemsQueryStore(s=>s.state.sortKey)
+    if (problem === undefined){
+        return <ListItem>no such problem id: {id}</ListItem>
+    }
+    const vdProblem = toProblemViewData(problem)    
+    
     const getSortKeyText = (sortKey: SortKey) => {
         const vdLearning = learning && toLearningStateViewData(learning)
         let text = undefined
@@ -52,6 +57,7 @@ export const LibraryListItem = function LibraryListItem({ id, onItemClick,
         }
         return text ? `${SortKeyLabel[sortKey]}: ${text}` : ""        
     }
+
 
     //////////////////////////////////////////////////////////
     return (

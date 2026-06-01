@@ -4,35 +4,52 @@ import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore"
 
 export function useProblemMutation() {
     const repos = useRepositoryContext()
-    
+
     const patchProblem = useProblemStore(s => s.patchProblem)
 
     const byId = useProblemStore(s => s.byId)
 
     const updateProblem = async (id: ProblemId, updater: (p: Problem) => Problem) => {
-        const current = byId[id]
-        if (!current) return
+        return updateProblems([id], updater)
+    }
 
-        const next = updater(current)
-        if (next === current) return
+    const updateProblems = async (ids: ProblemId[], updater: (p: Problem) => Problem) => {
+        const before: Record<ProblemId, Problem> = {}
+        const updated: Problem[] = []
 
-        // optimistic update
-        patchProblem(id, next)
+        for (const id of ids) {
+            const current = byId[id]
+            if (!current) continue
+
+            const next = updater(current)
+            if (next === current) continue
+
+            before[id] = current
+            updated.push(next)
+
+            // optimistic update
+            patchProblem(id, next)
+        }
+
+        if (updated.length === 0) return
+
         try {
-            await repos.problem.update(next)
+            await repos.problem.updateMany(updated)
         } catch (e) {
-            patchProblem(id, current)
+            // rollback
+            Object.entries(before).forEach(([id, problem]) => {
+                patchProblem(id as ProblemId, problem)
+            })
             throw e
         }
     }
-    const updateProblems = (ids: ProblemId[], updater: (p: Problem) => Problem) => {
-        ids.map(id=>updateProblem(id, updater))
-    }
     const deleteProblem = async (id: ProblemId) => {
         await updateProblem(id, p => p.softDelete())
+
     }
-    const deleteProblems = (ids: ProblemId[]) => {
-        ids.map(deleteProblem)
+    const deleteProblems = async (ids: ProblemId[]) => {
+        await updateProblems(ids, p => p.softDelete())
+        //ids.map(deleteProblem)//
     }
     const toggleStar = async (id: ProblemId) => {
         await updateProblem(id, prev => prev.toggleStar())
@@ -41,6 +58,6 @@ export function useProblemMutation() {
         updateProblem, updateProblems,
         deleteProblem, deleteProblems,
         toggleStar,
-        
+
     }
 }

@@ -10,7 +10,7 @@ import { ProblemRepository } from '@/domain/problem/repository/ProblemRepository
 import { LocalfileReviewEventDataSource } from '@/infrastructure/datasource/review/LocalfileReviewEventDatasource.ts';
 import { createDefaultMission } from '@/domain/mission/entity/createDefaultMission.ts'
 import { LocalFileProblemDatasource } from '@/infrastructure/datasource/problem/LocalfileProblemDatasource.ts';
-import { LocalfileMissionDatasource } from '@/infrastructure/datasource/mission/LocalfileProblemDatasource.ts';
+import { LocalfileMissionDatasource } from '@/infrastructure/datasource/mission/LocalfileMissionDatasource.ts';
 
 async function main() {
     const repos = createRepositories()

@@ -5,10 +5,10 @@ const STORAGE_KEY = "study-mission-v1"
 
 export class LocalfileMissionDatasource implements MissionDatasource {
     async findAll() {
-        return this.read()
+        return await this.read()
     }
     async replaceAll(missions: Mission[]){
-        return this.write(missions)
+        return await this.write(missions)
     }
     //////////////
     // TODO try-catch

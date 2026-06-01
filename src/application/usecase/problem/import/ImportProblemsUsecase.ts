@@ -75,8 +75,6 @@ export function useImportProblemsUsecase(problemRepo: ProblemRepository) {
         //console.log("import option", options)
 
         try {
-            const buf = await file.arrayBuffer();
-            const text = new TextDecoder("shift_jis").decode(buf);
             const existingTitles = await getExsitingTitle(problemRepo)
             let title = file.name
             if (existingTitles.has(title)) {
@@ -97,6 +95,8 @@ export function useImportProblemsUsecase(problemRepo: ProblemRepository) {
             }
             //const title = resolveTitle(file.name, existingTitles)
             //console.log("import tags", options)
+            const buf = await file.arrayBuffer();
+            const text = new TextDecoder("shift_jis").decode(buf);
             const newProblem = Problem.createFromText(text, title)
                 ?.setTags(options.tags)
                 ?.setSource(options.source)

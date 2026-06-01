@@ -1,3 +1,4 @@
+import { ProblemStatsTable } from "@/ui/screens/stats/components/ProblemStatsTable";
 import { Problem, type ProblemId } from "../entity/Problem";
 import type { ProblemDatasource } from "@/domain/problem/datasource/ProbleDatasource";
 
@@ -21,24 +22,31 @@ export class ProblemRepository {
         await this.ds.insert(problem.toDTO())
     }
     async addMany(problems: Problem[]){
-        problems.map(this.add)
+        //problems.map(this.add)
+        await Promise.all(
+            problems.map(problem => this.add(problem))
+        )
     }
-    async update(problem: Problem){
+    async update(problem: Problem) {
         await this.ds.update(problem.toDTO())
     }
-    async updateMany(problems: Problem[]){
-        problems.map(this.update)
+    async updateMany(problems: Problem[]) {
+        //problems.map(this.update)
+        await this.ds.updateMany(problems.map(p=>p.toDTO()))
     }
-    async remove(pid: ProblemId){
+    async remove(pid: ProblemId) {
         await this.ds.delete(pid)
     }
-    async removeMany(ids: ProblemId[]){
-        ids.map(this.remove)
+    async removeMany(ids: ProblemId[]) {
+        //ids.map(this.remove)
+        console.log("remove many", ids)
+        await this.ds.deleteMany(ids)
     }
-    async replaceAll(problems: Problem[]){ // TODO: transaction
-        const all = await this.findAll()
-        this.removeMany(all.map(p=>p.id))
-        this.addMany(problems)
+    async replaceAll(problems: Problem[]) { // TODO: transaction
+        await this.ds.replaceAll(problems.map(p=>p.toDTO()))
+        //const all = await this.findAll()
+        //await this.removeMany(all.map(p => p.id))
+        //await this.addMany(problems)
     }
 }
 /*

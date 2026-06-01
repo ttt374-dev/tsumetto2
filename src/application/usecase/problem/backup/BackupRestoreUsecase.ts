@@ -99,12 +99,14 @@ export function useBackupRestoreUsecase(
         },
 
         async restore(backupData: BackupData): Promise<RestoreResult> {
-            console.log("restore", backupData.missions)
+            //console.log("restore", backupData.missions)
             let problems: Problem[]
             try {
                 problems = backupData.problems.map(dto => Problem.fromDTO(dto))
+                console.log("restore", problems)
             } catch (e) {
-                            if (e instanceof Error) {
+                console.log("restore error", e)
+                if (e instanceof Error) {
                     console.error(e.message)
                 } else {
                     console.error(String(e))
@@ -112,9 +114,10 @@ export function useBackupRestoreUsecase(
                 return { ok: false, error: { code: "parse-failed" } }
             }
             try {
-                await problemRepo.replaceAll(problems)
-                await reviewRepo.replaceAll(backupData.reviewEvents)
-                await missionRepo.replaceAll(backupData.missions)
+                const activeProblems = problems.filter(p=>!p.deletedAt)
+                await problemRepo.replaceAll(activeProblems)
+                //await reviewRepo.replaceAll(backupData.reviewEvents)
+                //await missionRepo.replaceAll(backupData.missions)
             } catch (e) {
                 return { ok: false, error: { code: "persist-failed" } }
             }

@@ -69,21 +69,26 @@ export class LocalFileProblemDatasource implements ProblemDatasource {
     }
 
     async delete(id: string): Promise<void> {
-        const all = await this.read();
-
-        await this.write(
-            all.filter(p => p.id !== id)
-        );
+        this.deleteMany([id])
     }
 
     async deleteMany(ids: string[]): Promise<void> {
-        const idSet = new Set(ids);
+        const idSet = new Set(ids)
 
-        const all = await this.read();
+        const all = await this.read()
 
-        await this.write(
-            all.filter(p => !idSet.has(p.id))
-        );
+        const now = Date.now()
+
+        const next = all.map(dto =>
+            idSet.has(dto.id)
+                ? {
+                    ...dto,
+                    deletedAt: now,
+                }
+                : dto
+        )
+
+        await this.write(next)
     }
 
     async replaceAll(
@@ -125,6 +130,7 @@ export class LocalFileProblemDatasource implements ProblemDatasource {
                 directory: Directory.Data,
                 encoding: Encoding.UTF8,
             });
+            console.log("write", dtos)
 
         } catch (e) {
             console.error("problem datasource write error", e);
