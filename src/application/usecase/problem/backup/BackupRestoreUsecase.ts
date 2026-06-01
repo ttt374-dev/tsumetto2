@@ -7,6 +7,7 @@ import type { Mission } from "@/domain/mission/entity/Mission"
 import type { ProblemRepository } from "@/domain/problem/repository/ProblemRepository"
 import { useMissionStore } from "@/ui/screens/mission/hooks/useMissionStore"
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore"
+import { rebuildProjections, reloadAllStores } from "@/ui/App/useBootstrapStores"
 
 export type BackupResult = Result<BackupResultOk, BackupRestoreError>
 
@@ -45,8 +46,8 @@ export function useBackupRestoreUsecase(
     missionRepo: MissionRepository,
     writer: BackupWriter,
 ): BackupRestoreUsecase { 
-    const reloadProblems = useProblemStore(s=>s.reload)
-    const reloadMissions = useMissionStore(s=>s.reload)
+    //const reloadProblems = useProblemStore(s=>s.reload)
+    //const reloadMissions = useMissionStore(s=>s.reload)
     
     return {
         async backup(): Promise<BackupResult> {
@@ -114,16 +115,16 @@ export function useBackupRestoreUsecase(
                 return { ok: false, error: { code: "parse-failed" } }
             }
             try {
-                const activeProblems = problems.filter(p=>!p.deletedAt)
-                await problemRepo.replaceAll(activeProblems)
-                //await reviewRepo.replaceAll(backupData.reviewEvents)
-                //await missionRepo.replaceAll(backupData.missions)
+                //const activeProblems = problems.filter(p=>!p.deletedAt)
+                await problemRepo.replaceAll(problems)
+                await reviewRepo.replaceAll(backupData.reviewEvents)
+                await missionRepo.replaceAll(backupData.missions)
             } catch (e) {
                 return { ok: false, error: { code: "persist-failed" } }
             }
 
-            reloadProblems()
-            reloadMissions()       
+            reloadAllStores()
+            rebuildProjections()
 
             return {
                 ok: true,
@@ -143,6 +144,3 @@ export interface BackupWriter {
     //revoke?(fileUrl: string): void
 }
 
-function restoreReviewEvent(events: ReviewEvent[]){
-
-}

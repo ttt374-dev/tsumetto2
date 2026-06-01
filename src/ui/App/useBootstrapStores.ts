@@ -7,9 +7,7 @@ import { useReviewEventStore } from '@/ui/features/learning/hooks/useReviewEvent
 import { type RepositoryContextValue } from './providers/RepositoryProvider';
 import { useLearningRecordStore } from '@/ui/features/learning/hooks/useLearningRecordStore';
 
-export function useBootstrapStores(
-    repos: RepositoryContextValue
-) {
+export function useBootstrapStores(repos: RepositoryContextValue) {
     useEffect(() => {
         let cancelled = false
 
@@ -22,31 +20,19 @@ export function useBootstrapStores(
             useMissionStore
                 .getState()
                 .setRepository(missionRepo)
-
             useReviewEventStore
                 .getState()
                 .setRepository(reviewEventRepo)
-
             useProblemStore
                 .getState()
                 .setRepository(problemRepo)
 
             // reload
-            await useMissionStore.getState().reload()
-            if (cancelled) return
-            await useProblemStore.getState().reload()
-            if (cancelled) return
-            await useReviewEventStore.getState().reload()
+            reloadAllStores()
             if (cancelled) return
 
             // projection rebuild
-            useLearningRecordStore
-                .getState()
-                .build(
-                    useReviewEventStore
-                        .getState()
-                        .eventLog
-                )
+            rebuildProjections()
         }
 
         bootstrap()
@@ -55,4 +41,17 @@ export function useBootstrapStores(
             cancelled = true
         }
     }, [repos])
+}
+export async function reloadAllStores() {
+    await useMissionStore.getState().reload()
+    await useProblemStore.getState().reload()
+    await useReviewEventStore.getState().reload()
+}
+
+export function rebuildProjections() {
+    useLearningRecordStore
+        .getState()
+        .build(
+            useReviewEventStore.getState().eventLog
+        )
 }
