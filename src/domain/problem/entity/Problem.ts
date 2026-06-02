@@ -10,7 +10,7 @@ export type ProblemData = {
     title: string
     kifData: KifDataDTO    
     
-    type: ProblemType
+    problemType: ProblemType
     source: string
     tags: string[]
     comment: string,
@@ -31,7 +31,7 @@ function createDefaultValues(): ProblemData {
         title: "untitled",
         kifData: KifData.create().toDTO(),
 
-        type: "standard",
+        problemType: "standard",
         source: "",
         tags: [],
         comment: "",
@@ -55,7 +55,7 @@ export class Problem {
         readonly title: string,
         readonly kifData: KifData,
 
-        readonly type: ProblemType,
+        readonly problemType: ProblemType,
         readonly source: string,
         readonly tags: Tags,
         readonly comment: string,
@@ -82,7 +82,7 @@ export class Problem {
             title: this.title,
             kifData: this.kifData.toDTO(),
             
-            type: this.type,
+            problemType: this.problemType,
             source: this.source,
             tags: [...this.tags],
             comment: this.comment,
@@ -102,7 +102,7 @@ export class Problem {
     static fromDTO(dto: ProblemDTO): Problem {
         const d = normalizeProblemDTO(dto)
         return new Problem(d.id, d.title, KifData.fromDTO(d.kifData),            
-            d.type, d.source, d.tags, d.comment, d.hint, d.userSide,
+            d.problemType, d.source, d.tags, d.comment, d.hint, d.userSide,
             d.isStarred, d.isReferenceOnly,
             d.createdAt, d.updatedAt, d.deletedAt)
     }
@@ -162,7 +162,7 @@ export class Problem {
     setType(type: ProblemType): Problem {
         return Problem.fromDTO({
             ...this.toDTO(),
-            type,
+            problemType: type,
         })
     }
     setSource(source: string): Problem {
@@ -251,7 +251,7 @@ function normalizeProblemDTO(dto: Partial<ProblemDTO>): ProblemDTO {
         title: dto.title ?? defaults.title,
         kifData: dto.kifData ?? defaults.kifData,
 
-        type: dto.type ?? defaults.type,
+        problemType: dto.problemType ?? defaults.problemType,
         source: dto.source ?? defaults.source,
         tags: Array.isArray(dto.tags) ? dto.tags : [],
         comment: dto.comment ?? defaults.comment,

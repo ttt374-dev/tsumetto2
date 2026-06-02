@@ -20,7 +20,7 @@ export function toEditDraft(problem: Problem): ProblemEditDraft {
         tags: problem.tags ?? [],
         starred: problem.isStarred,
         isReferenceOnly: problem.isReferenceOnly,
-        type: problem.type ?? "standard",
+        type: problem.problemType ?? "standard",
         source: problem.source ?? "",
         comment: problem.comment,
         hint: problem.hint,

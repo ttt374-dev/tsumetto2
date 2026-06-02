@@ -1,37 +1,35 @@
 import { parseKif } from "@/domain/kif/service/parser/parseKif";
 import { Problem, type ProblemDTO, type ProblemId } from "@/domain/problem/entity/Problem";
-import type { ProblemType } from "@/domain/problem/entity/ProblemType";
 import type { ProblemRepository } from "@/domain/problem/repository/ProblemRepository";
-import { solvedResultLabels } from "@/ui/features/learning/hooks/solvedResultPresenter";
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
-import { Title } from "@mui/icons-material";
-import { result } from "lodash";
 
-type ProblemImportMetadata = {
-    tags: string[]
-    problemType: ProblemType
-    source: string
-}
-
+type ImportMetadata =  Pick<Partial<ProblemDTO>,"source" | "tags" | "problemType">
 type ImportPolicy = {
     duplicateTitleStrategy: DuplicateTitleStrategy
 }
 
 export type DuplicateTitleStrategy = "skip" | "rename" | "overwrite"
-export type ImportOptions = ProblemImportMetadata & ImportPolicy
+//export type ImportOptions = ProblemImportMetadata & ImportPolicy
+export type ImportOptions = {
+    metadata: ImportMetadata
+    policy: ImportPolicy
+}
 
 export const DefaultImportOptions: ImportOptions = {
-    tags: [],
-    problemType: "standard",
-    source: "",
-    duplicateTitleStrategy: "skip"
+    metadata: {
+        tags: [],
+        problemType: "standard",
+        source: "",
+    },
+    policy: {
+        duplicateTitleStrategy: "skip"
+    },     
 }
 
 export type ImportResult =
     | {
         status: "imported"
         problemId: ProblemId
-        //importedAt: number
     }
     | {
         status: "skipped"
@@ -69,12 +67,7 @@ export function useImportProblemsUsecase(problemRepo: ProblemRepository) {
         let skipped = 0
         let failed = 0
         const problems: Problem[] = []
-        const results: ImportResult[] = []        
-        const metadata: ProblemImportMetadata = {
-            tags: options.tags,
-            problemType: options.problemType,
-            source: options.source
-        }
+        const results: ImportResult[] = []                
         
         const existingTitles = await getExsitingTitle(problemRepo)
         //console.log("import files", files)
@@ -83,7 +76,7 @@ export function useImportProblemsUsecase(problemRepo: ProblemRepository) {
             let title = file.name
             let partial: Partial<ProblemDTO> = {}
             if (existingTitles.has(title)) {
-                switch (options.duplicateTitleStrategy) {
+                switch (options.policy.duplicateTitleStrategy) {
                     case "rename":
                         title = resolveTitle(file.name, existingTitles)
                         existingTitles.add(title)
@@ -98,7 +91,7 @@ export function useImportProblemsUsecase(problemRepo: ProblemRepository) {
                         const existingProblem = await problemRepo.findByTitle(title)                        
                         if (existingProblem) {
                             partial = {...existingProblem.toDTO(), createdAt: Date.now()}
-                            console.log("overwrite", partial, metadata, options)
+                            console.log("overwrite", partial, options.metadata, options)
                             //await problemRepo.remove(existingProblem.id)
                             //await problemRepo.update()
                         }
@@ -106,8 +99,8 @@ export function useImportProblemsUsecase(problemRepo: ProblemRepository) {
                 }
             }
             
-            const problem = await parseKifFile(file, {...partial, ...metadata, title})
-            console.log("parse kif", partial, metadata, { ...partial, ...metadata}, problem)
+            const problem = await parseKifFile(file, {...partial, ...options.metadata, title})
+            
 
             if (!problem){
                 console.error("parse kif file failed")
@@ -117,15 +110,7 @@ export function useImportProblemsUsecase(problemRepo: ProblemRepository) {
             }
             problems.push(problem)
             results.push({ status: "imported", problemId: problem.id})
-            imported++
-            /*
-            const result = await importFile(file, title, metadata)
-            results.push(result)
-            switch (result.status) {
-                case "imported": imported++; break
-                case "skipped": skipped++; break
-                case "failed": failed++; break
-            }*/
+            imported++            
         }
         console.log("add many", problems)
         if (problems.length > 0){

@@ -21,7 +21,7 @@ export const applyFilter = (
         // 問題タイプ
         (problem, _) =>
             !queryState.problemType ||
-            problem.type === queryState.problemType,
+            problem.problemType === queryState.problemType,
 
         // 出典
         (problem, learning) =>
