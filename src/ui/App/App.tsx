@@ -23,6 +23,7 @@ import ViewScreen from '@/ui/screens/view/ViewScreen';
 import SessionListScreen from '@/ui/screens/session/components/SessionListScreen';
 import { SettingsScreen } from '@/ui/screens/settings/SettingsScreen';
 import { useBootstrapStores } from '@/ui/App/useBootstrapStores';
+import { MaintenanceScreen } from '@/ui/maintenance/MaintenanceScreen';
 
 export const theme = createTheme({
     cssVariables: true,   // ← これ必須
@@ -89,7 +90,8 @@ function App(props: { repos: RepositoryContextValue }) {
 
                             <Route path={routes.stats} element={<StatsScreen />} />
                             <Route path={routes.history} element={<HistoryScreen />} />
-                            <Route path="/settings" element={<SettingsScreen />} />
+                            <Route path={routes.settings} element={<SettingsScreen />} />
+                            <Route path={routes.maintenance} element={<MaintenanceScreen />} />
                             <Route path="/" element={<Navigate to={routes.mission} />} />
                         </Routes>
                     </BrowserRouter>
