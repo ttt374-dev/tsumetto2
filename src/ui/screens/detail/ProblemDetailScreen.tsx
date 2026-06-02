@@ -8,7 +8,7 @@ import { CancelableTextField } from "@/shared/components/CancelableTextfield";
 import { ProblemTagEditor } from "@/ui/common/components/ProblemTagEditor";
 import { FreeSoloAutocomplete } from "@/shared/components/FreeSoloAutocomplete";
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
-import { routes } from "../../App/useAppNavigation";
+import { paths } from "../../../router/paths";
 import { useProblemDetailViewModel, useProblemEditActions } from "./hooks/useProblemDetailViewModel";
 import { StarToggleButton } from "../../common/components/StarToggleButton/StarToggleButton";
 import type { Problem, ProblemId } from "@/domain/problem/entity/Problem";
@@ -139,7 +139,7 @@ function Footer({ onConfirm }: { onConfirm: () => void }) {
     return (
         <Stack direction="row">
             <Button fullWidth
-                onClick={() => navigate(routes.back)}
+                onClick={() => navigate(paths.back)}
                 variant="outlined">
                 キャンセル
             </Button>

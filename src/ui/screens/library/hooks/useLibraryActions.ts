@@ -1,6 +1,6 @@
 import type { ProblemId } from "@/domain/problem/entity/Problem"
 import type { SessionId } from "@/domain/session/entity/Session"
-import { routes } from "@/ui/App/useAppNavigation"
+import { paths } from "@/router/paths"
 import { useProblemMutation } from "@/ui/features/problem/hooks/useProblemMutation"
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore"
 import { createSessionId, useSessionStore } from "@/ui/screens/session/store/useSessionStore"
@@ -27,7 +27,7 @@ export function useLibraryActions(ids: ProblemId[]) {
     const runSession = () => {
         const sessionId = createSessionId()
         startSession(sessionId, ids)
-        navigate(routes.sessionPlay(sessionId))
+        navigate(paths.sessionPlay(sessionId))
     }
 
     return {

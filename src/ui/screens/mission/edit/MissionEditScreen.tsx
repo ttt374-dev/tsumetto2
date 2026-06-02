@@ -7,7 +7,7 @@ import { useMissionEditViewModel } from "./useMissionEditViewModel";
 import { AppShell } from "../../../common/components/layout/AppShell";
 import { ListDialog } from "../../../dialogs/list/ListDialog";
 import { useNavigate } from "react-router-dom";
-import { routes } from "../../../App/useAppNavigation";
+import { paths } from "../../../../router/paths";
 import { FilterControlPanel } from "../../../features/problem/query/components/FilterControlPanel";
 import { useToast } from "@/ui/App/providers/ToastProvider";
 import { useDialogState } from "@/ui/common/hooks/useDialogState";
@@ -23,7 +23,7 @@ export default function MissionEditScreen() {
     const listDialog = useDialogState()
     const handleNavigateToList = () => {
         //console.log("nav: ids", problemIds)
-        navigate(routes.list, { state: { ids: problemIds, title: `デッキ ${name}：問題リスト` } })
+        navigate(paths.list, { state: { ids: problemIds, title: `デッキ ${name}：問題リスト` } })
     }
     const handleMissionNameClear = () => {
         setName("")
@@ -31,13 +31,13 @@ export default function MissionEditScreen() {
     const handleSaveAndExit = () => {
         save()
         toast({ message: "保存しました" })
-        navigate(routes.back)
+        navigate(paths.back)
     }
     const handleDeleteMission = () => {
         if (!window.confirm("are you sure to delete")) return
         remove()
         toast({ message: "削除しました" })
-        navigate(routes.back)
+        navigate(paths.back)
     }
     return (
         <AppShell
@@ -50,7 +50,7 @@ export default function MissionEditScreen() {
             }
             footer={
                 <Stack direction="row" spacing={1}>
-                    <Button onClick={() => navigate(routes.back)} sx={{ height: 64 }} variant="outlined" color="info" fullWidth>
+                    <Button onClick={() => navigate(paths.back)} sx={{ height: 64 }} variant="outlined" color="info" fullWidth>
                         キャンセル
                     </Button>
                     <Button onClick={handleSaveAndExit} sx={{ height: 64 }} variant="contained" fullWidth>
@@ -106,7 +106,7 @@ export default function MissionEditScreen() {
                 ids={problemIds}
                 open={listDialog.open}
                 onClose={listDialog.closeDialog}
-                onSelectProblem={(id) => navigate(routes.detail(id))}
+                onSelectProblem={(id) => navigate(paths.detail(id))}
             />
         </AppShell>
     );

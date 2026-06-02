@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import type { Mission } from "@/domain/mission/entity/Mission";
 import { useLongPress } from "@/ui/common/hooks/useLongPress";
 import { useMissionModeStore } from "@/ui/screens/mission/hooks/useMissionModeStore";
-import { routes } from "@/ui/App/useAppNavigation";
+import { paths } from "@/router/paths";
 import { computeStatsSummary } from "@/domain/learning/service/computeLearningSummary";
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
 import { applyQuery } from "@/domain/problem/service/query/applyQuery";
@@ -43,7 +43,7 @@ export function SortableMissionItem(props: {
         if (isLongPressedRef.current) return
         if (!editMode) {
             props.startMission()
-        } else navigate(routes.missionEdit(props.mission.id))
+        } else navigate(paths.missionEdit(props.mission.id))
     }
     const disabled = !editMode && (summary.problemCount === 0)
     

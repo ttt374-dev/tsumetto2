@@ -1,5 +1,5 @@
 import type { SessionId } from "@/domain/session/entity/Session"
-import { routes } from "@/ui/App/useAppNavigation"
+import { paths } from "@/router/paths"
 import { AppShell } from "@/ui/common/components/layout/AppShell"
 import { useReviewEventStore } from "@/ui/features/learning/hooks/useReviewEventStore"
 import { useSessionStore } from "@/ui/screens/session/store/useSessionStore"
@@ -37,7 +37,7 @@ function SessionListContent(props: {
         >
             <SessionListView
                 ids={ids}
-                onSelect={(i)=> navigate(routes.sessionPlay(sessionId, i))}
+                onSelect={(i)=> navigate(paths.sessionPlay(sessionId, i))}
                 selectedId={selectedId}
                 solvedResultMap={solvedResultMap}
             />
@@ -48,10 +48,10 @@ function SessionListContent(props: {
 function FooterPanel({ sessionId }: { sessionId: SessionId }) {
     const navigate = useNavigate()
     return <Stack direction="row">
-        <Button variant="outlined" fullWidth onClick={() => navigate(routes.back)}>
+        <Button variant="outlined" fullWidth onClick={() => navigate(paths.back)}>
             戻る
         </Button>
-        <Button variant="outlined" fullWidth onClick={() => navigate(routes.sessionSummary(sessionId))}>
+        <Button variant="outlined" fullWidth onClick={() => navigate(paths.sessionSummary(sessionId))}>
             サマリーへ
         </Button>
     </Stack>

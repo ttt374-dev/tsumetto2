@@ -1,7 +1,7 @@
 import type { ProblemId } from "@/domain/problem/entity/Problem"
 import type { SessionId } from "@/domain/session/entity/Session"
 
-export const routes = {
+export const paths = {
     home: "/",
 
     // mission

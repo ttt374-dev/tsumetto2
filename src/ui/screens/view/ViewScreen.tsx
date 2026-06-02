@@ -11,7 +11,7 @@ import TitlePanel from "@/ui/screens/player/components/panels/TitlePanel";
 import MovesPanel from "@/ui/screens/player/components/panels/moves/MovesPanel";
 import { useNavigate, useParams } from "react-router-dom";
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
-import { routes } from "@/ui/App/useAppNavigation";
+import { paths } from "@/router/paths";
 import { usePlayerPresentation } from "@/ui/screens/player/hooks/usePlayerPresentation";
 import { usePlayerRunner } from "@/ui/screens/player/runner/usePlayerRunner";
 import { useEffect } from "react";
@@ -76,7 +76,7 @@ function ViewContent({ problem}: { problem: Problem}){
 function FooterPanel(){
     const navigate = useNavigate()
     return <>
-        <Button onClick={()=> navigate(routes.back)}>
+        <Button onClick={()=> navigate(paths.back)}>
             戻る
         </Button>
     </>

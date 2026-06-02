@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { routes } from "@/ui/App/useAppNavigation";
+import { paths } from "@/router/paths";
 
 import { applyQuery } from "@/domain/problem/service/query/applyQuery";
 import { selectActiveProblems, useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
@@ -28,7 +28,7 @@ export function useMissionStarter(){
         const chunk = planner.nextChunk()
         if (!chunk) return
         start(sessionId, chunk, mission.id)
-        navigate(routes.sessionPlay(sessionId))
+        navigate(paths.sessionPlay(sessionId))
     };
 
     return { startMission }
