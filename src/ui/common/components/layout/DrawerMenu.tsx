@@ -1,6 +1,6 @@
 import type { MenuCommand, MenuItem } from "@/application/navigation/types";
 import styles from "./AppLayout.module.css";
-import { Box, Drawer, List, ListItemButton, ListItemText } from "@mui/material";
+import { Box, Drawer, List, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 
 /*
 export type DrawerMenuItem ={ 
@@ -53,6 +53,10 @@ export function DrawerMenu({ open, onClose, menuItems, onCommand }: {
 function DrawerItem({ item, onClick }: { item: MenuItem, onClick: () => void }) {
     return (
         <ListItemButton onClick={onClick}>
+            <ListItemIcon>
+                {item.icon}
+            </ListItemIcon>
+
             <ListItemText primary={item.label} />
         </ListItemButton>
     )

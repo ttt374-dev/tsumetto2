@@ -1,6 +1,6 @@
 export type MenuItem ={ 
     label: string
-    icon?: React.ReactNode
+    icon: React.ReactNode
     command: MenuCommand 
     group: MenuGroup
     footNav?: boolean

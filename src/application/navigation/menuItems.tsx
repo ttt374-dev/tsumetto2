@@ -4,6 +4,9 @@ import BarChartIcon from '@mui/icons-material/BarChart'
 import MenuBookIcon from '@mui/icons-material/MenuBook'
 import AssignmentIcon from '@mui/icons-material/Assignment'
 import FileDownloadIcon from "@mui/icons-material/FileDownload"
+import HistoryIcon from '@mui/icons-material/History'
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings'
+import SettingsIcon from '@mui/icons-material/Settings'
 
 export const menuItems: MenuItem[] = [
     {
@@ -31,7 +34,13 @@ export const menuItems: MenuItem[] = [
         command: { type: "NAVIGATE", to: routes.stats }, group: "analysis",
         footNav: true
     },
-    { label: "履歴", command: { type: "NAVIGATE", to: routes.history }, group: "analysis" },
-    { label: "バックアップ・復旧", command: { type: "OPEN_DIALOG", dialog: "backupRestore" }, group: "maintenance" },
-    { label: "設定", command: { type: "NAVIGATE", to: routes.settings }, group: "settings" },
+    { label: "履歴", 
+        icon: <HistoryIcon/>,
+        command: { type: "NAVIGATE", to: routes.history }, group: "analysis" },
+    { label: "バックアップ・復旧", 
+        icon: <AdminPanelSettingsIcon/>,
+        command: { type: "OPEN_DIALOG", dialog: "backupRestore" }, group: "maintenance" },
+    { label: "設定", 
+        icon: <SettingsIcon/>,
+        command: { type: "NAVIGATE", to: routes.settings }, group: "settings" },
 ]
