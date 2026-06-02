@@ -4,16 +4,17 @@ import { useRepositoryContext } from "@/ui/App/providers/RepositoryProvider"
 import { useImportProblemsUsecase, type ImportFilesResult, type ImportOptions } from "@/application/usecase/problem/import/ImportProblemsUsecase"
 import { useFileSelector } from "@/shared/hooks/useFileSelector"
 import { useDialogState } from "@/ui/common/hooks/useDialogState"
+import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore"
 
 export type ImportController = {
     // state
     open: boolean
     files: File[] | null
-    importing: boolean
+    //importing: boolean
     result: ImportFilesResult | null    
 
     // actions
-    confirm: (options: ImportOptions) => Promise<void>
+    confirm: (options: ImportOptions) => Promise<ImportFilesResult>
     cancel: () => void
 
     openFilesSelectDialog: () => void
@@ -26,10 +27,12 @@ export type ImportController = {
 export function useImportController(): ImportController {
     const dialog = useDialogState()
     const repos = useRepositoryContext()
-    const [files, setFiles] = useState<File[] | null>(null)
-    const [importing, setImporting] = useState(false)
+    const [files, setFiles] = useState<File[]>([])
+    //const [importing, setImporting] = useState(false)
     const [result, setResult] = useState<ImportFilesResult | null>(null)
- 
+    const reloadStore = useProblemStore(s=>s.reload)
+    const usecase = useImportProblemsUsecase(repos.problem) 
+
     const onFilesSelected = (files: File[]) => {
         setFiles(files)
         dialog.openDialog()
@@ -38,21 +41,24 @@ export function useImportController(): ImportController {
     const picker = useFileSelector(onFilesSelected)
 
     const cancel = () => {
-        setFiles(null)
+        setFiles([])
         dialog.closeDialog()
     }
 
     const confirm = async (options: ImportOptions) => {
-        if (!files) return
-        try {
-            setImporting(true)
-            const usecase = useImportProblemsUsecase(repos.problem)
-            const result = await usecase.importFiles(files, options)
-            setResult(result) // ← ここ
-        } finally {
-            setImporting(false)
-            cancel()
-        }
+        //if (!files) return
+        
+        //    setImporting(true)
+        const result = await usecase.importFiles(files, options)
+        setResult(result) // ← ここ
+        await reloadStore()        
+        return result
+        //console.log("confirm reloaded")
+        
+        //} finally {
+        //    setImporting(false)
+        //    cancel()
+        //}
     }
 
     return {
@@ -63,7 +69,7 @@ export function useImportController(): ImportController {
         // dialog
         open: dialog.open,
         files,
-        importing,
+        //importing,
         result,
 
         confirm,

@@ -9,6 +9,7 @@ export function LibraryListView({ ids, selection, onItemClick }: {
     selection?: LibrarySelection,
     onItemClick: (pid: ProblemId) => void,
 }) {
+    console.log("list view", ids)
     return (
         <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto" }}>
             <List>

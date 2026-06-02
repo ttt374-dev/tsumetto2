@@ -39,53 +39,58 @@ export function ImportDialog({ open, onClose, onImport, filesToImport }: {
                 <Stack spacing={2}>
                     {filesToImport.length} 件のファイルをインポートします。
                     <ProblemTypeFilterControl
-                        problemType={options.problemType} 
+                        problemType={options.metadata.problemType} 
                         onChange={(v) =>
-                            v && setOptions(prev => ({ ...prev, problemType: v }))
+                            v && setOptions(prev => ({
+                                ...prev,
+                                metadata: {
+                                    ...prev.metadata,
+                                    problemType: v,
+                                },
+                            }))
                         }
                         allowUnspecified={true}
                     />
                     <SourceFilterControl
-                        source={options.source} onChange={v =>
-                            v && setOptions(prev => ({ ...prev, source: v }))
-                        } sources={vm.allSources} />
+                        source={options.metadata.source} onChange={v =>
+                            v && setOptions(prev => ({
+                                ...prev,
+                                metadata: {
+                                    ...prev.metadata,
+                                    source: v,
+                                }}))
+                            }
+                        sources={vm.allSources} />
 
                     <ProblemTagEditor
                         label={"tags"}
-                        value={options.tags}
-                        onChange={(next) => { setOptions({ ...options, tags: next }) }}
+                        value={options.metadata.tags ?? []}
+                        onChange={(next) => {
+                            setOptions(prev => ({
+                                ...prev,
+                                metadata: {
+                                    ...prev.metadata,
+                                    tags: next,
+                                },
+                            }))
+                         }}
                     />
                     {/* オプション*/}
+                    
                     {vm.hasDuplicatedTitle() &&
-                        <FormControl>
-                            <FormLabel>同名タイトルの処理</FormLabel>
-                            <RadioGroup
-                                value={options.duplicateTitleStrategy}
-                                onChange={(e) =>
-                                    setOptions({
-                                        ...options,
-                                        duplicateTitleStrategy:
-                                            e.target.value as DuplicateTitleStrategy
-                                    })
-                                }
-                            >
-                                <FormControlLabel
-                                    value="overwrite"
-                                    control={<Radio />}
-                                    label="上書きする"
-                                />
-                                <FormControlLabel
-                                    value="rename"
-                                    control={<Radio />}
-                                    label="名前を変えて保存"
-                                />
-                                <FormControlLabel
-                                    value="skip"
-                                    control={<Radio />}
-                                    label="スキップする"
-                                />
-                            </RadioGroup>
-                        </FormControl>
+                        <DuplicatedTitleControle
+                            options={options}
+                            onChangeStrategy={v => {
+                                setOptions(prev => ({
+                                    ...prev,
+                                    policy: {
+                                        ...prev.policy,
+                                        duplicateTitleStrategy: v
+                                    }
+                                })
+                                )
+                            }}
+                        />    
                     }
                 </Stack>
             </DialogContent>
@@ -98,5 +103,38 @@ export function ImportDialog({ open, onClose, onImport, filesToImport }: {
                 </Button>
             </DialogActions>
         </Dialog>
+    )
+}
+
+function DuplicatedTitleControle( { options, onChangeStrategy }: {
+    options: ImportOptions,
+    onChangeStrategy: (v: DuplicateTitleStrategy) => void
+}) {
+    return (
+        <FormControl>
+            <FormLabel>同名タイトルの処理</FormLabel>
+            <RadioGroup
+                value={options.policy.duplicateTitleStrategy}
+                onChange={(e) =>                        
+                    onChangeStrategy(e.target.value as DuplicateTitleStrategy)
+                }
+            >
+                <FormControlLabel
+                    value="overwrite"
+                    control={<Radio />}
+                    label="上書きする"
+                />
+                <FormControlLabel
+                    value="rename"
+                    control={<Radio />}
+                    label="名前を変えて保存"
+                />
+                <FormControlLabel
+                    value="skip"
+                    control={<Radio />}
+                    label="スキップする"
+                />
+            </RadioGroup>
+        </FormControl>
     )
 }

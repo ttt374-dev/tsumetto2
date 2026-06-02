@@ -1,7 +1,6 @@
 import { parseKif } from "@/domain/kif/service/parser/parseKif";
 import { Problem, type ProblemDTO, type ProblemId } from "@/domain/problem/entity/Problem";
 import type { ProblemRepository } from "@/domain/problem/repository/ProblemRepository";
-import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
 
 type ImportMetadata =  Pick<Partial<ProblemDTO>,"source" | "tags" | "problemType">
 type ImportPolicy = {
@@ -99,8 +98,7 @@ export function useImportProblemsUsecase(problemRepo: ProblemRepository) {
                 }
             }
             
-            const problem = await parseKifFile(file, {...partial, ...options.metadata, title})
-            
+            const problem = await parseKifFile(file, {...partial, ...options.metadata, title})            
 
             if (!problem){
                 console.error("parse kif file failed")
@@ -115,7 +113,6 @@ export function useImportProblemsUsecase(problemRepo: ProblemRepository) {
         console.log("add many", problems)
         if (problems.length > 0){
             problemRepo.addMany(problems)
-            useProblemStore.getState().reload()
         }
 
         return {
@@ -127,7 +124,6 @@ export function useImportProblemsUsecase(problemRepo: ProblemRepository) {
             },
             results: results
         }
-
     }
     return {
         //importFile,
