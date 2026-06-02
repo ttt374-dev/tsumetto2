@@ -17,7 +17,7 @@ type ProblemViewField = keyof typeof problemFieldLabels
 export function toProblemViewData(p: Problem): Record<ProblemViewField, string> {
     return {
         title: p.title,
-        type: problemTypeLabels[p.type],
+        type: problemTypeLabels[p.problemType],
         source: p.source,
         tags: p.tags.join(", "),
         plyLength: `${p.kifData.moves.length}手`,

@@ -22,10 +22,8 @@ export class ProblemRepository {
         await this.ds.insert(problem.toDTO())
     }
     async addMany(problems: Problem[]){
-        //problems.map(this.add)
-        await Promise.all(
-            problems.map(problem => this.add(problem))
-        )
+        await this.ds.insertMany(problems.map(p=>p.toDTO()))
+        
     }
     async update(problem: Problem) {
         await this.ds.update(problem.toDTO())
