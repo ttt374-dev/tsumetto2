@@ -1,7 +1,7 @@
 import React, { useState, type ReactNode } from "react"
 
 import { useRepositoryContext } from "@/ui/App/providers/RepositoryProvider"
-import { useImportProblemsUsecase, type ImportFilesResult, type ImportOptions } from "@/application/usecase/problem/import/ImportProblemsUsecase"
+import { useImportProblemsUsecase, type ImportFilesResult, type ImportOptions } from "@/application/usecase/ImportProblemsUsecase"
 import { useFileSelector } from "@/shared/hooks/useFileSelector"
 import { useDialogState } from "@/ui/common/hooks/useDialogState"
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore"

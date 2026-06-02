@@ -2,7 +2,7 @@ import { useRef, useState } from "react"
 import { Dialog, DialogTitle, DialogContent, DialogActions,
     Button, Box, Typography, Divider } from "@mui/material"
 
-import { type BackupResult, type RestoreResult } from "@/application/usecase/problem/backup/BackupRestoreUsecase"
+import { type BackupResult, type RestoreResult } from "@/application/usecase/BackupRestoreUsecase"
 import { useRepositoryContext } from "@/ui/App/providers/RepositoryProvider"
 
 ///////////////////////////////////////////////////

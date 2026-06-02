@@ -1,4 +1,4 @@
-import type { ImportOptions } from "@/application/usecase/problem/import/ImportProblemsUsecase";
+import type { ImportOptions } from "@/application/usecase/ImportProblemsUsecase";
 import { routes } from "@/ui/App/useAppNavigation";
 import type { GlobalDialogControllers } from "@/ui/common/components/layout/AppShell";
 import BackupRestoreDialog from "@/ui/dialogs/BackupRestore/BackupRestoreDialog";

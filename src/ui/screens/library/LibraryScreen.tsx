@@ -22,7 +22,7 @@ export default function LibraryScreen() {
                     <PlayArrowIcon />
                 </IconButton>
             }
-            footer={<FooterNavigation />}
+            showBottomNav={true}
         >
             <LibraryControlPanel
                 selection={model.state.selection}

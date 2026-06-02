@@ -35,7 +35,7 @@ export default function MissionScreen() {
             rightActions={<MissionRightAction/>}
             //rightActions={<MissionEditModeControl/>}
             //fab={!editMode && <MissionFabMenu onCreateNewMission={()=>navigate(routes.newMission)} />}
-            footer={<FooterNavigation/>}
+            showBottomNav={true}
         >
             <MissionList/>
         </AppShell>
