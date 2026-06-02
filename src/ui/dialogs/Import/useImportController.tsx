@@ -50,7 +50,7 @@ export function useImportController(): ImportController {
         
         //    setImporting(true)
         const result = await usecase.importFiles(files, options)
-        setResult(result) // ← ここ
+        setResult(result) 
         await reloadStore()        
         return result
         //console.log("confirm reloaded")

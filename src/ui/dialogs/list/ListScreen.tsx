@@ -33,11 +33,11 @@ export function ListScreen(){
         navigate(routes.sessionPlay(sessionId))
     }
     return (
-        <AppShell 
+        <AppShell
             header={ title }
             rightActions={<RightActionPanel onStartSession={handleStartSession}/>}
-            footer={<Button variant="outlined" onClick={()=>navigate(routes.back)}>戻る</Button>}>            
-            <LibraryListView ids={ids} onItemClick={handleItemClick}/>                        
+            footer={<Button variant="outlined" onClick={()=>navigate(routes.back)}>戻る</Button>}>
+            <LibraryListView ids={ids} onItemClick={handleItemClick}/>
         </AppShell>
     )
 }

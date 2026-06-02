@@ -112,7 +112,7 @@ export function useImportProblemsUsecase(problemRepo: ProblemRepository) {
         }
         console.log("add many", problems)
         if (problems.length > 0){
-            problemRepo.addMany(problems)
+            await problemRepo.addMany(problems)
         }
 
         return {

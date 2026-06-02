@@ -22,6 +22,7 @@ export const LibraryListItem = function LibraryListItem({ id, onItemClick,
         selected?: boolean,
     }) {
     const problem = useProblemStore(s => s.byId[id])
+    console.log("listitem", problem, id)
 
     const learning = useLearningRecordStore(s => s.stateRecords[id])
 

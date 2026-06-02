@@ -96,6 +96,7 @@ function derive(byId: Record<ProblemId, Problem>) {
     }
 }
 function reduceById(byId: Record<ProblemId, Problem>) {
+    console.log("problem repo reducer", byId)
     return {
         byId,
         ...derive(byId),
@@ -122,6 +123,7 @@ export const useProblemStore = create<ProblemState>((set, get) => ({
         data.forEach(p => {
             byId[p.id] = p
         })
+        console.log("problem store reload", byId)
         set(reduceById(byId))
     },
     /*
@@ -130,7 +132,6 @@ export const useProblemStore = create<ProblemState>((set, get) => ({
         await repo.replaceAll(Object.values(get().byId))
     },*/
      replaceAll: (problems) => {
-
         const byId: Record<
             ProblemId,
             Problem
@@ -139,12 +140,10 @@ export const useProblemStore = create<ProblemState>((set, get) => ({
         for (const p of problems) {
             byId[p.id] = p
         }
-
         set(reduceById(byId))
     },
 
     patchProblem: (id, next) => {
-
         set(state =>
             reduceById({
                 ...state.byId,
