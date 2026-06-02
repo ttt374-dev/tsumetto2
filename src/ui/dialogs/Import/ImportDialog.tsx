@@ -1,7 +1,7 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, Stack } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { ProblemTagEditor } from "../../common/components/ProblemTagEditor";
-import { DefaultImportOptions, getExsitingTitle, type DuplicateTitleStrategy, type ImportOptions } from "@/application/usecase/problem/import/ImportProblemsUsecase";
+import { DefaultImportOptions, getExsitingTitle, type DuplicateTitleStrategy, type ImportMetadata, type ImportOptions } from "@/application/usecase/problem/import/ImportProblemsUsecase";
 import { ProblemTypeFilterControl } from "@/ui/features/problem/query/components/ProblemTypeFilterControl";
 import { SourceFilterControl } from "@/ui/features/problem/query/components/SourceFilterControl";
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
@@ -38,47 +38,23 @@ export function ImportDialog({ open, onClose, onImport, filesToImport }: {
             <DialogContent>
                 <Stack spacing={2}>
                     {filesToImport.length} 件のファイルをインポートします。
-                    <ProblemTypeFilterControl
-                        problemType={options.metadata.problemType} 
-                        onChange={(v) =>
-                            v && setOptions(prev => ({
+                    <ProblemComponentControls
+                        metadata={options.metadata}
+                        sources={vm.allSources}
+                        onChangeMetadata={partial=>
+                            setOptions(prev=>({
                                 ...prev,
                                 metadata: {
                                     ...prev.metadata,
-                                    problemType: v,
-                                },
+                                    ...partial
+                                }
                             }))
                         }
-                        allowUnspecified={true}
-                    />
-                    <SourceFilterControl
-                        source={options.metadata.source} onChange={v =>
-                            v && setOptions(prev => ({
-                                ...prev,
-                                metadata: {
-                                    ...prev.metadata,
-                                    source: v,
-                                }}))
-                            }
-                        sources={vm.allSources} />
-
-                    <ProblemTagEditor
-                        label={"tags"}
-                        value={options.metadata.tags ?? []}
-                        onChange={(next) => {
-                            setOptions(prev => ({
-                                ...prev,
-                                metadata: {
-                                    ...prev.metadata,
-                                    tags: next,
-                                },
-                            }))
-                         }}
-                    />
+                     />
                     {/* オプション*/}
                     
                     {vm.hasDuplicatedTitle() &&
-                        <DuplicatedTitleControle
+                        <DuplicatedTitleControl
                             options={options}
                             onChangeStrategy={v => {
                                 setOptions(prev => ({
@@ -106,7 +82,34 @@ export function ImportDialog({ open, onClose, onImport, filesToImport }: {
     )
 }
 
-function DuplicatedTitleControle( { options, onChangeStrategy }: {
+function ProblemComponentControls( { metadata, sources, onChangeMetadata}: {
+    metadata: ImportMetadata,
+    sources: string[],
+    onChangeMetadata: (p: Partial<ImportMetadata>) => void
+}){
+    return (<>
+        <ProblemTypeFilterControl
+            problemType={metadata.problemType}
+            onChange={v => v && onChangeMetadata({problemType: v})
+                
+            }
+            allowUnspecified={true}
+        />
+        <SourceFilterControl
+            source={metadata.source} 
+            onChange={v => v && onChangeMetadata({source: v})}
+            sources={sources} />
+
+        <ProblemTagEditor
+            label={"tags"}
+            value={metadata.tags ?? []}
+            onChange={v => onChangeMetadata({tags: v})}
+        />
+    </>
+    )
+}
+
+function DuplicatedTitleControl( { options, onChangeStrategy }: {
     options: ImportOptions,
     onChangeStrategy: (v: DuplicateTitleStrategy) => void
 }) {

@@ -2,8 +2,8 @@ import { parseKif } from "@/domain/kif/service/parser/parseKif";
 import { Problem, type ProblemDTO, type ProblemId } from "@/domain/problem/entity/Problem";
 import type { ProblemRepository } from "@/domain/problem/repository/ProblemRepository";
 
-type ImportMetadata =  Pick<Partial<ProblemDTO>,"source" | "tags" | "problemType">
-type ImportPolicy = {
+export type ImportMetadata =  Pick<Partial<ProblemDTO>,"source" | "tags" | "problemType">
+export type ImportPolicy = {
     duplicateTitleStrategy: DuplicateTitleStrategy
 }
 
