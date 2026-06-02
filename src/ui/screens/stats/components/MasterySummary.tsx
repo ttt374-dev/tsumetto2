@@ -7,7 +7,7 @@ import { useQueryActiveProblems } from "@/ui/features/problem/hooks/useQueryActi
 import type { ProblemId } from "@/domain/problem/entity/Problem";
 import { HandymanOutlined } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import { paths } from "@/router/paths";
+import { routePaths } from "@/router/paths";
 //import { itemsEqual } from "@dnd-kit/sortable/dist/utilities";
 
 function MasterySummaryHeaders(){
@@ -59,7 +59,7 @@ export function MasterySummary() {
     }
     const navigate = useNavigate()
     const handleClick = (status: MasteryStatus) => {
-        navigate(paths.list, { state: { ids: data[status].ids}})
+        navigate(routePaths.list, { state: { ids: data[status].ids}})
     }
     
     return (<>

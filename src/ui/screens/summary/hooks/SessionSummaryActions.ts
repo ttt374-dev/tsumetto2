@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 
 import { useReviewEventStore } from "@/ui/features/learning/hooks/useReviewEventStore";
-import { paths } from "@/router/paths";
+import { routePaths } from "@/router/paths";
 import { projectLearningState } from "@/domain/learning/service/projectLearningState";
 import { createSessionId, useSessionStore } from "@/ui/screens/session/store/useSessionStore";
 import { usePlannerStore } from "@/ui/screens/session/store/usePlannerStore";
@@ -41,13 +41,13 @@ export function useSessionSummaryActions(sessionId: SessionId) {
     }
 
     const backToMission = () => {
-        navigate(paths.mission)
+        navigate(routePaths.mission)
     }
     
     function goSession(ids: ProblemId[]){
         const newSessionId = createSessionId()
         startSession(newSessionId, ids, missionId)
-        navigate(paths.sessionPlay(newSessionId))
+        navigate(routePaths.sessionPlay.build(newSessionId))
     }
     return {
         navigation: {

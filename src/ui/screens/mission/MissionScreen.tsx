@@ -4,7 +4,7 @@ import { IconButton } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add'
 
 import { AppShell } from "@/ui/common/components/layout/AppShell";
-import { paths } from "@/router/paths";
+import { routePaths } from "@/router/paths";
 import { useMissionModeStore } from "./hooks/useMissionModeStore";
 import { MissionList } from "@/ui/screens/mission/components/MissionList";
 import FooterNavigation from '@/ui/common/components/FooterNavigation';
@@ -12,7 +12,7 @@ import FooterNavigation from '@/ui/common/components/FooterNavigation';
 function MissionRightAction(){
     const navigate = useNavigate()
     return (<>
-        <IconButton sx={{color: "white"}} onClick={()=>navigate(paths.newMission)}>
+        <IconButton sx={{color: "white"}} onClick={()=>navigate(routePaths.newMission)}>
             <AddIcon/>
         </IconButton>
         <MissionEditModeControl/>

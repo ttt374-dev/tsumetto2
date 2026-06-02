@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom"
 
-import { paths } from "@/router/paths"
+import { routePaths } from "@/router/paths"
 import { createSessionId } from "@/ui/screens/session/store/useSessionStore"
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore"
 import PlayerScreen from "./PlayerScreen"
@@ -75,6 +75,6 @@ function useNavigateBack() {
     const navigate = useNavigate()
 
     return useCallback(() => {
-        navigate(paths.back)
+        navigate(-1)
     }, [navigate])
 }

@@ -1,5 +1,5 @@
 import type { MenuItem } from "@/application/navigation/types";
-import { paths } from "@/router/paths";
+import { routePaths } from "@/router/paths";
 import BarChartIcon from '@mui/icons-material/BarChart'
 import MenuBookIcon from '@mui/icons-material/MenuBook'
 import AssignmentIcon from '@mui/icons-material/Assignment'
@@ -12,14 +12,14 @@ export const menuItems: MenuItem[] = [
     {
         label: "ミッション",
         icon: <AssignmentIcon />,
-        command: { type: "NAVIGATE", to: paths.mission },
+        command: { type: "NAVIGATE", to: routePaths.mission },
         group: "main",
         footNav: true
     },
     {
         label: "ライブラリ",
         icon: <MenuBookIcon />,
-        command: { type: "NAVIGATE", to: paths.library }, group: "main",
+        command: { type: "NAVIGATE", to: routePaths.library }, group: "main",
         footNav: true
     },
     {
@@ -31,19 +31,19 @@ export const menuItems: MenuItem[] = [
     {
         label: "統計",
         icon: <BarChartIcon />,
-        command: { type: "NAVIGATE", to: paths.stats }, group: "analysis",
+        command: { type: "NAVIGATE", to: routePaths.stats }, group: "analysis",
         footNav: true
     },
     { label: "履歴", 
         icon: <HistoryIcon/>,
-        command: { type: "NAVIGATE", to: paths.history }, group: "analysis" },
+        command: { type: "NAVIGATE", to: routePaths.history }, group: "analysis" },
     { 
         label: "メンテナンス管理", 
         icon: <AdminPanelSettingsIcon/>,
-        command: { type: "NAVIGATE", to: paths.maintenance}, group: "maintenance"
+        command: { type: "NAVIGATE", to: routePaths.maintenance}, group: "maintenance"
         //command: { type: "OPEN_DIALOG", dialog: "backupRestore" }, group: "maintenance" 
         },
     { label: "設定", 
         icon: <SettingsIcon/>,
-        command: { type: "NAVIGATE", to: paths.settings }, group: "settings" },
+        command: { type: "NAVIGATE", to: routePaths.settings }, group: "settings" },
 ]

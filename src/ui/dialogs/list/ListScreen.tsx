@@ -3,7 +3,7 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import type { ProblemId } from "@/domain/problem/entity/Problem";
 import { AppShell } from "@/ui/common/components/layout/AppShell";
 import { useLocation, useNavigate } from "react-router-dom";
-import { paths } from "@/router/paths";
+import { routePaths } from "@/router/paths";
 import { Button, IconButton } from "@mui/material";
 import { LibraryListView } from "@/ui/screens/library/components/LibraryListView";
 import { createSessionId, useSessionStore } from '@/ui/screens/session/store/useSessionStore';
@@ -23,20 +23,20 @@ export function ListScreen(){
     const startSession = useSessionStore(s=>s.start)
     
     const handleItemClick = (id: ProblemId) => {
-        navigate(paths.detail(id))
+        navigate(routePaths.detail.build(id))
         //navigate(routes.player(id))
     }
 
     const handleStartSession = () => {
         const sessionId = createSessionId()
         startSession(sessionId, ids)
-        navigate(paths.sessionPlay(sessionId))
+        navigate(routePaths.sessionPlay.build(sessionId))
     }
     return (
         <AppShell
             header={ title }
             rightActions={<RightActionPanel onStartSession={handleStartSession}/>}
-            footer={<Button variant="outlined" onClick={()=>navigate(paths.back)}>戻る</Button>}>
+            footer={<Button variant="outlined" onClick={()=>navigate(-1)}>戻る</Button>}>
             <LibraryListView ids={ids} onItemClick={handleItemClick}/>
         </AppShell>
     )

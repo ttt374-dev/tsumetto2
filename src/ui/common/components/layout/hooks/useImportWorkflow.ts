@@ -2,7 +2,7 @@ import { createContext, useEffect, useState, type ReactNode } from "react"
 import { useNavigate } from "react-router-dom"
 import { useToast } from "@/ui/App/providers/ToastProvider";
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
-import { paths } from "@/router/paths";
+import { routePaths } from "@/router/paths";
 import { useImportController } from "@/ui/dialogs/Import/useImportController";
 import { createSessionId, useSessionStore } from "@/ui/screens/session/store/useSessionStore";
 

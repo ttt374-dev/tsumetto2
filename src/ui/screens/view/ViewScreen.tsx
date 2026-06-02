@@ -5,13 +5,11 @@ import PlyControlPanel from "@/ui/screens/player/components/panels/PlyControlPan
 
 import { Problem } from "@/domain/problem/entity/Problem"
 import { AppShell } from "@/ui/common/components/layout/AppShell";
-import { useReplayStore } from "@/ui/screens/player/store/useReplayStore";
 import PromotionDialog from "@/ui/screens/player/dialogs/PromotionDialog";
 import TitlePanel from "@/ui/screens/player/components/panels/TitlePanel";
 import MovesPanel from "@/ui/screens/player/components/panels/moves/MovesPanel";
 import { useNavigate, useParams } from "react-router-dom";
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
-import { paths } from "@/router/paths";
 import { usePlayerPresentation } from "@/ui/screens/player/hooks/usePlayerPresentation";
 import { usePlayerRunner } from "@/ui/screens/player/runner/usePlayerRunner";
 import { useEffect } from "react";
@@ -76,7 +74,7 @@ function ViewContent({ problem}: { problem: Problem}){
 function FooterPanel(){
     const navigate = useNavigate()
     return <>
-        <Button onClick={()=> navigate(paths.back)}>
+        <Button onClick={()=> navigate(-1)}>
             戻る
         </Button>
     </>

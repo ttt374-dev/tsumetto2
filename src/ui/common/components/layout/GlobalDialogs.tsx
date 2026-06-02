@@ -1,5 +1,5 @@
 import type { ImportOptions } from "@/application/usecase/ImportProblemsUsecase";
-import { paths } from "@/router/paths";
+import { routePaths } from "@/router/paths";
 import type { GlobalDialogControllers } from "@/ui/common/components/layout/AppShell";
 import BackupRestoreDialog from "@/ui/dialogs/BackupRestore/BackupRestoreDialog";
 import { ImportDialog } from "@/ui/dialogs/Import/ImportDialog";
@@ -17,7 +17,7 @@ export function GlobalDialogs({ dialogs }: {
        const result = await dialogs.import.confirm(options)       
        const ids = result.results.filter(r => r.status === "imported").map(r => r.problemId)
         startSession(createSessionId(), ids)
-        navigate(paths.list, { state: { title: "imported kif files", ids: ids } })
+        navigate(routePaths.list, { state: { title: "imported kif files", ids: ids } })
     }
     return <>
         {dialogs.import.filesSelectElement}

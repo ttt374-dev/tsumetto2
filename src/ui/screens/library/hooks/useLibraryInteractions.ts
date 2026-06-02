@@ -1,5 +1,5 @@
 import type { ProblemId } from "@/domain/problem/entity/Problem"
-import { paths } from "@/router/paths"
+import { routePaths } from "@/router/paths"
 import { type LibrarySelection } from "@/ui/screens/library/hooks/useLibrarySelection"
 import { useNavigate } from "react-router-dom"
 
@@ -12,7 +12,7 @@ export function useLibraryInteractions(selection: LibrarySelection) {
             toggleChecked: selection.toggleChecked
         },
         navigation: {
-            openDetail: (pid: ProblemId) => navigate(paths.detail(pid))
+            openDetail: (pid: ProblemId) => navigate(routePaths.detail.build(pid))
         }
     }
 

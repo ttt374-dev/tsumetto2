@@ -5,7 +5,7 @@ import styles from "./AppLayout.module.css";
 import { AppBar, Box, IconButton,  Toolbar, Typography } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useNavigate } from "react-router-dom";
-import { paths } from "@/router/paths";
+import { routePaths } from "@/router/paths";
 
 interface Props {
     header?: React.ReactNode;
@@ -32,7 +32,7 @@ export function AppLayout({ header, footer, children, rightActions, fab, drawer,
                         >
                             <MenuIcon />
                         </IconButton> 
-                        : <ArrowBackIcon onClick={()=>navigate(paths.back)}/>
+                        : <ArrowBackIcon onClick={()=>navigate(-1)}/>
                     }
                     <Typography>
                         {header}

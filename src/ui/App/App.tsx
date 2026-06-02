@@ -12,7 +12,7 @@ import { RepositoryContext, type RepositoryContextValue } from './providers/Repo
 import { ToastProvider } from './providers/ToastProvider';
 import { ListScreen } from '@/ui/dialogs/list/ListScreen.tsx';
 import StatsScreen from '@/ui/screens/stats/StatsScreen.tsx';
-import { paths } from '../../router/paths';
+import { routePaths } from '../../router/paths';
 import SessionSummaryScreen from '@/ui/screens/summary/SessionSummaryScreen.tsx';
 import ProblemDetailScreen from '@/ui/screens/detail/ProblemDetailScreen.tsx';
 import LibraryScreen from '@/ui/screens/library/LibraryScreen.tsx';
@@ -74,25 +74,25 @@ function App(props: { repos: RepositoryContextValue }) {
                     <BrowserRouter>
                         { /* <DebugHistory />                         */}
                         <Routes>
-                            <Route path="/session/:sessionId/play/:index" element={<SessionPlayerScreen />} />
-                            <Route path="/session/:sessionId/summary" element={<SessionSummaryScreen />} />
-                            <Route path="/session/:sessionId/list/:index" element={<SessionListScreen />} />
+                            <Route path={routePaths.sessionPlay.path} element={<SessionPlayerScreen />} />
+                            <Route path={routePaths.sessionSummary.path} element={<SessionSummaryScreen />} />
+                            <Route path={routePaths.sessionList.path} element={<SessionListScreen />} />
 
-                            <Route path={paths.mission} element={<MissionScreen />} />
-                            <Route path={`${paths.mission}/:id`} element={<MissionEditScreen />} />
+                            <Route path={routePaths.mission} element={<MissionScreen />} />
+                            <Route path={routePaths.missionEdit.path} element={<MissionEditScreen />} />
 
-                            <Route path={paths.library} element={<LibraryScreen />} />
+                            <Route path={routePaths.library} element={<LibraryScreen />} />
                             { /* <Route path="/view/:id" element={<ViewerScreen />} /> */}
-                            <Route path="/play/:id" element={<SinglePlayerScreen />} />
-                            <Route path="/list" element={<ListScreen />} />
-                            <Route path="/detail/:id" element={<ProblemDetailScreen />} />
-                            <Route path="/view/:id" element={<ViewScreen />} />
+                            <Route path={routePaths.player.path} element={<SinglePlayerScreen />} />
+                            <Route path={routePaths.list} element={<ListScreen />} />
+                            <Route path={routePaths.detail.path} element={<ProblemDetailScreen />} />
+                            { /* <Route path="/view/:id" element={<ViewScreen />} />*/ }
 
-                            <Route path={paths.stats} element={<StatsScreen />} />
-                            <Route path={paths.history} element={<HistoryScreen />} />
-                            <Route path={paths.settings} element={<SettingsScreen />} />
-                            <Route path={paths.maintenance} element={<MaintenanceScreen />} />
-                            <Route path="/" element={<Navigate to={paths.mission} />} />
+                            <Route path={routePaths.stats} element={<StatsScreen />} />
+                            <Route path={routePaths.history} element={<HistoryScreen />} />
+                            <Route path={routePaths.settings} element={<SettingsScreen />} />
+                            <Route path={routePaths.maintenance} element={<MaintenanceScreen />} />
+                            <Route path="/" element={<Navigate to={routePaths.mission} />} />
                         </Routes>
                     </BrowserRouter>
                 </RepositoryContext.Provider>

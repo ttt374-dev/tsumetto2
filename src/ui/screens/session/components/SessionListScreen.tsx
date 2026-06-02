@@ -1,16 +1,16 @@
+import { useNavigate } from "react-router-dom"
+import { Button, Stack } from "@mui/material"
+
 import type { SessionId } from "@/domain/session/entity/Session"
-import { paths } from "@/router/paths"
+import { routePaths } from "@/router/paths"
 import { AppShell } from "@/ui/common/components/layout/AppShell"
 import { useReviewEventStore } from "@/ui/features/learning/hooks/useReviewEventStore"
 import { useSessionStore } from "@/ui/screens/session/store/useSessionStore"
 import SessionListView from "@/ui/screens/session/components/SessionListView"
-import { Button, Stack } from "@mui/material"
-import { useLocation, useNavigate, useParams } from "react-router-dom"
 import type { ProblemId } from "@/domain/problem/entity/Problem"
 import type { SolvedResult } from "@/domain/review/types/solvedResult"
 import type { ReviewEvent } from "@/domain/review/types/ReviewEvent"
 import { useSessionRouteContext } from "@/ui/screens/session/hooks/useSessionRouteContext"
-
 
 export default function SessionListScreen() {
     const resParams = useSessionRouteContext()
@@ -37,7 +37,7 @@ function SessionListContent(props: {
         >
             <SessionListView
                 ids={ids}
-                onSelect={(i)=> navigate(paths.sessionPlay(sessionId, i))}
+                onSelect={(i)=> navigate(routePaths.sessionPlay.build(sessionId, i))}
                 selectedId={selectedId}
                 solvedResultMap={solvedResultMap}
             />
@@ -48,10 +48,10 @@ function SessionListContent(props: {
 function FooterPanel({ sessionId }: { sessionId: SessionId }) {
     const navigate = useNavigate()
     return <Stack direction="row">
-        <Button variant="outlined" fullWidth onClick={() => navigate(paths.back)}>
+        <Button variant="outlined" fullWidth onClick={() => navigate(-1)}>
             戻る
         </Button>
-        <Button variant="outlined" fullWidth onClick={() => navigate(paths.sessionSummary(sessionId))}>
+        <Button variant="outlined" fullWidth onClick={() => navigate(routePaths.sessionSummary.build(sessionId))}>
             サマリーへ
         </Button>
     </Stack>

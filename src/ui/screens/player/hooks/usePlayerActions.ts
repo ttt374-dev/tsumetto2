@@ -5,7 +5,7 @@ import { useToast } from "@/ui/App/providers/ToastProvider";
 import { createPlayerContext } from "@/ui/screens/player/runner/createPlayerContext";
 import { useGameStore } from "@/ui/screens/player/store/useGameStore";
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
-import { paths } from "@/router/paths";
+import { routePaths } from "@/router/paths";
 import { useGameUIStore } from "@/ui/screens/player/store/useGameUIStore";
 import { useBoardInputStore } from "@/ui/screens/player/store/useBoardInputStore";
 import type { PieceType, Player, Square } from "@/domain/kif/entity";
@@ -102,7 +102,7 @@ export function usePlayerActions(): PlayerActions {
 
         navigation: {
             navigateToDetail: (pid: ProblemId) =>
-                navigate(paths.detail(pid)),
+                navigate(routePaths.detail.build(pid)),
         },
 
         game: {

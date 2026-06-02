@@ -5,7 +5,7 @@ import type { ProblemId } from "@/domain/problem/entity/Problem"
 import { useLearningRecordStore } from "@/ui/features/learning/hooks/useLearningRecordStore"
 import type { LearningState } from "@/domain/learning/entity/LearningState"
 import { useNavigate } from "react-router-dom"
-import { paths } from "@/router/paths"
+import { routePaths } from "@/router/paths"
 import { useQueryActiveProblems } from "@/ui/features/problem/hooks/useQueryActiveProblems"
 
 type HistogramItem = {
@@ -90,7 +90,7 @@ export function NextReviewHistogram({data}: {
 
     const max = Math.max(...filtered.map(d => d.ids.length), 1)    
     const handleClick = (ids: ProblemId[]) => {
-        navigate(paths.list, { state: { ids: ids }})
+        navigate(routePaths.list, { state: { ids: ids }})
     }
     
 

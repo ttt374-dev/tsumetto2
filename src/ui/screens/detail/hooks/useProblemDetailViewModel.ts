@@ -7,7 +7,7 @@ import type { ProblemType } from "@/domain/problem/entity/ProblemType";
 import { applyDraftToProblem, createEditDraft, toEditDraft, type ProblemEditDraft } from '@/ui/screens/detail/hooks/useProblemEditDraft';
 import { useProblemEditStore } from '@/ui/screens/detail/hooks/useProblemEditStore';
 import { useNavigate } from 'react-router-dom';
-import { paths } from '@/router/paths';
+import { routePaths } from '@/router/paths';
 import type { Player } from '@/domain/kif/entity';
 import { useLearningRecordStore } from '@/ui/features/learning/hooks/useLearningRecordStore';
 import { useProblemMutation } from '@/ui/features/problem/hooks/useProblemMutation';
@@ -57,17 +57,17 @@ export function useProblemEditActions(pid: ProblemId) {
     
     const startPlay = () => {
         //navigate(routes.view(pid))
-        navigate(paths.player(pid))
+        navigate(routePaths.player.build(pid))
     }
     const deleteProblem = () => {
         if(!window.confirm("Are you sure to delete?")) return
         deleteProblems([pid])
-        navigate(paths.back)
+        navigate(-1)
     }
     const confirm = async () => {
         if (!draft) return
         updateProblem(pid, prev => applyDraftToProblem(prev, draft))    
-        navigate(paths.back)
+        navigate(-1)
     }
     return {
         resetLearning, startPlay, deleteProblem, confirm

@@ -1,7 +1,7 @@
 import { deriveSolvedResultFromEvents } from "@/domain/review/service/solvedResultDeriver"
 import { type GameState } from "@/ui/screens/player/store/useGameStore"
 import type { SessionId } from "@/domain/session/entity/Session"
-import { paths } from "@/router/paths"
+import { routePaths } from "@/router/paths"
 import type { ProblemId } from "@/domain/problem/entity/Problem"
 import type { SolvedResult } from "@/domain/review/types/solvedResult"
 import type { ReviewEventLog } from "@/domain/review/types/ReviewEvent"
@@ -54,10 +54,10 @@ export function resolveSessionCommand(
         }
         case "GOTO_PROBLEM": {
             if (cmd.index >= ctx.problemIds.length) {
-                return [{ type: "NAVIGATE", to: paths.sessionSummary(sessionId) }]
+                return [{ type: "NAVIGATE", to: routePaths.sessionSummary.build(sessionId) }]
             }
             if (cmd.index < 0) return []
-            return [{ type: "NAVIGATE", to: paths.sessionPlay(sessionId, cmd.index) }]
+            return [{ type: "NAVIGATE", to: routePaths.sessionPlay.build(sessionId, cmd.index) }]
         }
 
         case "ADVANCE_PROBLEM": {
@@ -75,7 +75,7 @@ export function resolveSessionCommand(
 
         case "OPEN_SESSION_LIST": {
             return [
-                { type: "NAVIGATE", to: paths.sessionList(sessionId, ctx.currentIndex) }
+                { type: "NAVIGATE", to: routePaths.sessionList.build(sessionId, ctx.currentIndex) }
             ]
         }
 
