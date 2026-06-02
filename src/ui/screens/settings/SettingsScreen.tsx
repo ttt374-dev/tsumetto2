@@ -38,7 +38,7 @@ type SettingSection = {
     title: string
     items: SettingItem[]
 }
-
+///////////////////////////////////////
 export function SettingsScreen() {
     const settings = useUiSettingsStore(s => s.settings)
     const setSettings = useUiSettingsStore(s => s.setSettings)

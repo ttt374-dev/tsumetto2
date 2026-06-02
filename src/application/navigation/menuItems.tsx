@@ -37,9 +37,12 @@ export const menuItems: MenuItem[] = [
     { label: "履歴", 
         icon: <HistoryIcon/>,
         command: { type: "NAVIGATE", to: routes.history }, group: "analysis" },
-    { label: "バックアップ・復旧", 
+    { 
+        label: "メンテナンス管理", 
         icon: <AdminPanelSettingsIcon/>,
-        command: { type: "OPEN_DIALOG", dialog: "backupRestore" }, group: "maintenance" },
+        command: { type: "NAVIGATE", to: routes.maintenance}, group: "maintenance"
+        //command: { type: "OPEN_DIALOG", dialog: "backupRestore" }, group: "maintenance" 
+        },
     { label: "設定", 
         icon: <SettingsIcon/>,
         command: { type: "NAVIGATE", to: routes.settings }, group: "settings" },

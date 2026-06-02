@@ -37,6 +37,7 @@ export const routes = {
     // history,
     history: "/history",
 
+    maintenance: "/maintenance",
     // settings
     settings: "/settings",
     

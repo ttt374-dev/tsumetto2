@@ -37,8 +37,15 @@ export class ProblemRepository {
     }
     async removeMany(ids: ProblemId[]) {
         //ids.map(this.remove)
-        console.log("remove many", ids)
+        //console.log("remove many", ids)
         await this.ds.deleteMany(ids)
+    }
+    async hardDeleteDeleted(): Promise<number>{
+        const problems = await this.findAll()    
+        const remaining = problems.filter(p => !p.deletedAt)
+        const deletedCount = problems.length - remaining.length
+        await this.replaceAll(remaining)          
+        return deletedCount
     }
     async replaceAll(problems: Problem[]) { // TODO: transaction
         await this.ds.replaceAll(problems.map(p=>p.toDTO()))
