@@ -106,6 +106,7 @@ export class Problem {
             d.isStarred, d.isReferenceOnly,
             d.createdAt, d.updatedAt, d.deletedAt)
     }
+    /*
     static createFromText(text: string, title: string): Problem | null{
         const r = parseKif(text)
         //console.log("carete from text", r, text)
@@ -115,6 +116,7 @@ export class Problem {
         }
         return this.create({title: title, kifData: r.value.toDTO()})
     }
+        */
     ////
     get isActive(): boolean{ return !this.deletedAt}
     
