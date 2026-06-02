@@ -10,7 +10,7 @@ import FooterNavigation from "@/ui/common/components/FooterNavigation";
 export default function StatsScreen() {
     return (
         <AppShell header={"Stats"}
-            footer={<FooterNavigation/>}
+            showBottomNav={true}
         >
             <Box sx={{
                 height: "100%",
