@@ -4,7 +4,7 @@ import { useReviewEventStore } from "@/ui/features/learning/hooks/useReviewEvent
 import { useMissionStore } from "@/ui/screens/mission/hooks/useMissionStore"
 import { fileBackupWriter } from "@/infrastructure/backup/fileBackupWriter"
 import { useRepositoryContext } from "@/ui/App/providers/RepositoryProvider"
-import { useBackupRestoreUsecase, type BackupResult, type RestoreResult } from "@/application/usecase/problem/backup/BackupRestoreUsecase"
+import { useBackupRestoreUsecase, type BackupResult, type RestoreResult } from "@/application/usecase/BackupRestoreUsecase"
 import { useDialogState, type DialogState } from "@/ui/common/hooks/useDialogState"
 
 export type BackupRestoreController = DialogState & {

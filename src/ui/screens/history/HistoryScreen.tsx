@@ -17,7 +17,7 @@ export default function HistoryScreen(){
         rightActions={
             <RightActions onClearAllReviewEvents={handleClearAllReviewEvents}/>
         }
-        footer={<FooterNavigation/>}>
+        showBottomNav={true}>
         <ReviewEventHistory/>
     </AppShell>)
 }

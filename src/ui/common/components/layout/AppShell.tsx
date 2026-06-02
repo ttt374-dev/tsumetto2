@@ -5,12 +5,17 @@ import { useBackupRestoreDialogController, type BackupRestoreController } from "
 import { useImportWorkflow } from "@/ui/common/components/layout/hooks/useImportWorkflow";
 import type { ImportController } from "@/ui/dialogs/Import/useImportController";
 import { GlobalDialogs } from "@/ui/common/components/layout/GlobalDialogs";
-import { AppDrawerMenu } from "@/ui/common/components/layout/AppDrawerMenu";
 import { useDrawerState } from "@/ui/common/hooks/useDrawerState";
-
+import { DrawerMenu } from "@/ui/common/components/layout/DrawerMenu";
+import type { MenuCommand } from "@/application/navigation/types";
+import { executeMenuCommand } from "@/application/navigation/executeMenuCommand";
+import { createMenuDeps } from "@/application/navigation/createMenuDeps";
+import { menuItems } from "@/application/navigation/menuItems";
+import FooterNavigation from "@/ui/common/components/FooterNavigation";
 
 interface Props {
     header?: React.ReactNode;
+    showBottomNav?: boolean;
     footer?: React.ReactNode;
     children: React.ReactNode;
     rightActions?: React.ReactNode;
@@ -28,7 +33,7 @@ export type GlobalDialogControllers = {
 }
 
 //export const OpenImportContext = createContext<(() => void) | null>(null)
-export const AppActionsContext = createContext<AppActions | null>(null)
+//export const AppActionsContext = createContext<AppActions | null>(null)
 
 function useAppControllers() {
     const dialogs = {
@@ -37,26 +42,25 @@ function useAppControllers() {
     }
     return { dialogs }
 }
-function createAppActions(dialogs: GlobalDialogControllers): AppActions {
-    return {
-        openImport: dialogs.import.openFilesSelectDialog,
-        openBackupRestore: dialogs.backupRestore.openDialog
-    }
-}
+
 //////////////////////////////////////////////
-export function AppShell({ header, footer, rightActions, fab, children, navigateBack = false }: Props) {
-    
+export function AppShell({ header, showBottomNav, footer, rightActions, fab, children, navigateBack = false }: Props) {    
     const { dialogs } = useAppControllers()
     const drawer = useDrawerState()    
-    
-    // footer
-    // 下部メニューで import を呼ぶため
-    const appActions = createAppActions(dialogs)
-    const resolvedFooter = footer &&
-        <AppActionsContext.Provider value={appActions}>
-            {footer}            
-        </AppActionsContext.Provider>
-    
+    const menuDeps = createMenuDeps(dialogs)    
+    const handleMenuCommand = (cmd: MenuCommand) => {            
+        executeMenuCommand(cmd, menuDeps)        
+    }        
+    const resolvedFooter = showBottomNav ? 
+        <FooterNavigation onCommand={handleMenuCommand}/> :  footer
+    const drawerMenu = !navigateBack &&
+        <DrawerMenu
+            open={drawer.open}
+            onClose={drawer.closeDrawer}
+            menuItems={menuItems}
+            onCommand={cmd => { handleMenuCommand(cmd); drawer.closeDrawer() }}
+        />
+     
     return (
         <>
             <AppLayout
@@ -65,8 +69,7 @@ export function AppShell({ header, footer, rightActions, fab, children, navigate
                 rightActions={rightActions}
                 fab={fab}
                 onMenuClick={drawer.openDrawer}
-                drawer={!navigateBack && 
-                    <AppDrawerMenu open={drawer.open} onClose={drawer.closeDrawer} dialogs={dialogs}/>}
+                drawer={drawerMenu}
             >
                 {children}
             </AppLayout>

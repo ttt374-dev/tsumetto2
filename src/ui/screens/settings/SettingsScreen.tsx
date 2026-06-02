@@ -94,7 +94,7 @@ export function SettingsScreen() {
     return (
         <AppShell
             header="設定"
-            footer={<FooterNavigation/>}
+            showBottomNav={true}
         >
             <Stack
                 sx={{
