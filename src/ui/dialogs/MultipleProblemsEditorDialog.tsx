@@ -1,7 +1,7 @@
-import type { ProblemId } from "@/domain/problem/entity/Problem";
+import { DefaultProblemType, type ProblemId } from "@/domain/problem/entity/Problem";
 import { FreeSoloAutocomplete } from "@/shared/components/FreeSoloAutocomplete";
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
-import { Autocomplete, Box, Button, Checkbox, Chip, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, FormGroup, FormLabel, InputLabel, List, ListItem, ListItemIcon, ListItemText, MenuItem, Select, Stack, TextField } from "@mui/material";
+import { Autocomplete, Box, Button, Checkbox, Chip, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, FormGroup, FormLabel, InputLabel, List, ListItem, ListItemIcon, ListItemText, MenuItem, Select, setRef, Stack, TextField } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import type { ProblemType } from "@/domain/problem/entity/ProblemType";
 import { ProblemTypeFilterControl } from "@/ui/features/problem/query/components/ProblemTypeFilterControl";
@@ -28,7 +28,8 @@ function ProblemTypeSelectControl(props: {
     type: ProblemType
     onChange: (type: ProblemType) => void
 }) {
-    return (<FormControl fullWidth>
+    return (
+    <FormControl fullWidth>
         <ProblemTypeFilterControl
             problemType={props.type}
             onChange={v => props.onChange(v)}
@@ -53,7 +54,7 @@ function SourceSelectControl(props: {
 function TagEditControl(props: {
     checkedIds: ProblemId[]
     onDeleteTag: (tag: string) => void
-     onAddTag: (tag: string) => void
+    onAddTag: (tag: string) => void
 }) {
     const byId = useProblemStore(s=>s.byId)
     const allTags = useProblemStore(s=>s.allTags)
@@ -110,8 +111,20 @@ function TagEditControl(props: {
                 sx={{ minWidth: 200 }}
             />
         </Box>
+    )    
+}
+function ReferenceOnlyControl(props: {
+    checked: boolean
+    onToggle: () => void
+}) {
+    const { checked, onToggle} = props
+    return (
+        <FormControlLabel
+            label="閲覧のみ"
+            control={
+                <Checkbox checked={checked} onChange={onToggle} />} />
+
     )
-    
 }
 ///////////////////////////////////////////////////
 export function MultipleProblemsEditorDialog(props: {
@@ -119,12 +132,14 @@ export function MultipleProblemsEditorDialog(props: {
     checkedIds: ProblemId[]
     onClose: () => void
 }) {
-    const [type, setType] = useState<ProblemType>("standard")
+    const [type, setType] = useState<ProblemType>(DefaultProblemType)
     const [source, setSource] = useState("")
     const [applyType, setApplyType] = useState(false)
     const [applySource, setApplySource] = useState(false)
     const [tagsToDelete, setTagsToDelete] = useState<string[]>([])
     const [tagsToAdd, setTagsToAdd] = useState<string[]>([])
+    const [applyReferenceOnly, setApplyReferenceOnly] = useState(false)
+    const [referenceOnly, setReferenceOnly] = useState(false)
 
     const { updateProblems } = useProblemMutation()
     const handleConfirm = () => {
@@ -133,7 +148,8 @@ export function MultipleProblemsEditorDialog(props: {
             if (applyType) next = next.setType(type)
             if (applySource) next = next.setSource(source)
             //console.log("tagstodelete", tagsToDelete)
-            next = next.removeTags(tagsToDelete).addTags(tagsToAdd)            
+            next = next.removeTags(tagsToDelete).addTags(tagsToAdd)
+            if (applyReferenceOnly) next = next.setReferenceOnly(referenceOnly)
             return next
         })
         props.onClose()
@@ -164,16 +180,25 @@ export function MultipleProblemsEditorDialog(props: {
                             setApplySource(true)
                         }} />
                     </Stack>
-                    <Stack direction="row">
-                        
+                    <Stack direction="row">                        
                         <FormControl fullWidth>                            
                             <TagEditControl checkedIds={props.checkedIds}
                                 onDeleteTag={handleDeleteTag}
                                 onAddTag={handleAddTag}
                             />
-                        </FormControl>
-                             
+                        </FormControl>                             
                     </Stack>
+                    <Stack direction="row">
+                        <Checkbox checked={applyReferenceOnly} onChange={(e) => setApplyReferenceOnly(e.target.checked)} />
+                        <ReferenceOnlyControl
+                            checked={referenceOnly}
+                            onToggle={() => { 
+                                setApplyReferenceOnly(true)
+                                setReferenceOnly(!referenceOnly) 
+                            }}
+                        />
+                    </Stack>
+                    
                 </Stack>
             </DialogContent>
 
