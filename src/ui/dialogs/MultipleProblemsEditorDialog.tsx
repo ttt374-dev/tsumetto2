@@ -31,23 +31,26 @@ type BulkEditState = {
     source: string
     applySource: boolean
 
-    tagsToAdd: string[]
-    tagsToDelete: string[]
-    applyTags: boolean
-
     referenceOnly: boolean
     applyReferenceOnly: boolean
+
+    //tagsToAdd: string[]
+    //tagsToDelete: string[]
+    //applyTags: boolean
+
 }
 const defaultBulkEditState: BulkEditState = {
     problemType: DefaultProblemType,
     applyProblemType: false,
     source: "",
     applySource: false,
-    tagsToAdd: [],
-    tagsToDelete: [],
-    applyTags: false,
     referenceOnly: false,
     applyReferenceOnly: false,
+
+    //tagsToAdd: [],
+    //tagsToDelete: [],
+    //applyTags: false,
+    
 }
 ///////////////////////////////////////////////////
 export function MultipleProblemsEditorDialog(props: {
@@ -63,12 +66,13 @@ export function MultipleProblemsEditorDialog(props: {
             let next = p
             if (state.applyProblemType) next = next.setType(state.problemType)
             if (state.applySource) next = next.setSource(state.source)
-            if (state.applyTags) next = next.removeTags(state.tagsToDelete).addTags(state.tagsToAdd)
+            //if (state.applyTags) next = next.removeTags(state.tagsToDelete).addTags(state.tagsToAdd)
             if (state.applyReferenceOnly) next = next.setReferenceOnly(state.referenceOnly)
             return next
         })
         handleClose()
     }
+    /*
     const handleDeleteTag = (tag: string) => {
         setState(prev=>({...prev, tagsToDelete:  [...prev.tagsToDelete, tag]}))
         //setTagsToDelete(prev=>[...prev, tag])
@@ -76,7 +80,7 @@ export function MultipleProblemsEditorDialog(props: {
     const handleAddTag = (tag: string) => {
         setState(prev=>({...prev, tagsToAdd:  [...prev.tagsToAdd, tag]}))
         //setTagsToAdd(prev=>[...prev, tag])
-    }
+    }*/
 
     const handleClose = () => {
         setState({ ...defaultBulkEditState })
@@ -113,6 +117,7 @@ export function MultipleProblemsEditorDialog(props: {
                                 })
                             }} />
                     </Stack>
+                    { /* 
                     <Stack direction="row">                        
                         <Checkbox checked={state.applyTags} 
                             onChange={(e) => patchState(({applyTags: e.target.checked}))}/>
@@ -123,6 +128,7 @@ export function MultipleProblemsEditorDialog(props: {
                             />
                         </FormControl>                             
                     </Stack>
+                    */ }
                     <Stack direction="row">
                         <Checkbox checked={state.applyReferenceOnly} 
                             onChange={(e) => patchState(({applyReferenceOnly: e.target.checked}))}/>
