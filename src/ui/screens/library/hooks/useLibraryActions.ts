@@ -2,7 +2,6 @@ import type { ProblemId } from "@/domain/problem/entity/Problem"
 import type { SessionId } from "@/domain/session/entity/Session"
 import { routePaths } from "@/router/paths"
 import { useProblemMutation } from "@/ui/features/problem/hooks/useProblemMutation"
-import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore"
 import { createSessionId, useSessionStore } from "@/ui/screens/session/store/useSessionStore"
 import { useNavigate } from "react-router-dom"
 

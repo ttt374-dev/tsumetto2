@@ -24,6 +24,7 @@ export type ProblemData = {
     updatedAt: number
     deletedAt?: number
 }
+export const DefaultProblemType = "standard"
 function createDefaultValues(): ProblemData {
     const now = Date.now()
     return {
@@ -31,7 +32,7 @@ function createDefaultValues(): ProblemData {
         title: "untitled",
         kifData: KifData.create().toDTO(),
 
-        problemType: "standard",
+        problemType: DefaultProblemType,
         source: "",
         tags: [],
         comment: "",

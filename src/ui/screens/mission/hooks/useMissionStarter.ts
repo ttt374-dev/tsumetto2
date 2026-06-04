@@ -15,7 +15,7 @@ export function useMissionStarter(){
     const navigate = useNavigate()
     const planner = usePlannerStore()    
     const start = useSessionStore(s => s.start);    
-    const sessionId = createSessionId()
+    
     const chunkSize = useUiSettingsStore(s=>s.settings.chunkSize)
 
     const startMission = (mission: Mission) => {       
@@ -23,7 +23,8 @@ export function useMissionStarter(){
             problems,
             learningRecords,
             mission.queryState).map(p=>p.id)
-
+        const sessionId = createSessionId()
+        
         planner.create(mission.id, ids, chunkSize)
         const chunk = planner.nextChunk()
         if (!chunk) return
