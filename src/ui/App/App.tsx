@@ -23,7 +23,7 @@ import ViewScreen from '@/ui/screens/view/ViewScreen';
 import SessionListScreen from '@/ui/screens/session/components/SessionListScreen';
 import { SettingsScreen } from '@/ui/screens/settings/SettingsScreen';
 import { useBootstrapStores } from '@/ui/App/useBootstrapStores';
-import { MaintenanceScreen } from '@/ui/maintenance/MaintenanceScreen';
+import { MaintenanceScreen } from '@/ui/screens/maintenance/MaintenanceScreen';
 
 export const theme = createTheme({
     cssVariables: true,   // ← これ必須

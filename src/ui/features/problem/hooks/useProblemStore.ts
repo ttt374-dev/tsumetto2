@@ -54,6 +54,7 @@ export type ProblemState = {
     allTags: string[]
     allSources: string[]
     activeProblems: Problem[]
+    exisistingProblems: Problem[]
 
     reload: () => Promise<void>
     //save: () => Promise<void>
@@ -84,6 +85,7 @@ function derive(byId: Record<ProblemId, Problem>) {
     activeProblems.forEach(p =>
         p.tags?.forEach(tag => tagSet.add(tag))
     )
+    const exisistingProblems = Object.values(byId)
     const sourceSet = new Set(
         activeProblems
             .map(p => p.source)
@@ -91,6 +93,7 @@ function derive(byId: Record<ProblemId, Problem>) {
     )
     return {
         activeProblems, ids,
+        exisistingProblems,
         allTags: Array.from(tagSet),
         allSources: Array.from(sourceSet)
     }
@@ -112,6 +115,7 @@ export const useProblemStore = create<ProblemState>((set, get) => ({
     ids: [],
     byId: {},
     activeProblems: [],
+    exisistingProblems: [],
     allTags: [],
     allSources: [],
 

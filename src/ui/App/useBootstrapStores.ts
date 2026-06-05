@@ -28,7 +28,7 @@ export function useBootstrapStores(repos: RepositoryContextValue) {
                 .setRepository(problemRepo)
 
             // reload
-            reloadAllStores()
+            await reloadAllStores()
             if (cancelled) return
 
             // projection rebuild

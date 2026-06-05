@@ -2,6 +2,7 @@ import { useHardDeleteUsecase } from "@/application/usecase/HardDeleteUsecase";
 import { useToast } from "@/ui/App/providers/ToastProvider";
 import { AppShell } from "@/ui/common/components/layout/AppShell";
 import { useBackupRestoreDialogController } from "@/ui/dialogs/BackupRestore/useBackupRestoreDIalogController";
+import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
 import { Box, Button, Divider, List, ListItem, ListItemButton, Stack, Typography } from "@mui/material";
 import { useRef } from "react";
 
@@ -11,6 +12,7 @@ export function MaintenanceScreen(){
     const fileInputRef = useRef<HTMLInputElement>(null)
     const backupRestoreController = useBackupRestoreDialogController()
     const executeHardDelete = useHardDeleteUsecase()
+    const numSoftDeleted = useProblemStore(s=>s.exisistingProblems.filter(p=>p.deletedAt).length)
     const handleBackup = async () => { 
         await backupRestoreController.backup()
     }
@@ -75,7 +77,7 @@ export function MaintenanceScreen(){
                 <Box my={3}>
                     <Typography variant="h6">ハードデリート</Typography>
                     <Typography variant="body2" color="error" mb={1}>
-                        削除マークのついた問題群を物理削除
+                        削除マークのついた問題群を物理削除 ({numSoftDeleted}件)
                     </Typography>
                     <Button
                         variant="outlined"
