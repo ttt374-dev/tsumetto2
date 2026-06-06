@@ -17,15 +17,9 @@ export function useBootstrapStores(repos: RepositoryContextValue) {
             const problemRepo = repos.problem
 
             // Repository injection
-            useMissionStore
-                .getState()
-                .setRepository(missionRepo)
-            useReviewEventStore
-                .getState()
-                .setRepository(reviewEventRepo)
-            useProblemStore
-                .getState()
-                .setRepository(problemRepo)
+            useMissionStore.getState().setRepository(missionRepo)
+            useReviewEventStore.getState().setRepository(reviewEventRepo)
+            useProblemStore.getState().setRepository(problemRepo)
 
             // reload
             await reloadAllStores()
