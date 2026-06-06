@@ -1,32 +1,30 @@
+import { useCleanupresetReviewEvent } from "@/application/usecase/CleanupResetReviewEvent";
 import { useHardDeleteUsecase } from "@/application/usecase/HardDeleteUsecase";
 import { useToast } from "@/ui/App/providers/ToastProvider";
 import { AppShell } from "@/ui/common/components/layout/AppShell";
 import { useBackupRestoreDialogController } from "@/ui/dialogs/BackupRestore/useBackupRestoreDIalogController";
-import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore";
 import { Box, Button, Divider, List, ListItem, ListItemButton, Stack, Typography } from "@mui/material";
 import { useRef } from "react";
-
 
 export function MaintenanceScreen(){
     const toast = useToast()
     const fileInputRef = useRef<HTMLInputElement>(null)
     const backupRestoreController = useBackupRestoreDialogController()
     const executeHardDelete = useHardDeleteUsecase()
-    const numSoftDeleted = useProblemStore(s=>s.exisistingProblems.filter(p=>p.deletedAt).length)
+    const executeCleanupResetReviewEvents = useCleanupresetReviewEvent()
+    
     const handleBackup = async () => { 
         await backupRestoreController.backup()
     }
     const handleRestoreFile = async (file: File) => {
         if (!window.confirm("現在のデータは上書きされます。よろしいですか？")) return
-        const res = await backupRestoreController.restore(file)
-        //const res = await onRestore(file)
-        //if (res.ok) onClose()
-    }
-   
-    const handleHardDelete = async () => {
+        await backupRestoreController.restore(file)
+    }    
+    const handleCleanup = async () => {
         if (!window.confirm("よろしいですか？")) return
-        const deletedCount = await executeHardDelete()
-        toast({message: `${deletedCount}件物理削除されました`})
+        const deletedProblemsCount = await executeHardDelete()
+        const deletedReviewEventsCount = await executeCleanupResetReviewEvents()
+        toast({message: `問題済${deletedProblemsCount}件, リセット以前イベント${deletedReviewEventsCount}件　削除されました`})
     }
     return (
         <AppShell
@@ -43,8 +41,6 @@ export function MaintenanceScreen(){
                         バックアップを保存
                     </Button>
                 </Box>
-
-                <Divider />
 
                 {/* restore */}
                 <Box my={3}>
@@ -73,16 +69,19 @@ export function MaintenanceScreen(){
                         }}
                     />
                 </Box>
-
+                <Divider />
                 <Box my={3}>
-                    <Typography variant="h6">ハードデリート</Typography>
+                    <Typography variant="h6">クリーンアップ</Typography>
                     <Typography variant="body2" color="error" mb={1}>
-                        削除マークのついた問題群を物理削除 ({numSoftDeleted}件)
+                        削除マークのついた問題群を物理削除
+                    </Typography>
+                    <Typography variant="body2" color="error" mb={1}>
+                        リセット以前の習得データをクリア件
                     </Typography>
                     <Button
                         variant="outlined"
                         color="error"
-                        onClick={handleHardDelete}
+                        onClick={handleCleanup}
                     >
                         物理的削除
                     </Button>
