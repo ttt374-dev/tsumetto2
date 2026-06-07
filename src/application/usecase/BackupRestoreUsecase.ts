@@ -5,9 +5,8 @@ import { Problem, type ProblemDTO } from "@/domain/problem/entity/Problem"
 import type { ReviewEvent, ReviewEventLog } from "@/domain/review/types/ReviewEvent"
 import type { Mission } from "@/domain/mission/entity/Mission"
 import type { ProblemRepository } from "@/domain/problem/repository/ProblemRepository"
-import { useMissionStore } from "@/ui/screens/mission/hooks/useMissionStore"
-import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore"
 import { rebuildProjections, reloadAllStores } from "@/ui/App/useBootstrapStores"
+import { autobackupFileWriter, manualBackupWriter, type BackupWriter } from "@/infrastructure/backup/BackupWriter"
 
 export type BackupResult = Result<BackupResultOk, BackupRestoreError>
 
@@ -30,7 +29,9 @@ export type BackupRestoreError =
 export type RestoreResult = Result<RestoreResultOk, BackupRestoreError>
 ///////////////////////////
 export interface BackupRestoreUsecase {
-    backup(): Promise<BackupResult>
+    //backup(writer: BackupWriter): Promise<BackupResult>
+    manualBackup(): Promise<BackupResult>
+    autoBackup(): Promise<BackupResult>
     restore(data: BackupData): Promise<RestoreResult>
 }
 
@@ -40,107 +41,101 @@ export type BackupData = {
     missions: Mission[]
 }
 
+export type BackupDeps = {
+    problem: ProblemRepository
+    reviewEvent: ReviewEventRepository
+    mission: MissionRepository
+}
 export function useBackupRestoreUsecase(
     problemRepo: ProblemRepository,
     reviewRepo: ReviewEventRepository,
-    missionRepo: MissionRepository,
-    writer: BackupWriter,
-): BackupRestoreUsecase { 
-    //const reloadProblems = useProblemStore(s=>s.reload)
-    //const reloadMissions = useMissionStore(s=>s.reload)
-    
-    return {
-        async backup(): Promise<BackupResult> {
-            const filename = `kif-backup-${Date.now()}.json`
+    missionRepo: MissionRepository,    
+): BackupRestoreUsecase {
 
-            let problems: Problem[]
-            let reviewEvents: ReviewEventLog
-            let missions: Mission[]
-            let backupData: BackupData
-            let json: string
+    const createBackupJson = async (): Promise<{
+        json: string
+        counts: ResultCount
+    }> => {
+        const problems = await problemRepo.findAll()
+        const reviewEvents = await reviewRepo.findAll()
+        const missions = await missionRepo.findAll()
 
-            try {
-                problems = await problemRepo.findAll()
-                reviewEvents = await reviewRepo.findAll()
-                missions = await missionRepo.findAll()
-            } catch (e) {
-                if (e instanceof Error) {
-                    console.error(e.message)
-                } else {
-                    console.error(String(e))
-                }
-                return { ok: false, error: { code: `persist-failed` } }
+        const backupData: BackupData = {
+            problems: problems.map(p => p.toDTO()),
+            reviewEvents,
+            missions,
+        }
+
+        return {
+            json: JSON.stringify(backupData, null, 2),
+            counts: {
+                problemCount: problems.length,
+                reviewEventCount: reviewEvents.length,
+                missionCount: missions.length,
             }
-
-            try {
-                backupData = {
-                    problems: problems.map(p => p.toDTO()),
-                    reviewEvents: reviewEvents,
-                    missions: missions,
-                }
-                json = JSON.stringify(backupData, null, 2)
-            } catch (e) {
-                return { ok: false, error: { code: "parse-failed" } }
-            }
-            try {
-
-                await writer.write(json, filename)
-            } catch (e) {
-                return { ok: false, error: { code: "file-io-error" } }
-            }
+        }
+    }
+    const backup = async (writer: BackupWriter, filename: string): Promise<BackupResult> => {        
+        try {
+            const { json, counts } = await createBackupJson()
+            await writer.write(json, filename)
             return {
                 ok: true,
                 value: {
                     filename: filename,
-                    problemCount: problems.length,
-                    reviewEventCount: reviewEvents.length,
-                    missionCount: missions.length,
+                    ...counts,
                 }
             }
-        },
-
-        async restore(backupData: BackupData): Promise<RestoreResult> {
-            //console.log("restore", backupData.missions)
-            let problems: Problem[]
-            try {
-                problems = backupData.problems.map(dto => Problem.fromDTO(dto))
-                console.log("restore", problems)
-            } catch (e) {
-                console.log("restore error", e)
-                if (e instanceof Error) {
-                    console.error(e.message)
-                } else {
-                    console.error(String(e))
-                }
-                return { ok: false, error: { code: "parse-failed" } }
-            }
-            try {
-                //const activeProblems = problems.filter(p=>!p.deletedAt)
-                await problemRepo.replaceAll(problems)
-                await reviewRepo.replaceAll(backupData.reviewEvents)
-                await missionRepo.replaceAll(backupData.missions)
-            } catch (e) {
-                return { ok: false, error: { code: "persist-failed" } }
-            }
-
-            reloadAllStores()
-            rebuildProjections()
-
-            return {
-                ok: true,
-                value: {
-                    problemCount: backupData.problems.length,
-                    reviewEventCount: backupData.reviewEvents.length,
-                    missionCount: backupData.missions.length,
-                },
-            }
-
+        } catch (e) {
+            return { ok: false, error: { code: "file-io-error" } }
         }
+
+    }
+    const manualBackup = async () => {        
+        return await backup(manualBackupWriter, `kif-backup-${Date.now()}.json`)
+    }
+    const autoBackup = async () => {
+        return await backup(autobackupFileWriter, "kif-autobackup.json")
+    }
+    const restore = async (backupData: BackupData): Promise<RestoreResult> => {
+        //console.log("restore", backupData.missions)
+        let problems: Problem[]
+        try {
+            problems = backupData.problems.map(dto => Problem.fromDTO(dto))
+            console.log("restore", problems)
+        } catch (e) {
+            console.log("restore error", e)
+            if (e instanceof Error) {
+                console.error(e.message)
+            } else {
+                console.error(String(e))
+            }
+            return { ok: false, error: { code: "parse-failed" } }
+        }
+        try {
+            //const activeProblems = problems.filter(p=>!p.deletedAt)
+            await problemRepo.replaceAll(problems)
+            await reviewRepo.replaceAll(backupData.reviewEvents)
+            await missionRepo.replaceAll(backupData.missions)
+        } catch (e) {
+            return { ok: false, error: { code: "persist-failed" } }
+        }
+
+        //reloadAllStores()
+        //rebuildProjections()
+
+        return {
+            ok: true,
+            value: {
+                problemCount: backupData.problems.length,
+                reviewEventCount: backupData.reviewEvents.length,
+                missionCount: backupData.missions.length,
+            },
+        }
+
+    }
+    ////////////////////
+    return {
+        manualBackup, autoBackup, restore,
     }
 }
-
-export interface BackupWriter {
-    write(data: string, fileName: string): Promise<void>
-    //revoke?(fileUrl: string): void
-}
-
