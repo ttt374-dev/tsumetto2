@@ -18,7 +18,8 @@ export function useBackupRestoreDialogController(): BackupRestoreController {
     const dialog = useDialogState()  
     const toast = useToast()
     const repos = useRepositoryContext()
-    const usecase = useBackupRestoreUsecase(repos.problem, repos.reviewEvent, repos.mission)
+    const usecase = useBackupRestoreUsecase({
+        problem: repos.problem, reviewEvent: repos.reviewEvent, mission: repos.mission})
     const reloadStores = useStoresReloader()
 
     const backup = async () => {

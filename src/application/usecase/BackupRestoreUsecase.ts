@@ -46,19 +46,16 @@ export type BackupDeps = {
     reviewEvent: ReviewEventRepository
     mission: MissionRepository
 }
-export function useBackupRestoreUsecase(
-    problemRepo: ProblemRepository,
-    reviewRepo: ReviewEventRepository,
-    missionRepo: MissionRepository,    
-): BackupRestoreUsecase {
+export function useBackupRestoreUsecase(deps: BackupDeps): BackupRestoreUsecase {
 
     const createBackupJson = async (): Promise<{
         json: string
         counts: ResultCount
     }> => {
-        const problems = await problemRepo.findAll()
-        const reviewEvents = await reviewRepo.findAll()
-        const missions = await missionRepo.findAll()
+
+        const problems = await deps.problem.findAll()
+        const reviewEvents = await deps.reviewEvent.findAll()
+        const missions = await deps.mission.findAll()
 
         const backupData: BackupData = {
             problems: problems.map(p => p.toDTO()),
@@ -114,9 +111,9 @@ export function useBackupRestoreUsecase(
         }
         try {
             //const activeProblems = problems.filter(p=>!p.deletedAt)
-            await problemRepo.replaceAll(problems)
-            await reviewRepo.replaceAll(backupData.reviewEvents)
-            await missionRepo.replaceAll(backupData.missions)
+            await deps.problem.replaceAll(problems)
+            await deps.reviewEvent.replaceAll(backupData.reviewEvents)
+            await deps.mission.replaceAll(backupData.missions)
         } catch (e) {
             return { ok: false, error: { code: "persist-failed" } }
         }

@@ -40,7 +40,10 @@ async function ensureDefaultMission(missionRepo: MissionRepository){
     }
 }
 async function autobackup(repos: RepositoryContextValue){
-    const usecase = useBackupRestoreUsecase(repos.problem, repos.reviewEvent, repos.mission)
+    const usecase = useBackupRestoreUsecase({
+        problem: repos.problem, 
+        reviewEvent: repos.reviewEvent, 
+        mission: repos.mission})
     await usecase.autoBackup()
     console.log("autobackup")
 }
