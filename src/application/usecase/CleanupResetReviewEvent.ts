@@ -1,8 +1,9 @@
+import type { ReviewEventRepository } from "@/domain/review/repository/ReviewEventRepository";
 import { useRepositoryContext } from "@/ui/App/providers/RepositoryProvider";
 
-export function useCleanupresetReviewEvent() {
-    const repos = useRepositoryContext()
-    const repo = repos.reviewEvent
+export function createCleanupresetReviewEvent(repo: ReviewEventRepository) {
+    //const repos = useRepositoryContext()
+    //const repo = repos.reviewEvent
 
     const execute = async () => {
         const lastReset = await repo.findLastReset()

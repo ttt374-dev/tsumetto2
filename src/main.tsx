@@ -11,7 +11,7 @@ import { LocalfileReviewEventDataSource } from '@/infrastructure/datasource/revi
 import { createDefaultMission } from '@/domain/mission/entity/createDefaultMission.ts'
 import { LocalFileProblemDatasource } from '@/infrastructure/datasource/problem/LocalfileProblemDatasource.ts';
 import { LocalfileMissionDatasource } from '@/infrastructure/datasource/mission/LocalfileMissionDatasource.ts';
-import { useBackupRestoreUsecase } from '@/application/usecase/BackupRestoreUsecase.ts';
+import { createBackupRestoreUsecase } from '@/application/usecase/BackupRestoreUsecase.ts';
 import { type RepositoryContextValue } from '@/ui/App/providers/RepositoryProvider.tsx';
 
 async function main() {
@@ -40,7 +40,7 @@ async function ensureDefaultMission(missionRepo: MissionRepository){
     }
 }
 async function autobackup(repos: RepositoryContextValue){
-    const usecase = useBackupRestoreUsecase({
+    const usecase = createBackupRestoreUsecase({
         problem: repos.problem, 
         reviewEvent: repos.reviewEvent, 
         mission: repos.mission})

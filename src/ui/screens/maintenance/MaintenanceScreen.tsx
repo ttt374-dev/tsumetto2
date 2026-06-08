@@ -1,5 +1,5 @@
-import { useCleanupresetReviewEvent } from "@/application/usecase/CleanupResetReviewEvent";
-import { useHardDeleteUsecase } from "@/application/usecase/HardDeleteUsecase";
+import { createCleanupresetReviewEvent } from "@/application/usecase/CleanupResetReviewEvent";
+import { useRepositoryContext } from "@/ui/App/providers/RepositoryProvider";
 import { useToast } from "@/ui/App/providers/ToastProvider";
 import { AppShell } from "@/ui/common/components/layout/AppShell";
 import { useBackupRestoreController } from "@/ui/screens/maintenance/useBackupRestoreController";
@@ -10,8 +10,9 @@ export function MaintenanceScreen(){
     const toast = useToast()
     const fileInputRef = useRef<HTMLInputElement>(null)
     const backupRestoreController = useBackupRestoreController()
-    const executeHardDelete = useHardDeleteUsecase()
-    const executeCleanupResetReviewEvents = useCleanupresetReviewEvent()
+    const repos = useRepositoryContext()
+    const deleteHardDelete = repos.problem.hardDeleteDeleted
+    const executeCleanupResetReviewEvents = createCleanupresetReviewEvent(repos.reviewEvent)
     
     const handleBackup = async () => { 
         await backupRestoreController.backup()
@@ -26,7 +27,7 @@ export function MaintenanceScreen(){
     }    
     const handleCleanup = async () => {
         if (!window.confirm("よろしいですか？")) return
-        const deletedProblemsCount = await executeHardDelete()
+        const deletedProblemsCount = await deleteHardDelete()
         const deletedReviewEventsCount = await executeCleanupResetReviewEvents()
         toast({message: `問題済${deletedProblemsCount}件, リセット以前イベント${deletedReviewEventsCount}件　削除されました`})
     }

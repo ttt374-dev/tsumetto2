@@ -10,20 +10,20 @@ import { autobackupFileWriter, manualBackupWriter, type BackupWriter } from "@/i
 export type BackupRestoreResult =
     | { 
         ok: true,
-        value: BackupRestoreResultCount
+        value: {
+            count: BackupRestoreCount
+        }
     }
     | {
         ok: false,
         error: BackupRestoreError
     }
 
-type BackupRestoreResultCount = {
+export type BackupRestoreCount = {
     problem: number
     reviewEvent: number
     mission: number
 }
-//type BackupResotreResultOk = BackupRestoreResultCount
-//type RestoreResultOk = BackupRestoreResultCount
 
 export type BackupRestoreError =
     | { code: "file-io-error" }
@@ -31,10 +31,8 @@ export type BackupRestoreError =
     | { code: "parse-failed"; cause?: unknown }
     | { code: "persist-failed"; cause?: unknown }
 
-//export type RestoreResult = Result<RestoreResultOk, BackupRestoreError>
 ///////////////////////////
 export interface BackupRestoreUsecase {
-    //backup(writer: BackupWriter): Promise<BackupResult>
     manualBackup(): Promise<BackupRestoreResult>
     autoBackup(): Promise<BackupRestoreResult>
     restore(data: BackupData): Promise<BackupRestoreResult>
@@ -53,11 +51,11 @@ export type BackupDeps = {
 }
 export const autobackupFilename = "kif-autobackup.json"
 
-export function useBackupRestoreUsecase(deps: BackupDeps): BackupRestoreUsecase {
+export function createBackupRestoreUsecase(deps: BackupDeps): BackupRestoreUsecase {
 
     const createBackupJson = async (): Promise<{
         json: string
-        counts: BackupRestoreResultCount
+        counts: BackupRestoreCount
     }> => {
 
         const problems = await deps.problem.findAll()
@@ -86,8 +84,7 @@ export function useBackupRestoreUsecase(deps: BackupDeps): BackupRestoreUsecase 
             return {
                 ok: true,
                 value: {
-                    //filename: filename,
-                    ...counts,
+                    count: counts,
                 }
             }
         } catch (e) {
@@ -106,9 +103,9 @@ export function useBackupRestoreUsecase(deps: BackupDeps): BackupRestoreUsecase 
         let problems: Problem[]
         try {
             problems = backupData.problems.map(dto => Problem.fromDTO(dto))
-            console.log("restore", problems)
+            //console.log("restore", problems)
         } catch (e) {
-            console.log("restore error", e)
+            //console.log("restore error", e)
             if (e instanceof Error) {
                 console.error(e.message)
             } else {
@@ -125,15 +122,14 @@ export function useBackupRestoreUsecase(deps: BackupDeps): BackupRestoreUsecase 
             return { ok: false, error: { code: "persist-failed" } }
         }
 
-        //reloadAllStores()
-        //rebuildProjections()
-
         return {
             ok: true,
             value: {
-                problem: backupData.problems.length,
-                reviewEvent: backupData.reviewEvents.length,
-                mission: backupData.missions.length,
+                count: {
+                    problem: backupData.problems.length,
+                    reviewEvent: backupData.reviewEvents.length,
+                    mission: backupData.missions.length,
+                }
             },
         }
 
