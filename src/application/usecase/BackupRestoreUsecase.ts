@@ -1,38 +1,43 @@
-import type { Result } from "@/shared/result"
 import type { MissionRepository } from "@/domain/mission/repository/MissionRepository"
 import type { ReviewEventRepository } from "@/domain/review/repository/ReviewEventRepository"
 import { Problem, type ProblemDTO } from "@/domain/problem/entity/Problem"
 import type { ReviewEvent, ReviewEventLog } from "@/domain/review/types/ReviewEvent"
 import type { Mission } from "@/domain/mission/entity/Mission"
 import type { ProblemRepository } from "@/domain/problem/repository/ProblemRepository"
-import { rebuildProjections, reloadAllStores } from "@/ui/App/useBootstrapStores"
 import { autobackupFileWriter, manualBackupWriter, type BackupWriter } from "@/infrastructure/backup/BackupWriter"
 
-export type BackupResult = Result<BackupResultOk, BackupRestoreError>
+//export type BackupRestoreResult = Result<BackupResotreResultOk, BackupRestoreError>
+export type BackupRestoreResult =
+    | { 
+        ok: true,
+        value: BackupRestoreResultCount
+    }
+    | {
+        ok: false,
+        error: BackupRestoreError
+    }
 
-type ResultCount = {
-    problemCount: number
-    reviewEventCount: number
-    missionCount: number
+type BackupRestoreResultCount = {
+    problem: number
+    reviewEvent: number
+    mission: number
 }
-export type BackupResultOk = {
-    filename: string
-} & ResultCount
+//type BackupResotreResultOk = BackupRestoreResultCount
+//type RestoreResultOk = BackupRestoreResultCount
 
-export type RestoreResultOk = ResultCount
 export type BackupRestoreError =
     | { code: "file-io-error" }
     | { code: "invalid-format" }
     | { code: "parse-failed"; cause?: unknown }
     | { code: "persist-failed"; cause?: unknown }
 
-export type RestoreResult = Result<RestoreResultOk, BackupRestoreError>
+//export type RestoreResult = Result<RestoreResultOk, BackupRestoreError>
 ///////////////////////////
 export interface BackupRestoreUsecase {
     //backup(writer: BackupWriter): Promise<BackupResult>
-    manualBackup(): Promise<BackupResult>
-    autoBackup(): Promise<BackupResult>
-    restore(data: BackupData): Promise<RestoreResult>
+    manualBackup(): Promise<BackupRestoreResult>
+    autoBackup(): Promise<BackupRestoreResult>
+    restore(data: BackupData): Promise<BackupRestoreResult>
 }
 
 export type BackupData = {
@@ -46,11 +51,13 @@ export type BackupDeps = {
     reviewEvent: ReviewEventRepository
     mission: MissionRepository
 }
+export const autobackupFilename = "kif-autobackup.json"
+
 export function useBackupRestoreUsecase(deps: BackupDeps): BackupRestoreUsecase {
 
     const createBackupJson = async (): Promise<{
         json: string
-        counts: ResultCount
+        counts: BackupRestoreResultCount
     }> => {
 
         const problems = await deps.problem.findAll()
@@ -66,20 +73,20 @@ export function useBackupRestoreUsecase(deps: BackupDeps): BackupRestoreUsecase 
         return {
             json: JSON.stringify(backupData, null, 2),
             counts: {
-                problemCount: problems.length,
-                reviewEventCount: reviewEvents.length,
-                missionCount: missions.length,
+                problem: problems.length,
+                reviewEvent: reviewEvents.length,
+                mission: missions.length,
             }
         }
     }
-    const backup = async (writer: BackupWriter, filename: string): Promise<BackupResult> => {        
+    const backup = async (writer: BackupWriter, filename: string): Promise<BackupRestoreResult> => {        
         try {
             const { json, counts } = await createBackupJson()
             await writer.write(json, filename)
             return {
                 ok: true,
                 value: {
-                    filename: filename,
+                    //filename: filename,
                     ...counts,
                 }
             }
@@ -92,9 +99,9 @@ export function useBackupRestoreUsecase(deps: BackupDeps): BackupRestoreUsecase 
         return await backup(manualBackupWriter, `kif-backup-${Date.now()}.json`)
     }
     const autoBackup = async () => {
-        return await backup(autobackupFileWriter, "kif-autobackup.json")
+        return await backup(autobackupFileWriter, autobackupFilename)
     }
-    const restore = async (backupData: BackupData): Promise<RestoreResult> => {
+    const restore = async (backupData: BackupData): Promise<BackupRestoreResult> => {
         //console.log("restore", backupData.missions)
         let problems: Problem[]
         try {
@@ -124,9 +131,9 @@ export function useBackupRestoreUsecase(deps: BackupDeps): BackupRestoreUsecase 
         return {
             ok: true,
             value: {
-                problemCount: backupData.problems.length,
-                reviewEventCount: backupData.reviewEvents.length,
-                missionCount: backupData.missions.length,
+                problem: backupData.problems.length,
+                reviewEvent: backupData.reviewEvents.length,
+                mission: backupData.missions.length,
             },
         }
 

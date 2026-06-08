@@ -1,7 +1,7 @@
 import { Capacitor } from "@capacitor/core"
 import { Share } from '@capacitor/share';
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem'
-
+import { internalDataStorage } from "@/infrastructure/backup/BackupInternalStorage";
 
 export interface BackupWriter {
     write(data: string, fileName: string): Promise<void>
@@ -9,23 +9,14 @@ export interface BackupWriter {
 
 export const manualBackupWriter: BackupWriter = {
     write: async (data: string, filename) => {
-        const writer = isNative()
+        const writer = Capacitor.isNativePlatform()
             ? capacitorShareFileWriter
             : webDownloadFileWriter
 
         await writer.write(data, filename)
     }
 }
-//const backupFilename = "tsumetto2-autobackup.json"
-export const autobackupFileWriter: BackupWriter = {    
-    async write(data: string, filename: string){
-        const writer = isNative() 
-            ? capacitorInternalDataFileWriter
-            : webInternalDataFileWriter
-        await writer.write(data, filename)
-    }
-    
-}
+export const autobackupFileWriter: BackupWriter = internalDataStorage
 /////////////
 export const capacitorShareFileWriter: BackupWriter = {
     async write(data: string, filename: string) {
@@ -47,17 +38,6 @@ export const capacitorShareFileWriter: BackupWriter = {
         });
     }
 }
-export const capacitorInternalDataFileWriter: BackupWriter = {
-    async write(data: string, filename: string) {
-        await Filesystem.writeFile({
-            path: filename,
-            directory: Directory.Data,
-            data,
-            encoding: Encoding.UTF8,
-            recursive: true,
-        })
-    }
-}
 export const webDownloadFileWriter: BackupWriter = {
     async write(data: string, filename: string) {
         const blob = new Blob([data], { type: "application/json" })
@@ -69,9 +49,4 @@ export const webDownloadFileWriter: BackupWriter = {
         URL.revokeObjectURL(url)
     }
 }
-export const webInternalDataFileWriter: BackupWriter = {
-    async write(data: string, filename: string) {
-        localStorage.setItem(filename, data)
-    }
-}
-const isNative = () => Capacitor.isNativePlatform()
+//export const isNative = () => 

@@ -2,14 +2,14 @@ import { useCleanupresetReviewEvent } from "@/application/usecase/CleanupResetRe
 import { useHardDeleteUsecase } from "@/application/usecase/HardDeleteUsecase";
 import { useToast } from "@/ui/App/providers/ToastProvider";
 import { AppShell } from "@/ui/common/components/layout/AppShell";
-import { useBackupRestoreDialogController } from "@/ui/dialogs/BackupRestore/useBackupRestoreDIalogController";
+import { useBackupRestoreController } from "@/ui/screens/maintenance/useBackupRestoreController";
 import { Box, Button, Divider, List, ListItem, ListItemButton, Stack, Typography } from "@mui/material";
 import { useRef } from "react";
 
 export function MaintenanceScreen(){
     const toast = useToast()
     const fileInputRef = useRef<HTMLInputElement>(null)
-    const backupRestoreController = useBackupRestoreDialogController()
+    const backupRestoreController = useBackupRestoreController()
     const executeHardDelete = useHardDeleteUsecase()
     const executeCleanupResetReviewEvents = useCleanupresetReviewEvent()
     
@@ -19,6 +19,10 @@ export function MaintenanceScreen(){
     const handleRestoreFile = async (file: File) => {
         if (!window.confirm("現在のデータは上書きされます。よろしいですか？")) return
         await backupRestoreController.restore(file)
+    }    
+    const handleRestoreAutoBackup = async () => {
+        if (!window.confirm("現在のデータは上書きされます。よろしいですか？")) return
+        await backupRestoreController.restoreAutoBackup()
     }    
     const handleCleanup = async () => {
         if (!window.confirm("よろしいですか？")) return
@@ -54,7 +58,7 @@ export function MaintenanceScreen(){
                         color="error"
                         onClick={() => fileInputRef.current?.click()}
                     >
-                        バックアップを読み込む
+                        バックアップファイルを選択して読み込む
                     </Button>
 
                     <input
@@ -68,6 +72,13 @@ export function MaintenanceScreen(){
                             e.currentTarget.value = ""
                         }}
                     />
+                    <Button
+                        variant="outlined"
+                        color="error"
+                        onClick={handleRestoreAutoBackup}
+                    >
+                        自動バックアップファイルを読み込む
+                    </Button>
                 </Box>
                 <Divider />
                 <Box my={3}>

@@ -1,7 +1,7 @@
 import { createContext } from "react"
 
 import { AppLayout } from "./AppLayout"
-import { useBackupRestoreDialogController, type BackupRestoreController } from "@/ui/dialogs/BackupRestore/useBackupRestoreDIalogController";
+import { useBackupRestoreController, type BackupRestoreController } from "@/ui/screens/maintenance/useBackupRestoreController";
 import { useImportWorkflow } from "@/ui/common/components/layout/hooks/useImportWorkflow";
 import type { ImportController } from "@/ui/dialogs/Import/useImportController";
 import { GlobalDialogs } from "@/ui/common/components/layout/GlobalDialogs";
@@ -38,7 +38,7 @@ export type GlobalDialogControllers = {
 function useAppControllers() {
     const dialogs = {
         import: useImportWorkflow(),
-        backupRestore: useBackupRestoreDialogController(),
+        backupRestore: useBackupRestoreController(),
     }
     return { dialogs }
 }
