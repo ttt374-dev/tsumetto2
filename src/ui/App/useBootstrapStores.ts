@@ -26,7 +26,7 @@ export function useBootstrapStores(repos: RepositoryContextValue) {
             if (cancelled) return
 
             // projection rebuild
-            rebuildProjections()
+            //rebuildProjections()
         }
 
         bootstrap()
@@ -36,10 +36,16 @@ export function useBootstrapStores(repos: RepositoryContextValue) {
         }
     }, [repos])
 }
-export async function reloadAllStores() {
+export async function reloadAllStores(
+    { rebuildProjection = true }: { rebuildProjection?: boolean } = {}
+) {
     await useMissionStore.getState().reload()
     await useProblemStore.getState().reload()
     await useReviewEventStore.getState().reload()
+
+    if (rebuildProjection) {
+        rebuildProjections()
+    }
 }
 
 export function rebuildProjections() {

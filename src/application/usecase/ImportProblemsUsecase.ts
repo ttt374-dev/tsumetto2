@@ -60,7 +60,7 @@ function resolveTitle(title: string, existing: Set<string>) {
     return `${title} (${i})`
 }
 /////////////////////////////////////////////////
-export function useImportProblemsUsecase(problemRepo: ProblemRepository) {
+export function createImportProblemsUsecase(problemRepo: ProblemRepository) {
     const importFiles = async (files: File[], options: ImportOptions): Promise<ImportFilesResult> => {
         let imported = 0
         let skipped = 0

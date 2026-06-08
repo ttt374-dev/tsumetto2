@@ -11,10 +11,13 @@ import { LocalfileReviewEventDataSource } from '@/infrastructure/datasource/revi
 import { createDefaultMission } from '@/domain/mission/entity/createDefaultMission.ts'
 import { LocalFileProblemDatasource } from '@/infrastructure/datasource/problem/LocalfileProblemDatasource.ts';
 import { LocalfileMissionDatasource } from '@/infrastructure/datasource/mission/LocalfileMissionDatasource.ts';
+import { createBackupRestoreUsecase } from '@/application/usecase/BackupRestoreUsecase.ts';
+import { type RepositoryContextValue } from '@/ui/App/providers/RepositoryProvider.tsx';
 
 async function main() {
     const repos = createRepositories()
     await ensureDefaultMission(repos.mission)
+    await autobackup(repos)
 
     createRoot(document.getElementById('root')!).render(
         <StrictMode>
@@ -35,5 +38,13 @@ async function ensureDefaultMission(missionRepo: MissionRepository){
     if (missions.length === 0) {
         await missionRepo.replaceAll([createDefaultMission()])
     }
+}
+async function autobackup(repos: RepositoryContextValue){
+    const usecase = createBackupRestoreUsecase({
+        problem: repos.problem, 
+        reviewEvent: repos.reviewEvent, 
+        mission: repos.mission})
+    await usecase.autoBackup()
+    console.log("autobackup")
 }
 main()

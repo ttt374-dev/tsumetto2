@@ -1,17 +1,18 @@
-import { useCleanupresetReviewEvent } from "@/application/usecase/CleanupResetReviewEvent";
-import { useHardDeleteUsecase } from "@/application/usecase/HardDeleteUsecase";
+import { createCleanupresetReviewEvent } from "@/application/usecase/CleanupResetReviewEvent";
+import { useRepositoryContext } from "@/ui/App/providers/RepositoryProvider";
 import { useToast } from "@/ui/App/providers/ToastProvider";
 import { AppShell } from "@/ui/common/components/layout/AppShell";
-import { useBackupRestoreDialogController } from "@/ui/dialogs/BackupRestore/useBackupRestoreDIalogController";
+import { useBackupRestoreController } from "@/ui/screens/maintenance/useBackupRestoreController";
 import { Box, Button, Divider, List, ListItem, ListItemButton, Stack, Typography } from "@mui/material";
 import { useRef } from "react";
 
 export function MaintenanceScreen(){
     const toast = useToast()
     const fileInputRef = useRef<HTMLInputElement>(null)
-    const backupRestoreController = useBackupRestoreDialogController()
-    const executeHardDelete = useHardDeleteUsecase()
-    const executeCleanupResetReviewEvents = useCleanupresetReviewEvent()
+    const backupRestoreController = useBackupRestoreController()
+    const repos = useRepositoryContext()
+    const deleteHardDelete = repos.problem.hardDeleteDeleted
+    const executeCleanupResetReviewEvents = createCleanupresetReviewEvent(repos.reviewEvent)
     
     const handleBackup = async () => { 
         await backupRestoreController.backup()
@@ -20,9 +21,13 @@ export function MaintenanceScreen(){
         if (!window.confirm("現在のデータは上書きされます。よろしいですか？")) return
         await backupRestoreController.restore(file)
     }    
+    const handleRestoreAutoBackup = async () => {
+        if (!window.confirm("現在のデータは上書きされます。よろしいですか？")) return
+        await backupRestoreController.restoreAutoBackup()
+    }    
     const handleCleanup = async () => {
         if (!window.confirm("よろしいですか？")) return
-        const deletedProblemsCount = await executeHardDelete()
+        const deletedProblemsCount = await deleteHardDelete()
         const deletedReviewEventsCount = await executeCleanupResetReviewEvents()
         toast({message: `問題済${deletedProblemsCount}件, リセット以前イベント${deletedReviewEventsCount}件　削除されました`})
     }
@@ -54,7 +59,7 @@ export function MaintenanceScreen(){
                         color="error"
                         onClick={() => fileInputRef.current?.click()}
                     >
-                        バックアップを読み込む
+                        バックアップファイルを選択して読み込む
                     </Button>
 
                     <input
@@ -68,6 +73,13 @@ export function MaintenanceScreen(){
                             e.currentTarget.value = ""
                         }}
                     />
+                    <Button
+                        variant="outlined"
+                        color="error"
+                        onClick={handleRestoreAutoBackup}
+                    >
+                        自動バックアップファイルを読み込む
+                    </Button>
                 </Box>
                 <Divider />
                 <Box my={3}>

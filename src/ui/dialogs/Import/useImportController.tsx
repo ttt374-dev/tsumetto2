@@ -1,7 +1,7 @@
 import React, { useState, type ReactNode } from "react"
 
 import { useRepositoryContext } from "@/ui/App/providers/RepositoryProvider"
-import { useImportProblemsUsecase, type ImportFilesResult, type ImportOptions } from "@/application/usecase/ImportProblemsUsecase"
+import { createImportProblemsUsecase, type ImportFilesResult, type ImportOptions } from "@/application/usecase/ImportProblemsUsecase"
 import { useFileSelector } from "@/shared/hooks/useFileSelector"
 import { useDialogState } from "@/ui/common/hooks/useDialogState"
 import { useProblemStore } from "@/ui/features/problem/hooks/useProblemStore"
@@ -31,7 +31,7 @@ export function useImportController(): ImportController {
     //const [importing, setImporting] = useState(false)
     const [result, setResult] = useState<ImportFilesResult | null>(null)
     const reloadStore = useProblemStore(s=>s.reload)
-    const usecase = useImportProblemsUsecase(repos.problem) 
+    const usecase = createImportProblemsUsecase(repos.problem) 
 
     const onFilesSelected = (files: File[]) => {
         setFiles(files)

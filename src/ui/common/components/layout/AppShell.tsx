@@ -1,10 +1,10 @@
 import { createContext } from "react"
 
 import { AppLayout } from "./AppLayout"
-import { useBackupRestoreDialogController, type BackupRestoreController } from "@/ui/dialogs/BackupRestore/useBackupRestoreDIalogController";
+import { useBackupRestoreController, type BackupRestoreController } from "@/ui/screens/maintenance/useBackupRestoreController";
 import { useImportWorkflow } from "@/ui/common/components/layout/hooks/useImportWorkflow";
 import type { ImportController } from "@/ui/dialogs/Import/useImportController";
-import { GlobalDialogs } from "@/ui/common/components/layout/GlobalDialogs";
+import { GlobalDialogsContainer } from "@/ui/common/components/layout/GlobalDialogsContainer";
 import { useDrawerState } from "@/ui/common/hooks/useDrawerState";
 import { DrawerMenu } from "@/ui/common/components/layout/DrawerMenu";
 import type { MenuCommand } from "@/application/navigation/types";
@@ -29,7 +29,7 @@ type AppActions = {
 }
 export type GlobalDialogControllers = {
     import: ImportController
-    backupRestore: BackupRestoreController
+    //backupRestore: BackupRestoreController
 }
 
 //export const OpenImportContext = createContext<(() => void) | null>(null)
@@ -38,7 +38,7 @@ export type GlobalDialogControllers = {
 function useAppControllers() {
     const dialogs = {
         import: useImportWorkflow(),
-        backupRestore: useBackupRestoreDialogController(),
+        backupRestore: useBackupRestoreController(),
     }
     return { dialogs }
 }
@@ -73,7 +73,7 @@ export function AppShell({ header, showBottomNav, footer, rightActions, fab, chi
             >
                 {children}
             </AppLayout>
-            <GlobalDialogs dialogs={dialogs}/>
+            <GlobalDialogsContainer dialogs={dialogs}/>
         </>
     )
 }
