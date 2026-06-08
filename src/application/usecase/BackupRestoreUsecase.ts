@@ -77,9 +77,19 @@ export function createBackupRestoreUsecase(deps: BackupDeps): BackupRestoreUseca
             }
         }
     }
-    const backup = async (writer: BackupWriter, filename: string): Promise<BackupRestoreResult> => {        
+    const backup = async (writer: BackupWriter, filename: string): Promise<BackupRestoreResult> => {
+        let json: string
+        let counts: BackupRestoreCount
         try {
-            const { json, counts } = await createBackupJson()
+            ({ json, counts } = await createBackupJson())
+        } catch {
+            return {
+                ok: false,
+                error: { code: "persist-failed" }
+            }
+        }
+        try {
+            //const { json, counts } = await createBackupJson()
             await writer.write(json, filename)
             return {
                 ok: true,
@@ -126,7 +136,7 @@ export function createBackupRestoreUsecase(deps: BackupDeps): BackupRestoreUseca
             ok: true,
             value: {
                 count: {
-                    problem: backupData.problems.length,
+                    problem: problems.length,
                     reviewEvent: backupData.reviewEvents.length,
                     mission: backupData.missions.length,
                 }
